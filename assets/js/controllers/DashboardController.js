@@ -119,9 +119,10 @@ export class DashboardController {
             <div class="stat-card stat-card-green flex flex-col justify-between">
                 <div class="deco d1"></div>
                 <div class="deco d2"></div>
+                <div class="deco d3"></div>
                 <div class="flex items-start justify-between relative z-10">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-100/80">บุคลากรทั้งหมด</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-100/90">บุคลากรทั้งหมด</span>
                         <h3 class="text-3xl font-extrabold text-white mt-1">${metrics.total} <span class="text-sm font-medium text-emerald-100/90">คน</span></h3>
                     </div>
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white bg-white/20 backdrop-blur-xs shadow-inner">
@@ -133,7 +134,7 @@ export class DashboardController {
                         <span>สัดส่วนรวม</span>
                         <span>100%</span>
                     </div>
-                    <div class="w-full h-2 rounded-full bg-black/20 overflow-hidden">
+                    <div class="w-full h-2 rounded-full bg-black/25 overflow-hidden">
                         <div class="h-full rounded-full bg-white transition-all duration-500" style="width: 100%;"></div>
                     </div>
                 </div>
@@ -147,13 +148,18 @@ export class DashboardController {
             else if (cat.key === 'special') cardClass = 'stat-card-purple';
             else if (cat.key === 'absent') cardClass = 'stat-card-rose';
 
+            const customBgStyle = this.customColors[cat.key] 
+                ? `style="background: linear-gradient(135deg, ${cat.color} 0%, ${cat.color}cc 100%);"` 
+                : '';
+
             html += `
-                <div class="stat-card ${cardClass} flex flex-col justify-between">
+                <div class="stat-card ${cardClass} flex flex-col justify-between" ${customBgStyle}>
                     <div class="deco d1"></div>
                     <div class="deco d2"></div>
+                    <div class="deco d3"></div>
                     <div class="flex items-start justify-between relative z-10">
                         <div>
-                            <span class="text-xs font-bold text-white/80">${cat.label}</span>
+                            <span class="text-xs font-bold text-white/90">${cat.label}</span>
                             <h3 class="text-3xl font-extrabold text-white mt-1">${cat.count} <span class="text-sm font-medium text-white/80">คน</span></h3>
                         </div>
                         <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white bg-white/20 backdrop-blur-xs shadow-inner">
@@ -161,11 +167,11 @@ export class DashboardController {
                         </div>
                     </div>
                     <div class="mt-4 relative z-10">
-                        <div class="flex items-center justify-between text-xs font-semibold mb-1 text-white/90">
+                        <div class="flex items-center justify-between text-xs font-semibold mb-1 text-white/95">
                             <span>คิดเป็นร้อยละ</span>
                             <span>${cat.percent}%</span>
                         </div>
-                        <div class="w-full h-2 rounded-full bg-black/20 overflow-hidden">
+                        <div class="w-full h-2 rounded-full bg-black/25 overflow-hidden">
                             <div class="h-full rounded-full bg-white transition-all duration-500" style="width: ${cat.percent}%;"></div>
                         </div>
                     </div>

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=2.2">
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
@@ -51,8 +51,8 @@
     <!-- เนื้อหาหลักหน้าลงเวลา -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6 space-y-6">
 
-        <!-- การ์ดข้อมูลผู้ใช้งานและนาฬิกาดิจิทัลเรียลไทม์ -->
-        <div class="bma-card p-5 lg:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <!-- การ์ดข้อมูลผู้ใช้งานและนาฬิกาดิจิทัลเรียลไทม์ (BMA Green Accent) -->
+        <div class="bma-card p-5 lg:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-t-4 border-t-[#007B3E] shadow-sm">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-md" style="background-color: var(--bma-primary);">
                     <i class="fa-solid fa-user-check"></i>
@@ -75,15 +75,15 @@
 
         <!-- สถานะการลงเวลาของวันนี้ -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bma-card p-4 flex items-center justify-between">
+            <div class="bma-card p-4 flex items-center justify-between border-t-4 border-t-[#059669] shadow-sm">
                 <div>
                     <span class="text-xs font-semibold bma-text-sub">เวลาเข้างานวันนี้ (Check-in)</span>
                     <p id="todayCheckinTime" class="text-xl font-bold bma-text-main mt-1">ยังไม่ได้ลงเวลา</p>
                 </div>
-                <span id="todayCheckinBadge" class="bma-badge bma-badge-warning">รiaลงเวลา</span>
+                <span id="todayCheckinBadge" class="bma-badge bma-badge-warning">รอลงเวลา</span>
             </div>
 
-            <div class="bma-card p-4 flex items-center justify-between">
+            <div class="bma-card p-4 flex items-center justify-between border-t-4 border-t-[#0284C7] shadow-sm">
                 <div>
                     <span class="text-xs font-semibold bma-text-sub">เวลาออกงานวันนี้ (Check-out)</span>
                     <p id="todayCheckoutTime" class="text-xl font-bold bma-text-main mt-1">ยังไม่ได้ลงเวลา</p>
@@ -95,8 +95,8 @@
         <!-- ส่วนกล้องถ่ายรูป และ พิกัดสถานที่ GPS -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปยืนยันตัวตน (มีเฉพาะปุ่มถ่ายภาพและถ่ายใหม่อีกครั้ง) -->
-            <div id="cameraSectionCard" class="lg:col-span-7 bma-card p-5 flex flex-col justify-between">
+            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปยืนยันตัวตน (BMA Green Accent) -->
+            <div id="cameraSectionCard" class="lg:col-span-7 bma-card p-5 flex flex-col justify-between border-t-4 border-t-[#007B3E] shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-bold text-base bma-text-main flex items-center gap-2">
@@ -135,8 +135,8 @@
             <!-- คอลัมน์ขวา: พิกัด GPS สถานที่ และปุ่มบันทึกลงเวลา -->
             <div class="lg:col-span-5 flex flex-col justify-between gap-6">
 
-                <!-- การ์ดแสดงพิกัดและชื่อสถานที่จาก GPS -->
-                <div id="gpsSectionCard" class="bma-card p-5 space-y-3">
+                <!-- การ์ดแสดงพิกัดและชื่อสถานที่จาก GPS (BMA Accent) -->
+                <div id="gpsSectionCard" class="bma-card p-5 space-y-3 border-t-4 border-t-[#007B3E] shadow-sm">
                     <div class="flex items-center justify-between">
                         <h3 class="font-bold text-base bma-text-main flex items-center gap-2">
                             <i class="fa-solid fa-location-crosshairs" style="color: var(--bma-sec-10);"></i>
@@ -168,8 +168,8 @@
                     </div>
                 </div>
 
-                <!-- การ์ดปุ่มกดบันทึกลงเวลา และ ปุ่มขอลงเวลากรณีพิเศษ -->
-                <div class="bma-card p-5 space-y-4">
+                <!-- การ์ดปุ่มกดบันทึกลงเวลา และ ปุ่มขอลงเวลากรณีพิเศษ (BMA Accent) -->
+                <div class="bma-card p-5 space-y-4 border-t-4 border-t-[#007B3E] shadow-sm">
                     <div>
                         <label for="checkinShiftSelect" class="block text-xs font-semibold bma-text-main mb-1.5">ช่วงเวลาปฏิบัติราชการ</label>
                         <select id="checkinShiftSelect" class="bma-select text-sm"></select>

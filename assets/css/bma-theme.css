@@ -39,19 +39,19 @@
     --bma-sec-9: #EAB308;  /* Temple Gold / เกียรติยศและวัฒนธรรมพระนคร */
     --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue / การระบายน้ำและสายน้ำเจ้าพระยา */
 
-    /* 1.4 Surface & Typography Tokens (Soft Sage Mint Tint - 60% Dominant Surface) */
-    --bma-bg-main: #f5f8f6;       /* Soft Sage Tint ลดแสงจ้าสีขาว */
-    --bma-surface-1: #FFFFFF;     /* Card Surface */
-    --bma-surface-2: #eef7f1;     /* Elevated / Header Tint */
-    --bma-border: #e2ede6;        /* Subtle Green-tinted Border */
+    /* 1.4 Surface & Typography Tokens (BMA Emerald Sage Architecture - 60-30-10 Rule) */
+    --bma-bg-main: #E8F2EC;       /* Soft Emerald Sage Tint คอนทราสต์ชัดเจน ไม่ขาวจ้า */
+    --bma-surface-1: #FFFFFF;     /* Card Surface สีขาวบริสุทธิ์ ลอยเด่น */
+    --bma-surface-2: #DCEEE3;     /* Elevated / Header Tint สีเขียวมวลนุ่มนวล */
+    --bma-border: #CFE3D7;        /* Subtle Green-tinted Border คมชัด มีมิติ */
     --bma-text-primary: #1e293b;  /* Slate-800 อ่านง่ายคมชัด */
     --bma-text-secondary: #475569;
     --bma-text-muted: #64748b;
 
-    /* Table Colors */
-    --thead-bg: #eef7f1;
-    --thead-tx: #1e3a29;
-    --row-hover: rgba(0, 123, 62, 0.05);
+    /* Table Colors (Enhanced BMA Green Contrast) */
+    --thead-bg: #DCEEE3;
+    --thead-tx: #004D28;
+    --row-hover: rgba(0, 123, 62, 0.08);
 
     /* Status Badge Alpha Tokens (Light Mode) */
     --badge-success-bg: rgba(5, 150, 105, 0.14);
@@ -112,8 +112,8 @@ html.dark {
     --bma-text-secondary: #8B949E;
     --bma-text-muted: #6E7681;
 
-    /* Table Colors (Dark) */
-    --thead-bg: #1C2430;
+    /* Table Colors (Dark Mode Emerald Tint) */
+    --thead-bg: #15281E;
     --thead-tx: #7EE787;
     --row-hover: rgba(52, 211, 153, 0.08);
 
@@ -212,19 +212,24 @@ html.dark .bma-modal-surface {
 }
 
 .sidebar-bma .bma-nav-item.active {
-    background: linear-gradient(90deg, rgba(78, 186, 111, 0.38), rgba(139, 195, 74, 0.14));
+    background: linear-gradient(90deg, rgba(78, 186, 111, 0.42), rgba(139, 195, 74, 0.18));
     color: #FFFFFF;
     font-weight: 600;
+    border-left: 4px solid var(--yellow);
+    padding-left: calc(1rem - 4px);
+    box-shadow: inset 0 0 12px rgba(253, 216, 53, 0.1);
 }
 
 html.dark .sidebar-bma .bma-nav-item.active {
     background: linear-gradient(90deg, rgba(46, 160, 67, 0.35), rgba(86, 211, 100, 0.12));
+    border-left: 4px solid var(--yellow);
+    padding-left: calc(1rem - 4px);
 }
 
 .sidebar-bma .bma-nav-item.active::before {
     content: '';
     position: absolute;
-    left: -12px;
+    left: 0;
     top: 20%;
     height: 60%;
     width: 4px;
@@ -232,11 +237,23 @@ html.dark .sidebar-bma .bma-nav-item.active {
     background: var(--yellow);
 }
 
-/* Topbar Header Banner Option */
+/* Topbar Header Banner with BMA Green Accent Strip */
 .app-header-bma {
     background: var(--bma-surface-1);
-    border-bottom: 1px solid var(--bma-border);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border-bottom: 2px solid var(--bma-primary);
+    box-shadow: 0 4px 16px rgba(0, 53, 27, 0.06);
+    position: relative;
+}
+
+.app-header-bma::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--sb1) 0%, var(--sb3) 50%, var(--yellow) 100%);
+    z-index: 10;
 }
 
 /* ============================================================================
@@ -250,6 +267,7 @@ html.dark .sidebar-bma .bma-nav-item.active {
     color: #FFFFFF;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .stat-card:hover {
@@ -260,50 +278,53 @@ html.dark .sidebar-bma .bma-nav-item.active {
 .stat-card .deco {
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.16);
     pointer-events: none;
+    backdrop-filter: blur(2px);
 }
 
-.stat-card .d1 { width: 120px; height: 120px; top: -45px; right: -30px; }
-.stat-card .d2 { width: 80px; height: 80px; bottom: -35px; right: 22px; }
-.stat-card .d3 { width: 44px; height: 44px; top: 38%; right: 46%; background: rgba(255, 255, 255, 0.08); }
+.stat-card .d1 { width: 130px; height: 130px; top: -45px; right: -30px; }
+.stat-card .d2 { width: 85px; height: 85px; bottom: -35px; right: 22px; }
+.stat-card .d3 { width: 44px; height: 44px; top: 38%; right: 46%; background: rgba(255, 255, 255, 0.1); }
 
-.stat-card-green { background: linear-gradient(135deg, #007B3E 0%, #4EBA6F 100%); }
-.stat-card-amber { background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%); }
-.stat-card-purple { background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%); }
-.stat-card-rose { background: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%); }
+.stat-card-green { background: linear-gradient(135deg, #005B2E 0%, #007B3E 50%, #4EBA6F 100%); }
+.stat-card-amber { background: linear-gradient(135deg, #B45309 0%, #D97706 50%, #F59E0B 100%); }
+.stat-card-purple { background: linear-gradient(135deg, #4338CA 0%, #6366F1 50%, #8B5CF6 100%); }
+.stat-card-rose { background: linear-gradient(135deg, #BE123C 0%, #E11D48 50%, #F43F5E 100%); }
 
 /* ============================================================================
  * SPLASH & BRAND PANEL DECORATIVE ELEMENTS (from portal.css)
  * ============================================================================ */
 .splash-bg {
-    background: linear-gradient(135deg, var(--g0) 0%, var(--g1) 55%, var(--g2) 120%);
+    background: linear-gradient(135deg, #00351B 0%, #005B2E 35%, #007B3E 70%, #4EBA6F 100%);
+    min-height: 100vh;
+    width: 100%;
 }
 
 .brand-panel {
-    background: linear-gradient(135deg, var(--g1), var(--g2));
+    background: linear-gradient(135deg, #00351B 0%, #007B3E 55%, #4EBA6F 100%);
 }
 
 .deco-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.45;
+    filter: blur(65px);
+    opacity: 0.5;
     pointer-events: none;
 }
 
 .deco-1 {
-    width: 340px;
-    height: 340px;
-    background: var(--g2);
+    width: 400px;
+    height: 400px;
+    background: #4EBA6F;
     top: -80px;
     left: -80px;
     animation: bmaFloat 9s ease-in-out infinite;
 }
 
 .deco-2 {
-    width: 300px;
-    height: 300px;
+    width: 340px;
+    height: 340px;
     background: #FFB300;
     bottom: -90px;
     right: -70px;
@@ -313,7 +334,7 @@ html.dark .sidebar-bma .bma-nav-item.active {
 .deco-grid {
     position: absolute;
     inset: 0;
-    opacity: 0.12;
+    opacity: 0.15;
     background-image: linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
                       linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
     background-size: 40px 40px;
@@ -522,7 +543,8 @@ html.dark .bma-textarea {
     overflow-x: auto;
     border-radius: 0.75rem;
     border: 1px solid var(--bma-border);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    background-color: var(--bma-surface-1);
 }
 
 .bma-table {
@@ -537,7 +559,7 @@ html.dark .bma-textarea {
     color: var(--thead-tx);
     font-weight: 700;
     padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--bma-border);
+    border-bottom: 2px solid var(--bma-border);
     white-space: nowrap;
 }
 
