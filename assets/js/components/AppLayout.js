@@ -82,50 +82,50 @@ export class AppLayout {
             <!-- Backdrop สำหรับ Mobile -->
             <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
 
-            <!-- ตัว Sidebar ด้านซ้ายมือ -->
-            <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 bma-card rounded-none border-y-0 border-l-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between">
+            <!-- ตัว Sidebar ด้านซ้ายมือ (BMA Deep Emerald Gradient) -->
+            <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 sidebar-bma z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between">
                 <div>
                     <!-- ส่วนหัวโลโก้และชื่อหน่วยงาน -->
-                    <div class="p-5 border-b bma-border flex items-center justify-between gap-3">
+                    <div class="p-5 border-b border-white/10 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             ${logoHtml}
                             <div class="min-w-0">
-                                <h2 class="font-bold text-base truncate bma-text-main">${settings.organization_name}</h2>
-                                <p class="text-xs font-medium truncate" style="color: var(--bma-primary);">${settings.bureau_name}</p>
+                                <h2 class="font-bold text-base truncate text-white">${settings.organization_name}</h2>
+                                <p class="text-xs font-medium truncate text-emerald-300">${settings.bureau_name}</p>
                             </div>
                         </div>
-                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg bma-text-sub hover:bg-black/5">
+                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
 
                     <!-- ข้อมูลสิทธิ์และขอบเขตการมองเห็น -->
-                    <div class="px-5 py-3 border-b bma-border bg-emerald-500/5">
+                    <div class="px-5 py-3 border-b border-white/10 bg-white/5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold bma-text-sub">ระดับบัญชีผู้ใช้</span>
-                            <span class="bma-badge ${currentUser.role === 'SuperAdmin' ? 'bma-badge-success' : 'bma-badge-indigo'}">
+                            <span class="text-xs font-semibold text-white/70">ระดับบัญชีผู้ใช้</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${currentUser.role === 'SuperAdmin' ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/30' : 'bg-indigo-500/30 text-indigo-200 border border-indigo-400/30'}">
                                 ${currentUser.role}
                             </span>
                         </div>
-                        <p class="text-xs bma-text-sub mt-1 truncate" title="${scopeText}">
-                            <i class="fa-solid fa-eye mr-1"></i>${scopeText}
+                        <p class="text-xs text-emerald-200/80 mt-1 truncate" title="${scopeText}">
+                            <i class="fa-solid fa-shield-halved mr-1"></i>${scopeText}
                         </p>
                     </div>
 
                     <!-- รายการเมนู -->
                     <nav class="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-250px)]">
-                        <div class="text-[11px] font-bold uppercase tracking-wider bma-text-muted px-3 mb-2">เมนูการจัดการระบบ</div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-white/40 px-3 mb-2">เมนูการจัดการระบบ</div>
                         ${visibleMenus.map(item => `
                             <a href="${item.href}" class="bma-nav-item ${activePage === item.id ? 'active' : ''}">
                                 <i class="fa-solid ${item.icon} w-5 text-center"></i>
                                 <span class="flex-1 truncate">${item.label}</span>
-                                ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white">0</span>` : ''}
+                                ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
                             </a>
                         `).join('')}
 
-                        <div class="pt-3 mt-3 border-t bma-border">
-                            <a href="checkin.html" class="bma-nav-item">
-                                <i class="fa-solid fa-camera-retro w-5 text-center text-emerald-500"></i>
+                        <div class="pt-3 mt-3 border-t border-white/10">
+                            <a href="checkin.html" class="bma-nav-item text-emerald-300 hover:text-white">
+                                <i class="fa-solid fa-camera-retro w-5 text-center text-emerald-400"></i>
                                 <span class="flex-1 truncate">ไปหน้าลงเวลาปฏิบัติราชการ</span>
                             </a>
                         </div>
@@ -133,17 +133,17 @@ export class AppLayout {
                 </div>
 
                 <!-- ส่วนท้าย Sidebar แสดงชื่อผู้ใช้และปุ่มออกจากระบบ -->
-                <div class="p-4 border-t bma-border">
+                <div class="p-4 border-t border-white/10 bg-black/15">
                     <div class="flex items-center gap-3 mb-3 px-2">
-                        <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm" style="background-color: var(--bma-sec-6);">
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm bg-emerald-600/90 shadow border border-emerald-400/30">
                             ${String(currentUser.full_name || 'U').charAt(0)}
                         </div>
                         <div class="min-w-0 flex-1">
-                            <p class="text-sm font-semibold truncate bma-text-main">${currentUser.full_name}</p>
-                            <p class="text-xs truncate bma-text-sub">@${currentUser.username}</p>
+                            <p class="text-sm font-semibold truncate text-white">${currentUser.full_name}</p>
+                            <p class="text-xs truncate text-white/60">@${currentUser.username}</p>
                         </div>
                     </div>
-                    <button id="btnSidebarLogout" type="button" class="w-full btn-bma-outline text-rose-500 border-rose-500/30 hover:bg-rose-500/10 text-sm py-2">
+                    <button id="btnSidebarLogout" type="button" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/10 hover:bg-rose-500/20 text-rose-300 hover:text-rose-100 text-sm font-medium border border-rose-400/20 transition">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>ออกจากระบบ</span>
                     </button>
@@ -162,7 +162,7 @@ export class AppLayout {
         const isDark = document.documentElement.classList.contains('dark');
 
         topbarEl.innerHTML = `
-            <header class="sticky top-0 z-30 bma-card rounded-none border-t-0 border-x-0 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+            <header class="sticky top-0 z-30 app-header-bma px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
                     <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl border bma-border bma-text-main hover:bg-emerald-500/10">
                         <i class="fa-solid fa-bars-staggered text-lg"></i>

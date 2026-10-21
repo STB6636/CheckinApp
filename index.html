@@ -29,21 +29,29 @@
         </button>
     </div>
 
-    <!-- ส่วนกลางหน้าจอ: Card เข้าระบบแนวนอน (Horizontal Login Card) -->
-    <main class="flex-1 flex items-center justify-center px-4 py-6">
-        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-xl">
+    <!-- ส่วนกลางหน้าจอ: Card เข้าระบบแนวนอน พร้อม Decorative Blobs & Mesh Grid สไตล์ STB APP n2 -->
+    <main class="flex-1 flex items-center justify-center px-4 py-8 relative overflow-hidden">
+        <div class="deco-blob deco-1 opacity-20"></div>
+        <div class="deco-blob deco-2 opacity-20"></div>
+        <div class="deco-grid"></div>
 
-            <!-- ฝั่งซ้ายของ Card แนวนอน: แสดงโลโก้และข้อมูลหน่วยงาน (30% Primary Structural Color) -->
-            <div class="md:col-span-5 p-8 flex flex-col justify-between text-white relative overflow-hidden" style="background: linear-gradient(135deg, #00744B 0%, #059669 100%);">
+        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl relative z-10 border border-emerald-500/20">
+
+            <!-- ฝั่งซ้ายของ Card แนวนอน: แสดงโลโก้และข้อมูลหน่วยงาน (Brand Panel BMA Green) -->
+            <div class="md:col-span-5 p-8 flex flex-col justify-between text-white relative overflow-hidden brand-panel">
+                <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/10"></div>
+                <div class="absolute -left-12 -bottom-12 w-56 h-56 rounded-full bg-white/10"></div>
+                <div class="absolute right-6 bottom-10 w-14 h-14 rounded-2xl bg-[#FDD835]/25 rotate-12"></div>
+
                 <div class="relative z-10">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-semibold mb-6">
-                        <i class="fa-solid fa-shield-halved"></i>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-semibold mb-6 border border-white/20">
+                        <i class="fa-solid fa-shield-halved text-amber-300"></i>
                         <span>ระบบสารสนเทศภาครัฐ</span>
                     </div>
 
                     <!-- โลโก้หน่วยงาน (ดึงข้อมูลจากฐานข้อมูล) -->
                     <div class="mb-5">
-                        <div id="orgLogoWrapper" class="w-20 h-20 rounded-2xl bg-white p-2 flex items-center justify-center shadow-lg">
+                        <div id="orgLogoWrapper" class="w-20 h-20 rounded-2xl bg-white p-2 flex items-center justify-center shadow-lg border border-emerald-500/20">
                             <i class="fa-solid fa-landmark text-4xl text-emerald-700"></i>
                         </div>
                     </div>
@@ -53,17 +61,17 @@
                     <p id="bureauNameText" class="text-sm text-emerald-200 mt-0.5">สำนักเทศกิจ</p>
                 </div>
 
-                <div class="relative z-10 mt-8 pt-6 border-t border-white/20 text-xs text-emerald-100 space-y-1.5">
+                <div class="relative z-10 mt-8 pt-6 border-t border-white/20 text-xs text-emerald-100 space-y-2">
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-camera"></i>
+                        <i class="fa-solid fa-camera text-amber-300"></i>
                         <span>ยืนยันตัวตนด้วยภาพถ่ายขณะปฏิบัติราชการ</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-location-dot"></i>
+                        <i class="fa-solid fa-location-dot text-amber-300"></i>
                         <span>ระบุพิกัดและสถานที่ปฏิบัติงานด้วย GPS</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-id-card"></i>
+                        <i class="fa-solid fa-id-card text-amber-300"></i>
                         <span>รองรับการเข้าใช้งานด้วยเลขบัตรประชาชน 13 หลัก</span>
                     </div>
                 </div>

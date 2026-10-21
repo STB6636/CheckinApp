@@ -114,50 +114,59 @@ export class DashboardController {
         const grid = document.getElementById('dashboardKpiCardsGrid');
         if (!grid) return;
 
-        // การ์ดใบแรก: จำนวนบุคลากรทั้งหมด
+        // การ์ดใบแรก: จำนวนบุคลากรทั้งหมด (Jewel-Tone Green พร้อม Glassmorphism Decors)
         let html = `
-            <div class="bma-card p-5 flex flex-col justify-between relative overflow-hidden" style="border-left: 5px solid var(--bma-primary);">
-                <div class="flex items-start justify-between">
+            <div class="stat-card stat-card-green flex flex-col justify-between">
+                <div class="deco d1"></div>
+                <div class="deco d2"></div>
+                <div class="flex items-start justify-between relative z-10">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-wider bma-text-sub">จำนวนบุคลากรทั้งหมด</span>
-                        <h3 class="text-3xl font-extrabold bma-text-main mt-1">${metrics.total} <span class="text-sm font-medium bma-text-sub">คน</span></h3>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-100/80">บุคลากรทั้งหมด</span>
+                        <h3 class="text-3xl font-extrabold text-white mt-1">${metrics.total} <span class="text-sm font-medium text-emerald-100/90">คน</span></h3>
                     </div>
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow" style="background-color: var(--bma-primary);">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white bg-white/20 backdrop-blur-xs shadow-inner">
                         <i class="fa-solid fa-users text-lg"></i>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="flex items-center justify-between text-xs font-semibold mb-1">
-                        <span class="bma-text-sub">สัดส่วนรวมทั้งหมด</span>
-                        <span style="color: var(--bma-primary);">100%</span>
+                <div class="mt-4 relative z-10">
+                    <div class="flex items-center justify-between text-xs font-semibold mb-1 text-emerald-100">
+                        <span>สัดส่วนรวม</span>
+                        <span>100%</span>
                     </div>
-                    <div class="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                        <div class="h-full rounded-full transition-all duration-500" style="width: 100%; background-color: var(--bma-primary);"></div>
+                    <div class="w-full h-2 rounded-full bg-black/20 overflow-hidden">
+                        <div class="h-full rounded-full bg-white transition-all duration-500" style="width: 100%;"></div>
                     </div>
                 </div>
             </div>
         `;
 
-        // การ์ดแยกตามแต่ละประเภท พร้อมเติมสีตามที่กำหนดและ Progress Fill
+        // การ์ดแยกตามแต่ละประเภท พร้อม Glassmorphism Decors และสีสดใส
         for (const cat of metrics.categories) {
+            let cardClass = 'stat-card-green';
+            if (cat.key === 'late') cardClass = 'stat-card-amber';
+            else if (cat.key === 'special') cardClass = 'stat-card-purple';
+            else if (cat.key === 'absent') cardClass = 'stat-card-rose';
+
             html += `
-                <div class="bma-card p-5 flex flex-col justify-between relative overflow-hidden" style="border-left: 5px solid ${cat.color};">
-                    <div class="flex items-start justify-between">
+                <div class="stat-card ${cardClass} flex flex-col justify-between">
+                    <div class="deco d1"></div>
+                    <div class="deco d2"></div>
+                    <div class="flex items-start justify-between relative z-10">
                         <div>
-                            <span class="text-xs font-bold bma-text-sub">${cat.label}</span>
-                            <h3 class="text-3xl font-extrabold bma-text-main mt-1">${cat.count} <span class="text-sm font-medium bma-text-sub">คน</span></h3>
+                            <span class="text-xs font-bold text-white/80">${cat.label}</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-1">${cat.count} <span class="text-sm font-medium text-white/80">คน</span></h3>
                         </div>
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow" style="background-color: ${cat.color};">
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white bg-white/20 backdrop-blur-xs shadow-inner">
                             <i class="fa-solid ${cat.icon} text-lg"></i>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <div class="flex items-center justify-between text-xs font-semibold mb-1">
-                            <span class="bma-text-sub">คิดเป็นร้อยละของทั้งหมด</span>
-                            <span style="color: ${cat.color};">${cat.percent}%</span>
+                    <div class="mt-4 relative z-10">
+                        <div class="flex items-center justify-between text-xs font-semibold mb-1 text-white/90">
+                            <span>คิดเป็นร้อยละ</span>
+                            <span>${cat.percent}%</span>
                         </div>
-                        <div class="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                            <div class="h-full rounded-full transition-all duration-500" style="width: ${cat.percent}%; background-color: ${cat.color};"></div>
+                        <div class="w-full h-2 rounded-full bg-black/20 overflow-hidden">
+                            <div class="h-full rounded-full bg-white transition-all duration-500" style="width: ${cat.percent}%;"></div>
                         </div>
                     </div>
                 </div>

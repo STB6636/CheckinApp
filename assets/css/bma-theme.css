@@ -1,19 +1,33 @@
 /* ============================================================================
- * BMA Enterprise Design System (Light Mode & Eye-Care Dark Mode)
- * Font: Sarabun (Google Fonts)
- * Rules: 60-30-10 Architecture & WCAG 2.1 AA/AAA Compliant
+ * BMA Enterprise Design System (Enhanced with BMA Portal & SSO Tokens)
+ * Project: BMA Check-in App V2.1
+ * Reference: STB APP n2 (portal.css) & Bangkok City Law Enforcement Design Standards
+ * Rules: 60-30-10 Color Architecture & WCAG 2.1 AA/AAA Eye-Care
  * ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
-    /* 1.1 Brand & Primary Colors (Light Mode) */
-    --bma-primary: #00744B;
-    --bma-primary-hover: #005A3A;
-    --bma-primary-light: #66C19E;
-    --bma-primary-soft: rgba(0, 116, 75, 0.12);
+    /* 1.1 Brand & Emerald Gradients (BMA Green Tokens from portal.css) */
+    --g0: #00351B; /* Deep Forest Green */
+    --g1: #007B3E; /* BMA Primary Green */
+    --g2: #4EBA6F; /* BMA Accent Green */
 
-    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Light Mode) */
+    --bma-primary: #007B3E;
+    --bma-primary-hover: #005B2E;
+    --bma-primary-light: #4EBA6F;
+    --bma-primary-soft: rgba(0, 123, 62, 0.12);
+
+    /* 1.2 Sidebar & Topbar Gradient Tokens */
+    --sb1: #00351B;
+    --sb2: #005B2E;
+    --sb3: #007B3E;
+    --hd1: #007B3E;
+    --hd2: #00944A;
+    --hd3: #4EBA6F;
+    --yellow: #FDD835; /* Bangkok Law Enforcement Gold */
+
+    /* 1.3 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Light Mode) */
     --bma-sec-1: #059669;  /* Green Space / งานสิ่งแวดล้อม */
     --bma-sec-2: #84CC16;  /* Lime Eco / เมืองน่าอยู่และพลังงานสะอาด */
     --bma-sec-3: #F59E0B;  /* City Amber / แสงสว่างและการศึกษา */
@@ -25,14 +39,19 @@
     --bma-sec-9: #EAB308;  /* Temple Gold / เกียรติยศและวัฒนธรรมพระนคร */
     --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue / การระบายน้ำและสายน้ำเจ้าพระยา */
 
-    /* 1.3 Surface & Typography Tokens (Light Mode - 60% Dominant Surface) */
-    --bma-bg-main: #F8FAF9;
-    --bma-surface-1: #FFFFFF;
-    --bma-surface-2: #F1F5F3;
-    --bma-border: #E2E8F0;
-    --bma-text-primary: #0F172A;
+    /* 1.4 Surface & Typography Tokens (Soft Sage Mint Tint - 60% Dominant Surface) */
+    --bma-bg-main: #f5f8f6;       /* Soft Sage Tint ลดแสงจ้าสีขาว */
+    --bma-surface-1: #FFFFFF;     /* Card Surface */
+    --bma-surface-2: #eef7f1;     /* Elevated / Header Tint */
+    --bma-border: #e2ede6;        /* Subtle Green-tinted Border */
+    --bma-text-primary: #1e293b;  /* Slate-800 อ่านง่ายคมชัด */
     --bma-text-secondary: #475569;
-    --bma-text-muted: #94A3B8;
+    --bma-text-muted: #64748b;
+
+    /* Table Colors */
+    --thead-bg: #eef7f1;
+    --thead-tx: #1e3a29;
+    --row-hover: rgba(0, 123, 62, 0.05);
 
     /* Status Badge Alpha Tokens (Light Mode) */
     --badge-success-bg: rgba(5, 150, 105, 0.14);
@@ -49,15 +68,30 @@
     --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
 }
 
-/* Dark Mode (Eye-Care Specification - ห้ามใช้ #000000 เด็ดขาด) */
+/* ============================================================================
+ * Dark Mode (Eye-Care Specification - GitHub Dark Dimmed Style from portal.css)
+ * ============================================================================ */
 html.dark {
-    /* 1.1 Brand & Primary Colors (Dark Mode) */
+    /* 1.1 Brand & Emerald Gradients (Dark Mode) */
+    --g0: #0D1117;
+    --g1: #2EA043;
+    --g2: #56D364;
+
     --bma-primary: #34D399;
     --bma-primary-hover: #10B981;
     --bma-primary-light: #A7F3D0;
     --bma-primary-soft: rgba(52, 211, 153, 0.16);
 
-    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Dark Mode) */
+    /* Sidebar & Topbar Dark Mode */
+    --sb1: #0D1117;
+    --sb2: #12191F;
+    --sb3: #161B22;
+    --hd1: #15281D;
+    --hd2: #1B3A27;
+    --hd3: #2EA043;
+    --yellow: #F1E05A;
+
+    /* 1.2 Vibrant Secondary Colors (Dark Mode) */
     --bma-sec-1: #4ADE80;
     --bma-sec-2: #BEF264;
     --bma-sec-3: #FCD34D;
@@ -69,16 +103,21 @@ html.dark {
     --bma-sec-9: #FDE047;
     --bma-sec-10: #38BDF8;
 
-    /* 1.3 Surface & Typography Tokens (Dark Mode Eye-Care) */
-    --bma-bg-main: #111816;       /* Dark Charcoal อมเขียวมรกตลึก */
-    --bma-surface-1: #1A2522;     /* Container Layer 1 */
-    --bma-surface-2: #24332F;     /* Elevated Surface (Modal / Dropdown) */
-    --bma-border: #2D3F3A;        /* Border / Line */
-    --bma-text-primary: #F1F5F9;  /* Off-white ลดแสงสะท้อน */
-    --bma-text-secondary: #94A3B8;
-    --bma-text-muted: #64748B;
+    /* 1.3 Surface & Typography Tokens (Dark Mode) */
+    --bma-bg-main: #0D1117;       /* Dark Dimmed */
+    --bma-surface-1: #161B22;     /* Container Layer 1 */
+    --bma-surface-2: #1C2129;     /* Elevated Surface */
+    --bma-border: #30363D;        /* Clean Border Line */
+    --bma-text-primary: #F0F6FC;  /* Off-white สบายตา */
+    --bma-text-secondary: #8B949E;
+    --bma-text-muted: #6E7681;
 
-    /* Status Badge Alpha Tokens (Dark Mode 15%-20% Alpha) */
+    /* Table Colors (Dark) */
+    --thead-bg: #1C2430;
+    --thead-tx: #7EE787;
+    --row-hover: rgba(52, 211, 153, 0.08);
+
+    /* Status Badge Alpha Tokens (Dark Mode) */
     --badge-success-bg: rgba(74, 222, 128, 0.16);
     --badge-success-text: #4ADE80;
     --badge-warning-bg: rgba(252, 211, 77, 0.16);
@@ -142,9 +181,153 @@ html.dark .bma-modal-surface {
     color: var(--bma-text-muted);
 }
 
+/* ============================================================================
+ * SIDEBAR DESIGN (BMA Deep Emerald Gradient + Golden Yellow Active Indicator)
+ * ============================================================================ */
+.sidebar-bma {
+    background: linear-gradient(180deg, var(--sb1) 0%, var(--sb2) 55%, var(--sb3) 100%);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-bma .bma-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.72rem 1rem;
+    border-radius: 0.75rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    position: relative;
+    margin-bottom: 0.3rem;
+}
+
+.sidebar-bma .bma-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    transform: translateX(2px);
+}
+
+.sidebar-bma .bma-nav-item.active {
+    background: linear-gradient(90deg, rgba(78, 186, 111, 0.38), rgba(139, 195, 74, 0.14));
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+html.dark .sidebar-bma .bma-nav-item.active {
+    background: linear-gradient(90deg, rgba(46, 160, 67, 0.35), rgba(86, 211, 100, 0.12));
+}
+
+.sidebar-bma .bma-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 20%;
+    height: 60%;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: var(--yellow);
+}
+
+/* Topbar Header Banner Option */
+.app-header-bma {
+    background: var(--bma-surface-1);
+    border-bottom: 1px solid var(--bma-border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* ============================================================================
+ * JEWEL-TONE STAT CARDS WITH GLASSMORPHISM DECOR (from portal.css)
+ * ============================================================================ */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    padding: 1.25rem 1.4rem;
+    color: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+}
+
+.stat-card .deco {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    pointer-events: none;
+}
+
+.stat-card .d1 { width: 120px; height: 120px; top: -45px; right: -30px; }
+.stat-card .d2 { width: 80px; height: 80px; bottom: -35px; right: 22px; }
+.stat-card .d3 { width: 44px; height: 44px; top: 38%; right: 46%; background: rgba(255, 255, 255, 0.08); }
+
+.stat-card-green { background: linear-gradient(135deg, #007B3E 0%, #4EBA6F 100%); }
+.stat-card-amber { background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%); }
+.stat-card-purple { background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%); }
+.stat-card-rose { background: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%); }
+
+/* ============================================================================
+ * SPLASH & BRAND PANEL DECORATIVE ELEMENTS (from portal.css)
+ * ============================================================================ */
+.splash-bg {
+    background: linear-gradient(135deg, var(--g0) 0%, var(--g1) 55%, var(--g2) 120%);
+}
+
+.brand-panel {
+    background: linear-gradient(135deg, var(--g1), var(--g2));
+}
+
+.deco-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.deco-1 {
+    width: 340px;
+    height: 340px;
+    background: var(--g2);
+    top: -80px;
+    left: -80px;
+    animation: bmaFloat 9s ease-in-out infinite;
+}
+
+.deco-2 {
+    width: 300px;
+    height: 300px;
+    background: #FFB300;
+    bottom: -90px;
+    right: -70px;
+    animation: bmaFloat 11s ease-in-out infinite reverse;
+}
+
+.deco-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+
+@keyframes bmaFloat {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(25px, -25px); }
+}
+
 /* Primary & Secondary Buttons */
 .btn-bma-primary {
-    background-color: var(--bma-primary);
+    background: linear-gradient(135deg, var(--bma-primary), var(--bma-primary-light));
     color: #FFFFFF;
     font-weight: 600;
     border-radius: 0.75rem;
@@ -154,17 +337,18 @@ html.dark .bma-modal-surface {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1px solid transparent;
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 123, 62, 0.22);
     cursor: pointer;
 }
 
 html.dark .btn-bma-primary {
-    color: #0F172A;
+    color: #0D1117;
 }
 
 .btn-bma-primary:hover:not(:disabled) {
-    background-color: var(--bma-primary-hover);
     transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 123, 62, 0.3);
 }
 
 .btn-bma-primary:disabled {
@@ -277,35 +461,6 @@ html.dark .bma-textarea {
     color: var(--badge-sky-text);
 }
 
-/* Sidebar Navigation Links */
-.bma-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    color: var(--bma-text-secondary);
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    margin-bottom: 0.25rem;
-}
-
-.bma-nav-item:hover {
-    background-color: var(--bma-surface-2);
-    color: var(--bma-primary);
-}
-
-.bma-nav-item.active {
-    background-color: var(--bma-primary);
-    color: #FFFFFF;
-    font-weight: 600;
-}
-
-html.dark .bma-nav-item.active {
-    color: #0F172A;
-}
-
 /* iPhone / iOS Style Shortcut Icons for Responsive Mobile */
 .ios-shortcut-icon {
     width: 3.5rem;
@@ -367,6 +522,7 @@ html.dark .bma-nav-item.active {
     overflow-x: auto;
     border-radius: 0.75rem;
     border: 1px solid var(--bma-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .bma-table {
@@ -377,9 +533,9 @@ html.dark .bma-nav-item.active {
 }
 
 .bma-table th {
-    background-color: var(--bma-surface-2);
-    color: var(--bma-text-primary);
-    font-weight: 600;
+    background-color: var(--thead-bg);
+    color: var(--thead-tx);
+    font-weight: 700;
     padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--bma-border);
     white-space: nowrap;
@@ -393,7 +549,7 @@ html.dark .bma-nav-item.active {
 }
 
 .bma-table tbody tr:hover {
-    background-color: var(--bma-primary-soft);
+    background-color: var(--row-hover);
 }
 
 ::-webkit-scrollbar {
