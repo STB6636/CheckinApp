@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Supabase JS v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- BMA Design System Theme -->
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- แถบด้านบนสำหรับสลับโหมดสี Light / Eye-Care Dark Mode -->
+    <div class="w-full px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-xs font-semibold bma-text-sub">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>BMA e-Government Time Attendance System V2.1</span>
+        </div>
+        <button id="btnLoginThemeToggle" type="button" class="btn-bma-outline py-1.5 px-3 text-xs">
+            <i id="loginThemeIcon" class="fa-solid fa-moon"></i>
+            <span id="loginThemeLabel">โหมดถนอมสายตา</span>
+        </button>
+    </div>
+
+    <!-- ส่วนกลางหน้าจอ: Card เข้าระบบแนวนอน (Horizontal Login Card) -->
+    <main class="flex-1 flex items-center justify-center px-4 py-6">
+        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-xl">
+
+            <!-- ฝั่งซ้ายของ Card แนวนอน: แสดงโลโก้และข้อมูลหน่วยงาน (30% Primary Structural Color) -->
+            <div class="md:col-span-5 p-8 flex flex-col justify-between text-white relative overflow-hidden" style="background: linear-gradient(135deg, #00744B 0%, #059669 100%);">
+                <div class="relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-semibold mb-6">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>ระบบสารสนเทศภาครัฐ</span>
+                    </div>
+
+                    <!-- โลโก้หน่วยงาน (ดึงข้อมูลจากฐานข้อมูล) -->
+                    <div class="mb-5">
+                        <div id="orgLogoWrapper" class="w-20 h-20 rounded-2xl bg-white p-2 flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-landmark text-4xl text-emerald-700"></i>
+                        </div>
+                    </div>
+
+                    <h1 class="text-2xl font-bold leading-snug">ระบบลงเวลาปฏิบัติราชการ</h1>
+                    <p id="orgNameText" class="text-base font-semibold text-emerald-100 mt-2">กรุงเทพมหานคร</p>
+                    <p id="bureauNameText" class="text-sm text-emerald-200 mt-0.5">สำนักเทศกิจ</p>
+                </div>
+
+                <div class="relative z-10 mt-8 pt-6 border-t border-white/20 text-xs text-emerald-100 space-y-1.5">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>ยืนยันตัวตนด้วยภาพถ่ายขณะปฏิบัติราชการ</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>ระบุพิกัดและสถานที่ปฏิบัติงานด้วย GPS</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-id-card"></i>
+                        <span>รองรับการเข้าใช้งานด้วยเลขบัตรประชาชน 13 หลัก</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ฝั่งขวาของ Card แนวนอน: ฟอร์มเข้าสู่ระบบและคำสั่งจัดการรหัสผ่าน -->
+            <div class="md:col-span-7 p-8 lg:p-10 flex flex-col justify-center">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold bma-text-main">เข้าสู่ระบบใช้งาน</h2>
+                    <p class="text-sm bma-text-sub mt-1">กรอกชื่อบัญชีผู้ใช้งาน (หรือเลขบัตรประชาชน 13 หลัก) และรหัสผ่าน</p>
+                </div>
+
+                <form id="loginForm" class="space-y-4" onsubmit="return false;">
+                    <div>
+                        <label for="loginUsername" class="block text-sm font-semibold bma-text-main mb-1.5">
+                            ชื่อบัญชีผู้ใช้งาน / เลขบัตรประจำตัวประชาชน 13 หลัก
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="loginUsername" class="bma-input pl-10" placeholder="เช่น 1231254684532 หรือ superadmin" required autocomplete="username">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-semibold bma-text-main mb-1.5">
+                            รหัสผ่าน (Password)
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" id="loginPassword" class="bma-input pl-10 pr-10" placeholder="รหัสผ่าน (ค่าเริ่มต้น 6 ตัวท้ายบัตรประชาชน)" required autocomplete="current-password">
+                            <button type="button" id="btnToggleLoginPwd" class="absolute inset-y-0 right-0 pr-3.5 flex items-center bma-text-sub hover:text-emerald-600">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ลิงก์คำสั่ง เปลี่ยนรหัสผ่าน และ ลืมรหัสผ่าน (ตามข้อกำหนด V2.1) -->
+                    <div class="flex items-center justify-between pt-1 text-xs font-semibold">
+                        <button type="button" id="btnOpenChangePwdModal" class="hover:underline flex items-center gap-1" style="color: var(--bma-primary);">
+                            <i class="fa-solid fa-key"></i>
+                            <span>เปลี่ยนรหัสผ่านด้วยตนเอง</span>
+                        </button>
+                        <button type="button" id="btnOpenForgotPwdModal" class="text-rose-500 hover:underline flex items-center gap-1">
+                            <i class="fa-solid fa-circle-question"></i>
+                            <span>ลืมรหัสผ่าน?</span>
+                        </button>
+                    </div>
+
+                    <!-- ปุ่มเข้าสู่ระบบ 2 รูปแบบ: สำหรับลงเวลาปฏิบัติราชการ และ สำหรับผู้ดูแลระบบ -->
+                    <div class="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" id="btnLoginCheckin" class="btn-bma-primary w-full py-3 text-sm shadow-md">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>เข้าสู่ระบบลงเวลา</span>
+                        </button>
+
+                        <button type="button" id="btnLoginAdmin" class="btn-bma-soft w-full py-3 text-sm border border-emerald-500/30">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>เข้าสู่ระบบผู้ดูแลระบบ</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- คำแนะนำบัญชีทดสอบเริ่มต้น -->
+                <div class="mt-6 p-3.5 rounded-xl border bma-border bg-emerald-500/5 text-xs bma-text-sub">
+                    <p class="font-bold bma-text-main mb-1"><i class="fa-solid fa-circle-info mr-1 text-emerald-600"></i>ข้อมูลการเข้าใช้งานเบื้องต้น:</p>
+                    <ul class="list-disc list-inside space-y-0.5">
+                        <li>บุคลากรทั่วไป: Username = <b>เลขบัตรประชาชน 13 หลัก</b>, Password = <b>เลข 6 ตัวท้ายของบัตร</b></li>
+                        <li>ผู้ดูแลระบบตัวอย่าง: <code>superadmin</code> / <code>123456</code> หรือ <code>admin01</code> / <code>123456</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal 1: เปลี่ยนรหัสผ่านด้วยตนเอง (หน้า Login > เปลี่ยนรหัสผ่าน) -->
+    <div id="modalChangePassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
+                <h3 class="text-lg font-bold bma-text-main flex items-center gap-2">
+                    <i class="fa-solid fa-key" style="color: var(--bma-primary);"></i>
+                    <span>เปลี่ยนรหัสผ่านใหม่</span>
+                </h3>
+                <button type="button" id="btnCloseChangePwdModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="formChangePassword" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">ชื่อบัญชีผู้ใช้งาน / เลขบัตรประชาชน 13 หลัก *</label>
+                    <input type="text" id="cpUsername" class="bma-input" placeholder="ระบุ Username หรือเลขบัตรประชาชน 13 หลัก" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">รหัสผ่านเก่า *</label>
+                    <input type="password" id="cpOldPassword" class="bma-input" placeholder="กรอกรหัสผ่านปัจจุบัน" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">รหัสผ่านใหม่ *</label>
+                    <input type="password" id="cpNewPassword" class="bma-input" placeholder="กำหนดรหัสผ่านใหม่ (อย่างน้อย 4 ตัวอักษร)" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">ยืนยันรหัสผ่านใหม่อีกครั้ง *</label>
+                    <input type="password" id="cpConfirmPassword" class="bma-input" placeholder="กรอกรหัสผ่านใหม่อีกครั้งให้ตรงกัน" required>
+                    <p id="cpMatchStatus" class="text-xs mt-1 hidden"></p>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
+                    <button type="button" id="btnCancelChangePwd" class="btn-bma-outline text-sm">ยกเลิก</button>
+                    <button type="submit" id="btnSubmitChangePwd" class="btn-bma-primary text-sm" disabled>
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>บันทึกรหัสผ่านใหม่</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: ลืมรหัสผ่าน (หน้า Login > ลืมรหัสผ่าน ส่งคำขอด้วยเลขบัตร 13 หลัก) -->
+    <div id="modalForgotPassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
+                <h3 class="text-lg font-bold bma-text-main flex items-center gap-2">
+                    <i class="fa-solid fa-unlock-keyhole text-rose-500"></i>
+                    <span>แจ้งลืมรหัสผ่าน</span>
+                </h3>
+                <button type="button" id="btnCloseForgotPwdModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="formForgotPassword" class="space-y-4">
+                <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
+                    กรอกหมายเลขบัตรประจำตัวประชาชน 13 หลักของท่านเพื่อส่งคำขอไปยังผู้ดูแลระบบ เมื่อผู้ดูแลระบบกดอนุมัติแล้ว รหัสผ่านของท่านจะถูกรีเซ็ตกลับเป็น <b>หมายเลข 6 ตัวท้ายของบัตรประชาชน</b>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">หมายเลขบัตรประจำตัวประชาชน 13 หลัก *</label>
+                    <input type="text" id="fpNationalId" maxlength="13" class="bma-input tracking-widest font-semibold text-center text-base" placeholder="XXXXXXXXXXXXX" required>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
+                    <button type="button" id="btnCancelForgotPwd" class="btn-bma-outline text-sm">ยกเลิก</button>
+                    <button type="submit" class="btn-bma-primary text-sm">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ส่งคำขอรีเซ็ตรหัสผ่าน</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer ระบบ (ดึงข้อมูลชื่อหน่วยงานและสังกัด [สำนักงาน/กอง]) -->
+    <footer class="w-full py-4 px-6 border-t bma-border text-center text-xs bma-text-sub">
+        <span>ระบบลงเวลาปฏิบัติราชการ • </span>
+        <span id="footerOrgName" class="font-semibold bma-text-main">กรุงเทพมหานคร</span>
+        <span> • สังกัด </span>
+        <span id="footerBureauName" class="font-semibold" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+    </footer>
+
+    <!-- เรียกใช้งาน LoginController แบบ ES Module -->
+    <script type="module" src="assets/js/controllers/LoginController.js"></script>
+</body>
+</html>

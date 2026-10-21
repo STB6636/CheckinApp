@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานการลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Sidebar -->
+    <div id="bmaSidebarContainer"></div>
+
+    <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
+        <!-- Topbar -->
+        <div id="bmaTopbarContainer"></div>
+
+        <main class="flex-1 p-4 lg:p-8 space-y-6">
+
+            <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีเหมือนโทรศัพท์ iPhone -->
+            <div id="reportMobileShortcutContainer"></div>
+
+            <!-- ส่วนควบคุมตัวกรองวันที่, มุมมอง Group By, Color Picker และปุ่มส่งออก PDF / Excel -->
+            <div class="bma-card p-5 space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
+                    <div>
+                        <h2 class="text-base font-bold bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice" style="color: var(--bma-primary);"></i>
+                            <span>รายงานสรุปการลงเวลาปฏิบัติราชการประจำวัน</span>
+                        </h2>
+                        <p class="text-xs bma-text-sub mt-0.5">แสดงสถิติแดชบอร์ด ตารางจัดกลุ่ม 2 มุมมอง พร้อมพิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออก Excel UTF-8</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btnOpenAddReportRecord" class="btn-bma-primary text-xs py-2.5 px-3.5">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>เพิ่มเวลาปฏิบัติราชการ</span>
+                        </button>
+
+                        <button type="button" id="btnPrintPdfNewTab" class="btn-bma-soft text-xs py-2.5 px-3.5 border border-emerald-500/30">
+                            <i class="fa-solid fa-file-pdf text-rose-500"></i>
+                            <span>พิมพ์ / ส่งออก PDF (เปิด Tab ใหม่)</span>
+                        </button>
+
+                        <button type="button" id="btnExportReportExcel" class="btn-bma-outline text-xs py-2 px-3">
+                            <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                            <span>ส่งออก Excel</span>
+                        </button>
+
+                        <button type="button" id="btnTemplateReportExcel" class="btn-bma-outline text-xs py-2 px-3">
+                            <i class="fa-solid fa-download text-sky-500"></i>
+                            <span>Template Excel</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- แถบเลือกวันที่, เลือกมุมมอง Group By 2 มุมมอง และตั้งค่าสี Color Picker -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold bma-text-sub mb-1">เลือกวันที่ปฏิบัติราชการ:</label>
+                        <input type="date" id="reportDateInput" class="bma-input py-1.5 text-sm">
+                    </div>
+
+                    <div class="md:col-span-5">
+                        <label class="block text-xs font-bold bma-text-sub mb-1">มุมมองการจัดกลุ่มตาราง (Group By):</label>
+                        <select id="selectReportGroupBy" class="bma-select py-2 text-xs font-semibold">
+                            <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
+                            <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-4 flex items-center justify-end gap-3 pt-4 text-xs flex-wrap">
+                        <span class="font-semibold bma-text-sub">ตั้งค่าสีรายงาน:</span>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="color" id="repColorHeader" value="#00744B" class="w-6 h-6 rounded border-0 cursor-pointer">
+                            <span>หัวตาราง</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="color" id="repColorNormal" value="#059669" class="w-6 h-6 rounded border-0 cursor-pointer">
+                            <span>ปกติ</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="color" id="repColorLate" value="#F59E0B" class="w-6 h-6 rounded border-0 cursor-pointer">
+                            <span>สาย</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="color" id="repColorAbsent" value="#E11D48" class="w-6 h-6 rounded border-0 cursor-pointer">
+                            <span>ขาด/ไม่ลง</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ส่วนแดชบอร์ดของหน้ารายงาน: Card แสดงจำนวนทั้งหมด + Card แยกแต่ละประเภทและ Progress Fill -->
+            <div id="reportKpiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"></div>
+
+            <!-- กราฟ Chart.js ในหน้ารายงาน (ภายใน <div> <canvas> </div>) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-5 bma-card p-5">
+                    <h3 class="text-sm font-bold bma-text-main mb-3">สัดส่วนการลงเวลาประจำวันที่เลือก</h3>
+                    <div class="relative w-full h-64 flex items-center justify-center">
+                        <canvas id="reportPieChart"></canvas>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 bma-card p-5">
+                    <h3 class="text-sm font-bold bma-text-main mb-3">เปรียบเทียบการลงเวลาแยกตามส่วน/ฝ่าย</h3>
+                    <div class="relative w-full h-64">
+                        <canvas id="reportDivisionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางแสดงการลงเวลาปฏิบัติราชการ ({คอลัมน์} ลำดับ, คำนำหน้า+ชื่อ+นามสกุล, ตำแหน่ง+ระดับ, เวลาเข้างาน, เวลาออกงาน) -->
+            <div class="bma-card p-5">
+                <div class="bma-table-container" id="printableReportTableWrapper">
+                    <table class="bma-table text-sm" id="reportMainTable">
+                        <thead>
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th>คำนำหน้า + ชื่อ + นามสกุล</th>
+                                <th>ตำแหน่ง + ระดับ</th>
+                                <th class="text-center">เวลาเข้างาน</th>
+                                <th class="text-center">เวลาออกงาน</th>
+                                <th class="text-center">สถานะ / หมายเหตุ</th>
+                                <th class="w-32 text-center no-print">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <div id="bmaFooterContainer"></div>
+    </div>
+
+    <div id="bmaMobileBottomNav"></div>
+
+    <!-- Modal เพิ่ม / แก้ไขข้อมูลการลงเวลาสำหรับผู้ดูแลระบบ -->
+    <div id="modalReportAttendance" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
+                <h3 id="modalReportTitle" class="text-lg font-bold bma-text-main">บันทึก/แก้ไขเวลาปฏิบัติราชการ</h3>
+                <button type="button" id="btnCloseReportModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="formReportAttendance" class="space-y-3.5">
+                <input type="hidden" id="repLogId">
+
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">เลือกบุคลากร *</label>
+                    <select id="repPersonnelSelect" class="bma-select text-sm" required></select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">วันที่ปฏิบัติราชการ *</label>
+                    <input type="date" id="repWorkDate" class="bma-input text-sm" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold bma-text-main mb-1">เวลาเข้างาน *</label>
+                        <input type="time" id="repCheckinTime" class="bma-input text-sm" value="08:30" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold bma-text-main mb-1">เวลาออกงาน</label>
+                        <input type="time" id="repCheckoutTime" class="bma-input text-sm" value="16:30">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold bma-text-main mb-1">สถานะ</label>
+                        <select id="repStatusSelect" class="bma-select text-sm">
+                            <option value="ปกติ">ปกติ</option>
+                            <option value="สาย">สาย</option>
+                            <option value="อนุมัติกรณีพิเศษ">อนุมัติกรณีพิเศษ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold bma-text-main mb-1">สีประจำรายการ</label>
+                        <input type="color" id="repRowColorPicker" value="#059669" class="w-full h-10 rounded-lg border bma-border cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold bma-text-main mb-1">หมายเหตุ</label>
+                    <input type="text" id="repRemarkInput" class="bma-input text-sm" placeholder="ระบุหมายเหตุ (ถ้ามี)">
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
+                    <button type="button" id="btnCancelReportModal" class="btn-bma-outline text-sm">ยกเลิก</button>
+                    <button type="submit" class="btn-bma-primary text-sm">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>บันทึกข้อมูล</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/controllers/ReportsController.js"></script>
+</body>
+</html>

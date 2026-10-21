@@ -1,0 +1,415 @@
+/* ============================================================================
+ * BMA Enterprise Design System (Light Mode & Eye-Care Dark Mode)
+ * Font: Sarabun (Google Fonts)
+ * Rules: 60-30-10 Architecture & WCAG 2.1 AA/AAA Compliant
+ * ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+    /* 1.1 Brand & Primary Colors (Light Mode) */
+    --bma-primary: #00744B;
+    --bma-primary-hover: #005A3A;
+    --bma-primary-light: #66C19E;
+    --bma-primary-soft: rgba(0, 116, 75, 0.12);
+
+    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Light Mode) */
+    --bma-sec-1: #059669;  /* Green Space / งานสิ่งแวดล้อม */
+    --bma-sec-2: #84CC16;  /* Lime Eco / เมืองน่าอยู่และพลังงานสะอาด */
+    --bma-sec-3: #F59E0B;  /* City Amber / แสงสว่างและการศึกษา */
+    --bma-sec-4: #FB923C;  /* Warm Sunset / วิถีชีวิตริมน้ำและงานสร้างสรรค์ */
+    --bma-sec-5: #F43F5E;  /* Giant Swing Rose / เสาชิงช้าและการบรรเทาสาธารณภัย */
+    --bma-sec-6: #6366F1;  /* BMA Indigo / ความเป็นระเบียบ งานเทศกิจ และเทคโนโลยี */
+    --bma-sec-7: #E11D48;  /* Crimson Red / สถานะฉุกเฉินและข้อผิดพลาดร้ายแรง */
+    --bma-sec-8: #EA580C;  /* Public Works Orange / งานโยธาและรักษาความสะอาด */
+    --bma-sec-9: #EAB308;  /* Temple Gold / เกียรติยศและวัฒนธรรมพระนคร */
+    --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue / การระบายน้ำและสายน้ำเจ้าพระยา */
+
+    /* 1.3 Surface & Typography Tokens (Light Mode - 60% Dominant Surface) */
+    --bma-bg-main: #F8FAF9;
+    --bma-surface-1: #FFFFFF;
+    --bma-surface-2: #F1F5F3;
+    --bma-border: #E2E8F0;
+    --bma-text-primary: #0F172A;
+    --bma-text-secondary: #475569;
+    --bma-text-muted: #94A3B8;
+
+    /* Status Badge Alpha Tokens (Light Mode) */
+    --badge-success-bg: rgba(5, 150, 105, 0.14);
+    --badge-success-text: #059669;
+    --badge-warning-bg: rgba(245, 158, 11, 0.15);
+    --badge-warning-text: #D97706;
+    --badge-danger-bg: rgba(225, 29, 72, 0.14);
+    --badge-danger-text: #E11D48;
+    --badge-indigo-bg: rgba(99, 102, 241, 0.14);
+    --badge-indigo-text: #4F46E5;
+    --badge-sky-bg: rgba(2, 132, 199, 0.14);
+    --badge-sky-text: #0284C7;
+
+    --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+}
+
+/* Dark Mode (Eye-Care Specification - ห้ามใช้ #000000 เด็ดขาด) */
+html.dark {
+    /* 1.1 Brand & Primary Colors (Dark Mode) */
+    --bma-primary: #34D399;
+    --bma-primary-hover: #10B981;
+    --bma-primary-light: #A7F3D0;
+    --bma-primary-soft: rgba(52, 211, 153, 0.16);
+
+    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Dark Mode) */
+    --bma-sec-1: #4ADE80;
+    --bma-sec-2: #BEF264;
+    --bma-sec-3: #FCD34D;
+    --bma-sec-4: #FDBA74;
+    --bma-sec-5: #FDA4AF;
+    --bma-sec-6: #A5B4FC;
+    --bma-sec-7: #F87171;
+    --bma-sec-8: #FB923C;
+    --bma-sec-9: #FDE047;
+    --bma-sec-10: #38BDF8;
+
+    /* 1.3 Surface & Typography Tokens (Dark Mode Eye-Care) */
+    --bma-bg-main: #111816;       /* Dark Charcoal อมเขียวมรกตลึก */
+    --bma-surface-1: #1A2522;     /* Container Layer 1 */
+    --bma-surface-2: #24332F;     /* Elevated Surface (Modal / Dropdown) */
+    --bma-border: #2D3F3A;        /* Border / Line */
+    --bma-text-primary: #F1F5F9;  /* Off-white ลดแสงสะท้อน */
+    --bma-text-secondary: #94A3B8;
+    --bma-text-muted: #64748B;
+
+    /* Status Badge Alpha Tokens (Dark Mode 15%-20% Alpha) */
+    --badge-success-bg: rgba(74, 222, 128, 0.16);
+    --badge-success-text: #4ADE80;
+    --badge-warning-bg: rgba(252, 211, 77, 0.16);
+    --badge-warning-text: #FCD34D;
+    --badge-danger-bg: rgba(248, 113, 113, 0.16);
+    --badge-danger-text: #F87171;
+    --badge-indigo-bg: rgba(165, 180, 252, 0.16);
+    --badge-indigo-text: #A5B4FC;
+    --badge-sky-bg: rgba(56, 189, 248, 0.16);
+    --badge-sky-text: #38BDF8;
+
+    --shadow-card: none;
+}
+
+/* Base Typography & Body */
+* {
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bma-bg-main);
+    color: var(--bma-text-primary);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Surface & Card Classes */
+.bma-card {
+    background-color: var(--bma-surface-1);
+    border: 1px solid var(--bma-border);
+    box-shadow: var(--shadow-card);
+    border-radius: 1rem;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.bma-modal-surface {
+    background-color: var(--bma-surface-1);
+    border: 1px solid var(--bma-border);
+}
+
+html.dark .bma-modal-surface {
+    background-color: var(--bma-surface-2);
+}
+
+.bma-border {
+    border-color: var(--bma-border);
+}
+
+.bma-text-main {
+    color: var(--bma-text-primary);
+}
+
+.bma-text-sub {
+    color: var(--bma-text-secondary);
+}
+
+.bma-text-muted {
+    color: var(--bma-text-muted);
+}
+
+/* Primary & Secondary Buttons */
+.btn-bma-primary {
+    background-color: var(--bma-primary);
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+html.dark .btn-bma-primary {
+    color: #0F172A;
+}
+
+.btn-bma-primary:hover:not(:disabled) {
+    background-color: var(--bma-primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-bma-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.btn-bma-soft {
+    background-color: var(--bma-primary-soft);
+    color: var(--bma-primary);
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-bma-soft:hover:not(:disabled) {
+    border-color: var(--bma-primary);
+}
+
+.btn-bma-outline {
+    background-color: transparent;
+    color: var(--bma-text-primary);
+    border: 1px solid var(--bma-border);
+    font-weight: 500;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-bma-outline:hover:not(:disabled) {
+    background-color: var(--bma-surface-2);
+    border-color: var(--bma-primary);
+}
+
+/* Form Controls */
+.bma-input,
+.bma-select,
+.bma-textarea {
+    width: 100%;
+    background-color: var(--bma-surface-1);
+    color: var(--bma-text-primary);
+    border: 1px solid var(--bma-border);
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+html.dark .bma-input,
+html.dark .bma-select,
+html.dark .bma-textarea {
+    background-color: #151F1C;
+}
+
+.bma-input:focus,
+.bma-select:focus,
+.bma-textarea:focus {
+    border-color: var(--bma-primary);
+    box-shadow: 0 0 0 3px var(--bma-primary-soft);
+}
+
+/* Status Badges */
+.bma-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.bma-badge-success {
+    background-color: var(--badge-success-bg);
+    color: var(--badge-success-text);
+}
+
+.bma-badge-warning {
+    background-color: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+}
+
+.bma-badge-danger {
+    background-color: var(--badge-danger-bg);
+    color: var(--badge-danger-text);
+}
+
+.bma-badge-indigo {
+    background-color: var(--badge-indigo-bg);
+    color: var(--badge-indigo-text);
+}
+
+.bma-badge-sky {
+    background-color: var(--badge-sky-bg);
+    color: var(--badge-sky-text);
+}
+
+/* Sidebar Navigation Links */
+.bma-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    color: var(--bma-text-secondary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0.25rem;
+}
+
+.bma-nav-item:hover {
+    background-color: var(--bma-surface-2);
+    color: var(--bma-primary);
+}
+
+.bma-nav-item.active {
+    background-color: var(--bma-primary);
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+html.dark .bma-nav-item.active {
+    color: #0F172A;
+}
+
+/* iPhone / iOS Style Shortcut Icons for Responsive Mobile */
+.ios-shortcut-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 1.45rem;
+    box-shadow: 0 6px 14px -3px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s ease;
+}
+
+.ios-shortcut-icon:active {
+    transform: scale(0.92);
+}
+
+/* Skeleton Loading Shimmer */
+.bma-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bma-surface-2) 25%,
+        var(--bma-border) 50%,
+        var(--bma-surface-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: bmaShimmer 1.5s infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes bmaShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Global Loading Overlay */
+#bmaGlobalSpinner {
+    backdrop-filter: blur(4px);
+    background-color: rgba(17, 24, 22, 0.55);
+}
+
+.bma-spin-ring {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid var(--bma-primary-soft);
+    border-top-color: var(--bma-primary);
+    border-radius: 50%;
+    animation: bmaSpin 0.8s linear infinite;
+}
+
+@keyframes bmaSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Table Responsive & Custom Scrollbar */
+.bma-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    border: 1px solid var(--bma-border);
+}
+
+.bma-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 720px;
+}
+
+.bma-table th {
+    background-color: var(--bma-surface-2);
+    color: var(--bma-text-primary);
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--bma-border);
+    white-space: nowrap;
+}
+
+.bma-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--bma-border);
+    color: var(--bma-text-primary);
+    vertical-align: middle;
+}
+
+.bma-table tbody tr:hover {
+    background-color: var(--bma-primary-soft);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bma-bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bma-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bma-primary);
+}

@@ -1,0 +1,463 @@
+/**
+ * @file assets/js/controllers/ReportsController.js
+ * @description คลาสควบคุมหน้ารายงานการลงเวลา (แดชบอร์ดรายงาน, Group By 2 มุมมอง, พิมพ์ PDF Tab ใหม่, ส่งออก Excel UTF-8)
+ */
+
+import { UIHelpers } from '../core/UIHelpers.js';
+import { AppLayout } from '../components/AppLayout.js';
+import { SettingsModel } from '../models/SettingsModel.js';
+import { PersonnelModel } from '../models/PersonnelModel.js';
+import { AttendanceModel } from '../models/AttendanceModel.js';
+
+export class ReportsController {
+    constructor() {
+        this.currentUser = null;
+        this.settings = null;
+        this.records = [];
+        this.groupViewMode = 'division';
+        this.pieChart = null;
+        this.barChart = null;
+        this.colors = {
+            header: '#00744B',
+            normal: '#059669',
+            late: '#F59E0B',
+            special: '#6366F1',
+            absent: '#E11D48'
+        };
+        this.init();
+    }
+
+    async init() {
+        const layout = await AppLayout.initAdminLayout({
+            activePage: 'reports',
+            pageTitle: 'รายงานการลงเวลาปฏิบัติราชการ',
+            pageSubtitle: 'สรุปสถิติ ตารางการลงเวลา 2 มุมมอง พิมพ์รายงาน PDF และส่งออกไฟล์ Excel UTF-8'
+        });
+
+        if (!layout.currentUser) return;
+        this.currentUser = layout.currentUser;
+        this.settings = await SettingsModel.getSettings(true);
+
+        // แสดงไอคอนทางลัดสีสไตล์ iPhone เฉพาะเมื่อ Responsive Mobile
+        const mobileShortcutEl = document.getElementById('reportMobileShortcutContainer');
+        if (mobileShortcutEl) {
+            mobileShortcutEl.innerHTML = AppLayout.getMobileShortcutGridHtml(this.currentUser);
+        }
+
+        document.getElementById('reportDateInput').value = UIHelpers.getTodayISO();
+        this.#bindEvents();
+        await this.loadReportData();
+    }
+
+    async loadReportData() {
+        const workDate = document.getElementById('reportDateInput')?.value || UIHelpers.getTodayISO();
+        const tbody = document.getElementById('reportTableBody');
+        if (tbody) {
+            tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 7);
+        }
+
+        UIHelpers.showLoading('กำลังประมวลผลรายงานการลงเวลา...');
+        try {
+            this.records = await AttendanceModel.getDailyReportRecords(workDate, this.currentUser);
+            this.#populatePersonnelDropdown();
+            this.#renderReportAllVisuals();
+        } finally {
+            UIHelpers.hideLoading();
+        }
+    }
+
+    #populatePersonnelDropdown() {
+        const selectEl = document.getElementById('repPersonnelSelect');
+        if (!selectEl) return;
+        selectEl.innerHTML = this.records.map(r =>
+            `<option value="${r.personnel_id}">${r.full_name} (${r.division})</option>`
+        ).join('');
+    }
+
+    #renderReportAllVisuals() {
+        const metrics = AttendanceModel.calculateDashboardMetrics(this.records);
+        metrics.categories.forEach(cat => {
+            if (this.colors[cat.key]) {
+                cat.color = this.colors[cat.key];
+            }
+        });
+
+        this.#renderKpiCards(metrics);
+        this.#renderCharts(metrics);
+        this.#renderGroupedReportTable();
+    }
+
+    #renderKpiCards(metrics) {
+        const container = document.getElementById('reportKpiCardsContainer');
+        if (!container) return;
+
+        let html = `
+            <div class="bma-card p-4 flex flex-col justify-between" style="border-left: 4px solid ${this.colors.header};">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold bma-text-sub">บุคลากรทั้งหมด</span>
+                    <i class="fa-solid fa-users text-base" style="color: ${this.colors.header};"></i>
+                </div>
+                <div class="text-2xl font-extrabold bma-text-main my-1">${metrics.total} คน</div>
+                <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div class="h-full rounded-full" style="width: 100%; background-color: ${this.colors.header};"></div>
+                </div>
+            </div>
+        `;
+
+        for (const cat of metrics.categories) {
+            html += `
+                <div class="bma-card p-4 flex flex-col justify-between" style="border-left: 4px solid ${cat.color};">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold bma-text-sub">${cat.label}</span>
+                        <span class="text-xs font-bold" style="color: ${cat.color};">${cat.percent}%</span>
+                    </div>
+                    <div class="text-2xl font-extrabold bma-text-main my-1">${cat.count} คน</div>
+                    <div class="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-300" style="width: ${cat.percent}%; background-color: ${cat.color};"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+    }
+
+    #renderCharts(metrics) {
+        if (!window.Chart) return;
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#F1F5F9' : '#0F172A';
+        const gridColor = isDark ? '#2D3F3A' : '#E2E8F0';
+
+        const pieCtx = document.getElementById('reportPieChart')?.getContext('2d');
+        if (pieCtx) {
+            if (this.pieChart) this.pieChart.destroy();
+            this.pieChart = new window.Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: metrics.categories.map(c => c.label),
+                    datasets: [{
+                        data: metrics.categories.map(c => c.count),
+                        backgroundColor: metrics.categories.map(c => c.color),
+                        borderWidth: 2,
+                        borderColor: isDark ? '#1A2522' : '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Sarabun', size: 11 } } }
+                    }
+                }
+            });
+        }
+
+        const barCtx = document.getElementById('reportDivisionChart')?.getContext('2d');
+        if (barCtx) {
+            if (this.barChart) this.barChart.destroy();
+            const divs = Object.keys(metrics.divisionBreakdown);
+            this.barChart = new window.Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: divs,
+                    datasets: [
+                        { label: 'ปกติ', data: divs.map(d => metrics.divisionBreakdown[d].normal), backgroundColor: this.colors.normal },
+                        { label: 'มาสาย', data: divs.map(d => metrics.divisionBreakdown[d].late), backgroundColor: this.colors.late },
+                        { label: 'กรณีพิเศษ', data: divs.map(d => metrics.divisionBreakdown[d].special), backgroundColor: this.colors.special },
+                        { label: 'ยังไม่ลงเวลา', data: divs.map(d => metrics.divisionBreakdown[d].absent), backgroundColor: this.colors.absent }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: textColor, font: { family: 'Sarabun' } }, grid: { color: gridColor } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor }, grid: { color: gridColor } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Sarabun', size: 11 } } }
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * สร้างโครงสร้างตารางแสดงการลงเวลาปฏิบัติราชการ Group By 2 มุมมอง
+     * คอลัมน์: ลำดับ, คำนำหน้า+ชื่อ+นามสกุล, ตำแหน่ง+ระดับ, เวลาเข้างาน, เวลาออกงาน
+     */
+    #renderGroupedReportTable(forPrintPdf = false) {
+        const grouped = PersonnelModel.groupPersonnel(this.records, this.groupViewMode);
+        let rowsHtml = '';
+        let runningNo = 1;
+
+        for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
+            for (const [divisionName, content] of Object.entries(divisionsObj)) {
+                rowsHtml += `
+                    <tr class="group-row" style="background-color: ${this.colors.header}18;">
+                        <td colspan="${forPrintPdf ? 6 : 7}" class="font-bold text-sm py-2.5 px-4" style="color: ${this.colors.header}; border-left: 4px solid ${this.colors.header};">
+                            ${bureauName} &gt; ${divisionName}
+                        </td>
+                    </tr>
+                `;
+
+                if (this.groupViewMode === 'group') {
+                    for (const [groupName, members] of Object.entries(content)) {
+                        rowsHtml += `
+                            <tr class="sub-group-row bg-slate-100/80 dark:bg-slate-800/50">
+                                <td colspan="${forPrintPdf ? 6 : 7}" class="font-semibold text-xs py-2 pl-8 bma-text-main">
+                                    กลุ่มงาน: ${groupName} (${members.length} คน)
+                                </td>
+                            </tr>
+                        `;
+                        for (const rec of members) {
+                            rowsHtml += this.#buildReportRowHtml(rec, runningNo++, forPrintPdf);
+                        }
+                    }
+                } else {
+                    for (const rec of content) {
+                        rowsHtml += this.#buildReportRowHtml(rec, runningNo++, forPrintPdf);
+                    }
+                }
+            }
+        }
+
+        if (forPrintPdf) {
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px; text-align: center;">ลำดับ</th>
+                            <th>คำนำหน้า + ชื่อ + นามสกุล</th>
+                            <th>ตำแหน่ง + ระดับ</th>
+                            <th style="width: 95px; text-align: center;">เวลาเข้างาน</th>
+                            <th style="width: 95px; text-align: center;">เวลาออกงาน</th>
+                            <th style="width: 140px; text-align: center;">สถานะ / หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        const tbody = document.getElementById('reportTableBody');
+        if (tbody) {
+            tbody.innerHTML = rowsHtml || `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลในวันที่เลือก</td></tr>`;
+        }
+        return '';
+    }
+
+    #buildReportRowHtml(rec, indexNo, forPrintPdf = false) {
+        const badgeColor = this.colors[rec.status_category] || rec.row_color;
+        const statusText = rec.remark ? `${rec.status_label} (${rec.remark})` : rec.status_label;
+
+        if (forPrintPdf) {
+            return `
+                <tr>
+                    <td style="text-align: center;">${indexNo}</td>
+                    <td>${rec.full_name}</td>
+                    <td>${rec.position_full}</td>
+                    <td style="text-align: center;">${rec.check_in_time || '-'}</td>
+                    <td style="text-align: center;">${rec.check_out_time || '-'}</td>
+                    <td style="text-align: center; color: ${badgeColor}; font-weight: 600;">${statusText}</td>
+                </tr>
+            `;
+        }
+
+        return `
+            <tr>
+                <td class="text-center font-semibold">${indexNo}</td>
+                <td class="font-semibold bma-text-main">${rec.full_name}</td>
+                <td>${rec.position_full}</td>
+                <td class="text-center font-mono font-bold">${rec.check_in_time || '-'}</td>
+                <td class="text-center font-mono font-bold">${rec.check_out_time || '-'}</td>
+                <td class="text-center">
+                    <span class="bma-badge text-white" style="background-color: ${badgeColor};">
+                        ${rec.status_label}
+                    </span>
+                    ${rec.remark ? `<div class="text-[11px] bma-text-sub mt-0.5">${rec.remark}</div>` : ''}
+                </td>
+                <td class="text-center space-x-1 whitespace-nowrap">
+                    <button type="button" data-action="edit-record" data-pid="${rec.personnel_id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    ${rec.log_id ? `
+                        <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${rec.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    ` : ''}
+                </td>
+            </tr>
+        `;
+    }
+
+    #openModal(rec = null) {
+        const modal = document.getElementById('modalReportAttendance');
+        const workDate = document.getElementById('reportDateInput').value || UIHelpers.getTodayISO();
+
+        document.getElementById('repLogId').value = rec?.log_id || '';
+        if (rec?.personnel_id) {
+            document.getElementById('repPersonnelSelect').value = rec.personnel_id;
+        }
+        document.getElementById('repWorkDate').value = rec?.work_date || workDate;
+        document.getElementById('repCheckinTime').value = rec?.check_in_time || '08:30';
+        document.getElementById('repCheckoutTime').value = rec?.check_out_time || '16:30';
+        document.getElementById('repStatusSelect').value = rec?.status_category === 'late' ? 'สาย' : 'ปกติ';
+        document.getElementById('repRowColorPicker').value = rec?.row_color || '#059669';
+        document.getElementById('repRemarkInput').value = rec?.remark || '';
+
+        modal.classList.remove('hidden');
+    }
+
+    #closeModal() {
+        document.getElementById('modalReportAttendance')?.classList.add('hidden');
+    }
+
+    #bindEvents() {
+        document.getElementById('reportDateInput')?.addEventListener('change', () => this.loadReportData());
+        document.getElementById('selectReportGroupBy')?.addEventListener('change', (e) => {
+            this.groupViewMode = e.target.value;
+            this.#renderGroupedReportTable(false);
+        });
+
+        // Color Pickers
+        const updateColors = () => {
+            this.colors.header = document.getElementById('repColorHeader').value;
+            this.colors.normal = document.getElementById('repColorNormal').value;
+            this.colors.late = document.getElementById('repColorLate').value;
+            this.colors.absent = document.getElementById('repColorAbsent').value;
+            this.#renderReportAllVisuals();
+        };
+        document.getElementById('repColorHeader')?.addEventListener('input', updateColors);
+        document.getElementById('repColorNormal')?.addEventListener('input', updateColors);
+        document.getElementById('repColorLate')?.addEventListener('input', updateColors);
+        document.getElementById('repColorAbsent')?.addEventListener('input', updateColors);
+
+        // ปุ่มเปิด/ปิด Modal
+        document.getElementById('btnOpenAddReportRecord')?.addEventListener('click', () => this.#openModal(null));
+        document.getElementById('btnCloseReportModal')?.addEventListener('click', () => this.#closeModal());
+        document.getElementById('btnCancelReportModal')?.addEventListener('click', () => this.#closeModal());
+
+        document.getElementById('formReportAttendance')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.#handleSaveReportRecord();
+        });
+
+        // พิมพ์และส่งออกเป็น PDF โดยเปิด Tab ใหม่ (ไม่บันทึกไฟล์ลงไดรฟ์โดยตรง ใช้เค้าโครง HTML รองรับ UTF-8)
+        document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
+            const workDate = document.getElementById('reportDateInput').value;
+            const tableHtml = this.#renderGroupedReportTable(true);
+            UIHelpers.printReportInNewTab({
+                title: `รายงานการลงเวลาปฏิบัติราชการ ${this.settings.organization_name}`,
+                subtitle: `สังกัด: ${this.settings.bureau_name} • ประจำวันที่ ${UIHelpers.formatThaiDate(workDate)}`,
+                tableHtml,
+                headerColor: this.colors.header
+            });
+        });
+
+        // ส่งออกไฟล์ Excel UTF-8
+        document.getElementById('btnExportReportExcel')?.addEventListener('click', () => {
+            const workDate = document.getElementById('reportDateInput').value;
+            const rows = this.records.map((r, idx) => ({
+                'ลำดับ': idx + 1,
+                'คำนำหน้า+ชื่อ+นามสกุล': r.full_name,
+                'ตำแหน่ง+ระดับ': r.position_full,
+                'สำนักงาน/กอง': r.bureau,
+                'ส่วน/ฝ่าย': r.division,
+                'กลุ่มงาน': r.work_group,
+                'วันที่': r.work_date,
+                'เวลาเข้างาน': r.check_in_time || '-',
+                'เวลาออกงาน': r.check_out_time || '-',
+                'สถานะ': r.status_label,
+                'หมายเหตุ': r.remark || ''
+            }));
+            UIHelpers.exportToExcelUTF8(rows, `รายงานลงเวลาปฏิบัติราชการ_${workDate}`, 'AttendanceReport');
+        });
+
+        // Template Excel
+        document.getElementById('btnTemplateReportExcel')?.addEventListener('click', () => {
+            const sample = [{
+                'ลำดับ': 1,
+                'คำนำหน้า+ชื่อ+นามสกุล': 'นายสมชาย สายตรวจ',
+                'ตำแหน่ง+ระดับ': 'เจ้าพนักงานเทศกิจ ระดับปฏิบัติงาน',
+                'สำนักงาน/กอง': 'สำนักเทศกิจ',
+                'ส่วน/ฝ่าย': 'กองตรวจและปฏิบัติการพื้นที่ 1',
+                'กลุ่มงาน': 'กลุ่มงานตรวจและปฏิบัติการ 1',
+                'วันที่': UIHelpers.getTodayISO(),
+                'เวลาเข้างาน': '08:15',
+                'เวลาออกงาน': '16:35',
+                'สถานะ': 'ปกติ',
+                'หมายเหตุ': ''
+            }];
+            UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');
+        });
+
+        // Event Delegation สำหรับปุ่มแก้ไขและลบในตารางรายงาน
+        document.getElementById('reportTableBody')?.addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const action = btn.dataset.action;
+
+            if (action === 'edit-record') {
+                const pid = btn.dataset.pid;
+                const rec = this.records.find(r => r.personnel_id === pid);
+                if (rec) this.#openModal(rec);
+            } else if (action === 'delete-record') {
+                const logId = btn.dataset.logid;
+                const name = btn.dataset.name;
+                const confirmed = await UIHelpers.confirm(
+                    'ยืนยันการลบข้อมูลลงเวลา',
+                    `ต้องการลบข้อมูลการลงเวลาของ "${name}" ในวันนี้ใช่หรือไม่?`,
+                    'ลบรายการ',
+                    'warning'
+                );
+                if (confirmed) {
+                    UIHelpers.showLoading('กำลังลบรายการลงเวลา...');
+                    const res = await AttendanceModel.deleteAttendanceRecord(logId);
+                    UIHelpers.hideLoading();
+                    if (res.success) {
+                        await this.loadReportData();
+                        await UIHelpers.alert('ลบสำเร็จ', res.message, 'success');
+                    } else {
+                        await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
+                    }
+                }
+            }
+        });
+    }
+
+    async #handleSaveReportRecord() {
+        const payload = {
+            log_id: document.getElementById('repLogId').value || null,
+            personnel_id: document.getElementById('repPersonnelSelect').value,
+            work_date: document.getElementById('repWorkDate').value,
+            check_in_time: document.getElementById('repCheckinTime').value,
+            check_out_time: document.getElementById('repCheckoutTime').value,
+            status: document.getElementById('repStatusSelect').value,
+            row_color: document.getElementById('repRowColorPicker').value,
+            remark: document.getElementById('repRemarkInput').value
+        };
+
+        UIHelpers.showLoading('กำลังบันทึกข้อมูลการลงเวลา...');
+        try {
+            const res = await AttendanceModel.saveAdminAttendanceRecord(payload);
+            UIHelpers.hideLoading();
+            if (!res.success) {
+                await UIHelpers.alert('บันทึกไม่สำเร็จ', res.message, 'error');
+                return;
+            }
+            this.#closeModal();
+            await this.loadReportData();
+            await UIHelpers.alert('บันทึกสำเร็จ', res.message, 'success');
+        } catch (err) {
+            UIHelpers.hideLoading();
+            await UIHelpers.alert('เกิดข้อผิดพลาด', err.message, 'error');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new ReportsController();
+});
