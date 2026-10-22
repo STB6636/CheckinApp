@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>อนุมัติลงเวลากรณีพิเศษ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Sidebar -->
+    <div id="bmaSidebarContainer"></div>
+
+    <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
+        <!-- Topbar -->
+        <div id="bmaTopbarContainer"></div>
+
+        <main class="flex-1 p-4 lg:p-8 space-y-6">
+
+            <!-- แถบควบคุมมุมมอง Group By และปุ่มอนุมัติ/ไม่อนุมัติหลายรายการพร้อมกัน (Bulk Action) -->
+            <div class="bma-card p-5 space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
+                    <div>
+                        <h2 class="text-base font-bold bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-bell-concierge" style="color: var(--bma-sec-6);"></i>
+                            <span>รายการขออนุมัติลงเวลาปฏิบัติราชการกรณีพิเศษ</span>
+                        </h2>
+                        <p class="text-xs bma-text-sub mt-0.5">ตรวจสอบและอนุมัติคำขอลงเวลากรณีพิเศษของบุคลากรตามขอบเขตการมองเห็น</p>
+                    </div>
+
+                    <!-- ปุ่มสำหรับอนุมัติ/ไม่อนุมัติหลายรายการพร้อมกัน -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btnBulkApprove" class="btn-bma-primary text-xs py-2.5 px-4 shadow">
+                            <i class="fa-solid fa-check-double"></i>
+                            <span>อนุมัติที่เลือก (<span id="selectedBulkCount">0</span>)</span>
+                        </button>
+                        <button type="button" id="btnBulkReject" class="btn-bma-outline text-xs py-2.5 px-4 text-rose-500 border-rose-500/40 hover:bg-rose-500/10">
+                            <i class="fa-solid fa-ban"></i>
+                            <span>ไม่อนุมัติที่เลือก</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ตัวกรองสถานะและมุมมอง Group By 2 มุมมอง -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                    <div class="md:col-span-4">
+                        <label class="block text-xs font-bold bma-text-sub mb-1">สถานะคำขอ:</label>
+                        <select id="selectApprovalStatusFilter" class="bma-select py-2 text-xs font-semibold">
+                            <option value="pending">รออนุมัติ (Pending)</option>
+                            <option value="approved">อนุมัติแล้ว (Approved)</option>
+                            <option value="rejected">ไม่อนุมัติ (Rejected)</option>
+                            <option value="all">แสดงทั้งหมด</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-5">
+                        <label class="block text-xs font-bold bma-text-sub mb-1">มุมมองการจัดกลุ่มตาราง (Group By):</label>
+                        <select id="selectApprovalGroupBy" class="bma-select py-2 text-xs font-semibold">
+                            <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
+                            <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-3 flex items-end justify-end pt-4">
+                        <button type="button" id="btnRefreshApprovals" class="btn-bma-soft text-xs py-2 px-3 w-full sm:w-auto">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>รีเฟรชรายการ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางแสดงรายการขอลงเวลากรณีพิเศษ (คอลัมน์ตามข้อกำหนด: ลำดับ, คำนำหน้า+ชื่อ+นามสกุล, ตำแหน่ง+ระดับ, คำสั่ง[อนุมัติ,ไม่อนุมัติ]) -->
+            <div class="bma-card p-5">
+                <div class="bma-table-container">
+                    <table class="bma-table text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-12 text-center">
+                                    <input type="checkbox" id="chkSelectAllApprovals" class="w-4 h-4 accent-emerald-600 cursor-pointer" title="เลือกทั้งหมด">
+                                </th>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th>คำนำหน้า + ชื่อ + นามสกุล</th>
+                                <th>ตำแหน่ง + ระดับ</th>
+                                <th>วันที่ขอ / ช่วงเวลา</th>
+                                <th>หมายเหตุ</th>
+                                <th class="w-48 text-center">คำสั่ง [อนุมัติ / ไม่อนุมัติ]</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvalsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+        <div id="bmaFooterContainer"></div>
+    </div>
+
+    <div id="bmaMobileBottomNav"></div>
+
+    <script type="module" src="assets/js/controllers/ApprovalsController.js"></script>
+</body>
+</html>

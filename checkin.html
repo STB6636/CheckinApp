@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header หน้าลงเวลาปฏิบัติราชการ (คาดแถบสีเขียว BMA ด้านบนสุด) -->
+    <header class="bma-card rounded-none border-t-0 border-x-0 px-4 lg:px-8 py-3.5 sticky top-0 z-30" style="border-top: 4px solid var(--g1);">
+        <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div id="checkinLogoBox" class="w-11 h-11 rounded-xl flex items-center justify-center text-[#00351B] font-extrabold shadow-md bg-gradient-to-br from-[#FDD835] to-[#F59E0B] border border-white/50">
+                    <i class="fa-solid fa-landmark"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-base lg:text-lg font-extrabold truncate bma-text-main">ระบบลงเวลาปฏิบัติราชการ</h1>
+                    <p class="text-xs truncate bma-text-sub font-semibold">
+                        <span id="checkinOrgName">กรุงเทพมหานคร</span> • <span id="checkinBureauName" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- ปุ่มไปหน้าผู้ดูแลระบบ (แสดงเฉพาะเมื่อผู้ล็อกอินเป็น SuperAdmin หรือ Admin) -->
+                <a id="btnGoAdminDashboard" href="dashboard.html" class="hidden btn-bma-soft text-xs py-2 px-3.5 no-underline">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span class="hidden sm:inline">ระบบผู้ดูแล</span>
+                </a>
+
+                <!-- ปุ่มสลับโหมดสี -->
+                <button id="btnCheckinTheme" type="button" class="p-2.5 rounded-xl border bma-border bma-text-main cursor-pointer">
+                    <i id="checkinThemeIcon" class="fa-solid fa-moon text-emerald-800"></i>
+                </button>
+
+                <!-- ปุ่มออกจากระบบ -->
+                <button id="btnCheckinLogout" type="button" class="btn-bma-outline text-xs py-2 px-3 text-rose-600 border-rose-500/30">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden sm:inline">ออกจากระบบ</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- เนื้อหาหลักหน้าลงเวลา -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6 space-y-6">
+
+        <!-- การ์ดข้อมูลผู้ใช้งานและนาฬิกาดิจิทัลเรียลไทม์ (Outdoor High-Contrast Emerald Frame สู้แสงกลางแจ้ง) -->
+        <div class="outdoor-emerald-frame bma-mesh-grid p-5 lg:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-[#00351B] text-xl font-extrabold shadow-lg bg-[#FDD835] border-2 border-white">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h2 id="userFullNameText" class="text-lg lg:text-xl font-extrabold text-white">กำลังโหลดข้อมูล...</h2>
+                        <span id="userRoleBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#FDD835] text-[#00351B]">User</span>
+                    </div>
+                    <p id="userPositionText" class="text-sm text-emerald-100 font-medium mt-0.5">-</p>
+                    <p id="userAffiliationText" class="text-xs text-emerald-200/80 mt-0.5">-</p>
+                </div>
+            </div>
+
+            <!-- นาฬิกาดิจิทัลสีเหลืองทองเทศกิจ (#FDD835) บนพื้นหลังเขียวเข้ม มองเห็นชัดเจนกลางแจ้ง -->
+            <div class="w-full md:w-auto text-left md:text-right border-t md:border-t-0 pt-3 md:pt-0 border-white/20 relative z-10 bg-black/25 px-4 py-2.5 rounded-xl border border-white/15">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200">เวลามาตรฐานประเทศไทย</div>
+                <div id="liveClockDisplay" class="text-3xl lg:text-4xl font-extrabold tracking-widest text-[#FDD835] font-mono drop-shadow">00:00:00</div>
+                <div id="liveDateDisplay" class="text-xs font-semibold text-white mt-0.5">วัน...</div>
+            </div>
+        </div>
+
+        <!-- สถานะการลงเวลาของวันนี้ -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bma-card p-4 flex items-center justify-between" style="border-left: 5px solid var(--g1);">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background: linear-gradient(135deg, #007B3E, #4EBA6F);">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold bma-text-sub">เวลาเข้างานวันนี้ (Check-in)</span>
+                        <p id="todayCheckinTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
+                    </div>
+                </div>
+                <span id="todayCheckinBadge" class="bma-badge bma-badge-warning">รอลงเวลาเข้า</span>
+            </div>
+
+            <div class="bma-card p-4 flex items-center justify-between" style="border-left: 5px solid #0284C7;">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background: linear-gradient(135deg, #0284C7, #38BDF8);">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold bma-text-sub">เวลาออกงานวันนี้ (Check-out)</span>
+                        <p id="todayCheckoutTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
+                    </div>
+                </div>
+                <span id="todayCheckoutBadge" class="bma-badge bma-badge-sky">รอลงเวลาออก</span>
+            </div>
+        </div>
+
+        <!-- ส่วนกล้องถ่ายรูป และ พิกัดสถานที่ GPS -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปยืนยันตัวตน ล้อมกรอบสีเขียวเข้ม BMA + ขอบในสีเหลืองทอง (.outdoor-camera-bezel) -->
+            <div id="cameraSectionCard" class="lg:col-span-7 bma-card p-5 flex flex-col justify-between" style="border-top: 4px solid var(--g1);">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-extrabold text-base bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-camera" style="color: var(--bma-primary);"></i>
+                            <span>ภาพถ่ายยืนยันการปฏิบัติราชการ</span>
+                        </h3>
+                        <span id="photoRequirementBadge" class="bma-badge bma-badge-danger">บังคับถ่ายภาพ</span>
+                    </div>
+
+                    <!-- กรอบแสดงภาพจากกล้องสด ล้อมด้วย .outdoor-camera-bezel คมชัดกลางแจ้ง -->
+                    <div class="relative w-full aspect-video outdoor-camera-bezel flex items-center justify-center">
+                        <video id="cameraVideoStream" class="w-full h-full object-cover" autoplay playsinline muted></video>
+                        <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
+                        <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="ภาพถ่ายลงเวลา">
+
+                        <div id="cameraStatusOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black/75 text-white p-4 text-center hidden">
+                            <i class="fa-solid fa-video-slash text-3xl text-rose-400 mb-2"></i>
+                            <p id="cameraStatusMessage" class="text-sm font-semibold">กรุณาอนุญาตการเข้าถึงกล้องถ่ายรูป</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ปุ่มควบคุมกล้อง: มีเฉพาะปุ่ม "ถ่ายภาพ" และ "ถ่ายใหม่อีกครั้ง" ตามข้อกำหนด -->
+                <div class="mt-4 flex items-center justify-center gap-3">
+                    <button type="button" id="btnCapturePhoto" class="btn-bma-primary w-full py-3.5 text-sm shadow-md">
+                        <i class="fa-solid fa-camera text-base"></i>
+                        <span>ถ่ายภาพ</span>
+                    </button>
+                    <button type="button" id="btnRetakePhoto" class="btn-bma-outline w-full py-3.5 text-sm hidden border-2 border-[#007B3E]">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>ถ่ายใหม่อีกครั้ง</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- คอลัมน์ขวา: พิกัด GPS สถานที่ และปุ่มบันทึกลงเวลา -->
+            <div class="lg:col-span-5 flex flex-col justify-between gap-6">
+
+                <!-- การ์ดแสดงพิกัดและชื่อสถานที่จาก GPS -->
+                <div id="gpsSectionCard" class="bma-card p-5 space-y-3" style="border-top: 4px solid #0284C7;">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-extrabold text-base bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-location-crosshairs text-sky-600"></i>
+                            <span>ตำแหน่งสถานที่ปฏิบัติงาน (GPS)</span>
+                        </h3>
+                        <span id="gpsRequirementBadge" class="bma-badge bma-badge-danger">บังคับเปิด GPS</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border bg-[#eef7f1] dark:bg-emerald-950/30 space-y-2 text-xs">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="bma-text-sub font-bold whitespace-nowrap">พิกัด (Lat, Lng):</span>
+                            <span id="gpsCoordsText" class="font-mono font-bold bma-text-main text-right">กำลังค้นหาสัญญาณ GPS...</span>
+                        </div>
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="bma-text-sub font-bold whitespace-nowrap">สถานที่ (Google Map):</span>
+                            <span id="gpsLocationNameText" class="font-semibold bma-text-main text-right">กำลังระบุชื่อสถานที่...</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <button type="button" id="btnRefreshGps" class="btn-bma-outline text-xs py-2 px-3 w-full">
+                            <i class="fa-solid fa-location-arrow"></i>
+                            <span>ตรวจสอบพิกัด GPS อีกครั้ง</span>
+                        </button>
+                        <a id="linkViewGoogleMap" href="#" target="_blank" rel="noopener" class="btn-bma-soft text-xs py-2 px-3 whitespace-nowrap hidden no-underline">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>ดูแผนที่</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- การ์ดปุ่มกดบันทึกลงเวลา (รองรับทั้งรูปแบบปกติ และรูปแบบพิเศษกดครั้งเดียว) -->
+                <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
+
+                    <!-- แถบแสดงรูปแบบการลงเวลาที่ตั้งค่าไว้จากเมนูตั้งค่าระบบ -->
+                    <div id="checkinRecordingModeBanner" class="p-3 rounded-xl border bma-border bg-[#eef7f1] dark:bg-emerald-950/30 flex items-center justify-between gap-2 text-xs">
+                        <span class="font-bold bma-text-main flex items-center gap-1.5">
+                            <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
+                            <span>รูปแบบการบันทึกเวลา:</span>
+                        </span>
+                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ (เข้า-ออกแยกกัน)</span>
+                    </div>
+
+                    <div>
+                        <label for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">ช่วงเวลาปฏิบัติราชการ</label>
+                        <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
+                    </div>
+
+                    <!-- กล่องกรอกเวลาเข้า-ออกงานเอง กรณีเลือกช่วงเวลาเป็น "อื่นๆ" ในหน้าลงเวลาหลัก -->
+                    <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 rounded-xl border bma-border bg-emerald-500/5">
+                        <div>
+                            <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน *</label>
+                            <input type="time" id="mainCustomCheckin" class="bma-input text-sm" value="08:30">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold bma-text-main mb-1">เวลาออกงาน *</label>
+                            <input type="time" id="mainCustomCheckout" class="bma-input text-sm" value="16:30">
+                        </div>
+                    </div>
+
+                    <!-- ปุ่มบันทึกลงเวลาหลัก -->
+                    <button type="button" id="btnSubmitCheckinMain" class="btn-bma-primary w-full py-4 text-base shadow-xl">
+                        <i class="fa-solid fa-fingerprint text-xl text-[#FDD835]"></i>
+                        <span id="btnSubmitCheckinLabel">บันทึกลงเวลาปฏิบัติราชการ</span>
+                    </button>
+
+                    <!-- ปุ่มขอลงเวลากรณีพิเศษ -->
+                    <button type="button" id="btnOpenSpecialRequestModal" class="btn-bma-outline w-full py-2.5 text-sm border-indigo-500/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                        <span>ขอลงเวลากรณีพิเศษ (ย้อนหลัง / นอกสถานที่)</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal ขอลงเวลากรณีพิเศษ (เลือกวันที่, เลือกช่วงเวลา, หมายเหตุ จากตั้งค่าระบบ) -->
+    <div id="modalSpecialRequest" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div class="w-full max-w-lg bma-card bma-modal-surface p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
+                <h3 class="text-lg font-bold bma-text-main flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature text-indigo-500"></i>
+                    <span>แบบคำขอลงเวลากรณีพิเศษ</span>
+                </h3>
+                <button type="button" id="btnCloseSpecialModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="formSpecialRequest" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">1. เลือกวันที่ปฏิบัติราชการ *</label>
+                    <input type="date" id="spWorkDate" class="bma-input" required>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">2. เลือกช่วงเวลาปฏิบัติราชการ (ดึงจากตั้งค่าระบบ) *</label>
+                    <select id="spShiftSelect" class="bma-select" required></select>
+                </div>
+
+                <!-- กรณีเลือกตัวเลือก "อื่นๆ" ผู้ใช้จะสามารถกรอกเวลาเข้างานและเวลาออกงานเองได้ -->
+                <div id="spCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3.5 rounded-xl border bma-border bg-emerald-500/5">
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">ระบุเวลาเข้างานเอง *</label>
+                        <input type="time" id="spCustomCheckin" class="bma-input" value="08:30">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">ระบุเวลาออกงานเอง *</label>
+                        <input type="time" id="spCustomCheckout" class="bma-input" value="16:30">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">3. เลือกหมายเหตุ / เหตุผล (ดึงจากตั้งค่าระบบ) *</label>
+                    <select id="spRemarkSelect" class="bma-select" required></select>
+                </div>
+
+                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
+                    <button type="button" id="btnCancelSpecialModal" class="btn-bma-outline text-sm">ยกเลิก</button>
+                    <button type="submit" class="btn-bma-primary text-sm">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ส่งคำขออนุมัติ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer ระบบ -->
+    <footer class="w-full py-4 px-6 border-t bma-border text-center text-xs bma-text-sub mt-8 bg-white/50 dark:bg-[#161B22]/50">
+        <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
+        <span id="footerCheckinOrg" class="font-bold bma-text-main">กรุงเทพมหานคร</span>
+        <span> • สังกัด </span>
+        <span id="footerCheckinBureau" class="font-bold" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+    </footer>
+
+    <script type="module" src="assets/js/controllers/CheckinController.js"></script>
+</body>
+</html>

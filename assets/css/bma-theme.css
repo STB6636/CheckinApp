@@ -1,0 +1,609 @@
+/* ============================================================================
+ * BMA Enterprise Design System V2.1 (Integrated with STB APP n2 - portal.css)
+ * Theme: BMA Green Emerald & Eye-Care Dark System
+ * Font: Sarabun (Google Fonts)
+ * Architecture: 60-30-10 Rule (Soft Sage Surface / Deep Emerald Sidebar / Jewel-Tone Cards)
+ * ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+    /* --- Portal.css Core Emerald Tokens --- */
+    --g0: #00351B;
+    --g1: #007B3E;
+    --g2: #4EBA6F;
+    --gold-bma: #FDD835;
+
+    /* Sidebar Gradient Tokens (30% Structural) */
+    --sb1: #00351B;
+    --sb2: #005B2E;
+    --sb3: #007B3E;
+
+    /* Header / Primary Button Gradient Tokens */
+    --hd1: #007B3E;
+    --hd2: #00944A;
+    --hd3: #4EBA6F;
+
+    /* 1.1 Brand & Primary Colors (Light Mode) */
+    --bma-primary: #007B3E;
+    --bma-primary-hover: #005B2E;
+    --bma-primary-light: #4EBA6F;
+    --bma-primary-soft: rgba(0, 123, 62, 0.12);
+
+    /* 1.2 Vibrant Secondary & Jewel-Tone Colors */
+    --bma-sec-1: #059669;  /* Green Space */
+    --bma-sec-2: #84CC16;  /* Lime Eco */
+    --bma-sec-3: #F59E0B;  /* City Amber */
+    --bma-sec-4: #FB923C;  /* Warm Sunset */
+    --bma-sec-5: #F43F5E;  /* Giant Swing Rose */
+    --bma-sec-6: #6366F1;  /* BMA Indigo (งานเทศกิจ) */
+    --bma-sec-7: #E11D48;  /* Crimson Red */
+    --bma-sec-8: #EA580C;  /* Public Works Orange */
+    --bma-sec-9: #EAB308;  /* Temple Gold */
+    --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue */
+
+    /* 1.3 Surface & Typography Tokens (60% Dominant - Soft Sage Mint Tint ลดแสงสะท้อน) */
+    --bma-bg-main: #f5f8f6;
+    --bma-surface-1: #FFFFFF;
+    --bma-surface-2: #eef5f0;
+    --bma-border: #d8e6dd;
+    --bma-text-primary: #0F172A;
+    --bma-text-secondary: #334E40;
+    --bma-text-muted: #64748B;
+
+    /* Table Header Pastel Tokens ตาม portal.css */
+    --bma-thead-bg: #eef7f1;
+    --bma-thead-text: #2c4a38;
+    --bma-thead-border: #cde3d5;
+
+    /* Status Badge Alpha Tokens (Light Mode) */
+    --badge-success-bg: rgba(0, 123, 62, 0.14);
+    --badge-success-text: #007B3E;
+    --badge-warning-bg: rgba(245, 158, 11, 0.16);
+    --badge-warning-text: #B45309;
+    --badge-danger-bg: rgba(225, 29, 72, 0.14);
+    --badge-danger-text: #BE123C;
+    --badge-indigo-bg: rgba(99, 102, 241, 0.14);
+    --badge-indigo-text: #4338CA;
+    --badge-sky-bg: rgba(2, 132, 199, 0.14);
+    --badge-sky-text: #0369A1;
+
+    --shadow-card: 0 6px 20px -4px rgba(0, 53, 27, 0.08), 0 2px 6px -1px rgba(0, 53, 27, 0.04);
+}
+
+/* ============================================================================
+ * Dark Mode (Eye-Care Dark System ตาม portal.css: #0D1117 / #161B22)
+ * ============================================================================ */
+html.dark {
+    --bma-primary: #34D399;
+    --bma-primary-hover: #10B981;
+    --bma-primary-light: #A7F3D0;
+    --bma-primary-soft: rgba(52, 211, 153, 0.16);
+
+    /* Sidebar ในโหมดมืดยังคงความขรึมของเขียวมรกตลึก */
+    --sb1: #041F11;
+    --sb2: #07351D;
+    --sb3: #0B4D2B;
+
+    /* Surface & Typography Tokens (Eye-Care Dark Mode) */
+    --bma-bg-main: #0D1117;       /* พื้นหลังหลักโหมดมืดตาม portal.css */
+    --bma-surface-1: #161B22;     /* พื้นผิวการ์ดระดับที่ 1 ตาม portal.css */
+    --bma-surface-2: #1F2733;     /* พื้นผิวยกระดับ Modal / Dropdown */
+    --bma-border: #2B3645;        /* เส้นขอบในโหมดมืด */
+    --bma-text-primary: #F1F5F9;
+    --bma-text-secondary: #94A3B8;
+    --bma-text-muted: #64748B;
+
+    /* Table Header ในโหมดมืด */
+    --bma-thead-bg: #1A2B23;
+    --bma-thead-text: #A7F3D0;
+    --bma-thead-border: #264235;
+
+    /* Status Badge Alpha Tokens (Dark Mode 15%-20% Alpha) */
+    --badge-success-bg: rgba(74, 222, 128, 0.16);
+    --badge-success-text: #4ADE80;
+    --badge-warning-bg: rgba(252, 211, 77, 0.16);
+    --badge-warning-text: #FCD34D;
+    --badge-danger-bg: rgba(248, 113, 113, 0.16);
+    --badge-danger-text: #F87171;
+    --badge-indigo-bg: rgba(165, 180, 252, 0.16);
+    --badge-indigo-text: #A5B4FC;
+    --badge-sky-bg: rgba(56, 189, 248, 0.16);
+    --badge-sky-text: #38BDF8;
+
+    --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================================
+ * Base Typography & Body
+ * ============================================================================ */
+* {
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bma-bg-main);
+    color: var(--bma-text-primary);
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================================
+ * 30% Structural: Deep Emerald Sidebar (.sidebar-dark-bma) & Menu Items
+ * ============================================================================ */
+.sidebar-dark-bma {
+    background: linear-gradient(180deg, var(--sb1) 0%, var(--sb2) 55%, var(--sb3) 100%);
+    color: #FFFFFF;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 4px 0 24px rgba(0, 53, 27, 0.18);
+}
+
+.sidebar-dark-bma .bma-nav-item,
+.sidebar-dark-bma .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0.3rem;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-dark-bma .bma-nav-item:hover,
+.sidebar-dark-bma .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    transform: translateX(2px);
+}
+
+/* แถบเมนูที่กำลังเปิดอยู่ (Active Page): พื้นหลังโปร่งแสง + ขอบซ้ายสีเหลืองทองเทศกิจ (#FDD835) */
+.sidebar-dark-bma .bma-nav-item.active,
+.sidebar-dark-bma .menu-item.active {
+    background: linear-gradient(90deg, rgba(253, 216, 53, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%);
+    color: #FFFFFF;
+    font-weight: 700;
+    border-left: 4px solid var(--gold-bma);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-dark-bma .bma-nav-item.active i,
+.sidebar-dark-bma .menu-item.active i {
+    color: var(--gold-bma);
+}
+
+/* ============================================================================
+ * 10% Visual Focus: Jewel-Tone Stat Cards (.stat-card & .deco-1, .deco-2)
+ * ============================================================================ */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.15rem;
+    padding: 1.35rem 1.5rem;
+    color: #FFFFFF;
+    box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.22), 0 4px 10px -2px rgba(0, 0, 0, 0.08);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    z-index: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px -6px rgba(0, 53, 27, 0.28);
+}
+
+/* เฉดสีอัญมณีมาตรฐาน (Jewel-Tone Gradients) */
+.stat-card-total {
+    background: linear-gradient(135deg, #00351B 0%, #005B2E 50%, #007B3E 100%);
+}
+
+.stat-card-normal {
+    background: linear-gradient(135deg, #007B3E 0%, #00944A 50%, #4EBA6F 100%);
+}
+
+.stat-card-late {
+    background: linear-gradient(135deg, #D97706 0%, #F59E0B 55%, #FB923C 100%);
+}
+
+.stat-card-special {
+    background: linear-gradient(135deg, #4F46E5 0%, #6366F1 55%, #8B5CF6 100%);
+}
+
+.stat-card-absent {
+    background: linear-gradient(135deg, #BE123C 0%, #E11D48 55%, #F43F5E 100%);
+}
+
+/* วงกลมซ้อนเรืองแสง Glassmorphism (.deco, .deco-1, .deco-2) */
+.stat-card .deco,
+.stat-card .deco-1,
+.stat-card .deco-2 {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.04) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stat-card .deco-1 {
+    width: 7.5rem;
+    height: 7.5rem;
+    top: -2.2rem;
+    right: -2.2rem;
+}
+
+.stat-card .deco-2 {
+    width: 5.5rem;
+    height: 5.5rem;
+    bottom: -1.8rem;
+    right: 2.2rem;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 70%);
+}
+
+.stat-card .stat-content {
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card .stat-icon-box {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.stat-card .stat-progress-track {
+    width: 100%;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+    margin-top: 0.4rem;
+}
+
+.stat-card .stat-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: #FFFFFF;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    transition: width 0.5s ease;
+}
+
+/* ============================================================================
+ * Split-View Brand Panel (หน้า Login) & Outdoor Frame (หน้า Check-in)
+ * ============================================================================ */
+.bma-brand-panel {
+    background: linear-gradient(150deg, var(--sb1) 0%, var(--sb2) 50%, var(--sb3) 100%);
+    position: relative;
+    overflow: hidden;
+    color: #FFFFFF;
+}
+
+/* ลวดลายตาราง Mesh Grid สำหรับหน้า Login */
+.bma-mesh-grid {
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+/* กรอบสีเขียวเข้ม BMA สู้แสงกลางแจ้ง สำหรับนาฬิกาดิจิทัลและกล้องถ่ายภาพในหน้า checkin.html */
+.outdoor-emerald-frame {
+    background: linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 100%);
+    border: 2px solid var(--g1);
+    box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.25);
+    color: #FFFFFF;
+    border-radius: 1.15rem;
+}
+
+.outdoor-camera-bezel {
+    border: 3px solid var(--g1);
+    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.25);
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background-color: #07170E;
+}
+
+/* ============================================================================
+ * Surface & Card Classes (60% Dominant Surfaces)
+ * ============================================================================ */
+.bma-card {
+    background-color: var(--bma-surface-1);
+    border: 1px solid var(--bma-border);
+    box-shadow: var(--shadow-card);
+    border-radius: 1rem;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.bma-modal-surface {
+    background-color: var(--bma-surface-1);
+    border: 1px solid var(--bma-border);
+}
+
+html.dark .bma-modal-surface {
+    background-color: var(--bma-surface-2);
+}
+
+.bma-border {
+    border-color: var(--bma-border);
+}
+
+.bma-text-main {
+    color: var(--bma-text-primary);
+}
+
+.bma-text-sub {
+    color: var(--bma-text-secondary);
+}
+
+.bma-text-muted {
+    color: var(--bma-text-muted);
+}
+
+/* ============================================================================
+ * Primary & Secondary Buttons (ไล่เฉดสีเขียว BMA ตาม portal.css)
+ * ============================================================================ */
+.btn-primary,
+.btn-bma-primary {
+    background: linear-gradient(135deg, var(--hd1) 0%, var(--hd2) 55%, var(--hd3) 100%);
+    color: #FFFFFF !important;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 123, 62, 0.25);
+    cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-bma-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--sb2) 0%, var(--hd1) 60%, var(--hd2) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 123, 62, 0.35);
+}
+
+.btn-primary:disabled,
+.btn-bma-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-bma-soft {
+    background-color: var(--bma-primary-soft);
+    color: var(--bma-primary);
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(0, 123, 62, 0.2);
+    cursor: pointer;
+}
+
+.btn-bma-soft:hover:not(:disabled) {
+    border-color: var(--bma-primary);
+    background-color: rgba(0, 123, 62, 0.18);
+}
+
+.btn-bma-outline {
+    background-color: transparent;
+    color: var(--bma-text-primary);
+    border: 1px solid var(--bma-border);
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-bma-outline:hover:not(:disabled) {
+    background-color: var(--bma-surface-2);
+    border-color: var(--bma-primary);
+}
+
+/* ============================================================================
+ * Form Controls
+ * ============================================================================ */
+.bma-input,
+.bma-select,
+.bma-textarea {
+    width: 100%;
+    background-color: var(--bma-surface-1);
+    color: var(--bma-text-primary);
+    border: 1px solid var(--bma-border);
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+html.dark .bma-input,
+html.dark .bma-select,
+html.dark .bma-textarea {
+    background-color: #0D1117;
+}
+
+.bma-input:focus,
+.bma-select:focus,
+.bma-textarea:focus {
+    border-color: var(--bma-primary);
+    box-shadow: 0 0 0 3px var(--bma-primary-soft);
+}
+
+/* ============================================================================
+ * Status Badges
+ * ============================================================================ */
+.bma-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.bma-badge-success {
+    background-color: var(--badge-success-bg);
+    color: var(--badge-success-text);
+}
+
+.bma-badge-warning {
+    background-color: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+}
+
+.bma-badge-danger {
+    background-color: var(--badge-danger-bg);
+    color: var(--badge-danger-text);
+}
+
+.bma-badge-indigo {
+    background-color: var(--badge-indigo-bg);
+    color: var(--badge-indigo-text);
+}
+
+.bma-badge-sky {
+    background-color: var(--badge-sky-bg);
+    color: var(--badge-sky-text);
+}
+
+/* ============================================================================
+ * Data Tables (หัวตารางสีเขียวพาสเทลอ่อน #eef7f1 ตัวอักษรสีเขียวเข้ม #2c4a38)
+ * ============================================================================ */
+.bma-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 0.85rem;
+    border: 1px solid var(--bma-thead-border);
+}
+
+.bma-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 720px;
+}
+
+.bma-table thead th,
+.bma-table th {
+    background-color: var(--bma-thead-bg);
+    color: var(--bma-thead-text);
+    font-weight: 700;
+    padding: 0.9rem 1rem;
+    border-bottom: 2px solid var(--bma-thead-border);
+    white-space: nowrap;
+}
+
+.bma-table td {
+    padding: 0.78rem 1rem;
+    border-bottom: 1px solid var(--bma-border);
+    color: var(--bma-text-primary);
+    vertical-align: middle;
+}
+
+.bma-table tbody tr:hover {
+    background-color: var(--bma-primary-soft);
+}
+
+/* ============================================================================
+ * iPhone / iOS Style Shortcut Icons & Loading Animations
+ * ============================================================================ */
+.ios-shortcut-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 1.45rem;
+    box-shadow: 0 6px 14px -3px rgba(0, 53, 27, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.ios-shortcut-icon:active {
+    transform: scale(0.92);
+}
+
+.bma-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bma-surface-2) 25%,
+        var(--bma-border) 50%,
+        var(--bma-surface-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: bmaShimmer 1.5s infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes bmaShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+#bmaGlobalSpinner {
+    backdrop-filter: blur(4px);
+    background-color: rgba(4, 31, 17, 0.6);
+}
+
+.bma-spin-ring {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid var(--bma-primary-soft);
+    border-top-color: var(--bma-primary);
+    border-radius: 50%;
+    animation: bmaSpin 0.8s linear infinite;
+}
+
+@keyframes bmaSpin {
+    to { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bma-bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bma-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bma-primary);
+}
