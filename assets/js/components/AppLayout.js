@@ -1,6 +1,6 @@
 /**
  * @file assets/js/components/AppLayout.js
- * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (Deep Emerald Sidebar .sidebar-dark-bma, Topbar, กระดิ่งแจ้งเตือน, Mobile Navigation, Footer)
+ * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง พร้อมระบบ AJAX SPA Navigation (โหลดเฉพาะ <main> ไม่ต้องโหลด Sidebar/Topbar/Footer ซ้ำ)
  */
 
 import { AuthService } from '../core/AuthService.js';
@@ -10,45 +10,197 @@ import { AttendanceModel } from '../models/AttendanceModel.js';
 import { UserModel } from '../models/UserModel.js';
 
 export class AppLayout {
+    static #isLayoutMounted = false;
+    static #currentUser = null;
+    static #settings = null;
+
+    // แผนผังจับคู่ไฟล์ HTML กับ Controller และชื่อเมนู
+    static PAGE_ROUTES = {
+        'dashboard.html': {
+            activePage: 'dashboard',
+            controllerPath: '../controllers/DashboardController.js',
+            controllerClass: 'DashboardController'
+        },
+        'reports.html': {
+            activePage: 'reports',
+            controllerPath: '../controllers/ReportsController.js',
+            controllerClass: 'ReportsController'
+        },
+        'approvals.html': {
+            activePage: 'approvals',
+            controllerPath: '../controllers/ApprovalsController.js',
+            controllerClass: 'ApprovalsController'
+        },
+        'personnel.html': {
+            activePage: 'personnel',
+            controllerPath: '../controllers/PersonnelController.js',
+            controllerClass: 'PersonnelController'
+        },
+        'users.html': {
+            activePage: 'users',
+            controllerPath: '../controllers/UsersController.js',
+            controllerClass: 'UsersController'
+        },
+        'settings.html': {
+            activePage: 'settings',
+            controllerPath: '../controllers/SettingsController.js',
+            controllerClass: 'SettingsController'
+        }
+    };
+
     /**
-     * เริ่มต้นเรนเดอร์โครงสร้างหน้าจอผู้ดูแลระบบทั้งหมด
-     * @param {Object} options
-     * @param {string} options.activePage ชื่อเมนูที่กำลังเปิดอยู่ ('dashboard'|'personnel'|'users'|'approvals'|'reports'|'settings')
-     * @param {string} options.pageTitle หัวข้อหน้าจอปัจจุบัน
-     * @param {string} options.pageSubtitle คำอธิบายย่อยของหน้าจอ
-     * @returns {Promise<{currentUser: Object, settings: Object}>}
+     * เริ่มต้นเรนเดอร์โครงสร้างหน้าจอผู้ดูแลระบบ
+     * หาก Sidebar/Topbar/Footer ถูกสร้างไว้แล้ว (กรณีสลับหน้าด้วย AJAX) จะไม่อัปเดตซ้ำ แต่จะเปลี่ยนเฉพาะหัวข้อและสถานะเมนู
      */
     static async initAdminLayout({ activePage, pageTitle, pageSubtitle = '' }) {
         UIHelpers.initTheme();
 
-        // ตรวจสอบสิทธิ์ (เฉพาะ SuperAdmin และ Admin เท่านั้นที่เข้าหลังบ้านได้)
         const allowedRoles = activePage === 'settings' ? ['SuperAdmin'] : ['SuperAdmin', 'Admin'];
         const currentUser = AuthService.requireAuth(allowedRoles);
         if (!currentUser) return { currentUser: null, settings: null };
 
-        const settings = await SettingsModel.getSettings();
+        AppLayout.#currentUser = currentUser;
+        AppLayout.#settings = await SettingsModel.getSettings();
 
-        AppLayout.#renderSidebar(currentUser, settings, activePage);
-        AppLayout.#renderTopbar(currentUser, settings, pageTitle, pageSubtitle);
-        AppLayout.#renderMobileBottomNav(currentUser, activePage);
-        AppLayout.#renderFooter(settings);
-        AppLayout.#bindEvents();
+        const sidebarEl = document.getElementById('bmaSidebarDrawer');
+        if (!AppLayout.#isLayoutMounted || !sidebarEl) {
+            // โหลดครั้งแรก: สร้าง Sidebar, Topbar, Mobile Nav, Footer ครบชุด
+            AppLayout.#renderSidebar(currentUser, AppLayout.#settings, activePage);
+            AppLayout.#renderTopbar(currentUser, AppLayout.#settings, pageTitle, pageSubtitle);
+            AppLayout.#renderMobileBottomNav(currentUser, activePage);
+            AppLayout.#renderFooter(AppLayout.#settings);
+            AppLayout.#bindEvents();
+            AppLayout.#initAjaxSpaRouter();
+            AppLayout.#isLayoutMounted = true;
 
-        // โหลดตัวเลขแจ้งเตือนที่กระดิ่งแบบ Async
+            window.addEventListener('bma:settings-updated', (e) => {
+                AppLayout.#settings = e.detail;
+                AppLayout.#renderSidebar(currentUser, AppLayout.#settings, activePage);
+                AppLayout.#renderFooter(AppLayout.#settings);
+            });
+        } else {
+            // โหลดผ่าน AJAX SPA: ไม่ต้องสร้าง Sidebar/Topbar/Footer ใหม่ เปลี่ยนเฉพาะชื่อหน้าและไฮไลต์เมนู
+            AppLayout.#updateActiveNavState(activePage, pageTitle, pageSubtitle);
+        }
+
         AppLayout.refreshNotificationBell(currentUser);
-
-        // อัปเดตข้อมูลเมื่อมีการแก้ไขตั้งค่าระบบ
-        window.addEventListener('bma:settings-updated', (e) => {
-            const newSettings = e.detail;
-            AppLayout.#renderSidebar(currentUser, newSettings, activePage);
-            AppLayout.#renderFooter(newSettings);
-        });
-
-        return { currentUser, settings };
+        return { currentUser, settings: AppLayout.#settings };
     }
 
     /**
-     * สร้างแถบเมนูด้านซ้ายมือ (Deep Emerald Gradient Sidebar - .sidebar-dark-bma ตาม portal.css)
+     * อัปเดตเฉพาะสถานะเมนูที่เลือก (Active) และชื่อหัวข้อบน Topbar โดยไม่ต้องเรนเดอร์ Sidebar/Topbar ใหม่
+     */
+    static #updateActiveNavState(activePage, pageTitle, pageSubtitle) {
+        const titleEl = document.getElementById('topbarPageTitle');
+        const subEl = document.getElementById('topbarPageSubtitle');
+        if (titleEl) titleEl.textContent = pageTitle;
+        if (subEl) subEl.textContent = pageSubtitle || '';
+        document.title = `${pageTitle} - กรุงเทพมหานคร`;
+
+        // อัปเดตปุ่ม Active ใน Sidebar
+        document.querySelectorAll('#bmaSidebarDrawer a[data-nav-id]').forEach(link => {
+            const isMatch = link.dataset.navId === activePage;
+            link.classList.toggle('active', isMatch);
+        });
+
+        // อัปเดตปุ่ม Active ใน Mobile Bottom Nav
+        document.querySelectorAll('#bmaMobileBottomNav a[data-nav-id]').forEach(link => {
+            const isMatch = link.dataset.navId === activePage;
+            link.style.color = isMatch ? 'var(--bma-primary)' : '';
+            link.classList.toggle('bma-text-sub', !isMatch);
+        });
+
+        // ปิด Sidebar Drawer บนมือถือหากเปิดค้างอยู่
+        document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
+        document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
+    }
+
+    /**
+     * ระบบ AJAX SPA Router ดักจับการคลิกเมนูหลังบ้านเพื่อโหลดเฉพาะ <main> พร้อมแสดง Spin + Progress Bar
+     */
+    static #initAjaxSpaRouter() {
+        document.addEventListener('click', async (e) => {
+            const anchor = e.target.closest('a[href]');
+            if (!anchor) return;
+
+            const href = anchor.getAttribute('href') || '';
+            const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
+
+            // ตรวจสอบว่าเป็นลิงก์ภายในระบบผู้ดูแลระบบทั้ง 6 หน้าหรือไม่
+            if (!AppLayout.PAGE_ROUTES[cleanFile]) return;
+
+            e.preventDefault();
+            await AppLayout.navigateAjaxPage(cleanFile, true);
+        });
+
+        // รองรับการกดปุ่มย้อนกลับ/ไปข้างหน้า (Back / Forward) บนเบราว์เซอร์
+        window.addEventListener('popstate', async () => {
+            const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
+            if (AppLayout.PAGE_ROUTES[currentFile]) {
+                await AppLayout.navigateAjaxPage(currentFile, false);
+            }
+        });
+    }
+
+    /**
+     * โหลดเนื้อหาเฉพาะหน้าเมนู (<main> และ Modal) แบบ AJAX พร้อมแสดง Spin + Progress Bar
+     * @param {string} targetFile ชื่อไฟล์ HTML เช่น 'reports.html'
+     * @param {boolean} pushHistory บันทึก URL ลง History หรือไม่
+     */
+    static async navigateAjaxPage(targetFile, pushHistory = true) {
+        const routeInfo = AppLayout.PAGE_ROUTES[targetFile];
+        if (!routeInfo) {
+            window.location.href = targetFile;
+            return;
+        }
+
+        UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
+        try {
+            // ดึงไฟล์ HTML ปลายทางผ่าน Fetch API
+            const response = await fetch(targetFile, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`ไม่สามารถโหลดหน้า ${targetFile} ได้`);
+            }
+
+            const htmlText = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            const newMain = doc.querySelector('main');
+            const currentMain = document.querySelector('main');
+
+            if (newMain && currentMain) {
+                currentMain.replaceWith(newMain);
+            }
+
+            // ลบ Modal ประจำหน้าเดิมออก และนำ Modal ของหน้าใหม่มาใส่แทน (ยกเว้น Spinner และ Layout หลัก)
+            document.querySelectorAll('.bma-page-modal-dynamic, body > div[id^="modal"]').forEach(el => el.remove());
+            doc.querySelectorAll('body > div[id^="modal"]').forEach(modalEl => {
+                modalEl.classList.add('bma-page-modal-dynamic');
+                document.body.appendChild(modalEl);
+            });
+
+            if (pushHistory) {
+                window.history.pushState({ file: targetFile }, '', targetFile);
+            }
+
+            // โหลดและสร้างอินสแตนซ์ของ Controller ประจำหน้านั้นใหม่
+            const module = await import(routeInfo.controllerPath);
+            const ControllerClass = module[routeInfo.controllerClass];
+            if (ControllerClass) {
+                new ControllerClass();
+            } else {
+                UIHelpers.hideLoading();
+            }
+        } catch (err) {
+            console.error('AJAX Navigation error:', err);
+            UIHelpers.hideLoading();
+            window.location.href = targetFile;
+        }
+    }
+
+    /**
+     * สร้างแถบเมนูด้านซ้ายมือ (เปลี่ยนชื่อ "แดชบอร์ดภาพรวม" เป็น "ภาพรวม")
      */
     static #renderSidebar(currentUser, settings, activePage) {
         const sidebarEl = document.getElementById('bmaSidebarContainer');
@@ -60,9 +212,9 @@ export class AppLayout {
                    <i class="fa-solid fa-landmark"></i>
                </div>`;
 
-        // รายการเมนูหลัก (ซ่อนเมนูตั้งค่าระบบหากไม่ใช่ SuperAdmin ตามข้อกำหนด V2.1)
+        // รายการเมนูหลัก (เปลี่ยนชื่อเมนูแรกเป็น "ภาพรวม" ตามข้อกำหนด)
         const menuItems = [
-            { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'แดชบอร์ดภาพรวม', roles: ['SuperAdmin', 'Admin'] },
+            { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', roles: ['SuperAdmin', 'Admin'] },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-invoice', label: 'รายงานการลงเวลา', roles: ['SuperAdmin', 'Admin'] },
             { id: 'approvals', href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติลงเวลากรณีพิเศษ', roles: ['SuperAdmin', 'Admin'], badgeId: 'sidebarSpecialBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-id-card-clip', label: 'จัดการข้อมูลบุคลากร', roles: ['SuperAdmin', 'Admin'] },
@@ -79,13 +231,10 @@ export class AppLayout {
                 : `ขอบเขต: ${currentUser.scope_division || currentUser.scope_bureau}`);
 
         sidebarEl.innerHTML = `
-            <!-- Backdrop สำหรับ Mobile -->
             <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
 
-            <!-- ตัว Sidebar ด้านซ้ายมือ: Deep Emerald Gradient (.sidebar-dark-bma) -->
             <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 sidebar-dark-bma z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between">
                 <div>
-                    <!-- ส่วนหัวโลโก้และชื่อหน่วยงาน -->
                     <div class="p-5 border-b border-white/15 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             ${logoHtml}
@@ -99,7 +248,6 @@ export class AppLayout {
                         </button>
                     </div>
 
-                    <!-- ข้อมูลสิทธิ์และขอบเขตการมองเห็น (พื้นหลังโปร่งแสงเข้ากับ Sidebar สีเขียวเข้ม) -->
                     <div class="px-5 py-3 border-b border-white/10 bg-black/20">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-medium text-emerald-100/80">ระดับสิทธิ์ผู้ใช้งาน</span>
@@ -112,11 +260,10 @@ export class AppLayout {
                         </p>
                     </div>
 
-                    <!-- รายการเมนูนำทาง -->
                     <nav class="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-260px)]">
                         <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200/60 px-3 mb-2">เมนูบริหารจัดการระบบ</div>
                         ${visibleMenus.map(item => `
-                            <a href="${item.href}" class="bma-nav-item menu-item ${activePage === item.id ? 'active' : ''}">
+                            <a href="${item.href}" data-nav-id="${item.id}" class="bma-nav-item menu-item ${activePage === item.id ? 'active' : ''}">
                                 <i class="fa-solid ${item.icon} w-5 text-center"></i>
                                 <span class="flex-1 truncate">${item.label}</span>${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
                             </a>
@@ -131,7 +278,6 @@ export class AppLayout {
                     </nav>
                 </div>
 
-                <!-- ส่วนท้าย Sidebar แสดงโปรไฟล์ผู้ใช้และปุ่มออกจากระบบโทนเข้มกลมกลืน -->
                 <div class="p-4 border-t border-white/15 bg-black/25">
                     <div class="flex items-center gap-3 mb-3 px-2">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[#00351B] text-sm bg-[#FDD835] shadow">
@@ -151,9 +297,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * สร้างแถบด้านบน (Top Navigation Bar) พร้อมแถบสีเขียว BMA ด้านบนสุด กระดิ่งแจ้งเตือน และปุ่มสลับ Dark Mode
-     */
     static #renderTopbar(currentUser, settings, pageTitle, pageSubtitle) {
         const topbarEl = document.getElementById('bmaTopbarContainer');
         if (!topbarEl) return;
@@ -167,20 +310,18 @@ export class AppLayout {
                         <i class="fa-solid fa-bars-staggered text-lg" style="color: var(--bma-primary);"></i>
                     </button>
                     <div class="min-w-0">
-                        <h1 class="text-lg lg:text-xl font-extrabold truncate bma-text-main">${pageTitle}</h1>
-                        ${pageSubtitle ? `<p class="text-xs lg:text-sm bma-text-sub truncate">${pageSubtitle}</p>` : ''}
+                        <h1 id="topbarPageTitle" class="text-lg lg:text-xl font-extrabold truncate bma-text-main">${pageTitle}</h1>
+                        <p id="topbarPageSubtitle" class="text-xs lg:text-sm bma-text-sub truncate">${pageSubtitle || ''}</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2.5 lg:gap-3">
-                    <!-- กระดิ่งแจ้งเตือน (คำขอลงเวลากรณีพิเศษ + คำขอรีเซ็ตรหัสผ่าน) -->
                     <div class="relative">
                         <button id="btnNotificationBell" type="button" class="relative p-2.5 rounded-xl border bma-border bma-text-main hover:border-emerald-500 transition cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
                             <i class="fa-solid fa-bell text-base" style="color: var(--bma-primary);"></i>
                             <span id="topBellBadgeCount" class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shadow">0</span>
                         </button>
 
-                        <!-- Dropdown รายการแจ้งเตือน -->
                         <div id="notificationDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bma-card bma-modal-surface p-4 shadow-2xl z-50">
                             <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b bma-border">
                                 <span class="font-bold text-sm bma-text-main">รายการรออนุมัติตามขอบเขต</span>
@@ -192,12 +333,10 @@ export class AppLayout {
                         </div>
                     </div>
 
-                    <!-- ปุ่มสลับโหมดสี Light / Eye-Care Dark Mode -->
                     <button id="btnToggleThemeMode" type="button" class="p-2.5 rounded-xl border bma-border bma-text-main hover:border-emerald-500 transition cursor-pointer" title="สลับโหมดถนอมสายตา (Light/Dark Mode)">
                         <i id="themeModeIcon" class="fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-emerald-800'} text-base"></i>
                     </button>
 
-                    <!-- ปุ่มออกจากระบบบน Topbar -->
                     <button id="btnTopbarLogout" type="button" class="hidden sm:inline-flex btn-bma-outline text-sm py-2 px-3 text-rose-600 border-rose-500/30 hover:bg-rose-500/10">
                         <i class="fa-solid fa-power-off"></i>
                         <span class="hidden md:inline">ออกระบบ</span>
@@ -207,15 +346,12 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * สร้างแถบเมนูด้านล่างสำหรับหน้าจอมือถือ (Mobile Bottom Navigation Bar)
-     */
     static #renderMobileBottomNav(currentUser, activePage) {
         const mobileNavEl = document.getElementById('bmaMobileBottomNav');
         if (!mobileNavEl) return;
 
         const items = [
-            { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'แดชบอร์ด' },
+            { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม' },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-lines', label: 'รายงาน' },
             { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติเวลา' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-address-book', label: 'บุคลากร' },
@@ -231,7 +367,7 @@ export class AppLayout {
                 ${items.map(item => {
                     const isActive = activePage === item.id;
                     return `
-                        <a href="${item.href}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
+                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
                             <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
                             <span>${item.label}</span>
                         </a>
@@ -241,15 +377,10 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * สร้างชุดไอคอนทางลัดสไตล์โทรศัพท์ iPhone สำหรับแสดงเฉพาะบนหน้าจอมือถือ (Responsive Mobile)
-     * @param {Object} currentUser
-     * @returns {string} HTML string
-     */
     static getMobileShortcutGridHtml(currentUser) {
         const shortcuts = [
             { href: 'checkin.html', icon: 'fa-camera', label: 'ลงเวลา', bg: 'linear-gradient(135deg, #007B3E, #4EBA6F)' },
-            { href: 'dashboard.html', icon: 'fa-chart-pie', label: 'แดชบอร์ด', bg: 'linear-gradient(135deg, #0284C7, #38BDF8)' },
+            { href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', bg: 'linear-gradient(135deg, #0284C7, #38BDF8)' },
             { href: 'reports.html', icon: 'fa-file-pdf', label: 'รายงาน PDF', bg: 'linear-gradient(135deg, #D97706, #F59E0B)' },
             { href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติพิเศษ', bg: 'linear-gradient(135deg, #4F46E5, #8B5CF6)' },
             { href: 'personnel.html', icon: 'fa-users', label: 'บุคลากร', bg: 'linear-gradient(135deg, #005B2E, #059669)' },
@@ -281,9 +412,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * สร้าง Footer ดึงข้อมูลชื่อหน่วยงานและชื่อสังกัด [สำนักงาน/กอง] จากฐานข้อมูล
-     */
     static #renderFooter(settings) {
         const footerEl = document.getElementById('bmaFooterContainer');
         if (!footerEl) return;
@@ -301,10 +429,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * โหลดและอัปเดตตัวเลขกระดิ่งแจ้งเตือน (คำขอลงเวลากรณีพิเศษ + คำขอรีเซ็ตรหัสผ่าน)
-     * @param {Object} currentUser
-     */
     static async refreshNotificationBell(currentUser) {
         if (!currentUser) return;
 
@@ -378,9 +502,6 @@ export class AppLayout {
         }
     }
 
-    /**
-     * ผูกเหตุการณ์ปุ่มเปิด/ปิด Sidebar, ปุ่มสลับโหมดสี, กระดิ่งแจ้งเตือน และปุ่มออกจากระบบ
-     */
     static #bindEvents() {
         const drawer = document.getElementById('bmaSidebarDrawer');
         const backdrop = document.getElementById('bmaSidebarBackdrop');
@@ -402,7 +523,6 @@ export class AppLayout {
         btnClose?.addEventListener('click', () => toggleSidebar(false));
         backdrop?.addEventListener('click', () => toggleSidebar(false));
 
-        // สลับโหมดสี Light / Dark
         const btnTheme = document.getElementById('btnToggleThemeMode');
         const themeIcon = document.getElementById('themeModeIcon');
         btnTheme?.addEventListener('click', () => {
@@ -414,7 +534,6 @@ export class AppLayout {
             }
         });
 
-        // เปิด/ปิด Dropdown กระดิ่งแจ้งเตือน
         const btnBell = document.getElementById('btnNotificationBell');
         const bellMenu = document.getElementById('notificationDropdownMenu');
         btnBell?.addEventListener('click', (e) => {
@@ -425,7 +544,6 @@ export class AppLayout {
             bellMenu?.classList.add('hidden');
         });
 
-        // ออกจากระบบด้วย SweetAlert2 Confirm
         const handleLogout = async () => {
             const confirmed = await UIHelpers.confirm(
                 'ยืนยันการออกจากระบบ',

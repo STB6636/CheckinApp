@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/DashboardController.js
- * @description คลาสควบคุมหน้าแดชบอร์ดผู้ดูแลระบบ (Jewel-Tone Stat Cards .deco-1/.deco-2, Progress Fill, Chart.js, Mobile Shortcuts)
+ * @description คลาสควบคุมหน้า "ภาพรวม" (แสดง Jewel-Tone Stat Cards, Progress Fill, ตารางสถานะรายบุคคล และ Mobile Shortcuts)
  */
 
 import { UIHelpers } from '../core/UIHelpers.js';
@@ -12,8 +12,6 @@ export class DashboardController {
         this.currentUser = null;
         this.settings = null;
         this.dailyRecords = [];
-        this.doughnutChart = null;
-        this.barChart = null;
         this.customColors = {
             normal: '#007B3E',
             late: '#F59E0B',
@@ -32,8 +30,8 @@ export class DashboardController {
     async init() {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'dashboard',
-            pageTitle: 'แดชบอร์ดภาพรวมการลงเวลาปฏิบัติราชการ',
-            pageSubtitle: 'สรุปสถิติการปฏิบัติราชการแบบเรียลไทม์ตามขอบเขตการมองเห็น (BMA Green Emerald Theme)'
+            pageTitle: 'ภาพรวม',
+            pageSubtitle: 'สรุปสถิติการลงเวลาปฏิบัติราชการประจำวันตามขอบเขตการมองเห็น'
         });
 
         if (!layout.currentUser) return;
@@ -46,12 +44,19 @@ export class DashboardController {
             mobileShortcutEl.innerHTML = AppLayout.getMobileShortcutGridHtml(this.currentUser);
         }
 
-        // ตั้งค่าเริ่มต้นของตัวเลือกวันที่และ Color Picker ตามโทนสี portal.css
-        document.getElementById('dashboardDateFilter').value = UIHelpers.getTodayISO();
-        document.getElementById('colorPickerNormal').value = this.customColors.normal;
-        document.getElementById('colorPickerLate').value = this.customColors.late;
-        document.getElementById('colorPickerSpecial').value = this.customColors.special;
-        document.getElementById('colorPickerAbsent').value = this.customColors.absent;
+        // ตั้งค่าเริ่มต้นของตัวเลือกวันที่และ Color Picker
+        const dateFilterEl = document.getElementById('dashboardDateFilter');
+        if (dateFilterEl) dateFilterEl.value = UIHelpers.getTodayISO();
+
+        const cpNormal = document.getElementById('colorPickerNormal');
+        const cpLate = document.getElementById('colorPickerLate');
+        const cpSpecial = document.getElementById('colorPickerSpecial');
+        const cpAbsent = document.getElementById('colorPickerAbsent');
+
+        if (cpNormal) cpNormal.value = this.customColors.normal;
+        if (cpLate) cpLate.value = this.customColors.late;
+        if (cpSpecial) cpSpecial.value = this.customColors.special;
+        if (cpAbsent) cpAbsent.value = this.customColors.absent;
 
         this.#bindEvents();
         await this.loadDashboardData();
@@ -62,10 +67,10 @@ export class DashboardController {
         document.getElementById('btnRefreshDashboard')?.addEventListener('click', () => this.loadDashboardData());
 
         const handleColorChange = () => {
-            this.customColors.normal = document.getElementById('colorPickerNormal').value;
-            this.customColors.late = document.getElementById('colorPickerLate').value;
-            this.customColors.special = document.getElementById('colorPickerSpecial').value;
-            this.customColors.absent = document.getElementById('colorPickerAbsent').value;
+            this.customColors.normal = document.getElementById('colorPickerNormal')?.value || '#007B3E';
+            this.customColors.late = document.getElementById('colorPickerLate')?.value || '#F59E0B';
+            this.customColors.special = document.getElementById('colorPickerSpecial')?.value || '#6366F1';
+            this.customColors.absent = document.getElementById('colorPickerAbsent')?.value || '#E11D48';
 
             this.customGradients.normal = `linear-gradient(135deg, ${this.customColors.normal} 0%, #4EBA6F 100%)`;
             this.customGradients.late = `linear-gradient(135deg, ${this.customColors.late} 0%, #FB923C 100%)`;
@@ -79,10 +84,6 @@ export class DashboardController {
         document.getElementById('colorPickerLate')?.addEventListener('input', handleColorChange);
         document.getElementById('colorPickerSpecial')?.addEventListener('input', handleColorChange);
         document.getElementById('colorPickerAbsent')?.addEventListener('input', handleColorChange);
-
-        window.addEventListener('bma:theme-changed', () => {
-            this.#renderCharts(AttendanceModel.calculateDashboardMetrics(this.dailyRecords));
-        });
     }
 
     async loadDashboardData() {
@@ -92,7 +93,7 @@ export class DashboardController {
             tableBody.innerHTML = UIHelpers.renderTableSkeleton(5, 7);
         }
 
-        UIHelpers.showLoading('กำลังประมวลผลข้อมูลแดชบอร์ด...');
+        UIHelpers.showLoading('กำลังโหลดข้อมูลหน้าภาพรวม...');
         try {
             this.dailyRecords = await AttendanceModel.getDailyReportRecords(selectedDate, this.currentUser);
             this.#renderAllVisuals();
@@ -110,18 +111,16 @@ export class DashboardController {
         });
 
         this.#renderJewelToneStatCards(metrics);
-        this.#renderCharts(metrics);
         this.#renderTable();
     }
 
     /**
-     * สร้าง Jewel-Tone Stat Cards พร้อมวงกลมเรืองแสง .deco-1, .deco-2 และหลอด Progress Fill แบบ Glassmorphism
+     * สร้าง Jewel-Tone Stat Cards พร้อมวงกลมเรืองแสง .deco-1, .deco-2 และหลอด Progress Fill
      */
     #renderJewelToneStatCards(metrics) {
         const grid = document.getElementById('dashboardKpiCardsGrid');
         if (!grid) return;
 
-        // 1. การ์ดแสดงจำนวนบุคลากรทั้งหมด (Deep Emerald Gradient)
         let html = `
             <div class="stat-card stat-card-total">
                 <div class="deco-1"></div>
@@ -149,7 +148,6 @@ export class DashboardController {
             </div>
         `;
 
-        // 2. การ์ดสถิติ 4 ประเภทหลักแบบ Jewel-Tone Stat Cards
         for (const cat of metrics.categories) {
             const bgGradient = this.customGradients[cat.key] || `linear-gradient(135deg, ${cat.color}, ${cat.color})`;
             html += `
@@ -183,102 +181,6 @@ export class DashboardController {
         grid.innerHTML = html;
     }
 
-    /**
-     * วาดกราฟ Chart.js ทั้ง Doughnut Chart และ Bar Chart
-     */
-    #renderCharts(metrics) {
-        if (!window.Chart) return;
-        const isDark = document.documentElement.classList.contains('dark');
-        const textColor = isDark ? '#F1F5F9' : '#0F172A';
-        const gridColor = isDark ? '#2B3645' : '#d8e6dd';
-
-        const doughnutCtx = document.getElementById('attendanceDoughnutChart')?.getContext('2d');
-        if (doughnutCtx) {
-            if (this.doughnutChart) this.doughnutChart.destroy();
-            this.doughnutChart = new window.Chart(doughnutCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: metrics.categories.map(c => c.label),
-                    datasets: [{
-                        data: metrics.categories.map(c => c.count),
-                        backgroundColor: metrics.categories.map(c => c.color),
-                        borderWidth: 2,
-                        borderColor: isDark ? '#161B22' : '#FFFFFF'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: textColor, font: { family: 'Sarabun', size: 12 } }
-                        }
-                    }
-                }
-            });
-        }
-
-        const barCtx = document.getElementById('divisionBarChart')?.getContext('2d');
-        if (barCtx) {
-            if (this.barChart) this.barChart.destroy();
-            const divisionNames = Object.keys(metrics.divisionBreakdown);
-            this.barChart = new window.Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: divisionNames,
-                    datasets: [
-                        {
-                            label: 'ปกติ',
-                            data: divisionNames.map(d => metrics.divisionBreakdown[d].normal),
-                            backgroundColor: this.customColors.normal,
-                            borderRadius: 6
-                        },
-                        {
-                            label: 'มาสาย',
-                            data: divisionNames.map(d => metrics.divisionBreakdown[d].late),
-                            backgroundColor: this.customColors.late,
-                            borderRadius: 6
-                        },
-                        {
-                            label: 'กรณีพิเศษ',
-                            data: divisionNames.map(d => metrics.divisionBreakdown[d].special),
-                            backgroundColor: this.customColors.special,
-                            borderRadius: 6
-                        },
-                        {
-                            label: 'ยังไม่ลงเวลา',
-                            data: divisionNames.map(d => metrics.divisionBreakdown[d].absent),
-                            backgroundColor: this.customColors.absent,
-                            borderRadius: 6
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            ticks: { color: textColor, font: { family: 'Sarabun' } },
-                            grid: { color: gridColor }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            ticks: { stepSize: 1, color: textColor, font: { family: 'Sarabun' } },
-                            grid: { color: gridColor }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: textColor, font: { family: 'Sarabun', size: 12 } }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     #renderTable() {
         const tbody = document.getElementById('dashboardRecentTableBody');
         if (!tbody) return;
@@ -309,6 +211,12 @@ export class DashboardController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new DashboardController();
-});
+// รันอัตโนมัติเฉพาะเมื่อเปิดไฟล์หน้านี้โดยตรง (หากสลับผ่าน AJAX SPA ระบบ AppLayout จะเป็นผู้เรียก new DashboardController() เอง)
+if (!window.__BMA_SPA_ROUTER_ACTIVE__) {
+    window.__BMA_SPA_ROUTER_ACTIVE__ = true;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => new DashboardController());
+    } else {
+        new DashboardController();
+    }
+}

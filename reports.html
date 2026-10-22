@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานการลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
+    <!-- Tailwind CSS CDN พร้อมบังคับ darkMode: 'class' -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
@@ -21,20 +26,21 @@
         <!-- Topbar -->
         <div id="bmaTopbarContainer"></div>
 
+        <!-- เนื้อหาหลักของหน้ารายงานการลงเวลา (ลบการ์ดสถิติและแผนภูมิออกทั้งหมดตามข้อกำหนด) -->
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
             <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีเหมือนโทรศัพท์ iPhone -->
             <div id="reportMobileShortcutContainer"></div>
 
-            <!-- ส่วนควบคุมตัวกรองวันที่, มุมมอง Group By, Color Picker และปุ่มส่งออก PDF / Excel -->
-            <div class="bma-card p-5 space-y-4">
+            <!-- ส่วนควบคุมตัวกรองวันที่, มุมมอง Group By 2 มุมมอง, Color Picker และปุ่มส่งออก PDF / Excel -->
+            <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
                         <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
                             <i class="fa-solid fa-file-invoice" style="color: var(--bma-primary);"></i>
-                            <span>รายงานสรุปการลงเวลาปฏิบัติราชการประจำวัน</span>
+                            <span>ตารางรายงานการลงเวลาปฏิบัติราชการประจำวัน</span>
                         </h2>
-                        <p class="text-xs bma-text-sub mt-0.5">แสดงสถิติแดชบอร์ด ตารางจัดกลุ่ม 2 มุมมอง พร้อมพิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออก Excel UTF-8</p>
+                        <p class="text-xs bma-text-sub mt-0.5">เลือกวันที่และมุมมองจัดกลุ่ม (Group By 2 มุมมอง) พร้อมพิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออก Excel UTF-8</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -77,41 +83,22 @@
 
                     <div class="md:col-span-4 flex items-center justify-end gap-3 pt-4 text-xs flex-wrap">
                         <span class="font-bold bma-text-sub">ตั้งค่าสีรายงาน:</span>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
                             <input type="color" id="repColorHeader" value="#007B3E" class="w-6 h-6 rounded border-0 cursor-pointer">
                             <span>หัวตาราง</span>
                         </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
                             <input type="color" id="repColorNormal" value="#007B3E" class="w-6 h-6 rounded border-0 cursor-pointer">
                             <span>ปกติ</span>
                         </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
                             <input type="color" id="repColorLate" value="#F59E0B" class="w-6 h-6 rounded border-0 cursor-pointer">
                             <span>สาย</span>
                         </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold">
+                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
                             <input type="color" id="repColorAbsent" value="#E11D48" class="w-6 h-6 rounded border-0 cursor-pointer">
                             <span>ขาด/ไม่ลง</span>
                         </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ส่วนแดชบอร์ดของหน้ารายงาน: Jewel-Tone Stat Cards + Progress Fill -->
-            <div id="reportKpiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"></div>
-
-            <!-- กราฟ Chart.js ในหน้ารายงาน (ภายใน <div> <canvas> </div>) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-5 bma-card p-5" style="border-top: 3px solid var(--g1);">
-                    <h3 class="text-sm font-extrabold bma-text-main mb-3">สัดส่วนการลงเวลาประจำวันที่เลือก</h3>
-                    <div class="relative w-full h-64 flex items-center justify-center">
-                        <canvas id="reportPieChart"></canvas>
-                    </div>
-                </div>
-                <div class="lg:col-span-7 bma-card p-5" style="border-top: 3px solid var(--g1);">
-                    <h3 class="text-sm font-extrabold bma-text-main mb-3">เปรียบเทียบการลงเวลาแยกตามส่วน/ฝ่าย</h3>
-                    <div class="relative w-full h-64">
-                        <canvas id="reportDivisionChart"></canvas>
                     </div>
                 </div>
             </div>

@@ -1,13 +1,14 @@
 /* ============================================================================
- * BMA Enterprise Design System V2.1 (Integrated with STB APP n2 - portal.css)
+ * BMA Enterprise Design System V2.2 (Fixed Light/Dark Mode & AJAX Progress Loader)
  * Theme: BMA Green Emerald & Eye-Care Dark System
  * Font: Sarabun (Google Fonts)
- * Architecture: 60-30-10 Rule (Soft Sage Surface / Deep Emerald Sidebar / Jewel-Tone Cards)
  * ============================================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
+    color-scheme: light;
+
     /* --- Portal.css Core Emerald Tokens --- */
     --g0: #00351B;
     --g1: #007B3E;
@@ -31,27 +32,28 @@
     --bma-primary-soft: rgba(0, 123, 62, 0.12);
 
     /* 1.2 Vibrant Secondary & Jewel-Tone Colors */
-    --bma-sec-1: #059669;  /* Green Space */
-    --bma-sec-2: #84CC16;  /* Lime Eco */
-    --bma-sec-3: #F59E0B;  /* City Amber */
-    --bma-sec-4: #FB923C;  /* Warm Sunset */
-    --bma-sec-5: #F43F5E;  /* Giant Swing Rose */
-    --bma-sec-6: #6366F1;  /* BMA Indigo (งานเทศกิจ) */
-    --bma-sec-7: #E11D48;  /* Crimson Red */
-    --bma-sec-8: #EA580C;  /* Public Works Orange */
-    --bma-sec-9: #EAB308;  /* Temple Gold */
-    --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue */
+    --bma-sec-1: #059669;
+    --bma-sec-2: #84CC16;
+    --bma-sec-3: #F59E0B;
+    --bma-sec-4: #FB923C;
+    --bma-sec-5: #F43F5E;
+    --bma-sec-6: #6366F1;
+    --bma-sec-7: #E11D48;
+    --bma-sec-8: #EA580C;
+    --bma-sec-9: #EAB308;
+    --bma-sec-10: #0284C7;
 
-    /* 1.3 Surface & Typography Tokens (60% Dominant - Soft Sage Mint Tint ลดแสงสะท้อน) */
+    /* 1.3 Surface & Typography Tokens (Light Mode - Soft Sage Mint Tint) */
     --bma-bg-main: #f5f8f6;
     --bma-surface-1: #FFFFFF;
     --bma-surface-2: #eef5f0;
+    --bma-surface-info: #eef7f1;
     --bma-border: #d8e6dd;
     --bma-text-primary: #0F172A;
     --bma-text-secondary: #334E40;
     --bma-text-muted: #64748B;
 
-    /* Table Header Pastel Tokens ตาม portal.css */
+    /* Table Header Pastel Tokens */
     --bma-thead-bg: #eef7f1;
     --bma-thead-text: #2c4a38;
     --bma-thead-border: #cde3d5;
@@ -72,24 +74,26 @@
 }
 
 /* ============================================================================
- * Dark Mode (Eye-Care Dark System ตาม portal.css: #0D1117 / #161B22)
+ * Dark Mode (Eye-Care Dark System: ทำงานเฉพาะเมื่อมีคลาส html.dark เท่านั้น)
  * ============================================================================ */
 html.dark {
+    color-scheme: dark;
+
     --bma-primary: #34D399;
     --bma-primary-hover: #10B981;
     --bma-primary-light: #A7F3D0;
     --bma-primary-soft: rgba(52, 211, 153, 0.16);
 
-    /* Sidebar ในโหมดมืดยังคงความขรึมของเขียวมรกตลึก */
     --sb1: #041F11;
     --sb2: #07351D;
     --sb3: #0B4D2B;
 
     /* Surface & Typography Tokens (Eye-Care Dark Mode) */
-    --bma-bg-main: #0D1117;       /* พื้นหลังหลักโหมดมืดตาม portal.css */
-    --bma-surface-1: #161B22;     /* พื้นผิวการ์ดระดับที่ 1 ตาม portal.css */
-    --bma-surface-2: #1F2733;     /* พื้นผิวยกระดับ Modal / Dropdown */
-    --bma-border: #2B3645;        /* เส้นขอบในโหมดมืด */
+    --bma-bg-main: #0D1117;
+    --bma-surface-1: #161B22;
+    --bma-surface-2: #1F2733;
+    --bma-surface-info: rgba(6, 78, 59, 0.35);
+    --bma-border: #2B3645;
     --bma-text-primary: #F1F5F9;
     --bma-text-secondary: #94A3B8;
     --bma-text-muted: #64748B;
@@ -114,6 +118,37 @@ html.dark {
     --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
 }
 
+/* ป้องกันไม่ให้คลาส dark:* ของ Tailwind ทำงานผิดพลาดเมื่ออยู่ในโหมดสว่าง (html:not(.dark)) */
+html:not(.dark) .bma-login-form-panel,
+html:not(.dark) .bma-card,
+html:not(.dark) .bma-surface-panel {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+}
+
+html.dark .bma-login-form-panel,
+html.dark .bma-surface-panel {
+    background-color: #161B22 !important;
+    color: #F1F5F9 !important;
+}
+
+.bma-info-box {
+    background-color: var(--bma-surface-info);
+    border: 1px solid var(--bma-border);
+    border-radius: 0.75rem;
+}
+
+.bma-header-bar {
+    background-color: var(--bma-surface-1);
+    border-bottom: 1px solid var(--bma-border);
+    border-top: 4px solid var(--g1);
+}
+
+.bma-footer-bar {
+    background-color: var(--bma-surface-1);
+    border-top: 1px solid var(--bma-border);
+}
+
 /* ============================================================================
  * Base Typography & Body
  * ============================================================================ */
@@ -123,7 +158,7 @@ html.dark {
 }
 
 body {
-    background-color: var(--bma-bg-main);
+    background-color: var(--bma-bg-main) !important;
     color: var(--bma-text-primary);
     margin: 0;
     padding: 0;
@@ -154,6 +189,7 @@ body {
     transition: all 0.2s ease;
     margin-bottom: 0.3rem;
     border-left: 4px solid transparent;
+    cursor: pointer;
 }
 
 .sidebar-dark-bma .bma-nav-item:hover,
@@ -163,7 +199,6 @@ body {
     transform: translateX(2px);
 }
 
-/* แถบเมนูที่กำลังเปิดอยู่ (Active Page): พื้นหลังโปร่งแสง + ขอบซ้ายสีเหลืองทองเทศกิจ (#FDD835) */
 .sidebar-dark-bma .bma-nav-item.active,
 .sidebar-dark-bma .menu-item.active {
     background: linear-gradient(90deg, rgba(253, 216, 53, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%);
@@ -198,7 +233,6 @@ body {
     box-shadow: 0 16px 32px -6px rgba(0, 53, 27, 0.28);
 }
 
-/* เฉดสีอัญมณีมาตรฐาน (Jewel-Tone Gradients) */
 .stat-card-total {
     background: linear-gradient(135deg, #00351B 0%, #005B2E 50%, #007B3E 100%);
 }
@@ -219,7 +253,6 @@ body {
     background: linear-gradient(135deg, #BE123C 0%, #E11D48 55%, #F43F5E 100%);
 }
 
-/* วงกลมซ้อนเรืองแสง Glassmorphism (.deco, .deco-1, .deco-2) */
 .stat-card .deco,
 .stat-card .deco-1,
 .stat-card .deco-2 {
@@ -292,7 +325,6 @@ body {
     color: #FFFFFF;
 }
 
-/* ลวดลายตาราง Mesh Grid สำหรับหน้า Login */
 .bma-mesh-grid {
     background-image:
         linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
@@ -300,7 +332,6 @@ body {
     background-size: 28px 28px;
 }
 
-/* กรอบสีเขียวเข้ม BMA สู้แสงกลางแจ้ง สำหรับนาฬิกาดิจิทัลและกล้องถ่ายภาพในหน้า checkin.html */
 .outdoor-emerald-frame {
     background: linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 100%);
     border: 2px solid var(--g1);
@@ -354,7 +385,7 @@ html.dark .bma-modal-surface {
 }
 
 /* ============================================================================
- * Primary & Secondary Buttons (ไล่เฉดสีเขียว BMA ตาม portal.css)
+ * Primary & Secondary Buttons
  * ============================================================================ */
 .btn-primary,
 .btn-bma-primary {
@@ -398,13 +429,13 @@ html.dark .bma-modal-surface {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1px solid rgba(0, 123, 62, 0.2);
+    border: 1px solid rgba(0, 123, 62, 0.25);
     cursor: pointer;
 }
 
 .btn-bma-soft:hover:not(:disabled) {
     border-color: var(--bma-primary);
-    background-color: rgba(0, 123, 62, 0.18);
+    background-color: rgba(0, 123, 62, 0.2);
 }
 
 .btn-bma-outline {
@@ -427,6 +458,33 @@ html.dark .bma-modal-surface {
     border-color: var(--bma-primary);
 }
 
+/* ปุ่มลูกศรเรียงลำดับ ขึ้น/ลง ในหน้าตั้งค่าระบบ */
+.btn-sort-arrow {
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--bma-border);
+    background-color: var(--bma-surface-1);
+    color: var(--bma-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-sort-arrow:hover:not(:disabled) {
+    background-color: var(--bma-primary);
+    color: #FFFFFF;
+    border-color: var(--bma-primary);
+}
+
+.btn-sort-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 /* ============================================================================
  * Form Controls
  * ============================================================================ */
@@ -434,8 +492,8 @@ html.dark .bma-modal-surface {
 .bma-select,
 .bma-textarea {
     width: 100%;
-    background-color: var(--bma-surface-1);
-    color: var(--bma-text-primary);
+    background-color: var(--bma-surface-1) !important;
+    color: var(--bma-text-primary) !important;
     border: 1px solid var(--bma-border);
     border-radius: 0.75rem;
     padding: 0.625rem 0.875rem;
@@ -447,7 +505,8 @@ html.dark .bma-modal-surface {
 html.dark .bma-input,
 html.dark .bma-select,
 html.dark .bma-textarea {
-    background-color: #0D1117;
+    background-color: #0D1117 !important;
+    color: #F1F5F9 !important;
 }
 
 .bma-input:focus,
@@ -536,8 +595,56 @@ html.dark .bma-textarea {
 }
 
 /* ============================================================================
- * iPhone / iOS Style Shortcut Icons & Loading Animations
+ * AJAX Content Loader (Spin + Progress Bar สำหรับโหลดเฉพาะหน้าเมนู)
  * ============================================================================ */
+#bmaTopProgressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FDD835 0%, #4EBA6F 50%, #007B3E 100%);
+    z-index: 99999;
+    transition: width 0.25s ease, opacity 0.25s ease;
+    box-shadow: 0 0 10px rgba(78, 186, 111, 0.8);
+}
+
+.bma-ajax-progress-track {
+    width: 100%;
+    height: 0.65rem;
+    background-color: var(--bma-surface-2);
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid var(--bma-border);
+}
+
+.bma-ajax-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hd1) 0%, var(--hd3) 60%, var(--gold-bma) 100%);
+    border-radius: 9999px;
+    transition: width 0.25s ease;
+}
+
+/* Global Loading Overlay (Spin + Progress Bar) */
+#bmaGlobalSpinner {
+    backdrop-filter: blur(4px);
+    background-color: rgba(4, 31, 17, 0.55);
+}
+
+.bma-spin-ring {
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 4px solid var(--bma-primary-soft);
+    border-top-color: var(--bma-primary);
+    border-right-color: var(--gold-bma);
+    border-radius: 50%;
+    animation: bmaSpin 0.75s linear infinite;
+}
+
+@keyframes bmaSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* iPhone / iOS Style Shortcut Icons & Skeleton */
 .ios-shortcut-icon {
     width: 3.5rem;
     height: 3.5rem;
@@ -570,40 +677,4 @@ html.dark .bma-textarea {
 @keyframes bmaShimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
-}
-
-#bmaGlobalSpinner {
-    backdrop-filter: blur(4px);
-    background-color: rgba(4, 31, 17, 0.6);
-}
-
-.bma-spin-ring {
-    width: 3rem;
-    height: 3rem;
-    border: 4px solid var(--bma-primary-soft);
-    border-top-color: var(--bma-primary);
-    border-radius: 50%;
-    animation: bmaSpin 0.8s linear infinite;
-}
-
-@keyframes bmaSpin {
-    to { transform: rotate(360deg); }
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bma-bg-main);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--bma-border);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--bma-primary);
 }

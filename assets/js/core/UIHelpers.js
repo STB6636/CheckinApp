@@ -1,15 +1,25 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, SweetAlert2, Loading Spinner, Skeleton, ตรวจเลขบัตร 13 หลัก, Excel และ PDF
+ * @description คลาสจัดการ UI, SweetAlert2, Loading Spin + Progress Bar, Skeleton, ตรวจเลขบัตร 13 หลัก, Excel และ PDF
  */
 
 import { Config } from './Config.js';
 
 export class UIHelpers {
+    static #progressTimer = null;
+    static #currentProgress = 0;
+
     /**
-     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode) จาก LocalStorage
+     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode) จาก LocalStorage และล็อก Tailwind darkMode: 'class'
      */
     static initTheme() {
+        if (window.tailwind) {
+            window.tailwind.config = {
+                ...(window.tailwind.config || {}),
+                darkMode: 'class'
+            };
+        }
+
         const savedTheme = localStorage.getItem(Config.STORAGE_KEYS.THEME_MODE) || 'light';
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -32,36 +42,91 @@ export class UIHelpers {
     }
 
     /**
-     * แสดง Loading Spinner แบบเต็มหน้าจอในทุกกระบวนการทำงาน
+     * แสดง Loading Spin + Progress Bar (ทั้งแถบด้านบนสุดและกล่องตรงกลาง)
      * @param {string} message ข้อความขณะกำลังโหลด
      */
-    static showLoading(message = 'กำลังประมวลผลข้อมูล...') {
+    static showLoading(message = 'กำลังโหลดข้อมูล...') {
+        // 1. แถบ Progress Bar บนสุดของหน้าจอ
+        let topBar = document.getElementById('bmaTopProgressBar');
+        if (!topBar) {
+            topBar = document.createElement('div');
+            topBar.id = 'bmaTopProgressBar';
+            document.body.appendChild(topBar);
+        }
+
+        // 2. กล่อง Spin + Progress Bar
         let spinner = document.getElementById('bmaGlobalSpinner');
         if (!spinner) {
             spinner = document.createElement('div');
             spinner.id = 'bmaGlobalSpinner';
             spinner.className = 'fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-200';
             spinner.innerHTML = `
-                <div class="bma-card px-8 py-6 flex flex-col items-center gap-4 max-w-sm text-center shadow-2xl">
+                <div class="bma-card px-8 py-6 flex flex-col items-center gap-3.5 w-80 sm:w-96 text-center shadow-2xl">
                     <div class="bma-spin-ring"></div>
-                    <p id="bmaGlobalSpinnerText" class="text-base font-semibold bma-text-main"></p>
+                    <p id="bmaGlobalSpinnerText" class="text-sm font-bold bma-text-main"></p>
+                    <div class="w-full space-y-1">
+                        <div class="bma-ajax-progress-track">
+                            <div id="bmaGlobalProgressFill" class="bma-ajax-progress-fill" style="width: 15%;"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] font-bold bma-text-sub">
+                            <span>กำลังประมวลผล</span>
+                            <span id="bmaGlobalProgressPercent">15%</span>
+                        </div>
+                    </div>
                 </div>
             `;
             document.body.appendChild(spinner);
         }
+
         const textEl = document.getElementById('bmaGlobalSpinnerText');
         if (textEl) textEl.textContent = message;
+
         spinner.classList.remove('hidden');
+        topBar.style.opacity = '1';
+
+        // จำลองการวิ่งของ Progress Bar จาก 15% -> 90% ระหว่างรอโหลดเสร็จ
+        if (UIHelpers.#progressTimer) clearInterval(UIHelpers.#progressTimer);
+        UIHelpers.#currentProgress = 18;
+        UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
+
+        UIHelpers.#progressTimer = setInterval(() => {
+            if (UIHelpers.#currentProgress < 90) {
+                const step = UIHelpers.#currentProgress < 50 ? 12 : 5;
+                UIHelpers.#currentProgress = Math.min(90, UIHelpers.#currentProgress + step);
+                UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
+            }
+        }, 120);
+    }
+
+    static #updateProgressDOM(percent) {
+        const fillEl = document.getElementById('bmaGlobalProgressFill');
+        const pctEl = document.getElementById('bmaGlobalProgressPercent');
+        const topBar = document.getElementById('bmaTopProgressBar');
+        if (fillEl) fillEl.style.width = `${percent}%`;
+        if (pctEl) pctEl.textContent = `${percent}%`;
+        if (topBar) topBar.style.width = `${percent}%`;
     }
 
     /**
-     * ซ่อน Loading Spinner
+     * ซ่อน Loading Spin + Progress Bar เมื่อโหลดหน้าเสร็จสมบูรณ์ (ดันไปที่ 100% ก่อนซ่อน)
      */
     static hideLoading() {
-        const spinner = document.getElementById('bmaGlobalSpinner');
-        if (spinner) {
-            spinner.classList.add('hidden');
+        if (UIHelpers.#progressTimer) {
+            clearInterval(UIHelpers.#progressTimer);
+            UIHelpers.#progressTimer = null;
         }
+
+        UIHelpers.#updateProgressDOM(100);
+
+        setTimeout(() => {
+            const spinner = document.getElementById('bmaGlobalSpinner');
+            const topBar = document.getElementById('bmaTopProgressBar');
+            if (spinner) spinner.classList.add('hidden');
+            if (topBar) {
+                topBar.style.opacity = '0';
+                setTimeout(() => { topBar.style.width = '0%'; }, 200);
+            }
+        }, 140);
     }
 
     /**
@@ -83,9 +148,6 @@ export class UIHelpers {
 
     /**
      * แสดงแจ้งเตือนด้วย SweetAlert2
-     * @param {string} title หัวข้อ
-     * @param {string} text รายละเอียด
-     * @param {'success'|'error'|'warning'|'info'} icon ประเภทไอคอน
      */
     static async alert(title, text = '', icon = 'success') {
         const isDark = document.documentElement.classList.contains('dark');
@@ -95,8 +157,8 @@ export class UIHelpers {
                 text,
                 icon,
                 confirmButtonText: 'ตกลง',
-                confirmButtonColor: isDark ? '#34D399' : '#00744B',
-                background: isDark ? '#24332F' : '#FFFFFF',
+                confirmButtonColor: isDark ? '#34D399' : '#007B3E',
+                background: isDark ? '#1F2733' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
         } else {
@@ -105,12 +167,7 @@ export class UIHelpers {
     }
 
     /**
-     * แสดงกล่องยืนยันการทำงานด้วย SweetAlert2 (สำหรับการลบ หรือออกจากระบบ)
-     * @param {string} title หัวข้อการยืนยัน
-     * @param {string} text รายละเอียดเพิ่มเติม
-     * @param {string} confirmText ข้อความปุ่มยืนยัน
-     * @param {'warning'|'question'|'error'} icon ประเภทไอคอน
-     * @returns {Promise<boolean>}
+     * แสดงกล่องยืนยันการทำงานด้วย SweetAlert2
      */
     static async confirm(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') {
         const isDark = document.documentElement.classList.contains('dark');
@@ -120,11 +177,11 @@ export class UIHelpers {
                 text,
                 icon,
                 showCancelButton: true,
-                confirmButtonColor: icon === 'error' || icon === 'warning' ? '#E11D48' : (isDark ? '#34D399' : '#00744B'),
+                confirmButtonColor: icon === 'error' || icon === 'warning' ? '#E11D48' : (isDark ? '#34D399' : '#007B3E'),
                 cancelButtonColor: '#64748B',
                 confirmButtonText: confirmText,
                 cancelButtonText: 'ยกเลิก',
-                background: isDark ? '#24332F' : '#FFFFFF',
+                background: isDark ? '#1F2733' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
             return Boolean(result.isConfirmed);
@@ -134,14 +191,10 @@ export class UIHelpers {
 
     /**
      * ตรวจสอบเลขบัตรประจำตัวประชาชนไทย 13 หลัก
-     * (รองรับทั้งรูปแบบเลข 13 หลักทั่วไป และอัลกอริทึม Check Digit มาตรฐานกรมการปกครอง)
-     * @param {string} id เลขบัตรประชาชน 13 หลัก
-     * @param {boolean} strictCheckDigit บังคับตรวจ Check Digit หรือตรวจเฉพาะตัวเลข 13 หลัก
-     * @returns {{valid: boolean, message: string}}
      */
     static validateThaiNationalId(id, strictCheckDigit = false) {
         if (!id || id.trim() === '') {
-            return { valid: true, message: '' }; // กรณีไม่บังคับกรอกในหน้าบุคลากรทั่วไป
+            return { valid: true, message: '' };
         }
         const cleanId = id.replace(/[\s-]/g, '');
         if (!/^\d{13}$/.test(cleanId)) {
@@ -162,9 +215,6 @@ export class UIHelpers {
 
     /**
      * ดึงรหัสผ่านอัตโนมัติ 6 ตัวท้ายจากเลขบัตรประชาชน 13 หลัก
-     * เช่น 1231254684532 -> 684532
-     * @param {string} nationalId เลขบัตรประชาชน 13 หลัก
-     * @returns {string}
      */
     static getLast6DigitsFromNationalId(nationalId) {
         const cleanId = String(nationalId || '').replace(/\D/g, '');
@@ -172,11 +222,6 @@ export class UIHelpers {
         return cleanId.slice(-6);
     }
 
-    /**
-     * แปลงวันที่ YYYY-MM-DD เป็นวันที่ภาษาไทย (พ.ศ.)
-     * @param {string} dateStr
-     * @returns {string}
-     */
     static formatThaiDate(dateStr) {
         if (!dateStr) return '-';
         const d = new Date(dateStr);
@@ -188,21 +233,12 @@ export class UIHelpers {
         });
     }
 
-    /**
-     * ดึงวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD ตามเวลาท้องถิ่นประเทศไทย
-     * @returns {string}
-     */
     static getTodayISO() {
         const now = new Date();
         const offsetMs = now.getTimezoneOffset() * 60000;
-        const localISOTime = new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-        return localISOTime;
+        return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
     }
 
-    /**
-     * ดึงเวลาปัจจุบันในรูปแบบ HH:MM
-     * @returns {string}
-     */
     static getCurrentTimeHHMM() {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -210,12 +246,6 @@ export class UIHelpers {
         return `${hh}:${mm}`;
     }
 
-    /**
-     * ส่งออกข้อมูลเป็นไฟล์ Excel (.xlsx หรือ .csv UTF-8 BOM) รองรับภาษาไทย 100%
-     * @param {Array<Object>} dataRows ข้อมูลแบบ Array of Objects
-     * @param {string} fileName ชื่อไฟล์ไม่ต้องมีนามสกุล
-     * @param {string} sheetName ชื่อชีต
-     */
     static exportToExcelUTF8(dataRows, fileName = 'export_data', sheetName = 'Sheet1') {
         if (window.XLSX) {
             const worksheet = window.XLSX.utils.json_to_sheet(dataRows);
@@ -225,7 +255,6 @@ export class UIHelpers {
             return;
         }
 
-        // Fallback: สร้างไฟล์ CSV พร้อม UTF-8 BOM เพื่อให้เปิดใน Excel ภาษาไทยไม่เพี้ยน
         if (!dataRows || dataRows.length === 0) return;
         const headers = Object.keys(dataRows[0]);
         const csvLines = [
@@ -244,11 +273,6 @@ export class UIHelpers {
         document.body.removeChild(link);
     }
 
-    /**
-     * อ่านข้อมูลจากไฟล์ Excel (.xlsx / .csv) ที่ผู้ใช้นำเข้า รองรับ UTF-8
-     * @param {File} file ไฟล์จากการเลือกใน input[type="file"]
-     * @returns {Promise<Array<Object>>}
-     */
     static parseExcelFileUTF8(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -273,16 +297,7 @@ export class UIHelpers {
         });
     }
 
-    /**
-     * พิมพ์และส่งออกเป็น PDF โดยใช้วิธีเปิด Tab ใหม่ด้วยเค้าโครง HTML รองรับภาษาไทย UTF-8
-     * ไม่บันทึกไฟล์ลงไดรฟ์ของผู้ใช้โดยตรง (สร้างเฉพาะหน้าต่างชั่วคราวสำหรับการสั่งพิมพ์/บันทึก PDF)
-     * @param {Object} options
-     * @param {string} options.title หัวข้อรายงาน
-     * @param {string} options.subtitle หัวข้อย่อย (เช่น วันที่ และชื่อหน่วยงาน)
-     * @param {string} options.tableHtml โครงสร้าง HTML ของตารางการลงเวลา
-     * @param {string} options.headerColor สีพื้นหลังหัวตารางจาก Color Picker
-     */
-    static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#00744B' }) {
+    static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#007B3E' }) {
         const printWindow = window.open('', '_blank');
         if (!printWindow) {
             UIHelpers.alert('ไม่สามารถเปิดแท็บใหม่ได้', 'กรุณาอนุญาตให้เบราว์เซอร์เปิดหน้าต่างป๊อปอัป (Pop-up) สำหรับเว็บไซต์นี้', 'warning');
@@ -298,73 +313,18 @@ export class UIHelpers {
     <title>${title}</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Sarabun', sans-serif;
-            box-sizing: border-box;
-        }
-        body {
-            margin: 0;
-            padding: 24px;
-            color: #0F172A;
-            background: #FFFFFF;
-        }
-        .report-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid ${headerColor};
-            padding-bottom: 12px;
-        }
-        .report-header h1 {
-            margin: 0 0 6px 0;
-            font-size: 20px;
-            color: ${headerColor};
-        }
-        .report-header p {
-            margin: 0;
-            font-size: 14px;
-            color: #475569;
-        }
-        .toolbar {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .btn-print {
-            background: ${headerColor};
-            color: #FFFFFF;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        th, td {
-            border: 1px solid #CBD5E1;
-            padding: 8px 10px;
-            text-align: left;
-        }
-        th {
-            background-color: ${headerColor};
-            color: #FFFFFF;
-            font-weight: 600;
-        }
-        .group-row td {
-            background-color: #E2E8F0;
-            font-weight: 700;
-            color: #0F172A;
-        }
-        .sub-group-row td {
-            background-color: #F1F5F9;
-            font-weight: 600;
-            color: #334155;
-        }
+        * { font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
+        body { margin: 0; padding: 24px; color: #0F172A; background: #FFFFFF; }
+        .report-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid ${headerColor}; padding-bottom: 12px; }
+        .report-header h1 { margin: 0 0 6px 0; font-size: 20px; color: ${headerColor}; }
+        .report-header p { margin: 0; font-size: 14px; color: #475569; }
+        .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px; }
+        .btn-print { background: ${headerColor}; color: #FFFFFF; border: none; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid #CBD5E1; padding: 8px 10px; text-align: left; }
+        th { background-color: ${headerColor}; color: #FFFFFF; font-weight: 600; }
+        .group-row td { background-color: #eef7f1; font-weight: 700; color: #2c4a38; }
+        .sub-group-row td { background-color: #F8FAFC; font-weight: 600; color: #334155; }
         @media print {
             .toolbar { display: none !important; }
             body { padding: 0; }
@@ -383,9 +343,7 @@ export class UIHelpers {
     ${tableHtml}
     <script>
         window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 500);
+            setTimeout(function() { window.print(); }, 500);
         };
     </script>
 </body>

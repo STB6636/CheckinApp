@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/SettingsModel.js
- * @description คลาสจัดการข้อมูลตั้งค่าระบบ (หน่วยงาน, โลโก้, คำนำหน้า, ตำแหน่ง, สังกัด, ช่วงเวลา, เปิด/ปิดกล้อง, GPS และโหมดลงเวลาครั้งเดียว)
+ * @description คลาสจัดการข้อมูลตั้งค่าระบบ รักษาลำดับการแสดงผล Dropdown ตามการเรียงลำดับ (ขึ้น/ลง) และเชื่อมโยงข้อมูลแม่-ลูก
  */
 
 import { Config } from '../core/Config.js';
@@ -8,7 +8,7 @@ import { DatabaseService } from '../core/DatabaseService.js';
 
 export class SettingsModel {
     /**
-     * ดึงข้อมูลตั้งค่าระบบจาก Supabase (หากยังไม่สามารถเชื่อมต่อได้จะใช้ค่า Cache หรือค่าเริ่มต้น)
+     * ดึงข้อมูลตั้งค่าระบบจาก Supabase
      * @param {boolean} forceRefresh บังคับดึงข้อมูลใหม่จากฐานข้อมูล
      * @returns {Promise<Object>}
      */
@@ -53,7 +53,7 @@ export class SettingsModel {
     }
 
     /**
-     * บันทึกหรืออัปเดตการตั้งค่าระบบ (เฉพาะ SuperAdmin)
+     * บันทึกหรืออัปเดตการตั้งค่าระบบลงฐานข้อมูล Supabase
      * @param {Object} payload ข้อมูลตั้งค่าระบบที่ต้องการอัปเดต
      * @returns {Promise<{success: boolean, data?: Object, message: string}>}
      */
@@ -88,7 +88,25 @@ export class SettingsModel {
     }
 
     /**
-     * แปลงไฟล์รูปภาพโลโก้เป็น Base64 Data URL เพื่อจัดเก็บและแสดงผล Preview ได้ทันทีบน GitHub Pages
+     * สลับตำแหน่งรายการในอาร์เรย์ (สำหรับการกดปุ่มลูกศร ขึ้น / ลง)
+     * @param {Array} arr อาร์เรย์ต้นฉบับ
+     * @param {number} fromIndex ลำดับเดิม
+     * @param {'up'|'down'} direction ทิศทางการเลื่อน
+     * @returns {boolean} คืนค่า true หากมีการสลับตำแหน่งสำเร็จ
+     */
+    static moveItemInArray(arr, fromIndex, direction) {
+        if (!Array.isArray(arr)) return false;
+        const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;
+        if (toIndex < 0 || toIndex >= arr.length) return false;
+
+        const temp = arr[fromIndex];
+        arr[fromIndex] = arr[toIndex];
+        arr[toIndex] = temp;
+        return true;
+    }
+
+    /**
+     * แปลงไฟล์รูปภาพโลโก้เป็น Base64 Data URL
      * @param {File} file
      * @returns {Promise<string>}
      */
@@ -102,7 +120,7 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการประเภทตำแหน่งแบบไม่ซ้ำ (Unique Position Types)
+     * ดึงรายการประเภทตำแหน่งแบบไม่ซ้ำ โดยรักษาลำดับตามที่เรียงไว้ในหน้าตั้งค่าระบบ
      * @param {Object} settings
      * @returns {Array<string>}
      */
@@ -112,7 +130,7 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการชื่อสายงาน/ตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งได้)
+     * ดึงรายการชื่อสายงาน/ตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งแม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @param {string} filterType
      * @returns {Array<string>}
@@ -126,7 +144,7 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการระดับตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งหรือชื่อตำแหน่งได้)
+     * ดึงรายการระดับตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งและชื่อตำแหน่งแม่ รักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @param {string} filterType
      * @param {string} filterTitle
@@ -144,7 +162,7 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการชื่อหน่วยงานหลักแบบไม่ซ้ำ
+     * ดึงรายการชื่อหน่วยงานหลักแบบไม่ซ้ำ (รักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @returns {Array<string>}
      */
@@ -155,7 +173,7 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการ สำนักงาน/กอง แบบไม่ซ้ำ
+     * ดึงรายการ สำนักงาน/กอง แบบไม่ซ้ำ (กรองตามหน่วยงานแม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @param {string} filterOrg
      * @returns {Array<string>}
@@ -170,13 +188,17 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการ ส่วน/ฝ่าย แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง ได้)
+     * ดึงรายการ ส่วน/ฝ่าย แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง แม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @param {string} filterBureau
+     * @param {string} filterOrg
      * @returns {Array<string>}
      */
-    static getUniqueDivisions(settings, filterBureau = '') {
+    static getUniqueDivisions(settings, filterBureau = '', filterOrg = '') {
         let affiliations = settings?.affiliations || [];
+        if (filterOrg) {
+            affiliations = affiliations.filter(a => a.organization === filterOrg);
+        }
         if (filterBureau) {
             affiliations = affiliations.filter(a => a.bureau === filterBureau);
         }
@@ -184,14 +206,18 @@ export class SettingsModel {
     }
 
     /**
-     * ดึงรายการ กลุ่มงาน แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง และ ส่วน/ฝ่าย ได้)
+     * ดึงรายการ กลุ่มงาน แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง และ ส่วน/ฝ่าย แม่ รักษาลำดับตามหน้าตั้งค่าระบบ)
      * @param {Object} settings
      * @param {string} filterBureau
      * @param {string} filterDivision
+     * @param {string} filterOrg
      * @returns {Array<string>}
      */
-    static getUniqueGroups(settings, filterBureau = '', filterDivision = '') {
+    static getUniqueGroups(settings, filterBureau = '', filterDivision = '', filterOrg = '') {
         let affiliations = settings?.affiliations || [];
+        if (filterOrg) {
+            affiliations = affiliations.filter(a => a.organization === filterOrg);
+        }
         if (filterBureau) {
             affiliations = affiliations.filter(a => a.bureau === filterBureau);
         }

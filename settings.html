@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตั้งค่าระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
+    <!-- Tailwind CSS CDN พร้อมบังคับ darkMode: 'class' -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,6 +25,7 @@
         <!-- Topbar -->
         <div id="bmaTopbarContainer"></div>
 
+        <!-- เนื้อหาหลักหน้าตั้งค่าระบบ (รองรับการโหลดแบบ AJAX SPA) -->
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
             <!-- ส่วนที่ 1: ข้อมูลหน่วยงาน โลโก้ และการควบคุมฟังก์ชันกล้อง / GPS / รูปแบบการลงเวลา -->
@@ -88,8 +95,8 @@
                             <input type="checkbox" id="toggleRequireGps" class="w-5 h-5 accent-emerald-600 mt-1 shrink-0">
                         </label>
 
-                        <!-- 3. ออปชันใหม่: เปิด/ปิดฟังก์ชัน การบันทึกการลงเวลาปฏิบัติงาน [รูปแบบปกติ / รูปแบบพิเศษ] -->
-                        <div class="p-4 rounded-xl border-2 border-[#007B3E]/30 bg-[#eef7f1] dark:bg-emerald-950/30 space-y-3">
+                        <!-- 3. เปิด/ปิดฟังก์ชัน การบันทึกการลงเวลาปฏิบัติงาน [รูปแบบปกติ / รูปแบบพิเศษ] -->
+                        <div class="p-4 rounded-xl bma-info-box space-y-3">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
                                     <div class="font-extrabold text-sm bma-text-main flex items-center gap-1.5">
@@ -97,7 +104,7 @@
                                         <span>การบันทึกการลงเวลาปฏิบัติงาน (ปกติ / พิเศษครั้งเดียว)</span>
                                     </div>
                                     <p class="text-xs bma-text-sub mt-0.5">
-                                        เปิดสวิตช์ด้านขวา หรือเลือกการ์ดด้านล่างเพื่อกำหนดรูปแบบการบันทึกเวลาของผู้ใช้งาน
+                                        เลือกกำหนดรูปแบบการบันทึกเวลาของผู้ใช้งานในระบบ
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
@@ -106,21 +113,20 @@
                                 </div>
                             </div>
 
-                            <!-- ตัวเลือก Radio 2 รูปแบบให้เห็นชัดเจน -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                                <label id="cardModeNormal" class="flex items-start gap-2.5 p-3 rounded-xl border-2 bma-border bg-white dark:bg-[#161B22] cursor-pointer transition">
+                                <label id="cardModeNormal" class="flex items-start gap-2.5 p-3 rounded-xl border-2 bma-border bma-surface-panel cursor-pointer transition">
                                     <input type="radio" name="checkinRecordingMode" value="normal" class="accent-emerald-600 mt-1" checked>
                                     <div class="text-xs">
                                         <span class="font-extrabold bma-text-main block">1. รูปแบบปกติ</span>
-                                        <span class="bma-text-sub leading-relaxed block mt-0.5">ลงเวลาเข้างาน และลงเวลาออกงานแยกกันตามปกติ (2 ครั้ง)</span>
+                                        <span class="bma-text-sub leading-relaxed block mt-0.5">ลงเวลาเข้างาน และลงเวลาออกงานตามปกติ</span>
                                     </div>
                                 </label>
 
-                                <label id="cardModeSingleClick" class="flex items-start gap-2.5 p-3 rounded-xl border-2 bma-border bg-white dark:bg-[#161B22] cursor-pointer transition">
+                                <label id="cardModeSingleClick" class="flex items-start gap-2.5 p-3 rounded-xl border-2 bma-border bma-surface-panel cursor-pointer transition">
                                     <input type="radio" name="checkinRecordingMode" value="single_click" class="accent-emerald-600 mt-1">
                                     <div class="text-xs">
-                                        <span class="font-extrabold text-[#007B3E] dark:text-emerald-400 block">2. รูปแบบพิเศษ (ครั้งเดียว)</span>
-                                        <span class="bma-text-sub leading-relaxed block mt-0.5">กดบันทึกครั้งเดียว ระบบจะลงทั้งเวลาเข้างานและเวลาออกงานให้ในครั้งเดียวเลย</span>
+                                        <span class="font-extrabold block" style="color: var(--bma-primary);">2. รูปแบบพิเศษ (ครั้งเดียว)</span>
+                                        <span class="bma-text-sub leading-relaxed block mt-0.5">กดบันทึกครั้งเดียวระบบจะลงทั้ง เวลาเข้างาน และเวลาออกงานให้ในครั้งเดียวเลย</span>
                                     </div>
                                 </label>
                             </div>
@@ -134,28 +140,34 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 2: จัดการคำนำหน้าชื่อ และ หมายเหตุ -->
+            <!-- ส่วนที่ 2: จัดการคำนำหน้าชื่อ และ หมายเหตุ (พร้อมปุ่มลูกศร ขึ้น/ลง เรียงลำดับ Dropdown) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- คำนำหน้าชื่อ -->
                 <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--g1);">
                     <div class="flex items-center justify-between border-b bma-border pb-3">
-                        <h3 class="font-extrabold text-base bma-text-main">
-                            <i class="fa-solid fa-user-tag mr-1.5" style="color: var(--bma-primary);"></i>จัดการคำนำหน้าชื่อ
-                        </h3>
+                        <div>
+                            <h3 class="font-extrabold text-base bma-text-main">
+                                <i class="fa-solid fa-user-tag mr-1.5" style="color: var(--bma-primary);"></i>จัดการคำนำหน้าชื่อ
+                            </h3>
+                            <p class="text-xs bma-text-sub">กดปุ่มลูกศร ขึ้น/ลง เพื่อจัดลำดับการแสดงผลใน Dropdown</p>
+                        </div>
                         <button type="button" id="btnAddPrefix" class="btn-bma-soft text-xs py-1.5 px-3">
                             <i class="fa-solid fa-plus"></i> เพิ่มคำนำหน้า
                         </button>
                     </div>
-                    <div id="prefixListContainer" class="flex flex-wrap gap-2"></div>
+                    <div id="prefixListContainer" class="space-y-2"></div>
                 </div>
 
                 <!-- หมายเหตุการขอลงเวลากรณีพิเศษ -->
                 <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-6);">
                     <div class="flex items-center justify-between border-b bma-border pb-3">
-                        <h3 class="font-extrabold text-base bma-text-main">
-                            <i class="fa-solid fa-comment-dots mr-1.5" style="color: var(--bma-sec-6);"></i>จัดการตัวเลือกหมายเหตุ
-                        </h3>
+                        <div>
+                            <h3 class="font-extrabold text-base bma-text-main">
+                                <i class="fa-solid fa-comment-dots mr-1.5" style="color: var(--bma-sec-6);"></i>จัดการตัวเลือกหมายเหตุ
+                            </h3>
+                            <p class="text-xs bma-text-sub">กดปุ่มลูกศร ขึ้น/ลง เพื่อจัดลำดับการแสดงผลใน Dropdown</p>
+                        </div>
                         <button type="button" id="btnAddRemark" class="btn-bma-soft text-xs py-1.5 px-3">
                             <i class="fa-solid fa-plus"></i> เพิ่มหมายเหตุ
                         </button>
@@ -164,14 +176,14 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 3: จัดการช่วงเวลาปฏิบัติราชการ (เวลาเข้างาน, เวลาออกงาน และตัวเลือกอื่นๆ) -->
+            <!-- ส่วนที่ 3: จัดการช่วงเวลาปฏิบัติราชการ (พร้อมปุ่มลูกศร ขึ้น/ลง เรียงลำดับ) -->
             <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-3);">
-                <div class="flex items-center justify-between border-b bma-border pb-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
                     <div>
                         <h3 class="font-extrabold text-base bma-text-main">
                             <i class="fa-solid fa-clock mr-1.5" style="color: var(--bma-sec-3);"></i>จัดการช่วงเวลาปฏิบัติราชการ
                         </h3>
-                        <p class="text-xs bma-text-sub">กำหนดชื่อช่วงเวลา เวลาเข้างาน และเวลาออกงาน (รองรับตัวเลือก "อื่นๆ" ให้ผู้ใช้กรอกเวลาเองได้)</p>
+                        <p class="text-xs bma-text-sub">กดปุ่มลูกศร ขึ้น/ลง เพื่อเรียงลำดับช่วงเวลาใน Dropdown (รองรับตัวเลือก "อื่นๆ" ให้ผู้ใช้กรอกเวลาเองได้)</p>
                     </div>
                     <button type="button" id="btnAddShift" class="btn-bma-primary text-xs py-2 px-3.5">
                         <i class="fa-solid fa-plus"></i> เพิ่มช่วงเวลา
@@ -183,11 +195,12 @@
                         <thead>
                             <tr>
                                 <th class="w-14 text-center">ลำดับ</th>
+                                <th class="w-28 text-center">เรียงลำดับ</th>
                                 <th>ชื่อช่วงเวลา</th>
                                 <th>เวลาเข้างาน</th>
                                 <th>เวลาออกงาน</th>
                                 <th>รูปแบบ</th>
-                                <th class="w-36 text-center">จัดการ</th>
+                                <th class="w-32 text-center">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="shiftsTableBody"></tbody>
@@ -195,18 +208,33 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 4: จัดการตำแหน่ง (ประเภทตำแหน่ง, ตำแหน่ง, ระดับ) -->
+            <!-- ส่วนที่ 4: จัดการข้อมูลตำแหน่ง (ประเภทตำแหน่ง > ตำแหน่ง > ระดับ) แบบแยกส่วนเชื่อมโยงแม่-ลูก และเพิ่มหลายแถวพร้อมกัน -->
             <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-10);">
-                <div class="flex items-center justify-between border-b bma-border pb-3">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
                         <h3 class="font-extrabold text-base bma-text-main">
-                            <i class="fa-solid fa-briefcase mr-1.5" style="color: var(--bma-sec-10);"></i>จัดการข้อมูลตำแหน่ง (ประเภทตำแหน่ง, ตำแหน่ง, ระดับ)
+                            <i class="fa-solid fa-briefcase mr-1.5" style="color: var(--bma-sec-10);"></i>จัดการข้อมูลตำแหน่ง (ประเภทตำแหน่ง &gt; ตำแหน่ง &gt; ระดับ)
                         </h3>
-                        <p class="text-xs bma-text-sub">ข้อมูลนี้จะถูกนำไปแสดงใน Dropdown แบบกรองค่าไม่ซ้ำในหน้าจัดการข้อมูลบุคลากร</p>
+                        <p class="text-xs bma-text-sub mt-0.5">
+                            เพิ่มข้อมูลแบบแยกส่วนตามลำดับชั้น (เลือกค่าหลักแม่ เพื่อเพิ่มค่าลูกได้หลายแถวพร้อมกัน) และกดปุ่มลูกศร ขึ้น/ลง เพื่อจัดลำดับ Dropdown
+                        </p>
                     </div>
-                    <button type="button" id="btnAddPosition" class="btn-bma-primary text-xs py-2 px-3.5">
-                        <i class="fa-solid fa-plus"></i> เพิ่มตำแหน่ง
-                    </button>
+
+                    <!-- ปุ่มเพิ่มแยกส่วน 3 ระดับเชื่อมโยงกัน -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btnAddPosStep1Type" class="btn-bma-soft text-xs py-2 px-3">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>1. + เพิ่มประเภทตำแหน่ง</span>
+                        </button>
+                        <button type="button" id="btnAddPosStep2Title" class="btn-bma-soft text-xs py-2 px-3">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>2. + เพิ่มตำแหน่ง (เลือกประเภทแม่)</span>
+                        </button>
+                        <button type="button" id="btnAddPosStep3Level" class="btn-bma-primary text-xs py-2 px-3.5">
+                            <i class="fa-solid fa-ranking-star"></i>
+                            <span>3. + เพิ่มระดับ (เลือกตำแหน่งแม่)</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bma-table-container">
@@ -214,10 +242,11 @@
                         <thead>
                             <tr>
                                 <th class="w-14 text-center">ลำดับ</th>
-                                <th>ประเภทตำแหน่ง</th>
-                                <th>ชื่อตำแหน่งในสายงาน</th>
-                                <th>ระดับตำแหน่ง</th>
-                                <th class="w-36 text-center">จัดการ</th>
+                                <th class="w-28 text-center">เรียงลำดับ</th>
+                                <th>1. ประเภทตำแหน่ง (แม่)</th>
+                                <th>2. ชื่อตำแหน่งในสายงาน (ลูก)</th>
+                                <th>3. ระดับตำแหน่ง (ลูกย่อย)</th>
+                                <th class="w-32 text-center">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="positionsTableBody"></tbody>
@@ -225,18 +254,37 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 5: จัดการสังกัด (หน่วยงาน, สำนักงาน/กอง, ส่วน/ฝ่าย, กลุ่มงาน) -->
+            <!-- ส่วนที่ 5: จัดการโครงสร้างสังกัด (หน่วยงาน > สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน) แบบแยกส่วนเชื่อมโยงแม่-ลูก และเพิ่มหลายแถวพร้อมกัน -->
             <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--g1);">
-                <div class="flex items-center justify-between border-b bma-border pb-3">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
                         <h3 class="font-extrabold text-base bma-text-main">
-                            <i class="fa-solid fa-sitemap mr-1.5" style="color: var(--bma-primary);"></i>จัดการโครงสร้างสังกัด (หน่วยงาน, สำนักงาน/กอง, ส่วน/ฝ่าย, กลุ่มงาน)
+                            <i class="fa-solid fa-sitemap mr-1.5" style="color: var(--bma-primary);"></i>จัดการโครงสร้างสังกัด (หน่วยงาน &gt; สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน)
                         </h3>
-                        <p class="text-xs bma-text-sub">ใช้สำหรับผูกสังกัดบุคลากร กำหนดขอบเขตการมองเห็นของ Admin และจัดกลุ่มตาราง Group By 2 มุมมอง</p>
+                        <p class="text-xs bma-text-sub mt-0.5">
+                            เลือกค่าหลักแม่จาก Dropdown เพื่อเพิ่มค่าลูกได้หลายแถวพร้อมกันในครั้งเดียว และกดปุ่มลูกศร ขึ้น/ลง เพื่อจัดลำดับ Dropdown
+                        </p>
                     </div>
-                    <button type="button" id="btnAddAffiliation" class="btn-bma-primary text-xs py-2 px-3.5">
-                        <i class="fa-solid fa-plus"></i> เพิ่มสังกัด
-                    </button>
+
+                    <!-- ปุ่มเพิ่มแยกส่วน 4 ระดับเชื่อมโยงกัน -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" id="btnAddAffStep1Org" class="btn-bma-soft text-xs py-2 px-3">
+                            <i class="fa-solid fa-landmark"></i>
+                            <span>1. + เพิ่มหน่วยงาน</span>
+                        </button>
+                        <button type="button" id="btnAddAffStep2Bureau" class="btn-bma-soft text-xs py-2 px-3">
+                            <i class="fa-solid fa-building"></i>
+                            <span>2. + เพิ่มสำนักงาน/กอง</span>
+                        </button>
+                        <button type="button" id="btnAddAffStep3Division" class="btn-bma-soft text-xs py-2 px-3">
+                            <i class="fa-solid fa-network-wired"></i>
+                            <span>3. + เพิ่มส่วน/ฝ่าย</span>
+                        </button>
+                        <button type="button" id="btnAddAffStep4Group" class="btn-bma-primary text-xs py-2 px-3.5">
+                            <i class="fa-solid fa-people-group"></i>
+                            <span>4. + เพิ่มกลุ่มงาน</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bma-table-container">
@@ -244,11 +292,12 @@
                         <thead>
                             <tr>
                                 <th class="w-14 text-center">ลำดับ</th>
-                                <th>หน่วยงาน</th>
-                                <th>สำนักงาน/กอง</th>
-                                <th>ส่วน/ฝ่าย</th>
-                                <th>กลุ่มงาน</th>
-                                <th class="w-36 text-center">จัดการ</th>
+                                <th class="w-28 text-center">เรียงลำดับ</th>
+                                <th>1. หน่วยงาน</th>
+                                <th>2. สำนักงาน/กอง</th>
+                                <th>3. ส่วน/ฝ่าย</th>
+                                <th>4. กลุ่มงาน</th>
+                                <th class="w-32 text-center">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="affiliationsTableBody"></tbody>
@@ -263,22 +312,22 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal กลางสำหรับเพิ่ม/แก้ไข ข้อมูลย่อยในหน้าตั้งค่าระบบ -->
-    <div id="modalSettingsItem" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
+    <!-- Modal กลางสำหรับเพิ่ม/แก้ไข ข้อมูลแบบแยกส่วน เชื่อมโยงแม่-ลูก และรองรับการกด "+ เพิ่มแถว" หลายรายการพร้อมกัน -->
+    <div id="modalSettingsItem" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+        <div class="w-full max-w-lg bma-card bma-modal-surface p-6 shadow-2xl my-8">
             <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
-                <h3 id="modalSettingsTitle" class="text-lg font-bold bma-text-main">จัดการข้อมูล</h3>
+                <h3 id="modalSettingsTitle" class="text-lg font-extrabold bma-text-main">จัดการข้อมูล</h3>
                 <button type="button" id="btnCloseSettingsModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <form id="formSettingsItem" class="space-y-4">
-                <div id="modalSettingsBody" class="space-y-3"></div>
+                <div id="modalSettingsBody" class="space-y-3.5 max-h-[65vh] overflow-y-auto pr-1"></div>
                 <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
                     <button type="button" id="btnCancelSettingsModal" class="btn-bma-outline text-sm">ยกเลิก</button>
                     <button type="submit" class="btn-bma-primary text-sm">
-                        <i class="fa-solid fa-check"></i>
-                        <span>บันทึกรายการ</span>
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>บันทึกรายการทั้งหมด</span>
                     </button>
                 </div>
             </form>

@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/ReportsController.js
- * @description คลาสควบคุมหน้ารายงานการลงเวลา (Jewel-Tone Stat Cards, Group By 2 มุมมอง, พิมพ์ PDF Tab ใหม่, ส่งออก Excel UTF-8)
+ * @description คลาสควบคุมหน้ารายงานการลงเวลา (ตาราง Group By 2 มุมมอง, พิมพ์ PDF Tab ใหม่, ส่งออก Excel UTF-8 รองรับ AJAX SPA)
  */
 
 import { UIHelpers } from '../core/UIHelpers.js';
@@ -15,20 +15,12 @@ export class ReportsController {
         this.settings = null;
         this.records = [];
         this.groupViewMode = 'division';
-        this.pieChart = null;
-        this.barChart = null;
         this.colors = {
             header: '#007B3E',
             normal: '#007B3E',
             late: '#F59E0B',
             special: '#6366F1',
             absent: '#E11D48'
-        };
-        this.gradients = {
-            normal: 'linear-gradient(135deg, #007B3E 0%, #4EBA6F 100%)',
-            late: 'linear-gradient(135deg, #F59E0B 0%, #FB923C 100%)',
-            special: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-            absent: 'linear-gradient(135deg, #E11D48 0%, #F43F5E 100%)'
         };
         this.init();
     }
@@ -37,7 +29,7 @@ export class ReportsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'reports',
             pageTitle: 'รายงานการลงเวลาปฏิบัติราชการ',
-            pageSubtitle: 'สรุปสถิติ ตารางการลงเวลา 2 มุมมอง พิมพ์รายงาน PDF และส่งออกไฟล์ Excel UTF-8'
+            pageSubtitle: 'ตารางการลงเวลา 2 มุมมอง พิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออกไฟล์ Excel UTF-8'
         });
 
         if (!layout.currentUser) return;
@@ -49,7 +41,9 @@ export class ReportsController {
             mobileShortcutEl.innerHTML = AppLayout.getMobileShortcutGridHtml(this.currentUser);
         }
 
-        document.getElementById('reportDateInput').value = UIHelpers.getTodayISO();
+        const dateInput = document.getElementById('reportDateInput');
+        if (dateInput) dateInput.value = UIHelpers.getTodayISO();
+
         this.#bindEvents();
         await this.loadReportData();
     }
@@ -61,11 +55,11 @@ export class ReportsController {
             tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 7);
         }
 
-        UIHelpers.showLoading('กำลังประมวลผลรายงานการลงเวลา...');
+        UIHelpers.showLoading('กำลังประมวลผลตารางรายงานการลงเวลา...');
         try {
             this.records = await AttendanceModel.getDailyReportRecords(workDate, this.currentUser);
             this.#populatePersonnelDropdown();
-            this.#renderReportAllVisuals();
+            this.#renderGroupedReportTable(false);
         } finally {
             UIHelpers.hideLoading();
         }
@@ -79,146 +73,10 @@ export class ReportsController {
         ).join('');
     }
 
-    #renderReportAllVisuals() {
-        const metrics = AttendanceModel.calculateDashboardMetrics(this.records);
-        metrics.categories.forEach(cat => {
-            if (this.colors[cat.key]) {
-                cat.color = this.colors[cat.key];
-            }
-        });
-
-        this.#renderJewelToneKpiCards(metrics);
-        this.#renderCharts(metrics);
-        this.#renderGroupedReportTable(false);
-    }
-
     /**
-     * เรนเดอร์การ์ดสถิติแบบ Jewel-Tone Stat Cards พร้อมวงกลมเรืองแสง .deco-1, .deco-2
+     * สร้างโครงสร้างตารางแสดงการลงเวลาปฏิบัติราชการ Group By 2 มุมมอง
+     * คอลัมน์: ลำดับ, คำนำหน้า+ชื่อ+นามสกุล, ตำแหน่ง+ระดับ, เวลาเข้างาน, เวลาออกงาน
      */
-    #renderJewelToneKpiCards(metrics) {
-        const container = document.getElementById('reportKpiCardsContainer');
-        if (!container) return;
-
-        let html = `
-            <div class="stat-card stat-card-total">
-                <div class="deco-1"></div>
-                <div class="deco-2"></div>
-                <div class="stat-content flex flex-col justify-between h-full">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-100/90">บุคลากรทั้งหมด</span>
-                            <div class="text-3xl font-extrabold text-white mt-1">${metrics.total} <span class="text-sm font-semibold">คน</span></div>
-                        </div>
-                        <div class="stat-icon-box">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="flex items-center justify-between text-xs font-bold text-emerald-100 mb-1">
-                            <span>รวมในสังกัด</span>
-                            <span class="text-[#FDD835]">100%</span>
-                        </div>
-                        <div class="stat-progress-track">
-                            <div class="stat-progress-fill" style="width: 100%; background: #FDD835;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        for (const cat of metrics.categories) {
-            const bgGrad = this.gradients[cat.key] || `linear-gradient(135deg, ${cat.color}, ${cat.color})`;
-            html += `
-                <div class="stat-card" style="background: ${bgGrad};">
-                    <div class="deco-1"></div>
-                    <div class="deco-2"></div>
-                    <div class="stat-content flex flex-col justify-between h-full">
-                        <div class="flex items-start justify-between gap-2">
-                            <div>
-                                <span class="text-xs font-bold text-white/90">${cat.label}</span>
-                                <div class="text-3xl font-extrabold text-white mt-1">${cat.count} <span class="text-sm font-semibold">คน</span></div>
-                            </div>
-                            <div class="stat-icon-box">
-                                <i class="fa-solid ${cat.icon}"></i>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="flex items-center justify-between text-xs font-bold text-white/90 mb-1">
-                                <span>สัดส่วนร้อยละ</span>
-                                <span>${cat.percent}%</span>
-                            </div>
-                            <div class="stat-progress-track">
-                                <div class="stat-progress-fill" style="width: ${cat.percent}%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        container.innerHTML = html;
-    }
-
-    #renderCharts(metrics) {
-        if (!window.Chart) return;
-        const isDark = document.documentElement.classList.contains('dark');
-        const textColor = isDark ? '#F1F5F9' : '#0F172A';
-        const gridColor = isDark ? '#2B3645' : '#d8e6dd';
-
-        const pieCtx = document.getElementById('reportPieChart')?.getContext('2d');
-        if (pieCtx) {
-            if (this.pieChart) this.pieChart.destroy();
-            this.pieChart = new window.Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: metrics.categories.map(c => c.label),
-                    datasets: [{
-                        data: metrics.categories.map(c => c.count),
-                        backgroundColor: metrics.categories.map(c => c.color),
-                        borderWidth: 2,
-                        borderColor: isDark ? '#161B22' : '#FFFFFF'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Sarabun', size: 11 } } }
-                    }
-                }
-            });
-        }
-
-        const barCtx = document.getElementById('reportDivisionChart')?.getContext('2d');
-        if (barCtx) {
-            if (this.barChart) this.barChart.destroy();
-            const divs = Object.keys(metrics.divisionBreakdown);
-            this.barChart = new window.Chart(barCtx, {
-                type: 'bar',
-                data: {
-                    labels: divs,
-                    datasets: [
-                        { label: 'ปกติ', data: divs.map(d => metrics.divisionBreakdown[d].normal), backgroundColor: this.colors.normal, borderRadius: 5 },
-                        { label: 'มาสาย', data: divs.map(d => metrics.divisionBreakdown[d].late), backgroundColor: this.colors.late, borderRadius: 5 },
-                        { label: 'กรณีพิเศษ', data: divs.map(d => metrics.divisionBreakdown[d].special), backgroundColor: this.colors.special, borderRadius: 5 },
-                        { label: 'ยังไม่ลงเวลา', data: divs.map(d => metrics.divisionBreakdown[d].absent), backgroundColor: this.colors.absent, borderRadius: 5 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { ticks: { color: textColor, font: { family: 'Sarabun' } }, grid: { color: gridColor } },
-                        y: { beginAtZero: true, ticks: { stepSize: 1, color: textColor }, grid: { color: gridColor } }
-                    },
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Sarabun', size: 11 } } }
-                    }
-                }
-            });
-        }
-    }
-
     #renderGroupedReportTable(forPrintPdf = false) {
         const grouped = PersonnelModel.groupPersonnel(this.records, this.groupViewMode);
         let rowsHtml = '';
@@ -328,7 +186,7 @@ export class ReportsController {
 
     #openModal(rec = null) {
         const modal = document.getElementById('modalReportAttendance');
-        const workDate = document.getElementById('reportDateInput').value || UIHelpers.getTodayISO();
+        const workDate = document.getElementById('reportDateInput')?.value || UIHelpers.getTodayISO();
 
         document.getElementById('repLogId').value = rec?.log_id || '';
         if (rec?.personnel_id) {
@@ -341,7 +199,7 @@ export class ReportsController {
         document.getElementById('repRowColorPicker').value = rec?.row_color || '#007B3E';
         document.getElementById('repRemarkInput').value = rec?.remark || '';
 
-        modal.classList.remove('hidden');
+        modal?.classList.remove('hidden');
     }
 
     #closeModal() {
@@ -356,16 +214,11 @@ export class ReportsController {
         });
 
         const updateColors = () => {
-            this.colors.header = document.getElementById('repColorHeader').value;
-            this.colors.normal = document.getElementById('repColorNormal').value;
-            this.colors.late = document.getElementById('repColorLate').value;
-            this.colors.absent = document.getElementById('repColorAbsent').value;
-
-            this.gradients.normal = `linear-gradient(135deg, ${this.colors.normal} 0%, #4EBA6F 100%)`;
-            this.gradients.late = `linear-gradient(135deg, ${this.colors.late} 0%, #FB923C 100%)`;
-            this.gradients.absent = `linear-gradient(135deg, ${this.colors.absent} 0%, #F43F5E 100%)`;
-
-            this.#renderReportAllVisuals();
+            this.colors.header = document.getElementById('repColorHeader')?.value || '#007B3E';
+            this.colors.normal = document.getElementById('repColorNormal')?.value || '#007B3E';
+            this.colors.late = document.getElementById('repColorLate')?.value || '#F59E0B';
+            this.colors.absent = document.getElementById('repColorAbsent')?.value || '#E11D48';
+            this.#renderGroupedReportTable(false);
         };
         document.getElementById('repColorHeader')?.addEventListener('input', updateColors);
         document.getElementById('repColorNormal')?.addEventListener('input', updateColors);
@@ -382,7 +235,7 @@ export class ReportsController {
         });
 
         document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
-            const workDate = document.getElementById('reportDateInput').value;
+            const workDate = document.getElementById('reportDateInput')?.value || UIHelpers.getTodayISO();
             const tableHtml = this.#renderGroupedReportTable(true);
             UIHelpers.printReportInNewTab({
                 title: `รายงานการลงเวลาปฏิบัติราชการ ${this.settings.organization_name}`,
@@ -393,7 +246,7 @@ export class ReportsController {
         });
 
         document.getElementById('btnExportReportExcel')?.addEventListener('click', () => {
-            const workDate = document.getElementById('reportDateInput').value;
+            const workDate = document.getElementById('reportDateInput')?.value || UIHelpers.getTodayISO();
             const rows = this.records.map((r, idx) => ({
                 'ลำดับ': idx + 1,
                 'คำนำหน้า+ชื่อ+นามสกุล': r.full_name,
@@ -490,6 +343,11 @@ export class ReportsController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new ReportsController();
-});
+if (!window.__BMA_SPA_ROUTER_ACTIVE__) {
+    window.__BMA_SPA_ROUTER_ACTIVE__ = true;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => new ReportsController());
+    } else {
+        new ReportsController();
+    }
+}
