@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/Config.js
- * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.5
+ * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.7
  */
 
 export class Config {
@@ -10,10 +10,10 @@ export class Config {
     static GITHUB_REPO = 'https://github.com/STB6636/CheckinApp.git';
 
     static STORAGE_KEYS = {
-        SESSION_USER: 'bma_checkin_session_user_v2_5',
-        THEME_MODE: 'bma_checkin_theme_mode_v2_5',
-        CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_5',
-        WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_5'
+        SESSION_USER: 'bma_checkin_session_user_v2_7',
+        THEME_MODE: 'bma_checkin_theme_mode_v2_7',
+        CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_7',
+        WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7'
     };
 
     static OFFICIAL_STATUSES = [
@@ -34,9 +34,12 @@ export class Config {
         require_photo: true,
         require_gps: true,
         single_click_checkin: false,
+        allow_checkin_start_time: '06:00',
         standard_check_in: '08:30',
         standard_check_out: '16:30',
         late_threshold_minutes: 30,
+        checkout_grace_minutes: 30,
+        filter_shifts_by_realtime: true,
         google_drive_script_url: '',
         google_drive_folder_id: '',
         prefixes: ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'],
@@ -61,12 +64,13 @@ export class Config {
             'โทรศัพท์/อุปกรณ์ขัดข้อง'
         ],
         work_shifts: [
-            { name: 'เวลาราชการปกติ (08:30 - 16:30)', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ผลัดเช้า (06:00 - 14:00)', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ผลัดบ่าย (14:00 - 22:00)', check_in: '14:00', check_out: '22:00', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ปฏิบัติงานนอกเวลาราชการ ช่วงเย็น (16:30 - 20:30)', check_in: '16:30', check_out: '20:30', is_custom: false, is_overtime: true, is_overnight: false },
-            { name: 'ปฏิบัติงานนอกเวลาราชการ ข้ามวัน (22:00 - 01:00)', check_in: '22:00', check_out: '01:00', is_custom: false, is_overtime: true, is_overnight: true },
-            { name: 'อื่นๆ (ระบุเวลาเอง)', check_in: '08:30', check_out: '16:30', is_custom: true, is_overtime: false, is_overnight: false }
+            { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ผลัดเช้า', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ผลัดบ่าย', check_in: '14:00', check_out: '22:00', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ปฏิบัติงานนอกเวลา ช่วงเช้า', check_in: '05:00', check_out: '14:00', is_custom: false, is_overtime: true, is_overnight: false },
+            { name: 'ปฏิบัติงานนอกเวลา ช่วงเย็น', check_in: '16:30', check_out: '20:30', is_custom: false, is_overtime: true, is_overnight: false },
+            { name: 'ปฏิบัติงานนอกเวลา ข้ามวัน', check_in: '22:00', check_out: '01:00', is_custom: false, is_overtime: true, is_overnight: true },
+            { name: 'อื่นๆ', check_in: '08:30', check_out: '16:30', is_custom: true, is_overtime: false, is_overnight: false }
         ],
         category_colors: {
             normal: '#007B3E',

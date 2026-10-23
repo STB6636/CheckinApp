@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/SettingsController.js
- * @description คลาสควบคุมหน้าตั้งค่าระบบ (รองรับการตั้งค่าข้อความ Header BMA e-Government Time Attendance System, ตรวจลิงก์โลโก้ & Tag ปฏิบัติงานนอกเวลาสีม่วงพาสเทล)
+ * @description คลาสควบคุมหน้าตั้งค่าระบบ (ย่อป้าย Tag รูปแบบปกติ/รูปแบบพิเศษไม่ให้ล้นจอ และรองรับตั้งค่าเวลาเริ่มเข้างาน, นาทีหลังเลิกงาน, กรองช่วงเวลาตามเวลาจริง)
  */
 
 import { Config } from '../core/Config.js';
@@ -20,7 +20,7 @@ export class SettingsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'settings',
             pageTitle: 'ตั้งค่าระบบพื้นฐาน (สำหรับ SuperAdmin)',
-            pageSubtitle: 'จัดการหน่วยงาน, ข้อความ Header/Footer, ตรวจลิงก์โลโก้, Google Drive, เกณฑ์เวลา/สีรายงาน และโครงสร้างแม่-ลูก'
+            pageSubtitle: 'จัดการหน่วยงาน, เวลาเริ่มเข้างาน, เกณฑ์เวลาออกงาน, กรองกะตามเวลาจริง และโครงสร้างแม่-ลูก'
         });
 
         if (!layout.currentUser) return;
@@ -73,12 +73,26 @@ export class SettingsController {
         document.getElementById('toggleRequirePhoto').checked = Boolean(this.settings.require_photo);
         document.getElementById('toggleRequireGps').checked = Boolean(this.settings.require_gps);
 
+        const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
+        if (filterRealtimeEl) {
+            filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
+        }
+
         const isSingleClick = Boolean(this.settings.single_click_checkin);
         this.#syncCheckinModeUI(isSingleClick);
 
+        const allowStartEl = document.getElementById('setAllowCheckinStartTime');
+        if (allowStartEl) {
+            allowStartEl.value = UIHelpers.formatTime24(this.settings.allow_checkin_start_time || '06:00');
+        }
         document.getElementById('setStdCheckIn').value = UIHelpers.formatTime24(this.settings.standard_check_in || '08:30');
         document.getElementById('setStdCheckOut').value = UIHelpers.formatTime24(this.settings.standard_check_out || '16:30');
         document.getElementById('setLateThresholdMin').value = Number(this.settings.late_threshold_minutes ?? 30);
+
+        const graceMinEl = document.getElementById('setCheckoutGraceMin');
+        if (graceMinEl) {
+            graceMinEl.value = Number(this.settings.checkout_grace_minutes ?? 30);
+        }
 
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
@@ -118,6 +132,9 @@ export class SettingsController {
         }
     }
 
+    /**
+     * ย่อข้อความป้าย Tag ให้เหลือแค่ "รูปแบบพิเศษ" หรือ "รูปแบบปกติ" เพื่อไม่ให้ล้นจอหรือเบียดข้อความในมือถือ
+     */
     #syncCheckinModeUI(isSingleClick) {
         const toggleChk = document.getElementById('toggleSingleClickCheckin');
         const badgeEl = document.getElementById('checkinModeStatusBadge');
@@ -132,10 +149,10 @@ export class SettingsController {
 
         if (badgeEl) {
             if (isSingleClick) {
-                badgeEl.textContent = 'รูปแบบพิเศษ (ลงเวลาตามที่ตั้งไว้)';
+                badgeEl.textContent = 'รูปแบบพิเศษ';
                 badgeEl.className = 'bma-badge bma-badge-indigo';
             } else {
-                badgeEl.textContent = 'รูปแบบปกติ (เข้า-ออกตามเวลาจริง)';
+                badgeEl.textContent = 'รูปแบบปกติ';
                 badgeEl.className = 'bma-badge bma-badge-success';
             }
         }
@@ -229,10 +246,11 @@ export class SettingsController {
             const checkIn24 = UIHelpers.formatTime24(shift.check_in);
             const checkOut24 = UIHelpers.formatTime24(shift.check_out);
             const isOvernight = Boolean(shift.is_overnight || (UIHelpers.timeToMinutes(checkOut24) < UIHelpers.timeToMinutes(checkIn24)));
+            const formattedDisplay = SettingsModel.formatShiftDisplayText(shift);
 
             let typeBadgeHtml = '';
             if (shift.is_custom) {
-                typeBadgeHtml = `<span class="bma-badge bma-badge-warning">อื่นๆ (ระบุเวลาเอง)</span>`;
+                typeBadgeHtml = `<span class="bma-badge bma-badge-warning">อื่นๆ</span>`;
             } else if (shift.is_overtime) {
                 typeBadgeHtml = `
                     <span class="bma-badge-pastel-purple">
@@ -249,12 +267,11 @@ export class SettingsController {
                     <td class="text-center font-semibold">${idx + 1}</td>
                     <td class="text-center">${this.#buildSortButtonsHtml('work_shifts', idx, shifts.length)}</td>
                     <td>
-                        <div class="font-bold bma-text-main">${shift.name}</div>
-                        ${isOvernight ? `<span class="text-[11px] font-bold text-purple-700 dark:text-purple-300"><i class="fa-solid fa-moon mr-1"></i>เลิกงานในวันถัดไป (ข้ามวัน)</span>` : ''}
+                        <div class="font-bold bma-text-main">${formattedDisplay}</div>
                     </td>
                     <td class="text-center font-mono font-bold">${shift.is_custom ? 'ระบุเอง' : `${checkIn24} น.`}</td>
                     <td class="text-center font-mono font-bold">
-                        ${shift.is_custom ? 'ระบุเอง' : `${checkOut24} น.${isOvernight ? ' (วันถัดไป)' : ''}`}
+                        ${shift.is_custom ? 'ระบุเอง' : `${checkOut24} น.${isOvernight ? ' (ข้ามวัน)' : ''}`}
                     </td>
                     <td class="text-center">${typeBadgeHtml}</td>
                     <td class="text-center space-x-1 whitespace-nowrap">
@@ -327,11 +344,14 @@ export class SettingsController {
         this.settings.google_drive_folder_id = document.getElementById('setGDriveFolderId').value.trim();
         this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
         this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
+        this.settings.filter_shifts_by_realtime = document.getElementById('toggleFilterShiftsByRealtime')?.checked ?? true;
         this.settings.single_click_checkin = document.getElementById('toggleSingleClickCheckin').checked;
 
+        this.settings.allow_checkin_start_time = UIHelpers.formatTime24(document.getElementById('setAllowCheckinStartTime')?.value || '06:00');
         this.settings.standard_check_in = UIHelpers.formatTime24(document.getElementById('setStdCheckIn').value || '08:30');
         this.settings.standard_check_out = UIHelpers.formatTime24(document.getElementById('setStdCheckOut').value || '16:30');
         this.settings.late_threshold_minutes = Number(document.getElementById('setLateThresholdMin').value ?? 30);
+        this.settings.checkout_grace_minutes = Number(document.getElementById('setCheckoutGraceMin')?.value ?? 30);
 
         this.settings.category_colors = {
             normal: document.getElementById('setColorNormal').value || '#007B3E',
@@ -665,10 +685,15 @@ export class SettingsController {
             ? this.settings.work_shifts[editIndex]
             : { name: '', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false };
 
-        this.#openModal(editIndex !== null ? 'แก้ไขช่วงเวลาปฏิบัติราชการ' : 'เพิ่มช่วงเวลาปฏิบัติราชการ', `
+        const cleanName = String(item.name || '')
+            .replace(/\s*\(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}.*?\)/g, '')
+            .replace(/\s*\(ข้ามวัน\)/g, '')
+            .trim();
+
+        this.#openModal(editIndex !== null ? 'แก้ไขช่วงเวลาทำงาน' : 'เพิ่มช่วงเวลาทำงาน', `
             <div>
-                <label class="block text-xs font-bold bma-text-main mb-1">ชื่อช่วงเวลาปฏิบัติราชการ *</label>
-                <input type="text" id="mShiftName" class="bma-input" value="${item.name}" placeholder="เช่น ปฏิบัติงานนอกเวลา (22:00 - 01:00)" required>
+                <label class="block text-xs font-bold bma-text-main mb-1">ชื่อช่วงเวลาทำงาน (ไม่ต้องใส่วงเล็บเวลา ระบบจะต่อท้ายเวลาให้อัตโนมัติ) *</label>
+                <input type="text" id="mShiftName" class="bma-input" value="${cleanName}" placeholder="เช่น เวลาราชการปกติ หรือ ปฏิบัติงานนอกเวลา" required>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -686,16 +711,16 @@ export class SettingsController {
                 <label class="flex items-start gap-2.5 text-xs font-bold bma-text-main cursor-pointer">
                     <input type="checkbox" id="mShiftOvertime" class="w-4 h-4 accent-purple-600 mt-0.5 shrink-0" ${item.is_overtime ? 'checked' : ''}>
                     <div>
-                        <span class="text-purple-700 dark:text-purple-300 font-extrabold block">ช่วงเวลานี้คือ "ปฏิบัติงานนอกเวลา" (Tag สีม่วงพาสเทล)</span>
+                        <span class="text-purple-700 dark:text-purple-300 font-extrabold block">ช่วงเวลานี้คือ "ปฏิบัติงานนอกเวลา"</span>
                         <span class="bma-text-sub font-normal block mt-0.5">
-                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเวลาเข้าและเลิกงานตามที่ตั้งไว้) โดยอัตโนมัติ
+                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษโดยอัตโนมัติ
                         </span>
                     </div>
                 </label>
 
                 <label class="flex items-center gap-2.5 pt-2 border-t bma-border text-xs font-bold bma-text-main cursor-pointer">
                     <input type="checkbox" id="mShiftOvernight" class="w-4 h-4 accent-indigo-600 shrink-0" ${item.is_overnight ? 'checked' : ''}>
-                    <span>เป็นช่วงเวลาปฏิบัติงานข้ามวัน (เช่น เริ่ม 22:00 น. เลิกงาน 01:00 น. ของวันถัดไป)</span>
+                    <span>เป็นเวลาเลิกงานข้ามวัน (ระบบจะต่อท้าย "(ข้ามวัน)" ในตัวเลือกอัตโนมัติ)</span>
                 </label>
 
                 <label class="flex items-center gap-2.5 pt-2 border-t bma-border text-xs font-bold bma-text-main cursor-pointer">

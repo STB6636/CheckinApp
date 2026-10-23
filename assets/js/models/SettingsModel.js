@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/SettingsModel.js
- * @description คลาสจัดการข้อมูลตั้งค่าระบบ (รองรับการตั้งค่าข้อความ Header BMA e-Government Time Attendance System)
+ * @description คลาสจัดการข้อมูลตั้งค่าระบบ (รองรับ allow_checkin_start_time, checkout_grace_minutes, filter_shifts_by_realtime และการแสดงชื่อช่วงเวลามาตรฐาน)
  */
 
 import { Config } from '../core/Config.js';
@@ -8,6 +8,34 @@ import { DatabaseService } from '../core/DatabaseService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 
 export class SettingsModel {
+    /**
+     * จัดรูปแบบชื่อช่วงเวลาให้เป็นมาตรฐาน: "ชื่อตามที่ตั้งเอาไว้ ('เวลาเริ่มงาน' - 'เวลาเลิกงาน')"
+     * และหากเป็นเวลาเลิกงานข้ามวัน ให้เพิ่ม "(ข้ามวัน)" ต่อท้ายตัวเลือก
+     * @param {Object} shift
+     * @returns {string}
+     */
+    static formatShiftDisplayText(shift) {
+        if (!shift) return '-';
+        // ตัดวงเล็บเวลาเดิมที่อาจติดอยู่ในชื่อออกก่อน เพื่อไม่ให้แสดงวงเล็บเวลาซ้ำซ้อน
+        const cleanBaseName = String(shift.name || 'ช่วงเวลาทำงาน')
+            .replace(/\s*\(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}.*?\)/g, '')
+            .replace(/\s*\(ระบุเวลาเอง\)/g, '')
+            .replace(/\s*\(ข้ามวัน\)/g, '')
+            .trim();
+
+        if (shift.is_custom) {
+            return `${cleanBaseName} (ระบุเวลาเอง)`;
+        }
+
+        const checkIn = UIHelpers.formatTime24(shift.check_in || '08:30');
+        const checkOut = UIHelpers.formatTime24(shift.check_out || '16:30');
+        const inMin = UIHelpers.timeToMinutes(checkIn);
+        const outMin = UIHelpers.timeToMinutes(checkOut);
+        const isOvernight = Boolean(shift.is_overnight || (inMin >= 0 && outMin >= 0 && outMin < inMin));
+
+        return `${cleanBaseName} (${checkIn} - ${checkOut})${isOvernight ? ' (ข้ามวัน)' : ''}`;
+    }
+
     static async getSettings(forceRefresh = false) {
         if (!forceRefresh) {
             const cached = sessionStorage.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
@@ -49,7 +77,7 @@ export class SettingsModel {
             const isOvernight = Boolean(s.is_overnight || (inMin > 0 && outMin >= 0 && outMin < inMin));
 
             return {
-                name: s.name || 'เวลาราชการปกติ (08:30 - 16:30)',
+                name: s.name || 'เวลาราชการปกติ',
                 check_in: checkIn,
                 check_out: checkOut,
                 is_custom: Boolean(s.is_custom),
@@ -62,9 +90,12 @@ export class SettingsModel {
             ...Config.DEFAULT_SETTINGS,
             ...data,
             header_system_title: String(data.header_system_title || Config.DEFAULT_SETTINGS.header_system_title),
+            allow_checkin_start_time: UIHelpers.formatTime24(data.allow_checkin_start_time || Config.DEFAULT_SETTINGS.allow_checkin_start_time),
             standard_check_in: UIHelpers.formatTime24(data.standard_check_in || Config.DEFAULT_SETTINGS.standard_check_in),
             standard_check_out: UIHelpers.formatTime24(data.standard_check_out || Config.DEFAULT_SETTINGS.standard_check_out),
             late_threshold_minutes: Number(data.late_threshold_minutes ?? Config.DEFAULT_SETTINGS.late_threshold_minutes),
+            checkout_grace_minutes: Number(data.checkout_grace_minutes ?? Config.DEFAULT_SETTINGS.checkout_grace_minutes),
+            filter_shifts_by_realtime: Boolean(data.filter_shifts_by_realtime ?? Config.DEFAULT_SETTINGS.filter_shifts_by_realtime),
             google_drive_script_url: String(data.google_drive_script_url ?? ''),
             google_drive_folder_id: String(data.google_drive_folder_id ?? ''),
             footer_description: String(data.footer_description ?? Config.DEFAULT_SETTINGS.footer_description),
@@ -93,9 +124,12 @@ export class SettingsModel {
             require_photo: Boolean(payload.require_photo),
             require_gps: Boolean(payload.require_gps),
             single_click_checkin: Boolean(payload.single_click_checkin),
+            allow_checkin_start_time: UIHelpers.formatTime24(payload.allow_checkin_start_time || '06:00'),
             standard_check_in: UIHelpers.formatTime24(payload.standard_check_in || '08:30'),
             standard_check_out: UIHelpers.formatTime24(payload.standard_check_out || '16:30'),
             late_threshold_minutes: Number(payload.late_threshold_minutes ?? 30),
+            checkout_grace_minutes: Number(payload.checkout_grace_minutes ?? 30),
+            filter_shifts_by_realtime: Boolean(payload.filter_shifts_by_realtime ?? true),
             google_drive_script_url: String(payload.google_drive_script_url || '').trim(),
             google_drive_folder_id: String(payload.google_drive_folder_id || '').trim(),
             prefixes: payload.prefixes || [],

@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/AttendanceModel.js
- * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (แก้บั๊กบันทึกเวลารูปแบบพิเศษให้ตรงตามที่ตั้งไว้, แก้การนับบุคลากรทั้งหมดในหน้าภาพรวม & รองรับข้อมูลโปรไฟล์เฉพาะ Row)
+ * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (อัปเกรดระบบ GPS จับอพาร์ทเม้นส์/อาคารระยะใกล้แม่นยำ + คำนวณเวลาออกงานหลังเลิกงาน +30 นาที)
  */
 
 import { Config } from '../core/Config.js';
@@ -10,6 +10,9 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from './SettingsModel.js';
 
 export class AttendanceModel {
+    /**
+     * คำนวณระยะห่างระหว่างพิกัด 2 จุดเป็นเมตร (Haversine Formula)
+     */
     static #calculateDistanceMeters(lat1, lon1, lat2, lon2) {
         const R = 6371000;
         const toRad = (deg) => (deg * Math.PI) / 180;
@@ -23,11 +26,88 @@ export class AttendanceModel {
         return R * c;
     }
 
+    /**
+     * แปลงจำนวนนาทีรวมกลับเป็นเวลา HH:mm (24 ชม.)
+     * @param {number} totalMinutes
+     * @returns {string}
+     */
+    static #minutesToTime24(totalMinutes) {
+        const normalized = ((totalMinutes % 1440) + 1440) % 1440;
+        const hh = String(Math.floor(normalized / 60)).padStart(2, '0');
+        const mm = String(normalized % 60).padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+
+    /**
+     * อัปเกรดระบบจับสถานที่ใกล้เคียง (Multi-Layer POI & Building Detection):
+     * ขั้นที่ 1: ค้นหาหมุดสถานที่ อาคาร อพาร์ทเม้นส์ ร้านค้า สำนักงาน ในรัศมี 65 เมตรผ่าน Overpass API
+     *          เรียงลำดับตามระยะห่างจริงจากพิกัดผู้ใช้ (หาก <= 20 เมตร ใช้ชื่อสถานที่นั้นเลย / หาก > 20 เมตร ใช้ "ใกล้เคียง [ชื่อสถานที่]")
+     * ขั้นที่ 2: หากไม่พบใน Overpass จึงค้นหาจาก Nominatim ระดับอาคาร/ซอย/ถนน ก่อนจะไปถึงระดับแขวง/เขต
+     * @param {number} lat
+     * @param {number} lng
+     * @returns {Promise<string>}
+     */
     static async resolveLocationName(lat, lng) {
         if (typeof lat !== 'number' || typeof lng !== 'number') {
             return 'ไม่ระบุสถานที่';
         }
 
+        // ขั้นที่ 1: กวาดหาสถานที่ที่มีชื่อ (อพาร์ทเม้นส์, อาคาร, ร้านค้า, หน่วยงาน) ในรัศมี 65 เมตรด้วย Overpass API
+        try {
+            const overpassQuery = `[out:json][timeout:4];(node(around:65,${lat},${lng})["name"];way(around:65,${lat},${lng})["name"];);out center;`;
+            const overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`;
+            const ovRes = await fetch(overpassUrl);
+
+            if (ovRes.ok) {
+                const ovData = await ovRes.json();
+                const elements = ovData?.elements || [];
+
+                const candidates = [];
+                for (const el of elements) {
+                    const tags = el.tags || {};
+                    const placeName = (tags['name:th'] || tags.name || '').trim();
+                    if (!placeName) continue;
+
+                    // ข้ามเส้นถนนหลักหรือเขตการปกครองในรอบแรก เพื่อให้ความสำคัญกับอาคาร/อพาร์ทเม้นส์/สถานที่ก่อน
+                    if (tags.boundary === 'administrative' || tags.place) continue;
+
+                    const elLat = el.lat ?? el.center?.lat;
+                    const elLon = el.lon ?? el.center?.lon;
+                    if (typeof elLat !== 'number' || typeof elLon !== 'number') continue;
+
+                    const dist = AttendanceModel.#calculateDistanceMeters(lat, lng, elLat, elLon);
+                    // ให้คะแนนความสำคัญกับ อาคาร/อพาร์ทเม้นส์/สำนักงาน/ร้านค้า มากกว่าเส้นทางถนน
+                    const isHighway = Boolean(tags.highway);
+                    candidates.push({
+                        name: placeName,
+                        dist,
+                        isHighway
+                    });
+                }
+
+                // เรียงลำดับโดยเลือกสถานที่ที่ไม่ใช่เส้นถนนก่อน และเรียงตามระยะทางที่ใกล้ที่สุด
+                candidates.sort((a, b) => {
+                    if (a.isHighway !== b.isHighway) {
+                        return a.isHighway ? 1 : -1;
+                    }
+                    return a.dist - b.dist;
+                });
+
+                if (candidates.length > 0) {
+                    const nearest = candidates[0];
+                    if (!nearest.isHighway) {
+                        if (nearest.dist <= 20) {
+                            return nearest.name;
+                        }
+                        return `ใกล้เคียง ${nearest.name}`;
+                    }
+                }
+            }
+        } catch (ovErr) {
+            console.warn('Overpass POI lookup fallback to Nominatim:', ovErr);
+        }
+
+        // ขั้นที่ 2: ค้นหาผ่าน Nominatim Reverse Geocoding (zoom=18)
         try {
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`,
@@ -37,11 +117,15 @@ export class AttendanceModel {
             if (response.ok) {
                 const data = await response.json();
                 const addr = data.address || {};
+                const namedetails = data.namedetails || {};
 
                 const directPoiName =
+                    namedetails['name:th'] ||
+                    namedetails.name ||
                     data.name ||
-                    addr.amenity ||
+                    addr.apartments ||
                     addr.building ||
+                    addr.amenity ||
                     addr.office ||
                     addr.shop ||
                     addr.tourism ||
@@ -55,22 +139,26 @@ export class AttendanceModel {
                     ? AttendanceModel.#calculateDistanceMeters(lat, lng, placeLat, placeLon)
                     : 0;
 
-                if (directPoiName) {
-                    if (distMeters <= 28) {
+                // ตรวจสอบว่า directPoiName ไม่ใช่ชื่อถนนหรือชื่อเขต
+                if (directPoiName && directPoiName !== addr.road && directPoiName !== addr.city_district) {
+                    if (distMeters <= 25) {
                         return directPoiName.trim();
                     }
                     return `ใกล้เคียง ${directPoiName.trim()}`;
                 }
 
-                const fallbackLandmark =
-                    addr.road ||
-                    addr.soi ||
+                // หากไม่มีชื่ออาคาร ให้ใช้ชื่อซอย / ถนน / หมู่บ้าน / แขวง ตามลำดับ
+                const specificStreetOrArea =
+                    addr.Aeroway ||
+                    addr.hamlet ||
                     addr.neighbourhood ||
+                    addr.quarter ||
+                    addr.road ||
                     addr.suburb ||
                     addr.city_district ||
                     'พื้นที่ปฏิบัติราชการ';
 
-                return `ใกล้เคียง ${fallbackLandmark.trim()}`;
+                return `ใกล้เคียง ${specificStreetOrArea.trim()}`;
             }
         } catch (err) {
             console.warn('Reverse geocoding error:', err);
@@ -93,7 +181,10 @@ export class AttendanceModel {
             };
         }
 
-        const matchingShift = (settings?.work_shifts || []).find(s => s.name === log.shift_name);
+        const matchingShift = (settings?.work_shifts || []).find(s =>
+            s.name === log.shift_name || SettingsModel.formatShiftDisplayText(s) === log.shift_name
+        );
+
         if (
             log.is_overtime ||
             matchingShift?.is_overtime ||
@@ -205,6 +296,38 @@ export class AttendanceModel {
         return list.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
     }
 
+    /**
+     * ตรวจสอบว่ามีรายการลงเวลาเข้างานปกติที่ยังไม่ได้กดลงเวลาออกงานค้างอยู่หรือไม่
+     * - หากอยู่ในวันเดียวกันและยังไม่ได้กดออกงาน -> คืนค่ารายการนั้นเพื่อให้กดออกงานก่อน
+     * - หากข้ามมาวันถัดไปแล้ว แต่เวลาจริงยังไม่ถึงเวลาเริ่มบันทึกเวลาเข้างานของวันใหม่ (เช่น ก่อน 06:00 น.) -> ยังคงให้กดออกงานของเมื่อวานได้
+     * - หากข้ามมาวันถัดไปแล้ว และเวลาจริงเข้าสู่ช่วงเริ่มปฏิบัติงานตามข้อ 1 (>= 06:00 น.) -> เริ่มรอบวันใหม่ตามข้อ 1
+     */
+    static async getActiveRegularRecordForCheckout(personnelId, userId, settings) {
+        const todayIso = UIHelpers.getTodayISO();
+        const todayReg = await AttendanceModel.getTodayRegularRecordForUser(personnelId, userId, todayIso);
+        if (todayReg) {
+            return todayReg;
+        }
+
+        // ตรวจสอบกรณีข้ามเที่ยงคืนแต่ยังไม่ถึงเวลาเริ่มเข้างานของวันใหม่ (เช่น ก่อน 06:00 น.)
+        const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
+        const startAllowMin = UIHelpers.timeToMinutes(settings?.allow_checkin_start_time || '06:00');
+
+        if (nowMin < startAllowMin) {
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const offsetMs = yesterdayDate.getTimezoneOffset() * 60000;
+            const yesterdayIso = new Date(yesterdayDate.getTime() - offsetMs).toISOString().slice(0, 10);
+
+            const yesterdayReg = await AttendanceModel.getTodayRegularRecordForUser(personnelId, userId, yesterdayIso);
+            if (yesterdayReg && yesterdayReg.check_in_time && !yesterdayReg.check_out_time) {
+                return yesterdayReg;
+            }
+        }
+
+        return null;
+    }
+
     static async getPersonalAttendanceHistory(personnelId, userId, limit = 150) {
         const db = DatabaseService.getInstance().client;
         const settings = await SettingsModel.getSettings(false);
@@ -308,9 +431,12 @@ export class AttendanceModel {
     }
 
     /**
-     * บันทึกลงเวลาปฏิบัติราชการ:
-     * - แก้ไขบั๊กโหมดรูปแบบพิเศษ (isSingleClickMode): บันทึกทั้งเวลาเข้างาน (shiftStartRef เช่น 08:30) และเวลาออกงาน (shiftEndRef เช่น 16:30)
-     *   ตามที่ตั้งค่าเอาไว้ในระบบ ไม่ใช้เวลาปัจจุบัน (currentTime)
+     * บันทึกลงเวลาปฏิบัติราชการ รองรับเงื่อนไขใหม่ครบทุกข้อ:
+     * - กรณีมีรายการเข้างานปกติที่ยังไม่ได้กดออกงานค้างอยู่ (ข้อ 2 และ 3.1):
+     *   หากเลยเวลาเลิกงานที่ตั้งไว้แต่ไม่เกิน checkout_grace_minutes (เช่น 30 นาที) ให้บันทึกเวลาออกตามจริง
+     *   หากเกิน 30 นาที ให้บันทึกเวลาเป็น [เวลาออกงานที่ตั้งไว้ + 30 นาที]
+     * - กรณีเป็นช่วงเวลาปฏิบัติงานนอกเวลา (ข้อ 3 และ 4): บันทึกเป็นรูปแบบพิเศษอัตโนมัติ (ทั้งเข้าและออกตามที่ตั้งไว้)
+     * - กรณีเป็นรูปแบบพิเศษ (single_click_checkin): บันทึกทั้งเวลาเข้าและออกตามที่ตั้งไว้ในระบบ
      */
     static async submitCheckinOrCheckout(payload) {
         const db = DatabaseService.getInstance().client;
@@ -319,6 +445,91 @@ export class AttendanceModel {
 
         const today = payload.work_date || UIHelpers.getTodayISO();
         const currentTime = UIHelpers.formatTime24(payload.time || UIHelpers.getCurrentTimeHHMM());
+        const nowMin = UIHelpers.timeToMinutes(currentTime);
+
+        const shiftStartRef = UIHelpers.formatTime24(payload.shift_check_in || settings.standard_check_in || '08:30');
+        const shiftEndRef = UIHelpers.formatTime24(payload.shift_check_out || settings.standard_check_out || '16:30');
+
+        const activeRegularRecord = await AttendanceModel.getActiveRegularRecordForCheckout(
+            payload.personnel_id,
+            payload.user_id,
+            settings
+        );
+
+        const hasUnclosedRegular = Boolean(
+            activeRegularRecord &&
+            activeRegularRecord.check_in_time &&
+            !activeRegularRecord.check_out_time
+        );
+
+        // ====================================================================
+        // ข้อ 2 & ข้อ 3.1: กรณีเป็นรูปแบบปกติ และยังไม่ได้กดบันทึกเวลาออกงานตามปกติ
+        // ผู้ใช้จะต้องกดบันทึกเวลาออกงานก่อน!
+        // - ถ้าเลยเวลาเลิกงานแต่ยังไม่เกิน checkout_grace_minutes (30 นาที) -> บันทึกเวลาตามจริง
+        // - ถ้าเลยเวลาเลิกงานเกินกว่า checkout_grace_minutes (30 นาที) -> บันทึก [เวลาออกงาน + 30 นาที]
+        // ====================================================================
+        if (!payload.single_click_checkin && hasUnclosedRegular && !payload.force_overtime) {
+            const matchingShift = (settings.work_shifts || []).find(s =>
+                s.name === activeRegularRecord.shift_name ||
+                SettingsModel.formatShiftDisplayText(s) === activeRegularRecord.shift_name
+            );
+            const targetOutRef = UIHelpers.formatTime24(matchingShift?.check_out || settings.standard_check_out || shiftEndRef);
+            const targetOutMin = UIHelpers.timeToMinutes(targetOutRef);
+            const graceMinutes = Number(settings.checkout_grace_minutes ?? 30);
+
+            let effectiveCheckOutTime = payload.custom_check_out_time || currentTime;
+
+            if (!payload.custom_check_out_time) {
+                const isNextDayCheckout = activeRegularRecord.work_date !== today;
+                const effectiveNowMin = isNextDayCheckout ? (nowMin + 1440) : nowMin;
+
+                if (effectiveNowMin > targetOutMin) {
+                    if (effectiveNowMin <= targetOutMin + graceMinutes) {
+                        // เกินเวลาเลิกงาน แต่ยังไม่เกิน 30 นาที -> บันทึกเวลาตามจริง
+                        effectiveCheckOutTime = currentTime;
+                    } else {
+                        // เกินกว่า 30 นาทีหลังเวลาเลิกงาน -> บันทึกเป็น [เวลาออกงาน + 30 นาที]
+                        effectiveCheckOutTime = AttendanceModel.#minutesToTime24(targetOutMin + graceMinutes);
+                    }
+                }
+            }
+
+            const evalOut = AttendanceModel.evaluateOfficialStatus({
+                check_in_time: activeRegularRecord.check_in_time,
+                check_out_time: effectiveCheckOutTime,
+                shift_name: activeRegularRecord.shift_name,
+                is_overtime: false,
+                is_special_request: false
+            }, settings);
+
+            const updateOut = {
+                check_out_time: effectiveCheckOutTime,
+                check_out_photo: payload.photo_url || activeRegularRecord.check_out_photo || '',
+                check_out_lat: payload.lat ?? activeRegularRecord.check_out_lat,
+                check_out_lng: payload.lng ?? activeRegularRecord.check_out_lng,
+                check_out_location: payload.location_name || activeRegularRecord.check_out_location || '',
+                status: evalOut.status_label,
+                row_color: evalOut.row_color,
+                updated_at: new Date().toISOString()
+            };
+
+            const { data, error } = await db
+                .from('attendance_logs')
+                .update(updateOut)
+                .eq('id', activeRegularRecord.id)
+                .select()
+                .single();
+
+            if (error) {
+                return { success: false, message: 'ไม่สามารถบันทึกลงเวลาออกงานได้: ' + error.message };
+            }
+
+            return {
+                success: true,
+                data,
+                message: `บันทึกลงเวลาออกงานสำเร็จ เวลา ${effectiveCheckOutTime} น. (สถานะ: ${evalOut.status_label})`
+            };
+        }
 
         const todayLogs = await AttendanceModel.getTodayRecordsListForUser(
             payload.personnel_id,
@@ -326,17 +537,13 @@ export class AttendanceModel {
             today
         );
 
-        const regularRecord = todayLogs.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
         const isOvertimeFlow = Boolean(payload.is_overtime_shift);
 
-        const shiftStartRef = UIHelpers.formatTime24(payload.shift_check_in || settings.standard_check_in || '08:30');
-        const shiftEndRef = UIHelpers.formatTime24(payload.shift_check_out || settings.standard_check_out || '16:30');
-
         // ====================================================================
-        // กรณีที่ 1: การลงเวลา "ปฏิบัติงานนอกเวลา" (ใช้เวลาตามกะที่ตั้งไว้ ไม่ใช้เวลาปัจจุบัน)
+        // กรณีที่ 1: การลงเวลา "ปฏิบัติงานนอกเวลา" (ใช้การบันทึกเวลารูปแบบพิเศษอัตโนมัติ)
         // ====================================================================
         if (isOvertimeFlow) {
-            const otShiftName = payload.shift_name || `ปฏิบัติงานนอกเวลาราชการ (${shiftStartRef} - ${shiftEndRef})`;
+            const otShiftName = payload.shift_name || `ปฏิบัติงานนอกเวลา (${shiftStartRef} - ${shiftEndRef})`;
             const otCheckIn = UIHelpers.formatTime24(payload.custom_check_in_time || shiftStartRef);
             const otCheckOut = UIHelpers.formatTime24(payload.custom_check_out_time || shiftEndRef);
 
@@ -351,7 +558,7 @@ export class AttendanceModel {
             if (duplicateOt) {
                 return {
                     success: false,
-                    message: `ไม่สามารถลงเวลาซ้ำได้ เนื่องจากท่านได้ลงเวลาปฏิบัติงานนอกเวลาในช่วง "${otShiftName}" (${otCheckIn} - ${otCheckOut} น.) ในวันนี้ไปแล้ว`
+                    message: `ไม่สามารถลงเวลาซ้ำได้ เนื่องจากท่านได้ลงเวลาปฏิบัติงานนอกเวลาในช่วง "${otShiftName}" ในวันนี้ไปแล้ว`
                 };
             }
 
@@ -391,24 +598,33 @@ export class AttendanceModel {
             return {
                 success: true,
                 data: createdOt,
-                message: `บันทึก "ปฏิบัติงานนอกเวลาราชการ" สำเร็จ (${otCheckIn} - ${otCheckOut} น.)`
+                message: `บันทึก "ปฏิบัติงานนอกเวลา" สำเร็จ (${otCheckIn} - ${otCheckOut} น.)`
             };
         }
 
         // ====================================================================
-        // กรณีที่ 2: การลงเวลาในเวลาทำการปกติ (เข้างานและออกงานได้ครั้งเดียวต่อวัน)
+        // กรณีที่ 2: การลงเวลาในเวลาทำการปกติ (รูปแบบพิเศษ vs รูปแบบปกติ)
         // ====================================================================
-        if (regularRecord && regularRecord.check_in_time && regularRecord.check_out_time) {
+        const regularRecordToday = todayLogs.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
+        const startAllowRef = UIHelpers.formatTime24(settings.allow_checkin_start_time || '06:00');
+        const startAllowMin = UIHelpers.timeToMinutes(startAllowRef);
+
+        if (nowMin < startAllowMin) {
             return {
                 success: false,
-                message: `วันนี้ท่านได้ลงเวลาเข้างาน (${UIHelpers.formatTime24(regularRecord.check_in_time)} น.) และออกงาน (${UIHelpers.formatTime24(regularRecord.check_out_time)} น.) ในเวลาทำการปกติครบ 1 ครั้งแล้ว จะสามารถลงเวลาเข้างานได้อีกครั้งในเวลา ${shiftStartRef} น. ของวันถัดไป`
+                message: `สามารถเริ่มบันทึกเวลาเข้างานปกติได้ตั้งแต่เวลา ${startAllowRef} น. เป็นต้นไป (ขณะนี้สามารถเลือกบันทึกช่วงเวลาปฏิบัติงานนอกเวลาได้)`
+            };
+        }
+
+        if (regularRecordToday && regularRecordToday.check_in_time && regularRecordToday.check_out_time) {
+            return {
+                success: false,
+                message: `วันนี้ท่านได้ลงเวลาเข้างาน (${UIHelpers.formatTime24(regularRecordToday.check_in_time)} น.) และออกงาน (${UIHelpers.formatTime24(regularRecordToday.check_out_time)} น.) ในเวลาทำการปกติครบ 1 ครั้งแล้ว`
             };
         }
 
         const isSingleClickMode = Boolean(payload.single_click_checkin);
 
-        // แก้ไขบั๊ก: เมื่อเปิดฟังก์ชันบันทึกเวลารูปแบบพิเศษ (isSingleClickMode)
-        // ต้องบันทึกทั้งเวลาเข้างาน (shiftStartRef เช่น 08:30) และเวลาออกงาน (shiftEndRef เช่น 16:30) ตามที่ตั้งเอาไว้ ไม่ใช้เวลาปัจจุบัน!
         if (isSingleClickMode) {
             const checkInFinal = UIHelpers.formatTime24(payload.custom_check_in_time || shiftStartRef);
             const checkOutFinal = UIHelpers.formatTime24(payload.custom_check_out_time || shiftEndRef);
@@ -421,102 +637,24 @@ export class AttendanceModel {
                 is_special_request: false
             }, settings);
 
-            if (!regularRecord) {
-                const insertBoth = {
-                    personnel_id: payload.personnel_id || null,
-                    user_id: payload.user_id || null,
-                    work_date: today,
-                    shift_name: payload.shift_name || `เวลาราชการปกติ (${shiftStartRef} - ${shiftEndRef})`,
-                    check_in_time: checkInFinal,
-                    check_out_time: checkOutFinal,
-                    check_in_photo: payload.photo_url || '',
-                    check_out_photo: payload.photo_url || '',
-                    check_in_lat: payload.lat ?? null,
-                    check_in_lng: payload.lng ?? null,
-                    check_in_location: payload.location_name || '',
-                    check_out_lat: payload.lat ?? null,
-                    check_out_lng: payload.lng ?? null,
-                    check_out_location: payload.location_name || '',
-                    status: evalResult.status_label,
-                    remark: payload.remark || '',
-                    row_color: evalResult.row_color,
-                    is_overtime: false,
-                    is_special_request: false,
-                    approval_status: 'approved'
-                };
-
-                const { data, error } = await db
-                    .from('attendance_logs')
-                    .insert(insertBoth)
-                    .select()
-                    .single();
-
-                if (error) {
-                    return { success: false, message: 'ไม่สามารถบันทึกลงเวลาได้: ' + error.message };
-                }
-
-                return {
-                    success: true,
-                    data,
-                    message: `บันทึกลงเวลารูปแบบพิเศษสำเร็จ! เข้างาน ${checkInFinal} น. / ออกงาน ${checkOutFinal} น. (สถานะ: ${evalResult.status_label})`
-                };
-            } else {
-                const updateBoth = {
-                    shift_name: payload.shift_name || regularRecord.shift_name,
-                    check_in_time: checkInFinal,
-                    check_out_time: checkOutFinal,
-                    check_out_photo: payload.photo_url || regularRecord.check_out_photo || '',
-                    check_out_lat: payload.lat ?? regularRecord.check_out_lat,
-                    check_out_lng: payload.lng ?? regularRecord.check_out_lng,
-                    check_out_location: payload.location_name || regularRecord.check_out_location || '',
-                    status: evalResult.status_label,
-                    row_color: evalResult.row_color,
-                    updated_at: new Date().toISOString()
-                };
-
-                const { data, error } = await db
-                    .from('attendance_logs')
-                    .update(updateBoth)
-                    .eq('id', regularRecord.id)
-                    .select()
-                    .single();
-
-                if (error) {
-                    return { success: false, message: 'ไม่สามารถอัปเดตเวลาได้: ' + error.message };
-                }
-
-                return {
-                    success: true,
-                    data,
-                    message: `บันทึกลงเวลารูปแบบพิเศษสำเร็จ! เข้างาน ${checkInFinal} น. / ออกงาน ${checkOutFinal} น. (สถานะ: ${evalResult.status_label})`
-                };
-            }
-        }
-
-        // รูปแบบปกติ (ลงเวลาเข้างาน และลงเวลาออกงานตามเวลาจริงที่กด)
-        if (!regularRecord) {
-            const checkInTime = UIHelpers.formatTime24(payload.custom_check_in_time || currentTime);
-            const evalIn = AttendanceModel.evaluateOfficialStatus({
-                check_in_time: checkInTime,
-                check_out_time: null,
-                shift_name: payload.shift_name,
-                is_overtime: false,
-                is_special_request: false
-            }, settings);
-
-            const insertIn = {
+            const insertBoth = {
                 personnel_id: payload.personnel_id || null,
                 user_id: payload.user_id || null,
                 work_date: today,
                 shift_name: payload.shift_name || `เวลาราชการปกติ (${shiftStartRef} - ${shiftEndRef})`,
-                check_in_time: checkInTime,
+                check_in_time: checkInFinal,
+                check_out_time: checkOutFinal,
                 check_in_photo: payload.photo_url || '',
+                check_out_photo: payload.photo_url || '',
                 check_in_lat: payload.lat ?? null,
                 check_in_lng: payload.lng ?? null,
                 check_in_location: payload.location_name || '',
-                status: evalIn.status_label,
+                check_out_lat: payload.lat ?? null,
+                check_out_lng: payload.lng ?? null,
+                check_out_location: payload.location_name || '',
+                status: evalResult.status_label,
                 remark: payload.remark || '',
-                row_color: evalIn.row_color,
+                row_color: evalResult.row_color,
                 is_overtime: false,
                 is_special_request: false,
                 approval_status: 'approved'
@@ -524,57 +662,64 @@ export class AttendanceModel {
 
             const { data, error } = await db
                 .from('attendance_logs')
-                .insert(insertIn)
+                .insert(insertBoth)
                 .select()
                 .single();
 
             if (error) {
-                return { success: false, message: 'ไม่สามารถบันทึกลงเวลาเข้างานได้: ' + error.message };
+                return { success: false, message: 'ไม่สามารถบันทึกลงเวลาได้: ' + error.message };
             }
 
             return {
                 success: true,
                 data,
-                message: `บันทึกลงเวลาเข้างานสำเร็จ เวลา ${checkInTime} น. (สถานะ: ${evalIn.status_label})`
-            };
-        } else {
-            const checkOutTime = UIHelpers.formatTime24(payload.custom_check_out_time || currentTime);
-            const evalOut = AttendanceModel.evaluateOfficialStatus({
-                check_in_time: regularRecord.check_in_time,
-                check_out_time: checkOutTime,
-                shift_name: regularRecord.shift_name,
-                is_overtime: false,
-                is_special_request: false
-            }, settings);
-
-            const updateOut = {
-                check_out_time: checkOutTime,
-                check_out_photo: payload.photo_url || regularRecord.check_out_photo || '',
-                check_out_lat: payload.lat ?? regularRecord.check_out_lat,
-                check_out_lng: payload.lng ?? regularRecord.check_out_lng,
-                check_out_location: payload.location_name || regularRecord.check_out_location || '',
-                status: evalOut.status_label,
-                row_color: evalOut.row_color,
-                updated_at: new Date().toISOString()
-            };
-
-            const { data, error } = await db
-                .from('attendance_logs')
-                .update(updateOut)
-                .eq('id', regularRecord.id)
-                .select()
-                .single();
-
-            if (error) {
-                return { success: false, message: 'ไม่สามารถบันทึกลงเวลาออกงานได้: ' + error.message };
-            }
-
-            return {
-                success: true,
-                data,
-                message: `บันทึกลงเวลาออกงานสำเร็จ เวลา ${checkOutTime} น. (สถานะ: ${evalOut.status_label})`
+                message: `บันทึกลงเวลารูปแบบพิเศษสำเร็จ! เข้างาน ${checkInFinal} น. / ออกงาน ${checkOutFinal} น. (สถานะ: ${evalResult.status_label})`
             };
         }
+
+        // รูปแบบปกติ: บันทึกเวลาเข้างานตามเวลาจริง
+        const checkInTime = UIHelpers.formatTime24(payload.custom_check_in_time || currentTime);
+        const evalIn = AttendanceModel.evaluateOfficialStatus({
+            check_in_time: checkInTime,
+            check_out_time: null,
+            shift_name: payload.shift_name,
+            is_overtime: false,
+            is_special_request: false
+        }, settings);
+
+        const insertIn = {
+            personnel_id: payload.personnel_id || null,
+            user_id: payload.user_id || null,
+            work_date: today,
+            shift_name: payload.shift_name || `เวลาราชการปกติ (${shiftStartRef} - ${shiftEndRef})`,
+            check_in_time: checkInTime,
+            check_in_photo: payload.photo_url || '',
+            check_in_lat: payload.lat ?? null,
+            check_in_lng: payload.lng ?? null,
+            check_in_location: payload.location_name || '',
+            status: evalIn.status_label,
+            remark: payload.remark || '',
+            row_color: evalIn.row_color,
+            is_overtime: false,
+            is_special_request: false,
+            approval_status: 'approved'
+        };
+
+        const { data, error } = await db
+            .from('attendance_logs')
+            .insert(insertIn)
+            .select()
+            .single();
+
+        if (error) {
+            return { success: false, message: 'ไม่สามารถบันทึกลงเวลาเข้างานได้: ' + error.message };
+        }
+
+        return {
+            success: true,
+            data,
+            message: `บันทึกลงเวลาเข้างานสำเร็จ เวลา ${checkInTime} น. (สถานะ: ${evalIn.status_label})`
+        };
     }
 
     static async submitSpecialRequest(payload) {
@@ -737,10 +882,6 @@ export class AttendanceModel {
         return dates;
     }
 
-    /**
-     * ดึงข้อมูลรายงานการลงเวลา พร้อมพิกัด check_in_lat, check_in_lng และรูปถ่ายของแต่ละ Row
-     * เพื่อให้คลิกที่แถวแล้วแสดงฟอร์มโปรไฟล์เฉพาะของ Row นั้นๆ พร้อมแผนที่ Google Map ได้
-     */
     static async getReportRecordsByDateRange(startDate, endDate, currentUser) {
         const db = DatabaseService.getInstance().client;
         const settings = await SettingsModel.getSettings(false);
@@ -911,19 +1052,12 @@ export class AttendanceModel {
         return { success: true, message: 'ลบรายการลงเวลาเรียบร้อยแล้ว' };
     }
 
-    /**
-     * คำนวณสถิติสำหรับแสดงในการ์ดหน้าภาพรวม:
-     * แก้ไขบั๊ก: นับจำนวน "บุคลากรทั้งหมด" จากจำนวนบุคลากรจริง (Unique personnel_id)
-     * ไม่นับซ้ำเมื่อ 1 คนลงเวลาหลายครั้งในวันเดียวกัน
-     */
     static calculateDashboardMetrics(dailyRecords) {
-        // นับจำนวนบุคลากรทั้งหมดตามรายชื่อบุคลากรจริง (Unique personnel_id)
         const uniquePersonnelSet = new Set(
             (dailyRecords || []).map(r => r.personnel_id).filter(Boolean)
         );
         const total = uniquePersonnelSet.size;
 
-        // นับจำนวนบุคลากรในแต่ละสถานะแบบไม่ซ้ำคนสำหรับกะปกติ และนับจำนวนคนที่มีการลงเวลานอกเวลา
         const normalSet = new Set();
         const lateSet = new Set();
         const absentSet = new Set();

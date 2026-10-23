@@ -32,7 +32,6 @@
                 </div>
             </div>
 
-            <!-- ปุ่มระบบผู้ดูแล, ปุ่มเปลี่ยนโหมดธีม, และปุ่มออกจากระบบ สีสันเด่นชัดสวยงาม -->
             <div class="flex items-center gap-2 shrink-0">
                 <a id="btnGoAdminDashboard" href="dashboard.html" class="hidden btn-header-admin text-xs">
                     <i class="fa-solid fa-gauge-high text-emerald-700"></i>
@@ -55,7 +54,7 @@
     <!-- เนื้อหาหลักหน้าลงเวลา -->
     <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6 space-y-6">
 
-        <!-- การ์ดข้อมูลผู้ใช้งานและนาฬิกาดิจิทัล 24 ชั่วโมง + วันที่ไทยแบบย่อ (เช่น 15 ม.ค. 69) -->
+        <!-- การ์ดข้อมูลผู้ใช้งานและนาฬิกาดิจิทัล 24 ชั่วโมง + วันที่ไทยแบบย่อ -->
         <div class="outdoor-emerald-frame p-5 lg:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
             <div class="flex items-center gap-4 relative z-10">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-[#00351B] text-xl font-extrabold shadow-lg bg-[#FDD835] border-2 border-white">
@@ -107,10 +106,10 @@
             </div>
         </div>
 
-        <!-- ส่วนกล้องถ่ายรูปแนวตั้ง 3:4 (เริ่มต้นปิดกล้องไว้เสมอ) และพิกัดสถานที่ GPS พร้อมแผนที่ Google Map จริง -->
+        <!-- ส่วนกล้องถ่ายรูปแนวตั้ง 3:4 และพิกัดสถานที่ GPS พร้อมแผนที่ Google Map จริง -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปแนวตั้ง อัตราส่วน 3:4 (ป้องกันกล้องทำงานตลอดเวลา) -->
+            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปแนวตั้ง อัตราส่วน 3:4 -->
             <div id="cameraSectionCard" class="lg:col-span-5 bma-card p-5 flex flex-col justify-between" style="border-top: 4px solid var(--g1);">
                 <div>
                     <div class="flex items-center justify-between mb-3">
@@ -121,13 +120,11 @@
                         <span id="photoRequirementBadge" class="bma-badge bma-badge-danger">บังคับถ่ายภาพ</span>
                     </div>
 
-                    <!-- กรอบแสดงภาพแนวตั้ง 3:4 (เริ่มต้นแสดงหน้าจอปิดกล้อง) -->
                     <div class="camera-portrait-3-4 outdoor-camera-bezel flex items-center justify-center">
                         <video id="cameraVideoStream" class="hidden w-full h-full object-cover" autoplay playsinline muted></video>
                         <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
                         <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="ภาพถ่ายลงเวลา 3:4">
 
-                        <!-- หน้าจอพักขณะปิดกล้อง (ค่าเริ่มต้นทุกครั้งที่เข้ามา และหลังบันทึกเสร็จ) -->
                         <div id="cameraStandbyOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#041F11] to-[#07170E] text-white p-5 text-center">
                             <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-[#FDD835] flex items-center justify-center mb-3 shadow-lg">
                                 <i class="fa-solid fa-camera-retro text-2xl text-[#FDD835]"></i>
@@ -142,7 +139,6 @@
                     </div>
                 </div>
 
-                <!-- ปุ่มควบคุมการทำงานของกล้อง -->
                 <div class="mt-4 flex items-center justify-center gap-2.5">
                     <button type="button" id="btnStartCameraBottom" class="btn-bma-primary w-full py-3.5 text-sm shadow-md">
                         <i class="fa-solid fa-video"></i>
@@ -210,19 +206,19 @@
                     </div>
                 </div>
 
-                <!-- การ์ดปุ่มกดบันทึกลงเวลา -->
+                <!-- การ์ดปุ่มกดบันทึกลงเวลา (แก้ไขป้าย Tag ไม่ให้ยาวล้นกรอบ และเปลี่ยนหัวข้อเป็น "เลือกช่วงเวลาทำงาน") -->
                 <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
 
-                    <div class="p-3 bma-info-box flex items-center justify-between gap-2 text-xs">
+                    <div class="p-3.5 bma-info-box flex flex-wrap items-center justify-between gap-2 text-xs">
                         <span class="font-bold bma-text-main flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
                             <span>เงื่อนไขช่วงเวลาที่เลือก:</span>
                         </span>
-                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ (เข้า-ออกวันละ 1 ครั้ง)</span>
+                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
                     </div>
 
-                    <div>
-                        <label for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">เลือกช่วงเวลาปฏิบัติราชการ (24 ชม.)</label>
+                    <div id="shiftSelectorContainer">
+                        <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">เลือกช่วงเวลาทำงาน</label>
                         <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
                     </div>
 
@@ -239,7 +235,7 @@
 
                     <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
                         <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
-                        <span id="regularCompletedNoticeText">วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบ 1 ครั้งแล้ว</span>
+                        <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
                     </div>
 
                     <!-- ปุ่มบันทึกลงเวลาหลัก -->
@@ -258,7 +254,7 @@
             </div>
         </div>
 
-        <!-- ตารางที่ 1: ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว (แยก 2 แท็บ: วันปัจจุบัน / ประวัติลงเวลาย้อนหลัง 5, 10, 15 แถว + ปุ่มหน้าถัดไป) -->
+        <!-- ตารางที่ 1: ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว -->
         <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
                 <div>
@@ -400,7 +396,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">2. เลือกช่วงเวลาปฏิบัติราชการ *</label>
+                    <label class="block text-xs font-bold bma-text-main mb-1">2. เลือกช่วงเวลาทำงาน *</label>
                     <select id="spShiftSelect" class="bma-select font-semibold" required></select>
                 </div>
 
@@ -431,7 +427,7 @@
         </div>
     </div>
 
-    <!-- แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน -->
+    <!-- แถบ Footer สีเขียว กทม. สวยงาม -->
     <footer class="w-full py-4 px-6 bma-footer-bar text-center mt-8">
         <div class="text-xs">
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
