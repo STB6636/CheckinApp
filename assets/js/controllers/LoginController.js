@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/LoginController.js
- * @description คลาสควบคุมหน้าเข้าสู่ระบบ (index.html) แสดง Toast Popup อัตโนมัติโดยไม่ต้องกดปุ่มตกลง
+ * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ดึงข้อความ Header BMA e-Government Time Attendance System จากตั้งค่าระบบ)
  */
 
 import { AuthService } from '../core/AuthService.js';
@@ -25,7 +25,11 @@ export class LoginController {
             this.settings = await SettingsModel.getSettings(true);
             const orgName = this.settings.organization_name || 'กรุงเทพมหานคร';
             const bureauName = this.settings.bureau_name || 'สำนักเทศกิจ';
+            const headerTitle = this.settings.header_system_title || 'BMA e-Government Time Attendance System';
             const footerDesc = this.settings.footer_description || '';
+
+            const headerTitleEl = document.getElementById('headerSystemTitleText');
+            if (headerTitleEl) headerTitleEl.textContent = headerTitle;
 
             document.getElementById('orgNameText').textContent = orgName;
             document.getElementById('bureauNameText').textContent = bureauName;
@@ -57,7 +61,7 @@ export class LoginController {
         const icon = document.getElementById('loginThemeIcon');
         const label = document.getElementById('loginThemeLabel');
         if (icon) {
-            icon.className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-emerald-800';
+            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
         if (label) {
             label.textContent = isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา';
@@ -97,7 +101,6 @@ export class LoginController {
             }
         });
 
-        // Modal เปลี่ยนรหัสผ่านด้วยตนเอง
         const modalChange = document.getElementById('modalChangePassword');
         const openChangeModal = () => {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
@@ -147,7 +150,6 @@ export class LoginController {
             await this.#handleChangePasswordSubmit(closeChangeModal);
         });
 
-        // Modal ลืมรหัสผ่าน
         const modalForgot = document.getElementById('modalForgotPassword');
         const openForgotModal = () => {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
@@ -166,11 +168,6 @@ export class LoginController {
         });
     }
 
-    /**
-     * ประมวลผลการเข้าสู่ระบบ:
-     * - หากสำเร็จ: แสดง Popup เล็กๆ มุมขวาบน (หรือด้านบนในมือถือ) ว่า "เข้าสู่ระบบสำเร็จ" 2 วินาที แล้วเปลี่ยนหน้าทันทีโดยไม่ต้องกดปุ่มใดๆ
-     * - หาก User กดเข้าผู้ดูแลระบบ: แจ้งเตือนว่า "ท่านไม่มีสิทธิ์ใช้งาน"
-     */
     async #handleLogin(mode) {
         const username = document.getElementById('loginUsername')?.value || '';
         const password = document.getElementById('loginPassword')?.value || '';
@@ -185,7 +182,6 @@ export class LoginController {
                 return;
             }
 
-            // แสดง Popup เล็กๆ "เข้าสู่ระบบสำเร็จ" ประมาณ 2 วินาที แล้วเข้าสู่ระบบทันทีโดยไม่ต้องกดปุ่มตกลง
             await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
             window.location.href = result.redirectUrl;
         } catch (err) {

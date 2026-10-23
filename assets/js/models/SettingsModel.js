@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/SettingsModel.js
- * @description คลาสจัดการข้อมูลตั้งค่าระบบ (Google Drive, เกณฑ์เวลามาตรฐาน/นาทีสาย, สีสถานะ 5 ประเภท, กะนอกเวลา/ข้ามวัน, Footer 2 บรรทัด)
+ * @description คลาสจัดการข้อมูลตั้งค่าระบบ (รองรับการตั้งค่าข้อความ Header BMA e-Government Time Attendance System)
  */
 
 import { Config } from '../core/Config.js';
@@ -8,11 +8,6 @@ import { DatabaseService } from '../core/DatabaseService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 
 export class SettingsModel {
-    /**
-     * ดึงข้อมูลตั้งค่าระบบจาก Supabase
-     * @param {boolean} forceRefresh บังคับดึงข้อมูลใหม่จากฐานข้อมูล
-     * @returns {Promise<Object>}
-     */
     static async getSettings(forceRefresh = false) {
         if (!forceRefresh) {
             const cached = sessionStorage.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
@@ -46,7 +41,6 @@ export class SettingsModel {
             ? data.work_shifts
             : Config.DEFAULT_SETTINGS.work_shifts;
 
-        // จัดรูปแบบเวลาในกะการทำงานให้เป็น 24 ชม. และตรวจสอบกะข้ามวันอัตโนมัติ
         const normalizedShifts = rawShifts.map(s => {
             const checkIn = UIHelpers.formatTime24(s.check_in || '08:30');
             const checkOut = UIHelpers.formatTime24(s.check_out || '16:30');
@@ -67,6 +61,7 @@ export class SettingsModel {
         const merged = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
+            header_system_title: String(data.header_system_title || Config.DEFAULT_SETTINGS.header_system_title),
             standard_check_in: UIHelpers.formatTime24(data.standard_check_in || Config.DEFAULT_SETTINGS.standard_check_in),
             standard_check_out: UIHelpers.formatTime24(data.standard_check_out || Config.DEFAULT_SETTINGS.standard_check_out),
             late_threshold_minutes: Number(data.late_threshold_minutes ?? Config.DEFAULT_SETTINGS.late_threshold_minutes),
@@ -86,17 +81,13 @@ export class SettingsModel {
         return merged;
     }
 
-    /**
-     * บันทึกหรืออัปเดตการตั้งค่าระบบลงฐานข้อมูล Supabase
-     * @param {Object} payload ข้อมูลตั้งค่าระบบที่ต้องการอัปเดต
-     * @returns {Promise<{success: boolean, data?: Object, message: string}>}
-     */
     static async updateSettings(payload) {
         const db = DatabaseService.getInstance().client;
         const updateData = {
             id: 1,
             organization_name: payload.organization_name || 'กรุงเทพมหานคร',
             bureau_name: payload.bureau_name || 'สำนักเทศกิจ',
+            header_system_title: payload.header_system_title || 'BMA e-Government Time Attendance System',
             logo_url: payload.logo_url || '',
             footer_description: payload.footer_description ?? '',
             require_photo: Boolean(payload.require_photo),
@@ -137,13 +128,6 @@ export class SettingsModel {
         };
     }
 
-    /**
-     * สลับตำแหน่งรายการในอาร์เรย์ (สำหรับการกดปุ่มลูกศร ขึ้น / ลง)
-     * @param {Array} arr อาร์เรย์ต้นฉบับ
-     * @param {number} fromIndex ลำดับเดิม
-     * @param {'up'|'down'} direction ทิศทางการเลื่อน
-     * @returns {boolean}
-     */
     static moveItemInArray(arr, fromIndex, direction) {
         if (!Array.isArray(arr)) return false;
         const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;

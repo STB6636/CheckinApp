@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (รีเฟรชหลังลงเวลา, จำกัดเวลาปกติวันละครั้ง vs นอกเวลาหลายครั้ง, แท็บประวัติ 5/10/15 แถว & ตารางคำขอพิเศษ)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ป้องกันกล้องทำงานตลอดเวลา: เริ่มต้นปิดกล้อง -> กดเปิดกล้องเพื่อถ่ายรูป -> บันทึกเสร็จกลับมาปิดกล้อง)
  */
 
 import { Config } from '../core/Config.js';
@@ -14,6 +14,7 @@ export class CheckinController {
         this.currentUser = null;
         this.settings = null;
         this.mediaStream = null;
+        this.isCameraRunning = false;
         this.capturedPhotoDataUrl = '';
         this.gpsData = {
             ready: false,
@@ -21,11 +22,10 @@ export class CheckinController {
             lng: null,
             locationName: ''
         };
-        // สถานะสำหรับตารางประวัติส่วนตัว (แท็บวันปัจจุบัน vs ย้อนหลัง + Pagination)
-        this.activeHistoryTab = 'today'; // 'today' หรือ 'past'
+        this.activeHistoryTab = 'today';
         this.todayHistoryList = [];
         this.pastHistoryList = [];
-        this.pastPageSize = 5; // 5, 10, หรือ 15 แถว
+        this.pastPageSize = 5;
         this.pastCurrentPage = 1;
         this.specialRequestsList = [];
         this.init();
@@ -33,6 +33,7 @@ export class CheckinController {
 
     async init() {
         UIHelpers.initTheme();
+        this.#updateThemeButtonUI();
         this.currentUser = AuthService.requireAuth(['SuperAdmin', 'Admin', 'User']);
         if (!this.currentUser) return;
 
@@ -46,8 +47,21 @@ export class CheckinController {
         await this.#refreshAllAttendanceData();
         UIHelpers.hideLoading();
 
-        await this.#initCamera();
+        // ป้องกันกล้องทำงานตลอดเวลา: ทุกครั้งที่เข้ามาให้ปิดกล้องไว้ก่อนเสมอ
+        this.#stopCameraAndShowStandby();
         await this.#initGpsLocation();
+    }
+
+    #updateThemeButtonUI() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const icon = document.getElementById('checkinThemeIcon');
+        const label = document.getElementById('checkinThemeLabel');
+        if (icon) {
+            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        if (label) {
+            label.textContent = isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา';
+        }
     }
 
     #checkAndShowWelcomeToast() {
@@ -152,9 +166,6 @@ export class CheckinController {
         document.getElementById('spWorkDate').value = UIHelpers.getTodayISO();
     }
 
-    /**
-     * โหลดข้อมูลสถานะวันนี้, ตารางประวัติส่วนตัว (แยกวันนี้/ย้อนหลัง) และตารางประวัติคำขอพิเศษพร้อมกัน
-     */
     async #refreshAllAttendanceData() {
         const todayIso = UIHelpers.getTodayISO();
         const [regularRecord, allHistory, specialRequests] = await Promise.all([
@@ -163,7 +174,6 @@ export class CheckinController {
             AttendanceModel.getPersonalSpecialRequests(this.currentUser.personnel_id, this.currentUser.id)
         ]);
 
-        // แยกรายการลงเวลาส่วนตัวออกเป็น "วันปัจจุบัน" และ "ประวัติลงเวลาย้อนหลัง"
         this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
         this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso);
         this.specialRequestsList = specialRequests;
@@ -173,9 +183,6 @@ export class CheckinController {
         this.#renderSpecialRequestsHistoryTable();
     }
 
-    /**
-     * อัปเดตการ์ดเวลาเข้า-ออกงานวันนี้ และตรวจสอบสิทธิ์การกดปุ่มลงเวลาตามช่วงเวลาที่เลือก
-     */
     #updateStatusCardsAndMainButton(regularRecord) {
         const checkinTimeEl = document.getElementById('todayCheckinTime');
         const checkinBadgeEl = document.getElementById('todayCheckinBadge');
@@ -193,6 +200,7 @@ export class CheckinController {
         const isOvertimeShift = Boolean(shiftObj.is_overtime);
         const isSingleClick = Boolean(this.settings?.single_click_checkin || isOvertimeShift);
         const shiftStartRef = UIHelpers.formatTime24(shiftObj.check_in || this.settings?.standard_check_in || '08:30');
+        const shiftEndRef = UIHelpers.formatTime24(shiftObj.check_out || this.settings?.standard_check_out || '16:30');
 
         if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
             mainCustomBox?.classList.remove('hidden');
@@ -200,7 +208,6 @@ export class CheckinController {
             mainCustomBox?.classList.add('hidden');
         }
 
-        // แสดงป้ายเงื่อนไขของกะที่เลือก
         if (isOvertimeShift) {
             if (modeTag) {
                 modeTag.textContent = 'ปฏิบัติงานนอกเวลา (ลงได้หลายครั้ง ไม่ซ้ำช่วงเวลา)';
@@ -208,7 +215,7 @@ export class CheckinController {
             }
         } else if (this.settings?.single_click_checkin) {
             if (modeTag) {
-                modeTag.textContent = 'รูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเข้าและออก)';
+                modeTag.textContent = `รูปแบบพิเศษ (บันทึกเวลา ${shiftStartRef} - ${shiftEndRef} น.)`;
                 modeTag.className = 'bma-badge bma-badge-indigo';
             }
         } else {
@@ -218,7 +225,6 @@ export class CheckinController {
             }
         }
 
-        // อัปเดตการ์ดเวลาเข้า-ออกงานปกติวันนี้
         if (!regularRecord) {
             checkinTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
             checkinBadgeEl.textContent = 'รอลงเวลาเข้า';
@@ -246,17 +252,15 @@ export class CheckinController {
             }
         }
 
-        // ตรวจสอบปุ่มกดบันทึกลงเวลาหลัก
         if (isOvertimeShift) {
             noticeBox?.classList.add('hidden');
             if (btnSubmitMain) btnSubmitMain.disabled = false;
             if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = `บันทึกลงเวลาปฏิบัติงานนอกเวลา (${shiftObj.check_in} - ${shiftObj.check_out} น.)`;
+                btnSubmitLabel.textContent = `บันทึกลงเวลาปฏิบัติงานนอกเวลา (${shiftStartRef} - ${shiftEndRef} น.)`;
             }
         } else {
             const isRegularCompletedToday = Boolean(regularRecord && regularRecord.check_in_time && regularRecord.check_out_time);
             if (isRegularCompletedToday) {
-                // ลงเวลาทำการปกติครบทั้งเข้าและออกแล้วในวันนี้ -> ล็อกปุ่มสำหรับกะปกติ และแจ้งเวลาเข้างานวันถัดไป
                 noticeBox?.classList.remove('hidden');
                 if (noticeText) {
                     noticeText.textContent = `วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบ 1 ครั้งแล้ว จะสามารถเริ่มลงเวลาเข้างานได้อีกครั้งในเวลา ${shiftStartRef} น. ของวันถัดไป (หากต้องการลงเวลานอกเวลา กรุณาเลือกช่วงเวลา "ปฏิบัติงานนอกเวลา" ในช่องด้านบน)`;
@@ -268,7 +272,7 @@ export class CheckinController {
                 if (btnSubmitMain) btnSubmitMain.disabled = false;
                 if (!regularRecord) {
                     btnSubmitLabel.textContent = isSingleClick
-                        ? 'บันทึกลงเวลาเข้าและออกงาน (ในครั้งเดียว)'
+                        ? `บันทึกลงเวลารูปแบบพิเศษ (${shiftStartRef} - ${shiftEndRef} น.)`
                         : 'บันทึกลงเวลาเข้าปฏิบัติราชการ';
                 } else {
                     btnSubmitLabel.textContent = 'บันทึกลงเวลาออกปฏิบัติราชการ';
@@ -277,16 +281,12 @@ export class CheckinController {
         }
     }
 
-    /**
-     * เรนเดอร์ตารางประวัติการลงเวลาส่วนตัว ทั้งแท็บ "วันปัจจุบัน" และแท็บ "ประวัติลงเวลาย้อนหลัง" (พร้อม Pagination 5, 10, 15 แถว)
-     */
     #renderPersonalAttendanceTabs() {
         const todayCountEl = document.getElementById('todayHistoryCountBadge');
         const pastCountEl = document.getElementById('pastHistoryCountBadge');
         if (todayCountEl) todayCountEl.textContent = String(this.todayHistoryList.length);
         if (pastCountEl) pastCountEl.textContent = String(this.pastHistoryList.length);
 
-        // 1. เรนเดอร์ตารางแท็บวันปัจจุบัน
         const todayTbody = document.getElementById('todayPersonalTableBody');
         if (todayTbody) {
             if (this.todayHistoryList.length === 0) {
@@ -296,7 +296,6 @@ export class CheckinController {
             }
         }
 
-        // 2. เรนเดอร์ตารางแท็บประวัติลงเวลาย้อนหลัง พร้อม Pagination (5, 10, 15 แถว)
         const pastTbody = document.getElementById('pastPersonalTableBody');
         const pageInfoEl = document.getElementById('pastPageInfoText');
         const btnPrev = document.getElementById('btnPastPrevPage');
@@ -348,10 +347,6 @@ export class CheckinController {
         `;
     }
 
-    /**
-     * เรนเดอร์ตารางที่ 2: ตารางประวัติการขอลงเวลากรณีพิเศษ
-     * แสดงสถานะ รออนุมัติ / อนุมัติแล้ว / ปฏิเสธคำขอ และปุ่ม "ลบคำขอ" เมื่อยังไม่ได้อนุมัติ
-     */
     #renderSpecialRequestsHistoryTable() {
         const tbody = document.getElementById('personalSpecialRequestsTableBody');
         const totalBadge = document.getElementById('specialRequestTotalBadge');
@@ -396,79 +391,151 @@ export class CheckinController {
         }).join('');
     }
 
+    // ========================================================================
+    // ระบบควบคุมการเปิด/ปิดกล้อง (ป้องกันกล้องทำงานตลอดเวลา)
+    // ========================================================================
+
     /**
-     * รีเซ็ตและรีเฟรชสถานะหน้าจอเพื่อรอรับข้อมูลใหม่ทันทีหลังจากกดลงเวลาสำเร็จ
+     * หยุดการทำงานของสตรีมกล้องทันที (ตัดไฟสถานะกล้อง)
      */
-    async #resetPageForNewInput() {
-        this.#retakePhoto();
-        await this.#refreshAllAttendanceData();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    async #initCamera() {
-        const video = document.getElementById('cameraVideoStream');
-        const overlay = document.getElementById('cameraStatusOverlay');
-        const msgEl = document.getElementById('cameraStatusMessage');
-
-        try {
-            if (this.mediaStream) {
-                this.mediaStream.getTracks().forEach(track => track.stop());
-            }
-            this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
-                audio: false
-            });
-            video.srcObject = this.mediaStream;
-            overlay.classList.add('hidden');
-        } catch (err) {
-            console.warn('Camera access error:', err);
-            overlay.classList.remove('hidden');
-            msgEl.textContent = 'ไม่สามารถเข้าถึงกล้องถ่ายรูปได้ กรุณาอนุญาตการใช้กล้องบนเบราว์เซอร์';
-            if (this.settings.require_photo) {
-                await UIHelpers.alert(
-                    'แจ้งเตือนการเปิดกล้องถ่ายรูป',
-                    'ระบบกำหนดให้ต้องเปิดกล้องและถ่ายภาพยืนยันตัวตนก่อนบันทึกลงเวลา กรุณาอนุญาตการใช้งานกล้อง',
-                    'warning'
-                );
-            }
+    #stopCameraHardwareStream() {
+        if (this.mediaStream) {
+            this.mediaStream.getTracks().forEach(track => track.stop());
+            this.mediaStream = null;
         }
-    }
-
-    #capturePhoto() {
         const video = document.getElementById('cameraVideoStream');
-        const canvas = document.getElementById('cameraCaptureCanvas');
-        const preview = document.getElementById('capturedPhotoPreview');
-        const btnCapture = document.getElementById('btnCapturePhoto');
-        const btnRetake = document.getElementById('btnRetakePhoto');
-
-        if (!video.srcObject) {
-            UIHelpers.alert('กล้องยังไม่พร้อมใช้งาน', 'กรุณาอนุญาตให้เบราว์เซอร์เปิดกล้องก่อนถ่ายภาพ', 'warning');
-            return;
+        if (video) {
+            video.srcObject = null;
         }
-
-        this.capturedPhotoDataUrl = UIHelpers.capturePortrait3x4FromVideo(video, canvas);
-        preview.src = this.capturedPhotoDataUrl;
-
-        video.classList.add('hidden');
-        preview.classList.remove('hidden');
-        btnCapture.classList.add('hidden');
-        btnRetake.classList.remove('hidden');
+        this.isCameraRunning = false;
     }
 
-    #retakePhoto() {
-        const video = document.getElementById('cameraVideoStream');
-        const preview = document.getElementById('capturedPhotoPreview');
-        const btnCapture = document.getElementById('btnCapturePhoto');
-        const btnRetake = document.getElementById('btnRetakePhoto');
-
+    /**
+     * ปิดกล้องและแสดงหน้าจอพัก (Standby) เพื่อรอให้ผู้ใช้กดเปิดกล้องเองเมื่อต้องการถ่ายรูป
+     */
+    #stopCameraAndShowStandby() {
+        this.#stopCameraHardwareStream();
         this.capturedPhotoDataUrl = '';
+
+        const video = document.getElementById('cameraVideoStream');
+        const preview = document.getElementById('capturedPhotoPreview');
+        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+
+        const btnStartBottom = document.getElementById('btnStartCameraBottom');
+        const btnCapture = document.getElementById('btnCapturePhoto');
+        const btnStop = document.getElementById('btnStopCamera');
+        const btnRetake = document.getElementById('btnRetakePhoto');
+
         if (preview) {
             preview.src = '';
             preview.classList.add('hidden');
         }
-        video?.classList.remove('hidden');
+        video?.classList.add('hidden');
+        standbyOverlay?.classList.remove('hidden');
+
+        btnStartBottom?.classList.remove('hidden');
+        btnCapture?.classList.add('hidden');
+        btnStop?.classList.add('hidden');
         btnRetake?.classList.add('hidden');
-        btnCapture?.classList.remove('hidden');
+    }
+
+    /**
+     * เปิดกล้องเมื่อผู้ใช้กดปุ่ม "เปิดกล้องเพื่อถ่ายรูป" เท่านั้น
+     */
+    async #openCameraOnDemand() {
+        const video = document.getElementById('cameraVideoStream');
+        const preview = document.getElementById('capturedPhotoPreview');
+        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+        const msgEl = document.getElementById('cameraStatusMessage');
+
+        const btnStartBottom = document.getElementById('btnStartCameraBottom');
+        const btnCapture = document.getElementById('btnCapturePhoto');
+        const btnStop = document.getElementById('btnStopCamera');
+        const btnRetake = document.getElementById('btnRetakePhoto');
+
+        try {
+            this.#stopCameraHardwareStream();
+            this.capturedPhotoDataUrl = '';
+            if (preview) {
+                preview.src = '';
+                preview.classList.add('hidden');
+            }
+
+            this.mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
+                audio: false
+            });
+
+            this.isCameraRunning = true;
+            if (video) {
+                video.srcObject = this.mediaStream;
+                video.classList.remove('hidden');
+            }
+            standbyOverlay?.classList.add('hidden');
+
+            btnStartBottom?.classList.add('hidden');
+            btnRetake?.classList.add('hidden');
+            btnCapture?.classList.remove('hidden');
+            btnStop?.classList.remove('hidden');
+        } catch (err) {
+            console.warn('Camera access error:', err);
+            this.#stopCameraHardwareStream();
+            standbyOverlay?.classList.remove('hidden');
+            if (msgEl) {
+                msgEl.textContent = 'ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้กล้องบนเบราว์เซอร์';
+            }
+            await UIHelpers.alert(
+                'ไม่สามารถเข้าถึงกล้องถ่ายรูปได้',
+                'กรุณาอนุญาตการเข้าถึงกล้องบนเบราว์เซอร์เพื่อถ่ายภาพยืนยันตัวตน',
+                'warning'
+            );
+        }
+    }
+
+    /**
+     * กดปุ่มถ่ายภาพ -> บันทึกภาพลงตัวแปร และสั่งหยุดสตรีมกล้องทันทีเพื่อไม่ให้กล้องทำงานค้างไว้
+     */
+    #capturePhotoAndStopStream() {
+        const video = document.getElementById('cameraVideoStream');
+        const canvas = document.getElementById('cameraCaptureCanvas');
+        const preview = document.getElementById('capturedPhotoPreview');
+        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+
+        const btnStartBottom = document.getElementById('btnStartCameraBottom');
+        const btnCapture = document.getElementById('btnCapturePhoto');
+        const btnStop = document.getElementById('btnStopCamera');
+        const btnRetake = document.getElementById('btnRetakePhoto');
+
+        if (!video || !video.srcObject) {
+            UIHelpers.alert('กล้องยังไม่พร้อมใช้งาน', 'กรุณากดปุ่มเปิดกล้องก่อนถ่ายภาพ', 'warning');
+            return;
+        }
+
+        this.capturedPhotoDataUrl = UIHelpers.capturePortrait3x4FromVideo(video, canvas);
+
+        // ปิดสตรีมกล้องทันทีหลังจากได้ภาพถ่ายแล้ว
+        this.#stopCameraHardwareStream();
+
+        if (preview) {
+            preview.src = this.capturedPhotoDataUrl;
+            preview.classList.remove('hidden');
+        }
+        video.classList.add('hidden');
+        standbyOverlay?.classList.add('hidden');
+
+        btnStartBottom?.classList.add('hidden');
+        btnCapture?.classList.add('hidden');
+        btnStop?.classList.add('hidden');
+        btnRetake?.classList.remove('hidden');
+    }
+
+    /**
+     * รีเซ็ตและกลับมาปิดกล้องทันทีเมื่อบันทึกเวลาเสร็จสิ้น
+     */
+    async #resetPageAfterSave() {
+        this.#stopCameraAndShowStandby();
+        await this.#refreshAllAttendanceData();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async #initGpsLocation() {
@@ -536,11 +603,8 @@ export class CheckinController {
 
     #bindEvents() {
         document.getElementById('btnCheckinTheme')?.addEventListener('click', () => {
-            const mode = UIHelpers.toggleTheme();
-            const icon = document.getElementById('checkinThemeIcon');
-            if (icon) {
-                icon.className = mode === 'dark' ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-emerald-800';
-            }
+            UIHelpers.toggleTheme();
+            this.#updateThemeButtonUI();
         });
 
         document.getElementById('btnCheckinLogout')?.addEventListener('click', async () => {
@@ -551,16 +615,19 @@ export class CheckinController {
                 'question'
             );
             if (confirmed) {
-                if (this.mediaStream) {
-                    this.mediaStream.getTracks().forEach(t => t.stop());
-                }
+                this.#stopCameraHardwareStream();
                 AuthService.clearSession();
                 window.location.href = 'index.html';
             }
         });
 
-        document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhoto());
-        document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#retakePhoto());
+        // ปุ่มเปิดกล้อง, ปุ่มถ่ายภาพ, ปุ่มปิดกล้อง, และปุ่มถ่ายใหม่อีกครั้ง
+        document.getElementById('btnStartCameraOverlay')?.addEventListener('click', () => this.#openCameraOnDemand());
+        document.getElementById('btnStartCameraBottom')?.addEventListener('click', () => this.#openCameraOnDemand());
+        document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
+        document.getElementById('btnStopCamera')?.addEventListener('click', () => this.#stopCameraAndShowStandby());
+        document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#openCameraOnDemand());
+
         document.getElementById('btnRefreshGps')?.addEventListener('click', () => this.#initGpsLocation());
 
         document.getElementById('checkinShiftSelect')?.addEventListener('change', () => {
@@ -569,7 +636,7 @@ export class CheckinController {
 
         document.getElementById('btnSubmitCheckinMain')?.addEventListener('click', () => this.#handleMainCheckin());
 
-        // สลับแท็บตารางประวัติการลงเวลาส่วนตัว (วันปัจจุบัน vs ประวัติลงเวลาย้อนหลัง)
+        // สลับแท็บตารางประวัติส่วนตัว
         const btnTabToday = document.getElementById('btnTabTodayHistory');
         const btnTabPast = document.getElementById('btnTabPastHistory');
         const todayPanel = document.getElementById('todayHistoryTabPanel');
@@ -592,7 +659,6 @@ export class CheckinController {
             this.#renderPersonalAttendanceTabs();
         });
 
-        // เลือกจำนวนแถว 5, 10, 15 แถว และปุ่มกดหน้าก่อนหน้า / หน้าถัดไป ในแท็บประวัติลงเวลาย้อนหลัง
         document.getElementById('selectPastPageSize')?.addEventListener('change', (e) => {
             this.pastPageSize = parseInt(e.target.value, 10) || 5;
             this.pastCurrentPage = 1;
@@ -614,7 +680,6 @@ export class CheckinController {
             }
         });
 
-        // ลบคำขอลงเวลากรณีพิเศษที่ยังไม่ได้อนุมัติ (pending)
         document.getElementById('personalSpecialRequestsTableBody')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action="delete-special-req"]');
             if (!btn) return;
@@ -646,7 +711,6 @@ export class CheckinController {
             }
         });
 
-        // Modal ขอลงเวลากรณีพิเศษ
         const modalSpecial = document.getElementById('modalSpecialRequest');
         const closeSpecialModal = () => modalSpecial?.classList.add('hidden');
 
@@ -676,8 +740,8 @@ export class CheckinController {
     async #handleMainCheckin() {
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {
             await UIHelpers.alert(
-                'กรุณาถ่ายภาพก่อนลงเวลา',
-                'ระบบเปิดใช้งานการบังคับถ่ายภาพ กรุณากดปุ่ม "ถ่ายภาพ" เพื่อยืนยันตัวตนก่อนบันทึกลงเวลา',
+                'กรุณาเปิดกล้องและถ่ายภาพก่อนลงเวลา',
+                'ระบบเปิดใช้งานการบังคับถ่ายภาพ กรุณากดปุ่ม "เปิดกล้องเพื่อถ่ายรูป" แล้วกด "ถ่ายภาพ" ก่อนบันทึกลงเวลา',
                 'warning'
             );
             return;
@@ -742,8 +806,8 @@ export class CheckinController {
                 return;
             }
 
-            // รีเฟรชหน้าจอเพื่อรอรับข้อมูลใหม่ทันที
-            await this.#resetPageForNewInput();
+            // เมื่อบันทึกเสร็จ ให้กลับมาปิดกล้องและรีเฟรชข้อมูลทันที
+            await this.#resetPageAfterSave();
             await UIHelpers.showToast(res.message, 'success', 3000);
         } catch (err) {
             UIHelpers.hideLoading();
@@ -804,7 +868,7 @@ export class CheckinController {
             }
 
             closeModalCallback();
-            await this.#resetPageForNewInput();
+            await this.#resetPageAfterSave();
             await UIHelpers.showToast(res.message, 'success', 3200);
         } catch (err) {
             UIHelpers.hideLoading();

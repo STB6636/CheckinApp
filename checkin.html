@@ -17,33 +17,34 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Header หน้าลงเวลาปฏิบัติราชการ -->
+    <!-- แถบ Header สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย พร้อมปุ่มสีเด่นชัด -->
     <header class="bma-header-bar px-4 lg:px-8 py-3.5 sticky top-0 z-30">
         <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-                <div id="checkinLogoBox" class="w-11 h-11 rounded-xl flex items-center justify-center text-[#00351B] font-extrabold shadow-md bg-gradient-to-br from-[#FDD835] to-[#F59E0B] border border-white/50">
+                <div id="checkinLogoBox" class="w-11 h-11 rounded-xl flex items-center justify-center text-[#00351B] font-extrabold shadow-md bg-gradient-to-br from-[#FDD835] to-[#F59E0B] border-2 border-white shrink-0">
                     <i class="fa-solid fa-landmark"></i>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-base lg:text-lg font-extrabold truncate bma-text-main">ระบบลงเวลาปฏิบัติราชการ</h1>
-                    <p class="text-xs truncate bma-text-sub font-semibold">
-                        <span id="checkinOrgName">กรุงเทพมหานคร</span> • <span id="checkinBureauName" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+                    <h1 class="text-base lg:text-lg font-extrabold truncate header-title-text">ระบบลงเวลาปฏิบัติราชการ</h1>
+                    <p class="text-xs truncate header-sub-text font-semibold">
+                        <span id="checkinOrgName">กรุงเทพมหานคร</span> • <span id="checkinBureauName" class="text-[#FDD835] font-bold">สำนักเทศกิจ</span>
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <!-- ปุ่มไปหน้าผู้ดูแลระบบ (แสดงเฉพาะ SuperAdmin และ Admin) -->
-                <a id="btnGoAdminDashboard" href="dashboard.html" class="hidden btn-bma-soft text-xs py-2 px-3.5 no-underline">
-                    <i class="fa-solid fa-gauge-high"></i>
+            <!-- ปุ่มระบบผู้ดูแล, ปุ่มเปลี่ยนโหมดธีม, และปุ่มออกจากระบบ สีสันเด่นชัดสวยงาม -->
+            <div class="flex items-center gap-2 shrink-0">
+                <a id="btnGoAdminDashboard" href="dashboard.html" class="hidden btn-header-admin text-xs">
+                    <i class="fa-solid fa-gauge-high text-emerald-700"></i>
                     <span class="hidden sm:inline">ระบบผู้ดูแล</span>
                 </a>
 
-                <button id="btnCheckinTheme" type="button" class="p-2.5 rounded-xl border bma-border bma-text-main cursor-pointer">
-                    <i id="checkinThemeIcon" class="fa-solid fa-moon text-emerald-800"></i>
+                <button id="btnCheckinTheme" type="button" class="btn-header-theme text-xs" title="สลับโหมดสี">
+                    <i id="checkinThemeIcon" class="fa-solid fa-moon"></i>
+                    <span id="checkinThemeLabel" class="hidden md:inline">โหมดถนอมสายตา</span>
                 </button>
 
-                <button id="btnCheckinLogout" type="button" class="btn-bma-outline text-xs py-2 px-3 text-rose-600 border-rose-500/30">
+                <button id="btnCheckinLogout" type="button" class="btn-header-logout text-xs">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span class="hidden sm:inline">ออกจากระบบ</span>
                 </button>
@@ -106,10 +107,10 @@
             </div>
         </div>
 
-        <!-- ส่วนกล้องถ่ายรูปแนวตั้ง 3:4 และ พิกัดสถานที่ GPS พร้อมแผนที่ Google Map จริง -->
+        <!-- ส่วนกล้องถ่ายรูปแนวตั้ง 3:4 (เริ่มต้นปิดกล้องไว้เสมอ) และพิกัดสถานที่ GPS พร้อมแผนที่ Google Map จริง -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปแนวตั้ง อัตราส่วน 3:4 -->
+            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปแนวตั้ง อัตราส่วน 3:4 (ป้องกันกล้องทำงานตลอดเวลา) -->
             <div id="cameraSectionCard" class="lg:col-span-5 bma-card p-5 flex flex-col justify-between" style="border-top: 4px solid var(--g1);">
                 <div>
                     <div class="flex items-center justify-between mb-3">
@@ -120,26 +121,47 @@
                         <span id="photoRequirementBadge" class="bma-badge bma-badge-danger">บังคับถ่ายภาพ</span>
                     </div>
 
+                    <!-- กรอบแสดงภาพแนวตั้ง 3:4 (เริ่มต้นแสดงหน้าจอปิดกล้อง) -->
                     <div class="camera-portrait-3-4 outdoor-camera-bezel flex items-center justify-center">
-                        <video id="cameraVideoStream" class="w-full h-full object-cover" autoplay playsinline muted></video>
+                        <video id="cameraVideoStream" class="hidden w-full h-full object-cover" autoplay playsinline muted></video>
                         <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
                         <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="ภาพถ่ายลงเวลา 3:4">
 
-                        <div id="cameraStatusOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-black/75 text-white p-4 text-center hidden">
-                            <i class="fa-solid fa-video-slash text-3xl text-rose-400 mb-2"></i>
-                            <p id="cameraStatusMessage" class="text-sm font-semibold">กรุณาอนุญาตการเข้าถึงกล้องถ่ายรูป</p>
+                        <!-- หน้าจอพักขณะปิดกล้อง (ค่าเริ่มต้นทุกครั้งที่เข้ามา และหลังบันทึกเสร็จ) -->
+                        <div id="cameraStandbyOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#041F11] to-[#07170E] text-white p-5 text-center">
+                            <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-[#FDD835] flex items-center justify-center mb-3 shadow-lg">
+                                <i class="fa-solid fa-camera-retro text-2xl text-[#FDD835]"></i>
+                            </div>
+                            <p id="cameraStatusMessage" class="text-sm font-bold text-white">กล้องถูกปิดไว้ชั่วคราว</p>
+                            <p class="text-xs text-emerald-200/80 mt-1 mb-4">กรุณากดปุ่มเปิดกล้องเมื่อต้องการถ่ายรูปยืนยันตัวตน</p>
+                            <button type="button" id="btnStartCameraOverlay" class="btn-header-theme text-xs py-2.5 px-4">
+                                <i class="fa-solid fa-video"></i>
+                                <span>เปิดกล้องเพื่อถ่ายรูป</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4 flex items-center justify-center gap-3">
-                    <button type="button" id="btnCapturePhoto" class="btn-bma-primary w-full py-3.5 text-sm shadow-md">
-                        <i class="fa-solid fa-camera text-base"></i>
+                <!-- ปุ่มควบคุมการทำงานของกล้อง -->
+                <div class="mt-4 flex items-center justify-center gap-2.5">
+                    <button type="button" id="btnStartCameraBottom" class="btn-bma-primary w-full py-3.5 text-sm shadow-md">
+                        <i class="fa-solid fa-video"></i>
+                        <span>เปิดกล้องเพื่อถ่ายรูป</span>
+                    </button>
+
+                    <button type="button" id="btnCapturePhoto" class="btn-bma-primary w-full py-3.5 text-sm shadow-md hidden">
+                        <i class="fa-solid fa-camera text-base text-[#FDD835]"></i>
                         <span>ถ่ายภาพ</span>
                     </button>
+
+                    <button type="button" id="btnStopCamera" class="btn-bma-outline py-3.5 px-4 text-sm text-rose-600 border-rose-500/40 hidden" title="ปิดกล้อง">
+                        <i class="fa-solid fa-video-slash"></i>
+                        <span>ปิดกล้อง</span>
+                    </button>
+
                     <button type="button" id="btnRetakePhoto" class="btn-bma-outline w-full py-3.5 text-sm hidden border-2 border-[#007B3E]">
                         <i class="fa-solid fa-rotate-right"></i>
-                        <span>ถ่ายใหม่อีกครั้ง</span>
+                        <span>เปิดกล้องถ่ายใหม่อีกครั้ง</span>
                     </button>
                 </div>
             </div>
@@ -215,7 +237,6 @@
                         </div>
                     </div>
 
-                    <!-- แถบแจ้งเตือนกรณีลงเวลาทำการปกติของวันนี้ครบทั้งเข้าและออกแล้ว -->
                     <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
                         <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
                         <span id="regularCompletedNoticeText">วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบ 1 ครั้งแล้ว</span>
@@ -248,7 +269,6 @@
                     <p class="text-xs bma-text-sub mt-0.5">สลับแท็บเพื่อดูรายการลงเวลาเฉพาะวันปัจจุบัน หรือดูประวัติการลงเวลาย้อนหลัง</p>
                 </div>
 
-                <!-- แท็บสลับ วันปัจจุบัน vs ประวัติลงเวลาย้อนหลัง -->
                 <div class="flex items-center gap-2 p-1 rounded-xl bma-info-box self-start sm:self-auto">
                     <button type="button" id="btnTabTodayHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer">
                         <i class="fa-solid fa-calendar-day mr-1"></i>วันปัจจุบัน (<span id="todayHistoryCountBadge">0</span>)
@@ -259,7 +279,6 @@
                 </div>
             </div>
 
-            <!-- แผงที่ 1: แสดงเฉพาะของวันปัจจุบัน -->
             <div id="todayHistoryTabPanel" class="space-y-3">
                 <div class="bma-table-container">
                     <table class="bma-table text-sm">
@@ -279,7 +298,6 @@
                 </div>
             </div>
 
-            <!-- แผงที่ 2: ประวัติลงเวลาย้อนหลัง (เลือกแสดง 5, 10, 15 แถว + ปุ่มหน้าก่อนหน้า/หน้าถัดไป) -->
             <div id="pastHistoryTabPanel" class="hidden space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bma-info-box text-xs">
                     <div class="flex items-center gap-2">
@@ -323,7 +341,7 @@
             </div>
         </div>
 
-        <!-- ตารางที่ 2 (แยกมาอีก 1 ตารางตามข้อกำหนด): ตารางประวัติการขอลงเวลากรณีพิเศษ (แสดงสถานะ อนุมัติ/ปฏิเสธ และกดลบคำขอที่ยังไม่อนุมัติได้) -->
+        <!-- ตารางที่ 2: ตารางประวัติการขอลงเวลากรณีพิเศษ -->
         <div class="bma-card p-5 space-y-4" style="border-top: 4px solid #6366F1;">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b bma-border pb-3">
                 <div>
@@ -413,15 +431,15 @@
         </div>
     </div>
 
-    <!-- Footer ระบบ 2 บรรทัด -->
+    <!-- แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน -->
     <footer class="w-full py-4 px-6 bma-footer-bar text-center mt-8">
-        <div class="text-xs bma-text-sub">
+        <div class="text-xs">
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
-            <span id="footerCheckinOrg" class="font-bold bma-text-main">กรุงเทพมหานคร</span>
+            <span id="footerCheckinOrg" class="font-bold text-white">กรุงเทพมหานคร</span>
             <span> • สังกัด </span>
-            <span id="footerCheckinBureau" class="font-bold" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+            <span id="footerCheckinBureau" class="footer-highlight">สำนักเทศกิจ</span>
         </div>
-        <div id="footerCheckinDesc" class="text-[11px] bma-text-muted mt-0.5"></div>
+        <div id="footerCheckinDesc" class="text-[11px] footer-desc-line mt-0.5"></div>
     </footer>
 
     <script type="module" src="assets/js/controllers/CheckinController.js"></script>

@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/SettingsController.js
- * @description คลาสควบคุมหน้าตั้งค่าระบบ (ตรวจลิงก์รูปโลโก้หน่วยงาน, Tag "ปฏิบัติงานนอกเวลา" สีม่วงพาสเทล, Google Drive Verify & แม่-ลูกหลายแถว)
+ * @description คลาสควบคุมหน้าตั้งค่าระบบ (รองรับการตั้งค่าข้อความ Header BMA e-Government Time Attendance System, ตรวจลิงก์โลโก้ & Tag ปฏิบัติงานนอกเวลาสีม่วงพาสเทล)
  */
 
 import { Config } from '../core/Config.js';
@@ -20,7 +20,7 @@ export class SettingsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'settings',
             pageTitle: 'ตั้งค่าระบบพื้นฐาน (สำหรับ SuperAdmin)',
-            pageSubtitle: 'จัดการหน่วยงาน, ตรวจลิงก์โลโก้, Google Drive, เกณฑ์เวลา/สีรายงาน, กะนอกเวลา และโครงสร้างแม่-ลูก'
+            pageSubtitle: 'จัดการหน่วยงาน, ข้อความ Header/Footer, ตรวจลิงก์โลโก้, Google Drive, เกณฑ์เวลา/สีรายงาน และโครงสร้างแม่-ลูก'
         });
 
         if (!layout.currentUser) return;
@@ -39,6 +39,10 @@ export class SettingsController {
     #renderAllSettings() {
         document.getElementById('setOrgName').value = this.settings.organization_name || '';
         document.getElementById('setBureauName').value = this.settings.bureau_name || '';
+        const headerTitleEl = document.getElementById('setHeaderSystemTitle');
+        if (headerTitleEl) {
+            headerTitleEl.value = this.settings.header_system_title || 'BMA e-Government Time Attendance System';
+        }
         document.getElementById('setFooterDescInput').value = this.settings.footer_description || '';
         document.getElementById('setLogoUrlInput').value = this.settings.logo_url || '';
         document.getElementById('setGDriveScriptUrl').value = this.settings.google_drive_script_url || '';
@@ -128,10 +132,10 @@ export class SettingsController {
 
         if (badgeEl) {
             if (isSingleClick) {
-                badgeEl.textContent = 'รูปแบบพิเศษ (กดครั้งเดียวเข้า-ออก)';
+                badgeEl.textContent = 'รูปแบบพิเศษ (ลงเวลาตามที่ตั้งไว้)';
                 badgeEl.className = 'bma-badge bma-badge-indigo';
             } else {
-                badgeEl.textContent = 'รูปแบบปกติ (เข้า-ออกตามปกติ)';
+                badgeEl.textContent = 'รูปแบบปกติ (เข้า-ออกตามเวลาจริง)';
                 badgeEl.className = 'bma-badge bma-badge-success';
             }
         }
@@ -216,10 +220,6 @@ export class SettingsController {
         `).join('');
     }
 
-    /**
-     * เรนเดอร์ตารางจัดการช่วงเวลาปฏิบัติราชการ:
-     * คอลัมน์ ประเภท/เงื่อนไข เปลี่ยนชื่อเป็น "ปฏิบัติงานนอกเวลา" และใช้สี Tag ในโทนม่วงพาสเทล (.bma-badge-pastel-purple)
-     */
     #renderShifts() {
         const tbody = document.getElementById('shiftsTableBody');
         if (!tbody) return;
@@ -234,7 +234,6 @@ export class SettingsController {
             if (shift.is_custom) {
                 typeBadgeHtml = `<span class="bma-badge bma-badge-warning">อื่นๆ (ระบุเวลาเอง)</span>`;
             } else if (shift.is_overtime) {
-                // ใช้ข้อความ "ปฏิบัติงานนอกเวลา" และโทนสีม่วงพาสเทลตามข้อกำหนด
                 typeBadgeHtml = `
                     <span class="bma-badge-pastel-purple">
                         <i class="fa-solid fa-business-time"></i>
@@ -321,6 +320,7 @@ export class SettingsController {
     #collectMainAndColorFieldsIntoSettings() {
         this.settings.organization_name = document.getElementById('setOrgName').value.trim() || 'กรุงเทพมหานคร';
         this.settings.bureau_name = document.getElementById('setBureauName').value.trim() || 'สำนักเทศกิจ';
+        this.settings.header_system_title = document.getElementById('setHeaderSystemTitle')?.value?.trim() || 'BMA e-Government Time Attendance System';
         this.settings.footer_description = document.getElementById('setFooterDescInput').value.trim();
         this.settings.logo_url = document.getElementById('setLogoUrlInput').value.trim();
         this.settings.google_drive_script_url = document.getElementById('setGDriveScriptUrl').value.trim();
@@ -460,7 +460,6 @@ export class SettingsController {
             }
         });
 
-        // ปุ่มตรวจสอบลิงก์ของรูปโลโก้หน่วยงาน กรณีวางลิงก์ URL
         document.getElementById('btnVerifyLogoUrl')?.addEventListener('click', async () => {
             const rawUrl = document.getElementById('setLogoUrlInput')?.value || '';
             const logoBadge = document.getElementById('logoUrlVerifyBadge');
@@ -486,7 +485,6 @@ export class SettingsController {
             }
         });
 
-        // ปุ่มตรวจสอบลิงก์ Google Drive ก่อนบันทึก
         document.getElementById('btnVerifyGoogleDriveLink')?.addEventListener('click', async () => {
             const scriptUrl = document.getElementById('setGDriveScriptUrl').value.trim();
             const folderId = document.getElementById('setGDriveFolderId').value.trim();
@@ -690,7 +688,7 @@ export class SettingsController {
                     <div>
                         <span class="text-purple-700 dark:text-purple-300 font-extrabold block">ช่วงเวลานี้คือ "ปฏิบัติงานนอกเวลา" (Tag สีม่วงพาสเทล)</span>
                         <span class="bma-text-sub font-normal block mt-0.5">
-                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเวลาเข้าและเลิกงาน) โดยอัตโนมัติ
+                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเวลาเข้าและเลิกงานตามที่ตั้งไว้) โดยอัตโนมัติ
                         </span>
                     </div>
                 </label>

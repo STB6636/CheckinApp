@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/ReportsController.js
- * @description คลาสควบคุมหน้ารายงานการลงเวลา (พิมพ์ PDF A4 แนวนอนจัดขนาดคอลัมน์พอดีข้อมูล & คลิก Row ดูโปรไฟล์ Resume สากล)
+ * @description คลาสควบคุมหน้ารายงานการลงเวลา (คลิกแถวดูฟอร์มโปรไฟล์เฉพาะของ Row นั้นๆ พร้อมรูปถ่ายขนาดใหญ่และพิกัด Google Map)
  */
 
 import { Config } from '../core/Config.js';
@@ -26,7 +26,7 @@ export class ReportsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'reports',
             pageTitle: 'รายงานการลงเวลาปฏิบัติราชการ',
-            pageSubtitle: 'ฟิลเตอร์ตามวันที่/ช่วงวันที่ แยกตารางตาม TAG สถานะ พิมพ์ PDF A4 แนวนอน และคลิกแถวดู Resume'
+            pageSubtitle: 'ฟิลเตอร์ตามวันที่/ช่วงวันที่ แยกตารางตาม TAG สถานะ พิมพ์ PDF A4 แนวนอน และคลิกแถวดูโปรไฟล์เฉพาะรายการ'
         });
 
         if (!layout.currentUser) return;
@@ -140,9 +140,6 @@ export class ReportsController {
         ).join('');
     }
 
-    /**
-     * เรนเดอร์ตารางแยกตาม TAG สถานะ และกำหนดขนาดคอลัมน์สำหรับ PDF ขนาด A4 แนวนอนให้พอดีกับความยาวข้อมูล
-     */
     #renderSeparateTablesBySelectedTags(forPrintPdf = false) {
         const masterContainer = document.getElementById('reportTablesMasterContainer');
         const activeStatuses = Config.OFFICIAL_STATUSES.filter(st => this.selectedStatusKeys.has(st.key));
@@ -315,7 +312,7 @@ export class ReportsController {
         }
 
         return `
-            <tr class="report-person-row cursor-pointer transition" data-pid="${rec.personnel_id}" title="คลิกเพื่อดูโปรไฟล์ Resume ของ ${rec.full_name}">
+            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rec.row_uid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td class="text-xs font-bold whitespace-nowrap">${fullDateText}</td>
                 <td>
@@ -335,7 +332,7 @@ export class ReportsController {
                     ${rec.remark ? `<div class="text-[11px] bma-text-sub mt-0.5">${rec.remark}</div>` : ''}
                 </td>
                 <td class="text-center space-x-1 whitespace-nowrap">
-                    <button type="button" data-action="edit-record" data-pid="${rec.personnel_id}" data-logid="${rec.log_id || ''}" data-date="${rec.work_date}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
+                    <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
                         <i class="fa-solid fa-pen"></i>
                     </button>
                     ${rec.log_id ? `
@@ -349,93 +346,110 @@ export class ReportsController {
     }
 
     /**
-     * เปิดแสดง Modal โปรไฟล์บุคลากรรูปแบบ Resume สากล เมื่อคลิกที่แถวในตารางรายงาน
-     * @param {string} personnelId
+     * เปิดแสดงฟอร์มโปรไฟล์เฉพาะของ Row ที่คลิก:
+     * 1. แสดงข้อมูลเฉพาะของ Row นั้นๆ แม้จะเป็นคนเดียวกันก็ตาม
+     * 2. แสดงรูปที่ถ่ายมาขนาดใหญ่กว่าเดิม (3:4 Large Frame)
+     * 3. แสดงพิกัดตำแหน่งและแผนที่ Google Map ของ Row นั้น
+     * @param {string} rowUid
      */
-    #openResumeProfileModal(personnelId) {
-        const person = this.allPersonnel.find(p => p.id === personnelId);
-        if (!person) return;
+    #openResumeProfileForSpecificRow(rowUid) {
+        const rec = this.records.find(r => r.row_uid === rowUid);
+        if (!rec) return;
 
-        const fullName = `${person.prefix}${person.first_name} ${person.last_name}`;
-        const posFull = `${person.position_title}${person.position_level ? ' ระดับ' + person.position_level : ''}`;
+        const person = this.allPersonnel.find(p => p.id === rec.personnel_id) || rec;
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
+        const statusColor = this.#getStatusColor(rec.status_category);
 
-        // ค้นหารายการลงเวลาทั้งหมดของบุคคลนี้ในข้อมูลที่โหลดมา
-        const personLogs = this.records.filter(r => r.personnel_id === personnelId);
-        const latestPhotoRecord = personLogs.find(r => r.check_in_photo);
-
-        const avatarBox = document.getElementById('resumeAvatarBox');
-        if (avatarBox) {
-            if (latestPhotoRecord?.check_in_photo) {
-                avatarBox.innerHTML = `<img src="${latestPhotoRecord.check_in_photo}" alt="${fullName}" class="w-full h-full object-cover">`;
-            } else {
-                avatarBox.innerHTML = `<span>${String(person.first_name || 'U').charAt(0)}</span>`;
-            }
-        }
-
+        // 1. ส่วนหัว Banner
         const roleBadge = document.getElementById('resumeRoleBadge');
         if (roleBadge) {
             roleBadge.textContent = roleMeta.label;
             roleBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs`;
         }
 
-        document.getElementById('resumeFullName').textContent = fullName;
-        document.getElementById('resumePositionHeadline').textContent = `${posFull} (${person.position_type || 'ข้าราชการ/บุคลากร'})`;
-        document.getElementById('resumeOrgHeadline').textContent = `${person.organization} • ${person.bureau} • ${person.division}`;
+        document.getElementById('resumeFullName').textContent = rec.full_name;
+        document.getElementById('resumePositionHeadline').textContent = `${rec.position_full} (${rec.position_type || 'บุคลากร'})`;
+        document.getElementById('resumeOrgHeadline').textContent = `${rec.organization} • ${rec.bureau} • ${rec.division}`;
 
-        document.getElementById('resumeNationalId').textContent = person.national_id || 'ไม่ระบุ';
-        document.getElementById('resumeUsername').textContent = person.account_username || person.national_id || '-';
-        document.getElementById('resumeRoleText').textContent = `${roleMeta.label}`;
-
-        document.getElementById('resumeOrgName').textContent = person.organization || 'กรุงเทพมหานคร';
-        document.getElementById('resumeBureauName').textContent = person.bureau || '-';
-        document.getElementById('resumeDivisionName').textContent = person.division || '-';
-        document.getElementById('resumeWorkGroupName').textContent = person.work_group || '-';
-
-        document.getElementById('resumePosType').textContent = person.position_type || '-';
-        document.getElementById('resumePosTitle').textContent = person.position_title || '-';
-        document.getElementById('resumePosLevel').textContent = person.position_level || '-';
-
-        // สรุปสถิติการลงเวลาของบุคคลนี้
-        const countByCat = (key) => personLogs.filter(r => r.status_category === key).length;
-        const statsGrid = document.getElementById('resumeStatsGrid');
-        if (statsGrid) {
-            statsGrid.innerHTML = `
-                <div class="p-2.5 rounded-xl border bma-border">
-                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('normal')};">${countByCat('normal')}</span>
-                    <span class="text-[11px] bma-text-sub block font-semibold">ปฏิบัติงานปกติ</span>
-                </div>
-                <div class="p-2.5 rounded-xl border bma-border">
-                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('late')};">${countByCat('late')}</span>
-                    <span class="text-[11px] bma-text-sub block font-semibold">มาสาย</span>
-                </div>
-                <div class="p-2.5 rounded-xl border bma-border">
-                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('overtime')};">${countByCat('overtime')}</span>
-                    <span class="text-[11px] bma-text-sub block font-semibold">นอกเวลาราชการ</span>
-                </div>
-                <div class="p-2.5 rounded-xl border bma-border">
-                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('absent_duty')};">${countByCat('absent_duty') + countByCat('no_checkin')}</span>
-                    <span class="text-[11px] bma-text-sub block font-semibold">ขาด/ไม่ลงเวลา</span>
-                </div>
-            `;
+        document.getElementById('resumeRowDateHeadline').textContent = rec.work_date_thai_full;
+        const rowStatusBadge = document.getElementById('resumeRowStatusBadge');
+        if (rowStatusBadge) {
+            rowStatusBadge.textContent = rec.status_label;
+            rowStatusBadge.style.backgroundColor = statusColor;
         }
 
-        // รายการลงเวลาล่าสุด
-        const recentList = document.getElementById('resumeRecentLogsList');
-        if (recentList) {
-            recentList.innerHTML = personLogs.map(log => {
-                const c = this.#getStatusColor(log.status_category);
-                return `
-                    <div class="p-2.5 rounded-xl border bma-border flex items-center justify-between gap-2">
-                        <div>
-                            <span class="font-bold bma-text-main">${log.work_date_thai_full}</span>
-                            <span class="block text-[11px] bma-text-sub">เข้า: ${log.check_in_time || '-'} น. | ออก: ${log.check_out_time || '-'} น.</span>
-                        </div>
-                        <span class="bma-badge text-white text-[11px]" style="background-color: ${c};">${log.status_label}</span>
+        // 2. รูปที่ถ่ายมาขนาดใหญ่ของ Row นั้นๆ
+        const photoUrl = rec.check_in_photo || rec.check_out_photo || '';
+        const largePhotoBox = document.getElementById('resumeLargePhotoBox');
+        const fullPhotoLink = document.getElementById('resumeOpenFullPhotoLink');
+
+        if (largePhotoBox) {
+            if (photoUrl) {
+                largePhotoBox.innerHTML = `<img src="${photoUrl}" alt="${rec.full_name}" class="w-full h-full object-cover">`;
+                if (fullPhotoLink) {
+                    fullPhotoLink.href = photoUrl;
+                    fullPhotoLink.classList.remove('hidden');
+                }
+            } else {
+                largePhotoBox.innerHTML = `
+                    <div class="text-center p-4 text-emerald-200/80 text-xs">
+                        <i class="fa-solid fa-camera-slash text-4xl mb-2 block text-[#FDD835]"></i>
+                        <span>รายการนี้ไม่มีภาพถ่ายบันทึกไว้</span>
                     </div>
                 `;
-            }).join('');
+                fullPhotoLink?.classList.add('hidden');
+            }
         }
+
+        // 3. ข้อมูลประจำตัว
+        document.getElementById('resumeNationalId').textContent = rec.national_id || person.national_id || 'ไม่ระบุ';
+        document.getElementById('resumeUsername').textContent = person.account_username || rec.national_id || '-';
+        document.getElementById('resumePosSpec').textContent = `${rec.position_type || '-'} / ${rec.position_full}`;
+
+        // 4. ข้อมูลการลงเวลาเฉพาะของ Row นี้
+        document.getElementById('resumeRowFullDate').textContent = rec.work_date_thai_full;
+        document.getElementById('resumeRowShiftName').textContent = rec.shift_name || '-';
+        document.getElementById('resumeRowCheckinTime').textContent = rec.check_in_time ? `${rec.check_in_time} น.` : 'ไม่ได้ลงเวลา';
+        document.getElementById('resumeRowCheckoutTime').textContent = rec.check_out_time ? `${rec.check_out_time} น.` : 'ไม่ได้ลงเวลา';
+        document.getElementById('resumeRowRemark').textContent = rec.remark || 'ไม่มีหมายเหตุ';
+
+        // 5. พิกัดตำแหน่งและแผนที่ Google Map เฉพาะของ Row นี้
+        const lat = rec.check_in_lat ?? rec.check_out_lat;
+        const lng = rec.check_in_lng ?? rec.check_out_lng;
+        const locName = rec.check_in_location || rec.check_out_location || 'ไม่ระบุสถานที่';
+
+        document.getElementById('resumeRowLocationName').textContent = locName;
+        const coordsEl = document.getElementById('resumeRowGpsCoords');
+        const mapLinkEl = document.getElementById('resumeRowGoogleMapLink');
+        const mapIframeEl = document.getElementById('resumeRowMapIframe');
+        const mapPlaceholderEl = document.getElementById('resumeRowMapPlaceholder');
+
+        if (typeof lat === 'number' && typeof lng === 'number') {
+            coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            if (mapLinkEl) {
+                mapLinkEl.href = `https://www.google.com/maps?q=${lat},${lng}`;
+                mapLinkEl.classList.remove('hidden');
+            }
+            if (mapIframeEl) {
+                mapIframeEl.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=17&output=embed`;
+                mapIframeEl.classList.remove('hidden');
+                mapPlaceholderEl?.classList.add('hidden');
+            }
+        } else {
+            coordsEl.textContent = 'ไม่ได้บันทึกพิกัด GPS';
+            mapLinkEl?.classList.add('hidden');
+            if (mapIframeEl) {
+                mapIframeEl.src = '';
+                mapIframeEl.classList.add('hidden');
+            }
+            mapPlaceholderEl?.classList.remove('hidden');
+        }
+
+        // 6. โครงสร้างสังกัด
+        document.getElementById('resumeOrgName').textContent = rec.organization || 'กรุงเทพมหานคร';
+        document.getElementById('resumeBureauName').textContent = rec.bureau || '-';
+        document.getElementById('resumeDivisionName').textContent = rec.division || '-';
+        document.getElementById('resumeWorkGroupName').textContent = rec.work_group || '-';
 
         document.getElementById('modalPersonnelResumeProfile')?.classList.remove('hidden');
     }
@@ -537,7 +551,6 @@ export class ReportsController {
             await this.#handleSaveReportRecord();
         });
 
-        // ปุ่ม "พิมพ์/ส่งออก PDF" (พิมพ์ลงกระดาษ A4 แนวนอน Landscape)
         document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
             const tableHtml = this.#renderSeparateTablesBySelectedTags(true);
             if (!tableHtml) {
@@ -593,7 +606,7 @@ export class ReportsController {
             UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');
         });
 
-        // Event Delegation สำหรับคลิกปุ่มแก้ไข/ลบ หรือคลิกที่แถว (Row) เพื่อเปิดดูโปรไฟล์ Resume สากล
+        // Event Delegation สำหรับปุ่มแก้ไข/ลบ หรือคลิกที่แถว (Row) เพื่อเปิดดูฟอร์มโปรไฟล์เฉพาะของ Row นั้นๆ
         document.getElementById('reportTablesMasterContainer')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (btn) {
@@ -601,13 +614,8 @@ export class ReportsController {
                 const action = btn.dataset.action;
 
                 if (action === 'edit-record') {
-                    const pid = btn.dataset.pid;
-                    const logId = btn.dataset.logid;
-                    const workDate = btn.dataset.date;
-                    const rec = this.records.find(r =>
-                        (logId && r.log_id === logId) ||
-                        (r.personnel_id === pid && r.work_date === workDate)
-                    );
+                    const rowUid = btn.dataset.rowUid;
+                    const rec = this.records.find(r => r.row_uid === rowUid);
                     if (rec) this.#openModal(rec);
                 } else if (action === 'delete-record') {
                     const logId = btn.dataset.logid;
@@ -633,10 +641,9 @@ export class ReportsController {
                 return;
             }
 
-            // กรณีคลิกที่แถวของบุคลากร (.report-person-row) -> เปิดดูโปรไฟล์รูปแบบ Resume สากล
             const personRow = e.target.closest('tr.report-person-row');
-            if (personRow && personRow.dataset.pid) {
-                this.#openResumeProfileModal(personRow.dataset.pid);
+            if (personRow && personRow.dataset.rowUid) {
+                this.#openResumeProfileForSpecificRow(personRow.dataset.rowUid);
             }
         });
     }

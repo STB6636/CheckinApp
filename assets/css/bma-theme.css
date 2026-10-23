@@ -1,6 +1,6 @@
 /* ============================================================================
- * BMA Enterprise Design System V2.4 (Branch: Test-Argon)
- * Theme: Diagonal BMA Emerald Gradient, Role Pastel Badges & Resume Modal
+ * BMA Enterprise Design System V2.5 (Branch: Test-Argon)
+ * Theme: BMA Graphic Emerald Gradient, Rich Green Header/Footer & Row Profile
  * Font: Sarabun (Google Fonts)
  * ============================================================================ */
 
@@ -15,7 +15,7 @@
     --g2: #4EBA6F;
     --gold-bma: #FDD835;
 
-    /* Sidebar Gradient Tokens */
+    /* Sidebar & Header/Footer Gradient Tokens */
     --sb1: #00351B;
     --sb2: #005B2E;
     --sb3: #007B3E;
@@ -39,7 +39,6 @@
     --status-overtime: #2563EB;
 
     /* Surface & Typography Tokens (Light Mode) */
-    --bma-bg-diagonal: linear-gradient(135deg, #B2DFC7 0%, #D6EFE1 46%, #9AD0B3 100%);
     --bma-surface-1: #FFFFFF;
     --bma-surface-2: #EBF5EF;
     --bma-surface-info: #E4F3EA;
@@ -53,7 +52,7 @@
     --bma-thead-text: #1B432C;
     --bma-thead-border: #B5D6C3;
 
-    /* Status Badge Alpha Tokens (Light Mode) */
+    /* Status Badge Alpha Tokens */
     --badge-success-bg: rgba(0, 123, 62, 0.15);
     --badge-success-text: #006834;
     --badge-warning-bg: rgba(234, 179, 8, 0.20);
@@ -83,7 +82,6 @@ html.dark {
     --sb2: #062D19;
     --sb3: #0A4526;
 
-    --bma-bg-diagonal: linear-gradient(135deg, #06160F 0%, #0C2419 50%, #05110B 100%);
     --bma-surface-1: #11231B;
     --bma-surface-2: #183025;
     --bma-surface-info: rgba(6, 78, 59, 0.4);
@@ -111,7 +109,7 @@ html.dark {
 }
 
 /* ============================================================================
- * Base Typography & Diagonal Gradient Body
+ * พื้นหลังลายกราฟิกโทนสีเขียวไล่สี สวยงาม ไม่เด่นเกินหน้าต่าง Login หรือโมดูลทำงาน
  * ============================================================================ */
 * {
     font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -119,7 +117,12 @@ html.dark {
 }
 
 body {
-    background: var(--bma-bg-diagonal) !important;
+    background-color: #C5E6D4 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23007B3E' stroke-width='1' stroke-opacity='0.07'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.14) 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(0, 91, 46, 0.16) 0%, transparent 45%),
+        linear-gradient(135deg, #B8E1CC 0%, #DFF3E8 48%, #A5D6BD 100%) !important;
     background-attachment: fixed !important;
     color: var(--bma-text-primary);
     margin: 0;
@@ -127,6 +130,140 @@ body {
     min-height: 100vh;
     transition: background 0.25s ease, color 0.25s ease;
     -webkit-font-smoothing: antialiased;
+}
+
+html.dark body {
+    background-color: #071710 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2334D399' stroke-width='1' stroke-opacity='0.05'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        linear-gradient(135deg, #05130D 0%, #0B2217 50%, #04100A 100%) !important;
+}
+
+/* ============================================================================
+ * แถบ Header และแถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน
+ * ============================================================================ */
+.bma-header-bar {
+    background-color: #004D26 !important;
+    background-image: linear-gradient(90deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
+    color: #FFFFFF !important;
+    border-bottom: 3px solid #FDD835 !important;
+    box-shadow: 0 4px 20px rgba(0, 53, 27, 0.22);
+}
+
+.bma-header-bar h1,
+.bma-header-bar .header-title-text {
+    color: #FFFFFF !important;
+}
+
+.bma-header-bar p,
+.bma-header-bar .header-sub-text {
+    color: #D1FAE5 !important;
+}
+
+/* แถบ Topbar สำหรับหน้าผู้ดูแลระบบที่มี Sidebar ด้านซ้าย */
+.bma-admin-topbar {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bma-border);
+    border-top: 4px solid var(--g1);
+}
+html.dark .bma-admin-topbar {
+    background-color: rgba(17, 35, 27, 0.92);
+}
+
+/* แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย */
+.bma-footer-bar {
+    background-color: #00351B !important;
+    background-image: linear-gradient(90deg, #002B15 0%, #004D26 50%, #006834 100%) !important;
+    color: #FFFFFF !important;
+    border-top: 3px solid #FDD835 !important;
+    box-shadow: 0 -4px 16px rgba(0, 53, 27, 0.15);
+}
+
+.bma-footer-bar span,
+.bma-footer-bar div {
+    color: #E2F8EC !important;
+}
+
+.bma-footer-bar .footer-highlight {
+    color: #FDD835 !important;
+    font-weight: 800;
+}
+
+.bma-footer-bar .footer-desc-line {
+    color: rgba(255, 255, 255, 0.78) !important;
+}
+
+/* ============================================================================
+ * ปุ่มบนแถบ Header สีเขียว กทม. (ปุ่มเปลี่ยนโหมดธีม, ปุ่มระบบผู้ดูแล, ปุ่มออกจากระบบ)
+ * ============================================================================ */
+.btn-header-theme {
+    background: linear-gradient(135deg, #FDD835 0%, #F59E0B 100%) !important;
+    color: #00351B !important;
+    font-weight: 800 !important;
+    border: 2px solid #FFFFFF !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-header-theme:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(253, 216, 53, 0.45);
+    filter: brightness(1.05);
+}
+
+.btn-header-admin {
+    background: #FFFFFF !important;
+    color: #004D26 !important;
+    font-weight: 800 !important;
+    border: 2px solid #A7F3D0 !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-header-admin:hover {
+    background: #ECFDF5 !important;
+    border-color: #FDD835 !important;
+    transform: translateY(-1px);
+}
+
+.btn-header-logout {
+    background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 2px solid rgba(255, 255, 255, 0.75) !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(190, 18, 60, 0.35);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-header-logout:hover {
+    background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.5);
 }
 
 /* ============================================================================
@@ -159,27 +296,6 @@ html.dark .bma-modal-surface {
     background-color: var(--bma-surface-info);
     border: 1px solid var(--bma-border);
     border-radius: 0.75rem;
-}
-
-.bma-header-bar {
-    background-color: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--bma-border);
-    border-top: 4px solid var(--g1);
-}
-
-html.dark .bma-header-bar {
-    background-color: rgba(17, 35, 27, 0.9);
-}
-
-.bma-footer-bar {
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid var(--bma-border);
-}
-
-html.dark .bma-footer-bar {
-    background-color: rgba(17, 35, 27, 0.88);
 }
 
 .bma-border {
@@ -320,7 +436,7 @@ html.dark .bma-footer-bar {
 }
 
 /* ============================================================================
- * Status Tag Filter Chips & Pastel Role Badges (SuperAdmin, Admin, User)
+ * Status Tag Filter Chips & Pastel Role Badges
  * ============================================================================ */
 .status-tag-chip {
     display: inline-flex;
@@ -348,7 +464,6 @@ html.dark .bma-footer-bar {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
-/* ป้ายกำกับบุคลากรตายตัวตามระดับบัญชีผู้ใช้งาน (พาสเทล) */
 .role-pastel-superadmin {
     background-color: #FFE4E6 !important;
     color: #BE123C !important;
@@ -382,7 +497,6 @@ html.dark .role-pastel-user {
     border-color: rgba(134, 239, 172, 0.4) !important;
 }
 
-/* จุดสีพาสเทลหน้าชื่อบุคลากรตามระดับบัญชี */
 .role-dot-superadmin {
     background-color: #FB7185 !important;
     box-shadow: 0 0 0 3px #FFE4E6;
@@ -396,7 +510,6 @@ html.dark .role-pastel-user {
     box-shadow: 0 0 0 3px #DCFCE7;
 }
 
-/* ป้าย Tag "ปฏิบัติงานนอกเวลา" โทนสีม่วงพาสเทล (สำหรับหน้าตั้งค่าระบบ) */
 .bma-badge-pastel-purple {
     background-color: #F3E8FF !important;
     color: #6B21A8 !important;
@@ -464,7 +577,7 @@ html.dark .bma-badge-pastel-purple {
 }
 
 /* ============================================================================
- * Jewel-Tone Stat Cards (.stat-card & .stat-card-total แก้ปัญหาสีใสมองไม่เห็นตัวอักษร)
+ * Jewel-Tone Stat Cards
  * ============================================================================ */
 .stat-card {
     position: relative;
@@ -483,7 +596,6 @@ html.dark .bma-badge-pastel-purple {
     box-shadow: 0 16px 32px -6px rgba(0, 53, 27, 0.28);
 }
 
-/* การ์ดบุคลากรทั้งหมด: บังคับพื้นหลังสีเขียวมรกตเข้มทึบเข้าชุดกับการ์ดใบอื่น 100% */
 .stat-card-total {
     background-color: #00351B !important;
     background-image: linear-gradient(135deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
@@ -554,7 +666,7 @@ html.dark .bma-badge-pastel-purple {
 }
 
 /* ============================================================================
- * International Resume Profile Modal Styles (สำหรับคลิกดูโปรไฟล์ในหน้ารายงาน)
+ * International Resume Profile Modal Styles (รูปถ่ายขนาดใหญ่ + Google Map เฉพาะ Row)
  * ============================================================================ */
 .resume-header-banner {
     background-color: #00351B !important;
@@ -598,6 +710,22 @@ html.dark .bma-badge-pastel-purple {
     border-radius: 9999px;
     background-color: var(--bma-primary);
     border: 2px solid var(--bma-surface-1);
+}
+
+.resume-large-photo-frame {
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 3 / 4;
+    border-radius: 1rem;
+    border: 3px solid var(--g1);
+    box-shadow: 0 10px 24px -4px rgba(0, 53, 27, 0.22);
+    overflow: hidden;
+    background-color: #0B1912;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ============================================================================
