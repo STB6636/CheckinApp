@@ -106,10 +106,10 @@
             </div>
         </div>
 
-        <!-- ส่วนกล้องถ่ายรูปแนวตั้ง 3:4 และพิกัดสถานที่ GPS พร้อมแผนที่ Google Map จริง -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- พื้นที่ทำงานหลัก (Dynamic Workspace Grid: ปรับ Layout อัตโนมัติทั้ง 3 รูปแบบเมื่อปิดกล้อง และ/หรือ ปิด GPS) -->
+        <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
-            <!-- คอลัมน์ซ้าย: กล้องถ่ายรูปแนวตั้ง อัตราส่วน 3:4 -->
+            <!-- โมดูลที่ 1: ภาพถ่ายยืนยันตัวตน (แนวตั้ง 3:4) — ซ่อนอัตโนมัติเมื่อปิดฟังก์ชันในตั้งค่าระบบ -->
             <div id="cameraSectionCard" class="lg:col-span-5 bma-card p-5 flex flex-col justify-between" style="border-top: 4px solid var(--g1);">
                 <div>
                     <div class="flex items-center justify-between mb-3">
@@ -162,39 +162,41 @@
                 </div>
             </div>
 
-            <!-- คอลัมน์ขวา: พิกัด GPS + แผนที่ Google Map จริง และปุ่มบันทึกลงเวลา -->
-            <div class="lg:col-span-7 flex flex-col justify-between gap-6">
+            <!-- คอนเทนเนอร์ฝั่งขวา (ปรับ Layout อัตโนมัติตามสถานะการเปิด/ปิดกล้องและ GPS) -->
+            <div id="rightColumnWrapper" class="lg:col-span-7 flex flex-col justify-between gap-6">
 
-                <!-- การ์ดแสดงพิกัด ชื่อสถานที่ และแผนที่ Google Map จริง -->
-                <div id="gpsSectionCard" class="bma-card p-5 space-y-3.5" style="border-top: 4px solid #0284C7;">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-extrabold text-base bma-text-main flex items-center gap-2">
-                            <i class="fa-solid fa-location-crosshairs text-sky-600"></i>
-                            <span>ตำแหน่งสถานที่ปฏิบัติงาน (GPS &amp; Google Map)</span>
-                        </h3>
-                        <span id="gpsRequirementBadge" class="bma-badge bma-badge-danger">บังคับเปิด GPS</span>
+                <!-- โมดูลที่ 2: ตำแหน่งสถานที่ปฏิบัติงาน (GPS & Google Map) — ซ่อนอัตโนมัติเมื่อปิดฟังก์ชันในตั้งค่าระบบ -->
+                <div id="gpsSectionCard" class="bma-card p-5 space-y-3.5 flex flex-col justify-between" style="border-top: 4px solid #0284C7;">
+                    <div class="space-y-3.5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-extrabold text-base bma-text-main flex items-center gap-2">
+                                <i class="fa-solid fa-location-crosshairs text-sky-600"></i>
+                                <span>ตำแหน่งสถานที่ปฏิบัติงาน (GPS &amp; Google Map)</span>
+                            </h3>
+                            <span id="gpsRequirementBadge" class="bma-badge bma-badge-danger">บังคับเปิด GPS</span>
+                        </div>
+
+                        <div class="p-3.5 bma-info-box space-y-2 text-xs">
+                            <div class="flex items-start justify-between gap-2">
+                                <span class="bma-text-sub font-bold whitespace-nowrap">สถานที่ปฏิบัติงาน:</span>
+                                <span id="gpsLocationNameText" class="font-extrabold text-sm bma-text-main text-right" style="color: var(--bma-primary);">กำลังระบุชื่อสถานที่...</span>
+                            </div>
+                            <div class="flex items-start justify-between gap-2">
+                                <span class="bma-text-sub font-bold whitespace-nowrap">พิกัด (Lat, Lng):</span>
+                                <span id="gpsCoordsText" class="font-mono font-bold bma-text-sub text-right">กำลังค้นหาสัญญาณ GPS...</span>
+                            </div>
+                        </div>
+
+                        <div id="googleMapEmbedWrapper" class="w-full h-48 sm:h-52 rounded-xl overflow-hidden border bma-border bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
+                            <div id="googleMapPlaceholder" class="text-xs bma-text-sub flex flex-col items-center gap-1.5">
+                                <i class="fa-solid fa-map-location-dot text-2xl text-emerald-600"></i>
+                                <span>กำลังโหลดแผนที่ Google Map แสดงพิกัดปัจจุบัน...</span>
+                            </div>
+                            <iframe id="googleMapRealtimeIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
                     </div>
 
-                    <div class="p-3.5 bma-info-box space-y-2 text-xs">
-                        <div class="flex items-start justify-between gap-2">
-                            <span class="bma-text-sub font-bold whitespace-nowrap">สถานที่ปฏิบัติงาน:</span>
-                            <span id="gpsLocationNameText" class="font-extrabold text-sm bma-text-main text-right" style="color: var(--bma-primary);">กำลังระบุชื่อสถานที่...</span>
-                        </div>
-                        <div class="flex items-start justify-between gap-2">
-                            <span class="bma-text-sub font-bold whitespace-nowrap">พิกัด (Lat, Lng):</span>
-                            <span id="gpsCoordsText" class="font-mono font-bold bma-text-sub text-right">กำลังค้นหาสัญญาณ GPS...</span>
-                        </div>
-                    </div>
-
-                    <div id="googleMapEmbedWrapper" class="w-full h-48 sm:h-52 rounded-xl overflow-hidden border bma-border bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
-                        <div id="googleMapPlaceholder" class="text-xs bma-text-sub flex flex-col items-center gap-1.5">
-                            <i class="fa-solid fa-map-location-dot text-2xl text-emerald-600"></i>
-                            <span>กำลังโหลดแผนที่ Google Map แสดงพิกัดปัจจุบัน...</span>
-                        </div>
-                        <iframe id="googleMapRealtimeIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-2 pt-1">
+                    <div class="flex items-center justify-between gap-2 pt-2">
                         <button type="button" id="btnRefreshGps" class="btn-bma-outline text-xs py-2 px-3 w-full">
                             <i class="fa-solid fa-location-arrow"></i>
                             <span>ตรวจสอบพิกัด GPS อีกครั้ง</span>
@@ -206,49 +208,52 @@
                     </div>
                 </div>
 
-                <!-- การ์ดปุ่มกดบันทึกลงเวลา (แก้ไขป้าย Tag ไม่ให้ยาวล้นกรอบ และเปลี่ยนหัวข้อเป็น "เลือกช่วงเวลาทำงาน") -->
-                <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
-
-                    <div class="p-3.5 bma-info-box flex flex-wrap items-center justify-between gap-2 text-xs">
-                        <span class="font-bold bma-text-main flex items-center gap-1.5">
-                            <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
-                            <span>เงื่อนไขช่วงเวลาที่เลือก:</span>
-                        </span>
-                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
-                    </div>
-
-                    <div id="shiftSelectorContainer">
-                        <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">เลือกช่วงเวลาทำงาน</label>
-                        <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
-                    </div>
-
-                    <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 bma-info-box">
-                        <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน (24 ชม.) *</label>
-                            <input type="text" id="mainCustomCheckin" class="bma-input text-sm font-mono text-center" value="08:30" placeholder="HH:mm เช่น 08:30">
+                <!-- โมดูลที่ 3: การ์ดเลือกช่วงเวลาทำงานและปุ่มกดบันทึกลงเวลา -->
+                <div id="checkinActionCard" class="bma-card p-5 space-y-4 flex flex-col justify-between" style="border-top: 4px solid var(--g1);">
+                    <div class="space-y-4">
+                        <div class="p-3.5 bma-info-box flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <span class="font-bold bma-text-main flex items-center gap-1.5">
+                                <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
+                                <span>เงื่อนไขช่วงเวลาที่เลือก:</span>
+                            </span>
+                            <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
                         </div>
-                        <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">เวลาเลิกงาน (24 ชม.) *</label>
-                            <input type="text" id="mainCustomCheckout" class="bma-input text-sm font-mono text-center" value="16:30" placeholder="HH:mm เช่น 16:30">
+
+                        <div id="shiftSelectorContainer">
+                            <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">เลือกช่วงเวลาทำงาน</label>
+                            <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
+                        </div>
+
+                        <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 bma-info-box">
+                            <div>
+                                <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน (24 ชม.) *</label>
+                                <input type="text" id="mainCustomCheckin" class="bma-input text-sm font-mono text-center" value="08:30" placeholder="HH:mm เช่น 08:30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold bma-text-main mb-1">เวลาเลิกงาน (24 ชม.) *</label>
+                                <input type="text" id="mainCustomCheckout" class="bma-input text-sm font-mono text-center" value="16:30" placeholder="HH:mm เช่น 16:30">
+                            </div>
+                        </div>
+
+                        <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
+                            <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
                         </div>
                     </div>
 
-                    <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
-                        <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
-                        <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
+                    <div class="space-y-3 pt-2">
+                        <!-- ปุ่มบันทึกลงเวลาหลัก -->
+                        <button type="button" id="btnSubmitCheckinMain" class="btn-bma-primary w-full py-4 text-base shadow-xl">
+                            <i class="fa-solid fa-fingerprint text-xl text-[#FDD835]"></i>
+                            <span id="btnSubmitCheckinLabel">บันทึกลงเวลาปฏิบัติราชการ</span>
+                        </button>
+
+                        <!-- ปุ่มขอลงเวลากรณีพิเศษ -->
+                        <button type="button" id="btnOpenSpecialRequestModal" class="btn-bma-outline w-full py-2.5 text-sm border-indigo-500/40 text-indigo-600 hover:bg-indigo-500/10">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <span>ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)</span>
+                        </button>
                     </div>
-
-                    <!-- ปุ่มบันทึกลงเวลาหลัก -->
-                    <button type="button" id="btnSubmitCheckinMain" class="btn-bma-primary w-full py-4 text-base shadow-xl">
-                        <i class="fa-solid fa-fingerprint text-xl text-[#FDD835]"></i>
-                        <span id="btnSubmitCheckinLabel">บันทึกลงเวลาปฏิบัติราชการ</span>
-                    </button>
-
-                    <!-- ปุ่มขอลงเวลากรณีพิเศษ -->
-                    <button type="button" id="btnOpenSpecialRequestModal" class="btn-bma-outline w-full py-2.5 text-sm border-indigo-500/40 text-indigo-600 hover:bg-indigo-500/10">
-                        <i class="fa-solid fa-calendar-plus"></i>
-                        <span>ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)</span>
-                    </button>
                 </div>
 
             </div>
@@ -427,7 +432,7 @@
         </div>
     </div>
 
-    <!-- แถบ Footer สีเขียว กทม. สวยงาม -->
+    <!-- แถบ Footer สีเขียว กทม. สวยงาม จัดกึ่งกลาง -->
     <footer class="w-full py-4 px-6 bma-footer-bar text-center mt-8">
         <div class="text-xs">
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>

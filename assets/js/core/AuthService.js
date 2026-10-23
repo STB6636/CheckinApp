@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/AuthService.js
- * @description คลาสจัดการการยืนยันตัวตน สิทธิ์การเข้าถึง (RBAC) การเปลี่ยนรหัสผ่าน และการขอรีเซ็ตรหัสผ่าน
+ * @description คลาสจัดการการยืนยันตัวตน ระบบจดจำ Session อายุ 7 วันพร้อมต่ออายุอัตโนมัติเมื่อเข้าใช้งานต่อเนื่อง (7-Day Rolling Session)
  */
 
 import { Config } from './Config.js';
@@ -8,32 +8,140 @@ import { DatabaseService } from './DatabaseService.js';
 import { UIHelpers } from './UIHelpers.js';
 
 export class AuthService {
-    static getCurrentUser() {
+    // อายุของ Session = 7 วัน (หน่วยเป็นมิลลิวินาที)
+    static SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+    /**
+     * ดึงข้อมูลผู้ใช้งานจาก Session พร้อมตรวจสอบวันหมดอายุ (7 วัน)
+     * หากยังไม่หมดอายุและ extendSession = true ระบบจะต่ออายุ Session ให้ครบ 7 วันนับจากเวลาปัจจุบันไปเรื่อยๆ
+     * @param {boolean} extendSession ต่ออายุ Session อัตโนมัติอีก 7 วันหรือไม่
+     * @returns {Object|null}
+     */
+    static getCurrentUser(extendSession = true) {
         try {
             const raw = localStorage.getItem(Config.STORAGE_KEYS.SESSION_USER);
-            return raw ? JSON.parse(raw) : null;
+            if (!raw) return null;
+
+            const sessionData = JSON.parse(raw);
+            if (!sessionData || !sessionData.id) {
+                AuthService.clearSession();
+                return null;
+            }
+
+            const now = Date.now();
+
+            // ตรวจสอบว่า Session หมดอายุเกิน 7 วันหรือยัง
+            if (sessionData.expires_at && now > sessionData.expires_at) {
+                AuthService.clearSession();
+                return null;
+            }
+
+            // ต่ออายุ Session ให้ครบ 7 วันไปเรื่อยๆ เมื่อเข้าใช้งานต่อเนื่อง (Rolling Session)
+            if (extendSession) {
+                sessionData.last_active_at = now;
+                sessionData.expires_at = now + AuthService.SESSION_TTL_MS;
+                localStorage.setItem(Config.STORAGE_KEYS.SESSION_USER, JSON.stringify(sessionData));
+            }
+
+            return sessionData;
         } catch (err) {
             console.error('Failed to read session user:', err);
             return null;
         }
     }
 
-    static setCurrentUser(userObj) {
-        localStorage.setItem(Config.STORAGE_KEYS.SESSION_USER, JSON.stringify(userObj));
+    /**
+     * บันทึกข้อมูล Session ของผู้ใช้ลงใน LocalStorage พร้อมกำหนดอายุ 7 วัน
+     * @param {Object} userObj
+     * @param {'checkin'|'admin'} loginMode
+     */
+    static setCurrentUser(userObj, loginMode = 'checkin') {
+        const now = Date.now();
+        const payload = {
+            ...userObj,
+            last_login_mode: loginMode || userObj.last_login_mode || 'checkin',
+            last_active_at: now,
+            expires_at: now + AuthService.SESSION_TTL_MS
+        };
+        localStorage.setItem(Config.STORAGE_KEYS.SESSION_USER, JSON.stringify(payload));
     }
 
+    /**
+     * ล้างข้อมูล Session เมื่อผู้ใช้กดปุ่มออกจากระบบ
+     */
     static clearSession() {
         localStorage.removeItem(Config.STORAGE_KEYS.SESSION_USER);
     }
 
     /**
+     * ตรวจสอบความถูกต้องของ Session กับฐานข้อมูลเบื้องหลัง (ป้องกันกรณีบัญชีถูกระงับหรือเปลี่ยนสิทธิ์กลางคัน)
+     * @returns {Promise<boolean>}
+     */
+    static async verifySessionWithDatabase() {
+        const current = AuthService.getCurrentUser(false);
+        if (!current || !current.id) return false;
+
+        try {
+            const db = DatabaseService.getInstance().client;
+            const { data: user, error } = await db
+                .from('user_accounts')
+                .select(`
+                    id, personnel_id, username, full_name, national_id,
+                    role, visibility_level, scope_bureau, scope_division, is_active,
+                    personnel:personnel_id (
+                        id, national_id, prefix, first_name, last_name,
+                        position_type, position_title, position_level,
+                        organization, bureau, division, work_group, badge_color
+                    )
+                `)
+                .eq('id', current.id)
+                .maybeSingle();
+
+            if (error) {
+                // กรณีอินเทอร์เน็ตขัดข้องชั่วคราว ให้คง Session เดิมไว้ก่อน
+                return true;
+            }
+
+            if (!user || !user.is_active) {
+                AuthService.clearSession();
+                return false;
+            }
+
+            // อัปเดตข้อมูลผู้ใช้ให้เป็นปัจจุบันและต่ออายุอีก 7 วัน
+            AuthService.setCurrentUser({
+                ...current,
+                personnel_id: user.personnel_id,
+                username: user.username,
+                full_name: user.full_name,
+                national_id: user.national_id || (user.personnel ? user.personnel.national_id : ''),
+                role: user.role,
+                visibility_level: user.visibility_level,
+                scope_bureau: user.scope_bureau || (user.personnel ? user.personnel.bureau : ''),
+                scope_division: user.scope_division || (user.personnel ? user.personnel.division : ''),
+                personnel: user.personnel || null
+            }, current.last_login_mode || 'checkin');
+
+            return true;
+        } catch (err) {
+            return true;
+        }
+    }
+
+    /**
+     * คืนค่า URL ปลายทางของ Session ปัจจุบัน (สำหรับข้ามหน้า Login อัตโนมัติ)
+     * @param {Object} sessionUser
+     * @returns {string}
+     */
+    static getRedirectUrlForSession(sessionUser) {
+        if (!sessionUser) return './';
+        if (sessionUser.last_login_mode === 'admin' && ['SuperAdmin', 'Admin'].includes(sessionUser.role)) {
+            return 'dashboard.html';
+        }
+        return 'checkin.html';
+    }
+
+    /**
      * เข้าสู่ระบบสำหรับลงเวลาปฏิบัติราชการ หรือเข้าสู่ระบบผู้ดูแลระบบหลังบ้าน
-     * - หากกดปุ่ม "เข้าสู่ระบบผู้ดูแลระบบ" (loginMode === 'admin') จะอนุญาตเฉพาะ SuperAdmin และ Admin เท่านั้น
-     * - หากบัญชีระดับ User กดเข้าสู่ระบบผู้ดูแลระบบ จะแจ้งเตือนว่า "ท่านไม่มีสิทธิ์ใช้งาน"
-     * @param {string} username
-     * @param {string} password
-     * @param {'checkin'|'admin'} loginMode
-     * @returns {Promise<{success: boolean, user?: Object, redirectUrl?: string, message: string}>}
      */
     static async login(username, password, loginMode = 'checkin') {
         const db = DatabaseService.getInstance().client;
@@ -68,7 +176,6 @@ export class AuthService {
             return { success: false, message: 'ชื่อบัญชีผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' };
         }
 
-        // ตรวจสอบสิทธิ์กรณีต้องการเข้าสู่ระบบผู้ดูแลระบบ: อนุญาตเฉพาะ SuperAdmin และ Admin เท่านั้น
         if (loginMode === 'admin' && !['SuperAdmin', 'Admin'].includes(user.role)) {
             return {
                 success: false,
@@ -90,9 +197,8 @@ export class AuthService {
             login_at: new Date().toISOString()
         };
 
-        AuthService.setCurrentUser(sessionPayload);
+        AuthService.setCurrentUser(sessionPayload, loginMode);
 
-        // เก็บชื่อ-นามสกุลไว้ใน SessionStorage เพื่อให้หน้าปลายทางแสดง Popup "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]"
         sessionStorage.setItem(Config.STORAGE_KEYS.WELCOME_TOAST, sessionPayload.full_name);
 
         const redirectUrl = loginMode === 'admin' ? 'dashboard.html' : 'checkin.html';
@@ -198,10 +304,14 @@ export class AuthService {
         };
     }
 
+    /**
+     * ตรวจสอบสิทธิ์การเข้าถึงหน้าเว็บ พร้อมต่ออายุ Session อัตโนมัติอีก 7 วัน
+     */
     static requireAuth(allowedRoles = ['SuperAdmin', 'Admin', 'User']) {
-        const user = AuthService.getCurrentUser();
+        // ดึงข้อมูลพร้อมต่ออายุ Session อีก 7 วันอัตโนมัติ
+        const user = AuthService.getCurrentUser(true);
         if (!user) {
-            window.location.href = 'index.html';
+            window.location.href = './';
             return null;
         }
         if (!allowedRoles.includes(user.role)) {
@@ -212,6 +322,14 @@ export class AuthService {
             }
             return null;
         }
+
+        // ซิงค์สถานะบัญชีกับฐานข้อมูลเบื้องหลังแบบไม่บล็อกหน้าจอ
+        AuthService.verifySessionWithDatabase().then(isValid => {
+            if (!isValid) {
+                window.location.href = './';
+            }
+        });
+
         return user;
     }
 

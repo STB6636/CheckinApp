@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ป้าย Tag กระชับไม่ล้นจอ, กรองตัวเลือกช่วงเวลาตามเวลาจริง, และควบคุมเงื่อนไขรูปแบบปกติ/รูปแบบพิเศษครบทุกข้อ)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ซ่อนโมดูลกล้อง/GPS เมื่อปิดใช้งาน พร้อมจัด Layout อัตโนมัติทั้ง 3 รูปแบบสำหรับมือถือและคอมพิวเตอร์)
  */
 
 import { Config } from '../core/Config.js';
@@ -37,6 +37,8 @@ export class CheckinController {
     async init() {
         UIHelpers.initTheme();
         this.#updateThemeButtonUI();
+
+        // ตรวจสอบสิทธิ์และต่ออายุ Session 7 วันอัตโนมัติ
         this.currentUser = AuthService.requireAuth(['SuperAdmin', 'Admin', 'User']);
         if (!this.currentUser) return;
 
@@ -47,11 +49,82 @@ export class CheckinController {
         UIHelpers.showLoading('กำลังเตรียมระบบลงเวลาปฏิบัติราชการ...');
         this.settings = await SettingsModel.getSettings(false);
         this.#renderUserAndSettingsInfo();
+        this.#applyDynamicWorkspaceLayout();
         await this.#refreshAllAttendanceData();
         UIHelpers.hideLoading();
 
-        this.#stopCameraAndShowStandby();
-        await this.#initGpsLocation();
+        // หากเปิดฟังก์ชันถ่ายรูป ให้เริ่มต้นในโหมดพักกล้อง (กดเปิดกล้องเมื่อต้องการถ่ายรูป)
+        if (this.settings.require_photo) {
+            this.#stopCameraAndShowStandby();
+        } else {
+            this.#stopCameraHardwareStream();
+        }
+
+        // หากเปิดฟังก์ชัน GPS จึงจะเรียกใช้งานพิกัดและแผนที่
+        if (this.settings.require_gps) {
+            await this.#initGpsLocation();
+        } else {
+            this.gpsData = {
+                ready: true,
+                lat: null,
+                lng: null,
+                locationName: ''
+            };
+        }
+    }
+
+    /**
+     * จัด Layout อัตโนมัติทั้ง 3 รูปแบบ เมื่อปิดฟังก์ชัน "ภาพถ่ายยืนยันตัวตน (3:4)" และ/หรือ "ตำแหน่งสถานที่ปฏิบัติงาน (GPS & Google Map)"
+     * คำนึงถึงความสวยงามทั้งบนหน้าจอมือถือ (Mobile) และคอมพิวเตอร์ (Desktop)
+     */
+    #applyDynamicWorkspaceLayout() {
+        const showPhoto = Boolean(this.settings?.require_photo);
+        const showGps = Boolean(this.settings?.require_gps);
+
+        const cameraCard = document.getElementById('cameraSectionCard');
+        const rightWrapper = document.getElementById('rightColumnWrapper');
+        const gpsCard = document.getElementById('gpsSectionCard');
+        const actionCard = document.getElementById('checkinActionCard');
+
+        if (!cameraCard || !rightWrapper || !gpsCard || !actionCard) return;
+
+        if (showPhoto && showGps) {
+            // กรณีเปิดใช้งานทั้ง 2 ฟังก์ชัน (ค่าเริ่มต้น):
+            // Desktop: ซ้าย = กล้อง (5 ส่วน), ขวา = GPS + การ์ดลงเวลา (7 ส่วน) | Mobile: เรียงลงมา
+            cameraCard.classList.remove('hidden');
+            gpsCard.classList.remove('hidden');
+
+            cameraCard.className = 'lg:col-span-5 bma-card p-5 flex flex-col justify-between';
+            rightWrapper.className = 'lg:col-span-7 flex flex-col justify-between gap-6';
+            gpsCard.className = 'bma-card p-5 space-y-3.5 flex flex-col justify-between';
+            actionCard.className = 'bma-card p-5 space-y-4 flex flex-col justify-between';
+        } else if (!showPhoto && showGps) {
+            // รูปแบบที่ 1: ปิดเฉพาะฟังก์ชัน "ภาพถ่ายยืนยันตัวตน (แนวตั้ง 3:4)"
+            // ซ่อนโมดูลกล้อง | Desktop: วางโมดูล GPS (7 ส่วน) คู่กับการ์ดลงเวลา (5 ส่วน) ซ้าย-ขวาอย่างสมดุล | Mobile: เรียง 1 คอลัมน์
+            cameraCard.classList.add('hidden');
+            gpsCard.classList.remove('hidden');
+
+            rightWrapper.className = 'lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch';
+            gpsCard.className = 'lg:col-span-7 bma-card p-5 space-y-3.5 flex flex-col justify-between h-full';
+            actionCard.className = 'lg:col-span-5 bma-card p-5 space-y-4 flex flex-col justify-between h-full';
+        } else if (showPhoto && !showGps) {
+            // รูปแบบที่ 2: ปิดเฉพาะฟังก์ชัน "ตำแหน่งสถานที่ปฏิบัติงาน (GPS & Google Map)"
+            // ซ่อนโมดูล GPS | Desktop: วางโมดูลกล้อง (5 ส่วน) คู่กับการ์ดลงเวลา (7 ส่วน) ความสูงเท่ากัน | Mobile: เรียง 1 คอลัมน์
+            cameraCard.classList.remove('hidden');
+            gpsCard.classList.add('hidden');
+
+            cameraCard.className = 'lg:col-span-5 bma-card p-5 flex flex-col justify-between h-full';
+            rightWrapper.className = 'lg:col-span-7 flex flex-col justify-stretch';
+            actionCard.className = 'bma-card p-6 space-y-5 flex flex-col justify-between h-full w-full';
+        } else {
+            // รูปแบบที่ 3: ปิดทั้ง 2 ฟังก์ชัน (ปิดทั้งกล้องและ GPS)
+            // ซ่อนทั้งโมดูลกล้องและ GPS | Desktop & Mobile: จัดการ์ดลงเวลาอยู่กึ่งกลางหน้าจอ (max-w-2xl mx-auto) อย่างสวยงาม
+            cameraCard.classList.add('hidden');
+            gpsCard.classList.add('hidden');
+
+            rightWrapper.className = 'lg:col-span-12 max-w-2xl w-full mx-auto';
+            actionCard.className = 'bma-card p-6 sm:p-8 space-y-5 flex flex-col justify-between w-full shadow-xl';
+        }
     }
 
     #updateThemeButtonUI() {
@@ -92,7 +165,6 @@ export class CheckinController {
                 dateEl.textContent = UIHelpers.formatThaiShortDate(UIHelpers.getTodayISO());
             }
 
-            // อัปเดตตัวเลือกช่วงเวลาตามเวลาจริงทุกครั้งเมื่อนาทีเปลี่ยน (เช่น เมื่อถึง 14:01 น. ให้ซ่อนกะที่หมดเวลา 14:00 น. ทันที)
             const currentMinuteOfDay = (now.getHours() * 60) + now.getMinutes();
             if (this.settings && this.lastEvaluatedMinute !== -1 && currentMinuteOfDay !== this.lastEvaluatedMinute) {
                 this.lastEvaluatedMinute = currentMinuteOfDay;
@@ -106,17 +178,9 @@ export class CheckinController {
         setInterval(updateClock, 1000);
     }
 
-    /**
-     * ตรวจสอบว่าช่วงเวลา (shift) นี้อยู่ในกรอบเวลาจริงปัจจุบันหรือไม่ (ตามข้อ 5.1 และ 1.2.1)
-     * เช่น ปฏิบัติงานนอกเวลา (05:00 - 14:00) จะแสดงตั้งแต่เวลาจริง 05:00 - 14:00 น. พอถึง 14:01 น. จะซ่อนอัตโนมัติ
-     * @param {Object} shift
-     * @param {number} nowMin นาทีปัจจุบันนับจาก 00:00
-     * @param {number} allowStartMin เวลาเริ่มเปิดให้บันทึกเข้างานปกติ (เช่น 06:00 = 360)
-     * @returns {boolean}
-     */
     #isShiftActiveAtCurrentTime(shift, nowMin, allowStartMin) {
         if (!this.settings?.filter_shifts_by_realtime) {
-            return true; // กรณียกเลิกการติ๊กในตั้งค่าระบบ ให้แสดงตัวเลือกทั้งหมด
+            return true;
         }
         if (shift.is_custom) {
             return true;
@@ -129,18 +193,13 @@ export class CheckinController {
         const isOvernight = Boolean(shift.is_overnight || endMin < startMin);
 
         if (isOvernight) {
-            // กะข้ามวัน เช่น 22:00 - 01:00 น. แสดงตั้งแต่เริ่มกะไปจนถึงเวลาเลิกงานในวันถัดไป
             return (nowMin >= startMin) || (nowMin <= endMin);
         }
 
-        // สำหรับกะทำงานปกติ: เปิดให้เลือกได้ตั้งแต่ "เริ่มเวลาเข้างาน" (เช่น 06:00 น.) ไปจนถึงเวลาเลิกงานของกะนั้น
         const effectiveStartMin = shift.is_overtime ? startMin : Math.min(startMin, allowStartMin);
         return nowMin >= effectiveStartMin && nowMin <= endMin;
     }
 
-    /**
-     * ประเมินช่วงเวลาจริงปัจจุบัน และกรองตัวเลือกใน Dropdown ตามกฎข้อ 1 - 6
-     */
     #evaluateTimeWindowAndPopulateShifts() {
         const allShifts = this.settings?.work_shifts || [];
         const selectEl = document.getElementById('checkinShiftSelect');
@@ -164,9 +223,6 @@ export class CheckinController {
             this.activeRegularRecord.work_date === UIHelpers.getTodayISO()
         );
 
-        // ตรวจสอบว่าขณะนี้อยู่ในโหมดบังคับเลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" หรือไม่:
-        // - ข้อ 4: เข้ามาก่อนเวลาเริ่มบันทึกเวลาตามข้อ 1 (เช่น ก่อน 06:00 น.) และไม่มีรายการค้างออกงาน
-        // - ข้อ 3 & 3.1: เวลาจริงเกินกว่าเวลาออกงานที่ตั้งค่าไว้แล้ว (> 16:30 น.) และไม่ได้ค้างกดออกงานปกติ (หรือลงเวลาปกติครบแล้ว)
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
         const mustUseOvertimeWindow = !hasUnclosedRegular && (isBeforeAllowStart || isAfterStdOut || hasCompletedRegularToday);
@@ -180,19 +236,16 @@ export class CheckinController {
             }
         }
 
-        // กรองตามเวลาจริง (ข้อ 5 / 5.1 และ ข้อ 1.2 / 1.2.1) หากเปิดใช้งาน filter_shifts_by_realtime
         let timeFilteredShifts = candidateShifts.filter(s =>
             this.#isShiftActiveAtCurrentTime(s, nowMin, allowStartMin)
         );
 
-        // กรณีกรองตามเวลาจริงแล้วไม่มีกะใดตรงเวลาปัจจุบันเลย ให้แสดงเฉพาะกะนอกเวลาหรือกะ "อื่นๆ" สำรองไว้
         if (timeFilteredShifts.length === 0) {
             timeFilteredShifts = candidateShifts;
         }
 
         this.availableShiftsForCurrentWindow = timeFilteredShifts;
 
-        // เปลี่ยนชื่อหัวข้อ Dropdown ตามโหมดปัจจุบัน
         if (labelEl) {
             if (mustUseOvertimeWindow) {
                 labelEl.textContent = 'เลือกช่วงเวลาปฏิบัติงานนอกเวลา';
@@ -203,7 +256,6 @@ export class CheckinController {
             }
         }
 
-        // สร้างรายการตัวเลือกในรูปแบบ: ["ชื่อตามที่ตั้งเอาไว้" + " ('เวลาเริ่มงาน' - 'เวลาเลิกงาน')"] + "(ข้ามวัน)"
         selectEl.innerHTML = timeFilteredShifts.map(s => {
             const displayText = SettingsModel.formatShiftDisplayText(s);
             return `<option value="${s.originalIdx}">${displayText}</option>`;
@@ -250,25 +302,6 @@ export class CheckinController {
             document.getElementById('userAffiliationText').textContent = `${org} • ${this.currentUser.scope_bureau || bureau}`;
         }
 
-        const photoBadge = document.getElementById('photoRequirementBadge');
-        if (this.settings.require_photo) {
-            photoBadge.textContent = 'บังคับถ่ายภาพ';
-            photoBadge.className = 'bma-badge bma-badge-danger';
-        } else {
-            photoBadge.textContent = 'ไม่บังคับถ่ายภาพ';
-            photoBadge.className = 'bma-badge bma-badge-success';
-        }
-
-        const gpsBadge = document.getElementById('gpsRequirementBadge');
-        if (this.settings.require_gps) {
-            gpsBadge.textContent = 'บังคับเปิด GPS';
-            gpsBadge.className = 'bma-badge bma-badge-danger';
-        } else {
-            gpsBadge.textContent = 'ไม่บังคับ GPS';
-            gpsBadge.className = 'bma-badge bma-badge-success';
-        }
-
-        // สำหรับ Modal ขอลงเวลากรณีพิเศษ ให้แสดงตัวเลือกช่วงเวลาทั้งหมดในรูปแบบมาตรฐานเดียวกัน
         const allShifts = this.settings.work_shifts || [];
         const spSelect = document.getElementById('spShiftSelect');
         if (spSelect) {
@@ -304,10 +337,6 @@ export class CheckinController {
         this.#renderSpecialRequestsHistoryTable();
     }
 
-    /**
-     * อัปเดตการ์ดสถานะ ป้าย Tag (ย่อให้สั้นกระชับไม่ล้นกรอบ: "รูปแบบปกติ", "รูปแบบพิเศษ", "ปฏิบัติงานนอกเวลา")
-     * และควบคุมปุ่มกดลงเวลาตามเงื่อนไขเวลาจริง
-     */
     #updateStatusCardsAndMainButton() {
         const regularRecord = this.activeRegularRecord;
         const checkinTimeEl = document.getElementById('todayCheckinTime');
@@ -340,7 +369,6 @@ export class CheckinController {
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
 
-        // ตรวจสอบว่าเป็นโหมดปฏิบัติงานนอกเวลาหรือไม่ (ตามข้อ 3, 3.1 และ ข้อ 4)
         const isOvertimeContext = Boolean(
             shiftObj.is_overtime ||
             (!hasUnclosedRegular && (isBeforeAllowStart || isAfterStdOut))
@@ -352,7 +380,6 @@ export class CheckinController {
             mainCustomBox?.classList.add('hidden');
         }
 
-        // แสดงป้าย Tag สั้นกระชับไม่ล้นกรอบ: "ปฏิบัติงานนอกเวลา" / "รูปแบบพิเศษ" / "รูปแบบปกติ"
         if (modeTag) {
             if (!this.settings?.single_click_checkin && hasUnclosedRegular) {
                 modeTag.textContent = 'รูปแบบปกติ';
@@ -369,7 +396,6 @@ export class CheckinController {
             }
         }
 
-        // อัปเดตการ์ดเวลาเข้า-ออกงานปกติวันนี้
         if (!regularRecord) {
             checkinTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
             checkinBadgeEl.textContent = 'รอลงเวลาเข้า';
@@ -397,7 +423,6 @@ export class CheckinController {
             }
         }
 
-        // กรณีที่ 1 (ข้อ 2 & ข้อ 3.1): รูปแบบปกติ และยังไม่ได้กดบันทึกเวลาออกงานตามปกติ -> ต้องกดบันทึกเวลาออกงานก่อน!
         if (!this.settings?.single_click_checkin && hasUnclosedRegular) {
             shiftSelectorContainer?.classList.add('opacity-60', 'pointer-events-none');
             noticeBox?.classList.remove('hidden');
@@ -412,7 +437,6 @@ export class CheckinController {
 
         shiftSelectorContainer?.classList.remove('opacity-60', 'pointer-events-none');
 
-        // กรณีที่ 2: โหมดปฏิบัติงานนอกเวลา (ก่อนเวลาเริ่มเข้างาน 06:00 น. หรือหลังเวลาเลิกงาน หรือเลือกกะนอกเวลา)
         if (isOvertimeContext) {
             noticeBox?.classList.remove('hidden');
             if (noticeText) {
@@ -429,7 +453,6 @@ export class CheckinController {
             return;
         }
 
-        // กรณีที่ 3: อยู่ในช่วงเวลาทำงานปกติ
         const isRegularCompletedToday = Boolean(regularRecord && regularRecord.check_in_time && regularRecord.check_out_time);
         if (isRegularCompletedToday) {
             noticeBox?.classList.remove('hidden');
@@ -680,12 +703,18 @@ export class CheckinController {
     }
 
     async #resetPageAfterSave() {
-        this.#stopCameraAndShowStandby();
+        if (this.settings?.require_photo) {
+            this.#stopCameraAndShowStandby();
+        } else {
+            this.#stopCameraHardwareStream();
+        }
         await this.#refreshAllAttendanceData();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async #initGpsLocation() {
+        if (!this.settings?.require_gps) return;
+
         const coordsEl = document.getElementById('gpsCoordsText');
         const locNameEl = document.getElementById('gpsLocationNameText');
         const mapLink = document.getElementById('linkViewGoogleMap');
@@ -749,6 +778,13 @@ export class CheckinController {
     }
 
     #bindEvents() {
+        // ซิงค์การออกจากระบบข้ามแท็บ
+        window.addEventListener('storage', (e) => {
+            if (e.key === Config.STORAGE_KEYS.SESSION_USER && !e.newValue) {
+                window.location.href = './';
+            }
+        });
+
         document.getElementById('btnCheckinTheme')?.addEventListener('click', () => {
             UIHelpers.toggleTheme();
             this.#updateThemeButtonUI();
@@ -764,7 +800,7 @@ export class CheckinController {
             if (confirmed) {
                 this.#stopCameraHardwareStream();
                 AuthService.clearSession();
-                window.location.href = 'index.html';
+                window.location.href = './';
             }
         });
 
@@ -883,6 +919,9 @@ export class CheckinController {
     }
 
     async #handleMainCheckin() {
+        // ต่ออายุ Session อีก 7 วันเมื่อผู้ใช้กดลงเวลา
+        AuthService.getCurrentUser(true);
+
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {
             await UIHelpers.alert(
                 'กรุณาเปิดกล้องและถ่ายภาพก่อนลงเวลา',
@@ -932,7 +971,7 @@ export class CheckinController {
 
         try {
             let finalPhotoUrl = '';
-            if (this.capturedPhotoDataUrl) {
+            if (this.settings.require_photo && this.capturedPhotoDataUrl) {
                 finalPhotoUrl = await UIHelpers.uploadPhotoToGoogleDrive(
                     this.capturedPhotoDataUrl,
                     `Checkin_${this.currentUser.username}`,
@@ -953,9 +992,9 @@ export class CheckinController {
                 is_overnight: Boolean(shiftObj.is_overnight),
                 single_click_checkin: Boolean(this.settings.single_click_checkin || effectiveOvertimeShift),
                 photo_url: finalPhotoUrl,
-                lat: this.gpsData.lat,
-                lng: this.gpsData.lng,
-                location_name: this.gpsData.locationName
+                lat: this.settings.require_gps ? this.gpsData.lat : null,
+                lng: this.settings.require_gps ? this.gpsData.lng : null,
+                location_name: this.settings.require_gps ? this.gpsData.locationName : ''
             });
 
             UIHelpers.hideLoading();
@@ -973,6 +1012,8 @@ export class CheckinController {
     }
 
     async #handleSubmitSpecialRequest(closeModalCallback) {
+        AuthService.getCurrentUser(true);
+
         const workDate = document.getElementById('spWorkDate').value;
         const shiftIdx = parseInt(document.getElementById('spShiftSelect').value || '0', 10);
         const shiftObj = (this.settings.work_shifts || [])[shiftIdx] || {
@@ -995,7 +1036,7 @@ export class CheckinController {
         UIHelpers.showLoading('กำลังส่งคำขอลงเวลากรณีพิเศษ...');
         try {
             let finalPhotoUrl = '';
-            if (this.capturedPhotoDataUrl) {
+            if (this.settings.require_photo && this.capturedPhotoDataUrl) {
                 finalPhotoUrl = await UIHelpers.uploadPhotoToGoogleDrive(
                     this.capturedPhotoDataUrl,
                     `Special_${this.currentUser.username}`,
@@ -1013,9 +1054,9 @@ export class CheckinController {
                 is_overtime: Boolean(shiftObj.is_overtime),
                 remark,
                 photo_url: finalPhotoUrl,
-                lat: this.gpsData.lat,
-                lng: this.gpsData.lng,
-                location_name: this.gpsData.locationName || 'ขอลงเวลากรณีพิเศษ'
+                lat: this.settings.require_gps ? this.gpsData.lat : null,
+                lng: this.settings.require_gps ? this.gpsData.lng : null,
+                location_name: (this.settings.require_gps && this.gpsData.locationName) ? this.gpsData.locationName : 'ขอลงเวลากรณีพิเศษ'
             });
 
             UIHelpers.hideLoading();

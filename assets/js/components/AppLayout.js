@@ -1,6 +1,6 @@
 /**
  * @file assets/js/components/AppLayout.js
- * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (แก้สีปุ่มกระดิ่ง/สลับธีมให้ชัด, ปุ่มออกจากระบบสีแดงโทนเว็บ, ลบ @username, และจำกัดสิทธิ์เมนู Admin ส่วน/ฝ่าย)
+ * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (เปลี่ยนการจัด Footer ของระบบผู้ดูแลระบบให้เป็นจัดกึ่งกลาง และรองรับการต่ออายุ Session 7 วัน)
  */
 
 import { Config } from '../core/Config.js';
@@ -49,10 +49,6 @@ export class AppLayout {
         }
     };
 
-    /**
-     * ตรวจสอบว่าผู้ใช้งานมีสิทธิ์มองเห็นเมนู "จัดการบัญชีผู้ใช้งาน" (users.html) หรือไม่
-     * กฎ: Admin ขอบเขตการมองเห็น "ส่วน/ฝ่าย" (visibility_level === 'division') จะมองไม่เห็นเมนูนี้
-     */
     static canViewUsersMenu(user) {
         if (!user) return false;
         if (user.role === 'SuperAdmin') return true;
@@ -69,7 +65,6 @@ export class AppLayout {
         const currentUser = AuthService.requireAuth(allowedRoles);
         if (!currentUser) return { currentUser: null, settings: null };
 
-        // บล็อกกรณี Admin ขอบเขต "ส่วน/ฝ่าย" พยายามเข้าหน้าจัดการบัญชีผู้ใช้งาน
         if (activePage === 'users' && !AppLayout.canViewUsersMenu(currentUser)) {
             window.location.href = 'dashboard.html';
             return { currentUser: null, settings: null };
@@ -151,6 +146,9 @@ export class AppLayout {
             await UIHelpers.showToast('ท่านไม่มีสิทธิ์เข้าถึงเมนูจัดการบัญชีผู้ใช้งาน', 'warning', 2500);
             return;
         }
+
+        // ต่ออายุ Session อีก 7 วันทุกครั้งที่มีการคลิกเปลี่ยนเมนูในระบบหลังบ้าน
+        AuthService.getCurrentUser(true);
 
         UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
         try {
@@ -270,7 +268,6 @@ export class AppLayout {
                     </nav>
                 </div>
 
-                <!-- มุมซ้ายล่าง: ลบส่วนที่แสดงข้อมูลชื่อบัญชี (@username) ออก และใช้ปุ่มออกจากระบบสีแดงโทนเดียวกับธีมเว็บ -->
                 <div class="p-4 border-t border-white/15 bg-black/25">
                     <div class="flex items-center gap-3 mb-3 px-2">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[#00351B] text-sm bg-[#FDD835] shadow shrink-0">
@@ -289,9 +286,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * สร้างแถบด้านบน: ปรับสีปุ่มกระดิ่งแจ้งเตือนและปุ่มเปลี่ยนโหมดธีมให้โดดเด่นชัดเจน ไม่กลืนกับพื้นหลังสีเขียวเข้ม
-     */
     static #renderTopbar(currentUser, settings, pageTitle, pageSubtitle) {
         const topbarEl = document.getElementById('bmaTopbarContainer');
         if (!topbarEl) return;
@@ -311,7 +305,6 @@ export class AppLayout {
                 </div>
 
                 <div class="flex items-center gap-2.5 lg:gap-3 shrink-0">
-                    <!-- ปุ่มกระดิ่งแจ้งเตือน: พื้นหลังขาวมุก ขอบทอง ไอคอนสีเหลืองทอง/เขียวเข้ม มองเห็นเด่นชัด 100% -->
                     <div class="relative" id="notificationBellWrapper">
                         <button id="btnNotificationBell" type="button" class="relative w-10 h-10 rounded-xl bg-white text-[#00351B] border-2 border-[#FDD835] hover:bg-[#FEF9C3] transition flex items-center justify-center shadow-md cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
                             <i class="fa-solid fa-bell text-base text-[#005B2E]"></i>
@@ -331,7 +324,6 @@ export class AppLayout {
                         </div>
                     </div>
 
-                    <!-- ปุ่มสลับโหมดสี Light / Eye-Care Dark Mode: ใช้คลาส .btn-header-theme สีเหลืองทองตัดขอบขาวเด่นชัด -->
                     <button id="btnToggleThemeMode" type="button" class="btn-header-theme text-xs py-2 px-3" title="สลับโหมดถนอมสายตา (Light/Dark Mode)">
                         <i id="themeModeIcon" class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'} text-sm"></i>
                         <span id="themeModeTextLabel" class="hidden sm:inline">${isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา'}</span>
@@ -401,6 +393,9 @@ export class AppLayout {
         `;
     }
 
+    /**
+     * เปลี่ยนการจัด Footer ของระบบผู้ดูแลระบบให้เป็นจัดกึ่งกลาง (Center Aligned)
+     */
     static #renderFooter(settings) {
         const footerEl = document.getElementById('bmaFooterContainer');
         if (!footerEl) return;
@@ -409,16 +404,15 @@ export class AppLayout {
         const footerDesc = settings.footer_description || '';
 
         footerEl.innerHTML = `
-            <footer class="mt-10 py-4 px-4 lg:px-8 bma-footer-bar text-center sm:flex sm:items-center sm:justify-between mb-14 lg:mb-0">
-                <div class="text-left">
-                    <div class="text-xs font-bold text-white">
-                        ระบบลงเวลาปฏิบัติราชการออนไลน์ • <span>${settings.organization_name}</span>
-                    </div>
-                    ${footerDesc ? `<div class="text-[11px] footer-desc-line mt-0.5">${footerDesc}</div>` : ''}
+            <footer class="mt-10 py-4 px-4 lg:px-8 bma-footer-bar flex flex-col items-center justify-center text-center mb-14 lg:mb-0">
+                <div class="text-xs font-bold text-white">
+                    <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
+                    <span>${settings.organization_name}</span>
+                    <span> • สังกัด </span>
+                    <span class="footer-highlight">${settings.bureau_name}</span>
+                    <span> © พ.ศ. ${yearBuddhist}</span>
                 </div>
-                <div class="text-xs mt-1.5 sm:mt-0">
-                    สังกัด: <span class="footer-highlight">${settings.bureau_name}</span> © พ.ศ. ${yearBuddhist}
-                </div>
+                ${footerDesc ? `<div class="text-[11px] footer-desc-line mt-0.5">${footerDesc}</div>` : ''}
             </footer>
         `;
     }
@@ -526,6 +520,13 @@ export class AppLayout {
         if (AppLayout.#isGlobalEventsBound) return;
         AppLayout.#isGlobalEventsBound = true;
 
+        // ซิงค์การออกจากระบบข้ามแท็บ
+        window.addEventListener('storage', (e) => {
+            if (e.key === Config.STORAGE_KEYS.SESSION_USER && !e.newValue) {
+                window.location.href = './';
+            }
+        });
+
         document.addEventListener('click', async (e) => {
             const logoutBtn = e.target.closest('#btnSidebarLogout');
             if (logoutBtn) {
@@ -538,7 +539,7 @@ export class AppLayout {
                 );
                 if (confirmed) {
                     AuthService.clearSession();
-                    window.location.href = 'index.html';
+                    window.location.href = './';
                 }
                 return;
             }

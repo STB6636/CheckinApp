@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/LoginController.js
- * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ดึงข้อความ Header BMA e-Government Time Attendance System จากตั้งค่าระบบ)
+ * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ตรวจสอบและต่ออายุ Session 7 วันอัตโนมัติโดยไม่ต้อง Login ซ้ำ + ซ่อน /index.html บนแถบ URL)
  */
 
 import { AuthService } from '../core/AuthService.js';
@@ -14,7 +14,26 @@ export class LoginController {
     }
 
     async init() {
+        // ซ่อนชื่อไฟล์ /index.html ออกจากแถบ URL ของเบราว์เซอร์ให้เหลือเฉพาะโดเมนสะอาดตา
+        if (window.location.pathname.endsWith('/index.html')) {
+            const cleanPath = window.location.pathname.replace(/index\.html$/, '');
+            window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+        }
+
         UIHelpers.initTheme();
+
+        // ตรวจสอบว่ามี Session ของผู้ใช้งานที่ยังไม่หมดอายุ (ภายใน 7 วัน) หรือไม่
+        // หากมี ระบบจะต่ออายุให้ครบ 7 วันอัตโนมัติ และพาเข้าสู่ระบบทันทีโดยไม่ต้อง Login ซ้ำ
+        const existingSessionUser = AuthService.getCurrentUser(true);
+        if (existingSessionUser) {
+            const isValid = await AuthService.verifySessionWithDatabase();
+            if (isValid) {
+                const updatedUser = AuthService.getCurrentUser(false) || existingSessionUser;
+                window.location.replace(AuthService.getRedirectUrlForSession(updatedUser));
+                return;
+            }
+        }
+
         this.#updateThemeButtonUI();
         this.#bindEvents();
         await this.#loadOrganizationBranding();
