@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/SettingsController.js
- * @description คลาสควบคุมหน้าตั้งค่าระบบ (Google Drive Verify, เกณฑ์สาย/สีรายงาน 5 สถานะ, กะนอกเวลา/ข้ามวัน, เรียงลำดับ ขึ้น/ลง & แม่-ลูกหลายแถว)
+ * @description คลาสควบคุมหน้าตั้งค่าระบบ (ตรวจลิงก์รูปโลโก้หน่วยงาน, Tag "ปฏิบัติงานนอกเวลา" สีม่วงพาสเทล, Google Drive Verify & แม่-ลูกหลายแถว)
  */
 
 import { Config } from '../core/Config.js';
@@ -20,7 +20,7 @@ export class SettingsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'settings',
             pageTitle: 'ตั้งค่าระบบพื้นฐาน (สำหรับ SuperAdmin)',
-            pageSubtitle: 'จัดการหน่วยงาน, Google Drive, เกณฑ์เวลา/สีสถานะรายงาน, กะนอกเวลาข้ามวัน และโครงสร้างแม่-ลูก'
+            pageSubtitle: 'จัดการหน่วยงาน, ตรวจลิงก์โลโก้, Google Drive, เกณฑ์เวลา/สีรายงาน, กะนอกเวลา และโครงสร้างแม่-ลูก'
         });
 
         if (!layout.currentUser) return;
@@ -28,7 +28,7 @@ export class SettingsController {
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลตั้งค่าระบบ...');
         try {
-            this.settings = await SettingsModel.getSettings(true);
+            this.settings = await SettingsModel.getSettings(false);
             this.#renderAllSettings();
             this.#bindEvents();
         } finally {
@@ -43,6 +43,17 @@ export class SettingsController {
         document.getElementById('setLogoUrlInput').value = this.settings.logo_url || '';
         document.getElementById('setGDriveScriptUrl').value = this.settings.google_drive_script_url || '';
         document.getElementById('setGDriveFolderId').value = this.settings.google_drive_folder_id || '';
+
+        const logoBadge = document.getElementById('logoUrlVerifyBadge');
+        if (logoBadge) {
+            if (this.settings.logo_url) {
+                logoBadge.textContent = 'ตั้งค่าโลโก้แล้ว';
+                logoBadge.className = 'bma-badge bma-badge-success text-[11px]';
+            } else {
+                logoBadge.textContent = 'ยังไม่ได้ระบุโลโก้';
+                logoBadge.className = 'bma-badge bma-badge-sky text-[11px]';
+            }
+        }
 
         const gdriveBadge = document.getElementById('gdriveVerifyBadge');
         if (gdriveBadge) {
@@ -61,12 +72,10 @@ export class SettingsController {
         const isSingleClick = Boolean(this.settings.single_click_checkin);
         this.#syncCheckinModeUI(isSingleClick);
 
-        // เกณฑ์เวลาทำงานมาตรฐาน 24 ชม. และนาทีมาสาย
         document.getElementById('setStdCheckIn').value = UIHelpers.formatTime24(this.settings.standard_check_in || '08:30');
         document.getElementById('setStdCheckOut').value = UIHelpers.formatTime24(this.settings.standard_check_out || '16:30');
         document.getElementById('setLateThresholdMin').value = Number(this.settings.late_threshold_minutes ?? 30);
 
-        // สีสถานะรายงานทั้ง 5 สถานะ + สีหัวตาราง
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
             ...(this.settings.category_colors || {})
@@ -208,13 +217,13 @@ export class SettingsController {
     }
 
     /**
-     * เรนเดอร์ตารางช่วงเวลาปฏิบัติราชการ (แสดงสถานะการปฏิบัติงานนอกเวลาราชการ และกะข้ามวันอย่างชัดเจน)
+     * เรนเดอร์ตารางจัดการช่วงเวลาปฏิบัติราชการ:
+     * คอลัมน์ ประเภท/เงื่อนไข เปลี่ยนชื่อเป็น "ปฏิบัติงานนอกเวลา" และใช้สี Tag ในโทนม่วงพาสเทล (.bma-badge-pastel-purple)
      */
     #renderShifts() {
         const tbody = document.getElementById('shiftsTableBody');
         if (!tbody) return;
         const shifts = this.settings.work_shifts || [];
-        const otColor = this.settings?.category_colors?.overtime || '#2563EB';
 
         tbody.innerHTML = shifts.map((shift, idx) => {
             const checkIn24 = UIHelpers.formatTime24(shift.check_in);
@@ -225,9 +234,11 @@ export class SettingsController {
             if (shift.is_custom) {
                 typeBadgeHtml = `<span class="bma-badge bma-badge-warning">อื่นๆ (ระบุเวลาเอง)</span>`;
             } else if (shift.is_overtime) {
+                // ใช้ข้อความ "ปฏิบัติงานนอกเวลา" และโทนสีม่วงพาสเทลตามข้อกำหนด
                 typeBadgeHtml = `
-                    <span class="bma-badge text-white" style="background-color: ${otColor};">
-                        <i class="fa-solid fa-business-time"></i> ปฏิบัติงานนอกเวลาราชการ (บันทึกพิเศษอัตโนมัติ)
+                    <span class="bma-badge-pastel-purple">
+                        <i class="fa-solid fa-business-time"></i>
+                        <span>ปฏิบัติงานนอกเวลา</span>
                     </span>
                 `;
             } else {
@@ -240,7 +251,7 @@ export class SettingsController {
                     <td class="text-center">${this.#buildSortButtonsHtml('work_shifts', idx, shifts.length)}</td>
                     <td>
                         <div class="font-bold bma-text-main">${shift.name}</div>
-                        ${isOvernight ? `<span class="text-[11px] font-bold text-indigo-600"><i class="fa-solid fa-moon mr-1"></i>เลิกงานในวันถัดไป (ข้ามวัน)</span>` : ''}
+                        ${isOvernight ? `<span class="text-[11px] font-bold text-purple-700 dark:text-purple-300"><i class="fa-solid fa-moon mr-1"></i>เลิกงานในวันถัดไป (ข้ามวัน)</span>` : ''}
                     </td>
                     <td class="text-center font-mono font-bold">${shift.is_custom ? 'ระบุเอง' : `${checkIn24} น.`}</td>
                     <td class="text-center font-mono font-bold">
@@ -431,16 +442,48 @@ export class SettingsController {
             const dataUrl = await SettingsModel.fileToDataUrl(file);
             document.getElementById('setLogoUrlInput').value = dataUrl;
             this.#updateLogoPreview(dataUrl);
-        });
-
-        document.getElementById('setLogoUrlInput')?.addEventListener('input', (e) => {
-            this.#updateLogoPreview(e.target.value.trim());
+            const logoBadge = document.getElementById('logoUrlVerifyBadge');
+            if (logoBadge) {
+                logoBadge.textContent = '✓ อัปโหลดไฟล์รูปแล้ว';
+                logoBadge.className = 'bma-badge bma-badge-success text-[11px]';
+            }
         });
 
         document.getElementById('btnClearLogo')?.addEventListener('click', () => {
             document.getElementById('setLogoUrlInput').value = '';
             document.getElementById('setLogoFileInput').value = '';
             this.#updateLogoPreview('');
+            const logoBadge = document.getElementById('logoUrlVerifyBadge');
+            if (logoBadge) {
+                logoBadge.textContent = 'ล้างโลโก้แล้ว';
+                logoBadge.className = 'bma-badge bma-badge-warning text-[11px]';
+            }
+        });
+
+        // ปุ่มตรวจสอบลิงก์ของรูปโลโก้หน่วยงาน กรณีวางลิงก์ URL
+        document.getElementById('btnVerifyLogoUrl')?.addEventListener('click', async () => {
+            const rawUrl = document.getElementById('setLogoUrlInput')?.value || '';
+            const logoBadge = document.getElementById('logoUrlVerifyBadge');
+
+            UIHelpers.showLoading('กำลังตรวจสอบลิงก์รูปโลโก้หน่วยงาน...');
+            const result = await UIHelpers.verifyImageUrl(rawUrl);
+            UIHelpers.hideLoading();
+
+            if (result.success) {
+                document.getElementById('setLogoUrlInput').value = result.normalizedUrl;
+                this.#updateLogoPreview(result.normalizedUrl);
+                if (logoBadge) {
+                    logoBadge.textContent = `✓ ลิงก์รูปใช้ได้ (${result.width}×${result.height})`;
+                    logoBadge.className = 'bma-badge bma-badge-success text-[11px]';
+                }
+                await UIHelpers.alert('ตรวจสอบลิงก์รูปโลโก้สำเร็จ', result.message, 'success');
+            } else {
+                if (logoBadge) {
+                    logoBadge.textContent = '✗ ลิงก์รูปไม่ถูกต้อง';
+                    logoBadge.className = 'bma-badge bma-badge-danger text-[11px]';
+                }
+                await UIHelpers.alert('ไม่สามารถโหลดรูปโลโก้ได้', result.message, 'warning');
+            }
         });
 
         // ปุ่มตรวจสอบลิงก์ Google Drive ก่อนบันทึก
@@ -468,7 +511,6 @@ export class SettingsController {
             }
         });
 
-        // อัปเดตตัวอย่างป้ายสีสดเมื่อเปลี่ยนค่า Color Picker
         ['setColorNormal', 'setColorLate', 'setColorAbsentDuty', 'setColorNoCheckin', 'setColorOvertime', 'setColorGroupHeader'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', () => this.#updateColorPreviewBadges());
         });
@@ -483,7 +525,6 @@ export class SettingsController {
             });
         });
 
-        // ปุ่มบันทึกการตั้งค่าหลัก และปุ่มบันทึกเกณฑ์เวลา/สีรายงาน
         document.getElementById('btnSaveMainSettings')?.addEventListener('click', async () => {
             await this.#persistSettings(true);
         });
@@ -492,7 +533,6 @@ export class SettingsController {
             await this.#persistSettings(true);
         });
 
-        // ปิด Modal
         document.getElementById('btnCloseSettingsModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelSettingsModal')?.addEventListener('click', () => this.#closeModal());
 
@@ -504,7 +544,6 @@ export class SettingsController {
             }
         });
 
-        // เพิ่มคำนำหน้าชื่อ / หมายเหตุ / ช่วงเวลา
         document.getElementById('btnAddPrefix')?.addEventListener('click', () => {
             this.#openModal(
                 'เพิ่มคำนำหน้าชื่อ',
@@ -539,7 +578,6 @@ export class SettingsController {
             this.#openShiftModal();
         });
 
-        // ปุ่มเพิ่มตำแหน่ง 3 ระดับ และสังกัด 4 ระดับ
         document.getElementById('btnAddPosStep1Type')?.addEventListener('click', () => this.#openAddPositionStep1Modal());
         document.getElementById('btnAddPosStep2Title')?.addEventListener('click', () => this.#openAddPositionStep2Modal());
         document.getElementById('btnAddPosStep3Level')?.addEventListener('click', () => this.#openAddPositionStep3Modal());
@@ -549,7 +587,6 @@ export class SettingsController {
         document.getElementById('btnAddAffStep3Division')?.addEventListener('click', () => this.#openAddAffiliationStep3DivisionModal());
         document.getElementById('btnAddAffStep4Group')?.addEventListener('click', () => this.#openAddAffiliationStep4GroupModal());
 
-        // Event Delegation สำหรับปุ่มลูกศร ขึ้น/ลง และปุ่มแก้ไข/ลบในตารางทั้งหมด
         document.querySelector('main')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (!btn) return;
@@ -625,11 +662,6 @@ export class SettingsController {
         });
     }
 
-    /**
-     * Modal เพิ่ม/แก้ไข ช่วงเวลาปฏิบัติราชการ:
-     * - สามารถติ๊กได้ว่า ช่วงเวลานี้คือ "การปฏิบัติงานนอกเวลาราชการ" (is_overtime)
-     * - สามารถตั้งค่าเวลาข้ามวันได้ เช่น เริ่มเวลา 22:00 น. เลิกงานเวลา 01:00 น. ของวันถัดไป (is_overnight)
-     */
     #openShiftModal(editIndex = null) {
         const item = editIndex !== null
             ? this.settings.work_shifts[editIndex]
@@ -638,7 +670,7 @@ export class SettingsController {
         this.#openModal(editIndex !== null ? 'แก้ไขช่วงเวลาปฏิบัติราชการ' : 'เพิ่มช่วงเวลาปฏิบัติราชการ', `
             <div>
                 <label class="block text-xs font-bold bma-text-main mb-1">ชื่อช่วงเวลาปฏิบัติราชการ *</label>
-                <input type="text" id="mShiftName" class="bma-input" value="${item.name}" placeholder="เช่น ปฏิบัติงานนอกเวลาราชการ (22:00 - 01:00)" required>
+                <input type="text" id="mShiftName" class="bma-input" value="${item.name}" placeholder="เช่น ปฏิบัติงานนอกเวลา (22:00 - 01:00)" required>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -654,11 +686,11 @@ export class SettingsController {
 
             <div class="p-3.5 rounded-xl bma-info-box space-y-2.5">
                 <label class="flex items-start gap-2.5 text-xs font-bold bma-text-main cursor-pointer">
-                    <input type="checkbox" id="mShiftOvertime" class="w-4 h-4 accent-blue-600 mt-0.5 shrink-0" ${item.is_overtime ? 'checked' : ''}>
+                    <input type="checkbox" id="mShiftOvertime" class="w-4 h-4 accent-purple-600 mt-0.5 shrink-0" ${item.is_overtime ? 'checked' : ''}>
                     <div>
-                        <span class="text-blue-600 dark:text-blue-400 font-extrabold block">ช่วงเวลานี้คือ "การปฏิบัติงานนอกเวลาราชการ"</span>
+                        <span class="text-purple-700 dark:text-purple-300 font-extrabold block">ช่วงเวลานี้คือ "ปฏิบัติงานนอกเวลา" (Tag สีม่วงพาสเทล)</span>
                         <span class="bma-text-sub font-normal block mt-0.5">
-                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเวลาเข้าและเลิกงาน) และได้สถานะ "ปฏิบัติงานนอกเวลาราชการ (สีน้ำเงิน)" โดยอัตโนมัติ
+                            เมื่อเลือกช่วงเวลานี้ ระบบจะใช้การบันทึกเวลารูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเวลาเข้าและเลิกงาน) โดยอัตโนมัติ
                         </span>
                     </div>
                 </label>
@@ -695,7 +727,6 @@ export class SettingsController {
             await this.#persistSettings(true);
         });
 
-        // ตรวจจับอัตโนมัติหากกรอกเวลาเลิกงานน้อยกว่าเวลาเริ่มงาน (เช่น 22:00 -> 01:00) ให้ติ๊กข้ามวันอัตโนมัติ
         const checkOvernightAuto = () => {
             const inMin = UIHelpers.timeToMinutes(document.getElementById('mShiftIn')?.value);
             const outMin = UIHelpers.timeToMinutes(document.getElementById('mShiftOut')?.value);
@@ -708,9 +739,6 @@ export class SettingsController {
         document.getElementById('mShiftOut')?.addEventListener('input', checkOvernightAuto);
     }
 
-    // ========================================================================
-    // ส่วนจัดการ Modal ข้อมูลตำแหน่งแบบแยกส่วนเชื่อมโยงแม่-ลูก (3 ระดับ)
-    // ========================================================================
     #openAddPositionStep1Modal() {
         this.#openModal(
             '1. เพิ่มประเภทตำแหน่ง (เพิ่มได้หลายรายการ)',
@@ -865,9 +893,6 @@ export class SettingsController {
         });
     }
 
-    // ========================================================================
-    // ส่วนจัดการ Modal โครงสร้างสังกัดแบบแยกส่วนเชื่อมโยงแม่-ลูก (4 ระดับ)
-    // ========================================================================
     #openAddAffiliationStep1OrgModal() {
         this.#openModal(
             '1. เพิ่มหน่วยงานหลัก (เพิ่มได้หลายรายการ)',

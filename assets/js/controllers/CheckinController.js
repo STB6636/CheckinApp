@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (กล้อง 3:4, Google Drive URL, Google Map สด, นอกเวลาราชการ, ตารางประวัติส่วนตัว)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (รีเฟรชหลังลงเวลา, จำกัดเวลาปกติวันละครั้ง vs นอกเวลาหลายครั้ง, แท็บประวัติ 5/10/15 แถว & ตารางคำขอพิเศษ)
  */
 
 import { Config } from '../core/Config.js';
@@ -21,6 +21,13 @@ export class CheckinController {
             lng: null,
             locationName: ''
         };
+        // สถานะสำหรับตารางประวัติส่วนตัว (แท็บวันปัจจุบัน vs ย้อนหลัง + Pagination)
+        this.activeHistoryTab = 'today'; // 'today' หรือ 'past'
+        this.todayHistoryList = [];
+        this.pastHistoryList = [];
+        this.pastPageSize = 5; // 5, 10, หรือ 15 แถว
+        this.pastCurrentPage = 1;
+        this.specialRequestsList = [];
         this.init();
     }
 
@@ -29,16 +36,14 @@ export class CheckinController {
         this.currentUser = AuthService.requireAuth(['SuperAdmin', 'Admin', 'User']);
         if (!this.currentUser) return;
 
-        // ตรวจสอบและแสดง Popup "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]" สัก 2-3 วินาทีแล้วหายไป
         this.#checkAndShowWelcomeToast();
-
         this.#startLiveClock24();
         this.#bindEvents();
 
         UIHelpers.showLoading('กำลังเตรียมระบบลงเวลาปฏิบัติราชการ...');
-        this.settings = await SettingsModel.getSettings(true);
+        this.settings = await SettingsModel.getSettings(false);
         this.#renderUserAndSettingsInfo();
-        await this.#refreshTodayAttendanceAndHistory();
+        await this.#refreshAllAttendanceData();
         UIHelpers.hideLoading();
 
         await this.#initCamera();
@@ -55,9 +60,6 @@ export class CheckinController {
         }
     }
 
-    /**
-     * นาฬิกาดิจิทัลรูปแบบ 24 ชั่วโมง และวันที่แบบไทยย่อ เช่น "15 ม.ค. 69"
-     */
     #startLiveClock24() {
         const updateClock = () => {
             const now = new Date();
@@ -132,10 +134,9 @@ export class CheckinController {
             gpsBadge.className = 'bma-badge bma-badge-success';
         }
 
-        // เติมข้อมูล Dropdown ช่วงเวลาปฏิบัติราชการ (แสดงป้ายกำกับกะนอกเวลาและกะข้ามวันชัดเจน)
         const shifts = this.settings.work_shifts || [];
         const shiftOptionsHtml = shifts.map((s, idx) => {
-            const otLabel = s.is_overtime ? ' [นอกเวลาราชการ]' : '';
+            const otLabel = s.is_overtime ? ' [ปฏิบัติงานนอกเวลา]' : '';
             const overnightLabel = s.is_overnight ? ' (ข้ามวัน)' : '';
             return `<option value="${idx}">${s.name}${otLabel}${overnightLabel}</option>`;
         }).join('');
@@ -149,18 +150,49 @@ export class CheckinController {
         ).join('');
 
         document.getElementById('spWorkDate').value = UIHelpers.getTodayISO();
-        this.#updateSelectedShiftModeUI();
     }
 
     /**
-     * อัปเดตป้ายบอกรูปแบบการลงเวลาและปุ่มกดเมื่อเปลี่ยนช่วงเวลาใน Dropdown
+     * โหลดข้อมูลสถานะวันนี้, ตารางประวัติส่วนตัว (แยกวันนี้/ย้อนหลัง) และตารางประวัติคำขอพิเศษพร้อมกัน
      */
-    #updateSelectedShiftModeUI() {
+    async #refreshAllAttendanceData() {
+        const todayIso = UIHelpers.getTodayISO();
+        const [regularRecord, allHistory, specialRequests] = await Promise.all([
+            AttendanceModel.getTodayRegularRecordForUser(this.currentUser.personnel_id, this.currentUser.id, todayIso),
+            AttendanceModel.getPersonalAttendanceHistory(this.currentUser.personnel_id, this.currentUser.id, 150),
+            AttendanceModel.getPersonalSpecialRequests(this.currentUser.personnel_id, this.currentUser.id)
+        ]);
+
+        // แยกรายการลงเวลาส่วนตัวออกเป็น "วันปัจจุบัน" และ "ประวัติลงเวลาย้อนหลัง"
+        this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
+        this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso);
+        this.specialRequestsList = specialRequests;
+
+        this.#updateStatusCardsAndMainButton(regularRecord);
+        this.#renderPersonalAttendanceTabs();
+        this.#renderSpecialRequestsHistoryTable();
+    }
+
+    /**
+     * อัปเดตการ์ดเวลาเข้า-ออกงานวันนี้ และตรวจสอบสิทธิ์การกดปุ่มลงเวลาตามช่วงเวลาที่เลือก
+     */
+    #updateStatusCardsAndMainButton(regularRecord) {
+        const checkinTimeEl = document.getElementById('todayCheckinTime');
+        const checkinBadgeEl = document.getElementById('todayCheckinBadge');
+        const checkoutTimeEl = document.getElementById('todayCheckoutTime');
+        const checkoutBadgeEl = document.getElementById('todayCheckoutBadge');
+        const btnSubmitMain = document.getElementById('btnSubmitCheckinMain');
+        const btnSubmitLabel = document.getElementById('btnSubmitCheckinLabel');
+        const modeTag = document.getElementById('checkinRecordingModeTag');
+        const mainCustomBox = document.getElementById('mainCustomTimeContainer');
+        const noticeBox = document.getElementById('regularCompletedNoticeBox');
+        const noticeText = document.getElementById('regularCompletedNoticeText');
+
         const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
         const shiftObj = (this.settings?.work_shifts || [])[shiftIdx] || {};
-        const modeTag = document.getElementById('checkinRecordingModeTag');
-        const btnLabel = document.getElementById('btnSubmitCheckinLabel');
-        const mainCustomBox = document.getElementById('mainCustomTimeContainer');
+        const isOvertimeShift = Boolean(shiftObj.is_overtime);
+        const isSingleClick = Boolean(this.settings?.single_click_checkin || isOvertimeShift);
+        const shiftStartRef = UIHelpers.formatTime24(shiftObj.check_in || this.settings?.standard_check_in || '08:30');
 
         if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
             mainCustomBox?.classList.remove('hidden');
@@ -168,57 +200,34 @@ export class CheckinController {
             mainCustomBox?.classList.add('hidden');
         }
 
-        if (shiftObj.is_overtime) {
+        // แสดงป้ายเงื่อนไขของกะที่เลือก
+        if (isOvertimeShift) {
             if (modeTag) {
-                modeTag.textContent = 'ปฏิบัติงานนอกเวลาราชการ (คลิกครั้งเดียวเข้า-เลิกงาน)';
-                modeTag.className = 'bma-badge bma-badge-indigo';
-            }
-            if (btnLabel) {
-                btnLabel.textContent = `ลงเวลาปฏิบัติงานนอกเวลาราชการ (${shiftObj.check_in} - ${shiftObj.check_out} น.)`;
+                modeTag.textContent = 'ปฏิบัติงานนอกเวลา (ลงได้หลายครั้ง ไม่ซ้ำช่วงเวลา)';
+                modeTag.className = 'bma-badge-pastel-purple';
             }
         } else if (this.settings?.single_click_checkin) {
             if (modeTag) {
-                modeTag.textContent = 'รูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเข้าและเลิกงาน)';
+                modeTag.textContent = 'รูปแบบพิเศษ (คลิกครั้งเดียวลงทั้งเข้าและออก)';
                 modeTag.className = 'bma-badge bma-badge-indigo';
             }
         } else {
             if (modeTag) {
-                modeTag.textContent = 'รูปแบบปกติ (ลงเวลาเข้าและเลิกงานตามปกติ)';
+                modeTag.textContent = 'เวลาทำการปกติ (เข้าและออกได้ครั้งเดียวต่อวัน)';
                 modeTag.className = 'bma-badge bma-badge-success';
             }
         }
-    }
 
-    async #refreshTodayAttendanceAndHistory() {
-        const [regularRecord, historyList] = await Promise.all([
-            AttendanceModel.getTodayRegularRecordForUser(this.currentUser.personnel_id, this.currentUser.id),
-            AttendanceModel.getPersonalAttendanceHistory(this.currentUser.personnel_id, this.currentUser.id, 30)
-        ]);
-
-        const checkinTimeEl = document.getElementById('todayCheckinTime');
-        const checkinBadgeEl = document.getElementById('todayCheckinBadge');
-        const checkoutTimeEl = document.getElementById('todayCheckoutTime');
-        const checkoutBadgeEl = document.getElementById('todayCheckoutBadge');
-        const btnSubmitLabel = document.getElementById('btnSubmitCheckinLabel');
-
-        const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
-        const shiftObj = (this.settings?.work_shifts || [])[shiftIdx] || {};
-        const isSingleClick = Boolean(this.settings?.single_click_checkin || shiftObj.is_overtime);
-
+        // อัปเดตการ์ดเวลาเข้า-ออกงานปกติวันนี้
         if (!regularRecord) {
             checkinTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
             checkinBadgeEl.textContent = 'รอลงเวลาเข้า';
             checkinBadgeEl.className = 'bma-badge bma-badge-warning';
+            checkinBadgeEl.style.backgroundColor = '';
 
             checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
             checkoutBadgeEl.textContent = 'รอลงเวลาออก';
             checkoutBadgeEl.className = 'bma-badge bma-badge-sky';
-
-            if (!shiftObj.is_overtime) {
-                btnSubmitLabel.textContent = isSingleClick
-                    ? 'บันทึกลงเวลาเข้าและเลิกงาน (ในครั้งเดียว)'
-                    : 'บันทึกลงเวลาเข้าปฏิบัติราชการ';
-            }
         } else {
             const evalStatus = AttendanceModel.evaluateOfficialStatus(regularRecord, this.settings);
             checkinTimeEl.textContent = regularRecord.check_in_time ? `${UIHelpers.formatTime24(regularRecord.check_in_time)} น.` : '-';
@@ -228,41 +237,100 @@ export class CheckinController {
 
             if (regularRecord.check_out_time) {
                 checkoutTimeEl.textContent = `${UIHelpers.formatTime24(regularRecord.check_out_time)} น.`;
-                checkoutBadgeEl.textContent = 'ลงเวลาเลิกงานแล้ว';
+                checkoutBadgeEl.textContent = 'ลงเวลาออกงานแล้ว';
                 checkoutBadgeEl.className = 'bma-badge bma-badge-success';
-                if (!shiftObj.is_overtime) {
-                    btnSubmitLabel.textContent = 'บันทึกลงเวลาปฏิบัติงานนอกเวลาราชการ (หลังเลิกงาน)';
-                }
             } else {
                 checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลาออก';
-                checkoutBadgeEl.textContent = 'รอลงเวลาเลิกงาน';
+                checkoutBadgeEl.textContent = 'รอลงเวลาออกงาน';
                 checkoutBadgeEl.className = 'bma-badge bma-badge-warning';
-                if (!shiftObj.is_overtime) {
-                    btnSubmitLabel.textContent = isSingleClick
-                        ? 'บันทึกลงเวลาเข้าและเลิกงาน (ในครั้งเดียว)'
-                        : 'บันทึกลงเวลาเลิกงาน';
-                }
             }
         }
 
-        this.#renderPersonalHistoryTable(historyList);
+        // ตรวจสอบปุ่มกดบันทึกลงเวลาหลัก
+        if (isOvertimeShift) {
+            noticeBox?.classList.add('hidden');
+            if (btnSubmitMain) btnSubmitMain.disabled = false;
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = `บันทึกลงเวลาปฏิบัติงานนอกเวลา (${shiftObj.check_in} - ${shiftObj.check_out} น.)`;
+            }
+        } else {
+            const isRegularCompletedToday = Boolean(regularRecord && regularRecord.check_in_time && regularRecord.check_out_time);
+            if (isRegularCompletedToday) {
+                // ลงเวลาทำการปกติครบทั้งเข้าและออกแล้วในวันนี้ -> ล็อกปุ่มสำหรับกะปกติ และแจ้งเวลาเข้างานวันถัดไป
+                noticeBox?.classList.remove('hidden');
+                if (noticeText) {
+                    noticeText.textContent = `วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบ 1 ครั้งแล้ว จะสามารถเริ่มลงเวลาเข้างานได้อีกครั้งในเวลา ${shiftStartRef} น. ของวันถัดไป (หากต้องการลงเวลานอกเวลา กรุณาเลือกช่วงเวลา "ปฏิบัติงานนอกเวลา" ในช่องด้านบน)`;
+                }
+                if (btnSubmitMain) btnSubmitMain.disabled = true;
+                if (btnSubmitLabel) btnSubmitLabel.textContent = 'ลงเวลาทำการปกติของวันนี้ครบแล้ว';
+            } else {
+                noticeBox?.classList.add('hidden');
+                if (btnSubmitMain) btnSubmitMain.disabled = false;
+                if (!regularRecord) {
+                    btnSubmitLabel.textContent = isSingleClick
+                        ? 'บันทึกลงเวลาเข้าและออกงาน (ในครั้งเดียว)'
+                        : 'บันทึกลงเวลาเข้าปฏิบัติราชการ';
+                } else {
+                    btnSubmitLabel.textContent = 'บันทึกลงเวลาออกปฏิบัติราชการ';
+                }
+            }
+        }
     }
 
     /**
-     * เรนเดอร์ตารางประวัติการลงเวลาส่วนตัวด้านล่างหน้าลงเวลา
+     * เรนเดอร์ตารางประวัติการลงเวลาส่วนตัว ทั้งแท็บ "วันปัจจุบัน" และแท็บ "ประวัติลงเวลาย้อนหลัง" (พร้อม Pagination 5, 10, 15 แถว)
      */
-    #renderPersonalHistoryTable(historyList) {
-        const tbody = document.getElementById('personalHistoryTableBody');
-        if (!tbody) return;
+    #renderPersonalAttendanceTabs() {
+        const todayCountEl = document.getElementById('todayHistoryCountBadge');
+        const pastCountEl = document.getElementById('pastHistoryCountBadge');
+        if (todayCountEl) todayCountEl.textContent = String(this.todayHistoryList.length);
+        if (pastCountEl) pastCountEl.textContent = String(this.pastHistoryList.length);
 
-        if (!historyList || historyList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ยังไม่มีประวัติการลงเวลาปฏิบัติราชการ</td></tr>`;
-            return;
+        // 1. เรนเดอร์ตารางแท็บวันปัจจุบัน
+        const todayTbody = document.getElementById('todayPersonalTableBody');
+        if (todayTbody) {
+            if (this.todayHistoryList.length === 0) {
+                todayTbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">วันนี้ยังไม่มีรายการลงเวลาปฏิบัติราชการ</td></tr>`;
+            } else {
+                todayTbody.innerHTML = this.todayHistoryList.map((item, idx) => this.#buildHistoryRowHtml(item, idx + 1)).join('');
+            }
         }
 
-        tbody.innerHTML = historyList.map((item, idx) => `
+        // 2. เรนเดอร์ตารางแท็บประวัติลงเวลาย้อนหลัง พร้อม Pagination (5, 10, 15 แถว)
+        const pastTbody = document.getElementById('pastPersonalTableBody');
+        const pageInfoEl = document.getElementById('pastPageInfoText');
+        const btnPrev = document.getElementById('btnPastPrevPage');
+        const btnNext = document.getElementById('btnPastNextPage');
+
+        const totalPast = this.pastHistoryList.length;
+        const totalPages = Math.max(1, Math.ceil(totalPast / this.pastPageSize));
+        if (this.pastCurrentPage > totalPages) this.pastCurrentPage = totalPages;
+        if (this.pastCurrentPage < 1) this.pastCurrentPage = 1;
+
+        const startIndex = (this.pastCurrentPage - 1) * this.pastPageSize;
+        const pagedPastItems = this.pastHistoryList.slice(startIndex, startIndex + this.pastPageSize);
+
+        if (pageInfoEl) {
+            pageInfoEl.textContent = `หน้า ${this.pastCurrentPage} / ${totalPages} (ทั้งหมด ${totalPast} รายการ)`;
+        }
+        if (btnPrev) btnPrev.disabled = this.pastCurrentPage <= 1;
+        if (btnNext) btnNext.disabled = this.pastCurrentPage >= totalPages;
+
+        if (pastTbody) {
+            if (pagedPastItems.length === 0) {
+                pastTbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ไม่พบประวัติการลงเวลาย้อนหลัง</td></tr>`;
+            } else {
+                pastTbody.innerHTML = pagedPastItems.map((item, idx) =>
+                    this.#buildHistoryRowHtml(item, startIndex + idx + 1)
+                ).join('');
+            }
+        }
+    }
+
+    #buildHistoryRowHtml(item, rowNumber) {
+        return `
             <tr>
-                <td class="text-center font-semibold">${idx + 1}</td>
+                <td class="text-center font-semibold">${rowNumber}</td>
                 <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(item.work_date)}</td>
                 <td>
                     <div class="font-semibold bma-text-main">${item.shift_name || '-'}</div>
@@ -277,7 +345,64 @@ export class CheckinController {
                     </span>
                 </td>
             </tr>
-        `).join('');
+        `;
+    }
+
+    /**
+     * เรนเดอร์ตารางที่ 2: ตารางประวัติการขอลงเวลากรณีพิเศษ
+     * แสดงสถานะ รออนุมัติ / อนุมัติแล้ว / ปฏิเสธคำขอ และปุ่ม "ลบคำขอ" เมื่อยังไม่ได้อนุมัติ
+     */
+    #renderSpecialRequestsHistoryTable() {
+        const tbody = document.getElementById('personalSpecialRequestsTableBody');
+        const totalBadge = document.getElementById('specialRequestTotalBadge');
+        if (totalBadge) totalBadge.textContent = `${this.specialRequestsList.length} รายการ`;
+        if (!tbody) return;
+
+        if (this.specialRequestsList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ยังไม่มีประวัติการขอลงเวลากรณีพิเศษ</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = this.specialRequestsList.map((req, idx) => {
+            let statusBadgeHtml = '';
+            let actionHtml = `<span class="text-xs bma-text-muted">ดำเนินการแล้ว</span>`;
+
+            if (req.approval_status === 'pending') {
+                statusBadgeHtml = `<span class="bma-badge bma-badge-warning"><i class="fa-regular fa-hourglass-half"></i> รออนุมัติ</span>`;
+                actionHtml = `
+                    <button type="button" data-action="delete-special-req" data-id="${req.id}" data-date="${UIHelpers.formatThaiShortDate(req.work_date)}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-600 border-rose-500/40 hover:bg-rose-500/10">
+                        <i class="fa-solid fa-trash-can"></i> ลบคำขอ
+                    </button>
+                `;
+            } else if (req.approval_status === 'approved') {
+                statusBadgeHtml = `<span class="bma-badge bma-badge-success"><i class="fa-solid fa-circle-check"></i> อนุมัติแล้ว</span>`;
+            } else {
+                statusBadgeHtml = `<span class="bma-badge bma-badge-danger"><i class="fa-solid fa-circle-xmark"></i> ปฏิเสธคำขอ</span>`;
+            }
+
+            const timeRange = `${req.check_in_time || '-'} - ${req.check_out_time || '-'} น.`;
+
+            return `
+                <tr>
+                    <td class="text-center font-semibold">${idx + 1}</td>
+                    <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</td>
+                    <td class="font-semibold bma-text-main">${req.shift_name || '-'}</td>
+                    <td class="text-center font-mono font-bold whitespace-nowrap">${timeRange}</td>
+                    <td><span class="bma-badge bma-badge-indigo">${req.remark || '-'}</span></td>
+                    <td class="text-center">${statusBadgeHtml}</td>
+                    <td class="text-center whitespace-nowrap">${actionHtml}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    /**
+     * รีเซ็ตและรีเฟรชสถานะหน้าจอเพื่อรอรับข้อมูลใหม่ทันทีหลังจากกดลงเวลาสำเร็จ
+     */
+    async #resetPageForNewInput() {
+        this.#retakePhoto();
+        await this.#refreshAllAttendanceData();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async #initCamera() {
@@ -309,9 +434,6 @@ export class CheckinController {
         }
     }
 
-    /**
-     * ถ่ายภาพแนวตั้ง อัตราส่วน 3:4 ขนาดเล็กคมชัดสูง
-     */
     #capturePhoto() {
         const video = document.getElementById('cameraVideoStream');
         const canvas = document.getElementById('cameraCaptureCanvas');
@@ -340,16 +462,15 @@ export class CheckinController {
         const btnRetake = document.getElementById('btnRetakePhoto');
 
         this.capturedPhotoDataUrl = '';
-        preview.src = '';
-        preview.classList.add('hidden');
-        video.classList.remove('hidden');
-        btnRetake.classList.add('hidden');
-        btnCapture.classList.remove('hidden');
+        if (preview) {
+            preview.src = '';
+            preview.classList.add('hidden');
+        }
+        video?.classList.remove('hidden');
+        btnRetake?.classList.add('hidden');
+        btnCapture?.classList.remove('hidden');
     }
 
-    /**
-     * ดึงพิกัด GPS, แสดงชื่อสถานที่ (ตรงจุด หรือ "ใกล้เคียง ...") และเรนเดอร์แผนที่ Google Map จริง
-     */
     async #initGpsLocation() {
         const coordsEl = document.getElementById('gpsCoordsText');
         const locNameEl = document.getElementById('gpsLocationNameText');
@@ -376,7 +497,6 @@ export class CheckinController {
 
                 coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
-                // แสดงแผนที่ Google Map จริงปักหมุดพิกัดปัจจุบันทันที
                 if (mapIframe) {
                     mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=17&output=embed`;
                     mapIframe.classList.remove('hidden');
@@ -442,14 +562,89 @@ export class CheckinController {
         document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhoto());
         document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#retakePhoto());
         document.getElementById('btnRefreshGps')?.addEventListener('click', () => this.#initGpsLocation());
-        document.getElementById('btnRefreshPersonalHistory')?.addEventListener('click', () => this.#refreshTodayAttendanceAndHistory());
 
         document.getElementById('checkinShiftSelect')?.addEventListener('change', () => {
-            this.#updateSelectedShiftModeUI();
-            this.#refreshTodayAttendanceAndHistory();
+            this.#refreshAllAttendanceData();
         });
 
         document.getElementById('btnSubmitCheckinMain')?.addEventListener('click', () => this.#handleMainCheckin());
+
+        // สลับแท็บตารางประวัติการลงเวลาส่วนตัว (วันปัจจุบัน vs ประวัติลงเวลาย้อนหลัง)
+        const btnTabToday = document.getElementById('btnTabTodayHistory');
+        const btnTabPast = document.getElementById('btnTabPastHistory');
+        const todayPanel = document.getElementById('todayHistoryTabPanel');
+        const pastPanel = document.getElementById('pastHistoryTabPanel');
+
+        btnTabToday?.addEventListener('click', () => {
+            this.activeHistoryTab = 'today';
+            btnTabToday.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer';
+            btnTabPast.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer';
+            todayPanel?.classList.remove('hidden');
+            pastPanel?.classList.add('hidden');
+        });
+
+        btnTabPast?.addEventListener('click', () => {
+            this.activeHistoryTab = 'past';
+            btnTabPast.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer';
+            btnTabToday.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer';
+            todayPanel?.classList.add('hidden');
+            pastPanel?.classList.remove('hidden');
+            this.#renderPersonalAttendanceTabs();
+        });
+
+        // เลือกจำนวนแถว 5, 10, 15 แถว และปุ่มกดหน้าก่อนหน้า / หน้าถัดไป ในแท็บประวัติลงเวลาย้อนหลัง
+        document.getElementById('selectPastPageSize')?.addEventListener('change', (e) => {
+            this.pastPageSize = parseInt(e.target.value, 10) || 5;
+            this.pastCurrentPage = 1;
+            this.#renderPersonalAttendanceTabs();
+        });
+
+        document.getElementById('btnPastPrevPage')?.addEventListener('click', () => {
+            if (this.pastCurrentPage > 1) {
+                this.pastCurrentPage--;
+                this.#renderPersonalAttendanceTabs();
+            }
+        });
+
+        document.getElementById('btnPastNextPage')?.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(this.pastHistoryList.length / this.pastPageSize));
+            if (this.pastCurrentPage < totalPages) {
+                this.pastCurrentPage++;
+                this.#renderPersonalAttendanceTabs();
+            }
+        });
+
+        // ลบคำขอลงเวลากรณีพิเศษที่ยังไม่ได้อนุมัติ (pending)
+        document.getElementById('personalSpecialRequestsTableBody')?.addEventListener('click', async (e) => {
+            const btn = e.target.closest('button[data-action="delete-special-req"]');
+            if (!btn) return;
+            const logId = btn.dataset.id;
+            const dateLabel = btn.dataset.date || '';
+
+            const confirmed = await UIHelpers.confirm(
+                'ยืนยันการลบคำขอลงเวลากรณีพิเศษ',
+                `คุณต้องการยกเลิกและลบคำขอลงเวลากรณีพิเศษของวันที่ ${dateLabel} ทิ้งใช่หรือไม่?`,
+                'ลบคำขอ',
+                'warning'
+            );
+
+            if (confirmed) {
+                UIHelpers.showLoading('กำลังลบคำขอลงเวลากรณีพิเศษ...');
+                const res = await AttendanceModel.deletePendingSpecialRequestByUser(
+                    logId,
+                    this.currentUser.personnel_id,
+                    this.currentUser.id
+                );
+                UIHelpers.hideLoading();
+
+                if (res.success) {
+                    await this.#refreshAllAttendanceData();
+                    await UIHelpers.showToast(res.message, 'success', 2500);
+                } else {
+                    await UIHelpers.alert('ไม่สามารถลบคำขอได้', res.message, 'error');
+                }
+            }
+        });
 
         // Modal ขอลงเวลากรณีพิเศษ
         const modalSpecial = document.getElementById('modalSpecialRequest');
@@ -511,10 +706,9 @@ export class CheckinController {
         const customCheckIn = isCustomShift ? UIHelpers.formatTime24(document.getElementById('mainCustomCheckin')?.value) : '';
         const customCheckOut = isCustomShift ? UIHelpers.formatTime24(document.getElementById('mainCustomCheckout')?.value) : '';
 
-        UIHelpers.showLoading('กำลังอัปโหลดภาพถ่ายและบันทึกเวลาปฏิบัติราชการ...');
+        UIHelpers.showLoading('กำลังบันทึกเวลาปฏิบัติราชการ...');
 
         try {
-            // 1. อัปโหลดรูปถ่ายแนวตั้ง 3:4 ที่บีบอัดแล้วไปยัง Google Drive เพื่อเก็บเฉพาะ URL ลงใน Supabase
             let finalPhotoUrl = '';
             if (this.capturedPhotoDataUrl) {
                 finalPhotoUrl = await UIHelpers.uploadPhotoToGoogleDrive(
@@ -524,7 +718,6 @@ export class CheckinController {
                 );
             }
 
-            // 2. บันทึกข้อมูลการลงเวลาลงฐานข้อมูล Supabase
             const res = await AttendanceModel.submitCheckinOrCheckout({
                 personnel_id: this.currentUser.personnel_id,
                 user_id: this.currentUser.id,
@@ -545,11 +738,12 @@ export class CheckinController {
 
             UIHelpers.hideLoading();
             if (!res.success) {
-                await UIHelpers.alert('บันทึกลงเวลาไม่สำเร็จ', res.message, 'warning');
+                await UIHelpers.alert('ไม่สามารถลงเวลาได้', res.message, 'warning');
                 return;
             }
 
-            await this.#refreshTodayAttendanceAndHistory();
+            // รีเฟรชหน้าจอเพื่อรอรับข้อมูลใหม่ทันที
+            await this.#resetPageForNewInput();
             await UIHelpers.showToast(res.message, 'success', 3000);
         } catch (err) {
             UIHelpers.hideLoading();
@@ -557,9 +751,6 @@ export class CheckinController {
         }
     }
 
-    /**
-     * ส่งคำขอลงเวลากรณีพิเศษ (บันทึกทั้งเวลาเข้าและเลิกงานอัตโนมัติ และได้สถานะตามช่วงเวลาที่เลือก)
-     */
     async #handleSubmitSpecialRequest(closeModalCallback) {
         const workDate = document.getElementById('spWorkDate').value;
         const shiftIdx = parseInt(document.getElementById('spShiftSelect').value || '0', 10);
@@ -613,7 +804,7 @@ export class CheckinController {
             }
 
             closeModalCallback();
-            await this.#refreshTodayAttendanceAndHistory();
+            await this.#resetPageForNewInput();
             await UIHelpers.showToast(res.message, 'success', 3200);
         } catch (err) {
             UIHelpers.hideLoading();

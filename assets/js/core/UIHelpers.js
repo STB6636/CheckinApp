@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, วันที่ไทย (15 ม.ค. 69 / 15 มกราคม 2569), เวลา 24 ชม., Toast Popup, บีบอัดรูป 3:4 & Google Drive
+ * @description คลาสจัดการ UI, พิมพ์ PDF ขนาด A4 แนวนอน (Landscape), ตรวจสอบลิงก์รูปโลโก้, วันที่ไทย, เวลา 24 ชม. & Google Drive
  */
 
 import { Config } from './Config.js';
@@ -19,9 +19,6 @@ export class UIHelpers {
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
-    /**
-     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode)
-     */
     static initTheme() {
         if (window.tailwind) {
             window.tailwind.config = {
@@ -39,9 +36,6 @@ export class UIHelpers {
         return savedTheme;
     }
 
-    /**
-     * สลับโหมดสี Light <-> Dark
-     */
     static toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         const currentMode = isDark ? 'dark' : 'light';
@@ -50,14 +44,6 @@ export class UIHelpers {
         return currentMode;
     }
 
-    /**
-     * แสดง Popup เล็กๆ (Toast Notification) มุมขวาบน (PC) หรือด้านบนกึ่งกลาง (มือถือ)
-     * แสดงเป็นเวลา 2-3 วินาทีแล้วหายไปเองโดยไม่ต้องกดปุ่มตกลง
-     * @param {string} message ข้อความที่ต้องการแสดง
-     * @param {'success'|'error'|'warning'} type ประเภท
-     * @param {number} durationMs ระยะเวลาแสดงผล (ค่าเริ่มต้น 2600 มิลลิวินาที)
-     * @returns {Promise<void>}
-     */
     static showToast(message, type = 'success', durationMs = 2600) {
         return new Promise((resolve) => {
             let wrapper = document.getElementById('bmaToastWrapper');
@@ -92,11 +78,6 @@ export class UIHelpers {
         });
     }
 
-    /**
-     * แปลงวันที่ YYYY-MM-DD เป็นรูปแบบไทยแบบย่อ เช่น "15 ม.ค. 69"
-     * @param {string} dateStr
-     * @returns {string}
-     */
     static formatThaiShortDate(dateStr) {
         if (!dateStr) return '-';
         const parts = String(dateStr).slice(0, 10).split('-');
@@ -115,11 +96,6 @@ export class UIHelpers {
         return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${shortYear}`;
     }
 
-    /**
-     * แปลงวันที่ YYYY-MM-DD เป็นรูปแบบไทยแบบเต็มสำหรับหน้ารายงาน เช่น "15 มกราคม 2569"
-     * @param {string} dateStr
-     * @returns {string}
-     */
     static formatThaiFullDate(dateStr) {
         if (!dateStr) return '-';
         const parts = String(dateStr).slice(0, 10).split('-');
@@ -137,18 +113,10 @@ export class UIHelpers {
         return `${d.getDate()} ${UIHelpers.THAI_MONTHS_FULL[d.getMonth()]} ${d.getFullYear() + 543}`;
     }
 
-    /**
-     * เมธอดเดิม (Alias) ให้คืนค่ารูปแบบย่อ "15 ม.ค. 69" สำหรับตารางทั่วไป
-     */
     static formatThaiDate(dateStr) {
         return UIHelpers.formatThaiShortDate(dateStr);
     }
 
-    /**
-     * จัดรูปแบบเวลาให้เป็นระบบ 24 ชั่วโมง (HH:mm) เสมอ
-     * @param {string} timeStr เช่น "08:30:00" หรือ "8:30"
-     * @returns {string} เช่น "08:30"
-     */
     static formatTime24(timeStr) {
         if (!timeStr) return '';
         const clean = String(timeStr).trim();
@@ -159,11 +127,6 @@ export class UIHelpers {
         return `${hh}:${mm}`;
     }
 
-    /**
-     * แปลงเวลา HH:mm เป็นจำนวนนาทีนับจาก 00:00 (สำหรับคำนวณมาสายและออกก่อนเวลา)
-     * @param {string} timeStr
-     * @returns {number}
-     */
     static timeToMinutes(timeStr) {
         const formatted = UIHelpers.formatTime24(timeStr);
         if (!formatted) return -1;
@@ -172,18 +135,12 @@ export class UIHelpers {
         return (hh * 60) + mm;
     }
 
-    /**
-     * ดึงวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD
-     */
     static getTodayISO() {
         const now = new Date();
         const offsetMs = now.getTimezoneOffset() * 60000;
         return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
     }
 
-    /**
-     * ดึงเวลาปัจจุบันในรูปแบบ 24 ชั่วโมง (HH:mm)
-     */
     static getCurrentTimeHHMM() {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -191,16 +148,10 @@ export class UIHelpers {
         return `${hh}:${mm}`;
     }
 
-    /**
-     * ครอปและบีบอัดภาพจากวิดีโอกล้องให้เป็นแนวตั้ง อัตราส่วน 3:4 (ขนาดเล็กแต่คมชัดสูง)
-     * @param {HTMLVideoElement} videoEl
-     * @param {HTMLCanvasElement} canvasEl
-     * @returns {string} Base64 JPEG Data URL
-     */
     static capturePortrait3x4FromVideo(videoEl, canvasEl) {
         const targetWidth = 480;
-        const targetHeight = 640; // อัตราส่วนแนวตั้ง 3:4
-        const targetRatio = targetWidth / targetHeight; // 0.75
+        const targetHeight = 640;
+        const targetRatio = targetWidth / targetHeight;
 
         const srcW = videoEl.videoWidth || 640;
         const srcH = videoEl.videoHeight || 480;
@@ -212,11 +163,9 @@ export class UIHelpers {
         let cropY = 0;
 
         if (srcRatio > targetRatio) {
-            // วิดีโอต้นฉบับกว้างกว่า 3:4 -> ตัดด้านซ้ายและขวามาให้อยู่กึ่งกลาง
             cropW = Math.round(srcH * targetRatio);
             cropX = Math.round((srcW - cropW) / 2);
         } else {
-            // วิดีโอต้นฉบับสูงกว่า 3:4 -> ตัดด้านบนและล่างมาให้อยู่กึ่งกลาง
             cropH = Math.round(srcW / targetRatio);
             cropY = Math.round((srcH - cropH) / 2);
         }
@@ -232,18 +181,78 @@ export class UIHelpers {
     }
 
     /**
-     * ตรวจสอบลิงก์ Google Drive / Google Apps Script ก่อนบันทึกในหน้าตั้งค่าระบบ
-     * @param {string} scriptUrl ลิงก์ Web App หรือ Folder Link
-     * @param {string} folderId รหัสโฟลเดอร์ (ถ้ามี)
-     * @returns {Promise<{success: boolean, message: string, folderName?: string}>}
+     * ตรวจสอบลิงก์ของรูปโลโก้หน่วยงาน กรณีวางลิงก์ URL (ในหน้าตั้งค่าระบบ)
+     * รองรับการแปลงลิงก์แชร์ไฟล์ Google Drive ให้เป็น Direct Image Link อัตโนมัติ
+     * @param {string} rawUrl
+     * @returns {Promise<{success: boolean, normalizedUrl: string, width?: number, height?: number, message: string}>}
      */
+    static verifyImageUrl(rawUrl) {
+        return new Promise((resolve) => {
+            let cleanUrl = String(rawUrl || '').trim();
+            if (!cleanUrl) {
+                resolve({
+                    success: false,
+                    normalizedUrl: '',
+                    message: 'กรุณาวางลิงก์ URL ของรูปภาพโลโก้ก่อนกดปุ่มตรวจสอบ'
+                });
+                return;
+            }
+
+            // กรณีวางลิงก์แชร์ไฟล์จาก Google Drive เช่น https://drive.google.com/file/d/FILE_ID/view
+            if (cleanUrl.includes('drive.google.com/file/d/')) {
+                const match = cleanUrl.match(/\/d\/([-\w]{20,})/);
+                if (match && match[1]) {
+                    cleanUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+
+            const img = new Image();
+            let isSettled = false;
+
+            const timer = setTimeout(() => {
+                if (isSettled) return;
+                isSettled = true;
+                resolve({
+                    success: false,
+                    normalizedUrl: cleanUrl,
+                    message: 'หมดเวลาเชื่อมต่อลิงก์รูปภาพ กรุณาตรวจสอบว่าลิงก์เปิดสิทธิ์สาธารณะแล้ว'
+                });
+            }, 8000);
+
+            img.onload = () => {
+                if (isSettled) return;
+                isSettled = true;
+                clearTimeout(timer);
+                resolve({
+                    success: true,
+                    normalizedUrl: cleanUrl,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    message: `ตรวจสอบลิงก์รูปโลโก้สำเร็จ! รูปภาพพร้อมใช้งาน (ขนาด ${img.naturalWidth} × ${img.naturalHeight} พิกเซล)`
+                });
+            };
+
+            img.onerror = () => {
+                if (isSettled) return;
+                isSettled = true;
+                clearTimeout(timer);
+                resolve({
+                    success: false,
+                    normalizedUrl: cleanUrl,
+                    message: 'ไม่สามารถโหลดรูปภาพจากลิงก์ URL ที่ระบุได้ กรุณาตรวจสอบความถูกต้องของลิงก์อีกครั้ง'
+                });
+            };
+
+            img.src = cleanUrl;
+        });
+    }
+
     static async verifyGoogleDriveLink(scriptUrl, folderId = '') {
         const cleanUrl = String(scriptUrl || '').trim();
         if (!cleanUrl) {
             return { success: false, message: 'กรุณากรอกลิงก์ Google Drive / Apps Script Web App ก่อนกดตรวจสอบ' };
         }
 
-        // กรณีเป็นลิงก์ Google Apps Script Web App (/exec)
         if (cleanUrl.includes('script.google.com') && cleanUrl.includes('/exec')) {
             try {
                 const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(folderId || '')}`;
@@ -265,7 +274,6 @@ export class UIHelpers {
             }
         }
 
-        // กรณีผู้ใช้ใส่ลิงก์โฟลเดอร์ Google Drive โดยตรง (https://drive.google.com/drive/folders/...)
         if (cleanUrl.includes('drive.google.com')) {
             const match = cleanUrl.match(/[-\w]{25,}/);
             if (match) {
@@ -283,13 +291,6 @@ export class UIHelpers {
         };
     }
 
-    /**
-     * อัปโหลดรูปถ่ายลงเวลา (ที่บีบอัดแล้ว) ไปยัง Google Drive และคืนค่าเฉพาะ URL เพื่อจัดเก็บลงใน Supabase
-     * @param {string} base64DataUrl รูปภาพ Base64
-     * @param {string} fileNamePrefix ชื่อไฟล์
-     * @param {Object} settings ข้อมูลตั้งค่าระบบ
-     * @returns {Promise<string>} คืนค่า URL ของรูปภาพบน Google Drive
-     */
     static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings) {
         if (!base64DataUrl) return '';
         if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
@@ -321,7 +322,6 @@ export class UIHelpers {
             }
         }
 
-        // หากยังไม่ได้ตั้งค่า Web App URL แต่ใส่ลิงก์ Google Drive ไว้ จะสร้าง Reference URL ที่ไม่เก็บ Base64 ยาวลง Supabase
         if (scriptUrl && scriptUrl.includes('drive.google.com')) {
             const match = scriptUrl.match(/[-\w]{25,}/);
             const fid = match ? match[0] : 'drive_folder';
@@ -331,9 +331,6 @@ export class UIHelpers {
         return base64DataUrl;
     }
 
-    /**
-     * แสดง Loading Spin + Progress Bar
-     */
     static showLoading(message = 'กำลังโหลดข้อมูล...') {
         let topBar = document.getElementById('bmaTopProgressBar');
         if (!topBar) {
@@ -372,16 +369,16 @@ export class UIHelpers {
         topBar.style.opacity = '1';
 
         if (UIHelpers.#progressTimer) clearInterval(UIHelpers.#progressTimer);
-        UIHelpers.#currentProgress = 18;
+        UIHelpers.#currentProgress = 22;
         UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
 
         UIHelpers.#progressTimer = setInterval(() => {
             if (UIHelpers.#currentProgress < 90) {
-                const step = UIHelpers.#currentProgress < 50 ? 12 : 5;
+                const step = UIHelpers.#currentProgress < 55 ? 14 : 6;
                 UIHelpers.#currentProgress = Math.min(90, UIHelpers.#currentProgress + step);
                 UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
             }
-        }, 120);
+        }, 100);
     }
 
     static #updateProgressDOM(percent) {
@@ -407,9 +404,9 @@ export class UIHelpers {
             if (spinner) spinner.classList.add('hidden');
             if (topBar) {
                 topBar.style.opacity = '0';
-                setTimeout(() => { topBar.style.width = '0%'; }, 200);
+                setTimeout(() => { topBar.style.width = '0%'; }, 150);
             }
-        }, 140);
+        }, 100);
     }
 
     static renderTableSkeleton(rows = 5, cols = 6) {
@@ -539,6 +536,11 @@ export class UIHelpers {
         });
     }
 
+    /**
+     * พิมพ์/ส่งออก PDF ในรูปแบบกระดาษขนาด A4 แนวนอน (Landscape)
+     * จัดสัดส่วนความกว้างคอลัมน์ให้พอดีกับความยาวข้อมูล
+     * @param {Object} options
+     */
     static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#007B3E' }) {
         const printWindow = window.open('', '_blank');
         if (!printWindow) {
@@ -553,32 +555,121 @@ export class UIHelpers {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Sarabun', sans-serif; box-sizing: border-box; }
-        body { margin: 0; padding: 24px; color: #0F172A; background: #FFFFFF; }
-        .report-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid ${headerColor}; padding-bottom: 12px; }
-        .report-header h1 { margin: 0 0 6px 0; font-size: 20px; color: ${headerColor}; }
-        .report-header p { margin: 0; font-size: 14px; color: #475569; }
-        .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px; }
-        .btn-print { background: ${headerColor}; color: #FFFFFF; border: none; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        .tag-section-block { margin-bottom: 28px; page-break-inside: avoid; }
-        .tag-section-title { font-size: 15px; font-weight: 700; padding: 8px 12px; border-radius: 6px; color: #FFFFFF; margin-bottom: 8px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
-        th, td { border: 1px solid #CBD5E1; padding: 8px 10px; text-align: left; }
-        th { background-color: ${headerColor}; color: #FFFFFF; font-weight: 600; }
-        .group-row td { background-color: #eef7f1; font-weight: 700; color: #2c4a38; }
-        .sub-group-row td { background-color: #F8FAFC; font-weight: 600; color: #334155; }
+        * {
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        body {
+            margin: 0;
+            padding: 18px 24px;
+            color: #0F172A;
+            background: #FFFFFF;
+        }
+        .report-header {
+            text-align: center;
+            margin-bottom: 16px;
+            border-bottom: 2px solid ${headerColor};
+            padding-bottom: 10px;
+        }
+        .report-header h1 {
+            margin: 0 0 4px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: ${headerColor};
+        }
+        .report-header p {
+            margin: 0;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding: 10px 16px;
+            background: #eef7f1;
+            border: 1px solid #cde3d5;
+            border-radius: 10px;
+        }
+        .toolbar-hint {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1B432C;
+        }
+        .btn-print {
+            background: ${headerColor};
+            color: #FFFFFF;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .tag-section-block {
+            margin-bottom: 22px;
+            page-break-inside: avoid;
+        }
+        .tag-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 7px 14px;
+            border-radius: 6px;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+        }
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        th, td {
+            border: 1px solid #CBD5E1;
+            padding: 7px 10px;
+            text-align: left;
+            vertical-align: middle;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        th {
+            background-color: ${headerColor};
+            color: #FFFFFF;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .group-row td {
+            background-color: #E3F2E9 !important;
+            font-weight: 700;
+            color: #1B432C !important;
+        }
+        .sub-group-row td {
+            background-color: #F8FAFC !important;
+            font-weight: 600;
+            color: #334155 !important;
+        }
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
         @media print {
             .toolbar { display: none !important; }
             body { padding: 0; }
-            @page { size: A4 portrait; margin: 12mm; }
         }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <button class="btn-print" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+        <span class="toolbar-hint">ขนาดมาตรฐาน: กระดาษ A4 แนวนอน (Landscape) — จัดขนาดคอลัมน์พอดีกับข้อมูล</span>
+        <button class="btn-print" onclick="window.print()">พิมพ์/ส่งออก PDF</button>
     </div>
     <div class="report-header">
         <h1>${title}</h1>
@@ -587,7 +678,7 @@ export class UIHelpers {
     ${tableHtml}
     <script>
         window.onload = function() {
-            setTimeout(function() { window.print(); }, 500);
+            setTimeout(function() { window.print(); }, 450);
         };
     </script>
 </body>

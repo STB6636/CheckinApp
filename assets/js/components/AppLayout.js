@@ -1,6 +1,6 @@
 /**
  * @file assets/js/components/AppLayout.js
- * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง รองรับ AJAX SPA Navigation, Toast ต้อนรับ และ Footer 2 บรรทัด
+ * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (แก้ปุ่มออกจากระบบ Sidebar, ลบปุ่มออกระบบมุมขวาบน, กระดิ่งแจ้งเตือนตามขอบเขต & โหลดเร็วด้วย Cache)
  */
 
 import { Config } from '../core/Config.js';
@@ -12,6 +12,7 @@ import { UserModel } from '../models/UserModel.js';
 
 export class AppLayout {
     static #isLayoutMounted = false;
+    static #isGlobalEventsBound = false;
     static #currentUser = null;
     static #settings = null;
 
@@ -56,7 +57,8 @@ export class AppLayout {
         if (!currentUser) return { currentUser: null, settings: null };
 
         AppLayout.#currentUser = currentUser;
-        AppLayout.#settings = await SettingsModel.getSettings();
+        // ใช้ Smart Session Cache (forceRefresh = false) เพื่อความรวดเร็วในการสลับหน้า
+        AppLayout.#settings = await SettingsModel.getSettings(false);
 
         const sidebarEl = document.getElementById('bmaSidebarDrawer');
         if (!AppLayout.#isLayoutMounted || !sidebarEl) {
@@ -64,29 +66,30 @@ export class AppLayout {
             AppLayout.#renderTopbar(currentUser, AppLayout.#settings, pageTitle, pageSubtitle);
             AppLayout.#renderMobileBottomNav(currentUser, activePage);
             AppLayout.#renderFooter(AppLayout.#settings);
-            AppLayout.#bindEvents();
-            AppLayout.#initAjaxSpaRouter();
+            AppLayout.#bindGlobalDelegatedEvents();
             AppLayout.#isLayoutMounted = true;
 
             window.addEventListener('bma:settings-updated', (e) => {
                 AppLayout.#settings = e.detail;
-                AppLayout.#renderSidebar(currentUser, AppLayout.#settings, activePage);
+                const currentActive = document.querySelector('#bmaSidebarDrawer a.active')?.dataset?.navId || activePage;
+                AppLayout.#renderSidebar(currentUser, AppLayout.#settings, currentActive);
                 AppLayout.#renderFooter(AppLayout.#settings);
+                AppLayout.refreshNotificationBell(currentUser);
             });
         } else {
             AppLayout.#updateActiveNavState(activePage, pageTitle, pageSubtitle);
         }
 
-        // ตรวจสอบว่าเพิ่งเข้าสู่ระบบมาหรือไม่ หากใช่ให้แสดง Popup "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]" 2.5 วินาทีแล้วหายไป
         AppLayout.checkAndShowWelcomeToast(currentUser);
 
-        AppLayout.refreshNotificationBell(currentUser);
+        // โหลดข้อมูลกระดิ่งแจ้งเตือนแบบ Async Non-blocking เพื่อไม่ให้หน่วงตารางหลัก
+        setTimeout(() => {
+            AppLayout.refreshNotificationBell(currentUser);
+        }, 50);
+
         return { currentUser, settings: AppLayout.#settings };
     }
 
-    /**
-     * แสดง Popup เล็กๆ มุมขวาบน (หรือด้านบนในมือถือ) ว่า "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]" สัก 2-3 วินาทีแล้วหายไป
-     */
     static checkAndShowWelcomeToast(currentUser) {
         const welcomeName = sessionStorage.getItem(Config.STORAGE_KEYS.WELCOME_TOAST);
         if (welcomeName) {
@@ -94,7 +97,7 @@ export class AppLayout {
             const displayName = welcomeName || currentUser?.full_name || '';
             setTimeout(() => {
                 UIHelpers.showToast(`ยินดีต้อนรับคุณ ${displayName}`, 'success', 2800);
-            }, 250);
+            }, 200);
         }
     }
 
@@ -120,28 +123,6 @@ export class AppLayout {
         document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
     }
 
-    static #initAjaxSpaRouter() {
-        document.addEventListener('click', async (e) => {
-            const anchor = e.target.closest('a[href]');
-            if (!anchor) return;
-
-            const href = anchor.getAttribute('href') || '';
-            const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
-
-            if (!AppLayout.PAGE_ROUTES[cleanFile]) return;
-
-            e.preventDefault();
-            await AppLayout.navigateAjaxPage(cleanFile, true);
-        });
-
-        window.addEventListener('popstate', async () => {
-            const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
-            if (AppLayout.PAGE_ROUTES[currentFile]) {
-                await AppLayout.navigateAjaxPage(currentFile, false);
-            }
-        });
-    }
-
     static async navigateAjaxPage(targetFile, pushHistory = true) {
         const routeInfo = AppLayout.PAGE_ROUTES[targetFile];
         if (!routeInfo) {
@@ -151,7 +132,7 @@ export class AppLayout {
 
         UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
         try {
-            const response = await fetch(targetFile, { cache: 'no-store' });
+            const response = await fetch(targetFile);
             if (!response.ok) {
                 throw new Error(`ไม่สามารถโหลดหน้า ${targetFile} ได้`);
             }
@@ -231,7 +212,7 @@ export class AppLayout {
                                 <p class="text-xs font-semibold truncate text-[#FDD835]">${settings.bureau_name}</p>
                             </div>
                         </div>
-                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg text-white/80 hover:bg-white/10">
+                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg text-white/80 hover:bg-white/10 cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
@@ -267,6 +248,7 @@ export class AppLayout {
                     </nav>
                 </div>
 
+                <!-- ปุ่มออกจากระบบที่ Sidebar (ใช้งานได้ 100% ผ่าน Global Event Delegation) -->
                 <div class="p-4 border-t border-white/15 bg-black/25">
                     <div class="flex items-center gap-3 mb-3 px-2">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[#00351B] text-sm bg-[#FDD835] shadow">
@@ -277,7 +259,7 @@ export class AppLayout {
                             <p class="text-xs truncate text-emerald-200/80">@${currentUser.username}</p>
                         </div>
                     </div>
-                    <button id="btnSidebarLogout" type="button" class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-rose-200 bg-rose-500/20 border border-rose-400/30 hover:bg-rose-500 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
+                    <button id="btnSidebarLogout" type="button" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-rose-100 bg-rose-600/35 border border-rose-400/40 hover:bg-rose-600 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>ออกจากระบบ</span>
                     </button>
@@ -286,6 +268,9 @@ export class AppLayout {
         `;
     }
 
+    /**
+     * สร้างแถบด้านบน (เอาปุ่มออกจากระบบที่มุมขวาบนออกตามข้อกำหนด)
+     */
     static #renderTopbar(currentUser, settings, pageTitle, pageSubtitle) {
         const topbarEl = document.getElementById('bmaTopbarContainer');
         if (!topbarEl) return;
@@ -295,7 +280,7 @@ export class AppLayout {
         topbarEl.innerHTML = `
             <header class="sticky top-0 z-30 bma-header-bar px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
-                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl border bma-border bma-text-main hover:bg-emerald-500/10">
+                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl border bma-border bma-text-main hover:bg-emerald-500/10 cursor-pointer">
                         <i class="fa-solid fa-bars-staggered text-lg" style="color: var(--bma-primary);"></i>
                     </button>
                     <div class="min-w-0">
@@ -305,7 +290,8 @@ export class AppLayout {
                 </div>
 
                 <div class="flex items-center gap-2.5 lg:gap-3">
-                    <div class="relative">
+                    <!-- ระบบกระดิ่งแจ้งเตือน (แจ้งเตือนคำขออนุมัติลงเวลากรณีพิเศษและรีเซ็ตรหัสผ่านตามขอบเขตการมองเห็น) -->
+                    <div class="relative" id="notificationBellWrapper">
                         <button id="btnNotificationBell" type="button" class="relative p-2.5 rounded-xl border bma-border bma-text-main hover:border-emerald-500 transition cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
                             <i class="fa-solid fa-bell text-base" style="color: var(--bma-primary);"></i>
                             <span id="topBellBadgeCount" class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shadow">0</span>
@@ -313,22 +299,20 @@ export class AppLayout {
 
                         <div id="notificationDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bma-card bma-modal-surface p-4 shadow-2xl z-50">
                             <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b bma-border">
-                                <span class="font-bold text-sm bma-text-main">รายการรออนุมัติตามขอบเขต</span>
+                                <span class="font-bold text-sm bma-text-main">
+                                    <i class="fa-solid fa-bell text-amber-500 mr-1.5"></i>แจ้งเตือนรออนุมัติตามขอบเขต
+                                </span>
                                 <span id="notificationSummaryTag" class="bma-badge bma-badge-warning">0 รายการ</span>
                             </div>
-                            <div id="notificationListContainer" class="space-y-2.5 max-h-72 overflow-y-auto text-sm">
+                            <div id="notificationListContainer" class="space-y-2.5 max-h-80 overflow-y-auto text-sm pr-1">
                                 <p class="text-center py-4 bma-text-sub">กำลังตรวจสอบรายการแจ้งเตือน...</p>
                             </div>
                         </div>
                     </div>
 
+                    <!-- ปุ่มสลับโหมดสี Light / Eye-Care Dark Mode -->
                     <button id="btnToggleThemeMode" type="button" class="p-2.5 rounded-xl border bma-border bma-text-main hover:border-emerald-500 transition cursor-pointer" title="สลับโหมดถนอมสายตา (Light/Dark Mode)">
                         <i id="themeModeIcon" class="fa-solid ${isDark ? 'fa-sun text-amber-400' : 'fa-moon text-emerald-800'} text-base"></i>
-                    </button>
-
-                    <button id="btnTopbarLogout" type="button" class="hidden sm:inline-flex btn-bma-outline text-sm py-2 px-3 text-rose-600 border-rose-500/30 hover:bg-rose-500/10">
-                        <i class="fa-solid fa-power-off"></i>
-                        <span class="hidden md:inline">ออกระบบ</span>
                     </button>
                 </div>
             </header>
@@ -401,9 +385,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * เรนเดอร์ Footer 2 บรรทัด (บรรทัดที่ 2 แสดงข้อความอธิบาย Footer ขนาดเล็กกว่าบรรทัดแรกเล็กน้อย)
-     */
     static #renderFooter(settings) {
         const footerEl = document.getElementById('bmaFooterContainer');
         if (!footerEl) return;
@@ -426,135 +407,187 @@ export class AppLayout {
         `;
     }
 
+    /**
+     * โหลดและอัปเดตตัวเลขกระดิ่งแจ้งเตือนเมื่อมีผู้ขออนุมัติลงเวลากรณีพิเศษเข้ามา (กรองตามขอบเขตการมองเห็นของ SuperAdmin และ Admin)
+     */
     static async refreshNotificationBell(currentUser) {
         if (!currentUser) return;
 
-        const [pendingSpecial, pendingResets] = await Promise.all([
-            AttendanceModel.getSpecialRequests(currentUser, 'pending'),
-            UserModel.getPendingPasswordResetRequests(currentUser)
-        ]);
+        try {
+            const [pendingSpecial, pendingResets] = await Promise.all([
+                AttendanceModel.getSpecialRequests(currentUser, 'pending'),
+                UserModel.getPendingPasswordResetRequests(currentUser)
+            ]);
 
-        const totalCount = pendingSpecial.length + pendingResets.length;
+            const totalCount = pendingSpecial.length + pendingResets.length;
 
-        const topBellBadge = document.getElementById('topBellBadgeCount');
-        const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
-        const sidebarResetBadge = document.getElementById('sidebarResetBadge');
-        const summaryTag = document.getElementById('notificationSummaryTag');
-        const listContainer = document.getElementById('notificationListContainer');
+            const topBellBadge = document.getElementById('topBellBadgeCount');
+            const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
+            const sidebarResetBadge = document.getElementById('sidebarResetBadge');
+            const summaryTag = document.getElementById('notificationSummaryTag');
+            const listContainer = document.getElementById('notificationListContainer');
 
-        if (topBellBadge) {
-            topBellBadge.textContent = String(totalCount);
-            topBellBadge.classList.toggle('hidden', totalCount === 0);
-        }
-        if (sidebarSpecialBadge) {
-            sidebarSpecialBadge.textContent = String(pendingSpecial.length);
-            sidebarSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
-        }
-        if (sidebarResetBadge) {
-            sidebarResetBadge.textContent = String(pendingResets.length);
-            sidebarResetBadge.classList.toggle('hidden', pendingResets.length === 0);
-        }
-        if (summaryTag) {
-            summaryTag.textContent = `${totalCount} รายการ`;
-        }
-
-        if (listContainer) {
-            if (totalCount === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-6 bma-text-sub">
-                        <i class="fa-regular fa-circle-check text-2xl mb-2 text-emerald-500 block"></i>
-                        ไม่มีรายการคำขอที่รออนุมัติในขณะนี้
-                    </div>
-                `;
-            } else {
-                let itemsHtml = '';
-                if (pendingSpecial.length > 0) {
-                    itemsHtml += `
-                        <a href="approvals.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline">
-                            <div class="flex items-center justify-between">
-                                <span class="font-semibold bma-text-main">
-                                    <i class="fa-solid fa-clock-rotate-left text-indigo-500 mr-1.5"></i>คำขอลงเวลากรณีพิเศษ
-                                </span>
-                                <span class="bma-badge bma-badge-indigo">${pendingSpecial.length} รายการ</span>
-                            </div>
-                            <p class="text-xs bma-text-sub mt-1">คลิกเพื่อตรวจสอบและอนุมัติเวลาปฏิบัติราชการ</p>
-                        </a>
-                    `;
-                }
-                if (pendingResets.length > 0) {
-                    itemsHtml += `
-                        <a href="users.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline">
-                            <div class="flex items-center justify-between">
-                                <span class="font-semibold bma-text-main">
-                                    <i class="fa-solid fa-key text-rose-500 mr-1.5"></i>คำขอลืมรหัสผ่าน (รีเซ็ตรหัส)
-                                </span>
-                                <span class="bma-badge bma-badge-danger">${pendingResets.length} รายการ</span>
-                            </div>
-                            <p class="text-xs bma-text-sub mt-1">คลิกเพื่ออนุมัติรีเซ็ตรหัสผ่านเป็นเลข 6 ตัวท้ายบัตรประชาชน</p>
-                        </a>
-                    `;
-                }
-                listContainer.innerHTML = itemsHtml;
+            if (topBellBadge) {
+                topBellBadge.textContent = String(totalCount);
+                topBellBadge.classList.toggle('hidden', totalCount === 0);
             }
+            if (sidebarSpecialBadge) {
+                sidebarSpecialBadge.textContent = String(pendingSpecial.length);
+                sidebarSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
+            }
+            if (sidebarResetBadge) {
+                sidebarResetBadge.textContent = String(pendingResets.length);
+                sidebarResetBadge.classList.toggle('hidden', pendingResets.length === 0);
+            }
+            if (summaryTag) {
+                summaryTag.textContent = `${totalCount} รายการ`;
+            }
+
+            if (listContainer) {
+                if (totalCount === 0) {
+                    listContainer.innerHTML = `
+                        <div class="text-center py-6 bma-text-sub">
+                            <i class="fa-regular fa-circle-check text-2xl mb-2 text-emerald-500 block"></i>
+                            ไม่มีรายการคำขอที่รออนุมัติในขณะนี้
+                        </div>
+                    `;
+                } else {
+                    let itemsHtml = '';
+
+                    if (pendingSpecial.length > 0) {
+                        const previewItems = pendingSpecial.slice(0, 4).map(req => {
+                            const p = req.personnel || {};
+                            const fullName = p.first_name ? `${p.prefix}${p.first_name} ${p.last_name}` : 'บุคลากร';
+                            const division = p.division || p.bureau || '';
+                            return `
+                                <div class="text-xs py-1.5 border-t bma-border flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="font-bold bma-text-main block truncate">${fullName}</span>
+                                        <span class="text-[11px] bma-text-sub block truncate">${division} • ${req.remark || 'ขอลงเวลากรณีพิเศษ'}</span>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-indigo-600 whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</span>
+                                </div>
+                            `;
+                        }).join('');
+
+                        itemsHtml += `
+                            <a href="approvals.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-indigo-500/5">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="font-extrabold bma-text-main text-xs">
+                                        <i class="fa-solid fa-bell-concierge text-indigo-600 mr-1.5"></i>ขออนุมัติลงเวลากรณีพิเศษ
+                                    </span>
+                                    <span class="bma-badge bma-badge-indigo">${pendingSpecial.length} รายการ</span>
+                                </div>
+                                ${previewItems}
+                                <p class="text-[11px] font-bold text-center mt-2 pt-1.5 border-t bma-border" style="color: var(--bma-primary);">
+                                    คลิกเพื่อไปหน้าพิจารณาอนุมัติทั้งหมด &rarr;
+                                </p>
+                            </a>
+                        `;
+                    }
+
+                    if (pendingResets.length > 0) {
+                        itemsHtml += `
+                            <a href="users.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-extrabold bma-text-main text-xs">
+                                        <i class="fa-solid fa-key text-rose-500 mr-1.5"></i>คำขอลืมรหัสผ่าน (รีเซ็ตรหัส)
+                                    </span>
+                                    <span class="bma-badge bma-badge-danger">${pendingResets.length} รายการ</span>
+                                </div>
+                                <p class="text-xs bma-text-sub mt-1">คลิกเพื่ออนุมัติรีเซ็ตรหัสผ่านเป็นเลข 6 ตัวท้ายบัตรประชาชน</p>
+                            </a>
+                        `;
+                    }
+
+                    listContainer.innerHTML = itemsHtml;
+                }
+            }
+        } catch (err) {
+            console.warn('Notification bell refresh error:', err);
         }
     }
 
-    static #bindEvents() {
-        const drawer = document.getElementById('bmaSidebarDrawer');
-        const backdrop = document.getElementById('bmaSidebarBackdrop');
-        const btnOpen = document.getElementById('btnOpenSidebarMobile');
-        const btnClose = document.getElementById('btnCloseSidebarMobile');
+    /**
+     * ผูกเหตุการณ์แบบ Global Event Delegation เพียงครั้งเดียว
+     * ทำให้ปุ่มออกจากระบบที่ Sidebar (#btnSidebarLogout) ทำงานได้ 100% แม้มีการเรนเดอร์ Sidebar ซ้ำ
+     */
+    static #bindGlobalDelegatedEvents() {
+        if (AppLayout.#isGlobalEventsBound) return;
+        AppLayout.#isGlobalEventsBound = true;
 
-        const toggleSidebar = (show) => {
-            if (!drawer || !backdrop) return;
-            if (show) {
-                drawer.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            } else {
-                drawer.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
+        document.addEventListener('click', async (e) => {
+            // 1. ปุ่มออกจากระบบที่ Sidebar (#btnSidebarLogout)
+            const logoutBtn = e.target.closest('#btnSidebarLogout');
+            if (logoutBtn) {
+                e.preventDefault();
+                const confirmed = await UIHelpers.confirm(
+                    'ยืนยันการออกจากระบบ',
+                    'คุณต้องการออกจากระบบผู้ดูแลระบบใช่หรือไม่?',
+                    'ออกจากระบบ',
+                    'question'
+                );
+                if (confirmed) {
+                    AuthService.clearSession();
+                    window.location.href = 'index.html';
+                }
+                return;
             }
-        };
 
-        btnOpen?.addEventListener('click', () => toggleSidebar(true));
-        btnClose?.addEventListener('click', () => toggleSidebar(false));
-        backdrop?.addEventListener('click', () => toggleSidebar(false));
+            // 2. ปุ่มเปิด/ปิด Sidebar บนมือถือ
+            if (e.target.closest('#btnOpenSidebarMobile')) {
+                document.getElementById('bmaSidebarDrawer')?.classList.remove('-translate-x-full');
+                document.getElementById('bmaSidebarBackdrop')?.classList.remove('hidden');
+                return;
+            }
+            if (e.target.closest('#btnCloseSidebarMobile') || e.target.closest('#bmaSidebarBackdrop')) {
+                document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
+                document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
+                return;
+            }
 
-        const btnTheme = document.getElementById('btnToggleThemeMode');
-        const themeIcon = document.getElementById('themeModeIcon');
-        btnTheme?.addEventListener('click', () => {
-            const mode = UIHelpers.toggleTheme();
-            if (themeIcon) {
-                themeIcon.className = mode === 'dark'
-                    ? 'fa-solid fa-sun text-amber-400 text-base'
-                    : 'fa-solid fa-moon text-emerald-800 text-base';
+            // 3. ปุ่มสลับโหมดสี Light / Dark
+            if (e.target.closest('#btnToggleThemeMode')) {
+                const mode = UIHelpers.toggleTheme();
+                const themeIcon = document.getElementById('themeModeIcon');
+                if (themeIcon) {
+                    themeIcon.className = mode === 'dark'
+                        ? 'fa-solid fa-sun text-amber-400 text-base'
+                        : 'fa-solid fa-moon text-emerald-800 text-base';
+                }
+                return;
+            }
+
+            // 4. ปุ่มเปิด/ปิด Dropdown กระดิ่งแจ้งเตือน
+            const bellBtn = e.target.closest('#btnNotificationBell');
+            const bellMenu = document.getElementById('notificationDropdownMenu');
+            if (bellBtn) {
+                e.stopPropagation();
+                bellMenu?.classList.toggle('hidden');
+                return;
+            }
+            if (bellMenu && !bellMenu.classList.contains('hidden') && !e.target.closest('#notificationDropdownMenu')) {
+                bellMenu.classList.add('hidden');
+            }
+
+            // 5. ดักคลิกลิงก์เมนูภายในระบบผู้ดูแลระบบเพื่อโหลดเฉพาะ <main> แบบ AJAX SPA
+            const anchor = e.target.closest('a[href]');
+            if (anchor) {
+                const href = anchor.getAttribute('href') || '';
+                const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
+                if (AppLayout.PAGE_ROUTES[cleanFile]) {
+                    e.preventDefault();
+                    bellMenu?.classList.add('hidden');
+                    await AppLayout.navigateAjaxPage(cleanFile, true);
+                }
             }
         });
 
-        const btnBell = document.getElementById('btnNotificationBell');
-        const bellMenu = document.getElementById('notificationDropdownMenu');
-        btnBell?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            bellMenu?.classList.toggle('hidden');
-        });
-        document.addEventListener('click', () => {
-            bellMenu?.classList.add('hidden');
-        });
-
-        const handleLogout = async () => {
-            const confirmed = await UIHelpers.confirm(
-                'ยืนยันการออกจากระบบ',
-                'คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?',
-                'ออกจากระบบ',
-                'question'
-            );
-            if (confirmed) {
-                AuthService.clearSession();
-                window.location.href = 'index.html';
+        window.addEventListener('popstate', async () => {
+            const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
+            if (AppLayout.PAGE_ROUTES[currentFile]) {
+                await AppLayout.navigateAjaxPage(currentFile, false);
             }
-        };
-
-        document.getElementById('btnSidebarLogout')?.addEventListener('click', handleLogout);
-        document.getElementById('btnTopbarLogout')?.addEventListener('click', handleLogout);
+        });
     }
 }

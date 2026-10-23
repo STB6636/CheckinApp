@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/ReportsController.js
- * @description คลาสควบคุมหน้ารายงานการลงเวลา (เลือกวันที่เดี่ยว/ช่วงวันที่ 15 มกราคม 2569, กรอง Multi-Select Status Tags และแยกตารางตาม Tag ที่เลือก)
+ * @description คลาสควบคุมหน้ารายงานการลงเวลา (พิมพ์ PDF A4 แนวนอนจัดขนาดคอลัมน์พอดีข้อมูล & คลิก Row ดูโปรไฟล์ Resume สากล)
  */
 
 import { Config } from '../core/Config.js';
@@ -16,9 +16,8 @@ export class ReportsController {
         this.settings = null;
         this.allPersonnel = [];
         this.records = [];
-        this.dateMode = 'single'; // 'single' หรือ 'range'
-        this.groupViewMode = 'division'; // 'division' หรือ 'group'
-        // ค่าเริ่มต้นของ Tag สถานะที่เลือกคือ "ปฏิบัติงานปกติ" (normal) และ "มาสาย" (late)
+        this.dateMode = 'single';
+        this.groupViewMode = 'division';
         this.selectedStatusKeys = new Set(['normal', 'late']);
         this.init();
     }
@@ -27,12 +26,12 @@ export class ReportsController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'reports',
             pageTitle: 'รายงานการลงเวลาปฏิบัติราชการ',
-            pageSubtitle: 'ฟิลเตอร์ตามวันที่/ช่วงวันที่ และแยกตารางรายงานตาม TAG สถานะที่เลือก'
+            pageSubtitle: 'ฟิลเตอร์ตามวันที่/ช่วงวันที่ แยกตารางตาม TAG สถานะ พิมพ์ PDF A4 แนวนอน และคลิกแถวดู Resume'
         });
 
         if (!layout.currentUser) return;
         this.currentUser = layout.currentUser;
-        this.settings = await SettingsModel.getSettings(true);
+        this.settings = layout.settings || await SettingsModel.getSettings(false);
 
         const mobileShortcutEl = document.getElementById('reportMobileShortcutContainer');
         if (mobileShortcutEl) {
@@ -53,9 +52,6 @@ export class ReportsController {
         await this.loadReportData();
     }
 
-    /**
-     * ดึงสีประจำสถานะจากเมนูตั้งค่าระบบ
-     */
     #getStatusColor(statusKey) {
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
@@ -64,9 +60,6 @@ export class ReportsController {
         return colors[statusKey] || '#007B3E';
     }
 
-    /**
-     * เรนเดอร์ปุ่มเลือก TAG สถานะทั้ง 5 รายการ
-     */
     #renderStatusTagFilterChips() {
         const container = document.getElementById('statusTagsFilterContainer');
         if (!container) return;
@@ -91,9 +84,6 @@ export class ReportsController {
         }).join('');
     }
 
-    /**
-     * อัปเดตข้อความหัวข้อวันที่ในรูปแบบเต็ม เช่น "15 มกราคม 2569"
-     */
     #getFormattedReportDateSubtitle() {
         if (this.dateMode === 'single') {
             const d = document.getElementById('reportSingleDateInput')?.value || UIHelpers.getTodayISO();
@@ -151,12 +141,7 @@ export class ReportsController {
     }
 
     /**
-     * เรนเดอร์แยกตารางตาม TAG สถานะที่ผู้ดูแลระบบกดเลือกไว้:
-     * - เลือก 1 Tag แสดง 1 ตาราง
-     * - เลือก 2 Tags แสดง 2 ตารางแยกกัน
-     * - เลือก N Tags แสดง N ตารางแยกกัน
-     * @param {boolean} forPrintPdf
-     * @returns {string} HTML สำหรับโหมดพิมพ์ PDF
+     * เรนเดอร์ตารางแยกตาม TAG สถานะ และกำหนดขนาดคอลัมน์สำหรับ PDF ขนาด A4 แนวนอนให้พอดีกับความยาวข้อมูล
      */
     #renderSeparateTablesBySelectedTags(forPrintPdf = false) {
         const masterContainer = document.getElementById('reportTablesMasterContainer');
@@ -190,15 +175,24 @@ export class ReportsController {
                             ตารางสถานะ: ${statusMeta.label} (จำนวน ${tagRecords.length} รายการ)
                         </div>
                         <table>
+                            <colgroup>
+                                <col style="width: 5%;">
+                                <col style="width: 13%;">
+                                <col style="width: 21%;">
+                                <col style="width: 22%;">
+                                <col style="width: 9%;">
+                                <col style="width: 9%;">
+                                <col style="width: 21%;">
+                            </colgroup>
                             <thead>
                                 <tr>
-                                    <th style="width: 45px; text-align: center;">ลำดับ</th>
-                                    <th style="width: 120px;">วันที่ปฏิบัติงาน</th>
+                                    <th style="text-align: center;">ลำดับ</th>
+                                    <th>วันที่ปฏิบัติงาน</th>
                                     <th>คำนำหน้า + ชื่อ + นามสกุล</th>
                                     <th>ตำแหน่ง + ระดับ</th>
-                                    <th style="width: 85px; text-align: center;">เวลาเข้างาน</th>
-                                    <th style="width: 85px; text-align: center;">เวลาออกงาน</th>
-                                    <th style="width: 145px; text-align: center;">สถานะ / หมายเหตุ</th>
+                                    <th style="text-align: center;">เวลาเข้างาน</th>
+                                    <th style="text-align: center;">เวลาออกงาน</th>
+                                    <th style="text-align: center;">สถานะ / หมายเหตุ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -257,9 +251,6 @@ export class ReportsController {
         return combinedHtml;
     }
 
-    /**
-     * จัดกลุ่มข้อมูลภายในแต่ละตารางตามมุมมอง Group By 2 มุมมอง
-     */
     #buildGroupedRowsForTag(tagRecords, groupHeaderColor, forPrintPdf) {
         const colSpan = forPrintPdf ? 7 : 8;
         if (!tagRecords || tagRecords.length === 0) {
@@ -313,22 +304,25 @@ export class ReportsController {
             return `
                 <tr>
                     <td style="text-align: center;">${indexNo}</td>
-                    <td>${fullDateText}</td>
+                    <td style="white-space: nowrap;">${fullDateText}</td>
                     <td>${rec.full_name}</td>
                     <td>${rec.position_full}</td>
-                    <td style="text-align: center;">${rec.check_in_time || '-'}</td>
-                    <td style="text-align: center;">${rec.check_out_time || '-'}</td>
+                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_in_time || '-'}</td>
+                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_out_time || '-'}</td>
                     <td style="text-align: center; color: ${badgeColor}; font-weight: 700;">${statusText}</td>
                 </tr>
             `;
         }
 
         return `
-            <tr>
+            <tr class="report-person-row cursor-pointer transition" data-pid="${rec.personnel_id}" title="คลิกเพื่อดูโปรไฟล์ Resume ของ ${rec.full_name}">
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td class="text-xs font-bold whitespace-nowrap">${fullDateText}</td>
                 <td>
-                    <div class="font-bold bma-text-main">${rec.full_name}</div>
+                    <div class="font-bold bma-text-main flex items-center gap-1.5">
+                        <span>${rec.full_name}</span>
+                        <i class="fa-regular fa-id-badge text-xs text-emerald-600 opacity-75"></i>
+                    </div>
                     ${rec.check_in_location ? `<div class="text-[11px] bma-text-sub"><i class="fa-solid fa-location-dot mr-1 text-emerald-600"></i>${rec.check_in_location}</div>` : ''}
                 </td>
                 <td>${rec.position_full}</td>
@@ -352,6 +346,102 @@ export class ReportsController {
                 </td>
             </tr>
         `;
+    }
+
+    /**
+     * เปิดแสดง Modal โปรไฟล์บุคลากรรูปแบบ Resume สากล เมื่อคลิกที่แถวในตารางรายงาน
+     * @param {string} personnelId
+     */
+    #openResumeProfileModal(personnelId) {
+        const person = this.allPersonnel.find(p => p.id === personnelId);
+        if (!person) return;
+
+        const fullName = `${person.prefix}${person.first_name} ${person.last_name}`;
+        const posFull = `${person.position_title}${person.position_level ? ' ระดับ' + person.position_level : ''}`;
+        const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
+
+        // ค้นหารายการลงเวลาทั้งหมดของบุคคลนี้ในข้อมูลที่โหลดมา
+        const personLogs = this.records.filter(r => r.personnel_id === personnelId);
+        const latestPhotoRecord = personLogs.find(r => r.check_in_photo);
+
+        const avatarBox = document.getElementById('resumeAvatarBox');
+        if (avatarBox) {
+            if (latestPhotoRecord?.check_in_photo) {
+                avatarBox.innerHTML = `<img src="${latestPhotoRecord.check_in_photo}" alt="${fullName}" class="w-full h-full object-cover">`;
+            } else {
+                avatarBox.innerHTML = `<span>${String(person.first_name || 'U').charAt(0)}</span>`;
+            }
+        }
+
+        const roleBadge = document.getElementById('resumeRoleBadge');
+        if (roleBadge) {
+            roleBadge.textContent = roleMeta.label;
+            roleBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs`;
+        }
+
+        document.getElementById('resumeFullName').textContent = fullName;
+        document.getElementById('resumePositionHeadline').textContent = `${posFull} (${person.position_type || 'ข้าราชการ/บุคลากร'})`;
+        document.getElementById('resumeOrgHeadline').textContent = `${person.organization} • ${person.bureau} • ${person.division}`;
+
+        document.getElementById('resumeNationalId').textContent = person.national_id || 'ไม่ระบุ';
+        document.getElementById('resumeUsername').textContent = person.account_username || person.national_id || '-';
+        document.getElementById('resumeRoleText').textContent = `${roleMeta.label}`;
+
+        document.getElementById('resumeOrgName').textContent = person.organization || 'กรุงเทพมหานคร';
+        document.getElementById('resumeBureauName').textContent = person.bureau || '-';
+        document.getElementById('resumeDivisionName').textContent = person.division || '-';
+        document.getElementById('resumeWorkGroupName').textContent = person.work_group || '-';
+
+        document.getElementById('resumePosType').textContent = person.position_type || '-';
+        document.getElementById('resumePosTitle').textContent = person.position_title || '-';
+        document.getElementById('resumePosLevel').textContent = person.position_level || '-';
+
+        // สรุปสถิติการลงเวลาของบุคคลนี้
+        const countByCat = (key) => personLogs.filter(r => r.status_category === key).length;
+        const statsGrid = document.getElementById('resumeStatsGrid');
+        if (statsGrid) {
+            statsGrid.innerHTML = `
+                <div class="p-2.5 rounded-xl border bma-border">
+                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('normal')};">${countByCat('normal')}</span>
+                    <span class="text-[11px] bma-text-sub block font-semibold">ปฏิบัติงานปกติ</span>
+                </div>
+                <div class="p-2.5 rounded-xl border bma-border">
+                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('late')};">${countByCat('late')}</span>
+                    <span class="text-[11px] bma-text-sub block font-semibold">มาสาย</span>
+                </div>
+                <div class="p-2.5 rounded-xl border bma-border">
+                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('overtime')};">${countByCat('overtime')}</span>
+                    <span class="text-[11px] bma-text-sub block font-semibold">นอกเวลาราชการ</span>
+                </div>
+                <div class="p-2.5 rounded-xl border bma-border">
+                    <span class="text-lg font-extrabold" style="color: ${this.#getStatusColor('absent_duty')};">${countByCat('absent_duty') + countByCat('no_checkin')}</span>
+                    <span class="text-[11px] bma-text-sub block font-semibold">ขาด/ไม่ลงเวลา</span>
+                </div>
+            `;
+        }
+
+        // รายการลงเวลาล่าสุด
+        const recentList = document.getElementById('resumeRecentLogsList');
+        if (recentList) {
+            recentList.innerHTML = personLogs.map(log => {
+                const c = this.#getStatusColor(log.status_category);
+                return `
+                    <div class="p-2.5 rounded-xl border bma-border flex items-center justify-between gap-2">
+                        <div>
+                            <span class="font-bold bma-text-main">${log.work_date_thai_full}</span>
+                            <span class="block text-[11px] bma-text-sub">เข้า: ${log.check_in_time || '-'} น. | ออก: ${log.check_out_time || '-'} น.</span>
+                        </div>
+                        <span class="bma-badge text-white text-[11px]" style="background-color: ${c};">${log.status_label}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('modalPersonnelResumeProfile')?.classList.remove('hidden');
+    }
+
+    #closeResumeModal() {
+        document.getElementById('modalPersonnelResumeProfile')?.classList.add('hidden');
     }
 
     #openModal(rec = null) {
@@ -378,7 +468,6 @@ export class ReportsController {
     }
 
     #bindEvents() {
-        // สลับโหมดการเลือกวันที่: วันเดียว vs ช่วงวันที่
         const btnSingle = document.getElementById('btnModeSingleDate');
         const btnRange = document.getElementById('btnModeRangeDate');
         const singleBox = document.getElementById('singleDatePickerBox');
@@ -411,7 +500,6 @@ export class ReportsController {
             this.#renderSeparateTablesBySelectedTags(false);
         });
 
-        // คลิกเลือก/ยกเลิก TAG สถานะ
         document.getElementById('statusTagsFilterContainer')?.addEventListener('click', (e) => {
             const chip = e.target.closest('button[data-tag-key]');
             if (!chip) return;
@@ -425,7 +513,6 @@ export class ReportsController {
             this.#renderSeparateTablesBySelectedTags(false);
         });
 
-        // ปุ่มลัดเลือกค่าเริ่มต้น (ปฏิบัติงานปกติ + มาสาย) และ เลือกทั้งหมด
         document.getElementById('btnSelectDefaultTags')?.addEventListener('click', () => {
             this.selectedStatusKeys = new Set(['normal', 'late']);
             this.#renderStatusTagFilterChips();
@@ -438,17 +525,19 @@ export class ReportsController {
             this.#renderSeparateTablesBySelectedTags(false);
         });
 
-        // ปุ่มเปิด/ปิด Modal
         document.getElementById('btnOpenAddReportRecord')?.addEventListener('click', () => this.#openModal(null));
         document.getElementById('btnCloseReportModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelReportModal')?.addEventListener('click', () => this.#closeModal());
+
+        document.getElementById('btnCloseResumeModalTop')?.addEventListener('click', () => this.#closeResumeModal());
+        document.getElementById('btnCloseResumeModalBottom')?.addEventListener('click', () => this.#closeResumeModal());
 
         document.getElementById('formReportAttendance')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.#handleSaveReportRecord();
         });
 
-        // พิมพ์และส่งออกเป็น PDF โดยเปิด Tab ใหม่ (รวมทุกตารางตาม Tag ที่เลือกไว้)
+        // ปุ่ม "พิมพ์/ส่งออก PDF" (พิมพ์ลงกระดาษ A4 แนวนอน Landscape)
         document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
             const tableHtml = this.#renderSeparateTablesBySelectedTags(true);
             if (!tableHtml) {
@@ -464,7 +553,6 @@ export class ReportsController {
             });
         });
 
-        // ส่งออกไฟล์ Excel UTF-8 (เฉพาะรายการที่อยู่ใน Tag ที่เลือก)
         document.getElementById('btnExportReportExcel')?.addEventListener('click', () => {
             const filtered = this.records.filter(r => this.selectedStatusKeys.has(r.status_category));
             if (filtered.length === 0) {
@@ -505,41 +593,50 @@ export class ReportsController {
             UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');
         });
 
-        // Event Delegation สำหรับปุ่มแก้ไขและลบในตารางทั้งหมด
+        // Event Delegation สำหรับคลิกปุ่มแก้ไข/ลบ หรือคลิกที่แถว (Row) เพื่อเปิดดูโปรไฟล์ Resume สากล
         document.getElementById('reportTablesMasterContainer')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action]');
-            if (!btn) return;
-            const action = btn.dataset.action;
+            if (btn) {
+                e.stopPropagation();
+                const action = btn.dataset.action;
 
-            if (action === 'edit-record') {
-                const pid = btn.dataset.pid;
-                const logId = btn.dataset.logid;
-                const workDate = btn.dataset.date;
-                const rec = this.records.find(r =>
-                    (logId && r.log_id === logId) ||
-                    (r.personnel_id === pid && r.work_date === workDate)
-                );
-                if (rec) this.#openModal(rec);
-            } else if (action === 'delete-record') {
-                const logId = btn.dataset.logid;
-                const name = btn.dataset.name;
-                const confirmed = await UIHelpers.confirm(
-                    'ยืนยันการลบข้อมูลลงเวลา',
-                    `ต้องการลบข้อมูลการลงเวลาของ "${name}" รายการนี้ใช่หรือไม่?`,
-                    'ลบรายการ',
-                    'warning'
-                );
-                if (confirmed) {
-                    UIHelpers.showLoading('กำลังลบรายการลงเวลา...');
-                    const res = await AttendanceModel.deleteAttendanceRecord(logId);
-                    UIHelpers.hideLoading();
-                    if (res.success) {
-                        await this.loadReportData();
-                        await UIHelpers.showToast(res.message, 'success', 2500);
-                    } else {
-                        await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
+                if (action === 'edit-record') {
+                    const pid = btn.dataset.pid;
+                    const logId = btn.dataset.logid;
+                    const workDate = btn.dataset.date;
+                    const rec = this.records.find(r =>
+                        (logId && r.log_id === logId) ||
+                        (r.personnel_id === pid && r.work_date === workDate)
+                    );
+                    if (rec) this.#openModal(rec);
+                } else if (action === 'delete-record') {
+                    const logId = btn.dataset.logid;
+                    const name = btn.dataset.name;
+                    const confirmed = await UIHelpers.confirm(
+                        'ยืนยันการลบข้อมูลลงเวลา',
+                        `ต้องการลบข้อมูลการลงเวลาของ "${name}" รายการนี้ใช่หรือไม่?`,
+                        'ลบรายการ',
+                        'warning'
+                    );
+                    if (confirmed) {
+                        UIHelpers.showLoading('กำลังลบรายการลงเวลา...');
+                        const res = await AttendanceModel.deleteAttendanceRecord(logId);
+                        UIHelpers.hideLoading();
+                        if (res.success) {
+                            await this.loadReportData();
+                            await UIHelpers.showToast(res.message, 'success', 2500);
+                        } else {
+                            await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
+                        }
                     }
                 }
+                return;
+            }
+
+            // กรณีคลิกที่แถวของบุคลากร (.report-person-row) -> เปิดดูโปรไฟล์รูปแบบ Resume สากล
+            const personRow = e.target.closest('tr.report-person-row');
+            if (personRow && personRow.dataset.pid) {
+                this.#openResumeProfileModal(personRow.dataset.pid);
             }
         });
     }

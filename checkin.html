@@ -70,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- นาฬิกา 24 ชม. และวันที่ไทย (เช่น 15 ม.ค. 69) -->
             <div class="w-full md:w-auto text-left md:text-right border-t md:border-t-0 pt-3 md:pt-0 border-white/20 relative z-10 bg-black/25 px-4 py-2.5 rounded-xl border border-white/15">
                 <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200">เวลาราชการ (รูปแบบ 24 ชม.)</div>
                 <div id="liveClockDisplay" class="text-3xl lg:text-4xl font-extrabold tracking-widest text-[#FDD835] font-mono drop-shadow">00:00:00</div>
@@ -78,7 +77,7 @@
             </div>
         </div>
 
-        <!-- สถานะการลงเวลาของวันนี้ -->
+        <!-- สถานะการลงเวลาทำการปกติของวันนี้ -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="bma-card p-4 flex items-center justify-between" style="border-left: 5px solid var(--g1);">
                 <div class="flex items-center gap-3">
@@ -86,7 +85,7 @@
                         <i class="fa-solid fa-right-to-bracket"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold bma-text-sub">เวลาเข้างานวันนี้ (24 ชม.)</span>
+                        <span class="text-xs font-bold bma-text-sub">เวลาเข้างานปกติวันนี้ (24 ชม.)</span>
                         <p id="todayCheckinTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
                     </div>
                 </div>
@@ -99,7 +98,7 @@
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold bma-text-sub">เวลาออกงานวันนี้ (24 ชม.)</span>
+                        <span class="text-xs font-bold bma-text-sub">เวลาออกงานปกติวันนี้ (24 ชม.)</span>
                         <p id="todayCheckoutTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
                     </div>
                 </div>
@@ -121,7 +120,6 @@
                         <span id="photoRequirementBadge" class="bma-badge bma-badge-danger">บังคับถ่ายภาพ</span>
                     </div>
 
-                    <!-- กรอบแสดงภาพจากกล้องแนวตั้ง อัตราส่วน 3:4 (.camera-portrait-3-4) -->
                     <div class="camera-portrait-3-4 outdoor-camera-bezel flex items-center justify-center">
                         <video id="cameraVideoStream" class="w-full h-full object-cover" autoplay playsinline muted></video>
                         <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
@@ -134,7 +132,6 @@
                     </div>
                 </div>
 
-                <!-- ปุ่มควบคุมกล้อง: มีเฉพาะปุ่ม "ถ่ายภาพ" และ "ถ่ายใหม่อีกครั้ง" -->
                 <div class="mt-4 flex items-center justify-center gap-3">
                     <button type="button" id="btnCapturePhoto" class="btn-bma-primary w-full py-3.5 text-sm shadow-md">
                         <i class="fa-solid fa-camera text-base"></i>
@@ -171,7 +168,6 @@
                         </div>
                     </div>
 
-                    <!-- กรอบแสดงแผนที่ Google Map จริงปักหมุดพิกัดปัจจุบัน -->
                     <div id="googleMapEmbedWrapper" class="w-full h-48 sm:h-52 rounded-xl overflow-hidden border bma-border bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
                         <div id="googleMapPlaceholder" class="text-xs bma-text-sub flex flex-col items-center gap-1.5">
                             <i class="fa-solid fa-map-location-dot text-2xl text-emerald-600"></i>
@@ -198,9 +194,9 @@
                     <div class="p-3 bma-info-box flex items-center justify-between gap-2 text-xs">
                         <span class="font-bold bma-text-main flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
-                            <span>รูปแบบการบันทึกเวลา:</span>
+                            <span>เงื่อนไขช่วงเวลาที่เลือก:</span>
                         </span>
-                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
+                        <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ (เข้า-ออกวันละ 1 ครั้ง)</span>
                     </div>
 
                     <div>
@@ -208,7 +204,6 @@
                         <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
                     </div>
 
-                    <!-- กล่องกรอกเวลาเข้า-ออกงานเอง กรณีเลือกช่วงเวลาเป็น "อื่นๆ" (24 ชม.) -->
                     <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 bma-info-box">
                         <div>
                             <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน (24 ชม.) *</label>
@@ -218,6 +213,12 @@
                             <label class="block text-xs font-bold bma-text-main mb-1">เวลาเลิกงาน (24 ชม.) *</label>
                             <input type="text" id="mainCustomCheckout" class="bma-input text-sm font-mono text-center" value="16:30" placeholder="HH:mm เช่น 16:30">
                         </div>
+                    </div>
+
+                    <!-- แถบแจ้งเตือนกรณีลงเวลาทำการปกติของวันนี้ครบทั้งเข้าและออกแล้ว -->
+                    <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
+                        <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
+                        <span id="regularCompletedNoticeText">วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบ 1 ครั้งแล้ว</span>
                     </div>
 
                     <!-- ปุ่มบันทึกลงเวลาหลัก -->
@@ -236,20 +237,105 @@
             </div>
         </div>
 
-        <!-- ตารางแสดงข้อมูลการลงเวลาส่วนตัวที่ลงเวลาไว้แล้ว -->
+        <!-- ตารางที่ 1: ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว (แยก 2 แท็บ: วันปัจจุบัน / ประวัติลงเวลาย้อนหลัง 5, 10, 15 แถว + ปุ่มหน้าถัดไป) -->
         <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
-            <div class="flex items-center justify-between border-b bma-border pb-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
                 <div>
                     <h3 class="text-base font-extrabold bma-text-main flex items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left" style="color: var(--bma-primary);"></i>
                         <span>ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว</span>
                     </h3>
-                    <p class="text-xs bma-text-sub mt-0.5">แสดงรายการลงเวลาปฏิบัติงานปกติและปฏิบัติงานนอกเวลาราชการของท่าน</p>
+                    <p class="text-xs bma-text-sub mt-0.5">สลับแท็บเพื่อดูรายการลงเวลาเฉพาะวันปัจจุบัน หรือดูประวัติการลงเวลาย้อนหลัง</p>
                 </div>
-                <button type="button" id="btnRefreshPersonalHistory" class="btn-bma-soft text-xs py-1.5 px-3">
-                    <i class="fa-solid fa-rotate"></i>
-                    <span>รีเฟรชตาราง</span>
-                </button>
+
+                <!-- แท็บสลับ วันปัจจุบัน vs ประวัติลงเวลาย้อนหลัง -->
+                <div class="flex items-center gap-2 p-1 rounded-xl bma-info-box self-start sm:self-auto">
+                    <button type="button" id="btnTabTodayHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer">
+                        <i class="fa-solid fa-calendar-day mr-1"></i>วันปัจจุบัน (<span id="todayHistoryCountBadge">0</span>)
+                    </button>
+                    <button type="button" id="btnTabPastHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer">
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>ประวัติลงเวลาย้อนหลัง (<span id="pastHistoryCountBadge">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- แผงที่ 1: แสดงเฉพาะของวันปัจจุบัน -->
+            <div id="todayHistoryTabPanel" class="space-y-3">
+                <div class="bma-table-container">
+                    <table class="bma-table text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th>วันที่</th>
+                                <th>ช่วงเวลาปฏิบัติงาน</th>
+                                <th class="text-center">เวลาเข้างาน</th>
+                                <th class="text-center">เวลาเลิกงาน</th>
+                                <th>สถานที่ปฏิบัติงาน</th>
+                                <th class="text-center">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayPersonalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- แผงที่ 2: ประวัติลงเวลาย้อนหลัง (เลือกแสดง 5, 10, 15 แถว + ปุ่มหน้าก่อนหน้า/หน้าถัดไป) -->
+            <div id="pastHistoryTabPanel" class="hidden space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bma-info-box text-xs">
+                    <div class="flex items-center gap-2">
+                        <label for="selectPastPageSize" class="font-bold bma-text-main">แสดงข้อมูลหน้าละ:</label>
+                        <select id="selectPastPageSize" class="bma-select w-auto py-1 px-2.5 text-xs font-bold">
+                            <option value="5">5 แถว</option>
+                            <option value="10">10 แถว</option>
+                            <option value="15">15 แถว</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btnPastPrevPage" class="btn-bma-outline py-1 px-3 text-xs">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>ก่อนหน้า</span>
+                        </button>
+                        <span id="pastPageInfoText" class="font-bold bma-text-main px-2">หน้า 1 / 1</span>
+                        <button type="button" id="btnPastNextPage" class="btn-bma-primary py-1 px-3 text-xs">
+                            <span>หน้าถัดไป</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bma-table-container">
+                    <table class="bma-table text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th>วันที่</th>
+                                <th>ช่วงเวลาปฏิบัติงาน</th>
+                                <th class="text-center">เวลาเข้างาน</th>
+                                <th class="text-center">เวลาเลิกงาน</th>
+                                <th>สถานที่ปฏิบัติงาน</th>
+                                <th class="text-center">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pastPersonalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ตารางที่ 2 (แยกมาอีก 1 ตารางตามข้อกำหนด): ตารางประวัติการขอลงเวลากรณีพิเศษ (แสดงสถานะ อนุมัติ/ปฏิเสธ และกดลบคำขอที่ยังไม่อนุมัติได้) -->
+        <div class="bma-card p-5 space-y-4" style="border-top: 4px solid #6366F1;">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b bma-border pb-3">
+                <div>
+                    <h3 class="text-base font-extrabold bma-text-main flex items-center gap-2">
+                        <i class="fa-solid fa-file-signature text-indigo-600"></i>
+                        <span>ตารางประวัติการขอลงเวลากรณีพิเศษ</span>
+                    </h3>
+                    <p class="text-xs bma-text-sub mt-0.5">
+                        แสดงสถานะการอนุมัติหรือปฏิเสธคำขอลงเวลากรณีพิเศษ (กรณีคำขอยังไม่ได้อนุมัติ ท่านสามารถกดลบคำขอทิ้งได้)
+                    </p>
+                </div>
+                <span id="specialRequestTotalBadge" class="bma-badge bma-badge-indigo self-start sm:self-auto">0 รายการ</span>
             </div>
 
             <div class="bma-table-container">
@@ -257,22 +343,22 @@
                     <thead>
                         <tr>
                             <th class="w-14 text-center">ลำดับ</th>
-                            <th>วันที่</th>
+                            <th>วันที่ขอลงเวลา</th>
                             <th>ช่วงเวลาปฏิบัติงาน</th>
-                            <th class="text-center">เวลาเข้างาน</th>
-                            <th class="text-center">เวลาเลิกงาน</th>
-                            <th>สถานที่ปฏิบัติงาน</th>
-                            <th class="text-center">สถานะ</th>
+                            <th class="text-center">เวลาเข้า - เลิกงาน</th>
+                            <th>หมายเหตุ / เหตุผล</th>
+                            <th class="text-center">สถานะคำขอ</th>
+                            <th class="w-32 text-center">จัดการ</th>
                         </tr>
                     </thead>
-                    <tbody id="personalHistoryTableBody"></tbody>
+                    <tbody id="personalSpecialRequestsTableBody"></tbody>
                 </table>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal ขอลงเวลากรณีพิเศษ (บันทึกทั้งเวลาเข้าและเลิกงานอัตโนมัติ ได้สถานะตามช่วงเวลา) -->
+    <!-- Modal ขอลงเวลากรณีพิเศษ -->
     <div id="modalSpecialRequest" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bma-card bma-modal-surface p-6 shadow-2xl">
             <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
@@ -287,7 +373,7 @@
 
             <form id="formSpecialRequest" class="space-y-4">
                 <div class="p-3 bma-info-box text-xs bma-text-sub">
-                    ระบบจะบันทึกทั้ง <b>เวลาเข้างาน</b> และ <b>เวลาเลิกงาน</b> ให้อัตโนมัติตามช่วงเวลาที่เลือก และกำหนดสถานะเป็น <b>ปฏิบัติงานปกติ</b> หรือ <b>ปฏิบัติงานนอกเวลาราชการ</b> ตามช่วงเวลานั้นทันที
+                    ระบบจะบันทึกทั้ง <b>เวลาเข้างาน</b> และ <b>เวลาเลิกงาน</b> ให้อัตโนมัติตามช่วงเวลาที่เลือก และแสดงสถานะการพิจารณาในตารางประวัติการขอลงเวลากรณีพิเศษด้านล่าง
                 </div>
 
                 <div>

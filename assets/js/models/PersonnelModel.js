@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/PersonnelModel.js
- * @description คลาสจัดการข้อมูลบุคลากร การสร้างบัญชีผู้ใช้อัตโนมัติ และการจัดกลุ่ม Group By 2 มุมมอง
+ * @description คลาสจัดการข้อมูลบุคลากร กำหนดสีป้ายกำกับตายตัวตามระดับบัญชี (SuperAdmin แดงพาสเทล, Admin เหลืองพาสเทล, User เขียวพาสเทล)
  */
 
 import { DatabaseService } from '../core/DatabaseService.js';
@@ -9,15 +9,54 @@ import { UIHelpers } from '../core/UIHelpers.js';
 
 export class PersonnelModel {
     /**
-     * ดึงข้อมูลบุคลากรทั้งหมดตามขอบเขตการมองเห็นของผู้ใช้งานที่ล็อกอินอยู่
-     * @param {Object|null} currentUser ข้อมูลผู้ใช้ที่ล็อกอิน
+     * คืนค่าข้อมูลสีป้ายกำกับตายตัวตามระดับบัญชีผู้ใช้งาน (Role-based Pastel Colors)
+     * - SuperAdmin: สีแดงพาสเทล
+     * - Admin: สีเหลืองพาสเทล
+     * - User: สีเขียวพาสเทล
+     * @param {string} role 'SuperAdmin' | 'Admin' | 'User'
+     * @returns {{role: string, label: string, badgeClass: string, dotClass: string, hexColor: string}}
+     */
+    static getRolePastelMeta(role = 'User') {
+        if (role === 'SuperAdmin') {
+            return {
+                role: 'SuperAdmin',
+                label: 'SuperAdmin',
+                badgeClass: 'role-pastel-superadmin',
+                dotClass: 'role-dot-superadmin',
+                hexColor: '#FDA4AF'
+            };
+        }
+        if (role === 'Admin') {
+            return {
+                role: 'Admin',
+                label: 'Admin',
+                badgeClass: 'role-pastel-admin',
+                dotClass: 'role-dot-admin',
+                hexColor: '#FDE047'
+            };
+        }
+        return {
+            role: 'User',
+            label: 'User',
+            badgeClass: 'role-pastel-user',
+            dotClass: 'role-dot-user',
+            hexColor: '#86EFAC'
+        };
+    }
+
+    /**
+     * ดึงข้อมูลบุคลากรทั้งหมดพร้อมระดับสิทธิ์ของบัญชีผู้ใช้ที่ผูกอยู่
+     * @param {Object|null} currentUser
      * @returns {Promise<Array<Object>>}
      */
     static async getAll(currentUser = null) {
         const db = DatabaseService.getInstance().client;
         const { data, error } = await db
             .from('personnel')
-            .select('*')
+            .select(`
+                *,
+                user_accounts ( id, username, role )
+            `)
             .order('bureau', { ascending: true })
             .order('division', { ascending: true })
             .order('work_group', { ascending: true })
@@ -28,7 +67,22 @@ export class PersonnelModel {
             return [];
         }
 
-        const list = data || [];
+        const list = (data || []).map(person => {
+            const linkedAccounts = Array.isArray(person.user_accounts)
+                ? person.user_accounts
+                : (person.user_accounts ? [person.user_accounts] : []);
+            const accountRole = linkedAccounts[0]?.role || 'User';
+            const roleMeta = PersonnelModel.getRolePastelMeta(accountRole);
+
+            return {
+                ...person,
+                account_role: accountRole,
+                account_username: linkedAccounts[0]?.username || '',
+                role_meta: roleMeta,
+                badge_color: roleMeta.hexColor
+            };
+        });
+
         if (!currentUser || currentUser.role === 'SuperAdmin') {
             return list;
         }
@@ -36,16 +90,14 @@ export class PersonnelModel {
         return list.filter(item => AuthService.canViewRecordByScope(currentUser, item));
     }
 
-    /**
-     * ดึงข้อมูลบุคลากรรายบุคคลตาม ID
-     * @param {string} id UUID ของบุคลากร
-     * @returns {Promise<Object|null>}
-     */
     static async getById(id) {
         const db = DatabaseService.getInstance().client;
         const { data, error } = await db
             .from('personnel')
-            .select('*')
+            .select(`
+                *,
+                user_accounts ( id, username, role )
+            `)
             .eq('id', id)
             .maybeSingle();
 
@@ -57,19 +109,11 @@ export class PersonnelModel {
     }
 
     /**
-     * เพิ่มข้อมูลบุคลากรใหม่ พร้อมตัวเลือก "เพิ่มบัญชีผู้ใช้อัตโนมัติ" (V2.1)
-     * หาก autoCreateAccount = true ระบบจะสร้างบัญชีผู้ใช้โดยใช้:
-     * - Username: หมายเลขบัตรประชาชน 13 หลัก
-     * - Password: หมายเลข 6 ตัวท้ายของบัตรประชาชน
-     * - Role: User
-     * @param {Object} payload ข้อมูลบุคลากร
-     * @param {boolean} autoCreateAccount ติ๊กถูกเพิ่มบัญชีผู้ใช้อัตโนมัติหรือไม่
-     * @returns {Promise<{success: boolean, data?: Object, accountCreated?: boolean, message: string}>}
+     * เพิ่มข้อมูลบุคลากรใหม่ (สีป้ายกำกับกำหนดตายตัวเป็นสีเขียวพาสเทลสำหรับ User)
      */
     static async create(payload, autoCreateAccount = false) {
         const cleanNationalId = String(payload.national_id || '').replace(/[\s-]/g, '');
 
-        // ตรวจสอบเลขบัตรประชาชนกรณีกรอกข้อมูล หรือกรณีเลือกสร้างบัญชีอัตโนมัติ
         if (autoCreateAccount && cleanNationalId.length !== 13) {
             return {
                 success: false,
@@ -85,8 +129,8 @@ export class PersonnelModel {
         }
 
         const db = DatabaseService.getInstance().client;
+        const defaultUserPastel = PersonnelModel.getRolePastelMeta('User').hexColor;
 
-        // บันทึกข้อมูลลงตาราง personnel
         const insertPayload = {
             national_id: cleanNationalId || null,
             prefix: String(payload.prefix || '').trim(),
@@ -99,7 +143,7 @@ export class PersonnelModel {
             bureau: String(payload.bureau || '').trim(),
             division: String(payload.division || '').trim(),
             work_group: String(payload.work_group || '').trim(),
-            badge_color: payload.badge_color || '#00744B'
+            badge_color: defaultUserPastel
         };
 
         const { data: createdPerson, error: personErr } = await db
@@ -119,7 +163,6 @@ export class PersonnelModel {
         let accountCreated = false;
         let autoPassword = '';
 
-        // สร้างบัญชีผู้ใช้อัตโนมัติตามข้อกำหนด V2.1
         if (autoCreateAccount && cleanNationalId.length === 13) {
             autoPassword = UIHelpers.getLast6DigitsFromNationalId(cleanNationalId);
             const fullName = `${insertPayload.prefix}${insertPayload.first_name} ${insertPayload.last_name}`.trim();
@@ -143,8 +186,6 @@ export class PersonnelModel {
 
             if (!userErr) {
                 accountCreated = true;
-            } else {
-                console.warn('Auto user account creation warning:', userErr);
             }
         }
 
@@ -160,12 +201,6 @@ export class PersonnelModel {
         };
     }
 
-    /**
-     * แก้ไขข้อมูลบุคลากร และอัปเดตชื่อ-สกุล/สังกัดในตาราง user_accounts ที่ผูกไว้ให้ตรงกัน
-     * @param {string} id UUID ของบุคลากร
-     * @param {Object} payload ข้อมูลที่แก้ไข
-     * @returns {Promise<{success: boolean, data?: Object, message: string}>}
-     */
     static async update(id, payload) {
         const cleanNationalId = String(payload.national_id || '').replace(/[\s-]/g, '');
         if (cleanNationalId) {
@@ -188,7 +223,6 @@ export class PersonnelModel {
             bureau: String(payload.bureau || '').trim(),
             division: String(payload.division || '').trim(),
             work_group: String(payload.work_group || '').trim(),
-            badge_color: payload.badge_color || '#00744B',
             updated_at: new Date().toISOString()
         };
 
@@ -203,14 +237,13 @@ export class PersonnelModel {
             return { success: false, message: 'ไม่สามารถแก้ไขข้อมูลบุคลากรได้: ' + error.message };
         }
 
-        // ซิงค์ชื่อ-นามสกุล และเลขบัตรประชาชนไปยังบัญชีผู้ใช้ที่ผูกอยู่
         const fullName = `${updatePayload.prefix}${updatePayload.first_name} ${updatePayload.last_name}`.trim();
         await db
             .from('user_accounts')
             .update({
                 full_name: fullName,
                 national_id: cleanNationalId || null,
-                 updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString()
             })
             .eq('personnel_id', id);
 
@@ -221,11 +254,6 @@ export class PersonnelModel {
         };
     }
 
-    /**
-     * ลบข้อมูลบุคลากร
-     * @param {string} id UUID ของบุคลากร
-     * @returns {Promise<{success: boolean, message: string}>}
-     */
     static async delete(id) {
         const db = DatabaseService.getInstance().client;
         const { error } = await db
@@ -239,14 +267,6 @@ export class PersonnelModel {
         return { success: true, message: 'ลบข้อมูลบุคลากรเรียบร้อยแล้ว' };
     }
 
-    /**
-     * จัดกลุ่มข้อมูลบุคลากรสำหรับแสดงในตาราง 2 มุมมอง (Group By)
-     * - มุมมองที่ 1 ('division'): สำนักงาน/กอง > ส่วน/ฝ่าย
-     * - มุมมองที่ 2 ('group'): สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน
-     * @param {Array<Object>} personnelList
-     * @param {'division'|'group'} viewMode
-     * @returns {Object} โครงสร้าง Tree สำหรับเรนเดอร์ตาราง
-     */
     static groupPersonnel(personnelList, viewMode = 'division') {
         const grouped = {};
 
@@ -275,13 +295,6 @@ export class PersonnelModel {
         return grouped;
     }
 
-    /**
-     * นำเข้าข้อมูลบุคลากรจำนวนมากจากไฟล์ Excel รองรับภาษาไทย UTF-8
-     * พร้อมสร้างบัญชีผู้ใช้อัตโนมัติหากมีเลขบัตรประชาชน 13 หลักและเปิดใช้งาน autoCreateAccount
-     * @param {Array<Object>} excelRows
-     * @param {boolean} autoCreateAccount
-     * @returns {Promise<{success: boolean, importedCount: number, accountCount: number, message: string}>}
-     */
     static async bulkImportFromExcel(excelRows, autoCreateAccount = true) {
         if (!Array.isArray(excelRows) || excelRows.length === 0) {
             return { success: false, importedCount: 0, accountCount: 0, message: 'ไม่พบข้อมูลในไฟล์ Excel ที่นำเข้า' };
@@ -309,8 +322,7 @@ export class PersonnelModel {
                 organization: String(row['หน่วยงาน'] || row['organization'] || 'กรุงเทพมหานคร').trim(),
                 bureau: String(row['สำนักงาน/กอง'] || row['bureau'] || 'สำนักเทศกิจ').trim(),
                 division: String(row['ส่วน/ฝ่าย'] || row['division'] || 'สำนักงานเลขานุการ').trim(),
-                work_group: String(row['กลุ่มงาน'] || row['work_group'] || '').trim(),
-                badge_color: String(row['สีป้ายกำกับ'] || row['badge_color'] || '#00744B').trim()
+                work_group: String(row['กลุ่มงาน'] || row['work_group'] || '').trim()
             };
 
             const shouldAutoCreate = autoCreateAccount && nationalId.length === 13;
@@ -329,10 +341,6 @@ export class PersonnelModel {
         };
     }
 
-    /**
-     * สร้างข้อมูลตัวอย่างสำหรับดาวน์โหลด Template Excel ข้อมูลบุคลากร
-     * @returns {Array<Object>}
-     */
     static getExcelTemplateRows() {
         return [
             {
@@ -346,8 +354,7 @@ export class PersonnelModel {
                 'หน่วยงาน': 'กรุงเทพมหานคร',
                 'สำนักงาน/กอง': 'สำนักเทศกิจ',
                 'ส่วน/ฝ่าย': 'กองตรวจและปฏิบัติการพื้นที่ 1',
-                'กลุ่มงาน': 'กลุ่มงานตรวจและปฏิบัติการ 1',
-                'สีป้ายกำกับ': '#059669'
+                'กลุ่มงาน': 'กลุ่มงานตรวจและปฏิบัติการ 1'
             }
         ];
     }
