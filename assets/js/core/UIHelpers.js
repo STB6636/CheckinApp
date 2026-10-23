@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, พิมพ์ PDF ขนาด A4 แนวนอน (Landscape), ตรวจสอบลิงก์รูปโลโก้, วันที่ไทย, เวลา 24 ชม. & Google Drive
+ * @description คลาสจัดการ UI, พิมพ์ PDF ขนาด A4 แนวนอนโดยไม่มีข้อความ Header เบราว์เซอร์ซ้ำด้านบน, ตรวจสอบลิงก์รูปโลโก้, วันที่ไทย & เวลา 24 ชม.
  */
 
 import { Config } from './Config.js';
@@ -180,12 +180,6 @@ export class UIHelpers {
         return canvasEl.toDataURL('image/jpeg', 0.78);
     }
 
-    /**
-     * ตรวจสอบลิงก์ของรูปโลโก้หน่วยงาน กรณีวางลิงก์ URL (ในหน้าตั้งค่าระบบ)
-     * รองรับการแปลงลิงก์แชร์ไฟล์ Google Drive ให้เป็น Direct Image Link อัตโนมัติ
-     * @param {string} rawUrl
-     * @returns {Promise<{success: boolean, normalizedUrl: string, width?: number, height?: number, message: string}>}
-     */
     static verifyImageUrl(rawUrl) {
         return new Promise((resolve) => {
             let cleanUrl = String(rawUrl || '').trim();
@@ -198,7 +192,6 @@ export class UIHelpers {
                 return;
             }
 
-            // กรณีวางลิงก์แชร์ไฟล์จาก Google Drive เช่น https://drive.google.com/file/d/FILE_ID/view
             if (cleanUrl.includes('drive.google.com/file/d/')) {
                 const match = cleanUrl.match(/\/d\/([-\w]{20,})/);
                 if (match && match[1]) {
@@ -537,9 +530,10 @@ export class UIHelpers {
     }
 
     /**
-     * พิมพ์/ส่งออก PDF ในรูปแบบกระดาษขนาด A4 แนวนอน (Landscape)
-     * จัดสัดส่วนความกว้างคอลัมน์ให้พอดีกับความยาวข้อมูล
-     * @param {Object} options
+     * พิมพ์/ส่งออก PDF ขนาด A4 แนวนอน (Landscape)
+     * แก้ไขปัญหาข้อความชื่อรายงานสีดำซ้ำด้านบนสุดเวลาสั่งพิมพ์:
+     * - ตั้งค่า <title>&nbsp;</title> ให้ว่าง และใช้ @page { size: A4 landscape; margin: 0mm; }
+     *   เพื่อตัด Browser Print Header/Footer อัตโนมัติออกทั้งหมด
      */
     static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#007B3E' }) {
         const printWindow = window.open('', '_blank');
@@ -554,7 +548,7 @@ export class UIHelpers {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
+    <title>&nbsp;</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -658,11 +652,14 @@ export class UIHelpers {
         }
         @page {
             size: A4 landscape;
-            margin: 10mm;
+            margin: 0mm;
         }
         @media print {
             .toolbar { display: none !important; }
-            body { padding: 0; }
+            body {
+                margin: 0;
+                padding: 10mm 12mm;
+            }
         }
     </style>
 </head>
@@ -677,7 +674,9 @@ export class UIHelpers {
     </div>
     ${tableHtml}
     <script>
+        document.title = "";
         window.onload = function() {
+            document.title = "";
             setTimeout(function() { window.print(); }, 450);
         };
     </script>

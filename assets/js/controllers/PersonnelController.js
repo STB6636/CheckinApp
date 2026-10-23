@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/PersonnelController.js
- * @description คลาสควบคุมหน้าจัดการข้อมูลบุคลากร (ใช้สีป้ายกำกับตายตัวตามระดับบัญชี SuperAdmin แดงพาสเทล, Admin เหลืองพาสเทล, User เขียวพาสเทล)
+ * @description คลาสควบคุมหน้าจัดการข้อมูลบุคลากร (จำกัดสิทธิ์ Admin ทั้งขอบเขต "ส่วน/ฝ่าย" และ "สำนักงาน" ไม่ให้สามารถลบข้อมูลบุคลากรได้)
  */
 
 import { UIHelpers } from '../core/UIHelpers.js';
@@ -16,6 +16,7 @@ export class PersonnelController {
         this.groupViewMode = 'division';
         this.headerColor = '#007B3E';
         this.searchKeyword = '';
+        this.canDeletePersonnel = false;
         this.init();
     }
 
@@ -23,12 +24,15 @@ export class PersonnelController {
         const layout = await AppLayout.initAdminLayout({
             activePage: 'personnel',
             pageTitle: 'จัดการข้อมูลบุคลากร',
-            pageSubtitle: 'เพิ่ม แก้ไข ลบ ข้อมูลบุคลากร และสร้างบัญชีผู้ใช้งานอัตโนมัติตามขอบเขตการมองเห็น'
+            pageSubtitle: 'เพิ่ม แก้ไข ข้อมูลบุคลากร และสร้างบัญชีผู้ใช้งานอัตโนมัติตามขอบเขตการมองเห็น'
         });
 
         if (!layout.currentUser) return;
         this.currentUser = layout.currentUser;
         this.settings = layout.settings || await SettingsModel.getSettings(false);
+
+        // กฎ: บัญชีผู้ใช้งานระดับ Admin ขอบเขตการมองเห็น "ส่วน/ฝ่าย" และ "สำนักงาน" จะไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้
+        this.canDeletePersonnel = this.currentUser.role === 'SuperAdmin';
 
         if (this.settings?.category_colors?.group_header) {
             this.headerColor = this.settings.category_colors.group_header;
@@ -193,11 +197,20 @@ export class PersonnelController {
         const posFull = `${person.position_title}${person.position_level ? ' ระดับ' + person.position_level : ''}`;
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
 
+        // ซ่อนปุ่มลบหากเป็น Admin (ทั้งขอบเขต "ส่วน/ฝ่าย" และ "สำนักงาน") อนุญาตให้ลบได้เฉพาะ SuperAdmin
+        const deleteBtnHtml = this.canDeletePersonnel
+            ? `
+                <button type="button" data-action="delete-personnel" data-id="${person.id}" data-name="${fullName}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            `
+            : '';
+
         return `
             <tr>
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td>
-                    <div class="flex items-center gap-2.5">
+                    <div class="flex items-center gap-2.5 whitespace-nowrap">
                         <span class="w-3 h-3 rounded-full shrink-0 ${roleMeta.dotClass}"></span>
                         <span class="font-bold bma-text-main">${fullName}</span>
                     </div>
@@ -215,9 +228,7 @@ export class PersonnelController {
                     <button type="button" data-action="edit-personnel" data-id="${person.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
                         <i class="fa-solid fa-pen"></i>
                     </button>
-                    <button type="button" data-action="delete-personnel" data-id="${person.id}" data-name="${fullName}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    ${deleteBtnHtml}
                 </td>
             </tr>
         `;
@@ -386,6 +397,12 @@ export class PersonnelController {
                 const person = this.personnelList.find(p => p.id === id);
                 if (person) this.#openModal(person);
             } else if (action === 'delete-personnel') {
+                // บล็อกคำสั่งลบทันทีหากไม่ใช่ SuperAdmin
+                if (!this.canDeletePersonnel) {
+                    await UIHelpers.alert('ไม่มีสิทธิ์ลบข้อมูล', 'บัญชีผู้ใช้งานระดับ Admin ไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้', 'warning');
+                    return;
+                }
+
                 const name = btn.dataset.name || 'รายชื่อนี้';
                 const confirmed = await UIHelpers.confirm(
                     'ยืนยันการลบข้อมูลบุคลากร',

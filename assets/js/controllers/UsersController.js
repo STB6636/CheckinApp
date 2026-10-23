@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/UsersController.js
- * @description คลาสควบคุมหน้าจัดการบัญชีผู้ใช้งาน การผูกข้อมูลบุคลากร ขอบเขตการมองเห็น และการอนุมัติรีเซ็ตรหัสผ่าน
+ * @description คลาสควบคุมหน้าจัดการบัญชีผู้ใช้งาน (จำกัดสิทธิ์ Admin ส่วน/ฝ่าย ไม่ให้เห็นเมนู และ Admin สำนักงาน ไม่ให้เห็นคอลัมน์ "จัดการ" / ไม่มีสิทธิ์แก้ไขหรือลบ)
  */
 
 import { UIHelpers } from '../core/UIHelpers.js';
@@ -15,6 +15,7 @@ export class UsersController {
         this.settings = null;
         this.usersList = [];
         this.personnelList = [];
+        this.canEditOrDeleteUsers = false;
         this.init();
     }
 
@@ -27,17 +28,42 @@ export class UsersController {
 
         if (!layout.currentUser) return;
         this.currentUser = layout.currentUser;
-        this.settings = await SettingsModel.getSettings(true);
 
-        // กฎ V2.1: หากผู้ที่ล็อกอินเป็น Admin จะไม่เห็นตัวเลือก SuperAdmin และไม่สามารถแต่งตั้งสิทธิ์เกินกว่า Admin ได้
+        // กฎ: บัญชีผู้ใช้ระดับ Admin ขอบเขตการมองเห็น "ส่วน/ฝ่าย" จะมองไม่เห็นและเข้าเมนูจัดการบัญชีผู้ใช้งานไม่ได้
+        if (this.currentUser.role === 'Admin' && this.currentUser.visibility_level === 'division') {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        // กฎ: บัญชีผู้ใช้ระดับ Admin ขอบเขตการมองเห็น "สำนักงาน" จะมองเห็นเมนูนี้ แต่มองไม่เห็นคอลัมน์ "จัดการ" (ไม่มีสิทธิ์แก้ไขหรือลบ)
+        this.canEditOrDeleteUsers = this.currentUser.role === 'SuperAdmin';
+
+        this.settings = layout.settings || await SettingsModel.getSettings(false);
+
         if (this.currentUser.role === 'Admin') {
             document.getElementById('optFilterSuperAdmin')?.remove();
             document.getElementById('radioRoleSuperAdminWrap')?.classList.add('hidden');
         }
 
+        // ซ่อนหัวคอลัมน์ "จัดการ" ทันทีหากเป็น Admin ขอบเขต "สำนักงาน"
+        this.#toggleManageColumnHeader();
+
         this.#populateScopeDropdowns();
         this.#bindEvents();
         await this.loadUsersAndPersonnel();
+    }
+
+    /**
+     * ซ่อนหรือแสดงหัวคอลัมน์ "จัดการ" ในตารางตามสิทธิ์ของผู้ใช้งาน
+     */
+    #toggleManageColumnHeader() {
+        const tableHeaders = document.querySelectorAll('#usersTableBody')?.[0]?.closest('table')?.querySelectorAll('thead th');
+        if (tableHeaders && tableHeaders.length >= 7) {
+            const manageHeaderTh = tableHeaders[6];
+            if (manageHeaderTh) {
+                manageHeaderTh.classList.toggle('hidden', !this.canEditOrDeleteUsers);
+            }
+        }
     }
 
     #populateScopeDropdowns() {
@@ -47,8 +73,10 @@ export class UsersController {
         }
 
         const bureauSelect = document.getElementById('usrScopeBureau');
-        bureauSelect.innerHTML = bureaus.map(b => `<option value="${b}">${b}</option>`).join('');
-        this.#updateScopeDivisionDropdown(bureauSelect.value);
+        if (bureauSelect) {
+            bureauSelect.innerHTML = bureaus.map(b => `<option value="${b}">${b}</option>`).join('');
+            this.#updateScopeDivisionDropdown(bureauSelect.value);
+        }
     }
 
     #updateScopeDivisionDropdown(selectedBureau, selectedDivision = '') {
@@ -58,6 +86,8 @@ export class UsersController {
         }
 
         const divSelect = document.getElementById('usrScopeDivision');
+        if (!divSelect) return;
+
         divSelect.innerHTML = divisions.map(d => `<option value="${d}">${d}</option>`).join('');
         if (selectedDivision && divisions.includes(selectedDivision)) {
             divSelect.value = selectedDivision;
@@ -66,8 +96,9 @@ export class UsersController {
 
     async loadUsersAndPersonnel() {
         const tbody = document.getElementById('usersTableBody');
+        const colCount = this.canEditOrDeleteUsers ? 7 : 6;
         if (tbody) {
-            tbody.innerHTML = UIHelpers.renderTableSkeleton(5, 7);
+            tbody.innerHTML = UIHelpers.renderTableSkeleton(5, colCount);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบัญชีผู้ใช้งาน...');
@@ -86,9 +117,6 @@ export class UsersController {
         }
     }
 
-    /**
-     * กรองรายชื่อบุคลากรในฟิลด์ Dropdown ตามคำค้นหา (V2.1 ข้อ 2)
-     */
     #renderPersonnelSelectOptions(filterText = '', selectedPersonnelId = '') {
         const selectEl = document.getElementById('usrPersonnelSelect');
         if (!selectEl) return;
@@ -111,6 +139,7 @@ export class UsersController {
     }
 
     #renderUsersTable() {
+        this.#toggleManageColumnHeader();
         const tbody = document.getElementById('usersTableBody');
         if (!tbody) return;
 
@@ -126,15 +155,15 @@ export class UsersController {
             return text.includes(keyword);
         });
 
+        const colSpan = this.canEditOrDeleteUsers ? 7 : 6;
+
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
             return;
         }
 
         tbody.innerHTML = filtered.map((u, idx) => {
-            const roleBadgeClass = u.role === 'SuperAdmin'
-                ? 'bma-badge-success'
-                : (u.role === 'Admin' ? 'bma-badge-indigo' : 'bma-badge-sky');
+            const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
 
             let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
             if (u.role === 'SuperAdmin') {
@@ -145,7 +174,6 @@ export class UsersController {
                     : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
             }
 
-            // คอลัมน์ "คำสั่ง" สำหรับอนุมัติ / ไม่อนุมัติ การขอเปลี่ยนรหัสผ่าน (ตามข้อกำหนด V2.1 ข้อ 1)
             let commandHtml = `<span class="text-xs bma-text-muted">ปกติ</span>`;
             if (u.password_reset_requested) {
                 commandHtml = `
@@ -163,17 +191,9 @@ export class UsersController {
                 `;
             }
 
-            return `
-                <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
-                    <td class="text-center font-semibold">${idx + 1}</td>
-                    <td class="font-mono font-bold bma-text-main">${u.username}</td>
-                    <td>
-                        <div class="font-semibold bma-text-main">${u.full_name}</div>
-                        <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
-                    </td>
-                    <td><span class="bma-badge ${roleBadgeClass}">${u.role}</span></td>
-                    <td class="text-xs bma-text-sub">${scopeDesc}</td>
-                    <td class="text-center">${commandHtml}</td>
+            // คอลัมน์ "จัดการ": แสดงเฉพาะผู้ที่มีสิทธิ์แก้ไขหรือลบ (SuperAdmin) เท่านั้น ส่วน Admin ขอบเขต "สำนักงาน" จะมองไม่เห็นคอลัมน์นี้
+            const manageColumnHtml = this.canEditOrDeleteUsers
+                ? `
                     <td class="text-center space-x-1 whitespace-nowrap">
                         <button type="button" data-action="edit-user" data-id="${u.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
                             <i class="fa-solid fa-pen"></i>
@@ -182,6 +202,21 @@ export class UsersController {
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
+                `
+                : '';
+
+            return `
+                <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
+                    <td class="text-center font-semibold">${idx + 1}</td>
+                    <td class="font-mono font-bold bma-text-main">${u.username}</td>
+                    <td>
+                        <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
+                        <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
+                    </td>
+                    <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
+                    <td class="text-xs bma-text-sub">${scopeDesc}</td>
+                    <td class="text-center">${commandHtml}</td>
+                    ${manageColumnHtml}
                 </tr>
             `;
         }).join('');
@@ -194,18 +229,23 @@ export class UsersController {
         const divWrap = document.getElementById('usrScopeDivisionWrap');
 
         if (selectedRole === 'Admin') {
-            scopeBox.classList.remove('hidden');
+            scopeBox?.classList.remove('hidden');
             if (visLevel === 'bureau') {
-                divWrap.classList.add('hidden');
+                divWrap?.classList.add('hidden');
             } else {
-                divWrap.classList.remove('hidden');
+                divWrap?.classList.remove('hidden');
             }
         } else {
-            scopeBox.classList.add('hidden');
+            scopeBox?.classList.add('hidden');
         }
     }
 
     #openModal(editUser = null) {
+        if (editUser && !this.canEditOrDeleteUsers) {
+            UIHelpers.alert('ไม่มีสิทธิ์ดำเนินการ', 'บัญชีระดับ Admin ไม่มีสิทธิ์แก้ไขข้อมูลบัญชีผู้ใช้งาน', 'warning');
+            return;
+        }
+
         const modal = document.getElementById('modalUserAccountForm');
         const titleEl = document.getElementById('modalUserTitle');
         document.getElementById('usrPersonnelSearchFilter').value = '';
@@ -254,7 +294,7 @@ export class UsersController {
         }
 
         this.#toggleAdminScopeUI();
-        modal.classList.remove('hidden');
+        modal?.classList.remove('hidden');
     }
 
     #closeModal() {
@@ -270,13 +310,11 @@ export class UsersController {
         document.getElementById('btnCloseUserModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelUserModal')?.addEventListener('click', () => this.#closeModal());
 
-        // ฟิลเตอร์ค้นหารายชื่อบุคลากรในฟิลด์ Dropdown
         document.getElementById('usrPersonnelSearchFilter')?.addEventListener('input', (e) => {
             const currentSelected = document.getElementById('usrPersonnelSelect').value;
             this.#renderPersonnelSelectOptions(e.target.value, currentSelected);
         });
 
-        // เมื่อเลือกบุคลากรใน Dropdown ให้ดึงชื่อ-นามสกุล, เลขบัตร 13 หลัก, รหัส 6 ตัวท้าย และสังกัดมาเติมให้อัตโนมัติ
         document.getElementById('usrPersonnelSelect')?.addEventListener('change', (e) => {
             const personId = e.target.value;
             const person = this.personnelList.find(p => p.id === personId);
@@ -299,7 +337,6 @@ export class UsersController {
             }
         });
 
-        // สลับการแสดงผลกล่องกำหนดขอบเขตเมื่อเปลี่ยน Role หรือระดับการมองเห็น
         document.querySelectorAll('input[name="usrRoleRadio"]').forEach(r => {
             r.addEventListener('change', () => this.#toggleAdminScopeUI());
         });
@@ -311,13 +348,11 @@ export class UsersController {
             this.#updateScopeDivisionDropdown(e.target.value);
         });
 
-        // บันทึกบัญชีผู้ใช้งาน
         document.getElementById('formUserAccount')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.#handleSaveUserAccount();
         });
 
-        // ส่งออก Excel และ Template Excel
         document.getElementById('btnExportUsersExcel')?.addEventListener('click', () => {
             const rows = this.usersList.map((u, idx) => ({
                 'ลำดับ': idx + 1,
@@ -355,7 +390,6 @@ export class UsersController {
             }
         });
 
-        // Event Delegation สำหรับปุ่มอนุมัติ/ไม่อนุมัติรีเซ็ตรหัสผ่าน และปุ่มแก้ไข/ลบ
         document.getElementById('usersTableBody')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (!btn) return;
@@ -392,9 +426,11 @@ export class UsersController {
                     await UIHelpers.alert('ดำเนินการเรียบร้อย', res.message, 'info');
                 }
             } else if (action === 'edit-user') {
+                if (!this.canEditOrDeleteUsers) return;
                 const target = this.usersList.find(u => u.id === id);
                 if (target) this.#openModal(target);
             } else if (action === 'delete-user') {
+                if (!this.canEditOrDeleteUsers) return;
                 const confirmed = await UIHelpers.confirm(
                     'ยืนยันการลบบัญชีผู้ใช้งาน',
                     `ต้องการลบบัญชีผู้ใช้งานของ "${name}" ออกจากระบบใช่หรือไม่?`,
@@ -407,7 +443,7 @@ export class UsersController {
                     UIHelpers.hideLoading();
                     if (res.success) {
                         await this.loadUsersAndPersonnel();
-                        await UIHelpers.alert('ลบสำเร็จ', res.message, 'success');
+                        await UIHelpers.showToast(res.message, 'success', 2500);
                     } else {
                         await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
                     }
@@ -418,6 +454,11 @@ export class UsersController {
 
     async #handleSaveUserAccount() {
         const id = document.getElementById('usrAccountId').value;
+        if (id && !this.canEditOrDeleteUsers) {
+            await UIHelpers.alert('ไม่มีสิทธิ์แก้ไข', 'บัญชีระดับ Admin ไม่มีสิทธิ์แก้ไขข้อมูลบัญชีผู้ใช้งาน', 'error');
+            return;
+        }
+
         const role = document.querySelector('input[name="usrRoleRadio"]:checked')?.value || 'User';
         const visibilityLevel = document.querySelector('input[name="usrVisibilityLevel"]:checked')?.value || 'division';
 
@@ -448,7 +489,7 @@ export class UsersController {
 
             this.#closeModal();
             await this.loadUsersAndPersonnel();
-            await UIHelpers.alert('บันทึกสำเร็จ', res.message, 'success');
+            await UIHelpers.showToast(res.message, 'success', 2500);
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.alert('เกิดข้อผิดพลาด', err.message, 'error');
@@ -456,6 +497,11 @@ export class UsersController {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new UsersController();
-});
+if (!window.__BMA_SPA_ROUTER_ACTIVE__) {
+    window.__BMA_SPA_ROUTER_ACTIVE__ = true;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => new UsersController());
+    } else {
+        new UsersController();
+    }
+}

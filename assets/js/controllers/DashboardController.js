@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/DashboardController.js
- * @description คลาสควบคุมหน้า "ภาพรวม" (แก้สีการ์ดบุคลากรทั้งหมด, แก้ตารางโหลดค้าง และแจ้ง "ไม่พบผู้ลงเวลาปฏิบัติงาน" เมื่อยังไม่มีข้อมูล)
+ * @description คลาสควบคุมหน้า "ภาพรวม" (แสดง 5 รายการล่าสุด + Pagination [5,10,15,20], คอลัมน์สังกัด 2 บรรทัด, และปรับขนาดคอลัมน์พอดีข้อมูล)
  */
 
 import { Config } from '../core/Config.js';
@@ -14,6 +14,9 @@ export class DashboardController {
         this.currentUser = null;
         this.settings = null;
         this.dailyRecords = [];
+        this.checkedInRecords = [];
+        this.pageSize = 5; // ค่าเริ่มต้นแสดง 5 รายการล่าสุด
+        this.currentPage = 1;
         this.init();
     }
 
@@ -48,23 +51,68 @@ export class DashboardController {
         document.getElementById('dashboardDateFilter')?.addEventListener('change', (e) => {
             const thaiBadge = document.getElementById('dashboardThaiDateBadge');
             if (thaiBadge) thaiBadge.textContent = UIHelpers.formatThaiShortDate(e.target.value);
+            this.currentPage = 1;
             this.loadDashboardData();
         });
 
-        document.getElementById('btnRefreshDashboard')?.addEventListener('click', () => this.loadDashboardData());
+        document.getElementById('btnRefreshDashboard')?.addEventListener('click', () => {
+            this.currentPage = 1;
+            this.loadDashboardData();
+        });
+
+        // ตัวเลือกจำนวนรายการต่อหน้า [5, 10, 15, 20]
+        document.getElementById('dashboardPageSizeSelect')?.addEventListener('change', (e) => {
+            this.pageSize = parseInt(e.target.value, 10) || 5;
+            this.currentPage = 1;
+            const colors = {
+                ...Config.DEFAULT_SETTINGS.category_colors,
+                ...(this.settings?.category_colors || {})
+            };
+            this.#renderTable(colors);
+        });
+
+        // ปุ่มหน้าก่อนหน้า / หน้าถัดไป
+        document.getElementById('btnDashboardPrevPage')?.addEventListener('click', () => {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                const colors = {
+                    ...Config.DEFAULT_SETTINGS.category_colors,
+                    ...(this.settings?.category_colors || {})
+                };
+                this.#renderTable(colors);
+            }
+        });
+
+        document.getElementById('btnDashboardNextPage')?.addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(this.checkedInRecords.length / this.pageSize));
+            if (this.currentPage < totalPages) {
+                this.currentPage++;
+                const colors = {
+                    ...Config.DEFAULT_SETTINGS.category_colors,
+                    ...(this.settings?.category_colors || {})
+                };
+                this.#renderTable(colors);
+            }
+        });
     }
 
     async loadDashboardData() {
         const selectedDate = document.getElementById('dashboardDateFilter')?.value || UIHelpers.getTodayISO();
         const tableBody = document.getElementById('dashboardRecentTableBody');
         if (tableBody) {
-            tableBody.innerHTML = UIHelpers.renderTableSkeleton(4, 7);
+            tableBody.innerHTML = UIHelpers.renderTableSkeleton(5, 7);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลหน้าภาพรวม...');
         try {
             this.settings = await SettingsModel.getSettings(false);
             this.dailyRecords = await AttendanceModel.getDailyReportRecords(selectedDate, this.currentUser);
+
+            // กรองเฉพาะผู้ที่ลงเวลาปฏิบัติงานแล้ว และเรียงลำดับรายการล่าสุดขึ้นก่อน
+            this.checkedInRecords = (this.dailyRecords || [])
+                .filter(rec => Boolean(rec.log_id))
+                .reverse();
+
             this.#renderAllVisuals();
         } catch (err) {
             console.error('Load dashboard error:', err);
@@ -93,9 +141,6 @@ export class DashboardController {
         this.#renderTable(colors);
     }
 
-    /**
-     * เรนเดอร์การ์ดสถิติทั้ง 5 ใบ โดยการ์ด "บุคลากรทั้งหมด" ใช้ Inline Gradient สีเขียวมรกตเข้มชัดเจน ไม่เป็นสีใส
-     */
     #renderJewelToneStatCards(metrics, colors) {
         const grid = document.getElementById('dashboardKpiCardsGrid');
         if (!grid) return;
@@ -107,7 +152,6 @@ export class DashboardController {
             overtime: `linear-gradient(135deg, ${colors.overtime || '#2563EB'} 0%, #3B82F6 100%)`
         };
 
-        // 1. การ์ด "บุคลากรทั้งหมด" (กำหนด Inline Style สีเขียวมรกตเข้มหลวง BMA ตัดกับสีทองเทศกิจ)
         let html = `
             <div class="stat-card stat-card-total" style="background: linear-gradient(135deg, #00351B 0%, #005B2E 52%, #007B3E 100%); color: #FFFFFF;">
                 <div class="deco-1"></div>
@@ -135,7 +179,6 @@ export class DashboardController {
             </div>
         `;
 
-        // 2. การ์ดสถานะทั้ง 4 หมวดหมู่หลัก
         for (const cat of metrics.categories) {
             const bgGradient = cardGradients[cat.key] || `linear-gradient(135deg, ${cat.color}, ${cat.color})`;
             html += `
@@ -170,17 +213,31 @@ export class DashboardController {
     }
 
     /**
-     * เรนเดอร์ตารางรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล
-     * กรณียังไม่มีผู้ลงเวลาในวันนั้น ให้แจ้งว่า "ไม่พบผู้ลงเวลาปฏิบัติงาน"
+     * เรนเดอร์ตารางรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล:
+     * - แสดงตามจำนวนหน้าละ [5, 10, 15, 20] (ค่าเริ่มต้น 5 รายการล่าสุด)
+     * - คอลัมน์ สังกัด แสดง 2 บรรทัด: บรรทัดแรก = สำนักงาน/กอง, บรรทัดสอง = ส่วน/ฝ่าย
+     * - จัดขนาดคอลัมน์ให้พอดีกับข้อมูล ไม่ให้ชื่อ-นามสกุลล้นหรือตกบรรทัด
      */
     #renderTable(colors) {
         const tbody = document.getElementById('dashboardRecentTableBody');
+        const pageInfoEl = document.getElementById('dashboardPageInfoText');
+        const btnPrev = document.getElementById('btnDashboardPrevPage');
+        const btnNext = document.getElementById('btnDashboardNextPage');
+
         if (!tbody) return;
 
-        // กรองเฉพาะผู้ที่มีการลงเวลาปฏิบัติงานแล้วในวันนั้น (log_id !== null)
-        const checkedInRecords = (this.dailyRecords || []).filter(rec => Boolean(rec.log_id));
+        const totalItems = this.checkedInRecords.length;
+        const totalPages = Math.max(1, Math.ceil(totalItems / this.pageSize));
+        if (this.currentPage > totalPages) this.currentPage = totalPages;
+        if (this.currentPage < 1) this.currentPage = 1;
 
-        if (checkedInRecords.length === 0) {
+        if (pageInfoEl) {
+            pageInfoEl.textContent = `หน้า ${this.currentPage} / ${totalPages} (รวม ${totalItems} รายการ)`;
+        }
+        if (btnPrev) btnPrev.disabled = this.currentPage <= 1;
+        if (btnNext) btnNext.disabled = this.currentPage >= totalPages;
+
+        if (totalItems === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center py-10 bma-text-sub font-bold text-sm">
@@ -192,17 +249,28 @@ export class DashboardController {
             return;
         }
 
-        tbody.innerHTML = checkedInRecords.map((rec, idx) => {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const pagedRecords = this.checkedInRecords.slice(startIndex, startIndex + this.pageSize);
+
+        tbody.innerHTML = pagedRecords.map((rec, idx) => {
             const color = colors[rec.status_category] || rec.row_color || '#007B3E';
+            const runningNo = startIndex + idx + 1;
+
             return `
                 <tr>
-                    <td class="font-semibold text-center">${idx + 1}</td>
-                    <td class="font-bold bma-text-main">${rec.full_name}</td>
-                    <td>${rec.position_full}</td>
-                    <td class="text-xs bma-text-sub">${rec.bureau} &gt; ${rec.division}</td>
-                    <td class="font-mono font-bold text-center">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
-                    <td class="font-mono font-bold text-center">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
-                    <td class="text-center">
+                    <td class="font-semibold text-center whitespace-nowrap">${runningNo}</td>
+                    <td class="font-bold bma-text-main whitespace-nowrap">${rec.full_name}</td>
+                    <td class="font-medium bma-text-main leading-snug">
+                        <span class="block font-semibold">${rec.position_title || '-'}</span>
+                        ${rec.position_level ? `<span class="text-xs bma-text-sub block">ระดับ${rec.position_level}</span>` : ''}
+                    </td>
+                    <td class="leading-snug">
+                        <div class="font-bold text-xs" style="color: var(--bma-primary);">${rec.bureau || '-'}</div>
+                        <div class="text-xs bma-text-sub mt-0.5">${rec.division || '-'}</div>
+                    </td>
+                    <td class="font-mono font-bold text-center whitespace-nowrap">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
+                    <td class="font-mono font-bold text-center whitespace-nowrap">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
+                    <td class="text-center whitespace-nowrap">
                         <span class="bma-badge text-white shadow-xs" style="background-color: ${color};">
                             ${rec.status_label}
                         </span>

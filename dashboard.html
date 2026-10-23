@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ (แก้สีการ์ด "บุคลากรทั้งหมด" ให้เข้มคมชัดเข้าชุดกัน) -->
+            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ -->
             <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
                 <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
                 <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
@@ -61,30 +61,56 @@
                 <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
             </div>
 
-            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล -->
-            <div class="bma-card p-5" style="border-top: 3px solid var(--g1);">
-                <div class="flex items-center justify-between mb-4">
+            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล (แสดง 5 รายการล่าสุด + ตัวเลือก [5,10,15,20] + ปุ่มหน้าถัดไป) -->
+            <div class="bma-card p-5 space-y-4" style="border-top: 3px solid var(--g1);">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h3 class="text-base font-extrabold bma-text-main">รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</h3>
-                        <p class="text-xs bma-text-sub">แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานในวันที่เลือกตามขอบเขตการมองเห็น</p>
+                        <p class="text-xs bma-text-sub">แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น</p>
                     </div>
-                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline">
+                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline self-start sm:self-auto">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         <span>เปิดหน้ารายงานฉบับเต็ม</span>
                     </a>
                 </div>
 
+                <!-- แถบควบคุมการแบ่งหน้า (ตัวเลือกแสดง [5, 10, 15, 20] รายการต่อหน้า และปุ่มหน้าก่อนหน้า/หน้าถัดไป) -->
+                <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bma-info-box text-xs">
+                    <div class="flex items-center gap-2">
+                        <label for="dashboardPageSizeSelect" class="font-bold bma-text-main">แสดงรายการต่อหน้า:</label>
+                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-2.5 text-xs font-bold">
+                            <option value="5" selected>5 รายการ</option>
+                            <option value="10">10 รายการ</option>
+                            <option value="15">15 รายการ</option>
+                            <option value="20">20 รายการ</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btnDashboardPrevPage" class="btn-bma-outline py-1 px-3 text-xs">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>ก่อนหน้า</span>
+                        </button>
+                        <span id="dashboardPageInfoText" class="font-bold bma-text-main px-2">หน้า 1 / 1</span>
+                        <button type="button" id="btnDashboardNextPage" class="btn-bma-primary py-1 px-3 text-xs">
+                            <span>หน้าถัดไป</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ตารางจัดสัดส่วนความกว้างคอลัมน์ให้พอดีกับข้อมูล -->
                 <div class="bma-table-container">
                     <table class="bma-table text-sm">
                         <thead>
                             <tr>
                                 <th class="w-14 text-center">ลำดับ</th>
-                                <th>ชื่อ-นามสกุล</th>
-                                <th>ตำแหน่ง</th>
-                                <th>สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
-                                <th class="text-center">เวลาเข้างาน</th>
-                                <th class="text-center">เวลาออกงาน</th>
-                                <th class="text-center">สถานะ</th>
+                                <th class="min-w-[180px] whitespace-nowrap">ชื่อ-นามสกุล</th>
+                                <th class="min-w-[200px]">ตำแหน่ง</th>
+                                <th class="min-w-[210px]">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
+                                <th class="w-28 text-center whitespace-nowrap">เวลาเข้างาน</th>
+                                <th class="w-28 text-center whitespace-nowrap">เวลาออกงาน</th>
+                                <th class="w-40 text-center whitespace-nowrap">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody id="dashboardRecentTableBody"></tbody>
