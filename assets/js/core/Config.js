@@ -1,51 +1,44 @@
 /**
  * @file assets/js/core/Config.js
- * @description คลาสเก็บค่าคงที่และการตั้งค่าการเชื่อมต่อ Supabase และ GitHub Pages
+ * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.3.1
  */
 
 export class Config {
-    // ข้อมูลการเชื่อมต่อ Supabase จากไฟล์ Project ID STB.txt
     static SUPABASE_URL = 'https://yicatrqogmcncfpqdyra.supabase.co';
     static SUPABASE_ANON_KEY = 'sb_publishable_eF5hCLSrg74gre5UXNtVgw_UsPRbPZl';
     static PROJECT_REF = 'yicatrqogmcncfpqdyra';
     static GITHUB_REPO = 'https://github.com/STB6636/CheckinApp.git';
 
-    // คีย์สำหรับจัดเก็บสถานะใน LocalStorage / SessionStorage
     static STORAGE_KEYS = {
-        SESSION_USER: 'bma_checkin_session_user_v2_1',
-        THEME_MODE: 'bma_checkin_theme_mode_v2_1',
-        CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_1'
+        SESSION_USER: 'bma_checkin_session_user_v2_3',
+        THEME_MODE: 'bma_checkin_theme_mode_v2_3',
+        CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_3',
+        WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_3'
     };
 
-    // ชุดรหัสสีอัตลักษณ์องค์กร กทม. (BMA Design System Tokens)
-    static BMA_COLORS = {
-        primaryLight: '#007B3E',
-        primaryDark: '#34D399',
-        pastelLight: '#4EBA6F',
-        pastelDark: '#A7F3D0',
-        secondary: [
-            { id: 1, name: 'Green Space (งานสิ่งแวดล้อม)', light: '#059669', dark: '#4ADE80' },
-            { id: 2, name: 'Lime Eco (เมืองน่าอยู่และพลังงานสะอาด)', light: '#84CC16', dark: '#BEF264' },
-            { id: 3, name: 'City Amber (แสงสว่างและการศึกษา)', light: '#F59E0B', dark: '#FCD34D' },
-            { id: 4, name: 'Warm Sunset (วิถีชีวิตริมน้ำและงานสร้างสรรค์)', light: '#FB923C', dark: '#FDBA74' },
-            { id: 5, name: 'Giant Swing Rose (เสาชิงช้าและการบรรเทาสาธารณภัย)', light: '#F43F5E', dark: '#FDA4AF' },
-            { id: 6, name: 'BMA Indigo (ความเป็นระเบียบ งานเทศกิจ และเทคโนโลยี)', light: '#6366F1', dark: '#A5B4FC' },
-            { id: 7, name: 'Crimson Red (สถานะฉุกเฉินและข้อผิดพลาดร้ายแรง)', light: '#E11D48', dark: '#F87171' },
-            { id: 8, name: 'Public Works Orange (งานโยธาและรักษาความสะอาด)', light: '#EA580C', dark: '#FB923C' },
-            { id: 9, name: 'Temple Gold (เกียรติยศและวัฒนธรรมพระนคร)', light: '#EAB308', dark: '#FDE047' },
-            { id: 10, name: 'Chao Phraya Sky Blue (การระบายน้ำและสายน้ำเจ้าพระยา)', light: '#0284C7', dark: '#38BDF8' }
-        ]
-    };
+    // รายการสถานะทางการทั้ง 5 สถานะ
+    static OFFICIAL_STATUSES = [
+        { key: 'normal', label: 'ปฏิบัติงานปกติ', defaultColor: '#007B3E', icon: 'fa-user-check' },
+        { key: 'late', label: 'มาสาย', defaultColor: '#EAB308', icon: 'fa-user-clock' },
+        { key: 'absent_duty', label: 'ขาดราชการ', defaultColor: '#EA580C', icon: 'fa-user-slash' },
+        { key: 'no_checkin', label: 'ไม่ลงเวลา', defaultColor: '#E11D48', icon: 'fa-user-xmark' },
+        { key: 'overtime', label: 'ปฏิบัติงานนอกเวลาราชการ', defaultColor: '#2563EB', icon: 'fa-business-time' }
+    ];
 
-    // ค่าเริ่มต้นกรณีฐานข้อมูลยังไม่มีการตั้งค่า
     static DEFAULT_SETTINGS = {
         id: 1,
         organization_name: 'กรุงเทพมหานคร',
         bureau_name: 'สำนักเทศกิจ',
         logo_url: '',
+        footer_description: 'ระบบบันทึกเวลาปฏิบัติราชการอิเล็กทรอนิกส์ เพื่อการบริหารงานบุคคลที่มีประสิทธิภาพ',
         require_photo: true,
         require_gps: true,
-        single_click_checkin: false, // false = รูปแบบปกติ (เข้า-ออกแยกกัน), true = รูปแบบพิเศษ (กดครั้งเดียวลงทั้งเข้าและออก)
+        single_click_checkin: false,
+        standard_check_in: '08:30',
+        standard_check_out: '16:30',
+        late_threshold_minutes: 30,
+        google_drive_script_url: '',
+        google_drive_folder_id: '',
         prefixes: ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'],
         positions: [
             { type: 'ประเภททั่วไป', title: 'เจ้าพนักงานเทศกิจ', level: 'ปฏิบัติงาน' },
@@ -68,17 +61,19 @@ export class Config {
             'โทรศัพท์/อุปกรณ์ขัดข้อง'
         ],
         work_shifts: [
-            { name: 'เวลาราชการปกติ (08:30 - 16:30)', check_in: '08:30', check_out: '16:30', is_custom: false },
-            { name: 'ผลัดเช้า (06:00 - 14:00)', check_in: '06:00', check_out: '14:00', is_custom: false },
-            { name: 'ผลัดบ่าย (14:00 - 22:00)', check_in: '14:00', check_out: '22:00', is_custom: false },
-            { name: 'ผลัดดึก (22:00 - 06:00)', check_in: '22:00', check_out: '06:00', is_custom: false },
-            { name: 'อื่นๆ (ระบุเวลาเอง)', check_in: '', check_out: '', is_custom: true }
+            { name: 'เวลาราชการปกติ (08:30 - 16:30)', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ผลัดเช้า (06:00 - 14:00)', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ผลัดบ่าย (14:00 - 22:00)', check_in: '14:00', check_out: '22:00', is_custom: false, is_overtime: false, is_overnight: false },
+            { name: 'ปฏิบัติงานนอกเวลาราชการ ช่วงเย็น (16:30 - 20:30)', check_in: '16:30', check_out: '20:30', is_custom: false, is_overtime: true, is_overnight: false },
+            { name: 'ปฏิบัติงานนอกเวลาราชการ ข้ามวัน (22:00 - 01:00)', check_in: '22:00', check_out: '01:00', is_custom: false, is_overtime: true, is_overnight: true },
+            { name: 'อื่นๆ (ระบุเวลาเอง)', check_in: '08:30', check_out: '16:30', is_custom: true, is_overtime: false, is_overnight: false }
         ],
         category_colors: {
             normal: '#007B3E',
-            late: '#F59E0B',
-            special: '#6366F1',
-            absent: '#E11D48',
+            late: '#EAB308',
+            absent_duty: '#EA580C',
+            no_checkin: '#E11D48',
+            overtime: '#2563EB',
             group_header: '#007B3E'
         }
     };

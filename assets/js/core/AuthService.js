@@ -8,10 +8,6 @@ import { DatabaseService } from './DatabaseService.js';
 import { UIHelpers } from './UIHelpers.js';
 
 export class AuthService {
-    /**
-     * ดึงข้อมูลผู้ใช้งานที่ล็อกอินอยู่ในปัจจุบันจาก Session/LocalStorage
-     * @returns {Object|null}
-     */
     static getCurrentUser() {
         try {
             const raw = localStorage.getItem(Config.STORAGE_KEYS.SESSION_USER);
@@ -22,26 +18,21 @@ export class AuthService {
         }
     }
 
-    /**
-     * บันทึกข้อมูลผู้ใช้งานลงใน Session
-     * @param {Object} userObj
-     */
     static setCurrentUser(userObj) {
         localStorage.setItem(Config.STORAGE_KEYS.SESSION_USER, JSON.stringify(userObj));
     }
 
-    /**
-     * ล้างข้อมูล Session เมื่อออกจากระบบ
-     */
     static clearSession() {
         localStorage.removeItem(Config.STORAGE_KEYS.SESSION_USER);
     }
 
     /**
      * เข้าสู่ระบบสำหรับลงเวลาปฏิบัติราชการ หรือเข้าสู่ระบบผู้ดูแลระบบหลังบ้าน
-     * @param {string} username ชื่อบัญชีผู้ใช้ (หรือเลขบัตรประชาชน 13 หลัก)
-     * @param {string} password รหัสผ่าน
-     * @param {'checkin'|'admin'} loginMode โหมดการเข้าสู่ระบบ ('checkin' สำหรับลงเวลา, 'admin' สำหรับผู้ดูแลระบบ)
+     * - หากกดปุ่ม "เข้าสู่ระบบผู้ดูแลระบบ" (loginMode === 'admin') จะอนุญาตเฉพาะ SuperAdmin และ Admin เท่านั้น
+     * - หากบัญชีระดับ User กดเข้าสู่ระบบผู้ดูแลระบบ จะแจ้งเตือนว่า "ท่านไม่มีสิทธิ์ใช้งาน"
+     * @param {string} username
+     * @param {string} password
+     * @param {'checkin'|'admin'} loginMode
      * @returns {Promise<{success: boolean, user?: Object, redirectUrl?: string, message: string}>}
      */
     static async login(username, password, loginMode = 'checkin') {
@@ -77,15 +68,14 @@ export class AuthService {
             return { success: false, message: 'ชื่อบัญชีผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' };
         }
 
-        // ตรวจสอบสิทธิ์กรณีต้องการเข้าสู่ระบบผู้ดูแลระบบหลังบ้าน (User ห้ามเข้าหลังบ้านเด็ดขาด)
-        if (loginMode === 'admin' && user.role === 'User') {
+        // ตรวจสอบสิทธิ์กรณีต้องการเข้าสู่ระบบผู้ดูแลระบบ: อนุญาตเฉพาะ SuperAdmin และ Admin เท่านั้น
+        if (loginMode === 'admin' && !['SuperAdmin', 'Admin'].includes(user.role)) {
             return {
                 success: false,
-                message: 'บัญชีระดับผู้ใช้งานทั่วไป (User) สามารถเข้าสู่ระบบเพื่อบันทึกเวลาปฏิบัติราชการได้อย่างเดียว ไม่สามารถเข้าสู่ระบบผู้ดูแลระบบหลังบ้านได้'
+                message: 'ท่านไม่มีสิทธิ์ใช้งาน'
             };
         }
 
-        // จัดเก็บข้อมูลลงใน Session
         const sessionPayload = {
             id: user.id,
             personnel_id: user.personnel_id,
@@ -102,6 +92,9 @@ export class AuthService {
 
         AuthService.setCurrentUser(sessionPayload);
 
+        // เก็บชื่อ-นามสกุลไว้ใน SessionStorage เพื่อให้หน้าปลายทางแสดง Popup "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]"
+        sessionStorage.setItem(Config.STORAGE_KEYS.WELCOME_TOAST, sessionPayload.full_name);
+
         const redirectUrl = loginMode === 'admin' ? 'dashboard.html' : 'checkin.html';
         return {
             success: true,
@@ -111,14 +104,6 @@ export class AuthService {
         };
     }
 
-    /**
-     * เปลี่ยนรหัสผ่านด้วยตนเองจากหน้า Login > เปลี่ยนรหัสผ่าน
-     * @param {string} username ชื่อผู้ใช้ หรือเลขบัตรประชาชน 13 หลัก
-     * @param {string} oldPassword รหัสผ่านเก่า
-     * @param {string} newPassword รหัสผ่านใหม่
-     * @param {string} confirmPassword ยืนยันรหัสผ่านใหม่
-     * @returns {Promise<{success: boolean, message: string}>}
-     */
     static async changePassword(username, oldPassword, newPassword, confirmPassword) {
         const cleanUser = String(username || '').trim();
         const cleanOld = String(oldPassword || '').trim();
@@ -138,8 +123,6 @@ export class AuthService {
         }
 
         const db = DatabaseService.getInstance().client;
-
-        // ตรวจสอบชื่อผู้ใช้และรหัสผ่านเก่า
         const { data: existingUser, error: findErr } = await db
             .from('user_accounts')
             .select('id, username')
@@ -155,7 +138,6 @@ export class AuthService {
             return { success: false, message: 'ชื่อผู้ใช้งานหรือรหัสผ่านเก่าไม่ถูกต้อง' };
         }
 
-        // อัปเดตรหัสผ่านใหม่และล้างสถานะคำขอรีเซ็ต
         const { error: updateErr } = await db
             .from('user_accounts')
             .update({
@@ -173,11 +155,6 @@ export class AuthService {
         return { success: true, message: 'เปลี่ยนรหัสผ่านใหม่สำเร็จ กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่' };
     }
 
-    /**
-     * ส่งคำขอลืมรหัสผ่านจากหน้า Login > ลืมรหัสผ่าน โดยใช้หมายเลขบัตรประจำตัวประชาชน 13 หลัก
-     * @param {string} nationalId หมายเลขบัตรประจำตัวประชาชน 13 หลัก
-     * @returns {Promise<{success: boolean, message: string}>}
-     */
     static async requestPasswordResetByNationalId(nationalId) {
         const cleanId = String(nationalId || '').replace(/[\s-]/g, '');
         const check = UIHelpers.validateThaiNationalId(cleanId, false);
@@ -186,8 +163,6 @@ export class AuthService {
         }
 
         const db = DatabaseService.getInstance().client;
-
-        // ค้นหาบัญชีผู้ใช้จากเลขบัตรประชาชน หรือ username ที่ตรงกับเลขบัตร 13 หลัก
         const { data: accounts, error: searchErr } = await db
             .from('user_accounts')
             .select('id, username, full_name, national_id')
@@ -203,7 +178,6 @@ export class AuthService {
         }
 
         const targetAccount = accounts[0];
-
         const { error: updateErr } = await db
             .from('user_accounts')
             .update({
@@ -220,15 +194,10 @@ export class AuthService {
 
         return {
             success: true,
-            message: `ส่งคำขอรีเซ็ตรหัสผ่านของ "${targetAccount.full_name}" เรียบร้อยแล้ว กรุณารอผู้ดูแลระบบ (SuperAdmin/Admin) อนุมัติ เมื่ออนุมัติแล้วรหัสผ่านจะถูกรีเซ็ตเป็นหมายเลข 6 ตัวท้ายของบัตรประชาชน`
+            message: `ส่งคำขอรีเซ็ตรหัสผ่านของ "${targetAccount.full_name}" เรียบร้อยแล้ว กรุณารอผู้ดูแลระบบอนุมัติ`
         };
     }
 
-    /**
-     * ตรวจสอบสิทธิ์การเข้าถึงหน้าเว็บ (Route Guard)
-     * @param {Array<'SuperAdmin'|'Admin'|'User'>} allowedRoles บทบาทที่อนุญาตให้เข้าหน้านี้
-     * @returns {Object|null} ข้อมูลผู้ใช้หากมีสิทธิ์
-     */
     static requireAuth(allowedRoles = ['SuperAdmin', 'Admin', 'User']) {
         const user = AuthService.getCurrentUser();
         if (!user) {
@@ -246,12 +215,6 @@ export class AuthService {
         return user;
     }
 
-    /**
-     * ตรวจสอบว่าผู้ดูแลระบบ (SuperAdmin หรือ Admin) มีสิทธิ์มองเห็นข้อมูลของบุคลากรรายนี้ตามขอบเขตหรือไม่
-     * @param {Object} currentUser ผู้ใช้ที่ล็อกอินอยู่
-     * @param {Object} targetRecord ข้อมูลที่มีฟิลด์ bureau และ division
-     * @returns {boolean}
-     */
     static canViewRecordByScope(currentUser, targetRecord) {
         if (!currentUser) return false;
         if (currentUser.role === 'SuperAdmin') return true;

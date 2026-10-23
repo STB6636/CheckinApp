@@ -1,8 +1,9 @@
 /**
  * @file assets/js/components/AppLayout.js
- * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง พร้อมระบบ AJAX SPA Navigation (โหลดเฉพาะ <main> ไม่ต้องโหลด Sidebar/Topbar/Footer ซ้ำ)
+ * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง รองรับ AJAX SPA Navigation, Toast ต้อนรับ และ Footer 2 บรรทัด
  */
 
+import { Config } from '../core/Config.js';
 import { AuthService } from '../core/AuthService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
@@ -14,7 +15,6 @@ export class AppLayout {
     static #currentUser = null;
     static #settings = null;
 
-    // แผนผังจับคู่ไฟล์ HTML กับ Controller และชื่อเมนู
     static PAGE_ROUTES = {
         'dashboard.html': {
             activePage: 'dashboard',
@@ -48,10 +48,6 @@ export class AppLayout {
         }
     };
 
-    /**
-     * เริ่มต้นเรนเดอร์โครงสร้างหน้าจอผู้ดูแลระบบ
-     * หาก Sidebar/Topbar/Footer ถูกสร้างไว้แล้ว (กรณีสลับหน้าด้วย AJAX) จะไม่อัปเดตซ้ำ แต่จะเปลี่ยนเฉพาะหัวข้อและสถานะเมนู
-     */
     static async initAdminLayout({ activePage, pageTitle, pageSubtitle = '' }) {
         UIHelpers.initTheme();
 
@@ -64,7 +60,6 @@ export class AppLayout {
 
         const sidebarEl = document.getElementById('bmaSidebarDrawer');
         if (!AppLayout.#isLayoutMounted || !sidebarEl) {
-            // โหลดครั้งแรก: สร้าง Sidebar, Topbar, Mobile Nav, Footer ครบชุด
             AppLayout.#renderSidebar(currentUser, AppLayout.#settings, activePage);
             AppLayout.#renderTopbar(currentUser, AppLayout.#settings, pageTitle, pageSubtitle);
             AppLayout.#renderMobileBottomNav(currentUser, activePage);
@@ -79,17 +74,30 @@ export class AppLayout {
                 AppLayout.#renderFooter(AppLayout.#settings);
             });
         } else {
-            // โหลดผ่าน AJAX SPA: ไม่ต้องสร้าง Sidebar/Topbar/Footer ใหม่ เปลี่ยนเฉพาะชื่อหน้าและไฮไลต์เมนู
             AppLayout.#updateActiveNavState(activePage, pageTitle, pageSubtitle);
         }
+
+        // ตรวจสอบว่าเพิ่งเข้าสู่ระบบมาหรือไม่ หากใช่ให้แสดง Popup "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]" 2.5 วินาทีแล้วหายไป
+        AppLayout.checkAndShowWelcomeToast(currentUser);
 
         AppLayout.refreshNotificationBell(currentUser);
         return { currentUser, settings: AppLayout.#settings };
     }
 
     /**
-     * อัปเดตเฉพาะสถานะเมนูที่เลือก (Active) และชื่อหัวข้อบน Topbar โดยไม่ต้องเรนเดอร์ Sidebar/Topbar ใหม่
+     * แสดง Popup เล็กๆ มุมขวาบน (หรือด้านบนในมือถือ) ว่า "ยินดีต้อนรับคุณ [ชื่อ + นามสกุล]" สัก 2-3 วินาทีแล้วหายไป
      */
+    static checkAndShowWelcomeToast(currentUser) {
+        const welcomeName = sessionStorage.getItem(Config.STORAGE_KEYS.WELCOME_TOAST);
+        if (welcomeName) {
+            sessionStorage.removeItem(Config.STORAGE_KEYS.WELCOME_TOAST);
+            const displayName = welcomeName || currentUser?.full_name || '';
+            setTimeout(() => {
+                UIHelpers.showToast(`ยินดีต้อนรับคุณ ${displayName}`, 'success', 2800);
+            }, 250);
+        }
+    }
+
     static #updateActiveNavState(activePage, pageTitle, pageSubtitle) {
         const titleEl = document.getElementById('topbarPageTitle');
         const subEl = document.getElementById('topbarPageSubtitle');
@@ -97,27 +105,21 @@ export class AppLayout {
         if (subEl) subEl.textContent = pageSubtitle || '';
         document.title = `${pageTitle} - กรุงเทพมหานคร`;
 
-        // อัปเดตปุ่ม Active ใน Sidebar
         document.querySelectorAll('#bmaSidebarDrawer a[data-nav-id]').forEach(link => {
             const isMatch = link.dataset.navId === activePage;
             link.classList.toggle('active', isMatch);
         });
 
-        // อัปเดตปุ่ม Active ใน Mobile Bottom Nav
         document.querySelectorAll('#bmaMobileBottomNav a[data-nav-id]').forEach(link => {
             const isMatch = link.dataset.navId === activePage;
             link.style.color = isMatch ? 'var(--bma-primary)' : '';
             link.classList.toggle('bma-text-sub', !isMatch);
         });
 
-        // ปิด Sidebar Drawer บนมือถือหากเปิดค้างอยู่
         document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
         document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
     }
 
-    /**
-     * ระบบ AJAX SPA Router ดักจับการคลิกเมนูหลังบ้านเพื่อโหลดเฉพาะ <main> พร้อมแสดง Spin + Progress Bar
-     */
     static #initAjaxSpaRouter() {
         document.addEventListener('click', async (e) => {
             const anchor = e.target.closest('a[href]');
@@ -126,14 +128,12 @@ export class AppLayout {
             const href = anchor.getAttribute('href') || '';
             const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
 
-            // ตรวจสอบว่าเป็นลิงก์ภายในระบบผู้ดูแลระบบทั้ง 6 หน้าหรือไม่
             if (!AppLayout.PAGE_ROUTES[cleanFile]) return;
 
             e.preventDefault();
             await AppLayout.navigateAjaxPage(cleanFile, true);
         });
 
-        // รองรับการกดปุ่มย้อนกลับ/ไปข้างหน้า (Back / Forward) บนเบราว์เซอร์
         window.addEventListener('popstate', async () => {
             const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
             if (AppLayout.PAGE_ROUTES[currentFile]) {
@@ -142,11 +142,6 @@ export class AppLayout {
         });
     }
 
-    /**
-     * โหลดเนื้อหาเฉพาะหน้าเมนู (<main> และ Modal) แบบ AJAX พร้อมแสดง Spin + Progress Bar
-     * @param {string} targetFile ชื่อไฟล์ HTML เช่น 'reports.html'
-     * @param {boolean} pushHistory บันทึก URL ลง History หรือไม่
-     */
     static async navigateAjaxPage(targetFile, pushHistory = true) {
         const routeInfo = AppLayout.PAGE_ROUTES[targetFile];
         if (!routeInfo) {
@@ -156,7 +151,6 @@ export class AppLayout {
 
         UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
         try {
-            // ดึงไฟล์ HTML ปลายทางผ่าน Fetch API
             const response = await fetch(targetFile, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(`ไม่สามารถโหลดหน้า ${targetFile} ได้`);
@@ -173,7 +167,6 @@ export class AppLayout {
                 currentMain.replaceWith(newMain);
             }
 
-            // ลบ Modal ประจำหน้าเดิมออก และนำ Modal ของหน้าใหม่มาใส่แทน (ยกเว้น Spinner และ Layout หลัก)
             document.querySelectorAll('.bma-page-modal-dynamic, body > div[id^="modal"]').forEach(el => el.remove());
             doc.querySelectorAll('body > div[id^="modal"]').forEach(modalEl => {
                 modalEl.classList.add('bma-page-modal-dynamic');
@@ -184,7 +177,6 @@ export class AppLayout {
                 window.history.pushState({ file: targetFile }, '', targetFile);
             }
 
-            // โหลดและสร้างอินสแตนซ์ของ Controller ประจำหน้านั้นใหม่
             const module = await import(routeInfo.controllerPath);
             const ControllerClass = module[routeInfo.controllerClass];
             if (ControllerClass) {
@@ -199,9 +191,6 @@ export class AppLayout {
         }
     }
 
-    /**
-     * สร้างแถบเมนูด้านซ้ายมือ (เปลี่ยนชื่อ "แดชบอร์ดภาพรวม" เป็น "ภาพรวม")
-     */
     static #renderSidebar(currentUser, settings, activePage) {
         const sidebarEl = document.getElementById('bmaSidebarContainer');
         if (!sidebarEl) return;
@@ -212,7 +201,6 @@ export class AppLayout {
                    <i class="fa-solid fa-landmark"></i>
                </div>`;
 
-        // รายการเมนูหลัก (เปลี่ยนชื่อเมนูแรกเป็น "ภาพรวม" ตามข้อกำหนด)
         const menuItems = [
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', roles: ['SuperAdmin', 'Admin'] },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-invoice', label: 'รายงานการลงเวลา', roles: ['SuperAdmin', 'Admin'] },
@@ -265,7 +253,8 @@ export class AppLayout {
                         ${visibleMenus.map(item => `
                             <a href="${item.href}" data-nav-id="${item.id}" class="bma-nav-item menu-item ${activePage === item.id ? 'active' : ''}">
                                 <i class="fa-solid ${item.icon} w-5 text-center"></i>
-                                <span class="flex-1 truncate">${item.label}</span>${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
+                                <span class="flex-1 truncate">${item.label}</span>
+                                ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
                             </a>
                         `).join('')}
 
@@ -304,7 +293,7 @@ export class AppLayout {
         const isDark = document.documentElement.classList.contains('dark');
 
         topbarEl.innerHTML = `
-            <header class="sticky top-0 z-30 bma-card rounded-none border-t-0 border-x-0 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4" style="border-top: 3px solid var(--g1);">
+            <header class="sticky top-0 z-30 bma-header-bar px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
                     <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl border bma-border bma-text-main hover:bg-emerald-500/10">
                         <i class="fa-solid fa-bars-staggered text-lg" style="color: var(--bma-primary);"></i>
@@ -412,17 +401,25 @@ export class AppLayout {
         `;
     }
 
+    /**
+     * เรนเดอร์ Footer 2 บรรทัด (บรรทัดที่ 2 แสดงข้อความอธิบาย Footer ขนาดเล็กกว่าบรรทัดแรกเล็กน้อย)
+     */
     static #renderFooter(settings) {
         const footerEl = document.getElementById('bmaFooterContainer');
         if (!footerEl) return;
 
         const yearBuddhist = new Date().getFullYear() + 543;
+        const footerDesc = settings.footer_description || '';
+
         footerEl.innerHTML = `
-            <footer class="mt-10 py-5 px-4 lg:px-8 border-t bma-border text-center sm:flex sm:items-center sm:justify-between text-xs bma-text-sub mb-14 lg:mb-0">
-                <div class="font-bold bma-text-main">
-                    ระบบลงเวลาปฏิบัติราชการออนไลน์ • <span>${settings.organization_name}</span>
+            <footer class="mt-10 py-4 px-4 lg:px-8 bma-footer-bar text-center sm:flex sm:items-center sm:justify-between mb-14 lg:mb-0">
+                <div class="text-left">
+                    <div class="text-xs font-bold bma-text-main">
+                        ระบบลงเวลาปฏิบัติราชการออนไลน์ • <span>${settings.organization_name}</span>
+                    </div>
+                    ${footerDesc ? `<div class="text-[11px] bma-text-muted mt-0.5">${footerDesc}</div>` : ''}
                 </div>
-                <div class="mt-1 sm:mt-0">
+                <div class="text-xs bma-text-sub mt-1.5 sm:mt-0">
                     สังกัด: <span class="font-bold" style="color: var(--bma-primary);">${settings.bureau_name}</span> © พ.ศ. ${yearBuddhist}
                 </div>
             </footer>

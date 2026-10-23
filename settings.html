@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ตั้งค่าระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
-    <!-- Tailwind CSS CDN พร้อมบังคับ darkMode: 'class' -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,17 +24,17 @@
         <!-- Topbar -->
         <div id="bmaTopbarContainer"></div>
 
-        <!-- เนื้อหาหลักหน้าตั้งค่าระบบ (รองรับการโหลดแบบ AJAX SPA) -->
+        <!-- เนื้อหาหลักหน้าตั้งค่าระบบ -->
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
-            <!-- ส่วนที่ 1: ข้อมูลหน่วยงาน โลโก้ และการควบคุมฟังก์ชันกล้อง / GPS / รูปแบบการลงเวลา -->
+            <!-- ส่วนที่ 1: ข้อมูลหน่วยงาน, โลโก้, ข้อความอธิบาย Footer, Google Drive และการควบคุมฟังก์ชันลงเวลา -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- การ์ดตั้งค่าข้อมูลหน่วยงานและโลโก้ -->
+                <!-- คอลัมน์ซ้าย: ข้อมูลหน่วยงาน, ข้อความอธิบาย Footer, และตั้งค่า Google Drive พร้อมปุ่มตรวจสอบลิงก์ -->
                 <div class="lg:col-span-6 bma-card p-6 space-y-4" style="border-top: 4px solid var(--g1);">
                     <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2 border-b bma-border pb-3">
                         <i class="fa-solid fa-building-columns" style="color: var(--bma-primary);"></i>
-                        <span>ข้อมูลหน่วยงานและตราสัญลักษณ์</span>
+                        <span>ข้อมูลหน่วยงาน, Footer และการจัดเก็บรูปถ่าย Google Drive</span>
                     </h2>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -49,8 +48,16 @@
                         </div>
                     </div>
 
-                    <!-- อัปโหลดโลโก้หน่วยงาน พร้อม Preview (ไม่บังคับ) -->
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2">
+                    <!-- ตั้งค่าข้อความ Footer "ข้อความอธิบาย" (แสดงบรรทัดต่อไปขนาดเล็กกว่าบรรทัดบนเล็กน้อย) -->
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">
+                            <i class="fa-solid fa-quote-left mr-1" style="color: var(--bma-primary);"></i>ข้อความอธิบาย Footer (บรรทัดที่ 2)
+                        </label>
+                        <input type="text" id="setFooterDescInput" class="bma-input text-xs" placeholder="เช่น ระบบบันทึกเวลาปฏิบัติราชการอิเล็กทรอนิกส์ เพื่อการบริหารงานบุคคลที่มีประสิทธิภาพ">
+                    </div>
+
+                    <!-- อัปโหลดโลโก้หน่วยงาน พร้อม Preview -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-1">
                         <div id="setLogoPreviewBox" class="w-20 h-20 rounded-2xl border-2 border-[#007B3E]/40 flex items-center justify-center bg-white p-2 shrink-0 shadow-sm">
                             <i class="fa-solid fa-image text-2xl text-slate-400"></i>
                         </div>
@@ -63,9 +70,36 @@
                             <input type="text" id="setLogoUrlInput" class="bma-input text-xs" placeholder="หรือวางลิงก์ URL รูปโลโก้ที่นี่...">
                         </div>
                     </div>
+
+                    <!-- ตั้งค่าจัดเก็บไฟล์รูปถ่ายใน Google Drive พร้อมปุ่มตรวจสอบลิงก์ก่อนบันทึก -->
+                    <div class="p-4 rounded-xl bma-info-box space-y-3 border-t bma-border">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-xs font-extrabold bma-text-main flex items-center gap-1.5">
+                                <i class="fa-brands fa-google-drive text-base" style="color: var(--bma-primary);"></i>
+                                <span>ตั้งค่าจัดเก็บไฟล์รูปถ่ายใน Google Drive (บีบอัดภาพคมชัด เก็บเฉพาะ URL ใน Supabase)</span>
+                            </div>
+                            <span id="gdriveVerifyBadge" class="bma-badge bma-badge-warning text-[11px]">รอตรวจสอบลิงก์</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold bma-text-main mb-1">ลิงก์ Google Drive / Google Apps Script Web App URL</label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <input type="text" id="setGDriveScriptUrl" class="bma-input text-xs flex-1" placeholder="วางลิงก์ https://script.google.com/.../exec หรือลิงก์โฟลเดอร์ Google Drive">
+                                <button type="button" id="btnVerifyGoogleDriveLink" class="btn-bma-soft text-xs py-2 px-3.5 whitespace-nowrap">
+                                    <i class="fa-solid fa-plug-circle-check"></i>
+                                    <span>ตรวจสอบลิงก์ก่อนบันทึก</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold bma-text-sub mb-1">รหัสโฟลเดอร์ Google Drive (Folder ID - ไม่บังคับ หากใช้โฟลเดอร์อัตโนมัติ)</label>
+                            <input type="text" id="setGDriveFolderId" class="bma-input text-xs font-mono" placeholder="ระบุ Folder ID หรือลิงก์โฟลเดอร์ย่อยที่ต้องการเก็บรูป">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- การ์ดควบคุมฟังก์ชันการลงเวลาปฏิบัติราชการ (กล้อง, GPS, และรูปแบบปกติ/รูปแบบพิเศษกดครั้งเดียว) -->
+                <!-- คอลัมน์ขวา: ควบคุมฟังก์ชันการลงเวลาปฏิบัติราชการ -->
                 <div class="lg:col-span-6 bma-card p-6 flex flex-col justify-between space-y-4" style="border-top: 4px solid var(--g1);">
                     <div class="space-y-3.5">
                         <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2 border-b bma-border pb-3">
@@ -73,29 +107,26 @@
                             <span>ควบคุมฟังก์ชันและรูปแบบการลงเวลาปฏิบัติงาน</span>
                         </h2>
 
-                        <!-- 1. สวิตช์เปิด/ปิด บังคับถ่ายรูปจากกล้อง -->
                         <label class="flex items-start justify-between gap-4 p-3.5 rounded-xl border bma-border cursor-pointer hover:border-emerald-500 transition">
                             <div>
                                 <div class="font-bold text-sm bma-text-main">
-                                    <i class="fa-solid fa-camera text-emerald-600 mr-1.5"></i>บังคับถ่ายรูปจากกล้องก่อนลงเวลา
+                                    <i class="fa-solid fa-camera text-emerald-600 mr-1.5"></i>บังคับถ่ายรูปจากกล้องแนวตั้ง (3:4) ก่อนลงเวลา
                                 </div>
                                 <p class="text-xs bma-text-sub mt-0.5">หากเปิดใช้งาน ผู้ใช้ต้องเปิดกล้องและกดถ่ายภาพก่อนจึงจะสามารถบันทึกลงเวลาได้</p>
                             </div>
                             <input type="checkbox" id="toggleRequirePhoto" class="w-5 h-5 accent-emerald-600 mt-1 shrink-0">
                         </label>
 
-                        <!-- 2. สวิตช์เปิด/ปิด บังคับระบุตำแหน่งสถานที่จาก GPS -->
                         <label class="flex items-start justify-between gap-4 p-3.5 rounded-xl border bma-border cursor-pointer hover:border-emerald-500 transition">
                             <div>
                                 <div class="font-bold text-sm bma-text-main">
-                                    <i class="fa-solid fa-location-dot text-sky-600 mr-1.5"></i>บังคับระบุตำแหน่งสถานที่จาก GPS
+                                    <i class="fa-solid fa-location-dot text-sky-600 mr-1.5"></i>บังคับระบุตำแหน่งสถานที่จาก GPS &amp; Google Map
                                 </div>
-                                <p class="text-xs bma-text-sub mt-0.5">เก็บข้อมูล 2 ส่วนคือ พิกัด (Lat, Lng) และชื่อสถานที่ตามปรากฏในแผนที่</p>
+                                <p class="text-xs bma-text-sub mt-0.5">เก็บข้อมูลพิกัดและชื่อสถานที่/สถานที่ใกล้เคียง พร้อมแสดงบนแผนที่จริง</p>
                             </div>
                             <input type="checkbox" id="toggleRequireGps" class="w-5 h-5 accent-emerald-600 mt-1 shrink-0">
                         </label>
 
-                        <!-- 3. เปิด/ปิดฟังก์ชัน การบันทึกการลงเวลาปฏิบัติงาน [รูปแบบปกติ / รูปแบบพิเศษ] -->
                         <div class="p-4 rounded-xl bma-info-box space-y-3">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
@@ -104,12 +135,12 @@
                                         <span>การบันทึกการลงเวลาปฏิบัติงาน (ปกติ / พิเศษครั้งเดียว)</span>
                                     </div>
                                     <p class="text-xs bma-text-sub mt-0.5">
-                                        เลือกกำหนดรูปแบบการบันทึกเวลาของผู้ใช้งานในระบบ
+                                        กำหนดรูปแบบการบันทึกเวลาสำหรับการปฏิบัติงานปกติ (ส่วนกะนอกเวลาราชการจะใช้รูปแบบพิเศษให้อัตโนมัติ)
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
                                     <span id="checkinModeStatusBadge" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
-                                    <input type="checkbox" id="toggleSingleClickCheckin" class="w-5 h-5 accent-emerald-600 cursor-pointer" title="เปิดเพื่อใช้รูปแบบพิเศษ (กดครั้งเดียวลงทั้งเวลาเข้าและออก)">
+                                    <input type="checkbox" id="toggleSingleClickCheckin" class="w-5 h-5 accent-emerald-600 cursor-pointer">
                                 </div>
                             </div>
 
@@ -140,10 +171,139 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 2: จัดการคำนำหน้าชื่อ และ หมายเหตุ (พร้อมปุ่มลูกศร ขึ้น/ลง เรียงลำดับ Dropdown) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- ส่วนที่ 2 (ใหม่): ตั้งค่าเกณฑ์เวลาเข้า-เลิกงานมาตรฐาน, ระยะเวลามาสาย (นาที), และการตั้งค่าสีรายงานทั้ง 5 สถานะ -->
+            <div class="bma-card p-6 space-y-5" style="border-top: 4px solid var(--g1);">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
+                    <div>
+                        <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-palette" style="color: var(--bma-primary);"></i>
+                            <span>ตั้งค่าเกณฑ์เวลามาตรฐาน (24 ชม.) และการตั้งค่าสีสถานะรายงาน</span>
+                        </h2>
+                        <p class="text-xs bma-text-sub mt-0.5">
+                            กำหนดเวลาเข้างาน เวลาเลิกงาน ระยะเวลาอนุโลมสาย (นาที) และสีประจำสถานะทางการที่จะนำไปแสดงในหน้ารายงานและตารางทั่วทั้งระบบ
+                        </p>
+                    </div>
+                    <button type="button" id="btnSaveStatusAndColors" class="btn-bma-primary text-xs py-2.5 px-4 shadow">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>บันทึกเกณฑ์เวลาและสีรายงาน</span>
+                    </button>
+                </div>
 
-                <!-- คำนำหน้าชื่อ -->
+                <!-- กรอบตั้งค่าเกณฑ์เวลาเข้างาน เวลาเลิกงาน และนาทีมาสาย -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl bma-info-box">
+                    <div>
+                        <label class="block text-xs font-extrabold bma-text-main mb-1">
+                            <i class="fa-regular fa-clock mr-1 text-emerald-600"></i>เวลาเข้างานมาตรฐาน (24 ชม.) *
+                        </label>
+                        <input type="text" id="setStdCheckIn" class="bma-input font-mono font-bold text-center" value="08:30" placeholder="เช่น 08:30">
+                        <p class="text-[11px] bma-text-sub mt-1">ลงเวลาเข้างานไม่เกินเวลานี้ = <b>ปฏิบัติงานปกติ</b></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-extrabold bma-text-main mb-1">
+                            <i class="fa-solid fa-hourglass-half mr-1 text-amber-600"></i>ระยะเวลามาสายได้ไม่เกิน (นาที) *
+                        </label>
+                        <input type="number" id="setLateThresholdMin" min="0" max="240" class="bma-input font-mono font-bold text-center" value="30">
+                        <p class="text-[11px] bma-text-sub mt-1">สายไม่เกินเกณฑ์นี้ = <b>มาสาย</b> / เกินกว่านี้ = <b>ขาดราชการ</b></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-extrabold bma-text-main mb-1">
+                            <i class="fa-solid fa-right-from-bracket mr-1 text-sky-600"></i>เวลาเลิกงานมาตรฐาน (24 ชม.) *
+                        </label>
+                        <input type="text" id="setStdCheckOut" class="bma-input font-mono font-bold text-center" value="16:30" placeholder="เช่น 16:30">
+                        <p class="text-[11px] bma-text-sub mt-1">หากลงชื่อออกก่อนเวลาเลิกงาน จะถูกปรับเป็น <b>ขาดราชการ</b></p>
+                    </div>
+                </div>
+
+                <!-- กรอบตั้งค่าสีรายงานและสีป้ายสถานะทางการทั้ง 5 สถานะ -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">1. ปฏิบัติงานปกติ</span>
+                            <input type="color" id="setColorNormal" value="#007B3E" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeNormal" class="bma-badge text-white justify-center" style="background-color: #007B3E;">ปฏิบัติงานปกติ</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">2. มาสาย</span>
+                            <input type="color" id="setColorLate" value="#EAB308" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeLate" class="bma-badge text-white justify-center" style="background-color: #EAB308;">มาสาย</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">3. ขาดราชการ</span>
+                            <input type="color" id="setColorAbsentDuty" value="#EA580C" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeAbsentDuty" class="bma-badge text-white justify-center" style="background-color: #EA580C;">ขาดราชการ</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">4. ไม่ลงเวลา</span>
+                            <input type="color" id="setColorNoCheckin" value="#E11D48" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeNoCheckin" class="bma-badge text-white justify-center" style="background-color: #E11D48;">ไม่ลงเวลา</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">5. นอกเวลาราชการ</span>
+                            <input type="color" id="setColorOvertime" value="#2563EB" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeOvertime" class="bma-badge text-white justify-center" style="background-color: #2563EB;">ปฏิบัติงานนอกเวลาราชการ</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border bma-border flex flex-col justify-between gap-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold bma-text-main">6. สีหัวตารางรายงาน</span>
+                            <input type="color" id="setColorGroupHeader" value="#007B3E" class="w-8 h-8 rounded cursor-pointer border-0">
+                        </div>
+                        <span id="previewBadgeHeader" class="bma-badge text-white justify-center" style="background-color: #007B3E;">หัวตาราง / กลุ่มสังกัด</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ส่วนที่ 3: จัดการช่วงเวลาปฏิบัติราชการ (รองรับการติ๊ก "การปฏิบัติงานนอกเวลาราชการ" และเวลาข้ามวัน 22:00 - 01:00 น.) -->
+            <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-3);">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
+                    <div>
+                        <h3 class="font-extrabold text-base bma-text-main">
+                            <i class="fa-solid fa-clock mr-1.5" style="color: var(--bma-sec-3);"></i>จัดการช่วงเวลาปฏิบัติราชการ (รองรับกะนอกเวลาราชการ &amp; กะข้ามวัน)
+                        </h3>
+                        <p class="text-xs bma-text-sub">
+                            สามารถติ๊กกำหนดให้เป็น "การปฏิบัติงานนอกเวลาราชการ" (บันทึกเวลารูปแบบพิเศษอัตโนมัติ) และตั้งเวลาข้ามวัน เช่น 22:00 - 01:00 น. ของวันถัดไปได้
+                        </p>
+                    </div>
+                    <button type="button" id="btnAddShift" class="btn-bma-primary text-xs py-2 px-3.5">
+                        <i class="fa-solid fa-plus"></i> เพิ่มช่วงเวลาปฏิบัติงาน
+                    </button>
+                </div>
+
+                <div class="bma-table-container">
+                    <table class="bma-table text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th class="w-28 text-center">เรียงลำดับ</th>
+                                <th>ชื่อช่วงเวลาปฏิบัติราชการ</th>
+                                <th class="text-center">เวลาเริ่มงาน (24 ชม.)</th>
+                                <th class="text-center">เวลาเลิกงาน (24 ชม.)</th>
+                                <th class="text-center">ประเภท / เงื่อนไข</th>
+                                <th class="w-32 text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shiftsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ส่วนที่ 4: จัดการคำนำหน้าชื่อ และ หมายเหตุ -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--g1);">
                     <div class="flex items-center justify-between border-b bma-border pb-3">
                         <div>
@@ -159,7 +319,6 @@
                     <div id="prefixListContainer" class="space-y-2"></div>
                 </div>
 
-                <!-- หมายเหตุการขอลงเวลากรณีพิเศษ -->
                 <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-6);">
                     <div class="flex items-center justify-between border-b bma-border pb-3">
                         <div>
@@ -176,39 +335,7 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 3: จัดการช่วงเวลาปฏิบัติราชการ (พร้อมปุ่มลูกศร ขึ้น/ลง เรียงลำดับ) -->
-            <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-3);">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b bma-border pb-3">
-                    <div>
-                        <h3 class="font-extrabold text-base bma-text-main">
-                            <i class="fa-solid fa-clock mr-1.5" style="color: var(--bma-sec-3);"></i>จัดการช่วงเวลาปฏิบัติราชการ
-                        </h3>
-                        <p class="text-xs bma-text-sub">กดปุ่มลูกศร ขึ้น/ลง เพื่อเรียงลำดับช่วงเวลาใน Dropdown (รองรับตัวเลือก "อื่นๆ" ให้ผู้ใช้กรอกเวลาเองได้)</p>
-                    </div>
-                    <button type="button" id="btnAddShift" class="btn-bma-primary text-xs py-2 px-3.5">
-                        <i class="fa-solid fa-plus"></i> เพิ่มช่วงเวลา
-                    </button>
-                </div>
-
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th class="w-28 text-center">เรียงลำดับ</th>
-                                <th>ชื่อช่วงเวลา</th>
-                                <th>เวลาเข้างาน</th>
-                                <th>เวลาออกงาน</th>
-                                <th>รูปแบบ</th>
-                                <th class="w-32 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="shiftsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ส่วนที่ 4: จัดการข้อมูลตำแหน่ง (ประเภทตำแหน่ง > ตำแหน่ง > ระดับ) แบบแยกส่วนเชื่อมโยงแม่-ลูก และเพิ่มหลายแถวพร้อมกัน -->
+            <!-- ส่วนที่ 5: จัดการข้อมูลตำแหน่ง (ประเภทตำแหน่ง > ตำแหน่ง > ระดับ) -->
             <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--bma-sec-10);">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
@@ -220,7 +347,6 @@
                         </p>
                     </div>
 
-                    <!-- ปุ่มเพิ่มแยกส่วน 3 ระดับเชื่อมโยงกัน -->
                     <div class="flex flex-wrap items-center gap-2">
                         <button type="button" id="btnAddPosStep1Type" class="btn-bma-soft text-xs py-2 px-3">
                             <i class="fa-solid fa-layer-group"></i>
@@ -254,7 +380,7 @@
                 </div>
             </div>
 
-            <!-- ส่วนที่ 5: จัดการโครงสร้างสังกัด (หน่วยงาน > สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน) แบบแยกส่วนเชื่อมโยงแม่-ลูก และเพิ่มหลายแถวพร้อมกัน -->
+            <!-- ส่วนที่ 6: จัดการโครงสร้างสังกัด (หน่วยงาน > สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน) -->
             <div class="bma-card p-6 space-y-4" style="border-top: 3px solid var(--g1);">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
@@ -266,7 +392,6 @@
                         </p>
                     </div>
 
-                    <!-- ปุ่มเพิ่มแยกส่วน 4 ระดับเชื่อมโยงกัน -->
                     <div class="flex flex-wrap items-center gap-2">
                         <button type="button" id="btnAddAffStep1Org" class="btn-bma-soft text-xs py-2 px-3">
                             <i class="fa-solid fa-landmark"></i>
@@ -312,7 +437,7 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal กลางสำหรับเพิ่ม/แก้ไข ข้อมูลแบบแยกส่วน เชื่อมโยงแม่-ลูก และรองรับการกด "+ เพิ่มแถว" หลายรายการพร้อมกัน -->
+    <!-- Modal กลางสำหรับเพิ่ม/แก้ไข ข้อมูลในหน้าตั้งค่าระบบ -->
     <div id="modalSettingsItem" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
         <div class="w-full max-w-lg bma-card bma-modal-surface p-6 shadow-2xl my-8">
             <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">

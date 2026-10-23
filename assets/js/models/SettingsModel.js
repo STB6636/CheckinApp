@@ -1,10 +1,11 @@
 /**
  * @file assets/js/models/SettingsModel.js
- * @description คลาสจัดการข้อมูลตั้งค่าระบบ รักษาลำดับการแสดงผล Dropdown ตามการเรียงลำดับ (ขึ้น/ลง) และเชื่อมโยงข้อมูลแม่-ลูก
+ * @description คลาสจัดการข้อมูลตั้งค่าระบบ (Google Drive, เกณฑ์เวลามาตรฐาน/นาทีสาย, สีสถานะ 5 ประเภท, กะนอกเวลา/ข้ามวัน, Footer 2 บรรทัด)
  */
 
 import { Config } from '../core/Config.js';
 import { DatabaseService } from '../core/DatabaseService.js';
+import { UIHelpers } from '../core/UIHelpers.js';
 
 export class SettingsModel {
     /**
@@ -36,16 +37,49 @@ export class SettingsModel {
             return structuredClone(Config.DEFAULT_SETTINGS);
         }
 
+        const mergedColors = {
+            ...Config.DEFAULT_SETTINGS.category_colors,
+            ...(data.category_colors || {})
+        };
+
+        const rawShifts = Array.isArray(data.work_shifts) && data.work_shifts.length > 0
+            ? data.work_shifts
+            : Config.DEFAULT_SETTINGS.work_shifts;
+
+        // จัดรูปแบบเวลาในกะการทำงานให้เป็น 24 ชม. และตรวจสอบกะข้ามวันอัตโนมัติ
+        const normalizedShifts = rawShifts.map(s => {
+            const checkIn = UIHelpers.formatTime24(s.check_in || '08:30');
+            const checkOut = UIHelpers.formatTime24(s.check_out || '16:30');
+            const inMin = UIHelpers.timeToMinutes(checkIn);
+            const outMin = UIHelpers.timeToMinutes(checkOut);
+            const isOvernight = Boolean(s.is_overnight || (inMin > 0 && outMin >= 0 && outMin < inMin));
+
+            return {
+                name: s.name || 'เวลาราชการปกติ (08:30 - 16:30)',
+                check_in: checkIn,
+                check_out: checkOut,
+                is_custom: Boolean(s.is_custom),
+                is_overtime: Boolean(s.is_overtime),
+                is_overnight: isOvernight
+            };
+        });
+
         const merged = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
+            standard_check_in: UIHelpers.formatTime24(data.standard_check_in || Config.DEFAULT_SETTINGS.standard_check_in),
+            standard_check_out: UIHelpers.formatTime24(data.standard_check_out || Config.DEFAULT_SETTINGS.standard_check_out),
+            late_threshold_minutes: Number(data.late_threshold_minutes ?? Config.DEFAULT_SETTINGS.late_threshold_minutes),
+            google_drive_script_url: String(data.google_drive_script_url ?? ''),
+            google_drive_folder_id: String(data.google_drive_folder_id ?? ''),
+            footer_description: String(data.footer_description ?? Config.DEFAULT_SETTINGS.footer_description),
             single_click_checkin: Boolean(data.single_click_checkin ?? Config.DEFAULT_SETTINGS.single_click_checkin),
             prefixes: Array.isArray(data.prefixes) ? data.prefixes : Config.DEFAULT_SETTINGS.prefixes,
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
             remarks: Array.isArray(data.remarks) ? data.remarks : Config.DEFAULT_SETTINGS.remarks,
-            work_shifts: Array.isArray(data.work_shifts) ? data.work_shifts : Config.DEFAULT_SETTINGS.work_shifts,
-            category_colors: data.category_colors || Config.DEFAULT_SETTINGS.category_colors
+            work_shifts: normalizedShifts,
+            category_colors: mergedColors
         };
 
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(merged));
@@ -60,9 +94,25 @@ export class SettingsModel {
     static async updateSettings(payload) {
         const db = DatabaseService.getInstance().client;
         const updateData = {
-            ...payload,
             id: 1,
+            organization_name: payload.organization_name || 'กรุงเทพมหานคร',
+            bureau_name: payload.bureau_name || 'สำนักเทศกิจ',
+            logo_url: payload.logo_url || '',
+            footer_description: payload.footer_description ?? '',
+            require_photo: Boolean(payload.require_photo),
+            require_gps: Boolean(payload.require_gps),
             single_click_checkin: Boolean(payload.single_click_checkin),
+            standard_check_in: UIHelpers.formatTime24(payload.standard_check_in || '08:30'),
+            standard_check_out: UIHelpers.formatTime24(payload.standard_check_out || '16:30'),
+            late_threshold_minutes: Number(payload.late_threshold_minutes ?? 30),
+            google_drive_script_url: String(payload.google_drive_script_url || '').trim(),
+            google_drive_folder_id: String(payload.google_drive_folder_id || '').trim(),
+            prefixes: payload.prefixes || [],
+            positions: payload.positions || [],
+            affiliations: payload.affiliations || [],
+            remarks: payload.remarks || [],
+            work_shifts: payload.work_shifts || [],
+            category_colors: payload.category_colors || Config.DEFAULT_SETTINGS.category_colors,
             updated_at: new Date().toISOString()
         };
 
@@ -92,7 +142,7 @@ export class SettingsModel {
      * @param {Array} arr อาร์เรย์ต้นฉบับ
      * @param {number} fromIndex ลำดับเดิม
      * @param {'up'|'down'} direction ทิศทางการเลื่อน
-     * @returns {boolean} คืนค่า true หากมีการสลับตำแหน่งสำเร็จ
+     * @returns {boolean}
      */
     static moveItemInArray(arr, fromIndex, direction) {
         if (!Array.isArray(arr)) return false;
@@ -105,11 +155,6 @@ export class SettingsModel {
         return true;
     }
 
-    /**
-     * แปลงไฟล์รูปภาพโลโก้เป็น Base64 Data URL
-     * @param {File} file
-     * @returns {Promise<string>}
-     */
     static fileToDataUrl(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -119,22 +164,11 @@ export class SettingsModel {
         });
     }
 
-    /**
-     * ดึงรายการประเภทตำแหน่งแบบไม่ซ้ำ โดยรักษาลำดับตามที่เรียงไว้ในหน้าตั้งค่าระบบ
-     * @param {Object} settings
-     * @returns {Array<string>}
-     */
     static getUniquePositionTypes(settings) {
         const positions = settings?.positions || [];
         return [...new Set(positions.map(p => p.type).filter(Boolean))];
     }
 
-    /**
-     * ดึงรายการชื่อสายงาน/ตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งแม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @param {string} filterType
-     * @returns {Array<string>}
-     */
     static getUniquePositionTitles(settings, filterType = '') {
         const positions = settings?.positions || [];
         const filtered = filterType
@@ -143,13 +177,6 @@ export class SettingsModel {
         return [...new Set(filtered.map(p => p.title).filter(Boolean))];
     }
 
-    /**
-     * ดึงรายการระดับตำแหน่งแบบไม่ซ้ำ (กรองตามประเภทตำแหน่งและชื่อตำแหน่งแม่ รักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @param {string} filterType
-     * @param {string} filterTitle
-     * @returns {Array<string>}
-     */
     static getUniquePositionLevels(settings, filterType = '', filterTitle = '') {
         let positions = settings?.positions || [];
         if (filterType) {
@@ -161,23 +188,12 @@ export class SettingsModel {
         return [...new Set(positions.map(p => p.level).filter(Boolean))];
     }
 
-    /**
-     * ดึงรายการชื่อหน่วยงานหลักแบบไม่ซ้ำ (รักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @returns {Array<string>}
-     */
     static getUniqueOrganizations(settings) {
         const affiliations = settings?.affiliations || [];
         const list = [...new Set(affiliations.map(a => a.organization).filter(Boolean))];
         return list.length > 0 ? list : [settings?.organization_name || 'กรุงเทพมหานคร'];
     }
 
-    /**
-     * ดึงรายการ สำนักงาน/กอง แบบไม่ซ้ำ (กรองตามหน่วยงานแม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @param {string} filterOrg
-     * @returns {Array<string>}
-     */
     static getUniqueBureaus(settings, filterOrg = '') {
         let affiliations = settings?.affiliations || [];
         if (filterOrg) {
@@ -187,13 +203,6 @@ export class SettingsModel {
         return list.length > 0 ? list : [settings?.bureau_name || 'สำนักเทศกิจ'];
     }
 
-    /**
-     * ดึงรายการ ส่วน/ฝ่าย แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง แม่ และรักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @param {string} filterBureau
-     * @param {string} filterOrg
-     * @returns {Array<string>}
-     */
     static getUniqueDivisions(settings, filterBureau = '', filterOrg = '') {
         let affiliations = settings?.affiliations || [];
         if (filterOrg) {
@@ -205,14 +214,6 @@ export class SettingsModel {
         return [...new Set(affiliations.map(a => a.division).filter(Boolean))];
     }
 
-    /**
-     * ดึงรายการ กลุ่มงาน แบบไม่ซ้ำ (กรองตาม สำนักงาน/กอง และ ส่วน/ฝ่าย แม่ รักษาลำดับตามหน้าตั้งค่าระบบ)
-     * @param {Object} settings
-     * @param {string} filterBureau
-     * @param {string} filterDivision
-     * @param {string} filterOrg
-     * @returns {Array<string>}
-     */
     static getUniqueGroups(settings, filterBureau = '', filterDivision = '', filterOrg = '') {
         let affiliations = settings?.affiliations || [];
         if (filterOrg) {

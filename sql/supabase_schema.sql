@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS public.system_settings (
     logo_url TEXT DEFAULT '',
     require_photo BOOLEAN NOT NULL DEFAULT true,
     require_gps BOOLEAN NOT NULL DEFAULT true,
-    single_click_checkin BOOLEAN NOT NULL DEFAULT false,
     prefixes JSONB NOT NULL DEFAULT '["นาย", "นาง", "นางสาว", "ว่าที่ร้อยตรี", "ว่าที่ร้อยตรีหญิง"]'::jsonb,
     positions JSONB NOT NULL DEFAULT '[
         {"type": "ประเภททั่วไป", "title": "เจ้าพนักงานเทศกิจ", "level": "ปฏิบัติงาน"},

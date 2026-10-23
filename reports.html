@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานการลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
-    <!-- Tailwind CSS CDN พร้อมบังคับ darkMode: 'class' -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,21 +25,25 @@
         <!-- Topbar -->
         <div id="bmaTopbarContainer"></div>
 
-        <!-- เนื้อหาหลักของหน้ารายงานการลงเวลา (ลบการ์ดสถิติและแผนภูมิออกทั้งหมดตามข้อกำหนด) -->
+        <!-- เนื้อหาหลักของหน้ารายงานการลงเวลา -->
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
             <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีเหมือนโทรศัพท์ iPhone -->
             <div id="reportMobileShortcutContainer"></div>
 
-            <!-- ส่วนควบคุมตัวกรองวันที่, มุมมอง Group By 2 มุมมอง, Color Picker และปุ่มส่งออก PDF / Excel -->
-            <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
+            <!-- การ์ดควบคุมฟิลเตอร์ข้อมูล: เลือกวันที่ 2 รูปแบบ, เลือกมุมมอง Group By, และเลือก TAG สถานะ -->
+            <div class="bma-card p-5 space-y-5" style="border-top: 4px solid var(--g1);">
+
+                <!-- ส่วนหัวและปุ่มคำสั่งหลัก -->
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
                         <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
                             <i class="fa-solid fa-file-invoice" style="color: var(--bma-primary);"></i>
-                            <span>ตารางรายงานการลงเวลาปฏิบัติราชการประจำวัน</span>
+                            <span>รายงานการลงเวลาปฏิบัติราชการ</span>
                         </h2>
-                        <p class="text-xs bma-text-sub mt-0.5">เลือกวันที่และมุมมองจัดกลุ่ม (Group By 2 มุมมอง) พร้อมพิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออก Excel UTF-8</p>
+                        <p id="reportDateDisplaySubtitle" class="text-xs font-bold mt-1" style="color: var(--bma-primary);">
+                            ประจำวันที่ 15 มกราคม 2569
+                        </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -66,62 +69,81 @@
                     </div>
                 </div>
 
-                <!-- แถบเลือกวันที่, เลือกมุมมอง Group By 2 มุมมอง และตั้งค่าสี Color Picker -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-bold bma-text-sub mb-1">เลือกวันที่ปฏิบัติราชการ:</label>
-                        <input type="date" id="reportDateInput" class="bma-input py-1.5 text-sm font-semibold">
+                <!-- แถวที่ 1: ระบบเลือกวันที่ 2 รูปแบบ (วันเดียว / ช่วงวันที่) และมุมมอง Group By -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+
+                    <!-- รูปแบบการเลือกวันที่ -->
+                    <div class="lg:col-span-3">
+                        <label class="block text-xs font-bold bma-text-main mb-1.5">
+                            <i class="fa-regular fa-calendar mr-1" style="color: var(--bma-primary);"></i>รูปแบบการเลือกวันที่:
+                        </label>
+                        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bma-info-box">
+                            <button type="button" id="btnModeSingleDate" class="py-1.5 px-2.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer">
+                                เลือกวันเดียว
+                            </button>
+                            <button type="button" id="btnModeRangeDate" class="py-1.5 px-2.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer">
+                                เลือกเป็นช่วง
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="md:col-span-5">
+                    <!-- ช่องเลือกวันที่ (สลับตามโหมด วันเดียว / ช่วงวันที่) -->
+                    <div class="lg:col-span-5">
+                        <!-- โหมดที่ 1: เลือกวันที่ (วันเดียว) -->
+                        <div id="singleDatePickerBox">
+                            <label class="block text-xs font-bold bma-text-sub mb-1">เลือกวันที่ปฏิบัติราชการ:</label>
+                            <input type="date" id="reportSingleDateInput" class="bma-input py-2 text-sm font-semibold">
+                        </div>
+
+                        <!-- โหมดที่ 2: เลือกวันที่เป็นช่วง (ตั้งแต่วันที่ xxx ถึงวันที่ xxx) -->
+                        <div id="rangeDatePickerBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-bold bma-text-sub mb-1">ตั้งแต่วันที่:</label>
+                                <input type="date" id="reportStartDateInput" class="bma-input py-2 text-sm font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold bma-text-sub mb-1">ถึงวันที่:</label>
+                                <input type="date" id="reportEndDateInput" class="bma-input py-2 text-sm font-semibold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- มุมมองการจัดกลุ่มตาราง (Group By 2 มุมมอง) -->
+                    <div class="lg:col-span-4">
                         <label class="block text-xs font-bold bma-text-sub mb-1">มุมมองการจัดกลุ่มตาราง (Group By):</label>
                         <select id="selectReportGroupBy" class="bma-select py-2 text-xs font-semibold">
                             <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
                             <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
                         </select>
                     </div>
+                </div>
 
-                    <div class="md:col-span-4 flex items-center justify-end gap-3 pt-4 text-xs flex-wrap">
-                        <span class="font-bold bma-text-sub">ตั้งค่าสีรายงาน:</span>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
-                            <input type="color" id="repColorHeader" value="#007B3E" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>หัวตาราง</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
-                            <input type="color" id="repColorNormal" value="#007B3E" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>ปกติ</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
-                            <input type="color" id="repColorLate" value="#F59E0B" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>สาย</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer font-semibold bma-text-main">
-                            <input type="color" id="repColorAbsent" value="#E11D48" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>ขาด/ไม่ลง</span>
-                        </label>
+                <!-- แถวที่ 2: ระบบกรองค่า "สถานะ" แบบเลือก TAG ได้หลายค่าพร้อมกัน (แยกตารางตาม Tag ที่เลือก) -->
+                <div class="p-4 rounded-xl bma-info-box space-y-2.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="text-xs font-extrabold bma-text-main flex items-center gap-1.5">
+                            <i class="fa-solid fa-tags" style="color: var(--bma-primary);"></i>
+                            <span>กรองตามสถานะ (คลิกเลือก TAG ได้หลายค่าพร้อมกัน — ระบบจะแสดงแยกตารางตาม TAG ที่เลือก):</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btnSelectDefaultTags" class="text-[11px] font-bold underline cursor-pointer" style="color: var(--bma-primary);">
+                                ค่าเริ่มต้น (ปฏิบัติงานปกติ + มาสาย)
+                            </button>
+                            <span class="bma-text-muted">|</span>
+                            <button type="button" id="btnSelectAllStatusTags" class="text-[11px] font-bold underline bma-text-sub cursor-pointer">
+                                เลือกทั้งหมด (5 สถานะ)
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- ปุ่ม TAG สถานะทั้ง 5 รายการ -->
+                    <div id="statusTagsFilterContainer" class="flex flex-wrap items-center gap-2 pt-1"></div>
                 </div>
+
             </div>
 
-            <!-- ตารางแสดงการลงเวลาปฏิบัติราชการ (หัวตารางสีเขียวพาสเทล #eef7f1 ตัวอักษร #2c4a38) -->
-            <div class="bma-card p-5" style="border-top: 3px solid var(--g1);">
-                <div class="bma-table-container" id="printableReportTableWrapper">
-                    <table class="bma-table text-sm" id="reportMainTable">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th>คำนำหน้า + ชื่อ + นามสกุล</th>
-                                <th>ตำแหน่ง + ระดับ</th>
-                                <th class="text-center">เวลาเข้างาน</th>
-                                <th class="text-center">เวลาออกงาน</th>
-                                <th class="text-center">สถานะ / หมายเหตุ</th>
-                                <th class="w-32 text-center no-print">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reportTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- พื้นที่แสดงตารางแยกตาม TAG สถานะที่กดเลือก (1 Tag = 1 ตาราง, 2 Tags = 2 ตาราง, N Tags = N ตาราง) -->
+            <div id="reportTablesMasterContainer" class="space-y-6"></div>
 
         </main>
 
@@ -155,28 +177,23 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน *</label>
-                        <input type="time" id="repCheckinTime" class="bma-input text-sm" value="08:30" required>
+                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน (24 ชม.) *</label>
+                        <input type="text" id="repCheckinTime" class="bma-input text-sm font-mono text-center" value="08:30" placeholder="08:30" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาออกงาน</label>
-                        <input type="time" id="repCheckoutTime" class="bma-input text-sm" value="16:30">
+                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาเลิกงาน (24 ชม.)</label>
+                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center" value="16:30" placeholder="16:30">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold bma-text-main mb-1">สถานะ</label>
-                        <select id="repStatusSelect" class="bma-select text-sm">
-                            <option value="ปกติ">ปกติ</option>
-                            <option value="สาย">สาย</option>
-                            <option value="อนุมัติกรณีพิเศษ">อนุมัติกรณีพิเศษ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold bma-text-main mb-1">สีประจำรายการ</label>
-                        <input type="color" id="repRowColorPicker" value="#007B3E" class="w-full h-10 rounded-lg border bma-border cursor-pointer">
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">สถานะทางการ *</label>
+                    <select id="repStatusSelect" class="bma-select text-sm font-semibold">
+                        <option value="ปฏิบัติงานปกติ">ปฏิบัติงานปกติ</option>
+                        <option value="มาสาย">มาสาย</option>
+                        <option value="ขาดราชการ">ขาดราชการ</option>
+                        <option value="ปฏิบัติงานนอกเวลาราชการ">ปฏิบัติงานนอกเวลาราชการ</option>
+                    </select>
                 </div>
 
                 <div>

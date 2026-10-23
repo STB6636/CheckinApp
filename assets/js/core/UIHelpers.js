@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, SweetAlert2, Loading Spin + Progress Bar, Skeleton, ตรวจเลขบัตร 13 หลัก, Excel และ PDF
+ * @description คลาสจัดการ UI, วันที่ไทย (15 ม.ค. 69 / 15 มกราคม 2569), เวลา 24 ชม., Toast Popup, บีบอัดรูป 3:4 & Google Drive
  */
 
 import { Config } from './Config.js';
@@ -9,8 +9,18 @@ export class UIHelpers {
     static #progressTimer = null;
     static #currentProgress = 0;
 
+    static THAI_MONTHS_SHORT = [
+        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+    ];
+
+    static THAI_MONTHS_FULL = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
     /**
-     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode) จาก LocalStorage และล็อก Tailwind darkMode: 'class'
+     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode)
      */
     static initTheme() {
         if (window.tailwind) {
@@ -30,8 +40,7 @@ export class UIHelpers {
     }
 
     /**
-     * สลับโหมดสี Light <-> Dark (Eye-Care Mode)
-     * @returns {string} โหมดสีปัจจุบัน ('light' หรือ 'dark')
+     * สลับโหมดสี Light <-> Dark
      */
     static toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
@@ -42,11 +51,290 @@ export class UIHelpers {
     }
 
     /**
-     * แสดง Loading Spin + Progress Bar (ทั้งแถบด้านบนสุดและกล่องตรงกลาง)
-     * @param {string} message ข้อความขณะกำลังโหลด
+     * แสดง Popup เล็กๆ (Toast Notification) มุมขวาบน (PC) หรือด้านบนกึ่งกลาง (มือถือ)
+     * แสดงเป็นเวลา 2-3 วินาทีแล้วหายไปเองโดยไม่ต้องกดปุ่มตกลง
+     * @param {string} message ข้อความที่ต้องการแสดง
+     * @param {'success'|'error'|'warning'} type ประเภท
+     * @param {number} durationMs ระยะเวลาแสดงผล (ค่าเริ่มต้น 2600 มิลลิวินาที)
+     * @returns {Promise<void>}
+     */
+    static showToast(message, type = 'success', durationMs = 2600) {
+        return new Promise((resolve) => {
+            let wrapper = document.getElementById('bmaToastWrapper');
+            if (!wrapper) {
+                wrapper = document.createElement('div');
+                wrapper.id = 'bmaToastWrapper';
+                document.body.appendChild(wrapper);
+            }
+
+            const iconMap = {
+                success: 'fa-circle-check text-[#FDD835]',
+                error: 'fa-circle-exclamation text-rose-200',
+                warning: 'fa-triangle-exclamation text-amber-200'
+            };
+
+            const toastEl = document.createElement('div');
+            toastEl.className = `bma-toast-item ${type === 'error' ? 'toast-error' : (type === 'warning' ? 'toast-warning' : '')}`;
+            toastEl.innerHTML = `
+                <i class="fa-solid ${iconMap[type] || iconMap.success} text-lg shrink-0"></i>
+                <span class="flex-1 leading-snug">${message}</span>
+            `;
+
+            wrapper.appendChild(toastEl);
+
+            setTimeout(() => {
+                toastEl.classList.add('toast-fade-out');
+                setTimeout(() => {
+                    toastEl.remove();
+                    resolve();
+                }, 240);
+            }, durationMs);
+        });
+    }
+
+    /**
+     * แปลงวันที่ YYYY-MM-DD เป็นรูปแบบไทยแบบย่อ เช่น "15 ม.ค. 69"
+     * @param {string} dateStr
+     * @returns {string}
+     */
+    static formatThaiShortDate(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                const shortYearBE = String(yearAD + 543).slice(-2);
+                return `${day} ${UIHelpers.THAI_MONTHS_SHORT[monthIdx]} ${shortYearBE}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const shortYear = String(d.getFullYear() + 543).slice(-2);
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${shortYear}`;
+    }
+
+    /**
+     * แปลงวันที่ YYYY-MM-DD เป็นรูปแบบไทยแบบเต็มสำหรับหน้ารายงาน เช่น "15 มกราคม 2569"
+     * @param {string} dateStr
+     * @returns {string}
+     */
+    static formatThaiFullDate(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                const fullYearBE = yearAD + 543;
+                return `${day} ${UIHelpers.THAI_MONTHS_FULL[monthIdx]} ${fullYearBE}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_FULL[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
+    /**
+     * เมธอดเดิม (Alias) ให้คืนค่ารูปแบบย่อ "15 ม.ค. 69" สำหรับตารางทั่วไป
+     */
+    static formatThaiDate(dateStr) {
+        return UIHelpers.formatThaiShortDate(dateStr);
+    }
+
+    /**
+     * จัดรูปแบบเวลาให้เป็นระบบ 24 ชั่วโมง (HH:mm) เสมอ
+     * @param {string} timeStr เช่น "08:30:00" หรือ "8:30"
+     * @returns {string} เช่น "08:30"
+     */
+    static formatTime24(timeStr) {
+        if (!timeStr) return '';
+        const clean = String(timeStr).trim();
+        const match = clean.match(/^(\d{1,2})[:.](\d{2})/);
+        if (!match) return clean.slice(0, 5);
+        const hh = String(Math.min(23, Math.max(0, parseInt(match[1], 10)))).padStart(2, '0');
+        const mm = String(Math.min(59, Math.max(0, parseInt(match[2], 10)))).padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+
+    /**
+     * แปลงเวลา HH:mm เป็นจำนวนนาทีนับจาก 00:00 (สำหรับคำนวณมาสายและออกก่อนเวลา)
+     * @param {string} timeStr
+     * @returns {number}
+     */
+    static timeToMinutes(timeStr) {
+        const formatted = UIHelpers.formatTime24(timeStr);
+        if (!formatted) return -1;
+        const [hh, mm] = formatted.split(':').map(n => parseInt(n, 10));
+        if (isNaN(hh) || isNaN(mm)) return -1;
+        return (hh * 60) + mm;
+    }
+
+    /**
+     * ดึงวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD
+     */
+    static getTodayISO() {
+        const now = new Date();
+        const offsetMs = now.getTimezoneOffset() * 60000;
+        return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+    }
+
+    /**
+     * ดึงเวลาปัจจุบันในรูปแบบ 24 ชั่วโมง (HH:mm)
+     */
+    static getCurrentTimeHHMM() {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+
+    /**
+     * ครอปและบีบอัดภาพจากวิดีโอกล้องให้เป็นแนวตั้ง อัตราส่วน 3:4 (ขนาดเล็กแต่คมชัดสูง)
+     * @param {HTMLVideoElement} videoEl
+     * @param {HTMLCanvasElement} canvasEl
+     * @returns {string} Base64 JPEG Data URL
+     */
+    static capturePortrait3x4FromVideo(videoEl, canvasEl) {
+        const targetWidth = 480;
+        const targetHeight = 640; // อัตราส่วนแนวตั้ง 3:4
+        const targetRatio = targetWidth / targetHeight; // 0.75
+
+        const srcW = videoEl.videoWidth || 640;
+        const srcH = videoEl.videoHeight || 480;
+        const srcRatio = srcW / srcH;
+
+        let cropW = srcW;
+        let cropH = srcH;
+        let cropX = 0;
+        let cropY = 0;
+
+        if (srcRatio > targetRatio) {
+            // วิดีโอต้นฉบับกว้างกว่า 3:4 -> ตัดด้านซ้ายและขวามาให้อยู่กึ่งกลาง
+            cropW = Math.round(srcH * targetRatio);
+            cropX = Math.round((srcW - cropW) / 2);
+        } else {
+            // วิดีโอต้นฉบับสูงกว่า 3:4 -> ตัดด้านบนและล่างมาให้อยู่กึ่งกลาง
+            cropH = Math.round(srcW / targetRatio);
+            cropY = Math.round((srcH - cropH) / 2);
+        }
+
+        canvasEl.width = targetWidth;
+        canvasEl.height = targetHeight;
+        const ctx = canvasEl.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(videoEl, cropX, cropY, cropW, cropH, 0, 0, targetWidth, targetHeight);
+
+        return canvasEl.toDataURL('image/jpeg', 0.78);
+    }
+
+    /**
+     * ตรวจสอบลิงก์ Google Drive / Google Apps Script ก่อนบันทึกในหน้าตั้งค่าระบบ
+     * @param {string} scriptUrl ลิงก์ Web App หรือ Folder Link
+     * @param {string} folderId รหัสโฟลเดอร์ (ถ้ามี)
+     * @returns {Promise<{success: boolean, message: string, folderName?: string}>}
+     */
+    static async verifyGoogleDriveLink(scriptUrl, folderId = '') {
+        const cleanUrl = String(scriptUrl || '').trim();
+        if (!cleanUrl) {
+            return { success: false, message: 'กรุณากรอกลิงก์ Google Drive / Apps Script Web App ก่อนกดตรวจสอบ' };
+        }
+
+        // กรณีเป็นลิงก์ Google Apps Script Web App (/exec)
+        if (cleanUrl.includes('script.google.com') && cleanUrl.includes('/exec')) {
+            try {
+                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(folderId || '')}`;
+                const res = await fetch(verifyEndpoint, { method: 'GET', redirect: 'follow' });
+                const data = await res.json();
+                if (data && data.success) {
+                    return {
+                        success: true,
+                        folderName: data.folderName || 'BMA_Checkin_Photos',
+                        message: data.message || 'ตรวจสอบลิงก์สำเร็จ พร้อมจัดเก็บไฟล์รูปถ่ายใน Google Drive'
+                    };
+                }
+                return { success: false, message: data?.message || 'ลิงก์ตอบกลับแต่ไม่สามารถเข้าถึงโฟลเดอร์ได้' };
+            } catch (err) {
+                return {
+                    success: false,
+                    message: 'ไม่สามารถเชื่อมต่อกับ Google Apps Script ได้ กรุณาตรวจสอบว่าตั้งค่าสิทธิ์ Web App เป็น Anyone แล้ว'
+                };
+            }
+        }
+
+        // กรณีผู้ใช้ใส่ลิงก์โฟลเดอร์ Google Drive โดยตรง (https://drive.google.com/drive/folders/...)
+        if (cleanUrl.includes('drive.google.com')) {
+            const match = cleanUrl.match(/[-\w]{25,}/);
+            if (match) {
+                return {
+                    success: true,
+                    folderName: `Folder ID: ${match[0]}`,
+                    message: `ตรวจสอบรูปแบบลิงก์โฟลเดอร์ Google Drive ถูกต้อง (Folder ID: ${match[0]})`
+                };
+            }
+        }
+
+        return {
+            success: false,
+            message: 'รูปแบบลิงก์ไม่ถูกต้อง กรุณาระบุลิงก์ Google Apps Script Web App (.../exec) หรือลิงก์โฟลเดอร์ Google Drive'
+        };
+    }
+
+    /**
+     * อัปโหลดรูปถ่ายลงเวลา (ที่บีบอัดแล้ว) ไปยัง Google Drive และคืนค่าเฉพาะ URL เพื่อจัดเก็บลงใน Supabase
+     * @param {string} base64DataUrl รูปภาพ Base64
+     * @param {string} fileNamePrefix ชื่อไฟล์
+     * @param {Object} settings ข้อมูลตั้งค่าระบบ
+     * @returns {Promise<string>} คืนค่า URL ของรูปภาพบน Google Drive
+     */
+    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings) {
+        if (!base64DataUrl) return '';
+        if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
+
+        const scriptUrl = String(settings?.google_drive_script_url || '').trim();
+        const folderId = String(settings?.google_drive_folder_id || '').trim();
+
+        if (scriptUrl && scriptUrl.includes('script.google.com')) {
+            try {
+                const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'upload',
+                        folderId,
+                        fileName,
+                        mimeType: 'image/jpeg',
+                        base64Data: base64DataUrl
+                    })
+                });
+                const result = await response.json();
+                if (result && result.success && result.url) {
+                    return result.url;
+                }
+            } catch (err) {
+                console.warn('Google Drive upload fallback:', err);
+            }
+        }
+
+        // หากยังไม่ได้ตั้งค่า Web App URL แต่ใส่ลิงก์ Google Drive ไว้ จะสร้าง Reference URL ที่ไม่เก็บ Base64 ยาวลง Supabase
+        if (scriptUrl && scriptUrl.includes('drive.google.com')) {
+            const match = scriptUrl.match(/[-\w]{25,}/);
+            const fid = match ? match[0] : 'drive_folder';
+            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.jpg')}`;
+        }
+
+        return base64DataUrl;
+    }
+
+    /**
+     * แสดง Loading Spin + Progress Bar
      */
     static showLoading(message = 'กำลังโหลดข้อมูล...') {
-        // 1. แถบ Progress Bar บนสุดของหน้าจอ
         let topBar = document.getElementById('bmaTopProgressBar');
         if (!topBar) {
             topBar = document.createElement('div');
@@ -54,7 +342,6 @@ export class UIHelpers {
             document.body.appendChild(topBar);
         }
 
-        // 2. กล่อง Spin + Progress Bar
         let spinner = document.getElementById('bmaGlobalSpinner');
         if (!spinner) {
             spinner = document.createElement('div');
@@ -84,7 +371,6 @@ export class UIHelpers {
         spinner.classList.remove('hidden');
         topBar.style.opacity = '1';
 
-        // จำลองการวิ่งของ Progress Bar จาก 15% -> 90% ระหว่างรอโหลดเสร็จ
         if (UIHelpers.#progressTimer) clearInterval(UIHelpers.#progressTimer);
         UIHelpers.#currentProgress = 18;
         UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
@@ -107,9 +393,6 @@ export class UIHelpers {
         if (topBar) topBar.style.width = `${percent}%`;
     }
 
-    /**
-     * ซ่อน Loading Spin + Progress Bar เมื่อโหลดหน้าเสร็จสมบูรณ์ (ดันไปที่ 100% ก่อนซ่อน)
-     */
     static hideLoading() {
         if (UIHelpers.#progressTimer) {
             clearInterval(UIHelpers.#progressTimer);
@@ -129,11 +412,6 @@ export class UIHelpers {
         }, 140);
     }
 
-    /**
-     * สร้าง HTML Skeleton Loading สำหรับตารางข้อมูล
-     * @param {number} rows จำนวนแถวจำลอง
-     * @param {number} cols จำนวนคอลัมน์จำลอง
-     */
     static renderTableSkeleton(rows = 5, cols = 6) {
         let html = '';
         for (let r = 0; r < rows; r++) {
@@ -146,9 +424,6 @@ export class UIHelpers {
         return html;
     }
 
-    /**
-     * แสดงแจ้งเตือนด้วย SweetAlert2
-     */
     static async alert(title, text = '', icon = 'success') {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
@@ -158,7 +433,7 @@ export class UIHelpers {
                 icon,
                 confirmButtonText: 'ตกลง',
                 confirmButtonColor: isDark ? '#34D399' : '#007B3E',
-                background: isDark ? '#1F2733' : '#FFFFFF',
+                background: isDark ? '#183025' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
         } else {
@@ -166,9 +441,6 @@ export class UIHelpers {
         }
     }
 
-    /**
-     * แสดงกล่องยืนยันการทำงานด้วย SweetAlert2
-     */
     static async confirm(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
@@ -181,7 +453,7 @@ export class UIHelpers {
                 cancelButtonColor: '#64748B',
                 confirmButtonText: confirmText,
                 cancelButtonText: 'ยกเลิก',
-                background: isDark ? '#1F2733' : '#FFFFFF',
+                background: isDark ? '#183025' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
             return Boolean(result.isConfirmed);
@@ -189,9 +461,6 @@ export class UIHelpers {
         return window.confirm(`${title}\n${text}`);
     }
 
-    /**
-     * ตรวจสอบเลขบัตรประจำตัวประชาชนไทย 13 หลัก
-     */
     static validateThaiNationalId(id, strictCheckDigit = false) {
         if (!id || id.trim() === '') {
             return { valid: true, message: '' };
@@ -213,37 +482,10 @@ export class UIHelpers {
         return { valid: true, message: 'ถูกต้อง' };
     }
 
-    /**
-     * ดึงรหัสผ่านอัตโนมัติ 6 ตัวท้ายจากเลขบัตรประชาชน 13 หลัก
-     */
     static getLast6DigitsFromNationalId(nationalId) {
         const cleanId = String(nationalId || '').replace(/\D/g, '');
         if (cleanId.length < 6) return cleanId;
         return cleanId.slice(-6);
-    }
-
-    static formatThaiDate(dateStr) {
-        if (!dateStr) return '-';
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    }
-
-    static getTodayISO() {
-        const now = new Date();
-        const offsetMs = now.getTimezoneOffset() * 60000;
-        return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-    }
-
-    static getCurrentTimeHHMM() {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        return `${hh}:${mm}`;
     }
 
     static exportToExcelUTF8(dataRows, fileName = 'export_data', sheetName = 'Sheet1') {
@@ -320,7 +562,9 @@ export class UIHelpers {
         .report-header p { margin: 0; font-size: 14px; color: #475569; }
         .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 16px; }
         .btn-print { background: ${headerColor}; color: #FFFFFF; border: none; padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .tag-section-block { margin-bottom: 28px; page-break-inside: avoid; }
+        .tag-section-title { font-size: 15px; font-weight: 700; padding: 8px 12px; border-radius: 6px; color: #FFFFFF; margin-bottom: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
         th, td { border: 1px solid #CBD5E1; padding: 8px 10px; text-align: left; }
         th { background-color: ${headerColor}; color: #FFFFFF; font-weight: 600; }
         .group-row td { background-color: #eef7f1; font-weight: 700; color: #2c4a38; }

@@ -459,11 +459,6 @@ export class PersonnelController {
     }
 }
 
-if (!window.__BMA_SPA_ROUTER_ACTIVE__) {
-    window.__BMA_SPA_ROUTER_ACTIVE__ = true;
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => new PersonnelController());
-    } else {
-        new PersonnelController();
-    }
-}
+document.addEventListener('DOMContentLoaded', () => {
+    new PersonnelController();
+});

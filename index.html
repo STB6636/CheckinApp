@@ -4,59 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เข้าสู่ระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
-    <!-- Tailwind CSS CDN พร้อมบังคับ darkMode: 'class' เพื่อไม่ให้สีเพี้ยนตาม OS Dark Mode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
         };
     </script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Supabase JS v2 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- BMA Design System Theme -->
     <link rel="stylesheet" href="assets/css/bma-theme.css">
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- แถบด้านบนสำหรับสลับโหมดสี Light (Soft Sage Mint) / Eye-Care Dark Mode -->
-    <div class="w-full px-6 py-3.5 flex items-center justify-between bma-header-bar shadow-xs">
-        <div class="flex items-center gap-2.5 text-xs font-bold bma-text-main">
-            <span class="w-3 h-3 rounded-full bg-[#007B3E] ring-4 ring-[#007B3E]/20 animate-pulse"></span>
-            <span>BMA e-Government Time Attendance System V2.2</span>
+    <!-- แถบด้านบนสำหรับสลับโหมดสี -->
+    <div class="w-full px-4 sm:px-6 py-3 flex items-center justify-between bma-header-bar shadow-xs">
+        <div class="flex items-center gap-2 text-xs font-bold bma-text-main">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#007B3E] ring-4 ring-[#007B3E]/20 animate-pulse"></span>
+            <span>BMA e-Government Time Attendance System</span>
         </div>
-        <button id="btnLoginThemeToggle" type="button" class="btn-bma-outline py-1.5 px-3.5 text-xs">
+        <button id="btnLoginThemeToggle" type="button" class="btn-bma-outline py-1.5 px-3 text-xs">
             <i id="loginThemeIcon" class="fa-solid fa-moon text-emerald-800"></i>
             <span id="loginThemeLabel">โหมดถนอมสายตา</span>
         </button>
     </div>
 
-    <!-- ส่วนกลางหน้าจอ: Split-View Brand Panel Card แนวนอน -->
-    <main class="flex-1 flex items-center justify-center px-4 py-8">
-        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl border-2 border-[#007B3E]/20">
+    <!-- ส่วนกลางหน้าจอ: หน้าต่างเข้าสู่ระบบ -->
+    <main class="flex-1 flex items-center justify-center px-4 py-6">
+        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl border-2 border-[#007B3E]/30">
 
-            <!-- ฝั่งซ้ายของ Card แนวนอน: Split-View Brand Panel + Mesh Grid -->
-            <div class="md:col-span-5 bma-brand-panel bma-mesh-grid p-8 lg:p-9 flex flex-col justify-between text-white relative">
-                <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
-                <div class="absolute -bottom-16 -left-12 w-52 h-52 rounded-full bg-[#4EBA6F]/20 blur-xl pointer-events-none"></div>
+            <!-- เฉพาะหน้าจอมือถือ (Mobile Rectangular Compact Header): แสดงเฉพาะโลโก้ + ชื่อระบบ ตัดข้อความไม่จำเป็นออก -->
+            <div class="flex md:hidden items-center gap-3.5 px-5 py-4 bma-mobile-login-header">
+                <div id="mobileOrgLogoWrapper" class="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shadow border border-[#FDD835] shrink-0">
+                    <i class="fa-solid fa-landmark text-xl text-[#00351B]"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-base font-extrabold text-white truncate leading-tight">ระบบลงเวลาปฏิบัติราชการ</h1>
+                    <p class="text-xs font-semibold text-[#FDD835] truncate mt-0.5">
+                        <span id="mobileOrgNameText">กรุงเทพมหานคร</span> • <span id="mobileBureauNameText">สำนักเทศกิจ</span>
+                    </p>
+                </div>
+            </div>
 
+            <!-- เฉพาะหน้าจอ Desktop/Tablet (md ขึ้นไป): แผงซ้าย Split-View Brand Panel สีเขียวเข้ม BMA คมชัด -->
+            <div class="hidden md:flex md:col-span-5 bma-brand-panel p-8 lg:p-9 flex-col justify-between text-white relative">
                 <div class="relative z-10">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/25 border border-[#FDD835]/50 text-[#FDD835] text-xs font-bold mb-6 shadow-sm">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/30 border border-[#FDD835]/60 text-[#FDD835] text-xs font-bold mb-6 shadow-sm">
                         <i class="fa-solid fa-shield-halved"></i>
                         <span>ระบบสารสนเทศภาครัฐ</span>
                     </div>
 
-                    <!-- โลโก้หน่วยงาน ล้อมกรอบสีเหลืองทองเทศกิจ (#FDD835) -->
                     <div class="mb-5">
                         <div id="orgLogoWrapper" class="w-24 h-24 rounded-2xl bg-white p-2.5 flex items-center justify-center shadow-xl border-2 border-[#FDD835]">
                             <i class="fa-solid fa-landmark text-4xl text-[#00351B]"></i>
                         </div>
                     </div>
 
-                    <h1 class="text-2xl lg:text-3xl font-extrabold leading-tight tracking-tight text-white drop-shadow-xs">
+                    <h1 class="text-2xl lg:text-3xl font-extrabold leading-tight tracking-tight text-white">
                         ระบบลงเวลาปฏิบัติราชการ
                     </h1>
                     <div class="w-14 h-1 rounded-full bg-[#FDD835] my-3"></div>
@@ -64,8 +68,7 @@
                     <p id="bureauNameText" class="text-sm font-semibold text-[#FDD835] mt-0.5">สำนักเทศกิจ</p>
                 </div>
 
-                <!-- รายละเอียดคุณสมบัติมาตรฐานหน่วยงาน -->
-                <div class="relative z-10 mt-8 pt-5 border-t border-white/20 text-xs text-emerald-50/90 space-y-2">
+                <div class="relative z-10 mt-8 pt-5 border-t border-white/20 text-xs text-white/95 space-y-2.5">
                     <div class="flex items-center gap-2.5">
                         <span class="w-6 h-6 rounded-lg bg-white/15 flex items-center justify-center text-[#FDD835] shrink-0">
                             <i class="fa-solid fa-camera"></i>
@@ -87,14 +90,14 @@
                 </div>
             </div>
 
-            <!-- ฝั่งขวาของ Card แนวนอน: ใช้คลาส .bma-login-form-panel รับประกันพื้นขาวในโหมดสว่าง 100% -->
-            <div class="md:col-span-7 p-8 lg:p-10 flex flex-col justify-center bma-login-form-panel">
+            <!-- ฝั่งขวา: ฟอร์มเข้าสู่ระบบ (ลบกล่องข้อมูลการเข้าใช้งานเบื้องต้นออกตามข้อกำหนด) -->
+            <div class="md:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-center bma-login-form-panel">
                 <div class="mb-6">
                     <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bma-badge-success mb-2">
                         <i class="fa-solid fa-lock"></i> Authentication Portal
                     </div>
-                    <h2 class="text-2xl font-extrabold bma-text-main">เข้าสู่ระบบใช้งาน</h2>
-                    <p class="text-sm bma-text-sub mt-1">กรอกชื่อบัญชีผู้ใช้งาน (หรือเลขบัตรประชาชน 13 หลัก) และรหัสผ่าน</p>
+                    <h2 class="text-xl sm:text-2xl font-extrabold bma-text-main">เข้าสู่ระบบใช้งาน</h2>
+                    <p class="text-xs sm:text-sm bma-text-sub mt-1">กรอกชื่อบัญชีผู้ใช้งาน (หรือเลขบัตรประชาชน 13 หลัก) และรหัสผ่าน</p>
                 </div>
 
                 <form id="loginForm" class="space-y-4" onsubmit="return false;">
@@ -106,7 +109,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
                                 <i class="fa-solid fa-user" style="color: var(--bma-primary);"></i>
                             </span>
-                            <input type="text" id="loginUsername" class="bma-input pl-10 font-medium" placeholder="เช่น 1231254684532 หรือ superadmin" required autocomplete="username">
+                            <input type="text" id="loginUsername" class="bma-input pl-10 font-medium" placeholder="กรอกชื่อบัญชีผู้ใช้งาน หรือเลขบัตร 13 หลัก" required autocomplete="username">
                         </div>
                     </div>
 
@@ -118,7 +121,7 @@
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
                                 <i class="fa-solid fa-lock" style="color: var(--bma-primary);"></i>
                             </span>
-                            <input type="password" id="loginPassword" class="bma-input pl-10 pr-10 font-medium" placeholder="รหัสผ่าน (ค่าเริ่มต้น 6 ตัวท้ายบัตรประชาชน)" required autocomplete="current-password">
+                            <input type="password" id="loginPassword" class="bma-input pl-10 pr-10 font-medium" placeholder="กรอกรหัสผ่าน" required autocomplete="current-password">
                             <button type="button" id="btnToggleLoginPwd" class="absolute inset-y-0 right-0 pr-3.5 flex items-center bma-text-sub hover:text-emerald-600 cursor-pointer">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
@@ -138,7 +141,7 @@
                     </div>
 
                     <!-- ปุ่มเข้าสู่ระบบ 2 รูปแบบ -->
-                    <div class="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <button type="button" id="btnLoginCheckin" class="btn-bma-primary w-full py-3.5 text-sm shadow-lg">
                             <i class="fa-solid fa-clock"></i>
                             <span>เข้าสู่ระบบลงเวลา</span>
@@ -150,17 +153,6 @@
                         </button>
                     </div>
                 </form>
-
-                <!-- คำแนะนำบัญชีทดสอบเริ่มต้น -->
-                <div class="mt-6 p-3.5 bma-info-box text-xs bma-text-sub">
-                    <p class="font-bold bma-text-main mb-1">
-                        <i class="fa-solid fa-circle-info mr-1" style="color: var(--bma-primary);"></i>ข้อมูลการเข้าใช้งานเบื้องต้น:
-                    </p>
-                    <ul class="list-disc list-inside space-y-0.5">
-                        <li>บุคลากรทั่วไป: Username = <b>เลขบัตรประชาชน 13 หลัก</b>, Password = <b>เลข 6 ตัวท้ายของบัตร</b></li>
-                        <li>ผู้ดูแลระบบตัวอย่าง: <code>superadmin</code> / <code>123456</code> หรือ <code>admin01</code> / <code>123456</code></li>
-                    </ul>
-                </div>
             </div>
         </div>
     </main>
@@ -242,12 +234,17 @@
         </div>
     </div>
 
-    <!-- Footer ระบบ -->
-    <footer class="w-full py-4 px-6 bma-footer-bar text-center text-xs bma-text-sub">
-        <span>ระบบลงเวลาปฏิบัติราชการ • </span>
-        <span id="footerOrgName" class="font-bold bma-text-main">กรุงเทพมหานคร</span>
-        <span> • สังกัด </span>
-        <span id="footerBureauName" class="font-bold" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+    <!-- Footer ระบบ (2 บรรทัด: บรรทัดแรกชื่อหน่วยงาน/สังกัด, บรรทัดที่สองข้อความอธิบายขนาดเล็กกว่าเล็กน้อย) -->
+    <footer class="w-full py-3.5 px-6 bma-footer-bar text-center">
+        <div class="text-xs bma-text-sub">
+            <span>ระบบลงเวลาปฏิบัติราชการ • </span>
+            <span id="footerOrgName" class="font-bold bma-text-main">กรุงเทพมหานคร</span>
+            <span> • สังกัด </span>
+            <span id="footerBureauName" class="font-bold" style="color: var(--bma-primary);">สำนักเทศกิจ</span>
+        </div>
+        <div id="footerDescriptionText" class="text-[11px] bma-text-muted mt-0.5">
+            ระบบบันทึกเวลาปฏิบัติราชการอิเล็กทรอนิกส์ เพื่อการบริหารงานบุคคลที่มีประสิทธิภาพ
+        </div>
     </footer>
 
     <script type="module" src="assets/js/controllers/LoginController.js"></script>
