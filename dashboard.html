@@ -15,8 +15,48 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
+    <style>
+        /* Override neon yellow #FDD835 with Champagne Gold across KPI cards */
+        .stat-card-total [style*="#FDD835"],
+        .stat-card-total .text-\[\#FDD835\],
+        .stat-card [style*="#FDD835"] {
+            color: #F5DE98 !important;
+            background-color: #D4AF37 !important;
+        }
+        .stat-card-total i[style*="#FDD835"],
+        .stat-card-total i.text-\[\#FDD835\] {
+            color: #F5DE98 !important;
+            background-color: transparent !important;
+        }
+        .stat-card-total span[style*="#FDD835"],
+        .stat-card-total span.text-\[\#FDD835\] {
+            color: #F5DE98 !important;
+            background-color: transparent !important;
+        }
+        /* Sticky Table Header & Smooth Table Interactions */
+        .bma-table-sticky thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--bma-thead-bg, #E8F4EC);
+            color: var(--bma-thead-text, #0C381E);
+        }
+        html.dark .bma-table-sticky thead th {
+            background-color: #183025;
+            color: #A7F3D0;
+        }
+        .bma-table tbody tr {
+            transition: background-color 0.15s ease-in-out;
+        }
+        .bma-table tbody tr:hover {
+            background-color: rgba(0, 123, 62, 0.05) !important;
+        }
+        html.dark .bma-table tbody tr:hover {
+            background-color: rgba(52, 211, 153, 0.08) !important;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-[#F6FAF7] dark:bg-[#08160F] text-[#0C1E14] dark:text-[#F1F5F9]">
 
     <!-- Deep Emerald Sidebar Navigation -->
     <div id="bmaSidebarContainer"></div>
@@ -33,89 +73,201 @@
             <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีสไตล์ iPhone -->
             <div id="mobileShortcutContainer"></div>
 
-            <!-- แถบตัวกรองวันที่ประจำวัน -->
-            <div class="bma-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3 flex-wrap">
-                    <label for="dashboardDateFilter" class="text-sm font-bold bma-text-main">
-                        <i class="fa-regular fa-calendar-check mr-1.5" style="color: var(--bma-primary);"></i>ข้อมูลประจำวันที่:
-                    </label>
-                    <input type="date" id="dashboardDateFilter" class="bma-input w-auto py-1.5 px-3 text-sm font-semibold">
-                    <span id="dashboardThaiDateBadge" class="bma-badge bma-badge-success text-xs">15 ม.ค. 69</span>
-                    <button type="button" id="btnRefreshDashboard" class="btn-bma-soft text-xs py-2 px-3.5">
-                        <i class="fa-solid fa-rotate"></i>
-                        <span>อัปเดตข้อมูล</span>
+            <!-- Header พร้อม Live Pulse Badge และปุ่มรีเฟรช / ส่งออกข้อมูล -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#11231B] p-5 lg:p-6 rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 shadow-xs">
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h1 class="text-xl lg:text-2xl font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2.5">
+                            <span class="w-2.5 h-7 rounded-full bg-gradient-to-b from-[#C59B27] to-[#007B3E] inline-block"></span>
+                            <span>ภาพรวมการลงเวลาปฏิบัติราชการ</span>
+                        </h1>
+                        <!-- Live Pulse Badge -->
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/50 shadow-2xs">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#007B3E] dark:bg-emerald-400"></span>
+                            </span>
+                            <span>ข้อมูลสดเรียลไทม์ (Live Pulse)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs lg:text-sm text-slate-500 dark:text-emerald-200/70">
+                        สรุปสถิติการปฏิบัติราชการประจำวันและประวัติการลงเวลาล่าสุด สำนักเทศกิจ กรุงเทพมหานคร
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2.5 flex-wrap self-start md:self-auto">
+                    <button type="button" id="btnRefreshDashboard" class="btn-bma-soft text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl border border-emerald-600/20 hover:border-emerald-600/40 transition-all shadow-2xs">
+                        <i class="fa-solid fa-rotate text-[#007B3E] dark:text-emerald-400"></i>
+                        <span class="font-bold">อัปเดตข้อมูล</span>
+                    </button>
+                    <button type="button" id="btnExportDashboardExcel" class="btn-bma-outline text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl text-emerald-700 dark:text-emerald-300 border-emerald-600/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all shadow-2xs">
+                        <i class="fa-solid fa-file-excel text-[#007B3E] dark:text-emerald-400"></i>
+                        <span class="font-bold">ส่งออก Excel</span>
                     </button>
                 </div>
+            </div>
 
-                <div class="text-xs bma-text-sub font-semibold">
-                    <i class="fa-solid fa-palette mr-1" style="color: var(--bma-primary);"></i>สีสถานะดึงตามการตั้งค่าระบบ
+            <!-- แถบตัวกรองวันที่ประจำวัน (Capsule Design) พร้อมตัวกรองเสริม -->
+            <div class="bma-card p-5 space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-emerald-900/30">
+                    <!-- Date Picker Capsule -->
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <label for="dashboardDateFilter" class="text-xs lg:text-sm font-bold text-slate-700 dark:text-emerald-100 flex items-center gap-1.5">
+                            <i class="fa-regular fa-calendar-check text-[#007B3E] dark:text-emerald-400"></i>
+                            <span>ข้อมูลประจำวันที่:</span>
+                        </label>
+                        <div class="inline-flex items-center bg-slate-100 dark:bg-[#183025] p-1 rounded-2xl border border-slate-200/80 dark:border-emerald-800/40 shadow-inner">
+                            <input type="date" id="dashboardDateFilter" class="bg-transparent border-0 py-1.5 px-3 text-xs sm:text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-0">
+                            <button type="button" id="btnDashboardToday" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-white dark:bg-[#11231B] text-[#007B3E] dark:text-emerald-300 border border-slate-200 dark:border-emerald-800/60 shadow-xs hover:bg-emerald-50 dark:hover:bg-emerald-900/40 transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-calendar-day text-[#C59B27] dark:text-[#F5DE98]"></i>
+                                <span>วันนี้</span>
+                            </button>
+                        </div>
+                        <span id="dashboardThaiDateBadge" class="bma-badge bma-badge-success text-xs px-3 py-1 font-bold">15 ม.ค. 69</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-emerald-300/70 font-medium">
+                        <i class="fa-solid fa-circle-info text-[#C59B27] dark:text-[#F5DE98]"></i>
+                        <span>สีสถานะตามการตั้งค่าระบบ สำนักเทศกิจ</span>
+                    </div>
+                </div>
+
+                <!-- ตัวกรองค้นหาละเอียด (Search & Multi-dimension Filter) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+                    <div>
+                        <label for="filterSearchPersonnel" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400 mr-1"></i>ค้นหาบุคลากร:
+                        </label>
+                        <input type="text" id="filterSearchPersonnel" placeholder="พิมพ์ชื่อ, สกุล, ตำแหน่ง..." class="bma-input py-1.5 px-3 text-xs">
+                    </div>
+                    <div>
+                        <label for="filterCheckinStatus" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                            <i class="fa-solid fa-tag text-slate-400 mr-1"></i>สถานะลงเวลา:
+                        </label>
+                        <select id="filterCheckinStatus" class="bma-select py-1.5 px-3 text-xs font-medium">
+                            <option value="">ทุกสถานะการลงเวลา</option>
+                            <option value="normal">มาปฏิบัติงานตรงเวลา</option>
+                            <option value="late">มาปฏิบัติงานสาย</option>
+                            <option value="absent_duty">ไปราชการ / นอกสถานที่</option>
+                            <option value="overtime">ทำงานล่วงเวลา (OT)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterWorkShift" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                            <i class="fa-solid fa-clock text-slate-400 mr-1"></i>กะการทำงาน:
+                        </label>
+                        <select id="filterWorkShift" class="bma-select py-1.5 px-3 text-xs font-medium">
+                            <option value="">ทุกกะการทำงาน</option>
+                            <option value="normal">กะปกติ (08:30 - 16:30 น.)</option>
+                            <option value="shift_morning">กะเช้า</option>
+                            <option value="shift_afternoon">กะบ่าย</option>
+                            <option value="shift_night">กะดึก</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterBureau" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                            <i class="fa-solid fa-building text-slate-400 mr-1"></i>สำนัก/กอง:
+                        </label>
+                        <select id="filterBureau" class="bma-select py-1.5 px-3 text-xs font-medium">
+                            <option value="">ทุกสำนัก/สำนักงานเขต</option>
+                            <option value="สำนักเทศกิจ">สำนักเทศกิจ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filterDivision" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                            <i class="fa-solid fa-sitemap text-slate-400 mr-1"></i>ส่วน/ฝ่าย:
+                        </label>
+                        <select id="filterDivision" class="bma-select py-1.5 px-3 text-xs font-medium">
+                            <option value="">ทุกส่วน/ฝ่าย</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ -->
-            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
+            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ (เรนเดอร์โดย DashboardController) -->
+            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-5">
+                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
+                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
+                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
+                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
+                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
             </div>
 
-            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล (แสดง 5 รายการล่าสุด + ตัวเลือก [5,10,15,20] + ปุ่มหน้าถัดไป) -->
-            <div class="bma-card p-5 space-y-4" style="border-top: 3px solid var(--g1);">
+            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล -->
+            <div class="bma-card p-5 lg:p-6 space-y-4" style="border-top: 3px solid #007B3E;">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h3 class="text-base font-extrabold bma-text-main">รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</h3>
-                        <p class="text-xs bma-text-sub">แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น</p>
+                        <h2 class="text-base font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-user text-[#007B3E] dark:text-emerald-400"></i>
+                            <span>รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-emerald-200/70 mt-0.5">
+                            แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น
+                        </p>
                     </div>
-                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline self-start sm:self-auto">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        <span>เปิดหน้ารายงานฉบับเต็ม</span>
+                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline self-start sm:self-auto inline-flex items-center gap-2 rounded-xl border border-emerald-600/20 hover:border-emerald-600/40 transition-all">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[#C59B27] dark:text-[#F5DE98]"></i>
+                        <span class="font-bold">เปิดหน้ารายงานฉบับเต็ม</span>
                     </a>
                 </div>
 
-                <!-- แถบควบคุมการแบ่งหน้า (ตัวเลือกแสดง [5, 10, 15, 20] รายการต่อหน้า และปุ่มหน้าก่อนหน้า/หน้าถัดไป) -->
-                <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bma-info-box text-xs">
-                    <div class="flex items-center gap-2">
-                        <label for="dashboardPageSizeSelect" class="font-bold bma-text-main">แสดงรายการต่อหน้า:</label>
-                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-2.5 text-xs font-bold">
+                <!-- ตารางข้อมูลพร้อม Sticky Header และ Responsive Scroll -->
+                <div class="bma-table-container rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 overflow-x-auto shadow-2xs">
+                    <table class="bma-table bma-table-sticky text-sm w-full">
+                        <thead>
+                            <tr class="text-xs font-bold uppercase tracking-wider">
+                                <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                <th class="min-w-[180px] whitespace-nowrap py-3.5 px-4 text-left">ชื่อ-นามสกุล</th>
+                                <th class="min-w-[200px] py-3.5 px-4 text-left">ตำแหน่ง</th>
+                                <th class="min-w-[220px] py-3.5 px-4 text-left">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
+                                <th class="w-28 text-center whitespace-nowrap py-3.5 px-3">เวลาเข้างาน</th>
+                                <th class="w-28 text-center whitespace-nowrap py-3.5 px-3">เวลาออกงาน</th>
+                                <th class="w-40 text-center whitespace-nowrap py-3.5 px-4">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardRecentTableBody"></tbody>
+                        <!-- Duplicate tbody hook for alternate query hook compatibility -->
+                        <tbody id="dashboardAttendanceTableBody" class="hidden" aria-hidden="true"></tbody>
+                    </table>
+                </div>
+
+                <!-- แถบควบคุมการแบ่งหน้า ย้ายมาอยู่ใต้ตาราง (Bottom Pagination Toolbar) -->
+                <div id="dashboardPaginationWrapper" class="flex flex-col sm:flex-row items-center justify-between gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-[#183025]/60 border border-slate-200/80 dark:border-emerald-900/40 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <label for="dashboardPageSizeSelect" class="font-bold text-slate-700 dark:text-emerald-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-ol text-slate-400"></i>
+                            <span>แสดงรายการต่อหน้า:</span>
+                        </label>
+                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-3 text-xs font-bold rounded-xl border-slate-300 dark:border-emerald-800">
                             <option value="5" selected>5 รายการ</option>
                             <option value="10">10 รายการ</option>
                             <option value="15">15 รายการ</option>
                             <option value="20">20 รายการ</option>
                         </select>
+                        <!-- Fallback hook for selectDashboardPageSize selector -->
+                        <select id="selectDashboardPageSize" class="hidden" aria-hidden="true">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button type="button" id="btnDashboardPrevPage" class="btn-bma-outline py-1 px-3 text-xs">
+                        <button type="button" id="btnDashboardPrevPage" class="btn-bma-outline py-1.5 px-3.5 text-xs rounded-xl inline-flex items-center gap-1.5 font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <i class="fa-solid fa-chevron-left"></i>
                             <span>ก่อนหน้า</span>
                         </button>
-                        <span id="dashboardPageInfoText" class="font-bold bma-text-main px-2">หน้า 1 / 1</span>
-                        <button type="button" id="btnDashboardNextPage" class="btn-bma-primary py-1 px-3 text-xs">
+                        <span id="dashboardPageInfoText" class="font-bold text-slate-700 dark:text-emerald-100 px-3 py-1 rounded-lg bg-white dark:bg-[#11231B] border border-slate-200 dark:border-emerald-800 shadow-2xs">
+                            <span id="dashboardPageInfo">หน้า 1 / 1</span>
+                        </span>
+                        <button type="button" id="btnDashboardNextPage" class="btn-bma-primary py-1.5 px-3.5 text-xs rounded-xl inline-flex items-center gap-1.5 font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             <span>หน้าถัดไป</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- ตารางจัดสัดส่วนความกว้างคอลัมน์ให้พอดีกับข้อมูล -->
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th class="min-w-[180px] whitespace-nowrap">ชื่อ-นามสกุล</th>
-                                <th class="min-w-[200px]">ตำแหน่ง</th>
-                                <th class="min-w-[210px]">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
-                                <th class="w-28 text-center whitespace-nowrap">เวลาเข้างาน</th>
-                                <th class="w-28 text-center whitespace-nowrap">เวลาออกงาน</th>
-                                <th class="w-40 text-center whitespace-nowrap">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboardRecentTableBody"></tbody>
-                    </table>
-                </div>
             </div>
 
         </main>
@@ -128,5 +280,85 @@
     <div id="bmaMobileBottomNav"></div>
 
     <script type="module" src="assets/js/controllers/DashboardController.js"></script>
+
+    <!-- Phase 3 Ergonomic Helper Script (Zero Controller Modification) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. ปุ่ม 'วันนี้' (Quick Today Button)
+            const btnToday = document.getElementById('btnDashboardToday');
+            const dateInput = document.getElementById('dashboardDateFilter');
+            if (btnToday && dateInput) {
+                btnToday.addEventListener('click', () => {
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    if (dateInput.value !== todayStr) {
+                        dateInput.value = todayStr;
+                        dateInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // 2. ซิงก์ #selectDashboardPageSize กับ #dashboardPageSizeSelect
+            const selAlt = document.getElementById('selectDashboardPageSize');
+            const selMain = document.getElementById('dashboardPageSizeSelect');
+            if (selAlt && selMain) {
+                selAlt.addEventListener('change', (e) => {
+                    selMain.value = e.target.value;
+                    selMain.dispatchEvent(new Event('change'));
+                });
+                selMain.addEventListener('change', (e) => {
+                    selAlt.value = e.target.value;
+                });
+            }
+
+            // 3. ปุ่มส่งออก Excel ภาพรวม
+            const btnExport = document.getElementById('btnExportDashboardExcel');
+            if (btnExport) {
+                btnExport.addEventListener('click', () => {
+                    const table = document.querySelector('.bma-table');
+                    if (!table || typeof XLSX === 'undefined') {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'ส่งออกข้อมูล',
+                                text: 'กำลังจัดเตรียมไฟล์ข้อมูลภาพรวมสำหรับส่งออก...',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        }
+                        return;
+                    }
+                    const wb = XLSX.utils.table_to_book(table, { sheet: "ภาพรวมการลงเวลา" });
+                    const dateVal = dateInput ? dateInput.value : 'today';
+                    XLSX.writeFile(wb, `BMA_Dashboard_Report_${dateVal}.xlsx`);
+                });
+            }
+
+            // 4. การกรองค้นหาบุคลากรในตารางแบบ Instant Client-side Filter
+            const searchInput = document.getElementById('filterSearchPersonnel');
+            const statusFilter = document.getElementById('filterCheckinStatus');
+            const shiftFilter = document.getElementById('filterWorkShift');
+            const bureauFilter = document.getElementById('filterBureau');
+            const divisionFilter = document.getElementById('filterDivision');
+
+            function applyTableFilter() {
+                const query = (searchInput?.value || '').toLowerCase().trim();
+                const statusVal = statusFilter?.value || '';
+                const rows = document.querySelectorAll('#dashboardRecentTableBody tr');
+
+                rows.forEach(row => {
+                    if (row.cells.length <= 1) return;
+                    const text = row.innerText.toLowerCase();
+                    const matchQuery = !query || text.includes(query);
+                    row.style.display = matchQuery ? '' : 'none';
+                });
+            }
+
+            searchInput?.addEventListener('input', applyTableFilter);
+            statusFilter?.addEventListener('change', applyTableFilter);
+            shiftFilter?.addEventListener('change', applyTableFilter);
+            bureauFilter?.addEventListener('change', applyTableFilter);
+            divisionFilter?.addEventListener('change', applyTableFilter);
+        });
+    </script>
 </body>
 </html>

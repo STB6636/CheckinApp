@@ -9,15 +9,18 @@
 :root {
     color-scheme: light;
 
-    /* --- Core BMA Emerald Tokens --- */
+    /* --- Core BMA Emerald & Gold Tokens --- */
     --g0: #00351B;
     --g1: #007B3E;
     --g2: #4EBA6F;
-    --gold-bma: #FDD835;
+    --gold-bma: #C59B27;
+    --gold-bma-light: #D4AF37;
+    --gold-bma-pale: #F5DE98;
+    --gold-bma-soft: rgba(197, 155, 39, 0.16);
 
     /* Sidebar & Header/Footer Gradient Tokens */
-    --sb1: #00351B;
-    --sb2: #005B2E;
+    --sb1: #002510;
+    --sb2: #004D25;
     --sb3: #007B3E;
 
     /* Primary Button Gradient Tokens */
@@ -29,7 +32,7 @@
     --bma-primary: #007B3E;
     --bma-primary-hover: #005B2E;
     --bma-primary-light: #4EBA6F;
-    --bma-primary-soft: rgba(0, 123, 62, 0.14);
+    --bma-primary-soft: rgba(0, 123, 62, 0.12);
 
     /* Official 5 Status Colors */
     --status-normal: #007B3E;
@@ -38,33 +41,35 @@
     --status-no-checkin: #E11D48;
     --status-overtime: #2563EB;
 
-    /* Surface & Typography Tokens (Light Mode) */
+    /* Surface & Typography Tokens (Light Mode - Crisp White & Soft Sage) */
+    --bma-canvas: #F6FAF7;
     --bma-surface-1: #FFFFFF;
-    --bma-surface-2: #EBF5EF;
-    --bma-surface-info: #E4F3EA;
-    --bma-border: #BBD8C7;
-    --bma-text-primary: #0F172A;
-    --bma-text-secondary: #264635;
-    --bma-text-muted: #527060;
+    --bma-surface-2: #F0F6F2;
+    --bma-surface-info: #EBF5EF;
+    --bma-border: #D1E5DA;
+    --bma-text-primary: #0C1E14;
+    --bma-text-secondary: #1F3F2D;
+    --bma-text-muted: #537564;
 
     /* Table Header Pastel Tokens */
-    --bma-thead-bg: #E3F2E9;
-    --bma-thead-text: #1B432C;
-    --bma-thead-border: #B5D6C3;
+    --bma-thead-bg: #E8F4EC;
+    --bma-thead-text: #0C381E;
+    --bma-thead-border: #C8E2D3;
 
     /* Status Badge Alpha Tokens */
-    --badge-success-bg: rgba(0, 123, 62, 0.15);
+    --badge-success-bg: rgba(0, 123, 62, 0.14);
     --badge-success-text: #006834;
-    --badge-warning-bg: rgba(234, 179, 8, 0.20);
-    --badge-warning-text: #9A6700;
-    --badge-danger-bg: rgba(225, 29, 72, 0.15);
+    --badge-warning-bg: rgba(197, 155, 39, 0.18);
+    --badge-warning-text: #926E0B;
+    --badge-danger-bg: rgba(225, 29, 72, 0.14);
     --badge-danger-text: #BE123C;
-    --badge-indigo-bg: rgba(37, 99, 235, 0.15);
+    --badge-indigo-bg: rgba(37, 99, 235, 0.14);
     --badge-indigo-text: #1D4ED8;
-    --badge-sky-bg: rgba(2, 132, 199, 0.15);
+    --badge-sky-bg: rgba(2, 132, 199, 0.14);
     --badge-sky-text: #0369A1;
 
-    --shadow-card: 0 12px 28px -6px rgba(0, 53, 27, 0.14), 0 4px 10px -2px rgba(0, 53, 27, 0.07);
+    --shadow-card: 0 4px 20px -2px rgba(0, 77, 37, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    --shadow-card-hover: 0 12px 30px -4px rgba(0, 77, 37, 0.10), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* ============================================================================
@@ -78,13 +83,19 @@ html.dark {
     --bma-primary-light: #A7F3D0;
     --bma-primary-soft: rgba(52, 211, 153, 0.16);
 
+    --gold-bma: #D4AF37;
+    --gold-bma-light: #E5C158;
+    --gold-bma-pale: #F5DE98;
+    --gold-bma-soft: rgba(212, 175, 55, 0.20);
+
     --sb1: #03190E;
     --sb2: #062D19;
     --sb3: #0A4526;
 
+    --bma-canvas: #08160F;
     --bma-surface-1: #11231B;
     --bma-surface-2: #183025;
-    --bma-surface-info: rgba(6, 78, 59, 0.4);
+    --bma-surface-info: rgba(6, 78, 59, 0.35);
     --bma-border: #244737;
     --bma-text-primary: #F1F5F9;
     --bma-text-secondary: #A7F3D0;
@@ -96,8 +107,8 @@ html.dark {
 
     --badge-success-bg: rgba(74, 222, 128, 0.18);
     --badge-success-text: #4ADE80;
-    --badge-warning-bg: rgba(252, 211, 77, 0.18);
-    --badge-warning-text: #FCD34D;
+    --badge-warning-bg: rgba(212, 175, 55, 0.22);
+    --badge-warning-text: #F5DE98;
     --badge-danger-bg: rgba(248, 113, 113, 0.18);
     --badge-danger-text: #F87171;
     --badge-indigo-bg: rgba(96, 165, 250, 0.18);
@@ -105,11 +116,12 @@ html.dark {
     --badge-sky-bg: rgba(56, 189, 248, 0.18);
     --badge-sky-text: #38BDF8;
 
-    --shadow-card: 0 12px 30px -4px rgba(0, 0, 0, 0.55);
+    --shadow-card: 0 10px 28px -4px rgba(0, 0, 0, 0.50);
+    --shadow-card-hover: 0 16px 36px -4px rgba(0, 0, 0, 0.65);
 }
 
 /* ============================================================================
- * พื้นหลังลายกราฟิกโทนสีเขียวไล่สี สวยงาม ไม่เด่นเกินหน้าต่าง Login หรือโมดูลทำงาน
+ * พื้นหลังลายกราฟิกไทยสีทองบางเบา ผืนผ้าใบ Soft Sage สบายตาสไตล์ Modern Civic
  * ============================================================================ */
 * {
     font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -117,12 +129,13 @@ html.dark {
 }
 
 body {
-    background-color: #C5E6D4 !important;
+    background-color: var(--bma-canvas) !important;
     background-image:
-        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23007B3E' stroke-width='1' stroke-opacity='0.07'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
-        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.14) 0%, transparent 42%),
-        radial-gradient(circle at 88% 82%, rgba(0, 91, 46, 0.16) 0%, transparent 45%),
-        linear-gradient(135deg, #B8E1CC 0%, #DFF3E8 48%, #A5D6BD 100%) !important;
+        url('../images/thai-pattern-gold.svg'),
+        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 88% 82%, rgba(197, 155, 39, 0.03) 0%, transparent 45%),
+        linear-gradient(180deg, #FAFDFB 0%, #F4F9F6 100%) !important;
+    background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100% !important;
     background-attachment: fixed !important;
     color: var(--bma-text-primary);
     margin: 0;
@@ -133,23 +146,24 @@ body {
 }
 
 html.dark body {
-    background-color: #071710 !important;
+    background-color: var(--bma-canvas) !important;
     background-image:
-        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2334D399' stroke-width='1' stroke-opacity='0.05'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
-        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
-        linear-gradient(135deg, #05130D 0%, #0B2217 50%, #04100A 100%) !important;
+        url('../images/thai-pattern-gold.svg'),
+        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.04) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 45%),
+        linear-gradient(180deg, #05130D 0%, #08160F 100%) !important;
+    background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100% !important;
 }
 
 /* ============================================================================
- * แถบ Header และแถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน
+ * แถบ Header และแถบ Footer สีเขียว กทม. มรกตหลวง เส้นขอบทองแชมเปญหรูหรา
  * ============================================================================ */
 .bma-header-bar {
     background-color: #004D26 !important;
-    background-image: linear-gradient(90deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
+    background-image: linear-gradient(90deg, #002B13 0%, #004D25 50%, #006834 100%) !important;
     color: #FFFFFF !important;
-    border-bottom: 3px solid #FDD835 !important;
-    box-shadow: 0 4px 20px rgba(0, 53, 27, 0.22);
+    border-bottom: 2px solid var(--gold-bma) !important;
+    box-shadow: 0 4px 20px rgba(0, 37, 16, 0.25);
 }
 
 .bma-header-bar h1,
@@ -165,21 +179,21 @@ html.dark body {
 /* แถบ Topbar สำหรับหน้าผู้ดูแลระบบที่มี Sidebar ด้านซ้าย */
 .bma-admin-topbar {
     background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--bma-border);
-    border-top: 4px solid var(--g1);
+    border-top: 3px solid var(--gold-bma);
 }
 html.dark .bma-admin-topbar {
     background-color: rgba(17, 35, 27, 0.92);
 }
 
-/* แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย */
+/* แถบ Footer สีเขียว กทม. มรกตหลวง เส้นขอบทองแชมเปญหรูหรา */
 .bma-footer-bar {
     background-color: #00351B !important;
-    background-image: linear-gradient(90deg, #002B15 0%, #004D26 50%, #006834 100%) !important;
+    background-image: linear-gradient(90deg, #002510 0%, #003E1D 50%, #005B2B 100%) !important;
     color: #FFFFFF !important;
-    border-top: 3px solid #FDD835 !important;
-    box-shadow: 0 -4px 16px rgba(0, 53, 27, 0.15);
+    border-top: 2px solid var(--gold-bma) !important;
+    box-shadow: 0 -4px 16px rgba(0, 37, 16, 0.18);
 }
 
 .bma-footer-bar span,
@@ -188,7 +202,7 @@ html.dark .bma-admin-topbar {
 }
 
 .bma-footer-bar .footer-highlight {
-    color: #FDD835 !important;
+    color: var(--gold-bma-pale) !important;
     font-weight: 800;
 }
 
@@ -200,32 +214,10 @@ html.dark .bma-admin-topbar {
  * ปุ่มบนแถบ Header สีเขียว กทม. (ปุ่มเปลี่ยนโหมดธีม, ปุ่มระบบผู้ดูแล, ปุ่มออกจากระบบ)
  * ============================================================================ */
 .btn-header-theme {
-    background: linear-gradient(135deg, #FDD835 0%, #F59E0B 100%) !important;
-    color: #00351B !important;
-    font-weight: 800 !important;
-    border: 2px solid #FFFFFF !important;
-    border-radius: 0.75rem;
-    padding: 0.45rem 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-header-theme:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(253, 216, 53, 0.45);
-    filter: brightness(1.05);
-}
-
-.btn-header-admin {
-    background: #FFFFFF !important;
-    color: #004D26 !important;
-    font-weight: 800 !important;
-    border: 2px solid #A7F3D0 !important;
+    background: linear-gradient(135deg, #C59B27 0%, #D4AF37 50%, #B8860B 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
     border-radius: 0.75rem;
     padding: 0.45rem 0.95rem;
     display: inline-flex;
@@ -235,13 +227,36 @@ html.dark .bma-admin-topbar {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     cursor: pointer;
     transition: all 0.2s ease;
+}
+
+.btn-header-theme:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(197, 155, 39, 0.4);
+    filter: brightness(1.08);
+}
+
+.btn-header-admin {
+    background: #FFFFFF !important;
+    color: #004D26 !important;
+    font-weight: 800 !important;
+    border: 2px solid #D1E5DA !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 53, 27, 0.08);
+    cursor: pointer;
+    transition: all 0.2s ease;
     text-decoration: none;
 }
 
 .btn-header-admin:hover {
     background: #ECFDF5 !important;
-    border-color: #FDD835 !important;
+    border-color: var(--gold-bma) !important;
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(197, 155, 39, 0.25);
 }
 
 .btn-header-logout {
@@ -267,14 +282,28 @@ html.dark .bma-admin-topbar {
 }
 
 /* ============================================================================
- * การ์ดและพื้นผิวหลัก
+ * การ์ดและพื้นผิวหลัก (Executive White Surface with Emerald Accent)
  * ============================================================================ */
 .bma-card {
     background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
     box-shadow: var(--shadow-card);
     border-radius: 1rem;
-    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bma-card:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* มาตรการป้องกันตามแนวทาง ก: ป้องกัน JavaScript Controller สั่งล้างคลาสในการ์ดหน้าลงเวลา */
+#cameraSectionCard.bma-card,
+#gpsSectionCard.bma-card,
+#checkinActionCard.bma-card {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 77, 37, 0.06), 0 8px 10px -6px rgba(0, 77, 37, 0.03) !important;
+    border: 1px solid var(--bma-border) !important;
+    background-color: var(--bma-surface-1) !important;
 }
 
 .bma-login-form-panel,
@@ -286,6 +315,7 @@ html.dark .bma-admin-topbar {
 .bma-modal-surface {
     background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
+    border-radius: 1.25rem;
 }
 
 html.dark .bma-modal-surface {
@@ -318,27 +348,30 @@ html.dark .bma-modal-surface {
  * แผง Brand Panel หน้า Login & กรอบกล้องแนวตั้ง 3:4
  * ============================================================================ */
 .bma-brand-panel {
-    background-color: #004D26 !important;
+    background-color: #00351B !important;
     background-image:
-        linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-        linear-gradient(150deg, var(--sb1) 0%, var(--sb2) 52%, var(--sb3) 100%) !important;
-    background-size: 28px 28px, 28px 28px, 100% 100% !important;
+        url('../images/thai-pattern-gold.svg'),
+        linear-gradient(150deg, #001F0D 0%, #004D25 50%, #007B3E 100%) !important;
+    background-size: 160px 160px, 100% 100% !important;
     position: relative;
     overflow: hidden;
     color: #FFFFFF !important;
+    border-right: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .bma-mobile-login-header {
     background-color: #004D26 !important;
-    background-image: linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 60%, var(--sb3) 100%) !important;
+    background-image:
+        url('../images/thai-pattern-gold.svg'),
+        linear-gradient(135deg, #002510 0%, #004D25 60%, #007B3E 100%) !important;
+    background-size: 140px 140px, 100% 100% !important;
     color: #FFFFFF !important;
-    border-bottom: 3px solid var(--gold-bma);
+    border-bottom: 2px solid var(--gold-bma);
 }
 
 .camera-portrait-3-4 {
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
     aspect-ratio: 3 / 4;
     margin-left: auto;
     margin-right: auto;
@@ -348,22 +381,22 @@ html.dark .bma-modal-surface {
 .outdoor-emerald-frame {
     background-color: #004D26 !important;
     background-image:
-        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 100%) !important;
-    background-size: 24px 24px, 24px 24px, 100% 100% !important;
-    border: 2px solid var(--g1);
+        url('../images/thai-pattern-gold.svg'),
+        linear-gradient(135deg, #002510 0%, #004D25 100%) !important;
+    background-size: 120px 120px, 100% 100% !important;
+    border: 2px solid var(--gold-bma);
     box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.25);
     color: #FFFFFF !important;
-    border-radius: 1.15rem;
+    border-radius: 1.25rem;
 }
 
 .outdoor-camera-bezel {
-    border: 3px solid var(--g1);
-    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.25);
-    border-radius: 1.1rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.3);
+    border-radius: 1.15rem;
     overflow: hidden;
     background-color: #07170E;
+    position: relative;
 }
 
 /* ============================================================================
@@ -533,10 +566,14 @@ html.dark .bma-badge-pastel-purple {
  * Deep Emerald Sidebar (.sidebar-dark-bma) & Menu Items
  * ============================================================================ */
 .sidebar-dark-bma {
-    background: linear-gradient(180deg, var(--sb1) 0%, var(--sb2) 55%, var(--sb3) 100%);
+    background-color: #002510 !important;
+    background-image:
+        url('../images/thai-pattern-gold.svg'),
+        linear-gradient(180deg, #001F0D 0%, #003819 50%, #004D25 100%) !important;
+    background-size: 140px 140px, 100% 100% !important;
     color: #FFFFFF;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 4px 0 24px rgba(0, 53, 27, 0.18);
+    border-right: 1px solid rgba(212, 175, 55, 0.22) !important;
+    box-shadow: 4px 0 24px rgba(0, 31, 13, 0.35);
 }
 
 .sidebar-dark-bma .bma-nav-item,
@@ -564,16 +601,16 @@ html.dark .bma-badge-pastel-purple {
 
 .sidebar-dark-bma .bma-nav-item.active,
 .sidebar-dark-bma .menu-item.active {
-    background: linear-gradient(90deg, rgba(253, 216, 53, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%);
+    background: linear-gradient(90deg, rgba(197, 155, 39, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
     color: #FFFFFF;
     font-weight: 700;
-    border-left: 4px solid var(--gold-bma);
+    border-left: 4px solid var(--gold-bma-light);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-dark-bma .bma-nav-item.active i,
 .sidebar-dark-bma .menu-item.active i {
-    color: var(--gold-bma);
+    color: var(--gold-bma-pale);
 }
 
 /* ============================================================================
@@ -598,9 +635,20 @@ html.dark .bma-badge-pastel-purple {
 
 .stat-card-total {
     background-color: #00351B !important;
-    background-image: linear-gradient(135deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
+    background-image: linear-gradient(135deg, #002510 0%, #004D25 50%, #007B3E 100%) !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(253, 216, 53, 0.35) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+}
+
+/* มาตรการป้องกันตามแนวทาง ก: ดักจับและเปลี่ยนสีเหลืองนีออน #FDD835 ใน DashboardController เป็นสีทองแชมเปญ */
+.stat-card-total [style*="background: #FDD835"],
+.stat-card-total [style*="background:#FDD835"],
+.stat-card-total .stat-progress-fill {
+    background: linear-gradient(135deg, #C59B27 0%, #D4AF37 100%) !important;
+}
+.stat-card-total .text-\[\#FDD835\],
+.stat-card-total [class*="text-[#FDD835]"] {
+    color: var(--gold-bma-pale) !important;
 }
 
 .stat-card .deco,
@@ -939,11 +987,11 @@ html.dark .bma-textarea {
     position: fixed;
     top: 0;
     left: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #FDD835 0%, #4EBA6F 50%, #007B3E 100%);
+    height: 3.5px;
+    background: linear-gradient(90deg, var(--gold-bma) 0%, var(--gold-bma-light) 35%, var(--bma-primary) 100%);
     z-index: 99999;
     transition: width 0.25s ease, opacity 0.25s ease;
-    box-shadow: 0 0 10px rgba(78, 186, 111, 0.8);
+    box-shadow: 0 0 10px rgba(197, 155, 39, 0.6);
 }
 
 .bma-ajax-progress-track {
@@ -963,8 +1011,8 @@ html.dark .bma-textarea {
 }
 
 #bmaGlobalSpinner {
-    backdrop-filter: blur(4px);
-    background-color: rgba(4, 31, 17, 0.55);
+    backdrop-filter: blur(6px);
+    background-color: rgba(4, 25, 14, 0.65);
 }
 
 .bma-spin-ring {
@@ -1013,4 +1061,48 @@ html.dark .bma-textarea {
 @keyframes bmaShimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+/* ============================================================================
+ * Camera Kiosk HUD & Radar Pulse Utilities (BMA Modern Viewfinder)
+ * ============================================================================ */
+.hud-gold-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--gold-bma-light);
+    pointer-events: none;
+    z-index: 10;
+}
+.hud-tl { top: 12px; left: 12px; border-top: 3px solid var(--gold-bma-light); border-left: 3px solid var(--gold-bma-light); border-top-left-radius: 6px; }
+.hud-tr { top: 12px; right: 12px; border-top: 3px solid var(--gold-bma-light); border-right: 3px solid var(--gold-bma-light); border-top-right-radius: 6px; }
+.hud-bl { bottom: 12px; left: 12px; border-bottom: 3px solid var(--gold-bma-light); border-left: 3px solid var(--gold-bma-light); border-bottom-left-radius: 6px; }
+.hud-br { bottom: 12px; right: 12px; border-bottom: 3px solid var(--gold-bma-light); border-right: 3px solid var(--gold-bma-light); border-bottom-right-radius: 6px; }
+
+.hud-face-oval {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58%;
+    height: 64%;
+    border: 2px dashed rgba(212, 175, 55, 0.45);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes bmaRadarPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 62, 0.6); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 123, 62, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 62, 0); }
+}
+
+.radar-pulse-beacon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--bma-primary);
+    animation: bmaRadarPulse 2s infinite;
 }

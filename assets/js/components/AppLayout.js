@@ -203,8 +203,8 @@ export class AppLayout {
         if (!sidebarEl) return;
 
         const logoHtml = settings.logo_url
-            ? `<img src="${settings.logo_url}" alt="Logo" class="w-12 h-12 rounded-xl object-contain bg-white p-1 border-2 border-[#FDD835] shadow-md">`
-            : `<div class="w-12 h-12 rounded-xl flex items-center justify-center text-[#00351B] font-extrabold text-xl shadow-md bg-gradient-to-br from-[#FDD835] to-[#F59E0B] border border-white/40">
+            ? `<img src="${settings.logo_url}" alt="Logo" class="w-12 h-12 rounded-xl object-contain bg-white p-1 border-2 border-[#D4AF37] shadow-md">`
+            : `<div class="w-12 h-12 rounded-xl flex items-center justify-center text-[#F5DE98] font-extrabold text-xl shadow-md bg-gradient-to-br from-[#002510] to-[#004D25] border border-[#D4AF37]/50">
                    <i class="fa-solid fa-landmark"></i>
                </div>`;
 
@@ -235,7 +235,7 @@ export class AppLayout {
                             ${logoHtml}
                             <div class="min-w-0">
                                 <h2 class="font-bold text-base truncate text-white tracking-wide">${settings.organization_name}</h2>
-                                <p class="text-xs font-semibold truncate text-[#FDD835]">${settings.bureau_name}</p>
+                                <p class="text-xs font-semibold truncate text-[#F5DE98]">${settings.bureau_name}</p>
                             </div>
                         </div>
                         <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg text-white/80 hover:bg-white/10 cursor-pointer">
@@ -246,12 +246,12 @@ export class AppLayout {
                     <div class="px-5 py-3 border-b border-white/10 bg-black/20">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-medium text-emerald-100/80">ระดับสิทธิ์ผู้ใช้งาน</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${currentUser.role === 'SuperAdmin' ? 'bg-[#FDD835] text-[#00351B]' : 'bg-emerald-400/20 text-emerald-200 border border-emerald-300/30'}">
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${currentUser.role === 'SuperAdmin' ? 'bg-[#C59B27] text-white shadow-xs' : 'bg-emerald-400/20 text-emerald-200 border border-emerald-300/30'}">
                                 ${currentUser.role}
                             </span>
                         </div>
                         <p class="text-xs text-emerald-100/90 mt-1.5 truncate" title="${scopeText}">
-                            <i class="fa-solid fa-shield-halved mr-1.5 text-[#FDD835]"></i>${scopeText}
+                            <i class="fa-solid fa-shield-halved mr-1.5 text-[#F5DE98]"></i>${scopeText}
                         </p>
                     </div>
 
@@ -267,7 +267,7 @@ export class AppLayout {
 
                         <div class="pt-3 mt-3 border-t border-white/15">
                             <a href="checkin.html" class="bma-nav-item menu-item bg-white/5 hover:bg-white/15">
-                                <i class="fa-solid fa-camera-retro w-5 text-center text-[#FDD835]"></i>
+                                <i class="fa-solid fa-camera-retro w-5 text-center text-[#F5DE98]"></i>
                                 <span class="flex-1 truncate font-semibold text-white">ไปหน้าลงเวลาปฏิบัติราชการ</span>
                             </a>
                         </div>
@@ -276,7 +276,7 @@ export class AppLayout {
 
                 <div class="p-4 border-t border-white/15 bg-black/25">
                     <div class="flex items-center gap-3 mb-3 px-2">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[#00351B] text-sm bg-[#FDD835] shadow shrink-0">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-white text-sm bg-gradient-to-br from-[#C59B27] to-[#D4AF37] shadow shrink-0">
                             ${String(currentUser.full_name || 'U').charAt(0)}
                         </div>
                         <div class="min-w-0 flex-1">
@@ -301,8 +301,8 @@ export class AppLayout {
         topbarEl.innerHTML = `
             <header class="sticky top-0 z-30 bma-header-bar px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3 min-w-0">
-                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl bg-white/15 border border-white/40 text-white hover:bg-white/25 cursor-pointer">
-                        <i class="fa-solid fa-bars-staggered text-lg text-[#FDD835]"></i>
+                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 cursor-pointer">
+                        <i class="fa-solid fa-bars-staggered text-lg text-[#F5DE98]"></i>
                     </button>
                     <div class="min-w-0">
                         <h1 id="topbarPageTitle" class="text-lg lg:text-xl font-extrabold truncate header-title-text">${pageTitle}</h1>
@@ -312,8 +312,8 @@ export class AppLayout {
 
                 <div class="flex items-center gap-2.5 lg:gap-3 shrink-0">
                     <div class="relative" id="notificationBellWrapper">
-                        <button id="btnNotificationBell" type="button" class="relative w-10 h-10 rounded-xl bg-white text-[#00351B] border-2 border-[#FDD835] hover:bg-[#FEF9C3] transition flex items-center justify-center shadow-md cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
-                            <i class="fa-solid fa-bell text-base text-[#005B2E]"></i>
+                        <button id="btnNotificationBell" type="button" class="relative w-10 h-10 rounded-xl bg-white dark:bg-[#11231B] text-[#004D25] border border-[#C59B27]/60 hover:bg-[#F6FAF7] transition flex items-center justify-center shadow-xs cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
+                            <i class="fa-solid fa-bell text-base text-[#007B3E]"></i>
                             <span id="topBellBadgeCount" class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shadow border border-white">0</span>
                         </button>
 
@@ -353,12 +353,12 @@ export class AppLayout {
         ].filter(i => i.show);
 
         mobileNavEl.innerHTML = `
-            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-2 py-1.5 flex items-center justify-around shadow-lg">
+            <nav class="lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/92 dark:bg-[#11231B]/92 backdrop-blur-xl rounded-2xl border border-emerald-600/20 shadow-2xl px-2 py-1.5 flex items-center justify-around pb-[max(0.375rem,env(safe-area-inset-bottom))]">
                 ${items.map(item => {
                     const isActive = activePage === item.id;
                     return `
-                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
-                            <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
+                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300' : 'bma-text-sub hover:text-emerald-600'}">
+                            <i class="fa-solid ${item.icon} text-base mb-0.5 ${isActive ? 'text-[#007B3E] dark:text-[#34D399]' : ''}"></i>
                             <span>${item.label}</span>
                         </a>
                     `;
