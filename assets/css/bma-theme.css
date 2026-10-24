@@ -9,64 +9,62 @@
 :root {
     color-scheme: light;
 
-    /* --- BMA 9-Color Civic Design System (Image 2) --- */
-    --bma-c-primary: #00744B;      /* Primary BMA Green */
-    --bma-c-sec-1: #215A41;        /* 1. Dark Forest Green */
-    --bma-c-sec-2: #66A33A;        /* 2. Leaf Olive Green */
-    --bma-c-sec-3: #00C08A;        /* 3. Mint Teal */
-    --bma-c-sec-4: #FFB449;        /* 4. Warm Amber */
-    --bma-c-sec-5: #F6DE51;        /* 5. Golden Sunglow */
-    --bma-c-sec-6: #0971CE;        /* 6. Royal Sapphire Blue */
-    --bma-c-sec-7: #EB3DA9;        /* 7. Berry Magenta */
-    --bma-c-sec-8: #480080;        /* 8. Deep Imperial Purple */
+    /* --- Core BMA Emerald Tokens --- */
+    --g0: #00351B;
+    --g1: #007B3E;
+    --g2: #4EBA6F;
+    --gold-bma: #FDD835;
 
-    /* Core BMA Emerald & Gold Tokens */
-    --g0: #072314;
-    --g1: #00744B;
-    --g2: #00C08A;
-    --gold-bma: #F6DE51;
+    /* Sidebar & Header/Footer Gradient Tokens */
+    --sb1: #00351B;
+    --sb2: #005B2E;
+    --sb3: #007B3E;
 
-    /* Primary Brand & Button Tokens */
-    --bma-primary: #00744B;
+    /* Primary Button Gradient Tokens */
+    --hd1: #007B3E;
+    --hd2: #00944A;
+    --hd3: #4EBA6F;
+
+    /* Brand & Primary Colors (Light Mode) */
+    --bma-primary: #007B3E;
     --bma-primary-hover: #005B2E;
-    --bma-primary-light: #00C08A;
-    --bma-primary-soft: rgba(0, 116, 75, 0.12);
+    --bma-primary-light: #4EBA6F;
+    --bma-primary-soft: rgba(0, 123, 62, 0.14);
 
     /* Official 5 Status Colors */
-    --status-normal: #00744B;
-    --status-late: #FFB449;
-    --status-absent-duty: #EB3DA9;
+    --status-normal: #007B3E;
+    --status-late: #EAB308;
+    --status-absent-duty: #EA580C;
     --status-no-checkin: #E11D48;
-    --status-overtime: #0971CE;
+    --status-overtime: #2563EB;
 
-    /* Clean Surfaces & Typography Tokens */
-    --bma-canvas: #F4F6F9;
+    /* Surface & Typography Tokens (Light Mode) */
     --bma-surface-1: #FFFFFF;
-    --bma-surface-2: #F8FAFC;
-    --bma-surface-info: #EBF8F2;
-    --bma-border: #E2E8F0;
-    --bma-text-primary: #1E293B;
-    --bma-text-secondary: #475569;
-    --bma-text-muted: #94A3B8;
+    --bma-surface-2: #EBF5EF;
+    --bma-surface-info: #E4F3EA;
+    --bma-border: #BBD8C7;
+    --bma-text-primary: #0F172A;
+    --bma-text-secondary: #264635;
+    --bma-text-muted: #527060;
 
-    /* Table Header Tokens */
-    --bma-thead-bg: #F1F5F9;
-    --bma-thead-text: #0F172A;
-    --bma-thead-border: #E2E8F0;
+    /* Table Header Pastel Tokens */
+    --bma-thead-bg: #E3F2E9;
+    --bma-thead-text: #1B432C;
+    --bma-thead-border: #B5D6C3;
 
-    /* Status Badges */
-    --badge-success-bg: rgba(0, 192, 138, 0.15);
-    --badge-success-text: #00744B;
-    --badge-warning-bg: rgba(255, 180, 73, 0.18);
-    --badge-warning-text: #B45309;
-    --badge-danger-bg: rgba(235, 61, 169, 0.15);
+    /* Status Badge Alpha Tokens */
+    --badge-success-bg: rgba(0, 123, 62, 0.15);
+    --badge-success-text: #006834;
+    --badge-warning-bg: rgba(234, 179, 8, 0.20);
+    --badge-warning-text: #9A6700;
+    --badge-danger-bg: rgba(225, 29, 72, 0.15);
     --badge-danger-text: #BE123C;
-    --badge-indigo-bg: rgba(9, 113, 206, 0.15);
-    --badge-indigo-text: #0971CE;
+    --badge-indigo-bg: rgba(37, 99, 235, 0.15);
+    --badge-indigo-text: #1D4ED8;
     --badge-sky-bg: rgba(2, 132, 199, 0.15);
-    --badge-sky-text: #0284C7;
+    --badge-sky-text: #0369A1;
 
-    --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 12px 28px -6px rgba(0, 53, 27, 0.14), 0 4px 10px -2px rgba(0, 53, 27, 0.07);
 }
 
 /* ============================================================================
@@ -119,9 +117,14 @@ html.dark {
 }
 
 body {
-    background-color: var(--bma-canvas, #F4F6F9) !important;
-    background-image: none !important;
-    color: var(--bma-text-primary, #1E293B);
+    background-color: #C5E6D4 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23007B3E' stroke-width='1' stroke-opacity='0.07'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.14) 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(0, 91, 46, 0.16) 0%, transparent 45%),
+        linear-gradient(135deg, #B8E1CC 0%, #DFF3E8 48%, #A5D6BD 100%) !important;
+    background-attachment: fixed !important;
+    color: var(--bma-text-primary);
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -130,9 +133,12 @@ body {
 }
 
 html.dark body {
-    background-color: #0F172A !important;
-    background-image: none !important;
-    color: #F1F5F9;
+    background-color: #071710 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2334D399' stroke-width='1' stroke-opacity='0.05'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        linear-gradient(135deg, #05130D 0%, #0B2217 50%, #04100A 100%) !important;
 }
 
 /* ============================================================================
@@ -1008,372 +1014,3 @@ html.dark .bma-textarea {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
-
-/* ============================================================================
- * Creative Tim Material Dashboard PRO Components Engine (Material-UI v4)
- * ============================================================================ */
-
-/* 1. Floating Card Containers */
-.material-card {
-    background-color: #FFFFFF;
-    border-radius: 1rem;
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-    position: relative;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    transition: all 0.25s ease;
-}
-html.dark .material-card {
-    background-color: #1E293B;
-    border-color: rgba(51, 65, 85, 0.8);
-    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
-}
-
-/* 2. Floating Card Headers (-mt-6) */
-.material-floating-header {
-    margin-top: -1.5rem;
-    border-radius: 0.875rem;
-    padding: 1.25rem 1.5rem;
-    color: #FFFFFF;
-    position: relative;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-
-.header-grad-green {
-    background: linear-gradient(195deg, #00744B 0%, #008A56 50%, #00A368 100%);
-    box-shadow: 0 8px 26px -4px rgba(0, 116, 75, 0.45);
-}
-.header-grad-blue {
-    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%);
-    box-shadow: 0 8px 26px -4px rgba(9, 113, 206, 0.4);
-}
-.header-grad-amber {
-    background: linear-gradient(195deg, #FFB449 0%, #F59E0B 100%);
-    box-shadow: 0 8px 26px -4px rgba(255, 180, 73, 0.4);
-}
-.header-grad-magenta {
-    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%);
-    box-shadow: 0 8px 26px -4px rgba(235, 61, 169, 0.4);
-}
-.header-grad-purple {
-    background: linear-gradient(195deg, #480080 0%, #6D28D9 100%);
-    box-shadow: 0 8px 26px -4px rgba(72, 0, 128, 0.4);
-}
-
-/* 3. Stat Cards with Offset Floating Icon Box */
-.material-stat-card {
-    background-color: #FFFFFF;
-    border-radius: 1rem;
-    position: relative;
-    padding: 1rem 1.25rem 0.875rem 1.25rem;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
-}
-html.dark .material-stat-card {
-    background-color: #1E293B;
-    border-color: rgba(51, 65, 85, 0.8);
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.25);
-}
-.material-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.08);
-}
-
-.material-stat-icon-box {
-    width: 3.5rem;
-    height: 3.5rem;
-    margin-top: -1.75rem;
-    border-radius: 0.875rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FFFFFF;
-    font-size: 1.35rem;
-}
-.stat-icon-mint {
-    background: linear-gradient(195deg, #00C08A 0%, #00995D 100%);
-    box-shadow: 0 8px 20px -4px rgba(0, 192, 138, 0.45);
-}
-.stat-icon-green {
-    background: linear-gradient(195deg, #00744B 0%, #215A41 100%);
-    box-shadow: 0 8px 20px -4px rgba(0, 116, 75, 0.45);
-}
-.stat-icon-amber {
-    background: linear-gradient(195deg, #FFB449 0%, #F59E0B 100%);
-    box-shadow: 0 8px 20px -4px rgba(255, 180, 73, 0.45);
-}
-.stat-icon-magenta {
-    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%);
-    box-shadow: 0 8px 20px -4px rgba(235, 61, 169, 0.45);
-}
-.stat-icon-blue {
-    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%);
-    box-shadow: 0 8px 20px -4px rgba(9, 113, 206, 0.45);
-}
-.stat-icon-purple {
-    background: linear-gradient(195deg, #480080 0%, #6D28D9 100%);
-    box-shadow: 0 8px 20px -4px rgba(72, 0, 128, 0.45);
-}
-
-/* 4. Pure CSS Radio Tabs State Engine (0ms latency, zero script dependency) */
-#radioTabGeneral:checked ~ #settingsTabNav label[for="radioTabGeneral"],
-#radioTabRules:checked ~ #settingsTabNav label[for="radioTabRules"],
-#radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"],
-#radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"],
-#radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] {
-    background: linear-gradient(195deg, #00744B, #00995D) !important;
-    color: #FFFFFF !important;
-    border-color: transparent !important;
-    box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
-}
-#radioTabGeneral:checked ~ #settingsTabNav label[for="radioTabGeneral"] i,
-#radioTabRules:checked ~ #settingsTabNav label[for="radioTabRules"] i,
-#radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"] i,
-#radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"] i,
-#radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] i {
-    color: #FFFFFF !important;
-}
-
-#radioTabGeneral:checked ~ #formGlobalSettings #tab-panel-general,
-#radioTabRules:checked ~ #formGlobalSettings #tab-panel-rules,
-#radioTabShifts:checked ~ #formGlobalSettings #tab-panel-shifts,
-#radioTabPrefixes:checked ~ #formGlobalSettings #tab-panel-prefixes,
-#radioTabAffiliations:checked ~ #formGlobalSettings #tab-panel-affiliations,
-body:has(#radioTabGeneral:checked) #tab-panel-general,
-body:has(#radioTabRules:checked) #tab-panel-rules,
-body:has(#radioTabShifts:checked) #tab-panel-shifts,
-body:has(#radioTabPrefixes:checked) #tab-panel-prefixes,
-body:has(#radioTabAffiliations:checked) #tab-panel-affiliations {
-    display: block !important;
-}
-
-body:has(#radioTabGeneral:checked) label[for="radioTabGeneral"],
-body:has(#radioTabRules:checked) label[for="radioTabRules"],
-body:has(#radioTabShifts:checked) label[for="radioTabShifts"],
-body:has(#radioTabPrefixes:checked) label[for="radioTabPrefixes"],
-body:has(#radioTabAffiliations:checked) label[for="radioTabAffiliations"] {
-    background: linear-gradient(195deg, #00744B, #00995D) !important;
-    color: #FFFFFF !important;
-    border-color: transparent !important;
-    box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
-}
-
-/* 5. Kiosk Viewfinder HUD & Radar Pulse Utilities */
-.hud-gold-corner {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: #00744B;
-    pointer-events: none;
-    z-index: 10;
-}
-.hud-tl { top: 12px; left: 12px; border-top: 3px solid #00744B; border-left: 3px solid #00744B; border-top-left-radius: 6px; }
-.hud-tr { top: 12px; right: 12px; border-top: 3px solid #00744B; border-right: 3px solid #00744B; border-top-right-radius: 6px; }
-.hud-bl { bottom: 12px; left: 12px; border-bottom: 3px solid #00744B; border-left: 3px solid #00744B; border-bottom-left-radius: 6px; }
-.hud-br { bottom: 12px; right: 12px; border-bottom: 3px solid #00744B; border-right: 3px solid #00744B; border-bottom-right-radius: 6px; }
-
-@keyframes bmaRadarPulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 116, 75, 0.6); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 116, 75, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 116, 75, 0); }
-}
-
-.radar-pulse-beacon {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--bma-c-sec-3, #00C08A);
-    animation: bmaRadarPulse 2s infinite;
-}
-
-/* 6. SweetAlert2 Civic Material Skinning */
-.swal2-popup.bma-swal-popup {
-    border-radius: 1.5rem !important;
-    padding: 1.75rem !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-}
-html.dark .swal2-popup.bma-swal-popup {
-    background: #1E293B !important;
-    color: #F1F5F9 !important;
-    border-color: #334155 !important;
-}
-.swal2-popup.bma-swal-popup .swal2-confirm {
-    background: linear-gradient(195deg, #00744B 0%, #00995D 100%) !important;
-    border-radius: 9999px !important;
-    padding: 0.625rem 1.75rem !important;
-    font-weight: 700 !important;
-    box-shadow: 0 4px 15px rgba(0, 116, 75, 0.4) !important;
-}
-.swal2-popup.bma-swal-popup .swal2-cancel {
-    background: #F1F5F9 !important;
-    color: #475569 !important;
-    border-radius: 9999px !important;
-    padding: 0.625rem 1.5rem !important;
-    font-weight: 600 !important;
-}
-html.dark .swal2-popup.bma-swal-popup .swal2-cancel {
-    background: #334155 !important;
-    color: #E2E8F0 !important;
-}
-
-/* ============================================================================
- * Material Dashboard PRO - Dynamic Stat Card & Floating Header Overrides
- * Transforms controller-injected stat cards into floating icon boxes
- * ============================================================================ */
-#dashboardKpiCardsGrid {
-    padding-top: 1.5rem;
-}
-
-#dashboardKpiCardsGrid .stat-card {
-    background: #FFFFFF !important;
-    color: #1E293B !important;
-    border-radius: 1rem !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
-    position: relative !important;
-    padding: 1.25rem 1.25rem 0.875rem 1.25rem !important;
-    overflow: visible !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
-
-html.dark #dashboardKpiCardsGrid .stat-card {
-    background: #1E293B !important;
-    color: #F8FAFC !important;
-    border-color: rgba(51, 65, 85, 0.8) !important;
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35) !important;
-}
-
-#dashboardKpiCardsGrid .stat-card:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12) !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .deco-1,
-#dashboardKpiCardsGrid .stat-card .deco-2 {
-    display: none !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child {
-    display: flex !important;
-    flex-direction: row-reverse !important;
-    justify-content: space-between !important;
-    align-items: flex-start !important;
-    text-align: right !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child {
-    text-align: right !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
-    color: #64748B !important;
-    font-size: 0.775rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.025em !important;
-}
-
-html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
-    color: #94A3B8 !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
-    color: #0F172A !important;
-    font-size: 1.75rem !important;
-    font-weight: 800 !important;
-    margin-top: 0.2rem !important;
-    line-height: 1.2 !important;
-}
-
-html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
-    color: #F8FAFC !important;
-}
-
-#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 span {
-    color: #94A3B8 !important;
-    font-size: 0.825rem !important;
-    font-weight: 600 !important;
-}
-
-/* Material Floating Icon Box (Offset -top-4 left-4) */
-#dashboardKpiCardsGrid .stat-card .stat-icon-box {
-    position: absolute !important;
-    top: -1.25rem !important;
-    left: 1rem !important;
-    width: 3.5rem !important;
-    height: 3.5rem !important;
-    border-radius: 0.875rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 1.4rem !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    backdrop-filter: none !important;
-}
-
-/* Card 1: บุคลากรทั้งหมด (Mint Teal to BMA Green) */
-#dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-icon-box {
-    background: linear-gradient(195deg, #00C08A 0%, #00744B 100%) !important;
-    box-shadow: 0 8px 20px -4px rgba(0, 192, 138, 0.45) !important;
-}
-#dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-icon-box i {
-    color: #FFFFFF !important;
-}
-
-/* Card 2: ปฏิบัติงานปกติ (BMA Primary Green to Deep Forest) */
-#dashboardKpiCardsGrid .stat-card:nth-child(2) .stat-icon-box {
-    background: linear-gradient(195deg, #00744B 0%, #215A41 100%) !important;
-    box-shadow: 0 8px 20px -4px rgba(0, 116, 75, 0.45) !important;
-}
-
-/* Card 3: มาสาย (Warm Amber to Canary Yellow) */
-#dashboardKpiCardsGrid .stat-card:nth-child(3) .stat-icon-box {
-    background: linear-gradient(195deg, #FFB449 0%, #F6DE51 100%) !important;
-    box-shadow: 0 8px 20px -4px rgba(255, 180, 73, 0.45) !important;
-}
-
-/* Card 4: ขาดราชการ/ไปราชการ/ลา (Berry Magenta to Rose) */
-#dashboardKpiCardsGrid .stat-card:nth-child(4) .stat-icon-box {
-    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%) !important;
-    box-shadow: 0 8px 20px -4px rgba(235, 61, 169, 0.45) !important;
-}
-
-/* Card 5: ปฏิบัติงานนอกเวลา (Sapphire Blue) */
-#dashboardKpiCardsGrid .stat-card:nth-child(5) .stat-icon-box {
-    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%) !important;
-    box-shadow: 0 8px 20px -4px rgba(9, 113, 206, 0.45) !important;
-}
-
-/* Bottom Progress Divider */
-#dashboardKpiCardsGrid .stat-card .mt-4 {
-    margin-top: 0.875rem !important;
-    padding-top: 0.65rem !important;
-    border-top: 1px solid #F1F5F9 !important;
-}
-html.dark #dashboardKpiCardsGrid .stat-card .mt-4 {
-    border-top-color: #334155 !important;
-}
-#dashboardKpiCardsGrid .stat-card .mt-4 span {
-    color: #64748B !important;
-    font-size: 0.75rem !important;
-    font-weight: 600 !important;
-}
-html.dark #dashboardKpiCardsGrid .stat-card .mt-4 span {
-    color: #94A3B8 !important;
-}
-#dashboardKpiCardsGrid .stat-card .stat-progress-track {
-    background: #E2E8F0 !important;
-    height: 0.35rem !important;
-    border-radius: 9999px !important;
-}
-html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
-    background: #334155 !important;
-}
