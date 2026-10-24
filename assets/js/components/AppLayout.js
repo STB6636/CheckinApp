@@ -1,6 +1,6 @@
 /**
  * @file assets/js/components/AppLayout.js
- * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (เปลี่ยนการจัด Footer ของระบบผู้ดูแลระบบให้เป็นจัดกึ่งกลาง และรองรับการต่ออายุ Session 7 วัน)
+ * @description คลาสสร้างโครงสร้าง Layout ส่วนกลาง (ซ่อนชื่อไฟล์ .html บนแถบ URL ทุกหน้าให้แสดงเฉพาะ https://stb6636.github.io/CheckinApp/, จัด Footer กึ่งกลาง และต่ออายุ Session 7 วัน)
  */
 
 import { Config } from '../core/Config.js';
@@ -60,13 +60,14 @@ export class AppLayout {
 
     static async initAdminLayout({ activePage, pageTitle, pageSubtitle = '' }) {
         UIHelpers.initTheme();
+        UIHelpers.maskUrlToRoot(`${activePage}.html`);
 
         const allowedRoles = activePage === 'settings' ? ['SuperAdmin'] : ['SuperAdmin', 'Admin'];
         const currentUser = AuthService.requireAuth(allowedRoles);
         if (!currentUser) return { currentUser: null, settings: null };
 
         if (activePage === 'users' && !AppLayout.canViewUsersMenu(currentUser)) {
-            window.location.href = 'dashboard.html';
+            window.location.replace('dashboard.html');
             return { currentUser: null, settings: null };
         }
 
@@ -138,6 +139,7 @@ export class AppLayout {
     static async navigateAjaxPage(targetFile, pushHistory = true) {
         const routeInfo = AppLayout.PAGE_ROUTES[targetFile];
         if (!routeInfo) {
+            sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, targetFile);
             window.location.href = targetFile;
             return;
         }
@@ -147,7 +149,6 @@ export class AppLayout {
             return;
         }
 
-        // ต่ออายุ Session อีก 7 วันทุกครั้งที่มีการคลิกเปลี่ยนเมนูในระบบหลังบ้าน
         AuthService.getCurrentUser(true);
 
         UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
@@ -174,8 +175,13 @@ export class AppLayout {
                 document.body.appendChild(modalEl);
             });
 
+            // จดจำหน้าปัจจุบันไว้ใน sessionStorage และใช้ Root Path บนแถบ URL เพื่อไม่ให้แสดงชื่อไฟล์ .html
+            sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, targetFile);
+            const cleanRootUrl = UIHelpers.getRootBasePath();
             if (pushHistory) {
-                window.history.pushState({ file: targetFile }, '', targetFile);
+                window.history.pushState({ file: targetFile }, '', cleanRootUrl);
+            } else {
+                window.history.replaceState({ file: targetFile }, '', cleanRootUrl);
             }
 
             const module = await import(routeInfo.controllerPath);
@@ -393,9 +399,6 @@ export class AppLayout {
         `;
     }
 
-    /**
-     * เปลี่ยนการจัด Footer ของระบบผู้ดูแลระบบให้เป็นจัดกึ่งกลาง (Center Aligned)
-     */
     static #renderFooter(settings) {
         const footerEl = document.getElementById('bmaFooterContainer');
         if (!footerEl) return;
@@ -520,10 +523,9 @@ export class AppLayout {
         if (AppLayout.#isGlobalEventsBound) return;
         AppLayout.#isGlobalEventsBound = true;
 
-        // ซิงค์การออกจากระบบข้ามแท็บ
         window.addEventListener('storage', (e) => {
             if (e.key === Config.STORAGE_KEYS.SESSION_USER && !e.newValue) {
-                window.location.href = './';
+                window.location.replace(UIHelpers.getRootBasePath());
             }
         });
 
@@ -539,7 +541,7 @@ export class AppLayout {
                 );
                 if (confirmed) {
                     AuthService.clearSession();
-                    window.location.href = './';
+                    window.location.replace(UIHelpers.getRootBasePath());
                 }
                 return;
             }
@@ -589,14 +591,16 @@ export class AppLayout {
                     e.preventDefault();
                     bellMenu?.classList.add('hidden');
                     await AppLayout.navigateAjaxPage(cleanFile, true);
+                } else if (cleanFile === 'checkin.html') {
+                    sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, 'checkin.html');
                 }
             }
         });
 
-        window.addEventListener('popstate', async () => {
-            const currentFile = window.location.pathname.split('/').pop() || 'dashboard.html';
-            if (AppLayout.PAGE_ROUTES[currentFile]) {
-                await AppLayout.navigateAjaxPage(currentFile, false);
+        window.addEventListener('popstate', async (e) => {
+            const targetFile = e.state?.file || sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY) || 'dashboard.html';
+            if (AppLayout.PAGE_ROUTES[targetFile]) {
+                await AppLayout.navigateAjaxPage(targetFile, false);
             }
         });
     }

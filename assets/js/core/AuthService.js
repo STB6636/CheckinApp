@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/AuthService.js
- * @description คลาสจัดการการยืนยันตัวตน ระบบจดจำ Session อายุ 7 วันพร้อมต่ออายุอัตโนมัติเมื่อเข้าใช้งานต่อเนื่อง (7-Day Rolling Session)
+ * @description คลาสจัดการการยืนยันตัวตน ระบบจดจำ Session 7 วัน และรองรับการซ่อนชื่อไฟล์ .html บน URL ทุกหน้า
  */
 
 import { Config } from './Config.js';
@@ -8,15 +8,8 @@ import { DatabaseService } from './DatabaseService.js';
 import { UIHelpers } from './UIHelpers.js';
 
 export class AuthService {
-    // อายุของ Session = 7 วัน (หน่วยเป็นมิลลิวินาที)
     static SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
-    /**
-     * ดึงข้อมูลผู้ใช้งานจาก Session พร้อมตรวจสอบวันหมดอายุ (7 วัน)
-     * หากยังไม่หมดอายุและ extendSession = true ระบบจะต่ออายุ Session ให้ครบ 7 วันนับจากเวลาปัจจุบันไปเรื่อยๆ
-     * @param {boolean} extendSession ต่ออายุ Session อัตโนมัติอีก 7 วันหรือไม่
-     * @returns {Object|null}
-     */
     static getCurrentUser(extendSession = true) {
         try {
             const raw = localStorage.getItem(Config.STORAGE_KEYS.SESSION_USER);
@@ -30,13 +23,11 @@ export class AuthService {
 
             const now = Date.now();
 
-            // ตรวจสอบว่า Session หมดอายุเกิน 7 วันหรือยัง
             if (sessionData.expires_at && now > sessionData.expires_at) {
                 AuthService.clearSession();
                 return null;
             }
 
-            // ต่ออายุ Session ให้ครบ 7 วันไปเรื่อยๆ เมื่อเข้าใช้งานต่อเนื่อง (Rolling Session)
             if (extendSession) {
                 sessionData.last_active_at = now;
                 sessionData.expires_at = now + AuthService.SESSION_TTL_MS;
@@ -50,11 +41,6 @@ export class AuthService {
         }
     }
 
-    /**
-     * บันทึกข้อมูล Session ของผู้ใช้ลงใน LocalStorage พร้อมกำหนดอายุ 7 วัน
-     * @param {Object} userObj
-     * @param {'checkin'|'admin'} loginMode
-     */
     static setCurrentUser(userObj, loginMode = 'checkin') {
         const now = Date.now();
         const payload = {
@@ -66,17 +52,11 @@ export class AuthService {
         localStorage.setItem(Config.STORAGE_KEYS.SESSION_USER, JSON.stringify(payload));
     }
 
-    /**
-     * ล้างข้อมูล Session เมื่อผู้ใช้กดปุ่มออกจากระบบ
-     */
     static clearSession() {
         localStorage.removeItem(Config.STORAGE_KEYS.SESSION_USER);
+        sessionStorage.removeItem(UIHelpers.VIEW_PAGE_STORAGE_KEY);
     }
 
-    /**
-     * ตรวจสอบความถูกต้องของ Session กับฐานข้อมูลเบื้องหลัง (ป้องกันกรณีบัญชีถูกระงับหรือเปลี่ยนสิทธิ์กลางคัน)
-     * @returns {Promise<boolean>}
-     */
     static async verifySessionWithDatabase() {
         const current = AuthService.getCurrentUser(false);
         if (!current || !current.id) return false;
@@ -98,7 +78,6 @@ export class AuthService {
                 .maybeSingle();
 
             if (error) {
-                // กรณีอินเทอร์เน็ตขัดข้องชั่วคราว ให้คง Session เดิมไว้ก่อน
                 return true;
             }
 
@@ -107,7 +86,6 @@ export class AuthService {
                 return false;
             }
 
-            // อัปเดตข้อมูลผู้ใช้ให้เป็นปัจจุบันและต่ออายุอีก 7 วัน
             AuthService.setCurrentUser({
                 ...current,
                 personnel_id: user.personnel_id,
@@ -128,21 +106,30 @@ export class AuthService {
     }
 
     /**
-     * คืนค่า URL ปลายทางของ Session ปัจจุบัน (สำหรับข้ามหน้า Login อัตโนมัติ)
+     * คืนค่าหน้าเว็บปลายทางของ Session ปัจจุบัน (รองรับการเปิดหน้าล่าสุดที่ค้างไว้เมื่อกด Refresh บน Root URL)
      * @param {Object} sessionUser
      * @returns {string}
      */
     static getRedirectUrlForSession(sessionUser) {
-        if (!sessionUser) return './';
+        if (!sessionUser) return UIHelpers.getRootBasePath();
+
+        const savedViewPage = sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY);
+        if (savedViewPage && savedViewPage !== 'index.html') {
+            if (sessionUser.role === 'User') {
+                return 'checkin.html';
+            }
+            if (savedViewPage === 'settings.html' && sessionUser.role !== 'SuperAdmin') {
+                return 'dashboard.html';
+            }
+            return savedViewPage;
+        }
+
         if (sessionUser.last_login_mode === 'admin' && ['SuperAdmin', 'Admin'].includes(sessionUser.role)) {
             return 'dashboard.html';
         }
         return 'checkin.html';
     }
 
-    /**
-     * เข้าสู่ระบบสำหรับลงเวลาปฏิบัติราชการ หรือเข้าสู่ระบบผู้ดูแลระบบหลังบ้าน
-     */
     static async login(username, password, loginMode = 'checkin') {
         const db = DatabaseService.getInstance().client;
         const cleanUsername = String(username || '').trim();
@@ -198,10 +185,11 @@ export class AuthService {
         };
 
         AuthService.setCurrentUser(sessionPayload, loginMode);
-
         sessionStorage.setItem(Config.STORAGE_KEYS.WELCOME_TOAST, sessionPayload.full_name);
 
         const redirectUrl = loginMode === 'admin' ? 'dashboard.html' : 'checkin.html';
+        sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, redirectUrl);
+
         return {
             success: true,
             user: sessionPayload,
@@ -304,29 +292,24 @@ export class AuthService {
         };
     }
 
-    /**
-     * ตรวจสอบสิทธิ์การเข้าถึงหน้าเว็บ พร้อมต่ออายุ Session อัตโนมัติอีก 7 วัน
-     */
     static requireAuth(allowedRoles = ['SuperAdmin', 'Admin', 'User']) {
-        // ดึงข้อมูลพร้อมต่ออายุ Session อีก 7 วันอัตโนมัติ
         const user = AuthService.getCurrentUser(true);
         if (!user) {
-            window.location.href = './';
+            window.location.replace(UIHelpers.getRootBasePath());
             return null;
         }
         if (!allowedRoles.includes(user.role)) {
             if (user.role === 'User') {
-                window.location.href = 'checkin.html';
+                window.location.replace('checkin.html');
             } else {
-                window.location.href = 'dashboard.html';
+                window.location.replace('dashboard.html');
             }
             return null;
         }
 
-        // ซิงค์สถานะบัญชีกับฐานข้อมูลเบื้องหลังแบบไม่บล็อกหน้าจอ
         AuthService.verifySessionWithDatabase().then(isValid => {
             if (!isValid) {
-                window.location.href = './';
+                window.location.replace(UIHelpers.getRootBasePath());
             }
         });
 

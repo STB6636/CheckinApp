@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, พิมพ์ PDF ขนาด A4 แนวนอนโดยไม่มีข้อความ Header เบราว์เซอร์ซ้ำด้านบน, ตรวจสอบลิงก์รูปโลโก้, วันที่ไทย & เวลา 24 ชม.
+ * @description คลาสจัดการ UI, ซ่อนชื่อไฟล์บนแถบ URL รองรับทั้ง GitHub Pages และ Cloudflare Pages, พิมพ์ PDF A4 แนวนอน, ตรวจสอบลิงก์รูปโลโก้ & Google Drive
  */
 
 import { Config } from './Config.js';
@@ -8,6 +8,11 @@ import { Config } from './Config.js';
 export class UIHelpers {
     static #progressTimer = null;
     static #currentProgress = 0;
+
+    static VIEW_PAGE_STORAGE_KEY = 'bma_checkin_active_view_page_v2_9';
+
+    // รูปแบบชื่อหน้าทั้งหมดของระบบ (รองรับทั้งแบบมี .html บน GitHub Pages และแบบตัด .html อัตโนมัติบน Cloudflare Pages)
+    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|personnel|users|settings)(\.html)?\/?$/i;
 
     static THAI_MONTHS_SHORT = [
         'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
@@ -19,7 +24,55 @@ export class UIHelpers {
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
+    /**
+     * คืนค่า Path รากของเว็บไซต์โดยไม่มีชื่อไฟล์:
+     * - บน GitHub Pages คืนค่า "/CheckinApp/"
+     * - บน Cloudflare Pages คืนค่า "/"
+     * @returns {string}
+     */
+    static getRootBasePath() {
+        const pathname = window.location.pathname || '/';
+        if (UIHelpers.KNOWN_PAGES_REGEX.test(pathname)) {
+            return pathname.replace(UIHelpers.KNOWN_PAGES_REGEX, '/');
+        }
+        if (/\/[^\/]+\.html$/i.test(pathname)) {
+            return pathname.replace(/\/[^\/]+\.html$/i, '/');
+        }
+        return pathname.endsWith('/') ? pathname : `${pathname}/`;
+    }
+
+    /**
+     * ซ่อนชื่อไฟล์ออกจากแถบ URL ของเบราว์เซอร์ในทุกหน้า (รองรับทั้ง GitHub Pages และ Cloudflare Pages)
+     * พร้อมจดจำชื่อไฟล์หน้าปัจจุบันไว้ใน sessionStorage เพื่อรองรับการกด Refresh (F5)
+     * @param {string} explicitPageName ชื่อไฟล์หน้าที่กำลังแสดงผล
+     */
+    static maskUrlToRoot(explicitPageName = '') {
+        try {
+            const pathname = window.location.pathname || '/';
+            const match = pathname.match(UIHelpers.KNOWN_PAGES_REGEX);
+            const detectedPage = match ? `${match[1].toLowerCase()}.html` : '';
+            const currentFile = explicitPageName || detectedPage;
+
+            if (currentFile && currentFile.toLowerCase() !== 'index.html') {
+                sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, currentFile);
+            }
+
+            const cleanRootPath = UIHelpers.getRootBasePath();
+            if (window.location.pathname !== cleanRootPath || window.location.search || window.location.hash) {
+                window.history.replaceState(
+                    { file: currentFile || sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY) || 'index.html' },
+                    '',
+                    cleanRootPath
+                );
+            }
+        } catch (err) {
+            console.warn('URL masking warning:', err);
+        }
+    }
+
     static initTheme() {
+        UIHelpers.maskUrlToRoot();
+
         if (window.tailwind) {
             window.tailwind.config = {
                 ...(window.tailwind.config || {}),
@@ -529,12 +582,6 @@ export class UIHelpers {
         });
     }
 
-    /**
-     * พิมพ์/ส่งออก PDF ขนาด A4 แนวนอน (Landscape)
-     * แก้ไขปัญหาข้อความชื่อรายงานสีดำซ้ำด้านบนสุดเวลาสั่งพิมพ์:
-     * - ตั้งค่า <title>&nbsp;</title> ให้ว่าง และใช้ @page { size: A4 landscape; margin: 0mm; }
-     *   เพื่อตัด Browser Print Header/Footer อัตโนมัติออกทั้งหมด
-     */
     static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#007B3E' }) {
         const printWindow = window.open('', '_blank');
         if (!printWindow) {

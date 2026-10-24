@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ซ่อนโมดูลกล้อง/GPS เมื่อปิดใช้งาน พร้อมจัด Layout อัตโนมัติทั้ง 3 รูปแบบสำหรับมือถือและคอมพิวเตอร์)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ซ่อนชื่อไฟล์ .html บนแถบ URL, เร่งความเร็วการจับพิกัด GPS และไม่หน่วงตอนกดบันทึกข้อมูล)
  */
 
 import { Config } from '../core/Config.js';
@@ -22,6 +22,7 @@ export class CheckinController {
             lng: null,
             locationName: ''
         };
+        this.locationResolvePromise = null;
         this.activeRegularRecord = null;
         this.availableShiftsForCurrentWindow = [];
         this.activeHistoryTab = 'today';
@@ -36,9 +37,9 @@ export class CheckinController {
 
     async init() {
         UIHelpers.initTheme();
+        UIHelpers.maskUrlToRoot('checkin.html');
         this.#updateThemeButtonUI();
 
-        // ตรวจสอบสิทธิ์และต่ออายุ Session 7 วันอัตโนมัติ
         this.currentUser = AuthService.requireAuth(['SuperAdmin', 'Admin', 'User']);
         if (!this.currentUser) return;
 
@@ -53,16 +54,14 @@ export class CheckinController {
         await this.#refreshAllAttendanceData();
         UIHelpers.hideLoading();
 
-        // หากเปิดฟังก์ชันถ่ายรูป ให้เริ่มต้นในโหมดพักกล้อง (กดเปิดกล้องเมื่อต้องการถ่ายรูป)
         if (this.settings.require_photo) {
             this.#stopCameraAndShowStandby();
         } else {
             this.#stopCameraHardwareStream();
         }
 
-        // หากเปิดฟังก์ชัน GPS จึงจะเรียกใช้งานพิกัดและแผนที่
         if (this.settings.require_gps) {
-            await this.#initGpsLocation();
+            this.#initGpsLocation();
         } else {
             this.gpsData = {
                 ready: true,
@@ -73,10 +72,6 @@ export class CheckinController {
         }
     }
 
-    /**
-     * จัด Layout อัตโนมัติทั้ง 3 รูปแบบ เมื่อปิดฟังก์ชัน "ภาพถ่ายยืนยันตัวตน (3:4)" และ/หรือ "ตำแหน่งสถานที่ปฏิบัติงาน (GPS & Google Map)"
-     * คำนึงถึงความสวยงามทั้งบนหน้าจอมือถือ (Mobile) และคอมพิวเตอร์ (Desktop)
-     */
     #applyDynamicWorkspaceLayout() {
         const showPhoto = Boolean(this.settings?.require_photo);
         const showGps = Boolean(this.settings?.require_gps);
@@ -89,8 +84,6 @@ export class CheckinController {
         if (!cameraCard || !rightWrapper || !gpsCard || !actionCard) return;
 
         if (showPhoto && showGps) {
-            // กรณีเปิดใช้งานทั้ง 2 ฟังก์ชัน (ค่าเริ่มต้น):
-            // Desktop: ซ้าย = กล้อง (5 ส่วน), ขวา = GPS + การ์ดลงเวลา (7 ส่วน) | Mobile: เรียงลงมา
             cameraCard.classList.remove('hidden');
             gpsCard.classList.remove('hidden');
 
@@ -99,8 +92,6 @@ export class CheckinController {
             gpsCard.className = 'bma-card p-5 space-y-3.5 flex flex-col justify-between';
             actionCard.className = 'bma-card p-5 space-y-4 flex flex-col justify-between';
         } else if (!showPhoto && showGps) {
-            // รูปแบบที่ 1: ปิดเฉพาะฟังก์ชัน "ภาพถ่ายยืนยันตัวตน (แนวตั้ง 3:4)"
-            // ซ่อนโมดูลกล้อง | Desktop: วางโมดูล GPS (7 ส่วน) คู่กับการ์ดลงเวลา (5 ส่วน) ซ้าย-ขวาอย่างสมดุล | Mobile: เรียง 1 คอลัมน์
             cameraCard.classList.add('hidden');
             gpsCard.classList.remove('hidden');
 
@@ -108,8 +99,6 @@ export class CheckinController {
             gpsCard.className = 'lg:col-span-7 bma-card p-5 space-y-3.5 flex flex-col justify-between h-full';
             actionCard.className = 'lg:col-span-5 bma-card p-5 space-y-4 flex flex-col justify-between h-full';
         } else if (showPhoto && !showGps) {
-            // รูปแบบที่ 2: ปิดเฉพาะฟังก์ชัน "ตำแหน่งสถานที่ปฏิบัติงาน (GPS & Google Map)"
-            // ซ่อนโมดูล GPS | Desktop: วางโมดูลกล้อง (5 ส่วน) คู่กับการ์ดลงเวลา (7 ส่วน) ความสูงเท่ากัน | Mobile: เรียง 1 คอลัมน์
             cameraCard.classList.remove('hidden');
             gpsCard.classList.add('hidden');
 
@@ -117,8 +106,6 @@ export class CheckinController {
             rightWrapper.className = 'lg:col-span-7 flex flex-col justify-stretch';
             actionCard.className = 'bma-card p-6 space-y-5 flex flex-col justify-between h-full w-full';
         } else {
-            // รูปแบบที่ 3: ปิดทั้ง 2 ฟังก์ชัน (ปิดทั้งกล้องและ GPS)
-            // ซ่อนทั้งโมดูลกล้องและ GPS | Desktop & Mobile: จัดการ์ดลงเวลาอยู่กึ่งกลางหน้าจอ (max-w-2xl mx-auto) อย่างสวยงาม
             cameraCard.classList.add('hidden');
             gpsCard.classList.add('hidden');
 
@@ -712,6 +699,9 @@ export class CheckinController {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /**
+     * จับพิกัด GPS และค้นหาชื่อสถานที่ด้วยความเร็วสูงสุด โดยไม่บล็อกการบันทึกข้อมูล
+     */
     async #initGpsLocation() {
         if (!this.settings?.require_gps) return;
 
@@ -727,16 +717,17 @@ export class CheckinController {
             return;
         }
 
-        coordsEl.textContent = 'กำลังดึงพิกัดดาวเทียม GPS...';
-        locNameEl.textContent = 'กำลังค้นหาชื่อสถานที่ใกล้เคียง...';
+        coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
+        locNameEl.textContent = 'กำลังค้นหาสถานที่...';
 
         navigator.geolocation.getCurrentPosition(
-            async (pos) => {
+            (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 this.gpsData.lat = lat;
                 this.gpsData.lng = lng;
                 this.gpsData.ready = true;
+                this.gpsData.locationName = `พิกัด (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
 
                 coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
@@ -751,9 +742,12 @@ export class CheckinController {
                     mapLink.classList.remove('hidden');
                 }
 
-                const resolvedPlace = await AttendanceModel.resolveLocationName(lat, lng);
-                this.gpsData.locationName = resolvedPlace;
-                locNameEl.textContent = resolvedPlace;
+                // ค้นหาชื่อสถานที่แบบความเร็วสูง (ไม่บล็อกหน้าจอ)
+                this.locationResolvePromise = AttendanceModel.resolveLocationName(lat, lng).then(resolvedPlace => {
+                    this.gpsData.locationName = resolvedPlace;
+                    if (locNameEl) locNameEl.textContent = resolvedPlace;
+                    return resolvedPlace;
+                });
             },
             async (err) => {
                 console.warn('Geolocation error:', err);
@@ -771,17 +765,16 @@ export class CheckinController {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 12000,
-                maximumAge: 0
+                timeout: 6000,
+                maximumAge: 30000
             }
         );
     }
 
     #bindEvents() {
-        // ซิงค์การออกจากระบบข้ามแท็บ
         window.addEventListener('storage', (e) => {
             if (e.key === Config.STORAGE_KEYS.SESSION_USER && !e.newValue) {
-                window.location.href = './';
+                window.location.replace(UIHelpers.getRootBasePath());
             }
         });
 
@@ -800,7 +793,7 @@ export class CheckinController {
             if (confirmed) {
                 this.#stopCameraHardwareStream();
                 AuthService.clearSession();
-                window.location.href = './';
+                window.location.replace(UIHelpers.getRootBasePath());
             }
         });
 
@@ -919,7 +912,6 @@ export class CheckinController {
     }
 
     async #handleMainCheckin() {
-        // ต่ออายุ Session อีก 7 วันเมื่อผู้ใช้กดลงเวลา
         AuthService.getCurrentUser(true);
 
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {
@@ -970,6 +962,14 @@ export class CheckinController {
         UIHelpers.showLoading('กำลังบันทึกเวลาปฏิบัติราชการ...');
 
         try {
+            // หากชื่อสถานทีกำลังค้นหาอยู่ในเสี้ยววินาทีสุดท้าย ให้รอไม่เกิน 600ms เพื่อไม่ให้หน่วงตอนบันทึกข้อมูล
+            if (this.settings.require_gps && this.locationResolvePromise) {
+                await Promise.race([
+                    this.locationResolvePromise,
+                    new Promise(r => setTimeout(r, 600))
+                ]);
+            }
+
             let finalPhotoUrl = '';
             if (this.settings.require_photo && this.capturedPhotoDataUrl) {
                 finalPhotoUrl = await UIHelpers.uploadPhotoToGoogleDrive(

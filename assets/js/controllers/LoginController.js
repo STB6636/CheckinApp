@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/LoginController.js
- * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ตรวจสอบและต่ออายุ Session 7 วันอัตโนมัติโดยไม่ต้อง Login ซ้ำ + ซ่อน /index.html บนแถบ URL)
+ * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ซ่อนชื่อไฟล์ .html ทุกหน้าให้แสดงเฉพาะ https://stb6636.github.io/CheckinApp/ และกู้คืนหน้าเดิมเมื่อกด Refresh)
  */
 
 import { AuthService } from '../core/AuthService.js';
@@ -14,24 +14,15 @@ export class LoginController {
     }
 
     async init() {
-        // ซ่อนชื่อไฟล์ /index.html ออกจากแถบ URL ของเบราว์เซอร์ให้เหลือเฉพาะโดเมนสะอาดตา
-        if (window.location.pathname.endsWith('/index.html')) {
-            const cleanPath = window.location.pathname.replace(/index\.html$/, '');
-            window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
-        }
-
+        // ซ่อนชื่อไฟล์ .html ทันทีให้เหลือเฉพาะ https://stb6636.github.io/CheckinApp/
         UIHelpers.initTheme();
 
-        // ตรวจสอบว่ามี Session ของผู้ใช้งานที่ยังไม่หมดอายุ (ภายใน 7 วัน) หรือไม่
-        // หากมี ระบบจะต่ออายุให้ครบ 7 วันอัตโนมัติ และพาเข้าสู่ระบบทันทีโดยไม่ต้อง Login ซ้ำ
+        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าล่าสุดทันทีโดยไม่ต้อง Login ซ้ำ
         const existingSessionUser = AuthService.getCurrentUser(true);
         if (existingSessionUser) {
-            const isValid = await AuthService.verifySessionWithDatabase();
-            if (isValid) {
-                const updatedUser = AuthService.getCurrentUser(false) || existingSessionUser;
-                window.location.replace(AuthService.getRedirectUrlForSession(updatedUser));
-                return;
-            }
+            const targetUrl = AuthService.getRedirectUrlForSession(existingSessionUser);
+            window.location.replace(targetUrl);
+            return;
         }
 
         this.#updateThemeButtonUI();
@@ -202,7 +193,7 @@ export class LoginController {
             }
 
             await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
-            window.location.href = result.redirectUrl;
+            window.location.replace(result.redirectUrl);
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);
