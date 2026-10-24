@@ -137,65 +137,47 @@ export class AppLayout {
     }
 
     static async navigateAjaxPage(targetFile, pushHistory = true) {
-        const routeInfo = AppLayout.PAGE_ROUTES[targetFile];
-        if (!routeInfo) {
-            sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, targetFile);
-            window.location.href = targetFile;
-            return;
-        }
+        const cleanFile = targetFile.split('?')[0].split('#')[0].split('/').pop();
 
-        if (targetFile === 'users.html' && !AppLayout.canViewUsersMenu(AppLayout.#currentUser)) {
+        // 1. ตรวจสอบสิทธิ์การเข้าถึงเมนูผู้ใช้งาน (Users)
+        if (cleanFile === 'users.html' && !AppLayout.canViewUsersMenu(AppLayout.#currentUser)) {
             await UIHelpers.showToast('ท่านไม่มีสิทธิ์เข้าถึงเมนูจัดการบัญชีผู้ใช้งาน', 'warning', 2500);
             return;
         }
 
-        AuthService.getCurrentUser(true);
-
-        UIHelpers.showLoading('กำลังสลับหน้าเมนู...');
-        try {
-            const response = await fetch(targetFile);
-            if (!response.ok) {
-                throw new Error(`ไม่สามารถโหลดหน้า ${targetFile} ได้`);
-            }
-
-            const htmlText = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, 'text/html');
-
-            const newMain = doc.querySelector('main');
-            const currentMain = document.querySelector('main');
-
-            if (newMain && currentMain) {
-                currentMain.replaceWith(newMain);
-            }
-
-            document.querySelectorAll('.bma-page-modal-dynamic, body > div[id^="modal"]').forEach(el => el.remove());
-            doc.querySelectorAll('body > div[id^="modal"]').forEach(modalEl => {
-                modalEl.classList.add('bma-page-modal-dynamic');
-                document.body.appendChild(modalEl);
-            });
-
-            // จดจำหน้าปัจจุบันไว้ใน sessionStorage และใช้ Root Path บนแถบ URL เพื่อไม่ให้แสดงชื่อไฟล์ .html
-            sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, targetFile);
-            const cleanRootUrl = UIHelpers.getRootBasePath();
-            if (pushHistory) {
-                window.history.pushState({ file: targetFile }, '', cleanRootUrl);
-            } else {
-                window.history.replaceState({ file: targetFile }, '', cleanRootUrl);
-            }
-
-            const module = await import(routeInfo.controllerPath);
-            const ControllerClass = module[routeInfo.controllerClass];
-            if (ControllerClass) {
-                new ControllerClass();
-            } else {
-                UIHelpers.hideLoading();
-            }
-        } catch (err) {
-            console.error('AJAX Navigation error:', err);
-            UIHelpers.hideLoading();
-            window.location.href = targetFile;
+        // 2. ถ้าเป็นหน้าปัจจุบันอยู่แล้ว ให้ปิดเมนูด้านข้างบนมือถือและไม่ต้องโหลดซ้ำ
+        const currentActive = sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY) || window.location.pathname.split('/').pop() || 'dashboard.html';
+        if (cleanFile === currentActive) {
+            document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
+            document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
+            return;
         }
+
+        // 3. ปิด Sidebar Mobile Drawer ทันที
+        document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
+        document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
+
+        // 4. บันทึกประวัติหน้าปัจจุบันลง sessionStorage
+        sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, cleanFile);
+
+        // 5. คำนวณ URL ปลายทางที่แน่นอน (รองรับทั้ง file:///, localhost, และ GitHub Pages)
+        let targetUrl = cleanFile;
+        try {
+            if (window.location.protocol === 'file:') {
+                const currentHref = window.location.href.split('?')[0].split('#')[0];
+                const baseDir = currentHref.substring(0, currentHref.lastIndexOf('/') + 1);
+                targetUrl = new URL(cleanFile, baseDir).href;
+            } else {
+                const cleanRoot = UIHelpers.getRootBasePath();
+                const baseDir = new URL(cleanRoot, window.location.origin).href;
+                targetUrl = new URL(cleanFile, baseDir).href;
+            }
+        } catch (e) {
+            targetUrl = cleanFile;
+        }
+
+        // 6. นำทางไปยังเป้าหมายอย่างปลอดภัยและแม่นยำ
+        window.location.href = targetUrl;
     }
 
     static #renderSidebar(currentUser, settings, activePage) {
@@ -580,14 +562,22 @@ export class AppLayout {
             if (tabBtn) {
                 const targetId = tabBtn.getAttribute('data-tab-target');
                 if (targetId) {
-                    document.querySelectorAll('.settings-tab-panel').forEach(panel => {
+                    document.querySelectorAll('.settings-tab-pane, .settings-tab-panel').forEach(panel => {
                         panel.classList.toggle('hidden', panel.id !== targetId);
                     });
                     document.querySelectorAll('.settings-tab-btn, [data-tab-target]').forEach(btn => {
                         const isMatch = btn.getAttribute('data-tab-target') === targetId;
                         btn.classList.toggle('active', isMatch);
+                        if (isMatch) {
+                            btn.classList.add('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20');
+                            btn.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                        } else {
+                            btn.classList.remove('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20');
+                            btn.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                        }
                     });
                 }
+                return;
             }
 
             if (e.target.closest('#btnToggleThemeMode')) {
@@ -619,6 +609,7 @@ export class AppLayout {
             const anchor = e.target.closest('a[href]');
             if (anchor) {
                 const href = anchor.getAttribute('href') || '';
+                if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
                 const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
                 if (AppLayout.PAGE_ROUTES[cleanFile]) {
                     e.preventDefault();

@@ -15,19 +15,30 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
-        /* Smooth vertical gradient background without any pattern/clutter */
+        /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         .login-vertical-gradient {
-            background: linear-gradient(180deg, #1A092A 0%, #2E1242 25%, #4C1D54 50%, #722B65 75%, #9E4578 100%);
+            background: 
+                radial-gradient(ellipse 65% 45% at 88% 12%, rgba(9, 113, 206, 0.22) 0%, transparent 65%),
+                radial-gradient(ellipse 55% 40% at 12% 88%, rgba(235, 61, 169, 0.16) 0%, transparent 60%),
+                radial-gradient(ellipse 45% 35% at 85% 78%, rgba(255, 180, 73, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 18% 18%, rgba(72, 0, 128, 0.24) 0%, transparent 65%),
+                linear-gradient(180deg, #1A3F30 0%, #215A41 18%, #00744B 42%, #00995D 65%, #00C08A 84%, #66A33A 100%);
             min-height: 100vh;
         }
         html.dark .login-vertical-gradient {
-            background: linear-gradient(180deg, #0C0517 0%, #170924 30%, #250E36 60%, #38154D 100%);
+            background: 
+                radial-gradient(ellipse 65% 45% at 88% 12%, rgba(9, 113, 206, 0.16) 0%, transparent 65%),
+                radial-gradient(ellipse 55% 40% at 12% 88%, rgba(235, 61, 169, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 45% 35% at 85% 78%, rgba(255, 180, 73, 0.14) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 18% 18%, rgba(72, 0, 128, 0.20) 0%, transparent 65%),
+                linear-gradient(180deg, #0B1C15 0%, #15382A 20%, #004D32 45%, #00744B 75%, #00C08A 100%);
+            min-height: 100vh;
         }
         .login-card-header-gradient {
-            background: linear-gradient(180deg, rgba(38, 15, 61, 0.95) 0%, rgba(68, 28, 87, 0.92) 100%);
+            background: linear-gradient(180deg, #1A4D38 0%, #00744B 100%);
         }
         html.dark .login-card-header-gradient {
-            background: linear-gradient(180deg, rgba(22, 9, 36, 0.98) 0%, rgba(42, 17, 62, 0.95) 100%);
+            background: linear-gradient(180deg, #0F2D21 0%, #005436 100%);
         }
     </style>
 </head>
@@ -80,7 +91,7 @@
 
             <!-- LOWER SECTION: Crisp Pure White Form (Image 1 Style) -->
             <div class="p-7 sm:p-8 bg-white dark:bg-[#1E293B]">
-                <h2 class="text-2xl font-black text-[#26153B] dark:text-white tracking-tight mb-5 text-center">Login</h2>
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-5 text-center">Login</h2>
 
                 <form id="loginForm" class="space-y-4" onsubmit="return false;">
                     <!-- Username Capsule Input -->
