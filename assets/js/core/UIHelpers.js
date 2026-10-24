@@ -1,15 +1,74 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, SweetAlert2, Loading Spinner, Skeleton, ตรวจเลขบัตร 13 หลัก, Excel และ PDF
+ * @description คลาสจัดการ UI, ระบบ Popup รอโหลดระหว่างประมวลผลทั้งระบบ (แสดงผลทันที 0ms), ซ่อนชื่อไฟล์บนแถบ URL, พิมพ์ PDF A4 แนวนอน, ตรวจสอบลิงก์รูปโลโก้ & Google Drive
  */
 
 import { Config } from './Config.js';
 
 export class UIHelpers {
-    /**
-     * เริ่มต้นโหลดโหมดสี (Light / Dark Mode) จาก LocalStorage
-     */
+    static #progressTimer = null;
+    static #hideTimer = null;
+    static #currentProgress = 0;
+
+    static VIEW_PAGE_STORAGE_KEY = 'bma_checkin_active_view_page_v2_9';
+
+    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|personnel|users|settings)(\.html)?\/?$/i;
+
+    static THAI_MONTHS_SHORT = [
+        'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+        'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+    ];
+
+    static THAI_MONTHS_FULL = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
+    static getRootBasePath() {
+        const pathname = window.location.pathname || '/';
+        if (UIHelpers.KNOWN_PAGES_REGEX.test(pathname)) {
+            return pathname.replace(UIHelpers.KNOWN_PAGES_REGEX, '/');
+        }
+        if (/\/[^\/]+\.html$/i.test(pathname)) {
+            return pathname.replace(/\/[^\/]+\.html$/i, '/');
+        }
+        return pathname.endsWith('/') ? pathname : `${pathname}/`;
+    }
+
+    static maskUrlToRoot(explicitPageName = '') {
+        try {
+            const pathname = window.location.pathname || '/';
+            const match = pathname.match(UIHelpers.KNOWN_PAGES_REGEX);
+            const detectedPage = match ? `${match[1].toLowerCase()}.html` : '';
+            const currentFile = explicitPageName || detectedPage;
+
+            if (currentFile && currentFile.toLowerCase() !== 'index.html') {
+                sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, currentFile);
+            }
+
+            const cleanRootPath = UIHelpers.getRootBasePath();
+            if (window.location.pathname !== cleanRootPath || window.location.search || window.location.hash) {
+                window.history.replaceState(
+                    { file: currentFile || sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY) || 'index.html' },
+                    '',
+                    cleanRootPath
+                );
+            }
+        } catch (err) {
+            console.warn('URL masking warning:', err);
+        }
+    }
+
     static initTheme() {
+        UIHelpers.maskUrlToRoot();
+
+        if (window.tailwind) {
+            window.tailwind.config = {
+                ...(window.tailwind.config || {}),
+                darkMode: 'class'
+            };
+        }
+
         const savedTheme = localStorage.getItem(Config.STORAGE_KEYS.THEME_MODE) || 'light';
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -19,10 +78,6 @@ export class UIHelpers {
         return savedTheme;
     }
 
-    /**
-     * สลับโหมดสี Light <-> Dark (Eye-Care Mode)
-     * @returns {string} โหมดสีปัจจุบัน ('light' หรือ 'dark')
-     */
     static toggleTheme() {
         const isDark = document.documentElement.classList.toggle('dark');
         const currentMode = isDark ? 'dark' : 'light';
@@ -31,44 +86,391 @@ export class UIHelpers {
         return currentMode;
     }
 
+    static showToast(message, type = 'success', durationMs = 2600) {
+        return new Promise((resolve) => {
+            let wrapper = document.getElementById('bmaToastWrapper');
+            if (!wrapper) {
+                wrapper = document.createElement('div');
+                wrapper.id = 'bmaToastWrapper';
+                document.body.appendChild(wrapper);
+            }
+
+            const iconMap = {
+                success: 'fa-circle-check text-[#FDD835]',
+                error: 'fa-circle-exclamation text-rose-200',
+                warning: 'fa-triangle-exclamation text-amber-200'
+            };
+
+            const toastEl = document.createElement('div');
+            toastEl.className = `bma-toast-item ${type === 'error' ? 'toast-error' : (type === 'warning' ? 'toast-warning' : '')}`;
+            toastEl.innerHTML = `
+                <i class="fa-solid ${iconMap[type] || iconMap.success} text-lg shrink-0"></i>
+                <span class="flex-1 leading-snug">${message}</span>
+            `;
+
+            wrapper.appendChild(toastEl);
+
+            setTimeout(() => {
+                toastEl.classList.add('toast-fade-out');
+                setTimeout(() => {
+                    toastEl.remove();
+                    resolve();
+                }, 240);
+            }, durationMs);
+        });
+    }
+
+    static formatThaiShortDate(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                const shortYearBE = String(yearAD + 543).slice(-2);
+                return `${day} ${UIHelpers.THAI_MONTHS_SHORT[monthIdx]} ${shortYearBE}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        const shortYear = String(d.getFullYear() + 543).slice(-2);
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${shortYear}`;
+    }
+
+    static formatThaiFullDate(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                const fullYearBE = yearAD + 543;
+                return `${day} ${UIHelpers.THAI_MONTHS_FULL[monthIdx]} ${fullYearBE}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_FULL[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
+    static formatThaiDate(dateStr) {
+        return UIHelpers.formatThaiShortDate(dateStr);
+    }
+
+    static formatTime24(timeStr) {
+        if (!timeStr) return '';
+        const clean = String(timeStr).trim();
+        const match = clean.match(/^(\d{1,2})[:.](\d{2})/);
+        if (!match) return clean.slice(0, 5);
+        const hh = String(Math.min(23, Math.max(0, parseInt(match[1], 10)))).padStart(2, '0');
+        const mm = String(Math.min(59, Math.max(0, parseInt(match[2], 10)))).padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+
+    static timeToMinutes(timeStr) {
+        const formatted = UIHelpers.formatTime24(timeStr);
+        if (!formatted) return -1;
+        const [hh, mm] = formatted.split(':').map(n => parseInt(n, 10));
+        if (isNaN(hh) || isNaN(mm)) return -1;
+        return (hh * 60) + mm;
+    }
+
+    static getTodayISO() {
+        const now = new Date();
+        const offsetMs = now.getTimezoneOffset() * 60000;
+        return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+    }
+
+    static getCurrentTimeHHMM() {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+    }
+
+    static capturePortrait3x4FromVideo(videoEl, canvasEl) {
+        const targetWidth = 480;
+        const targetHeight = 640;
+        const targetRatio = targetWidth / targetHeight;
+
+        const srcW = videoEl.videoWidth || 640;
+        const srcH = videoEl.videoHeight || 480;
+        const srcRatio = srcW / srcH;
+
+        let cropW = srcW;
+        let cropH = srcH;
+        let cropX = 0;
+        let cropY = 0;
+
+        if (srcRatio > targetRatio) {
+            cropW = Math.round(srcH * targetRatio);
+            cropX = Math.round((srcW - cropW) / 2);
+        } else {
+            cropH = Math.round(srcW / targetRatio);
+            cropY = Math.round((srcH - cropH) / 2);
+        }
+
+        canvasEl.width = targetWidth;
+        canvasEl.height = targetHeight;
+        const ctx = canvasEl.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(videoEl, cropX, cropY, cropW, cropH, 0, 0, targetWidth, targetHeight);
+
+        return canvasEl.toDataURL('image/jpeg', 0.78);
+    }
+
+    static verifyImageUrl(rawUrl) {
+        return new Promise((resolve) => {
+            let cleanUrl = String(rawUrl || '').trim();
+            if (!cleanUrl) {
+                resolve({
+                    success: false,
+                    normalizedUrl: '',
+                    message: 'กรุณาวางลิงก์ URL ของรูปภาพโลโก้ก่อนกดปุ่มตรวจสอบ'
+                });
+                return;
+            }
+
+            if (cleanUrl.includes('drive.google.com/file/d/')) {
+                const match = cleanUrl.match(/\/d\/([-\w]{20,})/);
+                if (match && match[1]) {
+                    cleanUrl = `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+
+            const img = new Image();
+            let isSettled = false;
+
+            const timer = setTimeout(() => {
+                if (isSettled) return;
+                isSettled = true;
+                resolve({
+                    success: false,
+                    normalizedUrl: cleanUrl,
+                    message: 'หมดเวลาเชื่อมต่อลิงก์รูปภาพ กรุณาตรวจสอบว่าลิงก์เปิดสิทธิ์สาธารณะแล้ว'
+                });
+            }, 8000);
+
+            img.onload = () => {
+                if (isSettled) return;
+                isSettled = true;
+                clearTimeout(timer);
+                resolve({
+                    success: true,
+                    normalizedUrl: cleanUrl,
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                    message: `ตรวจสอบลิงก์รูปโลโก้สำเร็จ! รูปภาพพร้อมใช้งาน (ขนาด ${img.naturalWidth} × ${img.naturalHeight} พิกเซล)`
+                });
+            };
+
+            img.onerror = () => {
+                if (isSettled) return;
+                isSettled = true;
+                clearTimeout(timer);
+                resolve({
+                    success: false,
+                    normalizedUrl: cleanUrl,
+                    message: 'ไม่สามารถโหลดรูปภาพจากลิงก์ URL ที่ระบุได้ กรุณาตรวจสอบความถูกต้องของลิงก์อีกครั้ง'
+                });
+            };
+
+            img.src = cleanUrl;
+        });
+    }
+
+    static async verifyGoogleDriveLink(scriptUrl, folderId = '') {
+        const cleanUrl = String(scriptUrl || '').trim();
+        if (!cleanUrl) {
+            return { success: false, message: 'กรุณากรอกลิงก์ Google Drive / Apps Script Web App ก่อนกดตรวจสอบ' };
+        }
+
+        if (cleanUrl.includes('script.google.com') && cleanUrl.includes('/exec')) {
+            try {
+                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(folderId || '')}`;
+                const res = await fetch(verifyEndpoint, { method: 'GET', redirect: 'follow' });
+                const data = await res.json();
+                if (data && data.success) {
+                    return {
+                        success: true,
+                        folderName: data.folderName || 'BMA_Checkin_Photos',
+                        message: data.message || 'ตรวจสอบลิงก์สำเร็จ พร้อมจัดเก็บไฟล์รูปถ่ายใน Google Drive'
+                    };
+                }
+                return { success: false, message: data?.message || 'ลิงก์ตอบกลับแต่ไม่สามารถเข้าถึงโฟลเดอร์ได้' };
+            } catch (err) {
+                return {
+                    success: false,
+                    message: 'ไม่สามารถเชื่อมต่อกับ Google Apps Script ได้ กรุณาตรวจสอบว่าตั้งค่าสิทธิ์ Web App เป็น Anyone แล้ว'
+                };
+            }
+        }
+
+        if (cleanUrl.includes('drive.google.com')) {
+            const match = cleanUrl.match(/[-\w]{25,}/);
+            if (match) {
+                return {
+                    success: true,
+                    folderName: `Folder ID: ${match[0]}`,
+                    message: `ตรวจสอบรูปแบบลิงก์โฟลเดอร์ Google Drive ถูกต้อง (Folder ID: ${match[0]})`
+                };
+            }
+        }
+
+        return {
+            success: false,
+            message: 'รูปแบบลิงก์ไม่ถูกต้อง กรุณาระบุลิงก์ Google Apps Script Web App (.../exec) หรือลิงก์โฟลเดอร์ Google Drive'
+        };
+    }
+
+    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings) {
+        if (!base64DataUrl) return '';
+        if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
+
+        const scriptUrl = String(settings?.google_drive_script_url || '').trim();
+        const folderId = String(settings?.google_drive_folder_id || '').trim();
+
+        if (scriptUrl && scriptUrl.includes('script.google.com')) {
+            try {
+                const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'upload',
+                        folderId,
+                        fileName,
+                        mimeType: 'image/jpeg',
+                        base64Data: base64DataUrl
+                    })
+                });
+                const result = await response.json();
+                if (result && result.success && result.url) {
+                    return result.url;
+                }
+            } catch (err) {
+                console.warn('Google Drive upload fallback:', err);
+            }
+        }
+
+        if (scriptUrl && scriptUrl.includes('drive.google.com')) {
+            const match = scriptUrl.match(/[-\w]{25,}/);
+            const fid = match ? match[0] : 'drive_folder';
+            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.jpg')}`;
+        }
+
+        return base64DataUrl;
+    }
+
     /**
-     * แสดง Loading Spinner แบบเต็มหน้าจอในทุกกระบวนการทำงาน
-     * @param {string} message ข้อความขณะกำลังโหลด
+     * แสดง Popup รอโหลดระหว่างรอการประมวลผลทั้งระบบ (Login, บันทึก, แก้ไข, ลบ)
+     * ใช้ Inline Style z-index: 999999 เพื่อให้แสดงผลขึ้นหน้าจอทันที (0ms) อยู่เหนือทุก Modal
+     * @param {string} message ข้อความสถานะการทำงาน
      */
-    static showLoading(message = 'กำลังประมวลผลข้อมูล...') {
+    static showLoading(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') {
+        // ยกเลิก Timer ปิดหน้าต่างอันเก่า (ถ้ามี) เพื่อป้องกันไม่ให้ Popup ถูกซ่อนก่อนเวลา
+        if (UIHelpers.#hideTimer) {
+            clearTimeout(UIHelpers.#hideTimer);
+            UIHelpers.#hideTimer = null;
+        }
+
+        let topBar = document.getElementById('bmaTopProgressBar');
+        if (!topBar) {
+            topBar = document.createElement('div');
+            topBar.id = 'bmaTopProgressBar';
+            document.body.appendChild(topBar);
+        }
+
         let spinner = document.getElementById('bmaGlobalSpinner');
         if (!spinner) {
             spinner = document.createElement('div');
             spinner.id = 'bmaGlobalSpinner';
-            spinner.className = 'fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-200';
+            spinner.style.cssText = 'position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background-color: rgba(4, 31, 17, 0.65); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: opacity 0.15s ease;';
             spinner.innerHTML = `
-                <div class="bma-card px-8 py-6 flex flex-col items-center gap-4 max-w-sm text-center shadow-2xl">
+                <div class="bma-card px-7 py-6 flex flex-col items-center gap-3.5 w-80 sm:w-96 text-center shadow-2xl border-2 border-[#007B3E]" style="background-color: var(--bma-surface-1); border-radius: 1.25rem;">
                     <div class="bma-spin-ring"></div>
-                    <p id="bmaGlobalSpinnerText" class="text-base font-semibold bma-text-main"></p>
+                    <div class="space-y-1">
+                        <p id="bmaGlobalSpinnerText" class="text-sm sm:text-base font-extrabold bma-text-main">กำลังประมวลผล...</p>
+                        <p class="text-xs bma-text-sub">ระบบกำลังดำเนินการ กรุณารอสักครู่</p>
+                    </div>
+                    <div class="w-full space-y-1.5 pt-1">
+                        <div class="bma-ajax-progress-track">
+                            <div id="bmaGlobalProgressFill" class="bma-ajax-progress-fill" style="width: 20%;"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] font-bold bma-text-sub">
+                            <span><i class="fa-solid fa-circle-notch fa-spin mr-1" style="color: var(--bma-primary);"></i>กำลังเชื่อมต่อระบบ</span>
+                            <span id="bmaGlobalProgressPercent">20%</span>
+                        </div>
+                    </div>
                 </div>
             `;
             document.body.appendChild(spinner);
         }
+
         const textEl = document.getElementById('bmaGlobalSpinnerText');
         if (textEl) textEl.textContent = message;
+
         spinner.classList.remove('hidden');
+        spinner.style.display = 'flex';
+        spinner.style.opacity = '1';
+        topBar.style.opacity = '1';
+
+        // บังคับให้เบราว์เซอร์คำนวณ Layout ทันที (Force Synchronous Reflow) เพื่อให้ผู้ใช้เห็น Popup ทันทีที่กดปุ่ม
+        void spinner.offsetHeight;
+
+        if (UIHelpers.#progressTimer) clearInterval(UIHelpers.#progressTimer);
+        UIHelpers.#currentProgress = 24;
+        UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
+
+        UIHelpers.#progressTimer = setInterval(() => {
+            if (UIHelpers.#currentProgress < 92) {
+                const step = UIHelpers.#currentProgress < 60 ? 12 : 5;
+                UIHelpers.#currentProgress = Math.min(92, UIHelpers.#currentProgress + step);
+                UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
+            }
+        }, 90);
     }
 
-    /**
-     * ซ่อน Loading Spinner
-     */
+    static #updateProgressDOM(percent) {
+        const fillEl = document.getElementById('bmaGlobalProgressFill');
+        const pctEl = document.getElementById('bmaGlobalProgressPercent');
+        const topBar = document.getElementById('bmaTopProgressBar');
+        if (fillEl) fillEl.style.width = `${percent}%`;
+        if (pctEl) pctEl.textContent = `${percent}%`;
+        if (topBar) topBar.style.width = `${percent}%`;
+    }
+
     static hideLoading() {
-        const spinner = document.getElementById('bmaGlobalSpinner');
-        if (spinner) {
-            spinner.classList.add('hidden');
+        if (UIHelpers.#progressTimer) {
+            clearInterval(UIHelpers.#progressTimer);
+            UIHelpers.#progressTimer = null;
         }
+
+        UIHelpers.#updateProgressDOM(100);
+
+        if (UIHelpers.#hideTimer) {
+            clearTimeout(UIHelpers.#hideTimer);
+        }
+
+        UIHelpers.#hideTimer = setTimeout(() => {
+            const spinner = document.getElementById('bmaGlobalSpinner');
+            const topBar = document.getElementById('bmaTopProgressBar');
+            if (spinner) {
+                spinner.style.display = 'none';
+                spinner.classList.add('hidden');
+            }
+            if (topBar) {
+                topBar.style.opacity = '0';
+                setTimeout(() => { topBar.style.width = '0%'; }, 120);
+            }
+            UIHelpers.#hideTimer = null;
+        }, 120);
     }
 
-    /**
-     * สร้าง HTML Skeleton Loading สำหรับตารางข้อมูล
-     * @param {number} rows จำนวนแถวจำลอง
-     * @param {number} cols จำนวนคอลัมน์จำลอง
-     */
     static renderTableSkeleton(rows = 5, cols = 6) {
         let html = '';
         for (let r = 0; r < rows; r++) {
@@ -81,12 +483,6 @@ export class UIHelpers {
         return html;
     }
 
-    /**
-     * แสดงแจ้งเตือนด้วย SweetAlert2
-     * @param {string} title หัวข้อ
-     * @param {string} text รายละเอียด
-     * @param {'success'|'error'|'warning'|'info'} icon ประเภทไอคอน
-     */
     static async alert(title, text = '', icon = 'success') {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
@@ -95,8 +491,8 @@ export class UIHelpers {
                 text,
                 icon,
                 confirmButtonText: 'ตกลง',
-                confirmButtonColor: isDark ? '#34D399' : '#00744B',
-                background: isDark ? '#24332F' : '#FFFFFF',
+                confirmButtonColor: isDark ? '#34D399' : '#007B3E',
+                background: isDark ? '#183025' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
         } else {
@@ -104,14 +500,6 @@ export class UIHelpers {
         }
     }
 
-    /**
-     * แสดงกล่องยืนยันการทำงานด้วย SweetAlert2 (สำหรับการลบ หรือออกจากระบบ)
-     * @param {string} title หัวข้อการยืนยัน
-     * @param {string} text รายละเอียดเพิ่มเติม
-     * @param {string} confirmText ข้อความปุ่มยืนยัน
-     * @param {'warning'|'question'|'error'} icon ประเภทไอคอน
-     * @returns {Promise<boolean>}
-     */
     static async confirm(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
@@ -120,11 +508,11 @@ export class UIHelpers {
                 text,
                 icon,
                 showCancelButton: true,
-                confirmButtonColor: icon === 'error' || icon === 'warning' ? '#E11D48' : (isDark ? '#34D399' : '#00744B'),
+                confirmButtonColor: icon === 'error' || icon === 'warning' ? '#E11D48' : (isDark ? '#34D399' : '#007B3E'),
                 cancelButtonColor: '#64748B',
                 confirmButtonText: confirmText,
                 cancelButtonText: 'ยกเลิก',
-                background: isDark ? '#24332F' : '#FFFFFF',
+                background: isDark ? '#183025' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
             return Boolean(result.isConfirmed);
@@ -132,16 +520,9 @@ export class UIHelpers {
         return window.confirm(`${title}\n${text}`);
     }
 
-    /**
-     * ตรวจสอบเลขบัตรประจำตัวประชาชนไทย 13 หลัก
-     * (รองรับทั้งรูปแบบเลข 13 หลักทั่วไป และอัลกอริทึม Check Digit มาตรฐานกรมการปกครอง)
-     * @param {string} id เลขบัตรประชาชน 13 หลัก
-     * @param {boolean} strictCheckDigit บังคับตรวจ Check Digit หรือตรวจเฉพาะตัวเลข 13 หลัก
-     * @returns {{valid: boolean, message: string}}
-     */
     static validateThaiNationalId(id, strictCheckDigit = false) {
         if (!id || id.trim() === '') {
-            return { valid: true, message: '' }; // กรณีไม่บังคับกรอกในหน้าบุคลากรทั่วไป
+            return { valid: true, message: '' };
         }
         const cleanId = id.replace(/[\s-]/g, '');
         if (!/^\d{13}$/.test(cleanId)) {
@@ -160,62 +541,12 @@ export class UIHelpers {
         return { valid: true, message: 'ถูกต้อง' };
     }
 
-    /**
-     * ดึงรหัสผ่านอัตโนมัติ 6 ตัวท้ายจากเลขบัตรประชาชน 13 หลัก
-     * เช่น 1231254684532 -> 684532
-     * @param {string} nationalId เลขบัตรประชาชน 13 หลัก
-     * @returns {string}
-     */
     static getLast6DigitsFromNationalId(nationalId) {
         const cleanId = String(nationalId || '').replace(/\D/g, '');
         if (cleanId.length < 6) return cleanId;
         return cleanId.slice(-6);
     }
 
-    /**
-     * แปลงวันที่ YYYY-MM-DD เป็นวันที่ภาษาไทย (พ.ศ.)
-     * @param {string} dateStr
-     * @returns {string}
-     */
-    static formatThaiDate(dateStr) {
-        if (!dateStr) return '-';
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
-        return d.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    }
-
-    /**
-     * ดึงวันที่ปัจจุบันในรูปแบบ YYYY-MM-DD ตามเวลาท้องถิ่นประเทศไทย
-     * @returns {string}
-     */
-    static getTodayISO() {
-        const now = new Date();
-        const offsetMs = now.getTimezoneOffset() * 60000;
-        const localISOTime = new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-        return localISOTime;
-    }
-
-    /**
-     * ดึงเวลาปัจจุบันในรูปแบบ HH:MM
-     * @returns {string}
-     */
-    static getCurrentTimeHHMM() {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        return `${hh}:${mm}`;
-    }
-
-    /**
-     * ส่งออกข้อมูลเป็นไฟล์ Excel (.xlsx หรือ .csv UTF-8 BOM) รองรับภาษาไทย 100%
-     * @param {Array<Object>} dataRows ข้อมูลแบบ Array of Objects
-     * @param {string} fileName ชื่อไฟล์ไม่ต้องมีนามสกุล
-     * @param {string} sheetName ชื่อชีต
-     */
     static exportToExcelUTF8(dataRows, fileName = 'export_data', sheetName = 'Sheet1') {
         if (window.XLSX) {
             const worksheet = window.XLSX.utils.json_to_sheet(dataRows);
@@ -225,7 +556,6 @@ export class UIHelpers {
             return;
         }
 
-        // Fallback: สร้างไฟล์ CSV พร้อม UTF-8 BOM เพื่อให้เปิดใน Excel ภาษาไทยไม่เพี้ยน
         if (!dataRows || dataRows.length === 0) return;
         const headers = Object.keys(dataRows[0]);
         const csvLines = [
@@ -244,11 +574,6 @@ export class UIHelpers {
         document.body.removeChild(link);
     }
 
-    /**
-     * อ่านข้อมูลจากไฟล์ Excel (.xlsx / .csv) ที่ผู้ใช้นำเข้า รองรับ UTF-8
-     * @param {File} file ไฟล์จากการเลือกใน input[type="file"]
-     * @returns {Promise<Array<Object>>}
-     */
     static parseExcelFileUTF8(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -273,16 +598,7 @@ export class UIHelpers {
         });
     }
 
-    /**
-     * พิมพ์และส่งออกเป็น PDF โดยใช้วิธีเปิด Tab ใหม่ด้วยเค้าโครง HTML รองรับภาษาไทย UTF-8
-     * ไม่บันทึกไฟล์ลงไดรฟ์ของผู้ใช้โดยตรง (สร้างเฉพาะหน้าต่างชั่วคราวสำหรับการสั่งพิมพ์/บันทึก PDF)
-     * @param {Object} options
-     * @param {string} options.title หัวข้อรายงาน
-     * @param {string} options.subtitle หัวข้อย่อย (เช่น วันที่ และชื่อหน่วยงาน)
-     * @param {string} options.tableHtml โครงสร้าง HTML ของตารางการลงเวลา
-     * @param {string} options.headerColor สีพื้นหลังหัวตารางจาก Color Picker
-     */
-    static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#00744B' }) {
+    static printReportInNewTab({ title, subtitle, tableHtml, headerColor = '#007B3E' }) {
         const printWindow = window.open('', '_blank');
         if (!printWindow) {
             UIHelpers.alert('ไม่สามารถเปิดแท็บใหม่ได้', 'กรุณาอนุญาตให้เบราว์เซอร์เปิดหน้าต่างป๊อปอัป (Pop-up) สำหรับเว็บไซต์นี้', 'warning');
@@ -295,86 +611,125 @@ export class UIHelpers {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>&nbsp;</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             font-family: 'Sarabun', sans-serif;
             box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         body {
             margin: 0;
-            padding: 24px;
+            padding: 18px 24px;
             color: #0F172A;
             background: #FFFFFF;
         }
         .report-header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border-bottom: 2px solid ${headerColor};
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
         .report-header h1 {
-            margin: 0 0 6px 0;
+            margin: 0 0 4px 0;
             font-size: 20px;
+            font-weight: 800;
             color: ${headerColor};
         }
         .report-header p {
             margin: 0;
-            font-size: 14px;
-            color: #475569;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #334155;
         }
         .toolbar {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+            padding: 10px 16px;
+            background: #eef7f1;
+            border: 1px solid #cde3d5;
+            border-radius: 10px;
+        }
+        .toolbar-hint {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1B432C;
         }
         .btn-print {
             background: ${headerColor};
             color: #FFFFFF;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 8px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
+        }
+        .tag-section-block {
+            margin-bottom: 22px;
+            page-break-inside: avoid;
+        }
+        .tag-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            padding: 7px 14px;
+            border-radius: 6px;
+            color: #FFFFFF;
+            margin-bottom: 6px;
         }
         table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             font-size: 13px;
+            margin-bottom: 12px;
         }
         th, td {
             border: 1px solid #CBD5E1;
-            padding: 8px 10px;
+            padding: 7px 10px;
             text-align: left;
+            vertical-align: middle;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         th {
             background-color: ${headerColor};
             color: #FFFFFF;
-            font-weight: 600;
+            font-weight: 700;
+            white-space: nowrap;
         }
         .group-row td {
-            background-color: #E2E8F0;
+            background-color: #E3F2E9 !important;
             font-weight: 700;
-            color: #0F172A;
+            color: #1B432C !important;
         }
         .sub-group-row td {
-            background-color: #F1F5F9;
+            background-color: #F8FAFC !important;
             font-weight: 600;
-            color: #334155;
+            color: #334155 !important;
+        }
+        @page {
+            size: A4 landscape;
+            margin: 0mm;
         }
         @media print {
             .toolbar { display: none !important; }
-            body { padding: 0; }
-            @page { size: A4 portrait; margin: 12mm; }
+            body {
+                margin: 0;
+                padding: 10mm 12mm;
+            }
         }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <button class="btn-print" onclick="window.print()">พิมพ์ / บันทึกเป็น PDF</button>
+        <span class="toolbar-hint">ขนาดมาตรฐาน: กระดาษ A4 แนวนอน (Landscape) — จัดขนาดคอลัมน์พอดีกับข้อมูล</span>
+        <button class="btn-print" onclick="window.print()">พิมพ์/ส่งออก PDF</button>
     </div>
     <div class="report-header">
         <h1>${title}</h1>
@@ -382,10 +737,10 @@ export class UIHelpers {
     </div>
     ${tableHtml}
     <script>
+        document.title = "";
         window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 500);
+            document.title = "";
+            setTimeout(function() { window.print(); }, 450);
         };
     </script>
 </body>

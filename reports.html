@@ -5,36 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายงานการลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Sidebar -->
+    <!-- Deep Emerald Sidebar -->
     <div id="bmaSidebarContainer"></div>
 
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
         <!-- Topbar -->
         <div id="bmaTopbarContainer"></div>
 
+        <!-- เนื้อหาหลักของหน้ารายงานการลงเวลา -->
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
-            <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีเหมือนโทรศัพท์ iPhone -->
             <div id="reportMobileShortcutContainer"></div>
 
-            <!-- ส่วนควบคุมตัวกรองวันที่, มุมมอง Group By, Color Picker และปุ่มส่งออก PDF / Excel -->
-            <div class="bma-card p-5 space-y-4">
+            <!-- การ์ดควบคุมฟิลเตอร์ข้อมูล -->
+            <div class="bma-card p-5 space-y-5" style="border-top: 4px solid var(--g1);">
+
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
-                        <h2 class="text-base font-bold bma-text-main flex items-center gap-2">
+                        <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
                             <i class="fa-solid fa-file-invoice" style="color: var(--bma-primary);"></i>
-                            <span>รายงานสรุปการลงเวลาปฏิบัติราชการประจำวัน</span>
+                            <span>รายงานการลงเวลาปฏิบัติราชการ</span>
                         </h2>
-                        <p class="text-xs bma-text-sub mt-0.5">แสดงสถิติแดชบอร์ด ตารางจัดกลุ่ม 2 มุมมอง พร้อมพิมพ์รายงาน PDF (เปิดแท็บใหม่) และส่งออก Excel UTF-8</p>
+                        <p id="reportDateDisplaySubtitle" class="text-xs font-bold mt-1" style="color: var(--bma-primary);">
+                            ประจำวันที่ 15 มกราคม 2569
+                        </p>
+                        <p class="text-[11px] bma-text-sub mt-0.5">
+                            <i class="fa-solid fa-hand-pointer mr-1 text-amber-600"></i>คลิกที่แถวรายการใดๆ ในตาราง เพื่อเปิดดูฟอร์มโปรไฟล์ รูปถ่ายขนาดใหญ่ และแผนที่ Google Map เฉพาะของแถวนั้น
+                        </p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -43,9 +53,9 @@
                             <span>เพิ่มเวลาปฏิบัติราชการ</span>
                         </button>
 
-                        <button type="button" id="btnPrintPdfNewTab" class="btn-bma-soft text-xs py-2.5 px-3.5 border border-emerald-500/30">
-                            <i class="fa-solid fa-file-pdf text-rose-500"></i>
-                            <span>พิมพ์ / ส่งออก PDF (เปิด Tab ใหม่)</span>
+                        <button type="button" id="btnPrintPdfNewTab" class="btn-bma-soft text-xs py-2.5 px-3.5 border border-[#007B3E]/30">
+                            <i class="fa-solid fa-file-pdf text-rose-600"></i>
+                            <span>พิมพ์/ส่งออก PDF</span>
                         </button>
 
                         <button type="button" id="btnExportReportExcel" class="btn-bma-outline text-xs py-2 px-3">
@@ -60,81 +70,75 @@
                     </div>
                 </div>
 
-                <!-- แถบเลือกวันที่, เลือกมุมมอง Group By 2 มุมมอง และตั้งค่าสี Color Picker -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-bold bma-text-sub mb-1">เลือกวันที่ปฏิบัติราชการ:</label>
-                        <input type="date" id="reportDateInput" class="bma-input py-1.5 text-sm">
+                <!-- แถวที่ 1: ระบบเลือกวันที่ 2 รูปแบบ และมุมมอง Group By -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+
+                    <div class="lg:col-span-3">
+                        <label class="block text-xs font-bold bma-text-main mb-1.5">
+                            <i class="fa-regular fa-calendar mr-1" style="color: var(--bma-primary);"></i>รูปแบบการเลือกวันที่:
+                        </label>
+                        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bma-info-box">
+                            <button type="button" id="btnModeSingleDate" class="py-1.5 px-2.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer">
+                                เลือกวันเดียว
+                            </button>
+                            <button type="button" id="btnModeRangeDate" class="py-1.5 px-2.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer">
+                                เลือกเป็นช่วง
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="md:col-span-5">
+                    <div class="lg:col-span-5">
+                        <div id="singleDatePickerBox">
+                            <label class="block text-xs font-bold bma-text-sub mb-1">เลือกวันที่ปฏิบัติราชการ:</label>
+                            <input type="date" id="reportSingleDateInput" class="bma-input py-2 text-sm font-semibold">
+                        </div>
+
+                        <div id="rangeDatePickerBox" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs font-bold bma-text-sub mb-1">ตั้งแต่วันที่:</label>
+                                <input type="date" id="reportStartDateInput" class="bma-input py-2 text-sm font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold bma-text-sub mb-1">ถึงวันที่:</label>
+                                <input type="date" id="reportEndDateInput" class="bma-input py-2 text-sm font-semibold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-4">
                         <label class="block text-xs font-bold bma-text-sub mb-1">มุมมองการจัดกลุ่มตาราง (Group By):</label>
                         <select id="selectReportGroupBy" class="bma-select py-2 text-xs font-semibold">
                             <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
                             <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
                         </select>
                     </div>
-
-                    <div class="md:col-span-4 flex items-center justify-end gap-3 pt-4 text-xs flex-wrap">
-                        <span class="font-semibold bma-text-sub">ตั้งค่าสีรายงาน:</span>
-                        <label class="flex items-center gap-1 cursor-pointer">
-                            <input type="color" id="repColorHeader" value="#00744B" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>หัวตาราง</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer">
-                            <input type="color" id="repColorNormal" value="#059669" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>ปกติ</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer">
-                            <input type="color" id="repColorLate" value="#F59E0B" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>สาย</span>
-                        </label>
-                        <label class="flex items-center gap-1 cursor-pointer">
-                            <input type="color" id="repColorAbsent" value="#E11D48" class="w-6 h-6 rounded border-0 cursor-pointer">
-                            <span>ขาด/ไม่ลง</span>
-                        </label>
-                    </div>
                 </div>
+
+                <!-- แถวที่ 2: ระบบกรองค่า "สถานะ" แบบเลือก TAG ได้หลายค่าพร้อมกัน -->
+                <div class="p-4 rounded-xl bma-info-box space-y-2.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="text-xs font-extrabold bma-text-main flex items-center gap-1.5">
+                            <i class="fa-solid fa-tags" style="color: var(--bma-primary);"></i>
+                            <span>กรองตามสถานะ (คลิกเลือก TAG ได้หลายค่าพร้อมกัน — ระบบจะแสดงแยกตารางตาม TAG ที่เลือก):</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btnSelectDefaultTags" class="text-[11px] font-bold underline cursor-pointer" style="color: var(--bma-primary);">
+                                ค่าเริ่มต้น (ปฏิบัติงานปกติ + มาสาย)
+                            </button>
+                            <span class="bma-text-muted">|</span>
+                            <button type="button" id="btnSelectAllStatusTags" class="text-[11px] font-bold underline bma-text-sub cursor-pointer">
+                                เลือกทั้งหมด (5 สถานะ)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="statusTagsFilterContainer" class="flex flex-wrap items-center gap-2 pt-1"></div>
+                </div>
+
             </div>
 
-            <!-- ส่วนแดชบอร์ดของหน้ารายงาน: Card แสดงจำนวนทั้งหมด + Card แยกแต่ละประเภทและ Progress Fill -->
-            <div id="reportKpiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"></div>
-
-            <!-- กราฟ Chart.js ในหน้ารายงาน (ภายใน <div> <canvas> </div>) -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-5 bma-card p-5">
-                    <h3 class="text-sm font-bold bma-text-main mb-3">สัดส่วนการลงเวลาประจำวันที่เลือก</h3>
-                    <div class="relative w-full h-64 flex items-center justify-center">
-                        <canvas id="reportPieChart"></canvas>
-                    </div>
-                </div>
-                <div class="lg:col-span-7 bma-card p-5">
-                    <h3 class="text-sm font-bold bma-text-main mb-3">เปรียบเทียบการลงเวลาแยกตามส่วน/ฝ่าย</h3>
-                    <div class="relative w-full h-64">
-                        <canvas id="reportDivisionChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ตารางแสดงการลงเวลาปฏิบัติราชการ ({คอลัมน์} ลำดับ, คำนำหน้า+ชื่อ+นามสกุล, ตำแหน่ง+ระดับ, เวลาเข้างาน, เวลาออกงาน) -->
-            <div class="bma-card p-5">
-                <div class="bma-table-container" id="printableReportTableWrapper">
-                    <table class="bma-table text-sm" id="reportMainTable">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th>คำนำหน้า + ชื่อ + นามสกุล</th>
-                                <th>ตำแหน่ง + ระดับ</th>
-                                <th class="text-center">เวลาเข้างาน</th>
-                                <th class="text-center">เวลาออกงาน</th>
-                                <th class="text-center">สถานะ / หมายเหตุ</th>
-                                <th class="w-32 text-center no-print">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reportTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- พื้นที่แสดงตารางแยกตาม TAG สถานะที่กดเลือก -->
+            <div id="reportTablesMasterContainer" class="space-y-6"></div>
 
         </main>
 
@@ -143,7 +147,7 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal เพิ่ม / แก้ไขข้อมูลการลงเวลาสำหรับผู้ดูแลระบบ -->
+    <!-- Modal 1: เพิ่ม / แก้ไขข้อมูลการลงเวลาสำหรับผู้ดูแลระบบ -->
     <div id="modalReportAttendance" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
             <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
@@ -157,43 +161,38 @@
                 <input type="hidden" id="repLogId">
 
                 <div>
-                    <label class="block text-xs font-semibold bma-text-main mb-1">เลือกบุคลากร *</label>
+                    <label class="block text-xs font-bold bma-text-main mb-1">เลือกบุคลากร *</label>
                     <select id="repPersonnelSelect" class="bma-select text-sm" required></select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold bma-text-main mb-1">วันที่ปฏิบัติราชการ *</label>
+                    <label class="block text-xs font-bold bma-text-main mb-1">วันที่ปฏิบัติราชการ *</label>
                     <input type="date" id="repWorkDate" class="bma-input text-sm" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">เวลาเข้างาน *</label>
-                        <input type="time" id="repCheckinTime" class="bma-input text-sm" value="08:30" required>
+                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาเข้างาน (24 ชม.) *</label>
+                        <input type="text" id="repCheckinTime" class="bma-input text-sm font-mono text-center" value="08:30" placeholder="08:30" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">เวลาออกงาน</label>
-                        <input type="time" id="repCheckoutTime" class="bma-input text-sm" value="16:30">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">สถานะ</label>
-                        <select id="repStatusSelect" class="bma-select text-sm">
-                            <option value="ปกติ">ปกติ</option>
-                            <option value="สาย">สาย</option>
-                            <option value="อนุมัติกรณีพิเศษ">อนุมัติกรณีพิเศษ</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">สีประจำรายการ</label>
-                        <input type="color" id="repRowColorPicker" value="#059669" class="w-full h-10 rounded-lg border bma-border cursor-pointer">
+                        <label class="block text-xs font-bold bma-text-main mb-1">เวลาเลิกงาน (24 ชม.)</label>
+                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center" value="16:30" placeholder="16:30">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold bma-text-main mb-1">หมายเหตุ</label>
+                    <label class="block text-xs font-bold bma-text-main mb-1">สถานะทางการ *</label>
+                    <select id="repStatusSelect" class="bma-select text-sm font-semibold">
+                        <option value="ปฏิบัติงานปกติ">ปฏิบัติงานปกติ</option>
+                        <option value="มาสาย">มาสาย</option>
+                        <option value="ขาดราชการ">ขาดราชการ</option>
+                        <option value="ปฏิบัติงานนอกเวลาราชการ">ปฏิบัติงานนอกเวลาราชการ</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">หมายเหตุ</label>
                     <input type="text" id="repRemarkInput" class="bma-input text-sm" placeholder="ระบุหมายเหตุ (ถ้ามี)">
                 </div>
 
@@ -205,6 +204,198 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: ฟอร์มโปรไฟล์รูปแบบ Resume สากล (แสดงข้อมูลเฉพาะของ Row นั้นๆ, รูปถ่ายขนาดใหญ่ และพิกัด Google Map) -->
+    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs overflow-y-auto">
+        <div class="w-full max-w-4xl bma-card bma-modal-surface overflow-hidden shadow-2xl my-8">
+
+            <!-- ส่วนหัว Executive Resume Banner -->
+            <div class="resume-header-banner p-6 sm:p-7 relative">
+                <button type="button" id="btnCloseResumeModalTop" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pr-10">
+                    <div class="space-y-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-md bg-white/15 text-[#FDD835] text-[11px] font-bold uppercase tracking-wider">
+                                Attendance Record &amp; Personnel Profile
+                            </span>
+                            <span id="resumeRoleBadge" class="bma-badge role-pastel-user text-xs">User</span>
+                        </div>
+                        <h3 id="resumeFullName" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight truncate">-</h3>
+                        <p id="resumePositionHeadline" class="text-sm sm:text-base font-semibold text-emerald-100">-</p>
+                        <p id="resumeOrgHeadline" class="text-xs text-[#FDD835] font-medium">-</p>
+                    </div>
+
+                    <div class="bg-black/25 px-4 py-2.5 rounded-xl border border-white/15 text-left sm:text-right shrink-0">
+                        <span class="text-[11px] font-bold text-emerald-200 block">วันที่ปฏิบัติราชการของรายการนี้</span>
+                        <span id="resumeRowDateHeadline" class="text-base font-extrabold text-[#FDD835] block">-</span>
+                        <span id="resumeRowStatusBadge" class="bma-badge text-white text-xs mt-1">ปฏิบัติงานปกติ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- เนื้อหาฟอร์มโปรไฟล์: คอลัมน์ซ้ายแสดงรูปถ่ายขนาดใหญ่ + ข้อมูลประจำตัว, คอลัมน์ขวาแสดงข้อมูลเฉพาะของ Row นั้น + Google Map + สังกัด -->
+            <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- คอลัมน์ซ้าย (5 ส่วน): รูปที่ถ่ายมาขนาดใหญ่ (3:4) + ข้อมูลประจำตัว -->
+                <div class="lg:col-span-5 space-y-5">
+                    <div>
+                        <div class="resume-section-title">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>ภาพถ่ายยืนยันการลงเวลา (เฉพาะรายการนี้)</span>
+                        </div>
+
+                        <!-- กรอบรูปถ่ายขนาดใหญ่ (.resume-large-photo-frame) -->
+                        <div id="resumeLargePhotoBox" class="resume-large-photo-frame">
+                            <div class="text-center p-4 text-emerald-200/70 text-xs">
+                                <i class="fa-solid fa-user-tie text-5xl mb-2 block text-[#FDD835]"></i>
+                                <span>ไม่มีภาพถ่ายในรายการนี้</span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <a id="resumeOpenFullPhotoLink" href="#" target="_blank" rel="noopener" class="hidden text-xs font-bold underline" style="color: var(--bma-primary);">
+                                <i class="fa-solid fa-magnifying-glass-plus mr-1"></i>คลิกเพื่อเปิดดูรูปภาพขนาดเต็ม
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="resume-section-title">
+                            <i class="fa-solid fa-id-card"></i>
+                            <span>ข้อมูลประจำตัว (Personal Identity)</span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bma-info-box space-y-2 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="bma-text-sub font-semibold">เลขบัตรประชาชน 13 หลัก:</span>
+                                <span id="resumeNationalId" class="font-mono font-bold bma-text-main">-</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1.5 border-t bma-border">
+                                <span class="bma-text-sub font-semibold">ชื่อบัญชีผู้ใช้ (Username):</span>
+                                <span id="resumeUsername" class="font-mono font-bold bma-text-main">-</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1.5 border-t bma-border">
+                                <span class="bma-text-sub font-semibold">ประเภท / ระดับตำแหน่ง:</span>
+                                <span id="resumePosSpec" class="font-bold bma-text-main text-right">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- คอลัมน์ขวา (7 ส่วน): ข้อมูลการลงเวลาเฉพาะของ Row นี้ + พิกัดตำแหน่ง Google Map + โครงสร้างสังกัด -->
+                <div class="lg:col-span-7 space-y-5">
+
+                    <!-- 1. ข้อมูลเฉพาะของ Row ที่คลิก -->
+                    <div>
+                        <div class="resume-section-title">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>รายละเอียดการลงเวลาของรายการที่เลือก (Selected Row Details)</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bma-info-box space-y-3 text-xs">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="p-2.5 rounded-lg bg-white dark:bg-[#11231B] border bma-border">
+                                    <span class="bma-text-sub block font-semibold">วันที่ปฏิบัติราชการ</span>
+                                    <span id="resumeRowFullDate" class="text-sm font-extrabold bma-text-main mt-0.5 block">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-white dark:bg-[#11231B] border bma-border">
+                                    <span class="bma-text-sub block font-semibold">ช่วงเวลา / ผลัดปฏิบัติงาน</span>
+                                    <span id="resumeRowShiftName" class="text-sm font-extrabold bma-text-main mt-0.5 block">-</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <div class="p-2.5 rounded-lg bg-white dark:bg-[#11231B] border bma-border text-center">
+                                    <span class="bma-text-sub block font-semibold">เวลาเข้างาน (24 ชม.)</span>
+                                    <span id="resumeRowCheckinTime" class="text-base font-mono font-extrabold text-emerald-700 dark:text-emerald-400 mt-0.5 block">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-white dark:bg-[#11231B] border bma-border text-center">
+                                    <span class="bma-text-sub block font-semibold">เวลาออกงาน (24 ชม.)</span>
+                                    <span id="resumeRowCheckoutTime" class="text-base font-mono font-extrabold text-sky-700 dark:text-sky-400 mt-0.5 block">-</span>
+                                </div>
+                                <div class="col-span-2 sm:col-span-1 p-2.5 rounded-lg bg-white dark:bg-[#11231B] border bma-border text-center">
+                                    <span class="bma-text-sub block font-semibold">หมายเหตุ</span>
+                                    <span id="resumeRowRemark" class="text-xs font-bold bma-text-main mt-1 block">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. พิกัดตำแหน่งและแผนที่ Google Map ของ Row นี้ -->
+                    <div>
+                        <div class="resume-section-title">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>พิกัดตำแหน่งและแผนที่ Google Map (เฉพาะรายการนี้)</span>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border bma-border space-y-2.5 text-xs">
+                            <div class="flex items-start justify-between gap-2">
+                                <span class="bma-text-sub font-bold whitespace-nowrap">ชื่อสถานที่:</span>
+                                <span id="resumeRowLocationName" class="font-extrabold bma-text-main text-right" style="color: var(--bma-primary);">-</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="bma-text-sub font-bold">พิกัด GPS (Lat, Lng):</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="resumeRowGpsCoords" class="font-mono font-bold bma-text-main">-</span>
+                                    <a id="resumeRowGoogleMapLink" href="#" target="_blank" rel="noopener" class="hidden text-xs font-bold underline text-sky-600">
+                                        เปิดใน Google Maps &rarr;
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- แผนที่ Google Map จริงของ Row นั้น -->
+                            <div class="w-full h-48 rounded-xl overflow-hidden border bma-border bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
+                                <div id="resumeRowMapPlaceholder" class="text-xs bma-text-sub flex flex-col items-center gap-1">
+                                    <i class="fa-solid fa-location-dot text-xl text-slate-400"></i>
+                                    <span>ไม่มีข้อมูลพิกัด GPS ในรายการนี้</span>
+                                </div>
+                                <iframe id="resumeRowMapIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. โครงสร้างสังกัด -->
+                    <div>
+                        <div class="resume-section-title">
+                            <i class="fa-solid fa-sitemap"></i>
+                            <span>โครงสร้างสังกัด (Organization Hierarchy)</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                            <div class="p-2.5 rounded-xl border bma-border">
+                                <span class="text-[10px] font-bold uppercase bma-text-sub block">1. หน่วยงาน</span>
+                                <span id="resumeOrgName" class="font-bold bma-text-main mt-0.5 block truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border bma-border">
+                                <span class="text-[10px] font-bold uppercase bma-text-sub block">2. สำนักงาน/กอง</span>
+                                <span id="resumeBureauName" class="font-bold mt-0.5 block truncate" style="color: var(--bma-primary);">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border bma-border">
+                                <span class="text-[10px] font-bold uppercase bma-text-sub block">3. ส่วน/ฝ่าย</span>
+                                <span id="resumeDivisionName" class="font-bold bma-text-main mt-0.5 block truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl border bma-border">
+                                <span class="text-[10px] font-bold uppercase bma-text-sub block">4. กลุ่มงาน</span>
+                                <span id="resumeWorkGroupName" class="font-bold bma-text-main mt-0.5 block truncate">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ส่วนท้าย Modal Resume -->
+            <div class="px-6 py-4 border-t bma-border flex items-center justify-between bg-emerald-950/5">
+                <span class="text-xs bma-text-sub">ข้อมูลโปรไฟล์และหลักฐานการลงเวลาปฏิบัติราชการรายรายการ</span>
+                <button type="button" id="btnCloseResumeModalBottom" class="btn-bma-primary text-xs py-2 px-5">
+                    <i class="fa-solid fa-check"></i>
+                    <span>ปิดหน้าต่างโปรไฟล์</span>
+                </button>
+            </div>
+
         </div>
     </div>
 

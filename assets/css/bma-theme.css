@@ -1,129 +1,301 @@
 /* ============================================================================
- * BMA Enterprise Design System (Light Mode & Eye-Care Dark Mode)
+ * BMA Enterprise Design System V2.5 (Branch: Test-Argon)
+ * Theme: BMA Graphic Emerald Gradient, Rich Green Header/Footer & Row Profile
  * Font: Sarabun (Google Fonts)
- * Rules: 60-30-10 Architecture & WCAG 2.1 AA/AAA Compliant
  * ============================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
-    /* 1.1 Brand & Primary Colors (Light Mode) */
-    --bma-primary: #00744B;
-    --bma-primary-hover: #005A3A;
-    --bma-primary-light: #66C19E;
-    --bma-primary-soft: rgba(0, 116, 75, 0.12);
+    color-scheme: light;
 
-    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Light Mode) */
-    --bma-sec-1: #059669;  /* Green Space / งานสิ่งแวดล้อม */
-    --bma-sec-2: #84CC16;  /* Lime Eco / เมืองน่าอยู่และพลังงานสะอาด */
-    --bma-sec-3: #F59E0B;  /* City Amber / แสงสว่างและการศึกษา */
-    --bma-sec-4: #FB923C;  /* Warm Sunset / วิถีชีวิตริมน้ำและงานสร้างสรรค์ */
-    --bma-sec-5: #F43F5E;  /* Giant Swing Rose / เสาชิงช้าและการบรรเทาสาธารณภัย */
-    --bma-sec-6: #6366F1;  /* BMA Indigo / ความเป็นระเบียบ งานเทศกิจ และเทคโนโลยี */
-    --bma-sec-7: #E11D48;  /* Crimson Red / สถานะฉุกเฉินและข้อผิดพลาดร้ายแรง */
-    --bma-sec-8: #EA580C;  /* Public Works Orange / งานโยธาและรักษาความสะอาด */
-    --bma-sec-9: #EAB308;  /* Temple Gold / เกียรติยศและวัฒนธรรมพระนคร */
-    --bma-sec-10: #0284C7; /* Chao Phraya Sky Blue / การระบายน้ำและสายน้ำเจ้าพระยา */
+    /* --- Core BMA Emerald Tokens --- */
+    --g0: #00351B;
+    --g1: #007B3E;
+    --g2: #4EBA6F;
+    --gold-bma: #FDD835;
 
-    /* 1.3 Surface & Typography Tokens (Light Mode - 60% Dominant Surface) */
-    --bma-bg-main: #F8FAF9;
+    /* Sidebar & Header/Footer Gradient Tokens */
+    --sb1: #00351B;
+    --sb2: #005B2E;
+    --sb3: #007B3E;
+
+    /* Primary Button Gradient Tokens */
+    --hd1: #007B3E;
+    --hd2: #00944A;
+    --hd3: #4EBA6F;
+
+    /* Brand & Primary Colors (Light Mode) */
+    --bma-primary: #007B3E;
+    --bma-primary-hover: #005B2E;
+    --bma-primary-light: #4EBA6F;
+    --bma-primary-soft: rgba(0, 123, 62, 0.14);
+
+    /* Official 5 Status Colors */
+    --status-normal: #007B3E;
+    --status-late: #EAB308;
+    --status-absent-duty: #EA580C;
+    --status-no-checkin: #E11D48;
+    --status-overtime: #2563EB;
+
+    /* Surface & Typography Tokens (Light Mode) */
     --bma-surface-1: #FFFFFF;
-    --bma-surface-2: #F1F5F3;
-    --bma-border: #E2E8F0;
+    --bma-surface-2: #EBF5EF;
+    --bma-surface-info: #E4F3EA;
+    --bma-border: #BBD8C7;
     --bma-text-primary: #0F172A;
-    --bma-text-secondary: #475569;
-    --bma-text-muted: #94A3B8;
+    --bma-text-secondary: #264635;
+    --bma-text-muted: #527060;
 
-    /* Status Badge Alpha Tokens (Light Mode) */
-    --badge-success-bg: rgba(5, 150, 105, 0.14);
-    --badge-success-text: #059669;
-    --badge-warning-bg: rgba(245, 158, 11, 0.15);
-    --badge-warning-text: #D97706;
-    --badge-danger-bg: rgba(225, 29, 72, 0.14);
-    --badge-danger-text: #E11D48;
-    --badge-indigo-bg: rgba(99, 102, 241, 0.14);
-    --badge-indigo-text: #4F46E5;
-    --badge-sky-bg: rgba(2, 132, 199, 0.14);
-    --badge-sky-text: #0284C7;
+    /* Table Header Pastel Tokens */
+    --bma-thead-bg: #E3F2E9;
+    --bma-thead-text: #1B432C;
+    --bma-thead-border: #B5D6C3;
 
-    --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    /* Status Badge Alpha Tokens */
+    --badge-success-bg: rgba(0, 123, 62, 0.15);
+    --badge-success-text: #006834;
+    --badge-warning-bg: rgba(234, 179, 8, 0.20);
+    --badge-warning-text: #9A6700;
+    --badge-danger-bg: rgba(225, 29, 72, 0.15);
+    --badge-danger-text: #BE123C;
+    --badge-indigo-bg: rgba(37, 99, 235, 0.15);
+    --badge-indigo-text: #1D4ED8;
+    --badge-sky-bg: rgba(2, 132, 199, 0.15);
+    --badge-sky-text: #0369A1;
+
+    --shadow-card: 0 12px 28px -6px rgba(0, 53, 27, 0.14), 0 4px 10px -2px rgba(0, 53, 27, 0.07);
 }
 
-/* Dark Mode (Eye-Care Specification - ห้ามใช้ #000000 เด็ดขาด) */
+/* ============================================================================
+ * Dark Mode (Eye-Care Dark System)
+ * ============================================================================ */
 html.dark {
-    /* 1.1 Brand & Primary Colors (Dark Mode) */
+    color-scheme: dark;
+
     --bma-primary: #34D399;
     --bma-primary-hover: #10B981;
     --bma-primary-light: #A7F3D0;
     --bma-primary-soft: rgba(52, 211, 153, 0.16);
 
-    /* 1.2 Vibrant Secondary Colors (10 เฉดสีภารกิจ กทม. - Dark Mode) */
-    --bma-sec-1: #4ADE80;
-    --bma-sec-2: #BEF264;
-    --bma-sec-3: #FCD34D;
-    --bma-sec-4: #FDBA74;
-    --bma-sec-5: #FDA4AF;
-    --bma-sec-6: #A5B4FC;
-    --bma-sec-7: #F87171;
-    --bma-sec-8: #FB923C;
-    --bma-sec-9: #FDE047;
-    --bma-sec-10: #38BDF8;
+    --sb1: #03190E;
+    --sb2: #062D19;
+    --sb3: #0A4526;
 
-    /* 1.3 Surface & Typography Tokens (Dark Mode Eye-Care) */
-    --bma-bg-main: #111816;       /* Dark Charcoal อมเขียวมรกตลึก */
-    --bma-surface-1: #1A2522;     /* Container Layer 1 */
-    --bma-surface-2: #24332F;     /* Elevated Surface (Modal / Dropdown) */
-    --bma-border: #2D3F3A;        /* Border / Line */
-    --bma-text-primary: #F1F5F9;  /* Off-white ลดแสงสะท้อน */
-    --bma-text-secondary: #94A3B8;
-    --bma-text-muted: #64748B;
+    --bma-surface-1: #11231B;
+    --bma-surface-2: #183025;
+    --bma-surface-info: rgba(6, 78, 59, 0.4);
+    --bma-border: #244737;
+    --bma-text-primary: #F1F5F9;
+    --bma-text-secondary: #A7F3D0;
+    --bma-text-muted: #759987;
 
-    /* Status Badge Alpha Tokens (Dark Mode 15%-20% Alpha) */
-    --badge-success-bg: rgba(74, 222, 128, 0.16);
+    --bma-thead-bg: #163024;
+    --bma-thead-text: #A7F3D0;
+    --bma-thead-border: #254D3A;
+
+    --badge-success-bg: rgba(74, 222, 128, 0.18);
     --badge-success-text: #4ADE80;
-    --badge-warning-bg: rgba(252, 211, 77, 0.16);
+    --badge-warning-bg: rgba(252, 211, 77, 0.18);
     --badge-warning-text: #FCD34D;
-    --badge-danger-bg: rgba(248, 113, 113, 0.16);
+    --badge-danger-bg: rgba(248, 113, 113, 0.18);
     --badge-danger-text: #F87171;
-    --badge-indigo-bg: rgba(165, 180, 252, 0.16);
-    --badge-indigo-text: #A5B4FC;
-    --badge-sky-bg: rgba(56, 189, 248, 0.16);
+    --badge-indigo-bg: rgba(96, 165, 250, 0.18);
+    --badge-indigo-text: #60A5FA;
+    --badge-sky-bg: rgba(56, 189, 248, 0.18);
     --badge-sky-text: #38BDF8;
 
-    --shadow-card: none;
+    --shadow-card: 0 12px 30px -4px rgba(0, 0, 0, 0.55);
 }
 
-/* Base Typography & Body */
+/* ============================================================================
+ * พื้นหลังลายกราฟิกโทนสีเขียวไล่สี สวยงาม ไม่เด่นเกินหน้าต่าง Login หรือโมดูลทำงาน
+ * ============================================================================ */
 * {
     font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
     box-sizing: border-box;
 }
 
 body {
-    background-color: var(--bma-bg-main);
+    background-color: #C5E6D4 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23007B3E' stroke-width='1' stroke-opacity='0.07'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.14) 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(0, 91, 46, 0.16) 0%, transparent 45%),
+        linear-gradient(135deg, #B8E1CC 0%, #DFF3E8 48%, #A5D6BD 100%) !important;
+    background-attachment: fixed !important;
     color: var(--bma-text-primary);
     margin: 0;
     padding: 0;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    min-height: 100vh;
+    transition: background 0.25s ease, color 0.25s ease;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Surface & Card Classes */
+html.dark body {
+    background-color: #071710 !important;
+    background-image:
+        url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2334D399' stroke-width='1' stroke-opacity='0.05'%3E%3Cpath d='M60 0L120 60L60 120L0 60Z'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3C/g%3E%3C/svg%3E"),
+        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        linear-gradient(135deg, #05130D 0%, #0B2217 50%, #04100A 100%) !important;
+}
+
+/* ============================================================================
+ * แถบ Header และแถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน
+ * ============================================================================ */
+.bma-header-bar {
+    background-color: #004D26 !important;
+    background-image: linear-gradient(90deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
+    color: #FFFFFF !important;
+    border-bottom: 3px solid #FDD835 !important;
+    box-shadow: 0 4px 20px rgba(0, 53, 27, 0.22);
+}
+
+.bma-header-bar h1,
+.bma-header-bar .header-title-text {
+    color: #FFFFFF !important;
+}
+
+.bma-header-bar p,
+.bma-header-bar .header-sub-text {
+    color: #D1FAE5 !important;
+}
+
+/* แถบ Topbar สำหรับหน้าผู้ดูแลระบบที่มี Sidebar ด้านซ้าย */
+.bma-admin-topbar {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bma-border);
+    border-top: 4px solid var(--g1);
+}
+html.dark .bma-admin-topbar {
+    background-color: rgba(17, 35, 27, 0.92);
+}
+
+/* แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย */
+.bma-footer-bar {
+    background-color: #00351B !important;
+    background-image: linear-gradient(90deg, #002B15 0%, #004D26 50%, #006834 100%) !important;
+    color: #FFFFFF !important;
+    border-top: 3px solid #FDD835 !important;
+    box-shadow: 0 -4px 16px rgba(0, 53, 27, 0.15);
+}
+
+.bma-footer-bar span,
+.bma-footer-bar div {
+    color: #E2F8EC !important;
+}
+
+.bma-footer-bar .footer-highlight {
+    color: #FDD835 !important;
+    font-weight: 800;
+}
+
+.bma-footer-bar .footer-desc-line {
+    color: rgba(255, 255, 255, 0.78) !important;
+}
+
+/* ============================================================================
+ * ปุ่มบนแถบ Header สีเขียว กทม. (ปุ่มเปลี่ยนโหมดธีม, ปุ่มระบบผู้ดูแล, ปุ่มออกจากระบบ)
+ * ============================================================================ */
+.btn-header-theme {
+    background: linear-gradient(135deg, #FDD835 0%, #F59E0B 100%) !important;
+    color: #00351B !important;
+    font-weight: 800 !important;
+    border: 2px solid #FFFFFF !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-header-theme:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(253, 216, 53, 0.45);
+    filter: brightness(1.05);
+}
+
+.btn-header-admin {
+    background: #FFFFFF !important;
+    color: #004D26 !important;
+    font-weight: 800 !important;
+    border: 2px solid #A7F3D0 !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-header-admin:hover {
+    background: #ECFDF5 !important;
+    border-color: #FDD835 !important;
+    transform: translateY(-1px);
+}
+
+.btn-header-logout {
+    background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 2px solid rgba(255, 255, 255, 0.75) !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(190, 18, 60, 0.35);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-header-logout:hover {
+    background: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.5);
+}
+
+/* ============================================================================
+ * การ์ดและพื้นผิวหลัก
+ * ============================================================================ */
 .bma-card {
-    background-color: var(--bma-surface-1);
+    background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
     box-shadow: var(--shadow-card);
     border-radius: 1rem;
     transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
 }
 
+.bma-login-form-panel,
+.bma-surface-panel {
+    background-color: var(--bma-surface-1) !important;
+    color: var(--bma-text-primary) !important;
+}
+
 .bma-modal-surface {
-    background-color: var(--bma-surface-1);
+    background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
 }
 
 html.dark .bma-modal-surface {
-    background-color: var(--bma-surface-2);
+    background-color: var(--bma-surface-2) !important;
+}
+
+.bma-info-box {
+    background-color: var(--bma-surface-info);
+    border: 1px solid var(--bma-border);
+    border-radius: 0.75rem;
 }
 
 .bma-border {
@@ -142,10 +314,427 @@ html.dark .bma-modal-surface {
     color: var(--bma-text-muted);
 }
 
-/* Primary & Secondary Buttons */
-.btn-bma-primary {
-    background-color: var(--bma-primary);
+/* ============================================================================
+ * แผง Brand Panel หน้า Login & กรอบกล้องแนวตั้ง 3:4
+ * ============================================================================ */
+.bma-brand-panel {
+    background-color: #004D26 !important;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(150deg, var(--sb1) 0%, var(--sb2) 52%, var(--sb3) 100%) !important;
+    background-size: 28px 28px, 28px 28px, 100% 100% !important;
+    position: relative;
+    overflow: hidden;
+    color: #FFFFFF !important;
+}
+
+.bma-mobile-login-header {
+    background-color: #004D26 !important;
+    background-image: linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 60%, var(--sb3) 100%) !important;
+    color: #FFFFFF !important;
+    border-bottom: 3px solid var(--gold-bma);
+}
+
+.camera-portrait-3-4 {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 3 / 4;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.outdoor-emerald-frame {
+    background-color: #004D26 !important;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 100%) !important;
+    background-size: 24px 24px, 24px 24px, 100% 100% !important;
+    border: 2px solid var(--g1);
+    box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.25);
+    color: #FFFFFF !important;
+    border-radius: 1.15rem;
+}
+
+.outdoor-camera-bezel {
+    border: 3px solid var(--g1);
+    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.25);
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background-color: #07170E;
+}
+
+/* ============================================================================
+ * Toast Notification Popup
+ * ============================================================================ */
+#bmaToastWrapper {
+    position: fixed;
+    z-index: 100000;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 24rem;
+}
+
+@media (min-width: 768px) {
+    #bmaToastWrapper {
+        top: 1.25rem;
+        right: 1.25rem;
+        left: auto;
+        transform: none;
+        width: auto;
+        min-width: 20rem;
+        max-width: 26rem;
+    }
+}
+
+.bma-toast-item {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg, #00351B 0%, #006834 100%);
     color: #FFFFFF;
+    border-left: 5px solid #FDD835;
+    box-shadow: 0 14px 28px -6px rgba(0, 35, 18, 0.45);
+    font-size: 0.92rem;
+    font-weight: 700;
+    animation: bmaToastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bma-toast-item.toast-error {
+    background: linear-gradient(135deg, #881337 0%, #E11D48 100%);
+    border-left-color: #FDA4AF;
+}
+
+.bma-toast-item.toast-warning {
+    background: linear-gradient(135deg, #78350F 0%, #D97706 100%);
+    border-left-color: #FDE047;
+}
+
+.bma-toast-item.toast-fade-out {
+    animation: bmaToastFadeOut 0.25s ease forwards;
+}
+
+@keyframes bmaToastSlideIn {
+    from { opacity: 0; transform: translateY(-14px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bmaToastFadeOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-10px) scale(0.96); }
+}
+
+/* ============================================================================
+ * Status Tag Filter Chips & Pastel Role Badges
+ * ============================================================================ */
+.status-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 2px solid var(--bma-border);
+    background-color: var(--bma-surface-1);
+    color: var(--bma-text-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s ease;
+}
+
+.status-tag-chip:hover {
+    transform: translateY(-1px);
+}
+
+.status-tag-chip.active {
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.role-pastel-superadmin {
+    background-color: #FFE4E6 !important;
+    color: #BE123C !important;
+    border: 1px solid #FDA4AF !important;
+}
+html.dark .role-pastel-superadmin {
+    background-color: rgba(244, 63, 94, 0.22) !important;
+    color: #FDA4AF !important;
+    border-color: rgba(253, 164, 175, 0.4) !important;
+}
+
+.role-pastel-admin {
+    background-color: #FEF9C3 !important;
+    color: #A16207 !important;
+    border: 1px solid #FDE047 !important;
+}
+html.dark .role-pastel-admin {
+    background-color: rgba(234, 179, 8, 0.22) !important;
+    color: #FDE047 !important;
+    border-color: rgba(253, 224, 71, 0.4) !important;
+}
+
+.role-pastel-user {
+    background-color: #DCFCE7 !important;
+    color: #15803D !important;
+    border: 1px solid #86EFAC !important;
+}
+html.dark .role-pastel-user {
+    background-color: rgba(34, 197, 94, 0.22) !important;
+    color: #86EFAC !important;
+    border-color: rgba(134, 239, 172, 0.4) !important;
+}
+
+.role-dot-superadmin {
+    background-color: #FB7185 !important;
+    box-shadow: 0 0 0 3px #FFE4E6;
+}
+.role-dot-admin {
+    background-color: #FACC15 !important;
+    box-shadow: 0 0 0 3px #FEF9C3;
+}
+.role-dot-user {
+    background-color: #4ADE80 !important;
+    box-shadow: 0 0 0 3px #DCFCE7;
+}
+
+.bma-badge-pastel-purple {
+    background-color: #F3E8FF !important;
+    color: #6B21A8 !important;
+    border: 1px solid #D8B4FE !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.8rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+html.dark .bma-badge-pastel-purple {
+    background-color: rgba(168, 85, 247, 0.22) !important;
+    color: #E9D5FF !important;
+    border-color: rgba(216, 180, 254, 0.4) !important;
+}
+
+/* ============================================================================
+ * Deep Emerald Sidebar (.sidebar-dark-bma) & Menu Items
+ * ============================================================================ */
+.sidebar-dark-bma {
+    background: linear-gradient(180deg, var(--sb1) 0%, var(--sb2) 55%, var(--sb3) 100%);
+    color: #FFFFFF;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 4px 0 24px rgba(0, 53, 27, 0.18);
+}
+
+.sidebar-dark-bma .bma-nav-item,
+.sidebar-dark-bma .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 0.3rem;
+    border-left: 4px solid transparent;
+    cursor: pointer;
+}
+
+.sidebar-dark-bma .bma-nav-item:hover,
+.sidebar-dark-bma .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    transform: translateX(2px);
+}
+
+.sidebar-dark-bma .bma-nav-item.active,
+.sidebar-dark-bma .menu-item.active {
+    background: linear-gradient(90deg, rgba(253, 216, 53, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%);
+    color: #FFFFFF;
+    font-weight: 700;
+    border-left: 4px solid var(--gold-bma);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-dark-bma .bma-nav-item.active i,
+.sidebar-dark-bma .menu-item.active i {
+    color: var(--gold-bma);
+}
+
+/* ============================================================================
+ * Jewel-Tone Stat Cards
+ * ============================================================================ */
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.15rem;
+    padding: 1.35rem 1.5rem;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.22), 0 4px 10px -2px rgba(0, 0, 0, 0.08);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    z-index: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px -6px rgba(0, 53, 27, 0.28);
+}
+
+.stat-card-total {
+    background-color: #00351B !important;
+    background-image: linear-gradient(135deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(253, 216, 53, 0.35) !important;
+}
+
+.stat-card .deco,
+.stat-card .deco-1,
+.stat-card .deco-2 {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.04) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.stat-card .deco-1 {
+    width: 7.5rem;
+    height: 7.5rem;
+    top: -2.2rem;
+    right: -2.2rem;
+}
+
+.stat-card .deco-2 {
+    width: 5.5rem;
+    height: 5.5rem;
+    bottom: -1.8rem;
+    right: 2.2rem;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 70%);
+}
+
+.stat-card .stat-content {
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card .stat-icon-box {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.stat-card .stat-progress-track {
+    width: 100%;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    margin-top: 0.4rem;
+}
+
+.stat-card .stat-progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    background: #FFFFFF;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    transition: width 0.5s ease;
+}
+
+/* ============================================================================
+ * International Resume Profile Modal Styles (รูปถ่ายขนาดใหญ่ + Google Map เฉพาะ Row)
+ * ============================================================================ */
+.resume-header-banner {
+    background-color: #00351B !important;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(135deg, #00351B 0%, #005B2E 50%, #007B3E 100%) !important;
+    background-size: 24px 24px, 24px 24px, 100% 100% !important;
+    color: #FFFFFF !important;
+    border-bottom: 4px solid #FDD835;
+}
+
+.resume-section-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--bma-primary);
+    border-bottom: 2px solid var(--bma-border);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.resume-timeline-node {
+    position: relative;
+    padding-left: 1.35rem;
+    border-left: 2px solid var(--bma-primary);
+    padding-bottom: 0.75rem;
+}
+
+.resume-timeline-node::before {
+    content: '';
+    position: absolute;
+    left: -0.42rem;
+    top: 0.2rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 9999px;
+    background-color: var(--bma-primary);
+    border: 2px solid var(--bma-surface-1);
+}
+
+.resume-large-photo-frame {
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 3 / 4;
+    border-radius: 1rem;
+    border: 3px solid var(--g1);
+    box-shadow: 0 10px 24px -4px rgba(0, 53, 27, 0.22);
+    overflow: hidden;
+    background-color: #0B1912;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================================================
+ * Buttons & Form Controls
+ * ============================================================================ */
+.btn-primary,
+.btn-bma-primary {
+    background: linear-gradient(135deg, var(--hd1) 0%, var(--hd2) 55%, var(--hd3) 100%);
+    color: #FFFFFF !important;
     font-weight: 600;
     border-radius: 0.75rem;
     padding: 0.625rem 1.25rem;
@@ -154,22 +743,23 @@ html.dark .bma-modal-surface {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 123, 62, 0.25);
     cursor: pointer;
 }
 
-html.dark .btn-bma-primary {
-    color: #0F172A;
-}
-
+.btn-primary:hover:not(:disabled),
 .btn-bma-primary:hover:not(:disabled) {
-    background-color: var(--bma-primary-hover);
+    background: linear-gradient(135deg, var(--sb2) 0%, var(--hd1) 60%, var(--hd2) 100%);
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 123, 62, 0.35);
 }
 
+.btn-primary:disabled,
 .btn-bma-primary:disabled {
     opacity: 0.55;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .btn-bma-soft {
@@ -183,19 +773,20 @@ html.dark .btn-bma-primary {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border: 1px solid transparent;
+    border: 1px solid rgba(0, 123, 62, 0.25);
     cursor: pointer;
 }
 
 .btn-bma-soft:hover:not(:disabled) {
     border-color: var(--bma-primary);
+    background-color: rgba(0, 123, 62, 0.22);
 }
 
 .btn-bma-outline {
-    background-color: transparent;
+    background-color: var(--bma-surface-1);
     color: var(--bma-text-primary);
     border: 1px solid var(--bma-border);
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 0.75rem;
     padding: 0.5rem 1rem;
     transition: all 0.2s ease;
@@ -211,13 +802,38 @@ html.dark .btn-bma-primary {
     border-color: var(--bma-primary);
 }
 
-/* Form Controls */
+.btn-sort-arrow {
+    width: 1.85rem;
+    height: 1.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--bma-border);
+    background-color: var(--bma-surface-1);
+    color: var(--bma-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-sort-arrow:hover:not(:disabled) {
+    background-color: var(--bma-primary);
+    color: #FFFFFF;
+    border-color: var(--bma-primary);
+}
+
+.btn-sort-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 .bma-input,
 .bma-select,
 .bma-textarea {
     width: 100%;
-    background-color: var(--bma-surface-1);
-    color: var(--bma-text-primary);
+    background-color: var(--bma-surface-1) !important;
+    color: var(--bma-text-primary) !important;
     border: 1px solid var(--bma-border);
     border-radius: 0.75rem;
     padding: 0.625rem 0.875rem;
@@ -229,7 +845,8 @@ html.dark .btn-bma-primary {
 html.dark .bma-input,
 html.dark .bma-select,
 html.dark .bma-textarea {
-    background-color: #151F1C;
+    background-color: #0B1912 !important;
+    color: #F1F5F9 !important;
 }
 
 .bma-input:focus,
@@ -239,7 +856,9 @@ html.dark .bma-textarea {
     box-shadow: 0 0 0 3px var(--bma-primary-soft);
 }
 
-/* Status Badges */
+/* ============================================================================
+ * Status Badges & Tables
+ * ============================================================================ */
 .bma-badge {
     display: inline-flex;
     align-items: center;
@@ -277,36 +896,91 @@ html.dark .bma-textarea {
     color: var(--badge-sky-text);
 }
 
-/* Sidebar Navigation Links */
-.bma-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
-    color: var(--bma-text-secondary);
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    margin-bottom: 0.25rem;
+.bma-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 0.85rem;
+    border: 1px solid var(--bma-thead-border);
+    background-color: var(--bma-surface-1);
 }
 
-.bma-nav-item:hover {
+.bma-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 720px;
+}
+
+.bma-table thead th,
+.bma-table th {
+    background-color: var(--bma-thead-bg);
+    color: var(--bma-thead-text);
+    font-weight: 700;
+    padding: 0.9rem 1rem;
+    border-bottom: 2px solid var(--bma-thead-border);
+    white-space: nowrap;
+}
+
+.bma-table td {
+    padding: 0.78rem 1rem;
+    border-bottom: 1px solid var(--bma-border);
+    color: var(--bma-text-primary);
+    vertical-align: middle;
+}
+
+.bma-table tbody tr:hover {
+    background-color: var(--bma-primary-soft);
+}
+
+/* ============================================================================
+ * AJAX Spin + Progress Bar & Skeleton
+ * ============================================================================ */
+#bmaTopProgressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FDD835 0%, #4EBA6F 50%, #007B3E 100%);
+    z-index: 99999;
+    transition: width 0.25s ease, opacity 0.25s ease;
+    box-shadow: 0 0 10px rgba(78, 186, 111, 0.8);
+}
+
+.bma-ajax-progress-track {
+    width: 100%;
+    height: 0.65rem;
     background-color: var(--bma-surface-2);
-    color: var(--bma-primary);
+    border-radius: 9999px;
+    overflow: hidden;
+    border: 1px solid var(--bma-border);
 }
 
-.bma-nav-item.active {
-    background-color: var(--bma-primary);
-    color: #FFFFFF;
-    font-weight: 600;
+.bma-ajax-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hd1) 0%, var(--hd3) 60%, var(--gold-bma) 100%);
+    border-radius: 9999px;
+    transition: width 0.25s ease;
 }
 
-html.dark .bma-nav-item.active {
-    color: #0F172A;
+#bmaGlobalSpinner {
+    backdrop-filter: blur(4px);
+    background-color: rgba(4, 31, 17, 0.55);
 }
 
-/* iPhone / iOS Style Shortcut Icons for Responsive Mobile */
+.bma-spin-ring {
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 4px solid var(--bma-primary-soft);
+    border-top-color: var(--bma-primary);
+    border-right-color: var(--gold-bma);
+    border-radius: 50%;
+    animation: bmaSpin 0.75s linear infinite;
+}
+
+@keyframes bmaSpin {
+    to { transform: rotate(360deg); }
+}
+
 .ios-shortcut-icon {
     width: 3.5rem;
     height: 3.5rem;
@@ -316,7 +990,7 @@ html.dark .bma-nav-item.active {
     justify-content: center;
     color: #FFFFFF;
     font-size: 1.45rem;
-    box-shadow: 0 6px 14px -3px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 6px 14px -3px rgba(0, 53, 27, 0.25);
     transition: transform 0.2s ease;
 }
 
@@ -324,7 +998,6 @@ html.dark .bma-nav-item.active {
     transform: scale(0.92);
 }
 
-/* Skeleton Loading Shimmer */
 .bma-skeleton {
     background: linear-gradient(
         90deg,
@@ -340,76 +1013,4 @@ html.dark .bma-nav-item.active {
 @keyframes bmaShimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
-}
-
-/* Global Loading Overlay */
-#bmaGlobalSpinner {
-    backdrop-filter: blur(4px);
-    background-color: rgba(17, 24, 22, 0.55);
-}
-
-.bma-spin-ring {
-    width: 3rem;
-    height: 3rem;
-    border: 4px solid var(--bma-primary-soft);
-    border-top-color: var(--bma-primary);
-    border-radius: 50%;
-    animation: bmaSpin 0.8s linear infinite;
-}
-
-@keyframes bmaSpin {
-    to { transform: rotate(360deg); }
-}
-
-/* Table Responsive & Custom Scrollbar */
-.bma-table-container {
-    width: 100%;
-    overflow-x: auto;
-    border-radius: 0.75rem;
-    border: 1px solid var(--bma-border);
-}
-
-.bma-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-    min-width: 720px;
-}
-
-.bma-table th {
-    background-color: var(--bma-surface-2);
-    color: var(--bma-text-primary);
-    font-weight: 600;
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--bma-border);
-    white-space: nowrap;
-}
-
-.bma-table td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--bma-border);
-    color: var(--bma-text-primary);
-    vertical-align: middle;
-}
-
-.bma-table tbody tr:hover {
-    background-color: var(--bma-primary-soft);
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bma-bg-main);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--bma-border);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--bma-primary);
 }

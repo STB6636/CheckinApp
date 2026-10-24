@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/LoginController.js
- * @description คลาสควบคุมหน้าเข้าสู่ระบบ (index.html) เปลี่ยนรหัสผ่าน และลืมรหัสผ่าน
+ * @description คลาสควบคุมหน้าเข้าสู่ระบบ (ซ่อนชื่อไฟล์ .html ทุกหน้าให้แสดงเฉพาะ https://stb6636.github.io/CheckinApp/ และกู้คืนหน้าเดิมเมื่อกด Refresh)
  */
 
 import { AuthService } from '../core/AuthService.js';
@@ -14,29 +14,52 @@ export class LoginController {
     }
 
     async init() {
+        // ซ่อนชื่อไฟล์ .html ทันทีให้เหลือเฉพาะ https://stb6636.github.io/CheckinApp/
         UIHelpers.initTheme();
+
+        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าล่าสุดทันทีโดยไม่ต้อง Login ซ้ำ
+        const existingSessionUser = AuthService.getCurrentUser(true);
+        if (existingSessionUser) {
+            const targetUrl = AuthService.getRedirectUrlForSession(existingSessionUser);
+            window.location.replace(targetUrl);
+            return;
+        }
+
         this.#updateThemeButtonUI();
         this.#bindEvents();
         await this.#loadOrganizationBranding();
     }
 
-    /**
-     * ดึงข้อมูลโลโก้ ชื่อหน่วยงาน และชื่อสังกัด [สำนักงาน/กอง] จากฐานข้อมูลมาแสดงผลบนการ์ดแนวนอนและ Footer
-     */
     async #loadOrganizationBranding() {
         try {
             this.settings = await SettingsModel.getSettings(true);
             const orgName = this.settings.organization_name || 'กรุงเทพมหานคร';
             const bureauName = this.settings.bureau_name || 'สำนักเทศกิจ';
+            const headerTitle = this.settings.header_system_title || 'BMA e-Government Time Attendance System';
+            const footerDesc = this.settings.footer_description || '';
+
+            const headerTitleEl = document.getElementById('headerSystemTitleText');
+            if (headerTitleEl) headerTitleEl.textContent = headerTitle;
 
             document.getElementById('orgNameText').textContent = orgName;
             document.getElementById('bureauNameText').textContent = bureauName;
+            document.getElementById('mobileOrgNameText').textContent = orgName;
+            document.getElementById('mobileBureauNameText').textContent = bureauName;
             document.getElementById('footerOrgName').textContent = orgName;
             document.getElementById('footerBureauName').textContent = bureauName;
 
+            const footerDescEl = document.getElementById('footerDescriptionText');
+            if (footerDescEl) {
+                footerDescEl.textContent = footerDesc;
+                footerDescEl.classList.toggle('hidden', !footerDesc);
+            }
+
             if (this.settings.logo_url) {
-                const logoWrapper = document.getElementById('orgLogoWrapper');
-                logoWrapper.innerHTML = `<img src="${this.settings.logo_url}" alt="Logo" class="w-full h-full object-contain rounded-xl">`;
+                const logoImgHtml = `<img src="${this.settings.logo_url}" alt="Logo" class="w-full h-full object-contain rounded-xl">`;
+                const desktopLogo = document.getElementById('orgLogoWrapper');
+                const mobileLogo = document.getElementById('mobileOrgLogoWrapper');
+                if (desktopLogo) desktopLogo.innerHTML = logoImgHtml;
+                if (mobileLogo) mobileLogo.innerHTML = logoImgHtml;
             }
         } catch (err) {
             console.warn('Could not load branding settings on login page:', err);
@@ -48,7 +71,7 @@ export class LoginController {
         const icon = document.getElementById('loginThemeIcon');
         const label = document.getElementById('loginThemeLabel');
         if (icon) {
-            icon.className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon';
+            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
         if (label) {
             label.textContent = isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา';
@@ -56,13 +79,11 @@ export class LoginController {
     }
 
     #bindEvents() {
-        // ปุ่มสลับโหมดสี
         document.getElementById('btnLoginThemeToggle')?.addEventListener('click', () => {
             UIHelpers.toggleTheme();
             this.#updateThemeButtonUI();
         });
 
-        // ปุ่มแสดง/ซ่อนรหัสผ่าน
         document.getElementById('btnToggleLoginPwd')?.addEventListener('click', () => {
             const pwdInput = document.getElementById('loginPassword');
             const icon = document.querySelector('#btnToggleLoginPwd i');
@@ -75,17 +96,14 @@ export class LoginController {
             }
         });
 
-        // ปุ่มเข้าสู่ระบบสำหรับลงเวลาปฏิบัติราชการ
         document.getElementById('btnLoginCheckin')?.addEventListener('click', () => {
             this.#handleLogin('checkin');
         });
 
-        // ปุ่มเข้าสู่ระบบสำหรับผู้ดูแลระบบ (SuperAdmin, Admin)
         document.getElementById('btnLoginAdmin')?.addEventListener('click', () => {
             this.#handleLogin('admin');
         });
 
-        // รองรับการกด Enter ในช่องรหัสผ่านเพื่อเข้าสู่ระบบลงเวลา
         document.getElementById('loginPassword')?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -93,7 +111,6 @@ export class LoginController {
             }
         });
 
-        // จัดการ Modal เปลี่ยนรหัสผ่านด้วยตนเอง
         const modalChange = document.getElementById('modalChangePassword');
         const openChangeModal = () => {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
@@ -111,7 +128,6 @@ export class LoginController {
         document.getElementById('btnCloseChangePwdModal')?.addEventListener('click', closeChangeModal);
         document.getElementById('btnCancelChangePwd')?.addEventListener('click', closeChangeModal);
 
-        // ตรวจสอบรหัสผ่านใหม่และยืนยันรหัสผ่านใหม่ให้ตรงกันแบบเรียลไทม์จึงจะกดบันทึกได้
         const validatePasswordMatch = () => {
             const newPwd = document.getElementById('cpNewPassword').value;
             const confirmPwd = document.getElementById('cpConfirmPassword').value;
@@ -127,11 +143,11 @@ export class LoginController {
             statusEl.classList.remove('hidden');
             if (newPwd === confirmPwd && newPwd.length >= 4) {
                 statusEl.textContent = '✓ รหัสผ่านใหม่ตรงกัน สามารถกดบันทึกได้';
-                statusEl.className = 'text-xs mt-1 text-emerald-500 font-semibold';
+                statusEl.className = 'text-xs mt-1 text-emerald-600 font-bold';
                 submitBtn.disabled = false;
             } else {
                 statusEl.textContent = '✗ รหัสผ่านใหม่และการยืนยันยังไม่ตรงกัน (อย่างน้อย 4 ตัวอักษร)';
-                statusEl.className = 'text-xs mt-1 text-rose-500 font-semibold';
+                statusEl.className = 'text-xs mt-1 text-rose-600 font-bold';
                 submitBtn.disabled = true;
             }
         };
@@ -144,7 +160,6 @@ export class LoginController {
             await this.#handleChangePasswordSubmit(closeChangeModal);
         });
 
-        // จัดการ Modal ลืมรหัสผ่าน
         const modalForgot = document.getElementById('modalForgotPassword');
         const openForgotModal = () => {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
@@ -163,10 +178,6 @@ export class LoginController {
         });
     }
 
-    /**
-     * ประมวลผลการเข้าสู่ระบบ
-     * @param {'checkin'|'admin'} mode
-     */
     async #handleLogin(mode) {
         const username = document.getElementById('loginUsername')?.value || '';
         const password = document.getElementById('loginPassword')?.value || '';
@@ -177,21 +188,18 @@ export class LoginController {
             UIHelpers.hideLoading();
 
             if (!result.success) {
-                await UIHelpers.alert('ไม่สามารถเข้าสู่ระบบได้', result.message, 'error');
+                await UIHelpers.showToast(result.message, 'error', 2800);
                 return;
             }
 
-            await UIHelpers.alert('เข้าสู่ระบบสำเร็จ', `ยินดีต้อนรับ ${result.user.full_name}`, 'success');
-            window.location.href = result.redirectUrl;
+            await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
+            window.location.replace(result.redirectUrl);
         } catch (err) {
             UIHelpers.hideLoading();
-            await UIHelpers.alert('เกิดข้อผิดพลาด', err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error');
+            await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);
         }
     }
 
-    /**
-     * ประมวลผลการเปลี่ยนรหัสผ่านใหม่ด้วยตนเอง
-     */
     async #handleChangePasswordSubmit(closeModalCallback) {
         const username = document.getElementById('cpUsername').value;
         const oldPwd = document.getElementById('cpOldPassword').value;
@@ -218,9 +226,6 @@ export class LoginController {
         }
     }
 
-    /**
-     * ประมวลผลการส่งคำขอลืมรหัสผ่านด้วยหมายเลขบัตรประชาชน 13 หลัก
-     */
     async #handleForgotPasswordSubmit(closeModalCallback) {
         const nationalId = document.getElementById('fpNationalId').value;
 

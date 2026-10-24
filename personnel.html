@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการข้อมูลบุคลากร - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- SheetJS (XLSX) สำหรับนำเข้า-ส่งออก Excel รองรับ UTF-8 -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
@@ -23,11 +27,11 @@
 
         <main class="flex-1 p-4 lg:p-8 space-y-6">
 
-            <!-- แถบเครื่องมือด้านบน: ปุ่มเพิ่มบุคลากร, นำเข้า-ส่งออก Excel, เลือกมุมมอง Group By และ Color Picker -->
-            <div class="bma-card p-5 space-y-4">
+            <!-- แถบเครื่องมือด้านบน -->
+            <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
                     <div>
-                        <h2 class="text-base font-bold bma-text-main flex items-center gap-2">
+                        <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
                             <i class="fa-solid fa-id-card-clip" style="color: var(--bma-primary);"></i>
                             <span>ทะเบียนข้อมูลบุคลากรในสังกัด</span>
                         </h2>
@@ -58,16 +62,16 @@
                     </div>
                 </div>
 
-                <!-- แถบตัวกรองค้นหา, สลับมุมมอง Group By 2 มุมมอง และตั้งค่าสี Color Picker -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                    <div class="md:col-span-5 relative">
+                <!-- แถบค้นหา, สลับมุมมอง Group By 2 มุมมอง และคำอธิบายสีป้ายกำกับตามระดับสิทธิ์ -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
+                    <div class="lg:col-span-5 relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </span>
                         <input type="text" id="searchPersonnelInput" class="bma-input pl-9 py-2 text-sm" placeholder="ค้นหาชื่อ-นามสกุล, เลขบัตรประชาชน, ตำแหน่ง, สังกัด...">
                     </div>
 
-                    <div class="md:col-span-4 flex items-center gap-2">
+                    <div class="lg:col-span-4 flex items-center gap-2">
                         <label for="selectPersonnelGroupBy" class="text-xs font-bold bma-text-sub whitespace-nowrap">มุมมองจัดกลุ่ม:</label>
                         <select id="selectPersonnelGroupBy" class="bma-select py-2 text-xs font-semibold">
                             <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
@@ -75,15 +79,17 @@
                         </select>
                     </div>
 
-                    <div class="md:col-span-3 flex items-center justify-end gap-2 text-xs">
-                        <span class="font-semibold bma-text-sub">สีแถบกลุ่มสังกัด:</span>
-                        <input type="color" id="personnelHeaderColorPicker" value="#00744B" class="w-8 h-8 rounded cursor-pointer border-0">
+                    <div class="lg:col-span-3 flex items-center justify-end gap-1.5 flex-wrap text-xs">
+                        <span class="font-bold bma-text-sub mr-1">สีป้ายสิทธิ์:</span>
+                        <span class="bma-badge role-pastel-superadmin text-[11px]">SuperAdmin</span>
+                        <span class="bma-badge role-pastel-admin text-[11px]">Admin</span>
+                        <span class="bma-badge role-pastel-user text-[11px]">User</span>
                     </div>
                 </div>
             </div>
 
             <!-- ตารางแสดงข้อมูลบุคลากร (Group By 2 มุมมอง) -->
-            <div class="bma-card p-5">
+            <div class="bma-card p-5" style="border-top: 3px solid var(--g1);">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold bma-text-sub">
                         จำนวนบุคลากรที่แสดงผล: <strong id="personnelTotalCountBadge" class="bma-text-main">0</strong> คน
@@ -99,6 +105,7 @@
                                 <th>ตำแหน่ง + ระดับ</th>
                                 <th>เลขบัตรประชาชน 13 หลัก</th>
                                 <th>สังกัดย่อย (กลุ่มงาน)</th>
+                                <th class="text-center">ระดับบัญชี</th>
                                 <th class="w-36 text-center">จัดการ</th>
                             </tr>
                         </thead>
@@ -114,13 +121,13 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal เพิ่ม / แก้ไขข้อมูลบุคลากร พร้อมตัวเลือก "เพิ่มบัญชีผู้ใช้อัตโนมัติ" (ตามข้อกำหนด V2.1) -->
+    <!-- Modal เพิ่ม / แก้ไขข้อมูลบุคลากร (เอาสีป้ายกำกับบุคลากรออก โดยกำหนดตายตัวตามระดับบัญชีผู้ใช้งาน) -->
     <div id="modalPersonnelForm" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
         <div class="w-full max-w-2xl bma-card bma-modal-surface p-6 shadow-2xl my-8">
             <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
                 <h3 id="modalPersonnelTitle" class="text-lg font-bold bma-text-main flex items-center gap-2">
                     <i class="fa-solid fa-user-pen" style="color: var(--bma-primary);"></i>
-                    <span>เพิ่มข้อมูลบุคลากร</span>
+                    <span>เพิ่มข้อมูลบุคลากรใหม่</span>
                 </h3>
                 <button type="button" id="btnClosePersonnelModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
                     <i class="fa-solid fa-xmark"></i>
@@ -130,49 +137,40 @@
             <form id="formPersonnel" class="space-y-4">
                 <input type="hidden" id="perId">
 
-                <!-- ข้อมูลส่วนตัวและเลขบัตรประชาชน -->
+                <!-- ข้อมูลส่วนตัว -->
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     <div class="sm:col-span-3">
-                        <label class="block text-xs font-semibold bma-text-main mb-1">คำนำหน้าชื่อ *</label>
+                        <label class="block text-xs font-bold bma-text-main mb-1">คำนำหน้าชื่อ *</label>
                         <select id="perPrefix" class="bma-select text-sm" required></select>
                     </div>
                     <div class="sm:col-span-4">
-                        <label class="block text-xs font-semibold bma-text-main mb-1">ชื่อจริง *</label>
+                        <label class="block text-xs font-bold bma-text-main mb-1">ชื่อจริง *</label>
                         <input type="text" id="perFirstName" class="bma-input text-sm" placeholder="ระบุชื่อจริง" required>
                     </div>
                     <div class="sm:col-span-5">
-                        <label class="block text-xs font-semibold bma-text-main mb-1">นามสกุล *</label>
+                        <label class="block text-xs font-bold bma-text-main mb-1">นามสกุล *</label>
                         <input type="text" id="perLastName" class="bma-input text-sm" placeholder="ระบุนามสกุล" required>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start">
-                    <div class="sm:col-span-8">
-                        <label class="block text-xs font-semibold bma-text-main mb-1">
-                            หมายเลขบัตรประจำตัวประชาชน (13 หลัก)
-                            <span id="nationalIdRequiredHint" class="text-rose-500 hidden">* บังคับเมื่อสร้างบัญชีอัตโนมัติ</span>
-                        </label>
-                        <input type="text" id="perNationalId" maxlength="13" class="bma-input text-sm font-mono tracking-wider" placeholder="ระบุเลขบัตรประชาชน 13 หลัก (ระบบตรวจสอบความถูกต้องอัตโนมัติ)">
-                        <p id="perNationalIdStatus" class="text-xs mt-1 hidden"></p>
-                    </div>
-                    <div class="sm:col-span-4">
-                        <label class="block text-xs font-semibold bma-text-main mb-1">สีป้ายกำกับบุคลากร</label>
-                        <div class="flex items-center gap-2">
-                            <input type="color" id="perBadgeColor" value="#00744B" class="w-10 h-10 rounded-lg border bma-border cursor-pointer">
-                            <span class="text-xs bma-text-sub">เลือกสีประจำตัว</span>
-                        </div>
-                    </div>
+                <!-- หมายเลขบัตรประชาชน 13 หลัก (เอาช่องเลือกสีป้ายกำกับออกตามข้อกำหนด) -->
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">
+                        หมายเลขบัตรประจำตัวประชาชน (13 หลัก)
+                    </label>
+                    <input type="text" id="perNationalId" maxlength="13" class="bma-input text-sm font-mono tracking-wider" placeholder="ระบุเลขบัตรประชาชน 13 หลัก (ระบบตรวจสอบความถูกต้องอัตโนมัติ)">
+                    <p id="perNationalIdStatus" class="text-xs mt-1 hidden"></p>
                 </div>
 
-                <!-- กล่องติ๊กถูก "เพิ่มบัญชีผู้ใช้อัตโนมัติ" ตามข้อกำหนด V2.1 ข้อ 1 -->
-                <div id="autoCreateAccountBox" class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10">
+                <!-- กล่องติ๊กถูก "เพิ่มบัญชีผู้ใช้อัตโนมัติ" -->
+                <div id="autoCreateAccountBox" class="p-3.5 rounded-xl bma-info-box">
                     <label class="flex items-start gap-3 cursor-pointer">
                         <input type="checkbox" id="chkAutoCreateAccount" class="w-5 h-5 accent-emerald-600 mt-0.5 shrink-0" checked>
                         <div class="text-xs">
-                            <span class="font-bold text-sm bma-text-main block">เพิ่มบัญชีผู้ใช้อัตโนมัติ (Role: User)</span>
+                            <span class="font-bold text-sm bma-text-main block">เพิ่มบัญชีผู้ใช้อัตโนมัติ (Role: User - ป้ายสีเขียวพาสเทล)</span>
                             <span class="bma-text-sub block mt-0.5">
                                 ระบบจะสร้างบัญชีผู้ใช้งานให้อัตโนมัติโดยใช้ <b>Username = หมายเลขบัตรประชาชน 13 หลัก</b> และ <b>Password = หมายเลข 6 ตัวท้ายของบัตรประชาชน</b>
-                                <span id="autoPasswordPreview" class="font-mono font-bold text-emerald-600 ml-1"></span>
+                                <span id="autoPasswordPreview" class="font-mono font-bold text-emerald-700 ml-1"></span>
                             </span>
                         </div>
                     </label>
@@ -183,15 +181,15 @@
                     <div class="text-xs font-bold uppercase tracking-wider bma-text-sub mb-2.5">ข้อมูลตำแหน่ง (ดึงจากตั้งค่าระบบ)</div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">ประเภทตำแหน่ง *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">ประเภทตำแหน่ง *</label>
                             <select id="perPosType" class="bma-select text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">ตำแหน่งในสายงาน *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">ตำแหน่งในสายงาน *</label>
                             <select id="perPosTitle" class="bma-select text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">ระดับตำแหน่ง *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">ระดับตำแหน่ง *</label>
                             <select id="perPosLevel" class="bma-select text-sm" required></select>
                         </div>
                     </div>
@@ -202,19 +200,19 @@
                     <div class="text-xs font-bold uppercase tracking-wider bma-text-sub mb-2.5">ข้อมูลสังกัด (ดึงจากตั้งค่าระบบ)</div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">หน่วยงาน *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">หน่วยงาน *</label>
                             <select id="perOrganization" class="bma-select text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">สำนักงาน/กอง *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">สำนักงาน/กอง *</label>
                             <select id="perBureau" class="bma-select text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">ส่วน/ฝ่าย *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">ส่วน/ฝ่าย *</label>
                             <select id="perDivision" class="bma-select text-sm" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">กลุ่มงาน *</label>
+                            <label class="block text-xs font-bold bma-text-main mb-1">กลุ่มงาน *</label>
                             <select id="perWorkGroup" class="bma-select text-sm" required></select>
                         </div>
                     </div>
