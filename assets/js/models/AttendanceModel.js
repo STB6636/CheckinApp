@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/AttendanceModel.js
- * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (ระบบ GPS คัดกรองเฉพาะ 5 หมวดหมู่เป้าหมาย + ซอย/ซอยย่อย และวนหาค่าใหม่หากได้ ถนน/แขวง/เขต + ลอจิกบังคับลงเวลาเลิกงานค้างล่าสุดก่อนเสมอ)
+ * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (อัปเกรดระบบ GPS ค้นหาระยะ z=19 "ใกล้เคียง..." -> z=20 "บริเวณ..." -> ซอย/ซอยย่อย "ใกล้เคียง..." และวนหาใหม่เมื่อเจอ ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด)
  */
 
 import { Config } from '../core/Config.js';
@@ -10,6 +10,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from './SettingsModel.js';
 
 export class AttendanceModel {
+    // แคชเก็บผลลัพธ์สถานที่ตามพิกัด (ความละเอียดทศนิยม 5 ตำแหน่ง ~ 1.1 เมตร) เพื่อความเร็วสูงสุด
     static #locationCache = new Map();
 
     static #calculateDistanceMeters(lat1, lon1, lat2, lon2) {
@@ -33,23 +34,39 @@ export class AttendanceModel {
     }
 
     /**
-     * ตรวจสอบว่าข้อความชื่อสถานที่ที่ได้เป็น "ถนน", "แขวง" หรือ "เขต" หรือไม่
-     * หากใช่ ระบบจะไม่ยอมรับค่านี้ และจะวนกลับไปค้นหาสถานที่เป้าหมายหรือซอย/ซอยย่อยใหม่อีกครั้ง
+     * ตรวจสอบว่าชื่อสถานที่ที่ได้เป็นคำต้องห้าม ได้แก่:
+     * "ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด" หรือไม่
+     * หากใช่ ระบบจะไม่อนุญาตให้ใช้ค่านี้ และจะวนกลับไปหาค่าใหม่อีกครั้ง
      * @param {string} rawName
+     * @param {Object} tags
      * @returns {boolean}
      */
-    static #isRoadSubdistrictOrDistrict(rawName) {
+    static #isForbiddenLocationTerm(rawName, tags = {}) {
         if (!rawName) return true;
-        const clean = String(rawName).replace(/^ใกล้เคียง\s+/, '').trim();
+        const clean = String(rawName)
+            .replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '')
+            .trim();
         if (!clean) return true;
 
-        // หากมีคำว่า ซอย, ซ., ตรอก, แยก ถือว่าเป็นซอย/ซอยย่อยที่ถูกต้อง (เช่น "ถนนเพชรเกษม ซอย 4")
+        // 1. บล็อกคำว่า "หมู่บ้าน" ทุกกรณีตามข้อกำหนด (เช่น หมู่บ้าน..., บ้าน...)
+        if (/(^หมู่บ้าน|หมู่บ้าน|^หมู่ที่\s*\d+|ตำบล|อำเภอ|จังหวัด)/i.test(clean)) {
+            return true;
+        }
+        if (tags && ['village', 'hamlet', 'suburb', 'quarter', 'neighbourhood', 'Watch', 'municipality', 'district', 'city_district', 'county', 'state', 'province'].includes(tags.place)) {
+            return true;
+        }
+        if (tags && tags.boundary === 'administrative') {
+            return true;
+        }
+
+        // 2. หากมีคำว่า "ซอย", "ซ.", "ตรอก", "แยก" (และไม่ใช่หมู่บ้าน) ถือว่าเป็น ซอย/ซอยย่อย ที่อนุญาตให้ใช้ได้
         if (/(ซอย|ซ\.|ตรอก)/.test(clean)) {
             return false;
         }
 
-        // หากขึ้นต้นด้วย ถนน, ถ., ทางหลวง, แขวง, ตำบล, เขต, อำเภอ, จังหวัด ให้ถือว่าเป็นค่าที่ต้องวนหาใหม่
-        if (/^(ถนน|ถ\.|ทางหลวง|ทางพิเศษ|แขวง|ตำบล|ต\.|เขต|อำเภอ|อ\.|จังหวัด|จ\.|กรุงเทพมหานคร|พื้นที่ปฏิบัติราชการ)/i.test(clean)) {
+        // 3. บล็อก ถนน, แขวง, เขต, ตำบล, อำเภอ, จังหวัด
+        // (ยกเว้น "สำนักงานเขต..." ซึ่งเป็นสถานที่ราชการ)
+        if (/^(ถนน|ถ\.|ทางหลวง|ทางพิเศษ|ทางด่วน|แขวง|เขต|ตำบล|ต\.|อำเภอ|อ\.|จังหวัด|จ\.|กรุงเทพมหานคร|พื้นที่ปฏิบัติราชการ)/i.test(clean)) {
             return true;
         }
 
@@ -57,29 +74,38 @@ export class AttendanceModel {
     }
 
     /**
-     * ตรวจสอบว่าสถานที่นี้อยู่ใน 5 กลุ่มเป้าหมายที่กำหนดหรือไม่:
-     * 1. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
-     * 2. สถานที่ราชการ
+     * คัดกรองเฉพาะสถานที่ในกลุ่มเป้าหมายตามข้อกำหนด:
+     * 1. สถานที่ราชการ
+     * 2. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
      * 3. บริการสาธารณะ (สถานีรถไฟ, สถานีรถไฟฟ้า, ป้ายรถเมล์)
      * 4. ร้านค้า, ร้านอาหาร
-     * 5. อพาร์ทเม้นส์, คอนโด, หอพัก
+     * 5. อพาร์ทเม้นส์, คอนโด, หอพัก ฯลฯ
      * @param {Object} tags
      * @param {string} name
-     * @returns {{matched: boolean, priority: number}}
+     * @returns {{matched: boolean, priority: number, cleanName: string}}
      */
     static #classifyTargetPlace(tags = {}, name = '') {
-        const n = String(name || '').trim();
-        if (!n) return { matched: false, priority: 99 };
+        const n = String(name || '')
+            .replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '')
+            .trim();
 
-        // ห้ามจับเขตการปกครองหรือถนนสายหลักที่ไม่ใช่ซอย
-        if (tags.boundary === 'administrative' || tags.place) {
-            return { matched: false, priority: 99 };
-        }
-        if (AttendanceModel.#isRoadSubdistrictOrDistrict(n)) {
-            return { matched: false, priority: 99 };
+        if (!n || AttendanceModel.#isForbiddenLocationTerm(n, tags)) {
+            return { matched: false, priority: 99, cleanName: '' };
         }
 
-        // 1. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
+        // 1. สถานที่ราชการ
+        const isGovTag =
+            tags.office === 'government' ||
+            tags.building === 'government' ||
+            tags.building === 'public' ||
+            tags.building === 'civic' ||
+            ['townhall', 'police', 'courthouse', 'public_building', 'fire_station', 'post_office', 'hospital', 'school', 'university', 'college', 'community_centre', 'library'].includes(tags.amenity);
+        const isGovName = /(สำนัก|สำนักงาน|สำนักงานเขต|กอง|กรม|กระทรวง|ศาลาว่าการ|เทศกิจ|สถานีตำรวจ|สน\.|โรงพยาบาล|รพ\.|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล|ไปรษณีย์|ดับเพลิง|ราชการ)/.test(n);
+        if (isGovTag || isGovName) {
+            return { matched: true, priority: 1, cleanName: n };
+        }
+
+        // 2. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
         const isLandmarkTag =
             tags.amenity === 'place_of_worship' ||
             tags.amenity === 'ferry_terminal' ||
@@ -87,21 +113,12 @@ export class AttendanceModel {
             tags.man_made === 'bridge' ||
             tags.junction === 'roundabout' ||
             tags.historic === 'monument' ||
-            tags.historic === 'memorial';
-        const isLandmarkName = /(วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|อนุสาวรีย์)/.test(n);
+            tags.historic === 'memorial' ||
+            tags.tourism === 'attraction' ||
+            tags.tourism === 'museum';
+        const isLandmarkName = /(วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|อนุสาวรีย์|พระบรมมหาราชวัง|พิพิธภัณฑ์|ศาลเจ้า|มัสยิด|โบสถ์)/.test(n);
         if (isLandmarkTag || isLandmarkName) {
-            return { matched: true, priority: 1 };
-        }
-
-        // 2. สถานที่ราชการ (ตัดคำว่า "เขต" เดี่ยวๆ ออกเพื่อป้องกันการจับชื่อเขตการปกครอง แต่รองรับ "สำนักงานเขต")
-        const isGovTag =
-            tags.office === 'government' ||
-            tags.building === 'government' ||
-            tags.building === 'public' ||
-            ['townhall', 'police', 'courthouse', 'public_building', 'fire_station', 'post_office', 'hospital', 'school', 'university', 'college'].includes(tags.amenity);
-        const isGovName = /(สำนัก|สำนักงาน|สำนักงานเขต|กอง|กรม|กระทรวง|ศาลาว่าการ|เทศกิจ|สถานีตำรวจ|สน\.|โรงพยาบาล|รพ\.|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล)/.test(n);
-        if (isGovTag || isGovName) {
-            return { matched: true, priority: 1 };
+            return { matched: true, priority: 1, cleanName: n };
         }
 
         // 3. บริการสาธารณะ (สถานีรถไฟ, สถานีรถไฟฟ้า, ป้ายรถเมล์)
@@ -109,94 +126,166 @@ export class AttendanceModel {
             tags.railway === 'station' ||
             tags.railway === 'halt' ||
             tags.railway === 'subway_entrance' ||
+            tags.railway === 'tram_stop' ||
             tags.highway === 'bus_stop' ||
             tags.amenity === 'bus_station' ||
             Boolean(tags.public_transport);
-        const isTransitName = /(สถานีรถไฟ|สถานีรถไฟฟ้า|BTS|MRT|ARL|SRT|ป้ายรถประจำทาง|ป้ายรถเมล์|ท่ารถ)/.test(n);
+        const isTransitName = /(สถานีรถไฟ|สถานีรถไฟฟ้า|BTS|MRT|ARL|SRT|ป้ายรถประจำทาง|ป้ายรถเมล์|ท่ารถ|สถานีขนส่ง)/.test(n);
         if (isTransitTag || isTransitName) {
-            return { matched: true, priority: 2 };
+            return { matched: true, priority: 2, cleanName: n };
         }
 
-        // 4. อพาร์ทเม้นส์, คอนโด, หอพัก
+        // 4. อพาร์ทเม้นส์, คอนโด, หอพัก ฯลฯ
         const isResidenceTag =
             ['apartments', 'dormitory', 'residential', 'condominium', 'hotel', 'hostel'].includes(tags.building) ||
             ['apartment', 'hotel', 'hostel', 'guest_house', 'motel'].includes(tags.tourism);
-        const isResidenceName = /(อพาร์ทเม้น|อพาร์ตเมนต์|คอนโด|หอพัก|แมนชั่น|เรสซิเดนซ์|เพลส|คอร์ท|ทาวเวอร์|วิลล่า|โฮเทล|โรงแรม|บ้านพัก|Apartment|Condo|Mansion|Residence|Place|Court|Dorm)/i.test(n);
+        const isResidenceName = /(อพาร์ทเม้น|อพาร์ตเมนต์|คอนโด|หอพัก|แมนชั่น|เรสซิเดนซ์|เพลส|คอร์ท|ทาวเวอร์|วิลล่า|โฮเทล|โรงแรม|โฮสเทล|เกสต์เฮาส์|ห้องพัก|Apartment|Condo|Mansion|Residence|Place|Court|Dorm|Hotel|Hostel|Tower)/i.test(n);
         if (isResidenceTag || isResidenceName) {
-            return { matched: true, priority: 2 };
+            return { matched: true, priority: 2, cleanName: n };
         }
 
-        // 5. ร้านค้า, ร้านอาหาร
+        // 5. ร้านค้า, ร้านอาหาร ฯลฯ
         const isShopFoodTag =
             Boolean(tags.shop) ||
-            ['restaurant', 'cafe', 'fast_food', 'food_court', 'marketplace', 'convenience', 'bakery', 'pharmacy'].includes(tags.amenity);
-        const isShopFoodName = /(ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|ตลาด|มินิมาร์ท|เซเว่น|7-Eleven|7-11|Lotus|Big\s*C|Tops|Cafe|Coffee)/i.test(n);
+            ['restaurant', 'cafe', 'fast_food', 'food_court', 'marketplace', 'convenience', 'bakery', 'pharmacy', 'clinic', 'bank', 'atm', 'fuel'].includes(tags.amenity) ||
+            tags.building === 'commercial' ||
+            tags.building === 'retail';
+        const isShopFoodName = /(ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|เบเกอรี่|ตลาด|มินิมาร์ท|เซเว่น|7-Eleven|7-11|Lotus|Big\s*C|Tops|Makro|CJ|ห้าง|คลินิก|ขายยา|ธนาคาร|ปั๊ม|Cafe|Coffee|Shop|Store|Market|Mall)/i.test(n);
         if (isShopFoodTag || isShopFoodName) {
-            return { matched: true, priority: 3 };
+            return { matched: true, priority: 3, cleanName: n };
         }
 
-        return { matched: false, priority: 99 };
+        // 6. กรณีเป็นอาคารสำนักงานหรือสถานที่ที่มีชื่อเฉพาะซึ่งไม่ใช่ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด
+        if (
+            !tags.highway &&
+            (tags.building || tags.office || tags.amenity || tags.tourism || tags.leisure) &&
+            !AttendanceModel.#isForbiddenLocationTerm(n, tags)
+        ) {
+            return { matched: true, priority: 4, cleanName: n };
+        }
+
+        return { matched: false, priority: 99, cleanName: '' };
     }
 
     /**
-     * ค้นหาเฉพาะ "ซอย" หรือ "ซอยย่อย" ที่ใกล้พิกัดที่สุด (ไม่เอา ถนน, แขวง, เขต)
+     * สกัดชื่อสถานที่เป้าหมายจากผลลัพธ์ของ Nominatim (สำหรับการค้นหาที่ระดับ z=19 และ z=20)
+     * @param {Object} nomData
+     * @returns {{matched: boolean, cleanName: string, priority: number}}
+     */
+    static #extractValidPlaceFromNominatim(nomData) {
+        if (!nomData) return { matched: false, cleanName: '', priority: 99 };
+
+        const addr = nomData.address || {};
+        const namedetails = nomData.namedetails || {};
+
+        const candidateNames = [
+            namedetails['name:th'],
+            namedetails.name,
+            nomData.name,
+            addr.amenity,
+            addr.building,
+            addr.apartments,
+            addr.office,
+            addr.shop,
+            addr.tourism,
+            addr.historic,
+            addr.leisure
+        ].filter(Boolean);
+
+        const pseudoTags = {
+            amenity: nomData.category === 'amenity' ? nomData.type : (addr.amenity ? 'yes' : ''),
+            building: nomData.category === 'building' ? nomData.type : (addr.building || addr.apartments ? 'apartments' : ''),
+            office: nomData.category === 'office' ? nomData.type : (addr.office ? 'government' : ''),
+            shop: nomData.category === 'shop' ? nomData.type : (addr.shop ? 'yes' : ''),
+            tourism: nomData.category === 'tourism' ? nomData.type : (addr.tourism ? 'yes' : ''),
+            highway: nomData.category === 'highway' && nomData.type !== 'bus_stop' ? nomData.type : '',
+            railway: nomData.category === 'railway' ? nomData.type : '',
+            place: nomData.category === 'place' ? nomData.type : '',
+            boundary: nomData.category === 'boundary' ? nomData.type : ''
+        };
+
+        for (const rawCandidate of candidateNames) {
+            const check = AttendanceModel.#classifyTargetPlace(pseudoTags, rawCandidate);
+            if (check.matched && check.cleanName) {
+                return check;
+            }
+        }
+
+        return { matched: false, cleanName: '', priority: 99 };
+    }
+
+    /**
+     * ค้นหาเฉพาะ "ซอย" หรือ "ซอยย่อย" ที่ใกล้พิกัดที่สุด (และต้องไม่ใช่ ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด)
      * @param {number} lat
      * @param {number} lng
-     * @param {Object} nominatimData
-     * @param {Array} overpassElements
-     * @returns {string}
+     * @param {Array<Object>} nominatimList
+     * @param {Array<Object>} overpassElements
+     * @returns {string} ชื่อซอย/ซอยย่อย (ยังไม่เติมคำว่า "ใกล้เคียง")
      */
-    static #extractNearestSoiOrSubSoi(lat, lng, nominatimData, overpassElements = []) {
+    static #extractCleanSoiOrSubSoi(lat, lng, nominatimList = [], overpassElements = []) {
         const soiCandidates = [];
 
         // 1. ค้นหาซอยและซอยย่อยจากเส้นทางใน Overpass พร้อมคำนวณระยะทางจริง
         for (const el of overpassElements) {
-            const name = String(el?.tags?.['name:th'] || el?.tags?.name || '').trim();
+            const tags = el?.tags || {};
+            const name = String(tags['name:th'] || tags.name || '').trim();
             if (!name) continue;
-            if (/(ซอย|ซ\.|ตรอก)/.test(name)) {
+
+            if (/(ซอย|ซ\.|ตรอก)/.test(name) && !AttendanceModel.#isForbiddenLocationTerm(name, tags)) {
                 const elLat = el.lat ?? el.center?.lat;
                 const elLon = el.lon ?? el.center?.lon;
                 const dist = (typeof elLat === 'number' && typeof elLon === 'number')
                     ? AttendanceModel.#calculateDistanceMeters(lat, lng, elLat, elLon)
                     : 50;
-                // ให้ความสำคัญกับ "ซอยย่อย" (เช่น มีคำว่า แยก หรือ ทับ "/") หรือซอยที่อยู่ใกล้ที่สุด
+
+                // ให้ความสำคัญกับซอยย่อย (มีคำว่า แยก หรือ /) ที่อยู่ใกล้พิกัด
                 const isSubSoi = /(แยก|\/)/.test(name);
-                soiCandidates.push({ name, dist, isSubSoi });
+                soiCandidates.push({
+                    name: name.replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '').trim(),
+                    dist,
+                    isSubSoi
+                });
             }
         }
 
         if (soiCandidates.length > 0) {
-            soiCandidates.sort((a, b) => a.dist - b.dist);
-            const nearestSoi = soiCandidates[0];
-            return nearestSoi.dist <= 25 ? nearestSoi.name : `ใกล้เคียง ${nearestSoi.name}`;
+            soiCandidates.sort((a, b) => {
+                if (Math.abs(a.dist - b.dist) <= 15 && a.isSubSoi !== b.isSubSoi) {
+                    return a.isSubSoi ? -1 : 1;
+                }
+                return a.dist - b.dist;
+            });
+            return soiCandidates[0].name;
         }
 
-        // 2. ค้นหาซอย/ซอยย่อยจากข้อมูล Nominatim Address และ Display Name
-        if (nominatimData) {
-            const addr = nominatimData.address || {};
+        // 2. ค้นหาซอย/ซอยย่อยจากข้อมูล Nominatim
+        for (const nomData of nominatimList) {
+            if (!nomData) continue;
+            const addr = nomData.address || {};
             const fields = [
-                nominatimData.name,
+                nomData.name,
                 addr.soi,
                 addr.road,
                 addr.residential,
-                addr.neighbourhood,
-                addr.hamlet,
-                addr.quarter
+                addr. pedestrian,
+                addr.footway
             ].filter(Boolean);
 
             for (const f of fields) {
                 const text = String(f).trim();
-                if (/(ซอย|ซ\.|ตรอก)/.test(text)) {
-                    return text;
+                if (/(ซอย|ซ\.|ตรอก)/.test(text) && !AttendanceModel.#isForbiddenLocationTerm(text)) {
+                    return text.replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '').trim();
                 }
             }
 
-            const displayParts = String(nominatimData.display_name || '')
+            const displayParts = String(nomData.display_name || '')
                 .split(',')
                 .map(s => s.trim());
-            const soiFromDisplay = displayParts.find(p => /(ซอย|ซ\.|ตรอก)/.test(p));
-            if (soiFromDisplay) {
-                return soiFromDisplay;
+
+            for (const part of displayParts) {
+                if (/(ซอย|ซ\.|ตรอก)/.test(part) && !AttendanceModel.#isForbiddenLocationTerm(part)) {
+                    return part.replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '').trim();
+                }
             }
         }
 
@@ -220,9 +309,6 @@ export class AttendanceModel {
         }
     }
 
-    /**
-     * ดึงข้อมูลจาก Overpass API แบบ Multi-Mirror (เซิร์ฟเวอร์ใดตอบกลับเร็วที่สุดใช้ค่านั้นทันที)
-     */
     static async #queryOverpassFast(query, timeoutMs = 1200) {
         const encoded = encodeURIComponent(query);
         const mirrors = [
@@ -242,151 +328,253 @@ export class AttendanceModel {
     }
 
     /**
-     * ค้นหาสถานที่ใกล้เคียง (เน้นความรวดเร็วและถูกต้อง):
-     * - ค้นหาเฉพาะ 5 กลุ่มเป้าหมาย: สถานที่สำคัญ (วัด,สนามหลวง,ท่าเรือ,วงเวียน,สะพาน,เสาหลักเมือง),
-     *   สถานที่ราชการ, บริการสาธารณะ (สถานีรถไฟ,สถานีรถไฟฟ้า,ป้ายรถเมล์), ร้านค้า/ร้านอาหาร, อพาร์ทเม้นส์/คอนโด/หอพัก
-     * - หากบริเวณนั้นไม่มี ให้เอา ซอย / ซอยย่อย
-     * - หากได้ค่าเป็น ถนน, แขวง, หรือ เขต ระบบจะวนกลับไปหาค่าใหม่อีกครั้งโดยขยายรัศมีอัตโนมัติ (65m -> 160m -> 320m)
+     * ค้นหาสถานที่ใกล้เคียงพร้อมคืนค่าระดับ Zoom ที่ตรวจพบ (z=19 หรือ z=20) ตามข้อกำหนด STB Checkin แก้ไข 11:
+     * 1. ค้นหาในระยะค่า z = 19 (ประมาณ 20 เมตร) ก่อน -> แสดงคำขึ้นต้นว่า "ใกล้เคียง " + ชื่อสถานที่
+     * 2. หากไม่พบใน z = 19 ให้เปลี่ยนไปใช้ระยะค่า z = 20 (ประมาณ 10 เมตร) -> แสดงคำขึ้นต้นว่า "บริเวณ " + ชื่อสถานที่
+     * 3. หากใช้ z = 20 แล้วยังไม่เจอสถานที่ ให้เอา ซอย / ซอยย่อย -> แสดงคำขึ้นต้นว่า "ใกล้เคียง " + ชื่อซอย
+     * 4. หากได้ค่าเป็น ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด ให้วนกลับไปหาค่าใหม่อีกครั้งอัตโนมัติ
      * @param {number} lat
      * @param {number} lng
-     * @returns {Promise<string>}
+     * @returns {Promise<{locationName: string, zoomLevel: number}>}
      */
-    static async resolveLocationName(lat, lng) {
+    static async resolveLocationWithZoomMeta(lat, lng) {
         if (typeof lat !== 'number' || typeof lng !== 'number') {
-            return 'ไม่ระบุสถานที่';
+            return { locationName: 'ไม่ระบุสถานที่', zoomLevel: 19 };
         }
 
-        const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+        const cacheKey = `${lat.toFixed(5)},${lng.toFixed(5)}`;
         if (AttendanceModel.#locationCache.has(cacheKey)) {
-            const cachedVal = AttendanceModel.#locationCache.get(cacheKey);
-            if (!AttendanceModel.#isRoadSubdistrictOrDistrict(cachedVal)) {
-                return cachedVal;
+            const cached = AttendanceModel.#locationCache.get(cacheKey);
+            if (cached && !AttendanceModel.#isForbiddenLocationTerm(cached.locationName)) {
+                return cached;
             }
         }
 
-        const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`;
-        const searchRadii = [65, 160, 320];
-        let nomData = null;
+        // ยิงคำขอขนานชุดแรก: Nominatim z=19 (20m), Nominatim z=20 (10m) และ Overpass รัศมีเริ่มต้น
+        const nomUrlZ19 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=19&addressdetails=1&namedetails=1&accept-language=th`;
+        const nomUrlZ20 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=20&addressdetails=1&namedetails=1&accept-language=th`;
+        const initialOverpassQuery = `[out:json][timeout:1];(node(around:45,${lat},${lng})["name"];way(around:45,${lat},${lng})["name"];);out center;`;
 
-        for (let attempt = 0; attempt < searchRadii.length; attempt++) {
-            const radius = searchRadii[attempt];
-            const overpassQuery = `[out:json][timeout:1];(node(around:${radius},${lat},${lng})["name"];way(around:${radius},${lat},${lng})["name"];);out center;`;
+        const [nomZ19, nomZ20, ovInitial] = await Promise.all([
+            AttendanceModel.#fetchWithFastTimeout(nomUrlZ19, 1100),
+            AttendanceModel.#fetchWithFastTimeout(nomUrlZ20, 1100),
+            AttendanceModel.#queryOverpassFast(initialOverpassQuery, 1200)
+        ]);
 
-            const [ovData, nomResult] = await Promise.all([
-                AttendanceModel.#queryOverpassFast(overpassQuery, attempt === 0 ? 1100 : 1400),
-                attempt === 0 ? AttendanceModel.#fetchWithFastTimeout(nominatimUrl, 1100) : Promise.resolve(nomData)
-            ]);
+        const initialElements = ovInitial?.elements || [];
 
-            if (nomResult) nomData = nomResult;
-            const elements = ovData?.elements || [];
-            const matchedPlaces = [];
-
-            // 1. คัดกรองสถานที่ใน 5 กลุ่มเป้าหมายจาก Overpass
+        // คัดแยกสถานที่เป้าหมายจาก Overpass พร้อมคำนวณระยะห่างจริง
+        const classifyElementsWithinRadius = (elements, minExclusiveMeters, maxInclusiveMeters) => {
+            const list = [];
             for (const el of elements) {
                 const tags = el.tags || {};
-                const placeName = String(tags['name:th'] || tags.name || '').trim();
-                if (!placeName) continue;
+                const rawName = String(tags['name:th'] || tags.name || '').trim();
+                if (!rawName) continue;
 
-                const classification = AttendanceModel.#classifyTargetPlace(tags, placeName);
+                const classification = AttendanceModel.#classifyTargetPlace(tags, rawName);
                 if (!classification.matched) continue;
 
                 const elLat = el.lat ?? el.center?.lat;
                 const elLon = el.lon ?? el.center?.lon;
                 const dist = (typeof elLat === 'number' && typeof elLon === 'number')
                     ? AttendanceModel.#calculateDistanceMeters(lat, lng, elLat, elLon)
-                    : radius;
+                    : maxInclusiveMeters;
 
-                matchedPlaces.push({
-                    name: placeName,
-                    dist,
-                    priority: classification.priority
-                });
-            }
-
-            // 2. คัดกรองสถานที่จาก Nominatim (กรณีตรงจุดพิกัด)
-            if (nomData && attempt === 0) {
-                const addr = nomData.address || {};
-                const namedetails = nomData.namedetails || {};
-                const nomName = String(
-                    namedetails['name:th'] ||
-                    namedetails.name ||
-                    nomData.name ||
-                    addr.apartments ||
-                    addr.building ||
-                    addr.amenity ||
-                    addr.office ||
-                    addr.shop ||
-                    addr.tourism ||
-                    ''
-                ).trim();
-
-                if (nomName) {
-                    const classification = AttendanceModel.#classifyTargetPlace(
-                        {
-                            amenity: nomData.type,
-                            building: nomData.category === 'building' ? nomData.type : '',
-                            office: nomData.category === 'office' ? nomData.type : '',
-                            shop: nomData.category === 'shop' ? nomData.type : '',
-                            tourism: nomData.category === 'tourism' ? nomData.type : ''
-                        },
-                        nomName
-                    );
-
-                    if (classification.matched) {
-                        const nLat = parseFloat(nomData.lat);
-                        const nLon = parseFloat(nomData.lon);
-                        const dist = (!isNaN(nLat) && !isNaN(nLon))
-                            ? AttendanceModel.#calculateDistanceMeters(lat, lng, nLat, nLon)
-                            : 10;
-
-                        matchedPlaces.push({
-                            name: nomName,
-                            dist,
-                            priority: classification.priority
-                        });
-                    }
+                if (dist > minExclusiveMeters && dist <= maxInclusiveMeters) {
+                    list.push({
+                        cleanName: classification.cleanName,
+                        dist,
+                        priority: classification.priority
+                    });
                 }
             }
-
-            // 3. หากพบสถานที่ใน 5 กลุ่มเป้าหมายที่ใกล้ที่สุด และไม่ใช่ ถนน/แขวง/เขต ให้ใช้ค่านั้นทันที
-            if (matchedPlaces.length > 0) {
-                matchedPlaces.sort((a, b) => {
-                    if (Math.abs(a.dist - b.dist) <= 12 && a.priority !== b.priority) {
-                        return a.priority - b.priority;
-                    }
-                    return a.dist - b.dist;
-                });
-
-                const best = matchedPlaces[0];
-                const candidateResult = best.dist <= 20 ? best.name : `ใกล้เคียง ${best.name}`;
-
-                if (!AttendanceModel.#isRoadSubdistrictOrDistrict(candidateResult)) {
-                    AttendanceModel.#locationCache.set(cacheKey, candidateResult);
-                    return candidateResult;
+            list.sort((a, b) => {
+                if (Math.abs(a.dist - b.dist) <= 6 && a.priority !== b.priority) {
+                    return a.priority - b.priority;
                 }
-            }
+                return a.dist - b.dist;
+            });
+            return list;
+        };
 
-            // 4. หากในรัศมีนี้ไม่มีสถานที่ใน 5 กลุ่มเป้าหมาย ให้หา "ซอย / ซอยย่อย"
-            const soiResult = AttendanceModel.#extractNearestSoiOrSubSoi(lat, lng, nomData, elements);
-            if (soiResult && !AttendanceModel.#isRoadSubdistrictOrDistrict(soiResult)) {
-                AttendanceModel.#locationCache.set(cacheKey, soiResult);
-                return soiResult;
-            }
-            // หากได้เป็น ถนน, แขวง, เขต หรือยังไม่พบข้อมูล ระบบจะวนลูป (attempt ถัดไป) เพื่อขยายรัศมีค้นหาใหม่โดยอัตโนมัติ
-        }
-
-        // 5. กรณีวนครบ 3 รัศมีแล้วยังไม่พบในพิกัดตรงจุด ให้สุ่มค้นหาจุดข้างเคียงระยะ 45 เมตรเพื่อดึงซอยย่อยหรือสถานที่ใกล้เคียงอีก 1 รอบ
-        const offsetUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${(lat + 0.00035).toFixed(6)}&lon=${(lng + 0.00035).toFixed(6)}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`;
-        const offsetData = await AttendanceModel.#fetchWithFastTimeout(offsetUrl, 900);
-        if (offsetData) {
-            const retrySoi = AttendanceModel.#extractNearestSoiOrSubSoi(lat, lng, offsetData, []);
-            if (retrySoi && !AttendanceModel.#isRoadSubdistrictOrDistrict(retrySoi)) {
-                AttendanceModel.#locationCache.set(cacheKey, retrySoi);
-                return retrySoi;
+        // ====================================================================
+        // ขั้นตอนที่ 1: ค้นหาสถานที่ใกล้เคียงในระยะค่า z (Zoom Level) = 19 (ประมาณ 20 เมตร) ก่อน
+        // โดยแสดงคำขึ้นต้นว่า ["ใกล้เคียง " + ชื่อสถานที่]
+        // (หมายเหตุ: กรณีที่ตรวจพบจากระยะวง 10-20 เมตร หรือจาก Nominatim z=19)
+        // ====================================================================
+        const z19OverpassMatches = classifyElementsWithinRadius(initialElements, 10, 22);
+        if (z19OverpassMatches.length > 0) {
+            const bestZ19 = z19OverpassMatches[0];
+            if (!AttendanceModel.#isForbiddenLocationTerm(bestZ19.cleanName)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${bestZ19.cleanName}`,
+                    zoomLevel: 19
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
             }
         }
 
-        return `ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+        const nomZ19Check = AttendanceModel.#extractValidPlaceFromNominatim(nomZ19);
+        if (nomZ19Check.matched && !AttendanceModel.#isForbiddenLocationTerm(nomZ19Check.cleanName)) {
+            const nLat = parseFloat(nomZ19.lat);
+            const nLon = parseFloat(nomZ19.lon);
+            const nDist = (!isNaN(nLat) && !isNaN(nLon))
+                ? AttendanceModel.#calculateDistanceMeters(lat, lng, nLat, nLon)
+                : 18;
+            // หากอยู่ในระยะของ z=19 (ประมาณ 20 เมตร)
+            if (nDist > 10 && nDist <= 25) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${nomZ19Check.cleanName}`,
+                    zoomLevel: 19
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+        }
+
+        // ====================================================================
+        // ขั้นตอนที่ 2: หากในรัศมี z = 19 ไม่พบสถานที่ ให้เปลี่ยนไปใช้ระยะค่า z (Zoom Level) = 20 (ประมาณ 10 เมตร)
+        // โดยแสดงคำขึ้นต้นว่า ["บริเวณ " + ชื่อสถานที่]
+        // ====================================================================
+        const z20OverpassMatches = classifyElementsWithinRadius(initialElements, -1, 10);
+        if (z20OverpassMatches.length > 0) {
+            const bestZ20 = z20OverpassMatches[0];
+            if (!AttendanceModel.#isForbiddenLocationTerm(bestZ20.cleanName)) {
+                const resultObj = {
+                    locationName: `บริเวณ ${bestZ20.cleanName}`,
+                    zoomLevel: 20
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+        }
+
+        const nomZ20Check = AttendanceModel.#extractValidPlaceFromNominatim(nomZ20);
+        if (nomZ20Check.matched && !AttendanceModel.#isForbiddenLocationTerm(nomZ20Check.cleanName)) {
+            const resultObj = {
+                locationName: `บริเวณ ${nomZ20Check.cleanName}`,
+                zoomLevel: 20
+            };
+            AttendanceModel.#locationCache.set(cacheKey, resultObj);
+            return resultObj;
+        }
+
+        // ====================================================================
+        // ขั้นตอนที่ 3: หากใช้ z = 20 แล้วยังไม่เจอสถานที่ ให้เอา "ซอย / ซอยย่อย"
+        // โดยแสดงคำขึ้นต้นว่า ["ใกล้เคียง " + ชื่อสถานที่]
+        // และหากได้ค่าเป็น ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด ให้วนกลับไปหาค่าใหม่อีกครั้ง
+        // ====================================================================
+        const initialSoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [nomZ20, nomZ19], initialElements);
+        if (initialSoi && !AttendanceModel.#isForbiddenLocationTerm(initialSoi)) {
+            const resultObj = {
+                locationName: `ใกล้เคียง ${initialSoi}`,
+                zoomLevel: 19
+            };
+            AttendanceModel.#locationCache.set(cacheKey, resultObj);
+            return resultObj;
+        }
+
+        // ตรวจสอบว่าใน initialElements (ระยะ 22 - 45 เมตร) มีสถานที่เป้าหมายหรือไม่ก่อนขยายวง
+        const widerInitialMatches = classifyElementsWithinRadius(initialElements, 22, 45);
+        if (widerInitialMatches.length > 0) {
+            const bestWider = widerInitialMatches[0];
+            if (!AttendanceModel.#isForbiddenLocationTerm(bestWider.cleanName)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${bestWider.cleanName}`,
+                    zoomLevel: 19
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+        }
+
+        // ====================================================================
+        // ขั้นตอนที่ 4 (Retry Loop): วนกลับไปหาค่าใหม่อีกครั้งเมื่อยังไม่พบหรือติดค่าต้องห้าม
+        // (ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด)
+        // ====================================================================
+        const retryRadii = [100, 220, 380];
+        for (const radius of retryRadii) {
+            const retryQuery = `[out:json][timeout:1];(node(around:${radius},${lat},${lng})["name"];way(around:${radius},${lat},${lng})["name"];);out center;`;
+            const ovRetry = await AttendanceModel.#queryOverpassFast(retryQuery, 1200);
+            const retryElements = ovRetry?.elements || [];
+
+            if (retryElements.length === 0) continue;
+
+            // 4.1 ค้นหา ซอย / ซอยย่อย ที่ใกล้ที่สุดในวงค้นหาใหม่
+            const retrySoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [nomZ20, nomZ19], retryElements);
+            if (retrySoi && !AttendanceModel.#isForbiddenLocationTerm(retrySoi)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${retrySoi}`,
+                    zoomLevel: 19
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+
+            // 4.2 ค้นหาสถานที่เป้าหมายในวงค้นหาใหม่ (ที่ไม่ใช่ ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด)
+            const retryPlaces = classifyElementsWithinRadius(retryElements, -1, radius);
+            if (retryPlaces.length > 0) {
+                const bestRetryPlace = retryPlaces[0];
+                if (!AttendanceModel.#isForbiddenLocationTerm(bestRetryPlace.cleanName)) {
+                    const resultObj = {
+                        locationName: `ใกล้เคียง ${bestRetryPlace.cleanName}`,
+                        zoomLevel: 19
+                    };
+                    AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                    return resultObj;
+                }
+            }
+        }
+
+        // 4.3 กรณีพิกัดตรงจุดเป็นพื้นที่ว่าง ให้สแกนจุดพิกัดข้างเคียง 4 ทิศทางในระยะ ~40 เมตรด้วย z=20 เพื่อหาซอยย่อยหรือสถานที่อีกครั้ง
+        const offsets = [
+            [0.00035, 0.00035],
+            [-0.00035, -0.00035]
+        ];
+        for (const [dLat, dLng] of offsets) {
+            const probeUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${(lat + dLat).toFixed(6)}&lon=${(lng + dLng).toFixed(6)}&zoom=20&addressdetails=1&namedetails=1&accept-language=th`;
+            const probeData = await AttendanceModel.#fetchWithFastTimeout(probeUrl, 900);
+            if (!probeData) continue;
+
+            const probePlace = AttendanceModel.#extractValidPlaceFromNominatim(probeData);
+            if (probePlace.matched && !AttendanceModel.#isForbiddenLocationTerm(probePlace.cleanName)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${probePlace.cleanName}`,
+                    zoomLevel: 20
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+
+            const probeSoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [probeData], []);
+            if (probeSoi && !AttendanceModel.#isForbiddenLocationTerm(probeSoi)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${probeSoi}`,
+                    zoomLevel: 20
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+        }
+
+        const fallbackObj = {
+            locationName: `ใกล้เคียง ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`,
+            zoomLevel: 19
+        };
+        AttendanceModel.#locationCache.set(cacheKey, fallbackObj);
+        return fallbackObj;
+    }
+
+    /**
+     * เมธอดหลักสำหรับคืนค่าชื่อสถานที่ (เรียกใช้ resolveLocationWithZoomMeta)
+     * @param {number} lat
+     * @param {number} lng
+     * @returns {Promise<string>}
+     */
+    static async resolveLocationName(lat, lng) {
+        const res = await AttendanceModel.resolveLocationWithZoomMeta(lat, lng);
+        return res.locationName;
     }
 
     static evaluateOfficialStatus(log, settings) {
@@ -518,19 +706,9 @@ export class AttendanceModel {
         return list.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
     }
 
-    /**
-     * ตรวจสอบรายการลงเวลาปกติสำหรับแสดงสถานะและบังคับลงเวลาเลิกงาน:
-     * - หากผู้ใช้ลืมลงเวลาเลิกงาน (ไม่ว่าจะของวันนี้, หรือลืมจนข้ามวันมาวันถัดไป, หรือถึงเวลาปฏิบัติงานนอกเวลาแล้วแต่ยังไม่ได้ลงเวลาเลิกงานตามปกติ)
-     *   ระบบจะดึงรายการที่ยังไม่ได้ลงเวลาเลิกงานครั้งล่าสุด (`check_out_time IS NULL`) ขึ้นมาบังคับให้ลงเวลาเลิกงานให้เสร็จก่อนเสมอ
-     * @param {string} personnelId
-     * @param {string} userId
-     * @param {Object} settings
-     * @returns {Promise<Object|null>}
-     */
     static async getActiveRegularRecordForCheckout(personnelId, userId, settings) {
         const db = DatabaseService.getInstance().client;
 
-        // 1. ค้นหารายการลงเวลาทำงานปกติที่ยังไม่ได้ลงเวลาเลิกงาน (check_out_time IS NULL) ครั้งล่าสุด (ไม่จำกัดวัน)
         let unclosedQuery = db
             .from('attendance_logs')
             .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, check_in_photo, check_out_photo, check_in_lat, check_in_lng, check_out_lat, check_out_lng, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at')
@@ -556,7 +734,6 @@ export class AttendanceModel {
             }
         }
 
-        // 2. หากไม่มีรายการค้างลงเวลาเลิกงาน ให้ดึงรายการลงเวลาปกติของวันนี้ (ซึ่งอาจลงครบทั้งเข้าและออกไปแล้ว)
         const todayIso = UIHelpers.getTodayISO();
         return await AttendanceModel.getTodayRegularRecordForUser(personnelId, userId, todayIso);
     }
@@ -663,17 +840,6 @@ export class AttendanceModel {
         return { success: true, message: 'ลบคำขอลงเวลากรณีพิเศษเรียบร้อยแล้ว' };
     }
 
-    /**
-     * บันทึกลงเวลาเข้าปฏิบัติงาน / เลิกงาน:
-     * - หากเลือกฟังก์ชัน "รูปแบบปกติ":
-     *   1. กรณีมีรายการลงเวลาเข้างานปกติที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่ (แม้ข้ามวัน หรือถึงเวลานอกเวลาแล้ว):
-     *      บังคับบันทึกเวลาเลิกงานของรายการล่าสุดให้เสร็จก่อน:
-     *      - เลิกงานก่อน "เวลาเลิกงานมาตรฐาน" = ขาดราชการ
-     *      - เลิกงานตั้งแต่ "เวลาเลิกงานมาตรฐาน" จนถึง ["เวลาเลิกงานมาตรฐาน" + "ระยะเวลาหลังเลิกงาน (นาที)"] = บันทึกเวลาตามจริง
-     *      - หากเลยเวลา ["เวลาเลิกงานมาตรฐาน" + "ระยะเวลาหลังเลิกงาน (นาที)"] (หรือลืมข้ามวัน) = บันทึกเวลา ["เวลาเลิกงานมาตรฐาน" + "ระยะเวลาหลังเลิกงาน (นาที)"]
-     *   2. กรณีลงเวลาเข้างานปกติ (ตั้งแต่ "เริ่มเวลาเข้างาน" เป็นต้นไป):
-     *      ใช้วันและเวลามาตรฐานของระบบโดยไม่ต้องเลือก Dropdown
-     */
     static async submitCheckinOrCheckout(payload) {
         const db = DatabaseService.getInstance().client;
         const settings = await SettingsModel.getSettings(false);
@@ -701,10 +867,6 @@ export class AttendanceModel {
             !activeRegularRecord.check_out_time
         );
 
-        // ====================================================================
-        // กรณีรูปแบบปกติ และยังมีรายการลงเวลาเข้างานปกติที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่
-        // (ไม่ว่าจะของวันนี้, ลืมจนข้ามวัน, หรือถึงเวลาปฏิบัติงานนอกเวลาแล้ว ต้องบันทึกเวลาเลิกงานครั้งล่าสุดให้เสร็จก่อนเสมอ)
-        // ====================================================================
         if (!payload.single_click_checkin && hasUnclosedRegular) {
             const targetOutRef = stdEndRef;
             const targetOutMin = UIHelpers.timeToMinutes(targetOutRef);
@@ -715,19 +877,13 @@ export class AttendanceModel {
             const isPastDateRecord = activeRegularRecord.work_date < today;
 
             if (isPastDateRecord) {
-                // กรณีลืมลงเวลาเลิกงานจนข้ามวัน -> เลยเวลาเลิกงานมาตรฐาน + ระยะเวลาหลังเลิกงานแน่นอน
-                // จึงบันทึกเวลาเป็น ["เวลาเลิกงานมาตรฐาน" + "ระยะเวลาหลังเลิกงาน (นาที)"]
                 effectiveCheckOutTime = AttendanceModel.#minutesToTime24(maxAllowedOutMin);
             } else {
-                // กรณีลงเวลาเลิกงานในวันเดียวกัน
                 if (nowMin < targetOutMin) {
-                    // เลิกงานก่อนเวลาเลิกงานมาตรฐาน -> บันทึกเวลาตามจริง (สถานะจะถูกประเมินเป็น "ขาดราชการ")
                     effectiveCheckOutTime = currentTime;
                 } else if (nowMin <= maxAllowedOutMin) {
-                    // ตั้งแต่เวลาเลิกงานมาตรฐาน จนถึง [เวลาเลิกงานมาตรฐาน + ระยะเวลาหลังเลิกงาน] -> บันทึกเวลาตามจริง
                     effectiveCheckOutTime = currentTime;
                 } else {
-                    // เลยเวลา [เวลาเลิกงานมาตรฐาน + ระยะเวลาหลังเลิกงาน] -> บันทึกเวลาเป็น [เวลาเลิกงานมาตรฐาน + ระยะเวลาหลังเลิกงาน]
                     effectiveCheckOutTime = AttendanceModel.#minutesToTime24(maxAllowedOutMin);
                 }
             }
@@ -778,9 +934,6 @@ export class AttendanceModel {
 
         const isOvertimeFlow = Boolean(payload.is_overtime_shift);
 
-        // ====================================================================
-        // กรณีที่ 1: การลงเวลา "ปฏิบัติงานนอกเวลา" (ใช้การบันทึกเวลารูปแบบพิเศษอัตโนมัติ)
-        // ====================================================================
         if (isOvertimeFlow) {
             const otShiftName = payload.shift_name || `ปฏิบัติงานนอกเวลา (${shiftStartRef} - ${shiftEndRef})`;
             const otCheckIn = UIHelpers.formatTime24(payload.custom_check_in_time || shiftStartRef);
@@ -841,9 +994,6 @@ export class AttendanceModel {
             };
         }
 
-        // ====================================================================
-        // กรณีที่ 2: การลงเวลาเข้าปฏิบัติงานในเวลาทำการปกติ (รูปแบบพิเศษ vs รูปแบบปกติ)
-        // ====================================================================
         const regularRecordToday = todayLogs.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
         const startAllowRef = UIHelpers.formatTime24(settings.allow_checkin_start_time || '06:00');
         const startAllowMin = UIHelpers.timeToMinutes(startAllowRef);
@@ -916,7 +1066,6 @@ export class AttendanceModel {
             };
         }
 
-        // รูปแบบปกติ: บันทึกเวลาเข้าปฏิบัติงานตามเวลาจริง โดยอ้างอิงเวลามาตรฐานของระบบ (ไม่ต้องแสดง Dropdown)
         const normalShiftLabel = `เวลาราชการปกติ (${stdStartRef} - ${stdEndRef})`;
         const checkInTime = UIHelpers.formatTime24(currentTime);
         const evalIn = AttendanceModel.evaluateOfficialStatus({

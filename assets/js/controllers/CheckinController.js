@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (เปลี่ยนชื่อปุ่มเป็น "บันทึกลงเวลาเข้าปฏิบัติงาน", ซ่อน Dropdown ในโหมดรูปแบบปกติตั้งแต่เริ่มเวลาเข้างานจนกว่าจะกดลงเวลาเลิกงาน รวมถึงกรณีลืมลงเวลาเลิกงานข้ามวัน/นอกเวลา)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (รองรับการค้นหาสถานที่ใกล้เคียงระยะ z=19 "ใกล้เคียง..." -> z=20 "บริเวณ..." -> ซอย/ซอยย่อย "ใกล้เคียง..." พร้อมปรับซูมแผนที่อัตโนมัติ)
  */
 
 import { Config } from '../core/Config.js';
@@ -20,7 +20,8 @@ export class CheckinController {
             ready: false,
             lat: null,
             lng: null,
-            locationName: ''
+            locationName: '',
+            zoomLevel: 19
         };
         this.locationResolvePromise = null;
         this.activeRegularRecord = null;
@@ -67,7 +68,8 @@ export class CheckinController {
                 ready: true,
                 lat: null,
                 lng: null,
-                locationName: ''
+                locationName: '',
+                zoomLevel: 19
             };
         }
     }
@@ -324,14 +326,6 @@ export class CheckinController {
         this.#renderSpecialRequestsHistoryTable();
     }
 
-    /**
-     * อัปเดตการ์ดสถานะ, การซ่อน/แสดง Dropdown เลือกช่วงเวลาทำงาน และข้อความปุ่มกดตามเงื่อนไขล่าสุด:
-     * - หากเลือกฟังก์ชัน "รูปแบบปกติ" (!single_click_checkin):
-     *   1. กรณีมีรายการลงเวลาเข้างานที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่ (ไม่ว่าจะของวันนี้, ลืมข้ามวัน, หรือถึงเวลานอกเวลาแล้ว):
-     *      ซ่อน Dropdown เลือกช่วงเวลาทำงาน จนกว่าจะบันทึกเวลาเลิกงานครั้งล่าสุดเสร็จสิ้น
-     *   2. กรณีอยู่ในช่วงเวลา "เริ่มเวลาเข้างาน" จนถึงก่อนกดลงเวลาเลิกงาน:
-     *      ซ่อน Dropdown เลือกช่วงเวลาทำงาน และแสดงปุ่ม "บันทึกลงเวลาเข้าปฏิบัติงาน"
-     */
     #updateStatusCardsAndMainButton() {
         const regularRecord = this.activeRegularRecord;
         const todayIso = UIHelpers.getTodayISO();
@@ -378,7 +372,6 @@ export class CheckinController {
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
 
-        // 1. อัปเดตการ์ดแสดงเวลาเข้างาน-เลิกงานด้านบน
         if (!regularRecord) {
             if (checkinCardTitleEl) checkinCardTitleEl.textContent = 'เวลาเข้างานปกติวันนี้ (24 ชม.)';
             if (checkoutCardTitleEl) checkoutCardTitleEl.textContent = 'เวลาออกงานปกติวันนี้ (24 ชม.)';
@@ -413,11 +406,6 @@ export class CheckinController {
             }
         }
 
-        // ====================================================================
-        // เงื่อนไขสำคัญที่ 1: กรณีฟังก์ชัน "รูปแบบปกติ" และยังไม่ได้ลงเวลาเลิกงานตามปกติ
-        // (ไม่ว่าจะของวันนี้, ลืมจนข้ามวันมาวันถัดไป, หรือถึงเวลาปฏิบัติงานนอกเวลาแล้ว)
-        // ระบบจะไม่แสดง Dropdown ให้เลือกช่วงเวลาทำงาน จนกว่าจะบันทึกเวลาเลิกงานครั้งล่าสุดเสร็จ!
-        // ====================================================================
         if (isNormalModeSetting && hasUnclosedRegular) {
             shiftSelectorContainer?.classList.add('hidden');
             mainCustomBox?.classList.add('hidden');
@@ -446,10 +434,6 @@ export class CheckinController {
             return;
         }
 
-        // ====================================================================
-        // เงื่อนไขสำคัญที่ 2: กรณีฟังก์ชัน "รูปแบบปกติ" อยู่ในช่วงเวลาทำงานปกติ (ตั้งแต่ "เริ่มเวลาเข้างาน" จนถึงเวลาเลิกงานมาตรฐาน)
-        // และยังไม่ได้ลงเวลาเข้าปฏิบัติงานในวันนี้ -> ซ่อน Dropdown เลือกช่วงเวลาทำงาน และแสดงปุ่ม "บันทึกลงเวลาเข้าปฏิบัติงาน"
-        // ====================================================================
         if (isNormalModeSetting && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut) {
             shiftSelectorContainer?.classList.add('hidden');
             mainCustomBox?.classList.add('hidden');
@@ -471,10 +455,6 @@ export class CheckinController {
             return;
         }
 
-        // ====================================================================
-        // เงื่อนไขที่ 3: กรณีอยู่นอกเวลาทำการปกติ (หรือลงเวลาเข้า-เลิกงานปกติของวันนี้ครบแล้ว หรืออยู่ในโหมด "รูปแบบพิเศษ")
-        // แสดง Dropdown ให้เลือกช่วงเวลาได้ตามปกติ
-        // ====================================================================
         shiftSelectorContainer?.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
 
         if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
@@ -516,7 +496,6 @@ export class CheckinController {
             return;
         }
 
-        // กรณีโหมด "รูปแบบพิเศษ" (single_click_checkin === true) ในช่วงเวลาปกติ
         if (isRegularCompletedToday) {
             noticeBox?.classList.remove('hidden');
             if (noticeText) {
@@ -773,6 +752,12 @@ export class CheckinController {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /**
+     * จับพิกัด GPS และค้นหาสถานที่ใกล้เคียงตามลำดับ:
+     * 1. ซูมแผนที่เริ่มต้นที่ระยะ z = 19 (ประมาณ 20 เมตร) ก่อน -> แสดง ["ใกล้เคียง " + ชื่อสถานที่]
+     * 2. หากไม่พบใน z = 19 ระบบจะสลับไปใช้ z = 20 (ประมาณ 10 เมตร) -> แสดง ["บริเวณ " + ชื่อสถานที่] และปรับซูมแผนที่เป็น z = 20
+     * 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย]
+     */
     async #initGpsLocation() {
         if (!this.settings?.require_gps) return;
 
@@ -789,7 +774,7 @@ export class CheckinController {
         }
 
         coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
-        locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+        locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง (z=19 / 20 เมตร)...';
 
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -798,25 +783,43 @@ export class CheckinController {
                 this.gpsData.lat = lat;
                 this.gpsData.lng = lng;
                 this.gpsData.ready = true;
-                this.gpsData.locationName = `ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                this.gpsData.zoomLevel = 19;
+                this.gpsData.locationName = `ใกล้เคียง ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
 
                 coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
+                // เริ่มต้นแสดงแผนที่ที่ระยะซูม z = 19 (ประมาณ 20 เมตร) ก่อน
                 if (mapIframe) {
-                    mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=17&output=embed`;
+                    mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=19&output=embed`;
                     mapIframe.classList.remove('hidden');
                     mapPlaceholder?.classList.add('hidden');
                 }
 
                 if (mapLink) {
-                    mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+                    mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=19`;
                     mapLink.classList.remove('hidden');
                 }
 
-                this.locationResolvePromise = AttendanceModel.resolveLocationName(lat, lng).then(resolvedPlace => {
-                    this.gpsData.locationName = resolvedPlace;
-                    if (locNameEl) locNameEl.textContent = resolvedPlace;
-                    return resolvedPlace;
+                // ค้นหาสถานที่ใกล้เคียงตามลำดับ z=19 -> z=20 -> ซอย/ซอยย่อย
+                this.locationResolvePromise = AttendanceModel.resolveLocationWithZoomMeta(lat, lng).then(resMeta => {
+                    this.gpsData.locationName = resMeta.locationName;
+                    this.gpsData.zoomLevel = resMeta.zoomLevel || 19;
+
+                    if (locNameEl) {
+                        locNameEl.textContent = resMeta.locationName;
+                    }
+
+                    // หากระบบเปลี่ยนไปใช้ระยะ z = 20 (ประมาณ 10 เมตร) ให้ปรับซูมแผนที่ Google Map เป็น z = 20 ตามทันที
+                    if (resMeta.zoomLevel === 20) {
+                        if (mapIframe) {
+                            mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=20&output=embed`;
+                        }
+                        if (mapLink) {
+                            mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=20`;
+                        }
+                    }
+
+                    return resMeta.locationName;
                 });
             },
             async (err) => {
@@ -1039,8 +1042,6 @@ export class CheckinController {
             this.activeRegularRecord.work_date === todayIso
         );
 
-        // หากยังมีรายการลงเวลาเข้างานปกติที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่ (hasUnclosedRegular)
-        // ต้องบังคับให้เป็นการบันทึกเวลาเลิกงานตามปกติก่อนเสมอ (ไม่ให้เข้าโหมดนอกเวลา)
         const isOvertimeByTimeWindow = !hasUnclosedRegular && (nowMin < allowStartMin || nowMin > stdOutMin || isRegularCompletedToday);
         const effectiveOvertimeShift = !hasUnclosedRegular && Boolean(
             (!isNormalModeSetting && shiftObj.is_overtime) ||
@@ -1053,7 +1054,7 @@ export class CheckinController {
             if (this.settings.require_gps && this.locationResolvePromise) {
                 await Promise.race([
                     this.locationResolvePromise,
-                    new Promise(r => setTimeout(r, 800))
+                    new Promise(r => setTimeout(r, 900))
                 ]);
             }
 
