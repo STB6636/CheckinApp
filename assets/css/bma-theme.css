@@ -9,67 +9,64 @@
 :root {
     color-scheme: light;
 
-    /* --- Core BMA Emerald & Gold Tokens --- */
-    --g0: #00351B;
-    --g1: #007B3E;
-    --g2: #4EBA6F;
-    --gold-bma: #C59B27;
-    --gold-bma-light: #D4AF37;
-    --gold-bma-pale: #F5DE98;
-    --gold-bma-soft: rgba(197, 155, 39, 0.16);
+    /* --- BMA 9-Color Civic Design System (Image 2) --- */
+    --bma-c-primary: #00744B;      /* Primary BMA Green */
+    --bma-c-sec-1: #215A41;        /* 1. Dark Forest Green */
+    --bma-c-sec-2: #66A33A;        /* 2. Leaf Olive Green */
+    --bma-c-sec-3: #00C08A;        /* 3. Mint Teal */
+    --bma-c-sec-4: #FFB449;        /* 4. Warm Amber */
+    --bma-c-sec-5: #F6DE51;        /* 5. Golden Sunglow */
+    --bma-c-sec-6: #0971CE;        /* 6. Royal Sapphire Blue */
+    --bma-c-sec-7: #EB3DA9;        /* 7. Berry Magenta */
+    --bma-c-sec-8: #480080;        /* 8. Deep Imperial Purple */
 
-    /* Sidebar & Header/Footer Gradient Tokens */
-    --sb1: #002510;
-    --sb2: #004D25;
-    --sb3: #007B3E;
+    /* Core BMA Emerald & Gold Tokens */
+    --g0: #072314;
+    --g1: #00744B;
+    --g2: #00C08A;
+    --gold-bma: #F6DE51;
 
-    /* Primary Button Gradient Tokens */
-    --hd1: #007B3E;
-    --hd2: #00944A;
-    --hd3: #4EBA6F;
-
-    /* Brand & Primary Colors (Light Mode) */
+    /* Primary Brand & Button Tokens */
     --bma-primary: #00744B;
     --bma-primary-hover: #005B2E;
-    --bma-primary-light: #4EBA6F;
-    --bma-primary-soft: rgba(0, 123, 62, 0.12);
+    --bma-primary-light: #00C08A;
+    --bma-primary-soft: rgba(0, 116, 75, 0.12);
 
     /* Official 5 Status Colors */
-    --status-normal: #007B3E;
-    --status-late: #EAB308;
-    --status-absent-duty: #EA580C;
+    --status-normal: #00744B;
+    --status-late: #FFB449;
+    --status-absent-duty: #EB3DA9;
     --status-no-checkin: #E11D48;
-    --status-overtime: #2563EB;
+    --status-overtime: #0971CE;
 
-    /* Surface & Typography Tokens (Light Mode - Crisp White & Soft Sage) */
-    --bma-canvas: #F6FAF7;
+    /* Clean Surfaces & Typography Tokens */
+    --bma-canvas: #F4F6F9;
     --bma-surface-1: #FFFFFF;
-    --bma-surface-2: #F0F6F2;
-    --bma-surface-info: #EBF5EF;
-    --bma-border: #D1E5DA;
-    --bma-text-primary: #0C1E14;
-    --bma-text-secondary: #1F3F2D;
-    --bma-text-muted: #537564;
+    --bma-surface-2: #F8FAFC;
+    --bma-surface-info: #EBF8F2;
+    --bma-border: #E2E8F0;
+    --bma-text-primary: #1E293B;
+    --bma-text-secondary: #475569;
+    --bma-text-muted: #94A3B8;
 
-    /* Table Header Pastel Tokens */
-    --bma-thead-bg: #E8F4EC;
-    --bma-thead-text: #0C381E;
-    --bma-thead-border: #C8E2D3;
+    /* Table Header Tokens */
+    --bma-thead-bg: #F1F5F9;
+    --bma-thead-text: #0F172A;
+    --bma-thead-border: #E2E8F0;
 
-    /* Status Badge Alpha Tokens */
-    --badge-success-bg: rgba(0, 123, 62, 0.14);
-    --badge-success-text: #006834;
-    --badge-warning-bg: rgba(197, 155, 39, 0.18);
-    --badge-warning-text: #926E0B;
-    --badge-danger-bg: rgba(225, 29, 72, 0.14);
+    /* Status Badges */
+    --badge-success-bg: rgba(0, 192, 138, 0.15);
+    --badge-success-text: #00744B;
+    --badge-warning-bg: rgba(255, 180, 73, 0.18);
+    --badge-warning-text: #B45309;
+    --badge-danger-bg: rgba(235, 61, 169, 0.15);
     --badge-danger-text: #BE123C;
-    --badge-indigo-bg: rgba(37, 99, 235, 0.14);
-    --badge-indigo-text: #1D4ED8;
-    --badge-sky-bg: rgba(2, 132, 199, 0.14);
-    --badge-sky-text: #0369A1;
+    --badge-indigo-bg: rgba(9, 113, 206, 0.15);
+    --badge-indigo-text: #0971CE;
+    --badge-sky-bg: rgba(2, 132, 199, 0.15);
+    --badge-sky-text: #0284C7;
 
-    --shadow-card: 0 4px 20px -2px rgba(0, 77, 37, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
-    --shadow-card-hover: 0 12px 30px -4px rgba(0, 77, 37, 0.10), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
 /* ============================================================================
@@ -83,19 +80,13 @@ html.dark {
     --bma-primary-light: #A7F3D0;
     --bma-primary-soft: rgba(52, 211, 153, 0.16);
 
-    --gold-bma: #D4AF37;
-    --gold-bma-light: #E5C158;
-    --gold-bma-pale: #F5DE98;
-    --gold-bma-soft: rgba(212, 175, 55, 0.20);
-
     --sb1: #03190E;
     --sb2: #062D19;
     --sb3: #0A4526;
 
-    --bma-canvas: #08160F;
     --bma-surface-1: #11231B;
     --bma-surface-2: #183025;
-    --bma-surface-info: rgba(6, 78, 59, 0.35);
+    --bma-surface-info: rgba(6, 78, 59, 0.4);
     --bma-border: #244737;
     --bma-text-primary: #F1F5F9;
     --bma-text-secondary: #A7F3D0;
@@ -107,8 +98,8 @@ html.dark {
 
     --badge-success-bg: rgba(74, 222, 128, 0.18);
     --badge-success-text: #4ADE80;
-    --badge-warning-bg: rgba(212, 175, 55, 0.22);
-    --badge-warning-text: #F5DE98;
+    --badge-warning-bg: rgba(252, 211, 77, 0.18);
+    --badge-warning-text: #FCD34D;
     --badge-danger-bg: rgba(248, 113, 113, 0.18);
     --badge-danger-text: #F87171;
     --badge-indigo-bg: rgba(96, 165, 250, 0.18);
@@ -116,12 +107,11 @@ html.dark {
     --badge-sky-bg: rgba(56, 189, 248, 0.18);
     --badge-sky-text: #38BDF8;
 
-    --shadow-card: 0 10px 28px -4px rgba(0, 0, 0, 0.50);
-    --shadow-card-hover: 0 16px 36px -4px rgba(0, 0, 0, 0.65);
+    --shadow-card: 0 12px 30px -4px rgba(0, 0, 0, 0.55);
 }
 
 /* ============================================================================
- * พื้นหลังลายกราฟิกไทยสีทองบางเบา ผืนผ้าใบ Soft Sage สบายตาสไตล์ Modern Civic
+ * พื้นหลังลายกราฟิกโทนสีเขียวไล่สี สวยงาม ไม่เด่นเกินหน้าต่าง Login หรือโมดูลทำงาน
  * ============================================================================ */
 * {
     font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -129,15 +119,9 @@ html.dark {
 }
 
 body {
-    background-color: var(--bma-canvas) !important;
-    background-image:
-        url('../images/thai-pattern-gold.svg'),
-        radial-gradient(circle at 12% 18%, rgba(0, 123, 62, 0.04) 0%, transparent 40%),
-        radial-gradient(circle at 88% 82%, rgba(197, 155, 39, 0.03) 0%, transparent 45%),
-        linear-gradient(180deg, #FAFDFB 0%, #F4F9F6 100%) !important;
-    background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100% !important;
-    background-attachment: fixed !important;
-    color: var(--bma-text-primary);
+    background-color: var(--bma-canvas, #F4F6F9) !important;
+    background-image: none !important;
+    color: var(--bma-text-primary, #1E293B);
     margin: 0;
     padding: 0;
     min-height: 100vh;
@@ -146,24 +130,20 @@ body {
 }
 
 html.dark body {
-    background-color: var(--bma-canvas) !important;
-    background-image:
-        url('../images/thai-pattern-gold.svg'),
-        radial-gradient(circle at 15% 20%, rgba(52, 211, 153, 0.04) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 45%),
-        linear-gradient(180deg, #05130D 0%, #08160F 100%) !important;
-    background-size: 160px 160px, 100% 100%, 100% 100%, 100% 100% !important;
+    background-color: #0F172A !important;
+    background-image: none !important;
+    color: #F1F5F9;
 }
 
 /* ============================================================================
- * แถบ Header และแถบ Footer สีเขียว กทม. มรกตหลวง เส้นขอบทองแชมเปญหรูหรา
+ * แถบ Header และแถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน
  * ============================================================================ */
 .bma-header-bar {
     background-color: #004D26 !important;
-    background-image: linear-gradient(90deg, #002B13 0%, #004D25 50%, #006834 100%) !important;
+    background-image: linear-gradient(90deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
     color: #FFFFFF !important;
-    border-bottom: 2px solid var(--gold-bma) !important;
-    box-shadow: 0 4px 20px rgba(0, 37, 16, 0.25);
+    border-bottom: 3px solid #FDD835 !important;
+    box-shadow: 0 4px 20px rgba(0, 53, 27, 0.22);
 }
 
 .bma-header-bar h1,
@@ -179,21 +159,21 @@ html.dark body {
 /* แถบ Topbar สำหรับหน้าผู้ดูแลระบบที่มี Sidebar ด้านซ้าย */
 .bma-admin-topbar {
     background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--bma-border);
-    border-top: 3px solid var(--gold-bma);
+    border-top: 4px solid var(--g1);
 }
 html.dark .bma-admin-topbar {
     background-color: rgba(17, 35, 27, 0.92);
 }
 
-/* แถบ Footer สีเขียว กทม. มรกตหลวง เส้นขอบทองแชมเปญหรูหรา */
+/* แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย */
 .bma-footer-bar {
     background-color: #00351B !important;
-    background-image: linear-gradient(90deg, #002510 0%, #003E1D 50%, #005B2B 100%) !important;
+    background-image: linear-gradient(90deg, #002B15 0%, #004D26 50%, #006834 100%) !important;
     color: #FFFFFF !important;
-    border-top: 2px solid var(--gold-bma) !important;
-    box-shadow: 0 -4px 16px rgba(0, 37, 16, 0.18);
+    border-top: 3px solid #FDD835 !important;
+    box-shadow: 0 -4px 16px rgba(0, 53, 27, 0.15);
 }
 
 .bma-footer-bar span,
@@ -202,7 +182,7 @@ html.dark .bma-admin-topbar {
 }
 
 .bma-footer-bar .footer-highlight {
-    color: var(--gold-bma-pale) !important;
+    color: #FDD835 !important;
     font-weight: 800;
 }
 
@@ -214,10 +194,32 @@ html.dark .bma-admin-topbar {
  * ปุ่มบนแถบ Header สีเขียว กทม. (ปุ่มเปลี่ยนโหมดธีม, ปุ่มระบบผู้ดูแล, ปุ่มออกจากระบบ)
  * ============================================================================ */
 .btn-header-theme {
-    background: linear-gradient(135deg, #C59B27 0%, #D4AF37 50%, #B8860B 100%) !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    background: linear-gradient(135deg, #FDD835 0%, #F59E0B 100%) !important;
+    color: #00351B !important;
+    font-weight: 800 !important;
+    border: 2px solid #FFFFFF !important;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-header-theme:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(253, 216, 53, 0.45);
+    filter: brightness(1.05);
+}
+
+.btn-header-admin {
+    background: #FFFFFF !important;
+    color: #004D26 !important;
+    font-weight: 800 !important;
+    border: 2px solid #A7F3D0 !important;
     border-radius: 0.75rem;
     padding: 0.45rem 0.95rem;
     display: inline-flex;
@@ -227,36 +229,13 @@ html.dark .bma-admin-topbar {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.btn-header-theme:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(197, 155, 39, 0.4);
-    filter: brightness(1.08);
-}
-
-.btn-header-admin {
-    background: #FFFFFF !important;
-    color: #004D26 !important;
-    font-weight: 800 !important;
-    border: 2px solid #D1E5DA !important;
-    border-radius: 0.75rem;
-    padding: 0.45rem 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem;
-    box-shadow: 0 4px 12px rgba(0, 53, 27, 0.08);
-    cursor: pointer;
-    transition: all 0.2s ease;
     text-decoration: none;
 }
 
 .btn-header-admin:hover {
     background: #ECFDF5 !important;
-    border-color: var(--gold-bma) !important;
+    border-color: #FDD835 !important;
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(197, 155, 39, 0.25);
 }
 
 .btn-header-logout {
@@ -282,28 +261,14 @@ html.dark .bma-admin-topbar {
 }
 
 /* ============================================================================
- * การ์ดและพื้นผิวหลัก (Executive White Surface with Emerald Accent)
+ * การ์ดและพื้นผิวหลัก
  * ============================================================================ */
 .bma-card {
     background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
     box-shadow: var(--shadow-card);
     border-radius: 1rem;
-    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.bma-card:hover {
-    box-shadow: var(--shadow-card-hover);
-}
-
-/* มาตรการป้องกันตามแนวทาง ก: ป้องกัน JavaScript Controller สั่งล้างคลาสในการ์ดหน้าลงเวลา */
-#cameraSectionCard.bma-card,
-#gpsSectionCard.bma-card,
-#checkinActionCard.bma-card {
-    border-radius: 1.25rem !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 77, 37, 0.06), 0 8px 10px -6px rgba(0, 77, 37, 0.03) !important;
-    border: 1px solid var(--bma-border) !important;
-    background-color: var(--bma-surface-1) !important;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
 }
 
 .bma-login-form-panel,
@@ -315,7 +280,6 @@ html.dark .bma-admin-topbar {
 .bma-modal-surface {
     background-color: var(--bma-surface-1) !important;
     border: 1px solid var(--bma-border);
-    border-radius: 1.25rem;
 }
 
 html.dark .bma-modal-surface {
@@ -348,30 +312,27 @@ html.dark .bma-modal-surface {
  * แผง Brand Panel หน้า Login & กรอบกล้องแนวตั้ง 3:4
  * ============================================================================ */
 .bma-brand-panel {
-    background-color: #00351B !important;
+    background-color: #004D26 !important;
     background-image:
-        url('../images/thai-pattern-gold.svg'),
-        linear-gradient(150deg, #001F0D 0%, #004D25 50%, #007B3E 100%) !important;
-    background-size: 160px 160px, 100% 100% !important;
+        linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(150deg, var(--sb1) 0%, var(--sb2) 52%, var(--sb3) 100%) !important;
+    background-size: 28px 28px, 28px 28px, 100% 100% !important;
     position: relative;
     overflow: hidden;
     color: #FFFFFF !important;
-    border-right: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .bma-mobile-login-header {
     background-color: #004D26 !important;
-    background-image:
-        url('../images/thai-pattern-gold.svg'),
-        linear-gradient(135deg, #002510 0%, #004D25 60%, #007B3E 100%) !important;
-    background-size: 140px 140px, 100% 100% !important;
+    background-image: linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 60%, var(--sb3) 100%) !important;
     color: #FFFFFF !important;
-    border-bottom: 2px solid var(--gold-bma);
+    border-bottom: 3px solid var(--gold-bma);
 }
 
 .camera-portrait-3-4 {
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     aspect-ratio: 3 / 4;
     margin-left: auto;
     margin-right: auto;
@@ -381,22 +342,22 @@ html.dark .bma-modal-surface {
 .outdoor-emerald-frame {
     background-color: #004D26 !important;
     background-image:
-        url('../images/thai-pattern-gold.svg'),
-        linear-gradient(135deg, #002510 0%, #004D25 100%) !important;
-    background-size: 120px 120px, 100% 100% !important;
-    border: 2px solid var(--gold-bma);
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, var(--sb1) 0%, var(--sb2) 100%) !important;
+    background-size: 24px 24px, 24px 24px, 100% 100% !important;
+    border: 2px solid var(--g1);
     box-shadow: 0 10px 25px -5px rgba(0, 53, 27, 0.25);
     color: #FFFFFF !important;
-    border-radius: 1.25rem;
+    border-radius: 1.15rem;
 }
 
 .outdoor-camera-bezel {
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.3);
-    border-radius: 1.15rem;
+    border: 3px solid var(--g1);
+    box-shadow: inset 0 0 0 2px var(--gold-bma), 0 10px 24px -4px rgba(0, 53, 27, 0.25);
+    border-radius: 1.1rem;
     overflow: hidden;
     background-color: #07170E;
-    position: relative;
 }
 
 /* ============================================================================
@@ -566,14 +527,10 @@ html.dark .bma-badge-pastel-purple {
  * Deep Emerald Sidebar (.sidebar-dark-bma) & Menu Items
  * ============================================================================ */
 .sidebar-dark-bma {
-    background-color: #215A41 !important;
-    background-image:
-        url('../images/thai-pattern-gold.svg'),
-        linear-gradient(180deg, #184230 0%, #215A41 100%) !important;
-    background-size: 140px 140px, 100% 100% !important;
+    background: linear-gradient(180deg, var(--sb1) 0%, var(--sb2) 55%, var(--sb3) 100%);
     color: #FFFFFF;
-    border-right: 1px solid rgba(212, 175, 55, 0.22) !important;
-    box-shadow: 4px 0 24px rgba(0, 31, 13, 0.35);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 4px 0 24px rgba(0, 53, 27, 0.18);
 }
 
 .sidebar-dark-bma .bma-nav-item,
@@ -601,16 +558,16 @@ html.dark .bma-badge-pastel-purple {
 
 .sidebar-dark-bma .bma-nav-item.active,
 .sidebar-dark-bma .menu-item.active {
-    background: linear-gradient(90deg, #00744B 0%, #00C08A 100%) !important;
+    background: linear-gradient(90deg, rgba(253, 216, 53, 0.22) 0%, rgba(255, 255, 255, 0.12) 100%);
     color: #FFFFFF;
     font-weight: 700;
-    border-left: none !important;
-    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
+    border-left: 4px solid var(--gold-bma);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-dark-bma .bma-nav-item.active i,
 .sidebar-dark-bma .menu-item.active i {
-    color: #FFFFFF !important;
+    color: var(--gold-bma);
 }
 
 /* ============================================================================
@@ -635,20 +592,9 @@ html.dark .bma-badge-pastel-purple {
 
 .stat-card-total {
     background-color: #00351B !important;
-    background-image: linear-gradient(135deg, #002510 0%, #004D25 50%, #007B3E 100%) !important;
+    background-image: linear-gradient(135deg, #00351B 0%, #005B2E 52%, #007B3E 100%) !important;
     color: #FFFFFF !important;
-    border: 1px solid rgba(212, 175, 55, 0.35) !important;
-}
-
-/* มาตรการป้องกันตามแนวทาง ก: ดักจับและเปลี่ยนสีเหลืองนีออน #FDD835 ใน DashboardController เป็นสีทองแชมเปญ */
-.stat-card-total [style*="background: #FDD835"],
-.stat-card-total [style*="background:#FDD835"],
-.stat-card-total .stat-progress-fill {
-    background: linear-gradient(135deg, #C59B27 0%, #D4AF37 100%) !important;
-}
-.stat-card-total .text-\[\#FDD835\],
-.stat-card-total [class*="text-[#FDD835]"] {
-    color: var(--gold-bma-pale) !important;
+    border: 1px solid rgba(253, 216, 53, 0.35) !important;
 }
 
 .stat-card .deco,
@@ -987,11 +933,11 @@ html.dark .bma-textarea {
     position: fixed;
     top: 0;
     left: 0;
-    height: 3.5px;
-    background: linear-gradient(90deg, var(--gold-bma) 0%, var(--gold-bma-light) 35%, var(--bma-primary) 100%);
+    height: 4px;
+    background: linear-gradient(90deg, #FDD835 0%, #4EBA6F 50%, #007B3E 100%);
     z-index: 99999;
     transition: width 0.25s ease, opacity 0.25s ease;
-    box-shadow: 0 0 10px rgba(197, 155, 39, 0.6);
+    box-shadow: 0 0 10px rgba(78, 186, 111, 0.8);
 }
 
 .bma-ajax-progress-track {
@@ -1011,8 +957,8 @@ html.dark .bma-textarea {
 }
 
 #bmaGlobalSpinner {
-    backdrop-filter: blur(6px);
-    background-color: rgba(4, 25, 14, 0.65);
+    backdrop-filter: blur(4px);
+    background-color: rgba(4, 31, 17, 0.55);
 }
 
 .bma-spin-ring {
@@ -1064,204 +1010,118 @@ html.dark .bma-textarea {
 }
 
 /* ============================================================================
- * Camera Kiosk HUD & Radar Pulse Utilities (BMA Modern Viewfinder)
+ * Creative Tim Material Dashboard PRO Components Engine (Material-UI v4)
  * ============================================================================ */
-.hud-gold-corner {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-color: var(--gold-bma-light);
-    pointer-events: none;
-    z-index: 10;
-}
-.hud-tl { top: 12px; left: 12px; border-top: 3px solid var(--gold-bma-light); border-left: 3px solid var(--gold-bma-light); border-top-left-radius: 6px; }
-.hud-tr { top: 12px; right: 12px; border-top: 3px solid var(--gold-bma-light); border-right: 3px solid var(--gold-bma-light); border-top-right-radius: 6px; }
-.hud-bl { bottom: 12px; left: 12px; border-bottom: 3px solid var(--gold-bma-light); border-left: 3px solid var(--gold-bma-light); border-bottom-left-radius: 6px; }
-.hud-br { bottom: 12px; right: 12px; border-bottom: 3px solid var(--gold-bma-light); border-right: 3px solid var(--gold-bma-light); border-bottom-right-radius: 6px; }
-
-.hud-face-oval {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 58%;
-    height: 64%;
-    border: 2px dashed rgba(212, 175, 55, 0.45);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-@keyframes bmaRadarPulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 62, 0.6); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 123, 62, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 62, 0); }
-}
-
-.radar-pulse-beacon {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--bma-primary);
-    animation: bmaRadarPulse 2s infinite;
-}
-
-/* ============================================================================
- * Creative Tim Material Dashboard PRO Architecture & 9 BMA Civic Colors
- * ============================================================================ */
-
-:root {
-    /* --- 9 BMA Civic Colors (Extracted from Image 2) --- */
-    --bma-c-primary: #00744B;     /* Primary BMA Green */
-    --bma-c-sec-1: #215A41;       /* Dark Forest */
-    --bma-c-sec-2: #66A33A;       /* Leaf Olive */
-    --bma-c-sec-3: #00C08A;       /* Mint Teal */
-    --bma-c-sec-4: #FFB449;       /* Warm Amber */
-    --bma-c-sec-5: #F6DE51;       /* Golden Sunglow */
-    --bma-c-sec-6: #0971CE;       /* Royal Sapphire Blue */
-    --bma-c-sec-7: #EB3DA9;       /* Berry Magenta */
-    --bma-c-sec-8: #480080;       /* Imperial Purple */
-}
 
 /* 1. Floating Card Containers */
 .material-card {
+    background-color: #FFFFFF;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
     position: relative;
-    border-radius: 1.25rem; /* rounded-2xl */
-    background: #FFFFFF;
     border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 4px 20px -2px rgba(0, 77, 37, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
-    margin-top: 2rem;
-    overflow: visible !important;
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    transition: all 0.25s ease;
 }
 html.dark .material-card {
-    background: #11231B;
-    border-color: rgba(6, 78, 59, 0.4);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-}
-.material-card:hover {
-    box-shadow: 0 16px 32px -4px rgba(0, 77, 37, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.06);
+    background-color: #1E293B;
+    border-color: rgba(51, 65, 85, 0.8);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.25);
 }
 
-/* 2. Floating Card Headers with Colored Linear Gradients & Matching Shadows */
+/* 2. Floating Card Headers (-mt-6) */
 .material-floating-header {
-    position: relative;
     margin-top: -1.5rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    padding: 1.15rem 1.35rem;
-    border-radius: 0.875rem; /* rounded-xl */
+    border-radius: 0.875rem;
+    padding: 1.25rem 1.5rem;
     color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-@media (min-width: 640px) {
-    .material-floating-header {
-        margin-left: 1.5rem;
-        margin-right: 1.5rem;
-        padding: 1.25rem 1.65rem;
-    }
+    position: relative;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 .header-grad-green {
-    background: linear-gradient(195deg, #00744B, #215A41) !important;
-    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
+    background: linear-gradient(195deg, #00744B 0%, #008A56 50%, #00A368 100%);
+    box-shadow: 0 8px 26px -4px rgba(0, 116, 75, 0.45);
 }
 .header-grad-blue {
-    background: linear-gradient(195deg, #0971CE, #0284C7) !important;
-    box-shadow: 0 4px 20px 0 rgba(9, 113, 206, 0.38) !important;
+    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%);
+    box-shadow: 0 8px 26px -4px rgba(9, 113, 206, 0.4);
 }
 .header-grad-amber {
-    background: linear-gradient(195deg, #FFB449, #F6DE51) !important;
-    box-shadow: 0 4px 20px 0 rgba(255, 180, 73, 0.38) !important;
+    background: linear-gradient(195deg, #FFB449 0%, #F59E0B 100%);
+    box-shadow: 0 8px 26px -4px rgba(255, 180, 73, 0.4);
 }
 .header-grad-magenta {
-    background: linear-gradient(195deg, #EB3DA9, #BE123C) !important;
-    box-shadow: 0 4px 20px 0 rgba(235, 61, 169, 0.38) !important;
+    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%);
+    box-shadow: 0 8px 26px -4px rgba(235, 61, 169, 0.4);
 }
 .header-grad-purple {
-    background: linear-gradient(195deg, #480080, #7C3AED) !important;
-    box-shadow: 0 4px 20px 0 rgba(72, 0, 128, 0.38) !important;
+    background: linear-gradient(195deg, #480080 0%, #6D28D9 100%);
+    box-shadow: 0 8px 26px -4px rgba(72, 0, 128, 0.4);
 }
 
-/* 3. Offset Floating Icon Stat Boxes */
+/* 3. Stat Cards with Offset Floating Icon Box */
 .material-stat-card {
+    background-color: #FFFFFF;
+    border-radius: 1rem;
     position: relative;
-    border-radius: 1.25rem;
-    background: #FFFFFF;
+    padding: 1rem 1.25rem 0.875rem 1.25rem;
     border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 4px 20px -2px rgba(0, 77, 37, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
-    margin-top: 2rem;
-    padding: 1rem 1.25rem;
-    padding-top: 0;
-    overflow: visible !important;
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 }
 html.dark .material-stat-card {
-    background: #11231B;
-    border-color: rgba(6, 78, 59, 0.4);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    background-color: #1E293B;
+    border-color: rgba(51, 65, 85, 0.8);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.25);
 }
 .material-stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 28px -4px rgba(0, 77, 37, 0.14), 0 6px 12px -2px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.08);
 }
+
 .material-stat-icon-box {
-    width: 4rem; /* 64px */
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     margin-top: -1.75rem;
-    border-radius: 1rem;
+    border-radius: 0.875rem;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #FFFFFF;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    transition: transform 0.25s ease;
+    font-size: 1.35rem;
 }
-.material-stat-card:hover .material-stat-icon-box {
-    transform: translateY(-2px) scale(1.05);
-}
-
 .stat-icon-mint {
-    background: linear-gradient(195deg, #00C08A, #00744B) !important;
-    box-shadow: 0 4px 20px 0 rgba(0, 192, 138, 0.38) !important;
+    background: linear-gradient(195deg, #00C08A 0%, #00995D 100%);
+    box-shadow: 0 8px 20px -4px rgba(0, 192, 138, 0.45);
 }
 .stat-icon-green {
-    background: linear-gradient(195deg, #00744B, #215A41) !important;
-    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
+    background: linear-gradient(195deg, #00744B 0%, #215A41 100%);
+    box-shadow: 0 8px 20px -4px rgba(0, 116, 75, 0.45);
 }
 .stat-icon-amber {
-    background: linear-gradient(195deg, #FFB449, #F6DE51) !important;
-    box-shadow: 0 4px 20px 0 rgba(255, 180, 73, 0.38) !important;
+    background: linear-gradient(195deg, #FFB449 0%, #F59E0B 100%);
+    box-shadow: 0 8px 20px -4px rgba(255, 180, 73, 0.45);
 }
 .stat-icon-magenta {
-    background: linear-gradient(195deg, #EB3DA9, #BE123C) !important;
-    box-shadow: 0 4px 20px 0 rgba(235, 61, 169, 0.38) !important;
+    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%);
+    box-shadow: 0 8px 20px -4px rgba(235, 61, 169, 0.45);
 }
 .stat-icon-blue {
-    background: linear-gradient(195deg, #0971CE, #0284C7) !important;
-    box-shadow: 0 4px 20px 0 rgba(9, 113, 206, 0.38) !important;
+    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%);
+    box-shadow: 0 8px 20px -4px rgba(9, 113, 206, 0.45);
 }
 .stat-icon-purple {
-    background: linear-gradient(195deg, #480080, #7C3AED) !important;
-    box-shadow: 0 4px 20px 0 rgba(72, 0, 128, 0.38) !important;
-}
-.stat-icon-leaf {
-    background: linear-gradient(195deg, #66A33A, #4E8027) !important;
-    box-shadow: 0 4px 20px 0 rgba(102, 163, 58, 0.35) !important;
+    background: linear-gradient(195deg, #480080 0%, #6D28D9 100%);
+    box-shadow: 0 8px 20px -4px rgba(72, 0, 128, 0.45);
 }
 
-/* 4. Pure CSS Radio Tabs State Engine (Guarantees zero-failure tab switching) */
+/* 4. Pure CSS Radio Tabs State Engine (0ms latency, zero script dependency) */
 #radioTabGeneral:checked ~ #settingsTabNav label[for="radioTabGeneral"],
 #radioTabRules:checked ~ #settingsTabNav label[for="radioTabRules"],
 #radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"],
 #radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"],
 #radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] {
-    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    background: linear-gradient(195deg, #00744B, #00995D) !important;
     color: #FFFFFF !important;
     border-color: transparent !important;
     box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
@@ -1271,7 +1131,7 @@ html.dark .material-stat-card {
 #radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"] i,
 #radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"] i,
 #radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] i {
-    color: #F6DE51 !important;
+    color: #FFFFFF !important;
 }
 
 #radioTabGeneral:checked ~ #formGlobalSettings #tab-panel-general,
@@ -1292,34 +1152,228 @@ body:has(#radioTabRules:checked) label[for="radioTabRules"],
 body:has(#radioTabShifts:checked) label[for="radioTabShifts"],
 body:has(#radioTabPrefixes:checked) label[for="radioTabPrefixes"],
 body:has(#radioTabAffiliations:checked) label[for="radioTabAffiliations"] {
-    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    background: linear-gradient(195deg, #00744B, #00995D) !important;
     color: #FFFFFF !important;
     border-color: transparent !important;
     box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
 }
 
-body:has(#radioTabGeneral:checked) label[for="radioTabGeneral"] i,
-body:has(#radioTabRules:checked) label[for="radioTabRules"] i,
-body:has(#radioTabShifts:checked) label[for="radioTabShifts"] i,
-body:has(#radioTabPrefixes:checked) label[for="radioTabPrefixes"] i,
-body:has(#radioTabAffiliations:checked) label[for="radioTabAffiliations"] i {
-    color: #F6DE51 !important;
+/* 5. Kiosk Viewfinder HUD & Radar Pulse Utilities */
+.hud-gold-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: #00744B;
+    pointer-events: none;
+    z-index: 10;
+}
+.hud-tl { top: 12px; left: 12px; border-top: 3px solid #00744B; border-left: 3px solid #00744B; border-top-left-radius: 6px; }
+.hud-tr { top: 12px; right: 12px; border-top: 3px solid #00744B; border-right: 3px solid #00744B; border-top-right-radius: 6px; }
+.hud-bl { bottom: 12px; left: 12px; border-bottom: 3px solid #00744B; border-left: 3px solid #00744B; border-bottom-left-radius: 6px; }
+.hud-br { bottom: 12px; right: 12px; border-bottom: 3px solid #00744B; border-right: 3px solid #00744B; border-bottom-right-radius: 6px; }
+
+@keyframes bmaRadarPulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 116, 75, 0.6); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 116, 75, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 116, 75, 0); }
 }
 
-/* 5. SweetAlert2 Civic Skinning */
+.radar-pulse-beacon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--bma-c-sec-3, #00C08A);
+    animation: bmaRadarPulse 2s infinite;
+}
+
+/* 6. SweetAlert2 Civic Material Skinning */
 .swal2-popup.bma-swal-popup {
     border-radius: 1.5rem !important;
-    font-family: 'Sarabun', sans-serif !important;
-    border: 1px solid rgba(0, 116, 75, 0.2) !important;
-    box-shadow: 0 20px 50px rgba(0, 35, 18, 0.25) !important;
+    padding: 1.75rem !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+html.dark .swal2-popup.bma-swal-popup {
+    background: #1E293B !important;
+    color: #F1F5F9 !important;
+    border-color: #334155 !important;
 }
 .swal2-popup.bma-swal-popup .swal2-confirm {
+    background: linear-gradient(195deg, #00744B 0%, #00995D 100%) !important;
     border-radius: 9999px !important;
-    background: linear-gradient(195deg, #00744B, #215A41) !important;
-    box-shadow: 0 4px 14px rgba(0, 116, 75, 0.35) !important;
-    padding: 0.65rem 1.75rem !important;
+    padding: 0.625rem 1.75rem !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 15px rgba(0, 116, 75, 0.4) !important;
 }
 .swal2-popup.bma-swal-popup .swal2-cancel {
+    background: #F1F5F9 !important;
+    color: #475569 !important;
     border-radius: 9999px !important;
-    padding: 0.65rem 1.5rem !important;
+    padding: 0.625rem 1.5rem !important;
+    font-weight: 600 !important;
 }
+html.dark .swal2-popup.bma-swal-popup .swal2-cancel {
+    background: #334155 !important;
+    color: #E2E8F0 !important;
+}
+
+/* ============================================================================
+ * Material Dashboard PRO - Dynamic Stat Card & Floating Header Overrides
+ * Transforms controller-injected stat cards into floating icon boxes
+ * ============================================================================ */
+#dashboardKpiCardsGrid {
+    padding-top: 1.5rem;
+}
+
+#dashboardKpiCardsGrid .stat-card {
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
+    position: relative !important;
+    padding: 1.25rem 1.25rem 0.875rem 1.25rem !important;
+    overflow: visible !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+html.dark #dashboardKpiCardsGrid .stat-card {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+    border-color: rgba(51, 65, 85, 0.8) !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35) !important;
+}
+
+#dashboardKpiCardsGrid .stat-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12) !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .deco-1,
+#dashboardKpiCardsGrid .stat-card .deco-2 {
+    display: none !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child {
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    text-align: right !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child {
+    text-align: right !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
+    color: #64748B !important;
+    font-size: 0.775rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.025em !important;
+}
+
+html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
+    color: #94A3B8 !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
+    color: #0F172A !important;
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    margin-top: 0.2rem !important;
+    line-height: 1.2 !important;
+}
+
+html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
+    color: #F8FAFC !important;
+}
+
+#dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 span {
+    color: #94A3B8 !important;
+    font-size: 0.825rem !important;
+    font-weight: 600 !important;
+}
+
+/* Material Floating Icon Box (Offset -top-4 left-4) */
+#dashboardKpiCardsGrid .stat-card .stat-icon-box {
+    position: absolute !important;
+    top: -1.25rem !important;
+    left: 1rem !important;
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+    border-radius: 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.4rem !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    backdrop-filter: none !important;
+}
+
+/* Card 1: บุคลากรทั้งหมด (Mint Teal to BMA Green) */
+#dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-icon-box {
+    background: linear-gradient(195deg, #00C08A 0%, #00744B 100%) !important;
+    box-shadow: 0 8px 20px -4px rgba(0, 192, 138, 0.45) !important;
+}
+#dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-icon-box i {
+    color: #FFFFFF !important;
+}
+
+/* Card 2: ปฏิบัติงานปกติ (BMA Primary Green to Deep Forest) */
+#dashboardKpiCardsGrid .stat-card:nth-child(2) .stat-icon-box {
+    background: linear-gradient(195deg, #00744B 0%, #215A41 100%) !important;
+    box-shadow: 0 8px 20px -4px rgba(0, 116, 75, 0.45) !important;
+}
+
+/* Card 3: มาสาย (Warm Amber to Canary Yellow) */
+#dashboardKpiCardsGrid .stat-card:nth-child(3) .stat-icon-box {
+    background: linear-gradient(195deg, #FFB449 0%, #F6DE51 100%) !important;
+    box-shadow: 0 8px 20px -4px rgba(255, 180, 73, 0.45) !important;
+}
+
+/* Card 4: ขาดราชการ/ไปราชการ/ลา (Berry Magenta to Rose) */
+#dashboardKpiCardsGrid .stat-card:nth-child(4) .stat-icon-box {
+    background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%) !important;
+    box-shadow: 0 8px 20px -4px rgba(235, 61, 169, 0.45) !important;
+}
+
+/* Card 5: ปฏิบัติงานนอกเวลา (Sapphire Blue) */
+#dashboardKpiCardsGrid .stat-card:nth-child(5) .stat-icon-box {
+    background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%) !important;
+    box-shadow: 0 8px 20px -4px rgba(9, 113, 206, 0.45) !important;
+}
+
+/* Bottom Progress Divider */
+#dashboardKpiCardsGrid .stat-card .mt-4 {
+    margin-top: 0.875rem !important;
+    padding-top: 0.65rem !important;
+    border-top: 1px solid #F1F5F9 !important;
+}
+html.dark #dashboardKpiCardsGrid .stat-card .mt-4 {
+    border-top-color: #334155 !important;
+}
+#dashboardKpiCardsGrid .stat-card .mt-4 span {
+    color: #64748B !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+html.dark #dashboardKpiCardsGrid .stat-card .mt-4 span {
+    color: #94A3B8 !important;
+}
+#dashboardKpiCardsGrid .stat-card .stat-progress-track {
+    background: #E2E8F0 !important;
+    height: 0.35rem !important;
+    border-radius: 9999px !important;
+}
+html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
+    background: #334155 !important;
+}

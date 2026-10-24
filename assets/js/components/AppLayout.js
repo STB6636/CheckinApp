@@ -203,8 +203,8 @@ export class AppLayout {
         if (!sidebarEl) return;
 
         const logoHtml = settings.logo_url
-            ? `<img src="${settings.logo_url}" alt="Logo" class="w-12 h-12 rounded-xl object-contain bg-white p-1 border-2 border-[#D4AF37] shadow-md">`
-            : `<div class="w-12 h-12 rounded-xl flex items-center justify-center text-[#F5DE98] font-extrabold text-xl shadow-md bg-gradient-to-br from-[#002510] to-[#004D25] border border-[#D4AF37]/50">
+            ? `<img src="${settings.logo_url}" alt="Logo" class="w-10 h-10 rounded-xl object-contain bg-white/10 p-1 border border-white/15 shadow-xs">`
+            : `<div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-xs bg-gradient-to-tr from-[#00744B] to-[#00C08A] border border-white/20">
                    <i class="fa-solid fa-landmark"></i>
                </div>`;
 
@@ -222,68 +222,76 @@ export class AppLayout {
         const scopeText = currentUser.role === 'SuperAdmin'
             ? 'สิทธิ์สูงสุด (ทุกสังกัด)'
             : (currentUser.visibility_level === 'bureau'
-                ? `ขอบเขตสำนักงาน: ${currentUser.scope_bureau}`
-                : `ขอบเขตส่วน/ฝ่าย: ${currentUser.scope_division || currentUser.scope_bureau}`);
+                ? `สำนักงาน: ${currentUser.scope_bureau}`
+                : `ส่วน/ฝ่าย: ${currentUser.scope_division || currentUser.scope_bureau}`);
 
         sidebarEl.innerHTML = `
             <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
 
-            <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 sidebar-dark-bma z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between">
+            <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 bg-[#111827] dark:bg-[#0B132B] z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between shadow-2xl border-r border-slate-800">
                 <div>
-                    <div class="p-5 border-b border-white/15 flex items-center justify-between gap-3">
+                    <!-- Brand Header -->
+                    <div class="p-5 border-b border-slate-800 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             ${logoHtml}
                             <div class="min-w-0">
-                                <h2 class="font-bold text-base truncate text-white tracking-wide">${settings.organization_name}</h2>
-                                <p class="text-xs font-semibold truncate text-[#F5DE98]">${settings.bureau_name}</p>
+                                <h2 class="font-extrabold text-sm truncate text-white tracking-wide">${settings.organization_name}</h2>
+                                <p class="text-xs font-semibold truncate text-emerald-400">${settings.bureau_name}</p>
                             </div>
                         </div>
-                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-lg text-white/80 hover:bg-white/10 cursor-pointer">
+                        <button id="btnCloseSidebarMobile" type="button" class="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
 
-                    <div class="px-5 py-3 border-b border-white/10 bg-black/20">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-emerald-100/80">ระดับสิทธิ์ผู้ใช้งาน</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${currentUser.role === 'SuperAdmin' ? 'bg-[#C59B27] text-white shadow-xs' : 'bg-emerald-400/20 text-emerald-200 border border-emerald-300/30'}">
-                                ${currentUser.role}
-                            </span>
+                    <!-- User Profile Capsule -->
+                    <div class="mx-3 my-3 p-3 rounded-2xl bg-slate-800/60 border border-slate-700/60">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white text-xs bg-gradient-to-tr from-[#00744B] to-[#00C08A] shadow-md shrink-0">
+                                ${String(currentUser.full_name || 'U').charAt(0)}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs font-bold truncate text-white">${currentUser.full_name}</p>
+                                <div class="flex items-center gap-1.5 mt-0.5">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${currentUser.role === 'SuperAdmin' ? 'bg-[#FFB449]/20 text-[#FFB449] border border-[#FFB449]/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'}">
+                                        ${currentUser.role}
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 truncate" title="${scopeText}">${scopeText}</span>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-xs text-emerald-100/90 mt-1.5 truncate" title="${scopeText}">
-                            <i class="fa-solid fa-shield-halved mr-1.5 text-[#F5DE98]"></i>${scopeText}
-                        </p>
                     </div>
 
-                    <nav class="p-4 space-y-1 overflow-y-auto max-h-[calc(100vh-250px)]">
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-200/60 px-3 mb-2">เมนูบริหารจัดการระบบ</div>
-                        ${visibleMenus.map(item => `
-                            <a href="${item.href}" data-nav-id="${item.id}" class="bma-nav-item menu-item ${activePage === item.id ? 'active' : ''}">
-                                <i class="fa-solid ${item.icon} w-5 text-center"></i>
-                                <span class="flex-1 truncate">${item.label}</span>
-                                ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-xs font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
-                            </a>
-                        `).join('')}
+                    <!-- Navigation Items -->
+                    <nav class="p-3 space-y-1.5 overflow-y-auto max-h-[calc(100vh-270px)]">
+                        <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">เมนูระบบบริหารจัดการ</div>
+                        ${visibleMenus.map(item => {
+                            const isActive = activePage === item.id;
+                            return `
+                                <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">
+                                        <i class="fa-solid ${item.icon}"></i>
+                                    </div>
+                                    <span class="flex-1 truncate">${item.label}</span>
+                                    ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
+                                </a>
+                            `;
+                        }).join('')}
 
-                        <div class="pt-3 mt-3 border-t border-white/15">
-                            <a href="checkin.html" class="bma-nav-item menu-item bg-white/5 hover:bg-white/15">
-                                <i class="fa-solid fa-camera-retro w-5 text-center text-[#F5DE98]"></i>
-                                <span class="flex-1 truncate font-semibold text-white">ไปหน้าลงเวลาปฏิบัติราชการ</span>
+                        <div class="pt-3 mt-3 border-t border-slate-800">
+                            <a href="checkin.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all no-underline">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-sm text-emerald-400 shrink-0">
+                                    <i class="fa-solid fa-camera-retro"></i>
+                                </div>
+                                <span class="flex-1 truncate">ไปหน้าลงเวลาปฏิบัติราชการ</span>
                             </a>
                         </div>
                     </nav>
                 </div>
 
-                <div class="p-4 border-t border-white/15 bg-black/25">
-                    <div class="flex items-center gap-3 mb-3 px-2">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-white text-sm bg-gradient-to-br from-[#C59B27] to-[#D4AF37] shadow shrink-0">
-                            ${String(currentUser.full_name || 'U').charAt(0)}
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="text-sm font-bold truncate text-white">${currentUser.full_name}</p>
-                        </div>
-                    </div>
-                    <button id="btnSidebarLogout" type="button" class="btn-header-logout w-full py-2.5 px-3 text-xs">
+                <!-- Logout Bottom -->
+                <div class="p-4 border-t border-slate-800 bg-[#0B132B]">
+                    <button id="btnSidebarLogout" type="button" class="w-full py-2.5 px-3 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/15 hover:text-rose-300 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>ออกจากระบบ</span>
                     </button>
@@ -299,39 +307,50 @@ export class AppLayout {
         const isDark = document.documentElement.classList.contains('dark');
 
         topbarEl.innerHTML = `
-            <header class="sticky top-0 z-30 bma-header-bar px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+            <header class="sticky top-0 z-30 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200/80 dark:border-slate-800 px-4 lg:px-8 py-3.5 flex items-center justify-between gap-4 shadow-2xs">
                 <div class="flex items-center gap-3 min-w-0">
-                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2.5 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/20 cursor-pointer">
-                        <i class="fa-solid fa-bars-staggered text-lg text-[#F5DE98]"></i>
+                    <button id="btnOpenSidebarMobile" type="button" class="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 cursor-pointer">
+                        <i class="fa-solid fa-bars-staggered text-base"></i>
                     </button>
                     <div class="min-w-0">
-                        <h1 id="topbarPageTitle" class="text-lg lg:text-xl font-extrabold truncate header-title-text">${pageTitle}</h1>
-                        <p id="topbarPageSubtitle" class="text-xs lg:text-sm header-sub-text truncate">${pageSubtitle || ''}</p>
+                        <div class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
+                            <i class="fa-solid fa-house text-[10px]"></i>
+                            <span>/</span>
+                            <span class="text-emerald-700 dark:text-emerald-400 font-bold">${pageTitle}</span>
+                        </div>
+                        <h1 id="topbarPageTitle" class="text-base lg:text-lg font-black text-slate-800 dark:text-white tracking-tight truncate">${pageTitle}</h1>
+                        <p id="topbarPageSubtitle" class="hidden">${pageSubtitle || ''}</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2.5 lg:gap-3 shrink-0">
+                    <div class="relative hidden md:block">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" placeholder="ค้นหาข้อมูล..." class="pl-9 pr-4 py-1.5 text-xs rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-44 lg:w-56 transition-all">
+                    </div>
+
                     <div class="relative" id="notificationBellWrapper">
-                        <button id="btnNotificationBell" type="button" class="relative w-10 h-10 rounded-xl bg-white dark:bg-[#11231B] text-[#004D25] border border-[#C59B27]/60 hover:bg-[#F6FAF7] transition flex items-center justify-center shadow-xs cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
-                            <i class="fa-solid fa-bell text-base text-[#007B3E]"></i>
-                            <span id="topBellBadgeCount" class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shadow border border-white">0</span>
+                        <button id="btnNotificationBell" type="button" class="relative w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition flex items-center justify-center cursor-pointer" title="การแจ้งเตือนรออนุมัติ">
+                            <i class="fa-solid fa-bell text-sm text-[#00744B] dark:text-emerald-400"></i>
+                            <span id="topBellBadgeCount" class="hidden absolute -top-1 -right-1 min-w-[18px] h-4.5 px-1 rounded-full bg-rose-600 text-white text-[10px] font-bold flex items-center justify-center shadow">0</span>
                         </button>
 
-                        <div id="notificationDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bma-card bma-modal-surface p-4 shadow-2xl z-50">
-                            <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b bma-border">
-                                <span class="font-bold text-sm bma-text-main">
-                                    <i class="fa-solid fa-bell text-amber-500 mr-1.5"></i>แจ้งเตือนรออนุมัติตามขอบเขต
+                        <div id="notificationDropdownMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#1E293B] rounded-2xl p-4 shadow-2xl border border-slate-200 dark:border-slate-700 z-50">
+                            <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100 dark:border-slate-700">
+                                <span class="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-bell text-amber-500"></i>
+                                    <span>แจ้งเตือนรออนุมัติ</span>
                                 </span>
-                                <span id="notificationSummaryTag" class="bma-badge bma-badge-warning">0 รายการ</span>
+                                <span id="notificationSummaryTag" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">0 รายการ</span>
                             </div>
-                            <div id="notificationListContainer" class="space-y-2.5 max-h-80 overflow-y-auto text-sm pr-1">
-                                <p class="text-center py-4 bma-text-sub">กำลังตรวจสอบรายการแจ้งเตือน...</p>
+                            <div id="notificationListContainer" class="space-y-2 max-h-72 overflow-y-auto text-xs pr-1">
+                                <p class="text-center py-4 text-slate-400">กำลังตรวจสอบรายการแจ้งเตือน...</p>
                             </div>
                         </div>
                     </div>
 
-                    <button id="btnToggleThemeMode" type="button" class="btn-header-theme text-xs py-2 px-3" title="สลับโหมดถนอมสายตา (Light/Dark Mode)">
-                        <i id="themeModeIcon" class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'} text-sm"></i>
+                    <button id="btnToggleThemeMode" type="button" class="h-9 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-2 transition cursor-pointer" title="สลับโหมดสี">
+                        <i id="themeModeIcon" class="fa-solid ${isDark ? 'fa-sun' : 'fa-moon'} text-amber-500"></i>
                         <span id="themeModeTextLabel" class="hidden sm:inline">${isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา'}</span>
                     </button>
                 </div>
@@ -353,12 +372,12 @@ export class AppLayout {
         ].filter(i => i.show);
 
         mobileNavEl.innerHTML = `
-            <nav class="lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-white/92 dark:bg-[#11231B]/92 backdrop-blur-xl rounded-2xl border border-emerald-600/20 shadow-2xl px-2 py-1.5 flex items-center justify-around pb-[max(0.375rem,env(safe-area-inset-bottom))]">
+            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-2 py-1.5 flex items-center justify-around shadow-lg">
                 ${items.map(item => {
                     const isActive = activePage === item.id;
                     return `
-                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? 'bg-emerald-600/10 text-emerald-700 dark:text-emerald-300' : 'bma-text-sub hover:text-emerald-600'}">
-                            <i class="fa-solid ${item.icon} text-base mb-0.5 ${isActive ? 'text-[#007B3E] dark:text-[#34D399]' : ''}"></i>
+                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
+                            <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
                             <span>${item.label}</span>
                         </a>
                     `;
@@ -557,6 +576,20 @@ export class AppLayout {
                 return;
             }
 
+            const tabBtn = e.target.closest('.settings-tab-btn, [data-tab-target]');
+            if (tabBtn) {
+                const targetId = tabBtn.getAttribute('data-tab-target');
+                if (targetId) {
+                    document.querySelectorAll('.settings-tab-panel').forEach(panel => {
+                        panel.classList.toggle('hidden', panel.id !== targetId);
+                    });
+                    document.querySelectorAll('.settings-tab-btn, [data-tab-target]').forEach(btn => {
+                        const isMatch = btn.getAttribute('data-tab-target') === targetId;
+                        btn.classList.toggle('active', isMatch);
+                    });
+                }
+            }
+
             if (e.target.closest('#btnToggleThemeMode')) {
                 const mode = UIHelpers.toggleTheme();
                 const themeIcon = document.getElementById('themeModeIcon');
@@ -581,17 +614,6 @@ export class AppLayout {
             }
             if (bellMenu && !bellMenu.classList.contains('hidden') && !e.target.closest('#notificationDropdownMenu')) {
                 bellMenu.classList.add('hidden');
-            }
-
-            // Delegated Settings Tab Switcher (Guarantees zero-latency tab switching under AJAX navigation)
-            const tabBtn = e.target.closest('#settingsTabNav label, .settings-tab-btn, [data-tab-target]');
-            if (tabBtn) {
-                const targetId = tabBtn.dataset.tabTarget || tabBtn.getAttribute('for')?.replace('radioTab', 'tab-panel-')?.toLowerCase();
-                if (targetId) {
-                    document.querySelectorAll('.settings-tab-panel').forEach(p => p.classList.add('hidden'));
-                    const panel = document.getElementById(targetId) || document.getElementById(tabBtn.dataset.tabTarget);
-                    if (panel) panel.classList.remove('hidden');
-                }
             }
 
             const anchor = e.target.closest('a[href]');
