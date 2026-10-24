@@ -583,6 +583,17 @@ export class AppLayout {
                 bellMenu.classList.add('hidden');
             }
 
+            // Delegated Settings Tab Switcher (Guarantees zero-latency tab switching under AJAX navigation)
+            const tabBtn = e.target.closest('#settingsTabNav label, .settings-tab-btn, [data-tab-target]');
+            if (tabBtn) {
+                const targetId = tabBtn.dataset.tabTarget || tabBtn.getAttribute('for')?.replace('radioTab', 'tab-panel-')?.toLowerCase();
+                if (targetId) {
+                    document.querySelectorAll('.settings-tab-panel').forEach(p => p.classList.add('hidden'));
+                    const panel = document.getElementById(targetId) || document.getElementById(tabBtn.dataset.tabTarget);
+                    if (panel) panel.classList.remove('hidden');
+                }
+            }
+
             const anchor = e.target.closest('a[href]');
             if (anchor) {
                 const href = anchor.getAttribute('href') || '';

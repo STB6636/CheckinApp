@@ -14,120 +14,369 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
-</head>
-<body class="min-h-screen flex flex-col justify-between">
+    <style>
+        /* Twilight Scenic Background Layers & Shimmer Animations */
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.85); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes meteorTrail {
+            0% { transform: translate(-40px, -40px) scale(0); opacity: 0; }
+            20% { opacity: 1; }
+            70% { opacity: 0.8; }
+            100% { transform: translate(220px, 220px) scale(1.2); opacity: 0; }
+        }
+        @keyframes moonGlowPulse {
+            0%, 100% { filter: drop-shadow(0 0 25px rgba(246, 222, 81, 0.45)); }
+            50% { filter: drop-shadow(0 0 45px rgba(246, 222, 81, 0.75)); }
+        }
+        .star-twinkle-1 { animation: starTwinkle 3s ease-in-out infinite; }
+        .star-twinkle-2 { animation: starTwinkle 4.5s ease-in-out infinite 1.5s; }
+        .star-twinkle-3 { animation: starTwinkle 2.5s ease-in-out infinite 0.7s; }
+        .meteor-animation { animation: meteorTrail 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite; }
+        .moon-glow { animation: moonGlowPulse 5s ease-in-out infinite; }
 
-    <!-- แถบ Header สีเขียว กทม. สวยงาม ตัวอักษรอ่านง่าย + ปุ่มสลับธีมสีเด่นชัด -->
-    <header class="w-full px-4 sm:px-6 py-3 flex items-center justify-between bma-header-bar">
-        <div class="flex items-center gap-2.5 text-xs sm:text-sm font-bold text-white min-w-0">
-            <span class="w-2.5 h-2.5 rounded-full bg-[#C59B27] ring-4 ring-[#C59B27]/30 animate-pulse shrink-0"></span>
-            <span id="headerSystemTitleText" class="truncate tracking-wide">BMA e-Government Time Attendance System</span>
+        /* Split-Card Panoramic Window */
+        .scenic-card-window {
+            background: linear-gradient(180deg, rgba(72, 0, 128, 0.82) 0%, rgba(33, 90, 65, 0.88) 55%, rgba(0, 116, 75, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Material Pill Input Styling */
+        .capsule-input {
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+        .capsule-input:focus {
+            box-shadow: 0 0 0 3px rgba(0, 116, 75, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Hero Login Button Glow */
+        .btn-bma-hero-capsule {
+            background: linear-gradient(135deg, #00744B 0%, #00995D 50%, #00C08A 100%);
+            box-shadow: 0 6px 22px rgba(0, 116, 75, 0.42);
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-bma-hero-capsule:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 26px rgba(0, 116, 75, 0.52);
+            filter: brightness(1.05);
+        }
+        .btn-bma-hero-capsule:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 12px rgba(0, 116, 75, 0.35);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-[#00744B] selection:text-white">
+
+    <!-- ======================================================================
+         Scenic Twilight Sky Full-Screen Background (SVG Artwork inspired by Image 1)
+         Deep Imperial Purple #480080 -> Deep Forest #215A41 -> Primary BMA Green #00744B
+         Faceted Dunes, Moon with Corona Glow, Pinpoint Stars & Bangkok Landmarks
+         ====================================================================== -->
+    <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
+        <svg class="w-full h-full object-cover" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Sky Twilight Gradient: Zenith to Horizon -->
+                <linearGradient id="twilightSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#2D0052" />
+                    <stop offset="22%" stop-color="#480080" />
+                    <stop offset="46%" stop-color="#274438" />
+                    <stop offset="68%" stop-color="#215A41" />
+                    <stop offset="88%" stop-color="#0E4832" />
+                    <stop offset="100%" stop-color="#00744B" />
+                </linearGradient>
+
+                <!-- Moon Radial Corona Glow -->
+                <radialGradient id="moonCoronaGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#F6DE51" stop-opacity="1" />
+                    <stop offset="35%" stop-color="#FFB449" stop-opacity="0.8" />
+                    <stop offset="65%" stop-color="#F6DE51" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="#F6DE51" stop-opacity="0" />
+                </radialGradient>
+
+                <!-- Moon Sphere Gradient -->
+                <linearGradient id="moonSphereGrad" x1="20%" y1="20%" x2="90%" y2="90%">
+                    <stop offset="0%" stop-color="#FFFDF0" />
+                    <stop offset="40%" stop-color="#F6DE51" />
+                    <stop offset="85%" stop-color="#E5C158" />
+                    <stop offset="100%" stop-color="#C59B27" />
+                </linearGradient>
+
+                <!-- Meteor Trail Gradient -->
+                <linearGradient id="meteorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#F6DE51" stop-opacity="0.6" />
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="1" />
+                </linearGradient>
+
+                <!-- Faceted Dunes Gradients -->
+                <linearGradient id="duneShadeDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0D2E20" />
+                    <stop offset="100%" stop-color="#051810" />
+                </linearGradient>
+                <linearGradient id="duneShadeMid" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#164A35" />
+                    <stop offset="100%" stop-color="#0E3324" />
+                </linearGradient>
+                <linearGradient id="duneLight" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#215A41" />
+                    <stop offset="100%" stop-color="#15422F" />
+                </linearGradient>
+                <linearGradient id="duneHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#2F7B59" />
+                    <stop offset="100%" stop-color="#1B553C" />
+                </linearGradient>
+            </defs>
+
+            <!-- Sky Canvas -->
+            <rect width="100%" height="100%" fill="url(#twilightSkyGrad)" />
+
+            <!-- Pinpoint Stars Field -->
+            <g class="stars-layer">
+                <!-- Group 1: Twinkling Silver/White Stars -->
+                <g class="star-twinkle-1">
+                    <circle cx="120" cy="80" r="1.5" fill="#FFFFFF" opacity="0.8" />
+                    <circle cx="280" cy="140" r="1.2" fill="#FFFFFF" opacity="0.65" />
+                    <circle cx="450" cy="95" r="2" fill="#FFFFFF" opacity="0.9" />
+                    <circle cx="620" cy="180" r="1" fill="#FFFFFF" opacity="0.5" />
+                    <circle cx="780" cy="70" r="1.8" fill="#FFFFFF" opacity="0.75" />
+                    <circle cx="940" cy="130" r="1.3" fill="#FFFFFF" opacity="0.85" />
+                    <circle cx="1120" cy="90" r="2" fill="#FFFFFF" opacity="0.9" />
+                    <circle cx="1310" cy="160" r="1.1" fill="#FFFFFF" opacity="0.6" />
+                    <circle cx="1490" cy="85" r="1.6" fill="#FFFFFF" opacity="0.8" />
+                    <circle cx="1680" cy="140" r="2.2" fill="#FFFFFF" opacity="0.95" />
+                    <circle cx="1840" cy="100" r="1.4" fill="#FFFFFF" opacity="0.7" />
+                </g>
+                <!-- Group 2: Twinkling Golden Stars -->
+                <g class="star-twinkle-2">
+                    <circle cx="210" cy="220" r="1.4" fill="#F6DE51" opacity="0.8" />
+                    <circle cx="390" cy="270" r="1" fill="#F6DE51" opacity="0.6" />
+                    <circle cx="560" cy="210" r="1.7" fill="#F6DE51" opacity="0.85" />
+                    <circle cx="890" cy="260" r="1.2" fill="#F6DE51" opacity="0.75" />
+                    <circle cx="1060" cy="200" r="1.8" fill="#F6DE51" opacity="0.9" />
+                    <circle cx="1240" cy="240" r="1.3" fill="#F6DE51" opacity="0.7" />
+                    <circle cx="1580" cy="220" r="1.5" fill="#F6DE51" opacity="0.85" />
+                    <circle cx="1760" cy="260" r="1.1" fill="#F6DE51" opacity="0.65" />
+                </g>
+                <!-- Group 3: Subtle Micro Stars -->
+                <g class="star-twinkle-3">
+                    <circle cx="90" cy="340" r="0.9" fill="#E2E8F0" opacity="0.5" />
+                    <circle cx="320" cy="380" r="1" fill="#E2E8F0" opacity="0.55" />
+                    <circle cx="710" cy="350" r="1.1" fill="#E2E8F0" opacity="0.6" />
+                    <circle cx="1180" cy="370" r="0.8" fill="#E2E8F0" opacity="0.45" />
+                    <circle cx="1420" cy="320" r="1.2" fill="#E2E8F0" opacity="0.6" />
+                    <circle cx="1880" cy="360" r="1" fill="#E2E8F0" opacity="0.5" />
+                </g>
+            </g>
+
+            <!-- Celestial Golden Moon with Radial Corona -->
+            <g class="moon-glow" transform="translate(1520, 160)">
+                <!-- Outer Corona -->
+                <circle cx="0" cy="0" r="110" fill="url(#moonCoronaGrad)" />
+                <circle cx="0" cy="0" r="70" fill="url(#moonCoronaGrad)" opacity="0.85" />
+                <!-- Moon Sphere -->
+                <circle cx="0" cy="0" r="44" fill="url(#moonSphereGrad)" />
+                <!-- Subtle Moon Surface Texture -->
+                <circle cx="-12" cy="-10" r="7" fill="#E5C158" opacity="0.35" />
+                <circle cx="8" cy="14" r="10" fill="#E5C158" opacity="0.28" />
+                <circle cx="16" cy="-8" r="5" fill="#E5C158" opacity="0.25" />
+            </g>
+
+            <!-- Shooting Stars / Meteor Trails -->
+            <g class="meteor-animation" transform="translate(180, 40)">
+                <line x1="0" y1="0" x2="160" y2="130" stroke="url(#meteorGrad)" stroke-width="2.5" stroke-linecap="round" />
+            </g>
+            <g class="meteor-animation" style="animation-delay: 3.8s;" transform="translate(1100, 20)">
+                <line x1="0" y1="0" x2="140" y2="110" stroke="url(#meteorGrad)" stroke-width="2" stroke-linecap="round" />
+            </g>
+
+            <!-- Bangkok Architectural Landmark Silhouette (Wat Arun Prang on Horizon) -->
+            <g opacity="0.28" fill="#0D2E20" transform="translate(1380, 560)">
+                <!-- Central Prang -->
+                <polygon points="120,40 123,80 126,120 132,160 138,200 102,200 108,160 114,120 117,80" />
+                <polygon points="115,20 125,20 120,0" />
+                <!-- Left Minor Prang -->
+                <polygon points="60,90 62,130 66,170 70,200 50,200 54,170 58,130" />
+                <!-- Right Minor Prang -->
+                <polygon points="180,90 182,130 186,170 190,200 170,200 174,170 178,130" />
+                <!-- Mondop Base -->
+                <rect x="40" y="200" width="160" height="40" rx="3" />
+            </g>
+
+            <!-- Layer 1: Background Dunes (Dark Forest Facets) -->
+            <path d="M 0,680 L 320,610 L 640,650 L 980,590 L 1320,640 L 1640,580 L 1920,630 L 1920,1080 L 0,1080 Z" fill="url(#duneShadeDark)" opacity="0.9" />
+
+            <!-- Layer 2: Midground Faceted Dunes (Light and Shadow Geometry) -->
+            <g opacity="0.95">
+                <!-- Ridge 1 -->
+                <polygon points="0,740 380,670 720,760 0,840" fill="url(#duneHighlight)" />
+                <polygon points="380,670 720,760 1120,680 760,820" fill="url(#duneShadeMid)" />
+                <!-- Ridge 2 -->
+                <polygon points="720,760 1120,680 1480,750 1100,860" fill="url(#duneLight)" />
+                <polygon points="1120,680 1480,750 1920,660 1560,830" fill="url(#duneShadeDark)" />
+                <polygon points="1480,750 1920,660 1920,780 1560,830" fill="url(#duneHighlight)" />
+            </g>
+
+            <!-- Layer 3: Foreground Faceted Dunes (Rich Primary Emerald & Depth) -->
+            <g>
+                <polygon points="0,830 460,740 860,860 0,980" fill="url(#duneHighlight)" />
+                <polygon points="460,740 860,860 1340,750 820,960" fill="url(#duneShadeMid)" />
+                <polygon points="860,860 1340,750 1760,850 1280,990" fill="url(#duneLight)" />
+                <polygon points="1340,750 1760,850 1920,790 1920,1080 1280,990" fill="url(#duneShadeDark)" />
+                <polygon points="0,960 520,850 1020,980 0,1080" fill="url(#duneLight)" />
+                <polygon points="520,850 1020,980 1620,880 1920,1080 0,1080" fill="url(#duneShadeDark)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- ======================================================================
+         Topbar: Civic Title & Theme Mode Switcher
+         ====================================================================== -->
+    <header class="w-full px-4 sm:px-8 py-3.5 flex items-center justify-between relative z-20 bg-black/25 backdrop-blur-md border-b border-white/10 shadow-sm">
+        <div class="flex items-center gap-3 min-w-0">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#F6DE51] ring-4 ring-[#F6DE51]/30 animate-pulse shrink-0"></span>
+            <span id="headerSystemTitleText" class="text-xs sm:text-sm font-extrabold text-white tracking-wide truncate drop-shadow-sm">
+                BMA e-Government Time Attendance System
+            </span>
         </div>
-        <button id="btnLoginThemeToggle" type="button" class="btn-header-theme text-xs shrink-0 font-bold">
-            <i id="loginThemeIcon" class="fa-solid fa-moon"></i>
+        <button id="btnLoginThemeToggle" type="button" class="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold transition flex items-center gap-2 backdrop-blur-xs cursor-pointer shadow-sm active:scale-95">
+            <i id="loginThemeIcon" class="fa-solid fa-moon text-[#F6DE51]"></i>
             <span id="loginThemeLabel">โหมดถนอมสายตา</span>
         </button>
     </header>
 
-    <!-- ส่วนกลางหน้าจอ: หน้าต่างเข้าสู่ระบบ -->
-    <main class="flex-1 flex items-center justify-center px-4 py-8">
-        <div class="w-full max-w-4xl bma-card overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl border border-[#007B3E]/30 rounded-2xl">
+    <!-- ======================================================================
+         Main Stage: Centered Floating Split-Card (Image 1 Scenic Twilight Card)
+         Upper Section: Panoramic Twilight Window with Gold Medallion Emblem
+         Lower Section: Crisp White Surface with Pill Inputs & Hero Capsule Button
+         ====================================================================== -->
+    <main class="flex-1 flex items-center justify-center px-4 py-8 relative z-10">
+        <div class="w-full max-w-[440px] rounded-3xl shadow-2xl border border-white/20 backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,116,75,0.35)]">
 
-            <!-- เฉพาะหน้าจอมือถือ (Mobile Rectangular Compact Header): แสดงเฉพาะโลโก้ + ชื่อระบบ -->
-            <div class="flex md:hidden items-center gap-3.5 px-5 py-4 bma-mobile-login-header">
-                <div id="mobileOrgLogoWrapper" class="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-md border-2 border-[#D4AF37] shrink-0">
-                    <i class="fa-solid fa-landmark text-xl text-[#00351B]"></i>
+            <!-- UPPER SECTION: Panoramic Window Framing Twilight Sky & Emblem -->
+            <div class="scenic-card-window pt-8 pb-7 px-6 text-center text-white flex flex-col items-center relative border-b border-white/15">
+                <!-- Subtle Mini Moon in Panoramic Window -->
+                <div class="absolute top-4 right-5 w-8 h-8 rounded-full bg-gradient-to-tr from-[#F6DE51] to-[#FFFDF0] opacity-80 shadow-[0_0_15px_rgba(246,222,81,0.6)] pointer-events-none"></div>
+
+                <!-- Subtle Shooting Star in Panoramic Window -->
+                <div class="absolute top-7 left-6 w-20 h-[1.5px] bg-gradient-to-r from-transparent via-[#F6DE51] to-white opacity-60 rotate-[22deg] pointer-events-none"></div>
+
+                <!-- Civic Tag -->
+                <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-black/40 border border-[#F6DE51]/40 text-[#F6DE51] text-[11px] font-bold mb-4 shadow-sm backdrop-blur-xs">
+                    <i class="fa-solid fa-shield-halved text-[#F6DE51]"></i>
+                    <span>ระบบสารสนเทศภาครัฐ • BMA Civic Portal</span>
                 </div>
-                <div class="min-w-0">
-                    <h1 class="text-base font-extrabold text-white truncate leading-tight">ระบบลงเวลาปฏิบัติราชการ</h1>
-                    <p class="text-xs font-semibold text-[#F5DE98] truncate mt-0.5">
-                        <span id="mobileOrgNameText">กรุงเทพมหานคร</span> • <span id="mobileBureauNameText">สำนักเทศกิจ</span>
-                    </p>
+
+                <!-- BMA Medallion Emblem Box (#orgLogoWrapper) -->
+                <div class="mb-3.5 relative">
+                    <div id="orgLogoWrapper" class="w-20 h-20 rounded-2xl bg-white/95 p-2 flex items-center justify-center shadow-xl border-2 border-[#D4AF37] ring-4 ring-[#F6DE51]/20">
+                        <i class="fa-solid fa-landmark text-3xl text-[#00744B]"></i>
+                    </div>
+                </div>
+
+                <!-- System Main Title -->
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white drop-shadow-md">
+                    ระบบลงเวลาปฏิบัติราชการ
+                </h1>
+
+                <!-- Gold Accent Line -->
+                <div class="w-14 h-1 rounded-full bg-gradient-to-r from-[#F6DE51] via-[#FFB449] to-[#00C08A] my-2.5 shadow-sm"></div>
+
+                <!-- Organization & Bureau Names -->
+                <p id="orgNameText" class="text-sm font-bold text-emerald-100 drop-shadow-xs">กรุงเทพมหานคร</p>
+                <p id="bureauNameText" class="text-xs font-semibold text-[#F6DE51] mt-0.5 drop-shadow-xs">สำนักเทศกิจ</p>
+
+                <!-- Hidden Contract Preservation for Mobile IDs (Prevents null reference in LoginController) -->
+                <div class="hidden" aria-hidden="true">
+                    <div id="mobileOrgLogoWrapper"></div>
+                    <span id="mobileOrgNameText">กรุงเทพมหานคร</span>
+                    <span id="mobileBureauNameText">สำนักเทศกิจ</span>
                 </div>
             </div>
 
-            <!-- เฉพาะหน้าจอ Desktop/Tablet (md ขึ้นไป): แผงซ้าย Split-View Brand Panel (ตัดข้อความ 3 บรรทัดล่างออก และปรับขนาดชื่อระบบไม่ให้ขึ้นบรรทัดใหม่) -->
-            <div class="hidden md:flex md:col-span-5 bma-brand-panel p-8 lg:p-9 flex-col justify-center items-center text-center text-white relative">
-                <div class="relative z-10 flex flex-col items-center">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/40 border border-[#D4AF37]/50 text-[#F5DE98] text-xs font-bold mb-6 shadow-sm backdrop-blur-xs">
-                        <i class="fa-solid fa-shield-halved text-[#D4AF37]"></i>
-                        <span>ระบบสารสนเทศภาครัฐ</span>
+            <!-- LOWER SECTION: Crisp White Surface Form Container -->
+            <div class="bg-white dark:bg-[#11231B] p-6 sm:p-8 flex flex-col justify-center transition-colors">
+                <div class="mb-5 text-center sm:text-left">
+                    <div class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#00744B] dark:text-[#34D399] border border-emerald-200 dark:border-emerald-800/40 mb-1.5">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Authentication Portal</span>
                     </div>
-
-                    <div class="mb-5">
-                        <div id="orgLogoWrapper" class="w-24 h-24 rounded-2xl bg-white p-2.5 flex items-center justify-center shadow-2xl border-2 border-[#D4AF37]">
-                            <i class="fa-solid fa-landmark text-4xl text-[#00351B]"></i>
-                        </div>
-                    </div>
-
-                    <!-- ปรับขนาดตัวอักษรให้พอดีในบรรทัดเดียว ไม่ใหญ่จนตกบรรทัด -->
-                    <h1 class="text-lg lg:text-xl font-extrabold tracking-tight text-white whitespace-nowrap drop-shadow">
-                        ระบบลงเวลาปฏิบัติราชการ
-                    </h1>
-                    <div class="w-16 h-1 rounded-full bg-gradient-to-r from-[#C59B27] to-[#D4AF37] my-3.5 shadow-sm"></div>
-                    <p id="orgNameText" class="text-base font-bold text-emerald-100">กรุงเทพมหานคร</p>
-                    <p id="bureauNameText" class="text-sm font-semibold text-[#F5DE98] mt-1">สำนักเทศกิจ</p>
-                </div>
-            </div>
-
-            <!-- ฝั่งขวา: ฟอร์มเข้าสู่ระบบ -->
-            <div class="md:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-center bma-login-form-panel">
-                <div class="mb-6">
-                    <div class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bma-badge-success mb-2">
-                        <i class="fa-solid fa-lock text-[#007B3E]"></i> Authentication Portal
-                    </div>
-                    <h2 class="text-xl sm:text-2xl font-extrabold bma-text-main">เข้าสู่ระบบใช้งาน</h2>
-                    <p class="text-xs sm:text-sm bma-text-sub mt-1">กรอกชื่อบัญชีผู้ใช้งาน (หรือเลขบัตรประชาชน 13 หลัก) และรหัสผ่าน</p>
+                    <h2 class="text-xl font-extrabold text-[#0C1E14] dark:text-[#F1F5F9]">เข้าสู่ระบบปฏิบัติงาน</h2>
+                    <p class="text-xs text-[#537564] dark:text-[#759987] mt-0.5">กรอกชื่อบัญชีผู้ใช้งาน (หรือเลขบัตรประชาชน 13 หลัก) และรหัสผ่าน</p>
                 </div>
 
+                <!-- Form Element with All Inputs -->
                 <form id="loginForm" class="space-y-4" onsubmit="return false;">
+                    <!-- Username / 13-digit National ID Input -->
                     <div>
-                        <label for="loginUsername" class="block text-sm font-bold bma-text-main mb-1.5">
+                        <label for="loginUsername" class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1.5">
                             ชื่อบัญชีผู้ใช้งาน / เลขบัตรประจำตัวประชาชน 13 หลัก
                         </label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
-                                <i class="fa-solid fa-user" style="color: var(--bma-primary);"></i>
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#00744B] dark:text-[#34D399]">
+                                <i class="fa-solid fa-user text-sm"></i>
                             </span>
-                            <input type="text" id="loginUsername" class="bma-input pl-10 font-medium" placeholder="กรอกชื่อบัญชีผู้ใช้งาน หรือเลขบัตร 13 หลัก" required autocomplete="username">
+                            <input type="text" id="loginUsername" class="capsule-input w-full rounded-full pl-10 pr-4 py-3 text-sm font-medium bg-slate-50 dark:bg-[#183025] text-[#0C1E14] dark:text-[#F1F5F9] border border-slate-200 dark:border-[#244737] focus:outline-none focus:border-[#00744B] dark:focus:border-[#34D399]" placeholder="กรอกชื่อบัญชี หรือเลขบัตร 13 หลัก" required autocomplete="username">
                         </div>
                     </div>
 
+                    <!-- Password Input with Toggle Button -->
                     <div>
-                        <label for="loginPassword" class="block text-sm font-bold bma-text-main mb-1.5">
+                        <label for="loginPassword" class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1.5">
                             รหัสผ่าน (Password)
                         </label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
-                                <i class="fa-solid fa-lock" style="color: var(--bma-primary);"></i>
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#00744B] dark:text-[#34D399]">
+                                <i class="fa-solid fa-lock text-sm"></i>
                             </span>
-                            <input type="password" id="loginPassword" class="bma-input pl-10 pr-10 font-medium" placeholder="กรอกรหัสผ่าน" required autocomplete="current-password">
-                            <button type="button" id="btnToggleLoginPwd" class="absolute inset-y-0 right-0 pr-3.5 flex items-center bma-text-sub hover:text-emerald-600 cursor-pointer">
-                                <i class="fa-solid fa-eye"></i>
+                            <input type="password" id="loginPassword" class="capsule-input w-full rounded-full pl-10 pr-11 py-3 text-sm font-medium bg-slate-50 dark:bg-[#183025] text-[#0C1E14] dark:text-[#F1F5F9] border border-slate-200 dark:border-[#244737] focus:outline-none focus:border-[#00744B] dark:focus:border-[#34D399]" placeholder="กรอกรหัสผ่าน" required autocomplete="current-password">
+                            <button type="button" id="btnToggleLoginPwd" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-[#00744B] dark:hover:text-[#34D399] transition cursor-pointer" title="แสดง/ซ่อนรหัสผ่าน">
+                                <i class="fa-solid fa-eye text-sm"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between pt-1 text-xs font-bold">
-                        <button type="button" id="btnOpenChangePwdModal" class="hover:underline flex items-center gap-1.5 cursor-pointer" style="color: var(--bma-primary);">
-                            <i class="fa-solid fa-key"></i>
-                            <span>เปลี่ยนรหัสผ่านด้วยตนเอง</span>
-                        </button>
-                        <button type="button" id="btnOpenForgotPwdModal" class="text-rose-600 hover:underline flex items-center gap-1.5 cursor-pointer">
+                    <!-- Utility Row: Remember Me Pill Toggle & Forgot Password Link -->
+                    <div class="flex items-center justify-between pt-1 text-xs">
+                        <!-- Modern Pill Toggle Switch for Remember Me -->
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none text-[#537564] dark:text-[#759987] font-semibold hover:text-[#0C1E14] dark:hover:text-white transition">
+                            <div class="relative">
+                                <input type="checkbox" id="chkRememberMe" class="sr-only peer">
+                                <div class="w-8 h-4 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#00744B] dark:peer-checked:bg-[#00C08A]"></div>
+                            </div>
+                            <span>จดจำฉัน</span>
+                        </label>
+
+                        <!-- Forgot Password Button (#btnOpenForgotPwdModal) -->
+                        <button type="button" id="btnOpenForgotPwdModal" class="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-bold hover:underline inline-flex items-center gap-1 cursor-pointer transition">
                             <i class="fa-solid fa-circle-question"></i>
                             <span>ลืมรหัสผ่าน?</span>
                         </button>
                     </div>
 
-                    <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <button type="button" id="btnLoginCheckin" class="btn-bma-primary w-full py-3.5 text-sm shadow-lg font-bold rounded-xl flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-fingerprint text-base text-[#F5DE98]"></i>
+                    <!-- Action Buttons: Primary Capsule & Secondary Pill -->
+                    <div class="pt-2 space-y-2.5">
+                        <!-- Primary Capsule Button (#btnLoginCheckin) -->
+                        <button type="button" id="btnLoginCheckin" class="btn-bma-hero-capsule w-full py-3.5 px-6 rounded-full text-white font-extrabold text-sm tracking-wide flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-fingerprint text-lg text-[#F6DE51]"></i>
                             <span>เข้าสู่ระบบลงเวลา</span>
                         </button>
 
-                        <button type="button" id="btnLoginAdmin" class="btn-bma-soft w-full py-3.5 text-sm font-bold rounded-xl flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-user-shield"></i>
+                        <!-- Secondary Pill Button (#btnLoginAdmin) -->
+                        <button type="button" id="btnLoginAdmin" class="w-full py-2.5 px-5 rounded-full font-bold text-xs tracking-wide border border-[#00744B]/30 hover:border-[#00744B] text-[#00744B] dark:text-[#A7F3D0] bg-[#00744B]/5 hover:bg-[#00744B]/10 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/40 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-user-shield text-[#00744B] dark:text-[#A7F3D0]"></i>
                             <span>เข้าสู่ระบบผู้ดูแลระบบ</span>
+                        </button>
+                    </div>
+
+                    <!-- Self-Service Password Change Link (#btnOpenChangePwdModal) -->
+                    <div class="text-center pt-2">
+                        <button type="button" id="btnOpenChangePwdModal" class="text-xs font-bold text-[#00744B] dark:text-[#34D399] hover:underline inline-flex items-center gap-1.5 cursor-pointer transition">
+                            <i class="fa-solid fa-key"></i>
+                            <span>เปลี่ยนรหัสผ่านด้วยตนเอง</span>
                         </button>
                     </div>
                 </form>
@@ -135,41 +384,45 @@
         </div>
     </main>
 
-    <!-- Modal 1: เปลี่ยนรหัสผ่านด้วยตนเอง -->
+    <!-- ======================================================================
+         Modal 1: เปลี่ยนรหัสผ่านด้วยตนเอง (#modalChangePassword)
+         ====================================================================== -->
     <div id="modalChangePassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
-                <h3 class="text-lg font-bold bma-text-main flex items-center gap-2">
-                    <i class="fa-solid fa-key" style="color: var(--bma-primary);"></i>
+        <div class="w-full max-w-md bg-white dark:bg-[#11231B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-emerald-900/20 dark:border-emerald-800/40">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#244737]">
+                <h3 class="text-base font-extrabold text-[#0C1E14] dark:text-[#F1F5F9] flex items-center gap-2">
+                    <i class="fa-solid fa-key text-[#00744B] dark:text-[#34D399]"></i>
                     <span>เปลี่ยนรหัสผ่านใหม่ด้วยตนเอง</span>
                 </h3>
-                <button type="button" id="btnCloseChangePwdModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
-                    <i class="fa-solid fa-xmark"></i>
+                <button type="button" id="btnCloseChangePwdModal" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
             <form id="formChangePassword" class="space-y-3.5">
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">ชื่อบัญชีผู้ใช้งาน / เลขบัตรประชาชน 13 หลัก *</label>
-                    <input type="text" id="cpUsername" class="bma-input" placeholder="ระบุ Username หรือเลขบัตรประชาชน 13 หลัก" required>
+                    <label class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1">ชื่อบัญชีผู้ใช้งาน / เลขบัตรประชาชน 13 หลัก *</label>
+                    <input type="text" id="cpUsername" class="bma-input rounded-xl" placeholder="ระบุ Username หรือเลขบัตรประชาชน 13 หลัก" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">รหัสผ่านเก่า *</label>
-                    <input type="password" id="cpOldPassword" class="bma-input" placeholder="กรอกรหัสผ่านปัจจุบัน" required>
+                    <label class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1">รหัสผ่านเก่า *</label>
+                    <input type="password" id="cpOldPassword" class="bma-input rounded-xl" placeholder="กรอกรหัสผ่านปัจจุบัน" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">รหัสผ่านใหม่ *</label>
-                    <input type="password" id="cpNewPassword" class="bma-input" placeholder="กำหนดรหัสผ่านใหม่ (อย่างน้อย 4 ตัวอักษร)" required>
+                    <label class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1">รหัสผ่านใหม่ *</label>
+                    <input type="password" id="cpNewPassword" class="bma-input rounded-xl" placeholder="กำหนดรหัสผ่านใหม่ (อย่างน้อย 4 ตัวอักษร)" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">ยืนยันรหัสผ่านใหม่อีกครั้ง *</label>
-                    <input type="password" id="cpConfirmPassword" class="bma-input" placeholder="กรอกรหัสผ่านใหม่อีกครั้งให้ตรงกัน" required>
+                    <label class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1">ยืนยันรหัสผ่านใหม่อีกครั้ง *</label>
+                    <input type="password" id="cpConfirmPassword" class="bma-input rounded-xl" placeholder="กรอกรหัสผ่านใหม่อีกครั้งให้ตรงกัน" required>
                     <p id="cpMatchStatus" class="text-xs mt-1 hidden"></p>
                 </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
-                    <button type="button" id="btnCancelChangePwd" class="btn-bma-outline text-sm">ยกเลิก</button>
-                    <button type="submit" id="btnSubmitChangePwd" class="btn-bma-primary text-sm" disabled>
+                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#244737]">
+                    <button type="button" id="btnCancelChangePwd" class="px-4 py-2 rounded-full text-xs font-bold border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="btnSubmitChangePwd" class="px-5 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md hover:brightness-105 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer" disabled>
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>บันทึกรหัสผ่านใหม่</span>
                     </button>
@@ -178,32 +431,36 @@
         </div>
     </div>
 
-    <!-- Modal 2: ลืมรหัสผ่าน -->
+    <!-- ======================================================================
+         Modal 2: ลืมรหัสผ่าน (#modalForgotPassword)
+         ====================================================================== -->
     <div id="modalForgotPassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-md bma-card bma-modal-surface p-6 shadow-2xl">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
-                <h3 class="text-lg font-bold bma-text-main flex items-center gap-2">
+        <div class="w-full max-w-md bg-white dark:bg-[#11231B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-emerald-900/20 dark:border-emerald-800/40">
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-[#244737]">
+                <h3 class="text-base font-extrabold text-[#0C1E14] dark:text-[#F1F5F9] flex items-center gap-2">
                     <i class="fa-solid fa-unlock-keyhole text-rose-500"></i>
                     <span>แจ้งลืมรหัสผ่าน</span>
                 </h3>
-                <button type="button" id="btnCloseForgotPwdModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
-                    <i class="fa-solid fa-xmark"></i>
+                <button type="button" id="btnCloseForgotPwdModal" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
             <form id="formForgotPassword" class="space-y-4">
-                <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs bma-text-main leading-relaxed">
+                <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-[#0C1E14] dark:text-[#F1F5F9] leading-relaxed">
                     กรอกหมายเลขบัตรประจำตัวประชาชน 13 หลักของท่านเพื่อส่งคำขอไปยังผู้ดูแลระบบ เมื่อผู้ดูแลระบบกดอนุมัติแล้ว รหัสผ่านของท่านจะถูกรีเซ็ตกลับเป็น <b>หมายเลข 6 ตัวท้ายของบัตรประชาชน</b>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">หมายเลขบัตรประจำตัวประชาชน 13 หลัก *</label>
-                    <input type="text" id="fpNationalId" maxlength="13" class="bma-input tracking-widest font-bold text-center text-base" placeholder="XXXXXXXXXXXXX" required>
+                    <label class="block text-xs font-bold text-[#0C1E14] dark:text-[#F1F5F9] mb-1">หมายเลขบัตรประจำตัวประชาชน 13 หลัก *</label>
+                    <input type="text" id="fpNationalId" maxlength="13" class="bma-input rounded-xl tracking-widest font-mono font-bold text-center text-base" placeholder="XXXXXXXXXXXXX" required>
                 </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t bma-border">
-                    <button type="button" id="btnCancelForgotPwd" class="btn-bma-outline text-sm">ยกเลิก</button>
-                    <button type="submit" class="btn-bma-primary text-sm">
+                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-[#244737]">
+                    <button type="button" id="btnCancelForgotPwd" class="px-4 py-2 rounded-full text-xs font-bold border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="btnSubmitForgotPwd" class="px-5 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md hover:brightness-105 transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>ส่งคำขอรีเซ็ตรหัสผ่าน</span>
                     </button>
@@ -212,15 +469,17 @@
         </div>
     </div>
 
-    <!-- แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่ายชัดเจน -->
-    <footer class="w-full py-3.5 px-6 bma-footer-bar text-center">
+    <!-- ======================================================================
+         Footer: Civic Information & Organization Branding
+         ====================================================================== -->
+    <footer class="w-full py-4 px-6 relative z-20 text-center bg-black/35 backdrop-blur-md border-t border-white/10 text-xs text-white/90 shadow-md">
         <div class="text-xs">
             <span>ระบบลงเวลาปฏิบัติราชการ • </span>
             <span id="footerOrgName" class="font-bold text-white">กรุงเทพมหานคร</span>
             <span> • สังกัด </span>
-            <span id="footerBureauName" class="footer-highlight">สำนักเทศกิจ</span>
+            <span id="footerBureauName" class="font-bold text-[#F6DE51]">สำนักเทศกิจ</span>
         </div>
-        <div id="footerDescriptionText" class="text-[11px] footer-desc-line mt-0.5">
+        <div id="footerDescriptionText" class="text-[11px] text-white/70 mt-1">
             ระบบบันทึกเวลาปฏิบัติราชการอิเล็กทรอนิกส์ เพื่อการบริหารงานบุคคลที่มีประสิทธิภาพ
         </div>
     </footer>

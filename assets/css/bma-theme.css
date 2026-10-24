@@ -29,7 +29,7 @@
     --hd3: #4EBA6F;
 
     /* Brand & Primary Colors (Light Mode) */
-    --bma-primary: #007B3E;
+    --bma-primary: #00744B;
     --bma-primary-hover: #005B2E;
     --bma-primary-light: #4EBA6F;
     --bma-primary-soft: rgba(0, 123, 62, 0.12);
@@ -566,10 +566,10 @@ html.dark .bma-badge-pastel-purple {
  * Deep Emerald Sidebar (.sidebar-dark-bma) & Menu Items
  * ============================================================================ */
 .sidebar-dark-bma {
-    background-color: #002510 !important;
+    background-color: #215A41 !important;
     background-image:
         url('../images/thai-pattern-gold.svg'),
-        linear-gradient(180deg, #001F0D 0%, #003819 50%, #004D25 100%) !important;
+        linear-gradient(180deg, #184230 0%, #215A41 100%) !important;
     background-size: 140px 140px, 100% 100% !important;
     color: #FFFFFF;
     border-right: 1px solid rgba(212, 175, 55, 0.22) !important;
@@ -601,16 +601,16 @@ html.dark .bma-badge-pastel-purple {
 
 .sidebar-dark-bma .bma-nav-item.active,
 .sidebar-dark-bma .menu-item.active {
-    background: linear-gradient(90deg, rgba(197, 155, 39, 0.22) 0%, rgba(255, 255, 255, 0.10) 100%);
+    background: linear-gradient(90deg, #00744B 0%, #00C08A 100%) !important;
     color: #FFFFFF;
     font-weight: 700;
-    border-left: 4px solid var(--gold-bma-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left: none !important;
+    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
 }
 
 .sidebar-dark-bma .bma-nav-item.active i,
 .sidebar-dark-bma .menu-item.active i {
-    color: var(--gold-bma-pale);
+    color: #FFFFFF !important;
 }
 
 /* ============================================================================
@@ -1105,4 +1105,221 @@ html.dark .bma-textarea {
     border-radius: 50%;
     background-color: var(--bma-primary);
     animation: bmaRadarPulse 2s infinite;
+}
+
+/* ============================================================================
+ * Creative Tim Material Dashboard PRO Architecture & 9 BMA Civic Colors
+ * ============================================================================ */
+
+:root {
+    /* --- 9 BMA Civic Colors (Extracted from Image 2) --- */
+    --bma-c-primary: #00744B;     /* Primary BMA Green */
+    --bma-c-sec-1: #215A41;       /* Dark Forest */
+    --bma-c-sec-2: #66A33A;       /* Leaf Olive */
+    --bma-c-sec-3: #00C08A;       /* Mint Teal */
+    --bma-c-sec-4: #FFB449;       /* Warm Amber */
+    --bma-c-sec-5: #F6DE51;       /* Golden Sunglow */
+    --bma-c-sec-6: #0971CE;       /* Royal Sapphire Blue */
+    --bma-c-sec-7: #EB3DA9;       /* Berry Magenta */
+    --bma-c-sec-8: #480080;       /* Imperial Purple */
+}
+
+/* 1. Floating Card Containers */
+.material-card {
+    position: relative;
+    border-radius: 1.25rem; /* rounded-2xl */
+    background: #FFFFFF;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px -2px rgba(0, 77, 37, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+    margin-top: 2rem;
+    overflow: visible !important;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+html.dark .material-card {
+    background: #11231B;
+    border-color: rgba(6, 78, 59, 0.4);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+.material-card:hover {
+    box-shadow: 0 16px 32px -4px rgba(0, 77, 37, 0.12), 0 6px 12px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* 2. Floating Card Headers with Colored Linear Gradients & Matching Shadows */
+.material-floating-header {
+    position: relative;
+    margin-top: -1.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 1.15rem 1.35rem;
+    border-radius: 0.875rem; /* rounded-xl */
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+@media (min-width: 640px) {
+    .material-floating-header {
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
+        padding: 1.25rem 1.65rem;
+    }
+}
+
+.header-grad-green {
+    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
+}
+.header-grad-blue {
+    background: linear-gradient(195deg, #0971CE, #0284C7) !important;
+    box-shadow: 0 4px 20px 0 rgba(9, 113, 206, 0.38) !important;
+}
+.header-grad-amber {
+    background: linear-gradient(195deg, #FFB449, #F6DE51) !important;
+    box-shadow: 0 4px 20px 0 rgba(255, 180, 73, 0.38) !important;
+}
+.header-grad-magenta {
+    background: linear-gradient(195deg, #EB3DA9, #BE123C) !important;
+    box-shadow: 0 4px 20px 0 rgba(235, 61, 169, 0.38) !important;
+}
+.header-grad-purple {
+    background: linear-gradient(195deg, #480080, #7C3AED) !important;
+    box-shadow: 0 4px 20px 0 rgba(72, 0, 128, 0.38) !important;
+}
+
+/* 3. Offset Floating Icon Stat Boxes */
+.material-stat-card {
+    position: relative;
+    border-radius: 1.25rem;
+    background: #FFFFFF;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px -2px rgba(0, 77, 37, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    padding-top: 0;
+    overflow: visible !important;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+html.dark .material-stat-card {
+    background: #11231B;
+    border-color: rgba(6, 78, 59, 0.4);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+.material-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px -4px rgba(0, 77, 37, 0.14), 0 6px 12px -2px rgba(0, 0, 0, 0.06);
+}
+.material-stat-icon-box {
+    width: 4rem; /* 64px */
+    height: 4rem;
+    margin-top: -1.75rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+.material-stat-card:hover .material-stat-icon-box {
+    transform: translateY(-2px) scale(1.05);
+}
+
+.stat-icon-mint {
+    background: linear-gradient(195deg, #00C08A, #00744B) !important;
+    box-shadow: 0 4px 20px 0 rgba(0, 192, 138, 0.38) !important;
+}
+.stat-icon-green {
+    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    box-shadow: 0 4px 20px 0 rgba(0, 116, 75, 0.38) !important;
+}
+.stat-icon-amber {
+    background: linear-gradient(195deg, #FFB449, #F6DE51) !important;
+    box-shadow: 0 4px 20px 0 rgba(255, 180, 73, 0.38) !important;
+}
+.stat-icon-magenta {
+    background: linear-gradient(195deg, #EB3DA9, #BE123C) !important;
+    box-shadow: 0 4px 20px 0 rgba(235, 61, 169, 0.38) !important;
+}
+.stat-icon-blue {
+    background: linear-gradient(195deg, #0971CE, #0284C7) !important;
+    box-shadow: 0 4px 20px 0 rgba(9, 113, 206, 0.38) !important;
+}
+.stat-icon-purple {
+    background: linear-gradient(195deg, #480080, #7C3AED) !important;
+    box-shadow: 0 4px 20px 0 rgba(72, 0, 128, 0.38) !important;
+}
+.stat-icon-leaf {
+    background: linear-gradient(195deg, #66A33A, #4E8027) !important;
+    box-shadow: 0 4px 20px 0 rgba(102, 163, 58, 0.35) !important;
+}
+
+/* 4. Pure CSS Radio Tabs State Engine (Guarantees zero-failure tab switching) */
+#radioTabGeneral:checked ~ #settingsTabNav label[for="radioTabGeneral"],
+#radioTabRules:checked ~ #settingsTabNav label[for="radioTabRules"],
+#radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"],
+#radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"],
+#radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] {
+    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
+}
+#radioTabGeneral:checked ~ #settingsTabNav label[for="radioTabGeneral"] i,
+#radioTabRules:checked ~ #settingsTabNav label[for="radioTabRules"] i,
+#radioTabShifts:checked ~ #settingsTabNav label[for="radioTabShifts"] i,
+#radioTabPrefixes:checked ~ #settingsTabNav label[for="radioTabPrefixes"] i,
+#radioTabAffiliations:checked ~ #settingsTabNav label[for="radioTabAffiliations"] i {
+    color: #F6DE51 !important;
+}
+
+#radioTabGeneral:checked ~ #formGlobalSettings #tab-panel-general,
+#radioTabRules:checked ~ #formGlobalSettings #tab-panel-rules,
+#radioTabShifts:checked ~ #formGlobalSettings #tab-panel-shifts,
+#radioTabPrefixes:checked ~ #formGlobalSettings #tab-panel-prefixes,
+#radioTabAffiliations:checked ~ #formGlobalSettings #tab-panel-affiliations,
+body:has(#radioTabGeneral:checked) #tab-panel-general,
+body:has(#radioTabRules:checked) #tab-panel-rules,
+body:has(#radioTabShifts:checked) #tab-panel-shifts,
+body:has(#radioTabPrefixes:checked) #tab-panel-prefixes,
+body:has(#radioTabAffiliations:checked) #tab-panel-affiliations {
+    display: block !important;
+}
+
+body:has(#radioTabGeneral:checked) label[for="radioTabGeneral"],
+body:has(#radioTabRules:checked) label[for="radioTabRules"],
+body:has(#radioTabShifts:checked) label[for="radioTabShifts"],
+body:has(#radioTabPrefixes:checked) label[for="radioTabPrefixes"],
+body:has(#radioTabAffiliations:checked) label[for="radioTabAffiliations"] {
+    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    color: #FFFFFF !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px 0 rgba(0, 116, 75, 0.35) !important;
+}
+
+body:has(#radioTabGeneral:checked) label[for="radioTabGeneral"] i,
+body:has(#radioTabRules:checked) label[for="radioTabRules"] i,
+body:has(#radioTabShifts:checked) label[for="radioTabShifts"] i,
+body:has(#radioTabPrefixes:checked) label[for="radioTabPrefixes"] i,
+body:has(#radioTabAffiliations:checked) label[for="radioTabAffiliations"] i {
+    color: #F6DE51 !important;
+}
+
+/* 5. SweetAlert2 Civic Skinning */
+.swal2-popup.bma-swal-popup {
+    border-radius: 1.5rem !important;
+    font-family: 'Sarabun', sans-serif !important;
+    border: 1px solid rgba(0, 116, 75, 0.2) !important;
+    box-shadow: 0 20px 50px rgba(0, 35, 18, 0.25) !important;
+}
+.swal2-popup.bma-swal-popup .swal2-confirm {
+    border-radius: 9999px !important;
+    background: linear-gradient(195deg, #00744B, #215A41) !important;
+    box-shadow: 0 4px 14px rgba(0, 116, 75, 0.35) !important;
+    padding: 0.65rem 1.75rem !important;
+}
+.swal2-popup.bma-swal-popup .swal2-cancel {
+    border-radius: 9999px !important;
+    padding: 0.65rem 1.5rem !important;
 }

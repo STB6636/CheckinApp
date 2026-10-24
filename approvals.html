@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=2.2">
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
         /* Sticky Table Header & Refined Grouping */
         .bma-table-sticky thead th {
@@ -32,48 +32,73 @@
             transition: background-color 0.15s ease-in-out;
         }
         .bma-table tbody tr:hover {
-            background-color: rgba(0, 123, 62, 0.05) !important;
+            background-color: rgba(0, 116, 75, 0.05) !important;
         }
         html.dark .bma-table tbody tr:hover {
-            background-color: rgba(52, 211, 153, 0.08) !important;
+            background-color: rgba(0, 192, 138, 0.08) !important;
         }
-        /* Segmented Status Pill Active States */
+
+        /* Material Segmented Status Pills Active States */
         .pill-status-btn {
-            transition: all 0.2s ease-in-out;
+            transition: all 0.22s ease-in-out;
+            cursor: pointer;
+            border: 1px solid transparent;
         }
-        .pill-status-btn.active {
-            background: linear-gradient(135deg, #007B3E, #004D25);
-            color: #FFFFFF;
-            box-shadow: 0 2px 8px rgba(0, 123, 62, 0.25);
+        .pill-status-btn:hover:not(.active) {
+            background-color: rgba(0, 116, 75, 0.08);
+            color: #00744B;
         }
-        html.dark .pill-status-btn.active {
-            background: linear-gradient(135deg, #007B3E, #0A4526);
-            color: #F5DE98;
-            box-shadow: 0 2px 8px rgba(0, 123, 62, 0.4);
+        html.dark .pill-status-btn:hover:not(.active) {
+            background-color: rgba(0, 192, 138, 0.12);
+            color: #A7F3D0;
+        }
+        .pill-status-btn.active[data-status="pending"] {
+            background: linear-gradient(195deg, #FFB449 0%, #F6DE51 100%) !important;
+            color: #00351B !important;
+            box-shadow: 0 4px 14px rgba(255, 180, 73, 0.4) !important;
+            border-color: rgba(255, 180, 73, 0.5) !important;
+        }
+        .pill-status-btn.active[data-status="approved"] {
+            background: linear-gradient(195deg, #00744B 0%, #00C08A 100%) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(0, 116, 75, 0.4) !important;
+            border-color: rgba(0, 116, 75, 0.5) !important;
+        }
+        .pill-status-btn.active[data-status="rejected"] {
+            background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(235, 61, 169, 0.4) !important;
+            border-color: rgba(235, 61, 169, 0.5) !important;
+        }
+        .pill-status-btn.active[data-status="all"] {
+            background: linear-gradient(195deg, #215A41 0%, #00744B 100%) !important;
+            color: #FFFFFF !important;
+            box-shadow: 0 4px 14px rgba(33, 90, 65, 0.4) !important;
+            border-color: rgba(33, 90, 65, 0.5) !important;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F6FAF7] dark:bg-[#08160F] text-[#0C1E14] dark:text-[#F1F5F9]">
 
-    <!-- Sidebar -->
+    <!-- Sidebar Container -->
     <div id="bmaSidebarContainer"></div>
 
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
-        <!-- Topbar -->
+        <!-- Topbar Container -->
         <div id="bmaTopbarContainer"></div>
 
         <main class="flex-1 p-4 lg:p-8 space-y-6 pb-32">
 
-            <!-- Header Section พร้อมปุ่มรีเฟรช / ส่งออกข้อมูล -->
+            <!-- Header Ribbon Section with Live Stamp Badge & Action Buttons -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#11231B] p-5 lg:p-6 rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 shadow-xs">
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-3 flex-wrap">
                         <h1 class="text-xl lg:text-2xl font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2.5">
-                            <span class="w-2.5 h-7 rounded-full bg-gradient-to-b from-[#C59B27] to-[#007B3E] inline-block"></span>
+                            <span class="w-2.5 h-7 rounded-full bg-gradient-to-b from-[#F6DE51] to-[#00744B] inline-block"></span>
                             <span>อนุมัติลงเวลาปฏิบัติราชการกรณีพิเศษ</span>
                         </h1>
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/50 shadow-2xs">
-                            <i class="fa-solid fa-stamp text-[#C59B27] dark:text-[#F5DE98]"></i>
+                            <i class="fa-solid fa-stamp text-[#FFB449] dark:text-[#F6DE51]"></i>
                             <span>ระบบพิจารณาคำขอส่วนกลาง</span>
                         </div>
                     </div>
@@ -83,39 +108,39 @@
                 </div>
 
                 <div class="flex items-center gap-2.5 flex-wrap self-start md:self-auto">
-                    <button type="button" id="btnRefreshApprovals" class="btn-bma-soft text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl border border-emerald-600/20 hover:border-emerald-600/40 transition-all shadow-2xs">
-                        <i class="fa-solid fa-rotate text-[#007B3E] dark:text-emerald-400"></i>
-                        <span class="font-bold">รีเฟรชรายการ</span>
+                    <button type="button" id="btnRefreshApprovals" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#183025] dark:hover:bg-[#204233] text-slate-700 dark:text-emerald-300 border border-slate-200 dark:border-emerald-800/60 transition-all shadow-2xs inline-flex items-center gap-2">
+                        <i class="fa-solid fa-rotate text-[#00744B] dark:text-emerald-400"></i>
+                        <span>รีเฟรชรายการ</span>
                     </button>
-                    <button type="button" id="btnExportApprovalsExcel" class="btn-bma-outline text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl text-emerald-700 dark:text-emerald-300 border-emerald-600/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all shadow-2xs">
-                        <i class="fa-solid fa-file-excel text-[#007B3E] dark:text-emerald-400"></i>
-                        <span class="font-bold">ส่งออก Excel</span>
+                    <button type="button" id="btnExportApprovalsExcel" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white dark:bg-[#11231B] text-emerald-700 dark:text-emerald-300 border border-emerald-600/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all shadow-2xs inline-flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel text-[#00744B] dark:text-emerald-400"></i>
+                        <span>ส่งออก Excel</span>
                     </button>
                 </div>
             </div>
 
-            <!-- แถบควบคุมสถานะคำขอ (Segmented Status Pills) และมุมมอง Group By -->
-            <div class="bma-card p-5 space-y-4">
+            <!-- Status Filter Card with Material Segmented Pills & Group By Mode -->
+            <div class="bma-card p-5 lg:p-6 space-y-4">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-emerald-900/30">
-                    <!-- Segmented Status Pill Filter -->
+                    <!-- Material Segmented Status Pills Container -->
                     <div class="space-y-1.5">
                         <label class="block text-xs font-bold text-slate-600 dark:text-emerald-200">
                             <i class="fa-solid fa-filter text-slate-400 mr-1"></i>สถานะคำขอ:
                         </label>
-                        <div id="statusPillContainer" class="inline-flex p-1 bg-slate-100 dark:bg-[#183025] rounded-2xl border border-slate-200/80 dark:border-emerald-800/40 gap-1 flex-wrap">
-                            <button type="button" data-status="pending" class="pill-status-btn active px-3.5 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200 hover:text-emerald-700">
-                                <i class="fa-solid fa-clock-rotate-left text-[#C59B27] dark:text-[#F5DE98]"></i>
+                        <div id="statusPillContainer" class="inline-flex p-1.5 bg-slate-100 dark:bg-[#183025] rounded-2xl border border-slate-200/80 dark:border-emerald-800/40 gap-1.5 flex-wrap">
+                            <button type="button" data-status="pending" class="pill-status-btn active px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200">
+                                <i class="fa-solid fa-clock-rotate-left text-[#00351B]"></i>
                                 <span>รออนุมัติ (Pending)</span>
                             </button>
-                            <button type="button" data-status="approved" class="pill-status-btn px-3.5 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200 hover:text-emerald-700">
+                            <button type="button" data-status="approved" class="pill-status-btn px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200">
                                 <i class="fa-solid fa-circle-check text-emerald-500"></i>
                                 <span>อนุมัติแล้ว (Approved)</span>
                             </button>
-                            <button type="button" data-status="rejected" class="pill-status-btn px-3.5 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200 hover:text-emerald-700">
+                            <button type="button" data-status="rejected" class="pill-status-btn px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200">
                                 <i class="fa-solid fa-circle-xmark text-rose-500"></i>
                                 <span>ไม่อนุมัติ (Rejected)</span>
                             </button>
-                            <button type="button" data-status="all" class="pill-status-btn px-3.5 py-1.5 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200 hover:text-emerald-700">
+                            <button type="button" data-status="all" class="pill-status-btn px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 text-slate-700 dark:text-emerald-200">
                                 <i class="fa-solid fa-list text-slate-400"></i>
                                 <span>แสดงทั้งหมด</span>
                             </button>
@@ -141,7 +166,7 @@
                         <label for="selectApprovalGroupBy" class="block text-xs font-bold text-slate-600 dark:text-emerald-200">
                             <i class="fa-solid fa-layer-group text-slate-400 mr-1"></i>มุมมองการจัดกลุ่มตาราง (Group By):
                         </label>
-                        <select id="selectApprovalGroupBy" class="bma-select py-2 px-3 text-xs font-bold rounded-xl border-slate-300 dark:border-emerald-800">
+                        <select id="selectApprovalGroupBy" class="bma-select py-2.5 px-3.5 text-xs font-bold rounded-xl border-slate-300 dark:border-emerald-800">
                             <option value="division" selected>มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
                             <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
                         </select>
@@ -149,51 +174,65 @@
                 </div>
 
                 <!-- Secondary Filters: Search, Bureau, Division -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
                     <div>
-                        <label for="searchApprovalInput" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="searchApprovalInput" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-magnifying-glass text-slate-400 mr-1"></i>ค้นหาคำขอ:
                         </label>
-                        <input type="text" id="searchApprovalInput" placeholder="พิมพ์ชื่อ, สกุล, ตำแหน่ง, เหตุผล..." class="bma-input py-1.5 px-3 text-xs">
+                        <input type="text" id="searchApprovalInput" placeholder="พิมพ์ชื่อ, สกุล, ตำแหน่ง, เหตุผล..." class="bma-input py-2 px-3 text-xs rounded-xl">
                     </div>
                     <div>
-                        <label for="filterApprovalBureau" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterApprovalBureau" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-building text-slate-400 mr-1"></i>สังกัดสำนัก/เขต:
                         </label>
-                        <select id="filterApprovalBureau" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterApprovalBureau" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกสำนัก/สำนักงานเขต</option>
                             <option value="สำนักเทศกิจ">สำนักเทศกิจ</option>
                         </select>
                     </div>
                     <div>
-                        <label for="filterApprovalDivision" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterApprovalDivision" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-sitemap text-slate-400 mr-1"></i>สังกัดส่วน/ฝ่าย:
                         </label>
-                        <select id="filterApprovalDivision" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterApprovalDivision" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกส่วน/ฝ่าย</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- ตารางแสดงรายการขอลงเวลากรณีพิเศษ (Clean Grouped Table View) -->
-            <div class="bma-card p-5 lg:p-6 space-y-4" style="border-top: 3px solid #007B3E;">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-base font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-list-check text-[#007B3E] dark:text-emerald-400"></i>
-                            <span>ตารางคำขอลงเวลาปฏิบัติราชการกรณีพิเศษ</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-emerald-200/70 mt-0.5">
+            <!-- Grouped Approvals Table Card with Floating Emerald Header -->
+            <div class="mt-10 rounded-2xl bg-white dark:bg-[#11231B] border border-slate-200/80 dark:border-emerald-900/30 shadow-md relative pt-0 pb-6">
+                <!-- Floating Emerald Header (-mt-6 mx-4 sm:mx-6 rounded-xl p-4 sm:p-5 shadow-lg) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-xl p-4 sm:p-5 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10"
+                     style="background: linear-gradient(195deg, #00744B 0%, #215A41 100%); box-shadow: 0 10px 24px -4px rgba(0, 116, 75, 0.45);">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-xs flex items-center justify-center text-white text-sm">
+                                <i class="fa-solid fa-list-check"></i>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-extrabold text-white tracking-wide">
+                                ตารางคำขอลงเวลาปฏิบัติราชการกรณีพิเศษ
+                            </h2>
+                        </div>
+                        <p class="text-xs text-emerald-100/90 pl-10">
                             แยกตามกลุ่มหน่วยงาน สังกัด และช่วงเวลาปฏิบัติงาน
                         </p>
                     </div>
+
+                    <div class="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+                        <span class="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/15 border border-white/20 text-emerald-100 backdrop-blur-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-check text-[#F6DE51]"></i>
+                            <span>การพิจารณาตามลำดับสายงาน</span>
+                        </span>
+                    </div>
                 </div>
 
-                <div class="bma-table-container rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 overflow-x-auto shadow-2xs">
+                <!-- Table Canvas with Sticky Header & Responsive Scroll -->
+                <div class="bma-table-container overflow-x-auto mt-6 px-4 sm:px-6">
                     <table class="bma-table bma-table-sticky text-sm w-full">
                         <thead>
-                            <tr class="text-xs font-bold uppercase tracking-wider">
+                            <tr class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-emerald-200 border-b border-slate-200 dark:border-emerald-900/50">
                                 <th class="w-12 text-center py-3.5 px-3">
                                     <input type="checkbox" id="chkSelectAllApprovalsHeader" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer" title="เลือกทั้งหมด">
                                 </th>
@@ -212,6 +251,7 @@
 
         </main>
 
+        <!-- System Footer Container -->
         <div id="bmaFooterContainer"></div>
     </div>
 
@@ -227,9 +267,9 @@
 
         <!-- Badge แสดงจำนวนที่เลือก -->
         <div id="bulkSelectionCountBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-            <i class="fa-solid fa-list-check text-[#C59B27] dark:text-[#F5DE98]"></i>
+            <i class="fa-solid fa-list-check text-[#FFB449] dark:text-[#F6DE51]"></i>
             <span>เลือกแล้ว</span>
-            <span id="selectedBulkCount" class="font-extrabold text-sm px-2 py-0.5 rounded-md bg-[#007B3E] text-white min-w-[22px] text-center">0</span>
+            <span id="selectedBulkCount" class="font-extrabold text-sm px-2 py-0.5 rounded-md bg-[#00744B] text-white min-w-[22px] text-center">0</span>
             <span>รายการ</span>
         </div>
 
@@ -238,7 +278,7 @@
         <!-- ปุ่มสำหรับอนุมัติ/ไม่อนุมัติหลายรายการพร้อมกัน -->
         <div class="flex items-center gap-2">
             <button type="button" id="btnBulkApprove" class="btn-bma-primary text-xs py-2 px-4 rounded-xl shadow-md inline-flex items-center gap-1.5 font-bold transition-all">
-                <i class="fa-solid fa-check-double text-[#F5DE98]"></i>
+                <i class="fa-solid fa-check-double text-[#F6DE51]"></i>
                 <span>อนุมัติที่เลือก</span>
             </button>
             <button type="button" id="btnBulkReject" class="btn-bma-outline text-xs py-2 px-4 rounded-xl text-rose-500 border-rose-500/40 hover:bg-rose-500/10 inline-flex items-center gap-1.5 font-bold transition-all">
@@ -249,6 +289,7 @@
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar Container -->
     <div id="bmaMobileBottomNav"></div>
 
     <script type="module" src="assets/js/controllers/ApprovalsController.js"></script>

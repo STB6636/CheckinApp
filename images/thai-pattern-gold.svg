@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <!-- Royal Champagne Gold Gradient -->
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DFB76C" stop-opacity="0.25"/>
+      <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#996515" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="goldStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E5AB" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#AA771C" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Diamond Grid (เส้นตารางสี่เหลี่ยมข้าวหลามตัดไทย) -->
+  <path d="M80 0 L160 80 L80 160 L0 80 Z" fill="none" stroke="url(#goldStroke)" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <path d="M0 0 L80 80 L160 0 M0 160 L80 80 L160 160" fill="none" stroke="url(#goldStroke)" stroke-width="0.5" stroke-opacity="0.3"/>
+
+  <!-- Center Prajamyam (ลายประจำยามดอกบัวกลาง) -->
+  <g transform="translate(80, 80)">
+    <!-- Outer Petals (กลีบกระหนก 4 ทิศ) -->
+    <path d="M0 -36 C6 -24 16 -16 28 -12 C16 -6 12 6 0 0 C-12 6 -16 -6 -28 -12 C-16 -16 -6 -24 0 -36 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.8"/>
+    <path d="M0 36 C6 24 16 16 28 12 C16 6 12 -6 0 0 C-12 -6 -16 6 -28 12 C-16 16 -6 24 0 36 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.8"/>
+    <path d="M-36 0 C-24 6 -16 16 -12 28 C-6 16 6 12 0 0 C6 -12 -6 -16 -12 -28 C-16 -16 -24 -6 -36 0 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.8"/>
+    <path d="M36 0 C24 6 16 16 12 28 C6 16 -6 12 0 0 C-6 -12 6 -16 12 -28 C16 -16 24 -6 36 0 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.8"/>
+
+    <!-- Diagonal Flourishes (ยอดเปลวกนก 4 มุม) -->
+    <path d="M-18 -18 C-12 -26 -6 -28 0 -22 C-6 -16 -16 -12 -18 -18 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M18 -18 C26 -12 28 -6 22 0 C16 -6 12 -16 18 -18 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M18 18 C12 26 6 28 0 22 C6 16 16 12 18 18 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M-18 18 C-26 12 -28 6 -22 0 C-16 6 -12 16 -18 18 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+
+    <!-- Inner Core Seed (เกษรบัวมณีใจกลาง) -->
+    <circle cx="0" cy="0" r="7" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="1"/>
+    <circle cx="0" cy="0" r="3" fill="#D4AF37" fill-opacity="0.3"/>
+  </g>
+
+  <!-- Corner Quarter Prajamyam (ประจำยามมุม 4 มุมเพื่อการต่อลาย Seamless) -->
+  <g transform="translate(0, 0)">
+    <circle cx="0" cy="0" r="14" fill="none" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M0 0 L16 8 C10 12 8 20 0 16 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <circle cx="0" cy="0" r="4" fill="#D4AF37" fill-opacity="0.2"/>
+  </g>
+  <g transform="translate(160, 0)">
+    <circle cx="0" cy="0" r="14" fill="none" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M0 0 L-16 8 C-10 12 -8 20 0 16 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <circle cx="0" cy="0" r="4" fill="#D4AF37" fill-opacity="0.2"/>
+  </g>
+  <g transform="translate(0, 160)">
+    <circle cx="0" cy="0" r="14" fill="none" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M0 0 L16 -8 C10 -12 8 -20 0 -16 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <circle cx="0" cy="0" r="4" fill="#D4AF37" fill-opacity="0.2"/>
+  </g>
+  <g transform="translate(160, 160)">
+    <circle cx="0" cy="0" r="14" fill="none" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <path d="M0 0 L-16 -8 C-10 -12 -8 -20 0 -16 Z" fill="url(#goldGradient)" stroke="url(#goldStroke)" stroke-width="0.6"/>
+    <circle cx="0" cy="0" r="4" fill="#D4AF37" fill-opacity="0.2"/>
+  </g>
+</svg>

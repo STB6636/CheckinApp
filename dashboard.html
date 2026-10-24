@@ -16,23 +16,208 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
-        /* Override neon yellow #FDD835 with Champagne Gold across KPI cards */
-        .stat-card-total [style*="#FDD835"],
-        .stat-card-total .text-\[\#FDD835\],
-        .stat-card [style*="#FDD835"] {
-            color: #F5DE98 !important;
-            background-color: #D4AF37 !important;
+        /* ==========================================================================
+           Material Dashboard PRO - 5 Offset Floating Icon Stat Cards
+           ========================================================================== */
+        #dashboardKpiCardsGrid {
+            padding-top: 1.75rem;
         }
-        .stat-card-total i[style*="#FDD835"],
-        .stat-card-total i.text-\[\#FDD835\] {
-            color: #F5DE98 !important;
-            background-color: transparent !important;
+
+        #dashboardKpiCardsGrid .stat-card {
+            position: relative !important;
+            overflow: visible !important;
+            border-radius: 1rem !important;
+            background: #FFFFFF !important;
+            color: #0C1E14 !important;
+            border: 1px solid rgba(226, 232, 240, 0.9) !important;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
+            padding: 1.1rem 1.25rem 1.25rem 1.25rem !important;
+            transition: transform 0.25s ease, box-shadow 0.25s ease !important;
         }
-        .stat-card-total span[style*="#FDD835"],
-        .stat-card-total span.text-\[\#FDD835\] {
-            color: #F5DE98 !important;
-            background-color: transparent !important;
+
+        html.dark #dashboardKpiCardsGrid .stat-card {
+            background: #11231B !important;
+            color: #F1F5F9 !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.45) !important;
         }
+
+        #dashboardKpiCardsGrid .stat-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 14px 30px -4px rgba(0, 116, 75, 0.2) !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .deco-1,
+        #dashboardKpiCardsGrid .stat-card .deco-2 {
+            display: none !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child {
+            display: flex !important;
+            flex-direction: row-reverse !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 0.75rem !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child {
+            text-align: right !important;
+            min-width: 0 !important;
+            flex: 1 !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
+            color: #64748B !important;
+            font-weight: 700 !important;
+            font-size: 0.75rem !important;
+            display: block !important;
+            letter-spacing: 0.025em !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
+            color: #94A3B8 !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
+            color: #0C1E14 !important;
+            font-size: 1.85rem !important;
+            font-weight: 800 !important;
+            line-height: 1.2 !important;
+            margin-top: 0.25rem !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
+            color: #FFFFFF !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 span {
+            color: #64748B !important;
+            font-size: 0.875rem !important;
+            font-weight: 600 !important;
+            display: inline !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 span {
+            color: #94A3B8 !important;
+        }
+
+        /* Material Offset Floating Icon Boxes (w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg) */
+        #dashboardKpiCardsGrid .stat-card .stat-icon-box {
+            width: 4rem !important; /* w-16 = 64px */
+            height: 4rem !important; /* h-16 = 64px */
+            margin-top: -2.1rem !important; /* -mt-8 = -32px */
+            border-radius: 1rem !important; /* rounded-2xl */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1.5rem !important; /* text-2xl */
+            color: #FFFFFF !important;
+            border: none !important;
+            backdrop-filter: none !important;
+            flex-shrink: 0 !important;
+            z-index: 20 !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-icon-box i {
+            color: #FFFFFF !important;
+        }
+
+        /* 1. Total: Mint Emerald #00C08A */
+        #dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-icon-box,
+        #dashboardKpiCardsGrid .stat-card-total .stat-icon-box {
+            background: linear-gradient(195deg, #00C08A 0%, #00744B 100%) !important;
+            box-shadow: 0 10px 20px -5px rgba(0, 192, 138, 0.45) !important;
+        }
+
+        /* 2. Normal: BMA Green #00744B */
+        #dashboardKpiCardsGrid .stat-card:nth-child(2) .stat-icon-box {
+            background: linear-gradient(195deg, #00744B 0%, #215A41 100%) !important;
+            box-shadow: 0 10px 20px -5px rgba(0, 116, 75, 0.45) !important;
+        }
+
+        /* 3. Late: Warm Amber #FFB449 */
+        #dashboardKpiCardsGrid .stat-card:nth-child(3) .stat-icon-box {
+            background: linear-gradient(195deg, #FFB449 0%, #F6DE51 100%) !important;
+            box-shadow: 0 10px 20px -5px rgba(255, 180, 73, 0.45) !important;
+        }
+
+        /* 4. Absent/Duty: Berry Magenta #EB3DA9 */
+        #dashboardKpiCardsGrid .stat-card:nth-child(4) .stat-icon-box {
+            background: linear-gradient(195deg, #EB3DA9 0%, #BE123C 100%) !important;
+            box-shadow: 0 10px 20px -5px rgba(235, 61, 169, 0.45) !important;
+        }
+
+        /* 5. Overtime: Royal Blue #0971CE */
+        #dashboardKpiCardsGrid .stat-card:nth-child(5) .stat-icon-box {
+            background: linear-gradient(195deg, #0971CE 0%, #0284C7 100%) !important;
+            box-shadow: 0 10px 20px -5px rgba(9, 113, 206, 0.45) !important;
+        }
+
+        /* Divider & Progress Track */
+        #dashboardKpiCardsGrid .stat-card .mt-4 {
+            border-top: 1px solid rgba(226, 232, 240, 0.9) !important;
+            padding-top: 0.65rem !important;
+            margin-top: 0.85rem !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .mt-4 {
+            border-top-color: rgba(16, 185, 129, 0.15) !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .mt-4 .flex {
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            color: #64748B !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .mt-4 .flex {
+            color: #94A3B8 !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card .stat-progress-track {
+            width: 100% !important;
+            height: 0.35rem !important;
+            border-radius: 9999px !important;
+            background: #E2E8F0 !important;
+            overflow: hidden !important;
+            margin-top: 0.35rem !important;
+        }
+
+        html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
+            background: #1E293B !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card:nth-child(1) .stat-progress-fill,
+        #dashboardKpiCardsGrid .stat-card-total .stat-progress-fill {
+            background: #00C08A !important;
+            box-shadow: none !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card:nth-child(2) .stat-progress-fill {
+            background: #00744B !important;
+            box-shadow: none !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card:nth-child(3) .stat-progress-fill {
+            background: #FFB449 !important;
+            box-shadow: none !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card:nth-child(4) .stat-progress-fill {
+            background: #EB3DA9 !important;
+            box-shadow: none !important;
+        }
+
+        #dashboardKpiCardsGrid .stat-card:nth-child(5) .stat-progress-fill {
+            background: #0971CE !important;
+            box-shadow: none !important;
+        }
+
         /* Sticky Table Header & Smooth Table Interactions */
         .bma-table-sticky thead th {
             position: sticky;
@@ -49,43 +234,43 @@
             transition: background-color 0.15s ease-in-out;
         }
         .bma-table tbody tr:hover {
-            background-color: rgba(0, 123, 62, 0.05) !important;
+            background-color: rgba(0, 116, 75, 0.05) !important;
         }
         html.dark .bma-table tbody tr:hover {
-            background-color: rgba(52, 211, 153, 0.08) !important;
+            background-color: rgba(0, 192, 138, 0.08) !important;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col bg-[#F6FAF7] dark:bg-[#08160F] text-[#0C1E14] dark:text-[#F1F5F9]">
 
-    <!-- Deep Emerald Sidebar Navigation -->
+    <!-- Deep Emerald Sidebar Navigation Container -->
     <div id="bmaSidebarContainer"></div>
 
-    <!-- พื้นที่หลักด้านขวา -->
+    <!-- Main Workspace Area -->
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
 
-        <!-- Topbar Navigation -->
+        <!-- Topbar Navigation Container -->
         <div id="bmaTopbarContainer"></div>
 
-        <!-- เนื้อหาหลักของหน้า "ภาพรวม" -->
-        <main class="flex-1 p-4 lg:p-8 space-y-6">
+        <!-- Main Dashboard View Content -->
+        <main class="flex-1 p-4 lg:p-8 space-y-6 pb-20">
 
-            <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีสไตล์ iPhone -->
+            <!-- Responsive Mobile Shortcut Grid -->
             <div id="mobileShortcutContainer"></div>
 
-            <!-- Header พร้อม Live Pulse Badge และปุ่มรีเฟรช / ส่งออกข้อมูล -->
+            <!-- Welcome Ribbon Header with Live Pulse Badge -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#11231B] p-5 lg:p-6 rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 shadow-xs">
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-3 flex-wrap">
                         <h1 class="text-xl lg:text-2xl font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2.5">
-                            <span class="w-2.5 h-7 rounded-full bg-gradient-to-b from-[#C59B27] to-[#007B3E] inline-block"></span>
+                            <span class="w-2.5 h-7 rounded-full bg-gradient-to-b from-[#F6DE51] to-[#00744B] inline-block"></span>
                             <span>ภาพรวมการลงเวลาปฏิบัติราชการ</span>
                         </h1>
                         <!-- Live Pulse Badge -->
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/50 shadow-2xs">
                             <span class="relative flex h-2 w-2">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#007B3E] dark:bg-emerald-400"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#00744B] dark:bg-emerald-400"></span>
                             </span>
                             <span>ข้อมูลสดเรียลไทม์ (Live Pulse)</span>
                         </div>
@@ -96,30 +281,26 @@
                 </div>
 
                 <div class="flex items-center gap-2.5 flex-wrap self-start md:self-auto">
-                    <button type="button" id="btnRefreshDashboard" class="btn-bma-soft text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl border border-emerald-600/20 hover:border-emerald-600/40 transition-all shadow-2xs">
-                        <i class="fa-solid fa-rotate text-[#007B3E] dark:text-emerald-400"></i>
-                        <span class="font-bold">อัปเดตข้อมูล</span>
-                    </button>
-                    <button type="button" id="btnExportDashboardExcel" class="btn-bma-outline text-xs py-2 px-3.5 inline-flex items-center gap-2 rounded-xl text-emerald-700 dark:text-emerald-300 border-emerald-600/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-all shadow-2xs">
-                        <i class="fa-solid fa-file-excel text-[#007B3E] dark:text-emerald-400"></i>
-                        <span class="font-bold">ส่งออก Excel</span>
-                    </button>
+                    <span class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#183025] text-slate-600 dark:text-emerald-300 border border-slate-200/80 dark:border-emerald-800/50 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-[#00744B] dark:text-emerald-400"></i>
+                        <span>มาตรฐาน กทม. 9 สี</span>
+                    </span>
                 </div>
             </div>
 
-            <!-- แถบตัวกรองวันที่ประจำวัน (Capsule Design) พร้อมตัวกรองเสริม -->
-            <div class="bma-card p-5 space-y-4">
+            <!-- Top Filter Capsule & Dimension Selectors -->
+            <div class="bma-card p-5 lg:p-6 space-y-4">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-emerald-900/30">
                     <!-- Date Picker Capsule -->
                     <div class="flex items-center gap-3 flex-wrap">
                         <label for="dashboardDateFilter" class="text-xs lg:text-sm font-bold text-slate-700 dark:text-emerald-100 flex items-center gap-1.5">
-                            <i class="fa-regular fa-calendar-check text-[#007B3E] dark:text-emerald-400"></i>
+                            <i class="fa-regular fa-calendar-check text-[#00744B] dark:text-emerald-400"></i>
                             <span>ข้อมูลประจำวันที่:</span>
                         </label>
                         <div class="inline-flex items-center bg-slate-100 dark:bg-[#183025] p-1 rounded-2xl border border-slate-200/80 dark:border-emerald-800/40 shadow-inner">
                             <input type="date" id="dashboardDateFilter" class="bg-transparent border-0 py-1.5 px-3 text-xs sm:text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-0">
-                            <button type="button" id="btnDashboardToday" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-white dark:bg-[#11231B] text-[#007B3E] dark:text-emerald-300 border border-slate-200 dark:border-emerald-800/60 shadow-xs hover:bg-emerald-50 dark:hover:bg-emerald-900/40 transition-colors flex items-center gap-1.5">
-                                <i class="fa-solid fa-calendar-day text-[#C59B27] dark:text-[#F5DE98]"></i>
+                            <button type="button" id="btnDashboardToday" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-white dark:bg-[#11231B] text-[#00744B] dark:text-emerald-300 border border-slate-200 dark:border-emerald-800/60 shadow-xs hover:bg-emerald-50 dark:hover:bg-emerald-900/40 transition-colors flex items-center gap-1.5">
+                                <i class="fa-solid fa-calendar-day text-[#FFB449] dark:text-[#F6DE51]"></i>
                                 <span>วันนี้</span>
                             </button>
                         </div>
@@ -127,24 +308,24 @@
                     </div>
 
                     <div class="flex items-center gap-2 text-xs text-slate-500 dark:text-emerald-300/70 font-medium">
-                        <i class="fa-solid fa-circle-info text-[#C59B27] dark:text-[#F5DE98]"></i>
-                        <span>สีสถานะตามการตั้งค่าระบบ สำนักเทศกิจ</span>
+                        <i class="fa-solid fa-circle-info text-[#FFB449] dark:text-[#F6DE51]"></i>
+                        <span>สีสถานะตามการตั้งค่าระบบ สำนักเทศกิจ กรุงเทพมหานคร</span>
                     </div>
                 </div>
 
-                <!-- ตัวกรองค้นหาละเอียด (Search & Multi-dimension Filter) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+                <!-- Multi-dimension Filter Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1">
                     <div>
-                        <label for="filterSearchPersonnel" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterSearchPersonnel" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-magnifying-glass text-slate-400 mr-1"></i>ค้นหาบุคลากร:
                         </label>
-                        <input type="text" id="filterSearchPersonnel" placeholder="พิมพ์ชื่อ, สกุล, ตำแหน่ง..." class="bma-input py-1.5 px-3 text-xs">
+                        <input type="text" id="filterSearchPersonnel" placeholder="พิมพ์ชื่อ, สกุล, ตำแหน่ง..." class="bma-input py-2 px-3 text-xs rounded-xl">
                     </div>
                     <div>
-                        <label for="filterCheckinStatus" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterCheckinStatus" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-tag text-slate-400 mr-1"></i>สถานะลงเวลา:
                         </label>
-                        <select id="filterCheckinStatus" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterCheckinStatus" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกสถานะการลงเวลา</option>
                             <option value="normal">มาปฏิบัติงานตรงเวลา</option>
                             <option value="late">มาปฏิบัติงานสาย</option>
@@ -153,10 +334,10 @@
                         </select>
                     </div>
                     <div>
-                        <label for="filterWorkShift" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterWorkShift" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-clock text-slate-400 mr-1"></i>กะการทำงาน:
                         </label>
-                        <select id="filterWorkShift" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterWorkShift" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกกะการทำงาน</option>
                             <option value="normal">กะปกติ (08:30 - 16:30 น.)</option>
                             <option value="shift_morning">กะเช้า</option>
@@ -165,57 +346,188 @@
                         </select>
                     </div>
                     <div>
-                        <label for="filterBureau" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterBureau" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-building text-slate-400 mr-1"></i>สำนัก/กอง:
                         </label>
-                        <select id="filterBureau" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterBureau" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกสำนัก/สำนักงานเขต</option>
                             <option value="สำนักเทศกิจ">สำนักเทศกิจ</option>
                         </select>
                     </div>
                     <div>
-                        <label for="filterDivision" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1">
+                        <label for="filterDivision" class="block text-xs font-bold text-slate-600 dark:text-emerald-200 mb-1.5">
                             <i class="fa-solid fa-sitemap text-slate-400 mr-1"></i>ส่วน/ฝ่าย:
                         </label>
-                        <select id="filterDivision" class="bma-select py-1.5 px-3 text-xs font-medium">
+                        <select id="filterDivision" class="bma-select py-2 px-3 text-xs font-medium rounded-xl">
                             <option value="">ทุกส่วน/ฝ่าย</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ (เรนเดอร์โดย DashboardController) -->
-            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-5">
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full rounded-xl"></div></div>
-            </div>
-
-            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล -->
-            <div class="bma-card p-5 lg:p-6 space-y-4" style="border-top: 3px solid #007B3E;">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h2 class="text-base font-extrabold text-[#0C1E14] dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-clipboard-user text-[#007B3E] dark:text-emerald-400"></i>
-                            <span>รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</span>
-                        </h2>
-                        <p class="text-xs text-slate-500 dark:text-emerald-200/70 mt-0.5">
-                            แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น
-                        </p>
+            <!-- 5 KPI Stat Cards with Offset Floating Icon Boxes (#dashboardKpiCardsGrid) -->
+            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                <!-- 1. Total: Mint Emerald #00C08A -->
+                <div class="stat-card stat-card-total">
+                    <div class="stat-content flex flex-col justify-between h-full">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-emerald-200/80">บุคลากรทั้งหมด</span>
+                                <h3 class="text-3xl font-extrabold text-[#0C1E14] dark:text-white mt-1">- <span class="text-sm font-semibold">คน</span></h3>
+                            </div>
+                            <div class="stat-icon-box w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>สัดส่วนรวม</span>
+                                <span>100%</span>
+                            </div>
+                            <div class="stat-progress-track">
+                                <div class="stat-progress-fill" style="width: 100%;"></div>
+                            </div>
+                        </div>
                     </div>
-                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline self-start sm:self-auto inline-flex items-center gap-2 rounded-xl border border-emerald-600/20 hover:border-emerald-600/40 transition-all">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-[#C59B27] dark:text-[#F5DE98]"></i>
-                        <span class="font-bold">เปิดหน้ารายงานฉบับเต็ม</span>
-                    </a>
                 </div>
 
-                <!-- ตารางข้อมูลพร้อม Sticky Header และ Responsive Scroll -->
-                <div class="bma-table-container rounded-2xl border border-slate-200/80 dark:border-emerald-900/30 overflow-x-auto shadow-2xs">
+                <!-- 2. Normal: BMA Green #00744B -->
+                <div class="stat-card">
+                    <div class="stat-content flex flex-col justify-between h-full">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-emerald-200/80">มาตรงเวลา (ปกติ)</span>
+                                <h3 class="text-3xl font-extrabold text-[#0C1E14] dark:text-white mt-1">- <span class="text-sm font-semibold">คน</span></h3>
+                            </div>
+                            <div class="stat-icon-box w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>คิดเป็นร้อยละ</span>
+                                <span>-%</span>
+                            </div>
+                            <div class="stat-progress-track">
+                                <div class="stat-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Late: Warm Amber #FFB449 -->
+                <div class="stat-card">
+                    <div class="stat-content flex flex-col justify-between h-full">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-emerald-200/80">มาสาย</span>
+                                <h3 class="text-3xl font-extrabold text-[#0C1E14] dark:text-white mt-1">- <span class="text-sm font-semibold">คน</span></h3>
+                            </div>
+                            <div class="stat-icon-box w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>คิดเป็นร้อยละ</span>
+                                <span>-%</span>
+                            </div>
+                            <div class="stat-progress-track">
+                                <div class="stat-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Absent/Duty: Berry Magenta #EB3DA9 -->
+                <div class="stat-card">
+                    <div class="stat-content flex flex-col justify-between h-full">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-emerald-200/80">ขาดราชการ / นอกสถานที่</span>
+                                <h3 class="text-3xl font-extrabold text-[#0C1E14] dark:text-white mt-1">- <span class="text-sm font-semibold">คน</span></h3>
+                            </div>
+                            <div class="stat-icon-box w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>คิดเป็นร้อยละ</span>
+                                <span>-%</span>
+                            </div>
+                            <div class="stat-progress-track">
+                                <div class="stat-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Overtime: Royal Blue #0971CE -->
+                <div class="stat-card">
+                    <div class="stat-content flex flex-col justify-between h-full">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-emerald-200/80">ล่วงเวลา (OT)</span>
+                                <h3 class="text-3xl font-extrabold text-[#0C1E14] dark:text-white mt-1">- <span class="text-sm font-semibold">คน</span></h3>
+                            </div>
+                            <div class="stat-icon-box w-16 h-16 -mt-8 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500 mb-1">
+                                <span>คิดเป็นร้อยละ</span>
+                                <span>-%</span>
+                            </div>
+                            <div class="stat-progress-track">
+                                <div class="stat-progress-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Card with Floating Emerald Header -->
+            <div class="mt-10 rounded-2xl bg-white dark:bg-[#11231B] border border-slate-200/80 dark:border-emerald-900/30 shadow-md relative pt-0 pb-6">
+                <!-- Floating Emerald Header (-mt-6 mx-4 sm:mx-6 rounded-xl p-4 sm:p-5 shadow-lg) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-xl p-4 sm:p-5 shadow-lg text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative z-10"
+                     style="background: linear-gradient(195deg, #00744B 0%, #215A41 100%); box-shadow: 0 10px 24px -4px rgba(0, 116, 75, 0.45);">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-xs flex items-center justify-center text-white text-sm">
+                                <i class="fa-solid fa-clipboard-user"></i>
+                            </span>
+                            <h2 class="text-base sm:text-lg font-extrabold text-white tracking-wide">
+                                รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล
+                            </h2>
+                        </div>
+                        <p class="text-xs text-emerald-100/90 pl-10">
+                            แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น สำนักเทศกิจ กรุงเทพมหานคร
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 flex-wrap self-stretch sm:self-auto justify-end">
+                        <button type="button" id="btnRefreshDashboard" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-xs transition-all shadow-xs inline-flex items-center gap-2">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>อัปเดตข้อมูล</span>
+                        </button>
+                        <button type="button" id="btnExportDashboardExcel" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-xs transition-all shadow-xs inline-flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel text-[#F6DE51]"></i>
+                            <span>ส่งออก Excel</span>
+                        </button>
+                        <a href="reports.html" class="px-3.5 py-2 text-xs font-bold rounded-xl bg-[#F6DE51] hover:bg-[#FFB449] text-[#00351B] transition-all shadow-xs inline-flex items-center gap-1.5 no-underline font-extrabold">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            <span>รายงานฉบับเต็ม</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Table Canvas with Sticky Header & Responsive Scroll -->
+                <div class="bma-table-container overflow-x-auto mt-6 px-4 sm:px-6">
                     <table class="bma-table bma-table-sticky text-sm w-full">
                         <thead>
-                            <tr class="text-xs font-bold uppercase tracking-wider">
+                            <tr class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-emerald-200 border-b border-slate-200 dark:border-emerald-900/50">
                                 <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
                                 <th class="min-w-[180px] whitespace-nowrap py-3.5 px-4 text-left">ชื่อ-นามสกุล</th>
                                 <th class="min-w-[200px] py-3.5 px-4 text-left">ตำแหน่ง</th>
@@ -231,14 +543,14 @@
                     </table>
                 </div>
 
-                <!-- แถบควบคุมการแบ่งหน้า ย้ายมาอยู่ใต้ตาราง (Bottom Pagination Toolbar) -->
-                <div id="dashboardPaginationWrapper" class="flex flex-col sm:flex-row items-center justify-between gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-[#183025]/60 border border-slate-200/80 dark:border-emerald-900/40 text-xs">
+                <!-- Material Pagination Dock (#dashboardPaginationWrapper) -->
+                <div id="dashboardPaginationWrapper" class="mt-6 mx-4 sm:mx-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-3.5 rounded-2xl bg-slate-50 dark:bg-[#183025]/60 border border-slate-200/80 dark:border-emerald-900/40 text-xs">
                     <div class="flex items-center gap-2.5">
                         <label for="dashboardPageSizeSelect" class="font-bold text-slate-700 dark:text-emerald-200 flex items-center gap-1.5">
                             <i class="fa-solid fa-list-ol text-slate-400"></i>
                             <span>แสดงรายการต่อหน้า:</span>
                         </label>
-                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-3 text-xs font-bold rounded-xl border-slate-300 dark:border-emerald-800">
+                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1.5 px-3 text-xs font-bold rounded-xl border-slate-300 dark:border-emerald-800">
                             <option value="5" selected>5 รายการ</option>
                             <option value="10">10 รายการ</option>
                             <option value="15">15 รายการ</option>
@@ -272,7 +584,7 @@
 
         </main>
 
-        <!-- Footer ระบบ -->
+        <!-- System Footer Container -->
         <div id="bmaFooterContainer"></div>
     </div>
 
@@ -342,7 +654,6 @@
 
             function applyTableFilter() {
                 const query = (searchInput?.value || '').toLowerCase().trim();
-                const statusVal = statusFilter?.value || '';
                 const rows = document.querySelectorAll('#dashboardRecentTableBody tr');
 
                 rows.forEach(row => {
