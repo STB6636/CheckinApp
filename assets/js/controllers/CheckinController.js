@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (ซ่อนชื่อไฟล์ .html บนแถบ URL, เร่งความเร็วการจับพิกัด GPS และไม่หน่วงตอนกดบันทึกข้อมูล)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (เปลี่ยนชื่อปุ่มเป็น "บันทึกลงเวลาเข้าปฏิบัติงาน", ซ่อน Dropdown ในโหมดรูปแบบปกติตั้งแต่เริ่มเวลาเข้างานจนกว่าจะกดลงเวลาเลิกงาน รวมถึงกรณีลืมลงเวลาเลิกงานข้ามวัน/นอกเวลา)
  */
 
 import { Config } from '../core/Config.js';
@@ -324,8 +324,20 @@ export class CheckinController {
         this.#renderSpecialRequestsHistoryTable();
     }
 
+    /**
+     * อัปเดตการ์ดสถานะ, การซ่อน/แสดง Dropdown เลือกช่วงเวลาทำงาน และข้อความปุ่มกดตามเงื่อนไขล่าสุด:
+     * - หากเลือกฟังก์ชัน "รูปแบบปกติ" (!single_click_checkin):
+     *   1. กรณีมีรายการลงเวลาเข้างานที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่ (ไม่ว่าจะของวันนี้, ลืมข้ามวัน, หรือถึงเวลานอกเวลาแล้ว):
+     *      ซ่อน Dropdown เลือกช่วงเวลาทำงาน จนกว่าจะบันทึกเวลาเลิกงานครั้งล่าสุดเสร็จสิ้น
+     *   2. กรณีอยู่ในช่วงเวลา "เริ่มเวลาเข้างาน" จนถึงก่อนกดลงเวลาเลิกงาน:
+     *      ซ่อน Dropdown เลือกช่วงเวลาทำงาน และแสดงปุ่ม "บันทึกลงเวลาเข้าปฏิบัติงาน"
+     */
     #updateStatusCardsAndMainButton() {
         const regularRecord = this.activeRegularRecord;
+        const todayIso = UIHelpers.getTodayISO();
+
+        const checkinCardTitleEl = document.getElementById('todayCheckinCardTitle');
+        const checkoutCardTitleEl = document.getElementById('todayCheckoutCardTitle');
         const checkinTimeEl = document.getElementById('todayCheckinTime');
         const checkinBadgeEl = document.getElementById('todayCheckinBadge');
         const checkoutTimeEl = document.getElementById('todayCheckoutTime');
@@ -338,14 +350,17 @@ export class CheckinController {
         const noticeText = document.getElementById('regularCompletedNoticeText');
         const shiftSelectorContainer = document.getElementById('shiftSelectorContainer');
 
+        const isNormalModeSetting = !Boolean(this.settings?.single_click_checkin);
         const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
         const shiftObj = (this.settings?.work_shifts || [])[shiftIdx] || {};
 
         const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
         const allowStartRef = UIHelpers.formatTime24(this.settings?.allow_checkin_start_time || '06:00');
         const allowStartMin = UIHelpers.timeToMinutes(allowStartRef);
+        const stdInRef = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
         const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
         const stdOutMin = UIHelpers.timeToMinutes(stdOutRef);
+        const graceMin = Number(this.settings?.checkout_grace_minutes ?? 30);
 
         const hasUnclosedRegular = Boolean(
             regularRecord &&
@@ -353,37 +368,20 @@ export class CheckinController {
             !regularRecord.check_out_time
         );
 
+        const isRegularCompletedToday = Boolean(
+            regularRecord &&
+            regularRecord.check_in_time &&
+            regularRecord.check_out_time &&
+            regularRecord.work_date === todayIso
+        );
+
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
 
-        const isOvertimeContext = Boolean(
-            shiftObj.is_overtime ||
-            (!hasUnclosedRegular && (isBeforeAllowStart || isAfterStdOut))
-        );
-
-        if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
-            mainCustomBox?.classList.remove('hidden');
-        } else {
-            mainCustomBox?.classList.add('hidden');
-        }
-
-        if (modeTag) {
-            if (!this.settings?.single_click_checkin && hasUnclosedRegular) {
-                modeTag.textContent = 'รูปแบบปกติ';
-                modeTag.className = 'bma-badge bma-badge-success';
-            } else if (isOvertimeContext) {
-                modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
-                modeTag.className = 'bma-badge-pastel-purple';
-            } else if (this.settings?.single_click_checkin) {
-                modeTag.textContent = 'รูปแบบพิเศษ';
-                modeTag.className = 'bma-badge bma-badge-indigo';
-            } else {
-                modeTag.textContent = 'รูปแบบปกติ';
-                modeTag.className = 'bma-badge bma-badge-success';
-            }
-        }
-
+        // 1. อัปเดตการ์ดแสดงเวลาเข้างาน-เลิกงานด้านบน
         if (!regularRecord) {
+            if (checkinCardTitleEl) checkinCardTitleEl.textContent = 'เวลาเข้างานปกติวันนี้ (24 ชม.)';
+            if (checkoutCardTitleEl) checkoutCardTitleEl.textContent = 'เวลาออกงานปกติวันนี้ (24 ชม.)';
             checkinTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
             checkinBadgeEl.textContent = 'รอลงเวลาเข้า';
             checkinBadgeEl.className = 'bma-badge bma-badge-warning';
@@ -393,6 +391,11 @@ export class CheckinController {
             checkoutBadgeEl.textContent = 'รอลงเวลาออก';
             checkoutBadgeEl.className = 'bma-badge bma-badge-sky';
         } else {
+            const isPastUnclosed = regularRecord.work_date !== todayIso && !regularRecord.check_out_time;
+            const dateSuffix = isPastUnclosed ? ` (${UIHelpers.formatThaiShortDate(regularRecord.work_date)})` : 'วันนี้ (24 ชม.)';
+            if (checkinCardTitleEl) checkinCardTitleEl.textContent = `เวลาเข้างานปกติ${dateSuffix}`;
+            if (checkoutCardTitleEl) checkoutCardTitleEl.textContent = `เวลาเลิกงานปกติ${dateSuffix}`;
+
             const evalStatus = AttendanceModel.evaluateOfficialStatus(regularRecord, this.settings);
             checkinTimeEl.textContent = regularRecord.check_in_time ? `${UIHelpers.formatTime24(regularRecord.check_in_time)} น.` : '-';
             checkinBadgeEl.textContent = evalStatus.status_label;
@@ -401,34 +404,107 @@ export class CheckinController {
 
             if (regularRecord.check_out_time) {
                 checkoutTimeEl.textContent = `${UIHelpers.formatTime24(regularRecord.check_out_time)} น.`;
-                checkoutBadgeEl.textContent = 'ลงเวลาออกงานแล้ว';
+                checkoutBadgeEl.textContent = 'ลงเวลาเลิกงานแล้ว';
                 checkoutBadgeEl.className = 'bma-badge bma-badge-success';
             } else {
-                checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลาออก';
-                checkoutBadgeEl.textContent = 'รอลงเวลาออกงาน';
-                checkoutBadgeEl.className = 'bma-badge bma-badge-warning';
+                checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลาเลิกงาน';
+                checkoutBadgeEl.textContent = isPastUnclosed ? 'ค้างลงเวลาเลิกงาน' : 'รอลงเวลาเลิกงาน';
+                checkoutBadgeEl.className = isPastUnclosed ? 'bma-badge bma-badge-danger' : 'bma-badge bma-badge-warning';
             }
         }
 
-        if (!this.settings?.single_click_checkin && hasUnclosedRegular) {
-            shiftSelectorContainer?.classList.add('opacity-60', 'pointer-events-none');
-            noticeBox?.classList.remove('hidden');
-            const graceMin = Number(this.settings?.checkout_grace_minutes ?? 30);
-            if (noticeText) {
-                noticeText.textContent = `ท่านได้ลงเวลาเข้างานไว้เมื่อ ${UIHelpers.formatTime24(regularRecord.check_in_time)} น. กรุณากดบันทึกเวลาออกงานตามปกติก่อน (หากเลยเวลาเลิกงานไม่เกิน ${graceMin} นาทีจะบันทึกเวลาจริง หากเกิน ${graceMin} นาทีจะบันทึกเป็น เวลาออกงาน+${graceMin} นาที)`;
+        // ====================================================================
+        // เงื่อนไขสำคัญที่ 1: กรณีฟังก์ชัน "รูปแบบปกติ" และยังไม่ได้ลงเวลาเลิกงานตามปกติ
+        // (ไม่ว่าจะของวันนี้, ลืมจนข้ามวันมาวันถัดไป, หรือถึงเวลาปฏิบัติงานนอกเวลาแล้ว)
+        // ระบบจะไม่แสดง Dropdown ให้เลือกช่วงเวลาทำงาน จนกว่าจะบันทึกเวลาเลิกงานครั้งล่าสุดเสร็จ!
+        // ====================================================================
+        if (isNormalModeSetting && hasUnclosedRegular) {
+            shiftSelectorContainer?.classList.add('hidden');
+            mainCustomBox?.classList.add('hidden');
+
+            if (modeTag) {
+                modeTag.textContent = 'รูปแบบปกติ';
+                modeTag.className = 'bma-badge bma-badge-success';
             }
+
+            noticeBox?.classList.remove('hidden');
+            const isPastDate = regularRecord.work_date !== todayIso;
+            if (noticeText) {
+                if (isPastDate) {
+                    noticeText.textContent = `ท่านมีรายการลงเวลาเข้าปฏิบัติงานค้างอยู่เมื่อวันที่ ${UIHelpers.formatThaiShortDate(regularRecord.work_date)} เวลา ${UIHelpers.formatTime24(regularRecord.check_in_time)} น. กรุณากดบันทึกเวลาเลิกงานครั้งล่าสุดให้เสร็จสิ้นก่อน จึงจะสามารถลงเวลาทำงานในรอบถัดไปได้`;
+                } else {
+                    noticeText.textContent = `ท่านได้ลงเวลาเข้าปฏิบัติงานไว้เมื่อเวลา ${UIHelpers.formatTime24(regularRecord.check_in_time)} น. กรุณากดบันทึกลงเวลาเลิกงาน (เลิกงานก่อน ${stdOutRef} น. = ขาดราชการ | ตั้งแต่ ${stdOutRef} น. ไม่เกิน ${graceMin} นาที = บันทึกตามจริง | เกิน ${graceMin} นาที = บันทึกเวลาเลิกงาน+${graceMin} นาที)`;
+                }
+            }
+
             if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (btnSubmitLabel) btnSubmitLabel.textContent = 'บันทึกลงเวลาออกปฏิบัติราชการ';
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = isPastDate
+                    ? `บันทึกลงเวลาเลิกงาน (${UIHelpers.formatThaiShortDate(regularRecord.work_date)})`
+                    : 'บันทึกลงเวลาเลิกงาน';
+            }
             return;
         }
 
-        shiftSelectorContainer?.classList.remove('opacity-60', 'pointer-events-none');
+        // ====================================================================
+        // เงื่อนไขสำคัญที่ 2: กรณีฟังก์ชัน "รูปแบบปกติ" อยู่ในช่วงเวลาทำงานปกติ (ตั้งแต่ "เริ่มเวลาเข้างาน" จนถึงเวลาเลิกงานมาตรฐาน)
+        // และยังไม่ได้ลงเวลาเข้าปฏิบัติงานในวันนี้ -> ซ่อน Dropdown เลือกช่วงเวลาทำงาน และแสดงปุ่ม "บันทึกลงเวลาเข้าปฏิบัติงาน"
+        // ====================================================================
+        if (isNormalModeSetting && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut) {
+            shiftSelectorContainer?.classList.add('hidden');
+            mainCustomBox?.classList.add('hidden');
+
+            if (modeTag) {
+                modeTag.textContent = 'รูปแบบปกติ';
+                modeTag.className = 'bma-badge bma-badge-success';
+            }
+
+            noticeBox?.classList.remove('hidden');
+            if (noticeText) {
+                noticeText.textContent = `เวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) เปิดให้เริ่มบันทึกเวลาเข้าปฏิบัติงานตั้งแต่เวลา ${allowStartRef} น.`;
+            }
+
+            if (btnSubmitMain) btnSubmitMain.disabled = false;
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
+            }
+            return;
+        }
+
+        // ====================================================================
+        // เงื่อนไขที่ 3: กรณีอยู่นอกเวลาทำการปกติ (หรือลงเวลาเข้า-เลิกงานปกติของวันนี้ครบแล้ว หรืออยู่ในโหมด "รูปแบบพิเศษ")
+        // แสดง Dropdown ให้เลือกช่วงเวลาได้ตามปกติ
+        // ====================================================================
+        shiftSelectorContainer?.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
+
+        if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
+            mainCustomBox?.classList.remove('hidden');
+        } else {
+            mainCustomBox?.classList.add('hidden');
+        }
+
+        const isOvertimeContext = Boolean(
+            shiftObj.is_overtime ||
+            isBeforeAllowStart ||
+            isAfterStdOut ||
+            isRegularCompletedToday
+        );
+
+        if (modeTag) {
+            if (isOvertimeContext) {
+                modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
+                modeTag.className = 'bma-badge-pastel-purple';
+            } else {
+                modeTag.textContent = 'รูปแบบพิเศษ';
+                modeTag.className = 'bma-badge bma-badge-indigo';
+            }
+        }
 
         if (isOvertimeContext) {
             noticeBox?.classList.remove('hidden');
             if (noticeText) {
                 if (isBeforeAllowStart) {
-                    noticeText.textContent = `ขณะนี้อยู่ก่อนเวลาเริ่มบันทึกเข้างานปกติ (${allowStartRef} น.) ระบบสลับให้เลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" และบันทึกเวลารูปแบบพิเศษอัตโนมัติ`;
+                    noticeText.textContent = `ขณะนี้อยู่ก่อนเวลาเริ่มบันทึกเข้าปฏิบัติงานปกติ (${allowStartRef} น.) ระบบสลับให้เลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" และบันทึกเวลารูปแบบพิเศษอัตโนมัติ`;
                 } else {
                     noticeText.textContent = `ระบบอยู่ในโหมด "ช่วงเวลาปฏิบัติงานนอกเวลา" เมื่อกดบันทึกจะลงทั้งเวลาเข้าและเวลาเลิกงานตามช่วงเวลาที่เลือกให้อัตโนมัติ`;
                 }
@@ -440,21 +516,19 @@ export class CheckinController {
             return;
         }
 
-        const isRegularCompletedToday = Boolean(regularRecord && regularRecord.check_in_time && regularRecord.check_out_time);
+        // กรณีโหมด "รูปแบบพิเศษ" (single_click_checkin === true) ในช่วงเวลาปกติ
         if (isRegularCompletedToday) {
             noticeBox?.classList.remove('hidden');
             if (noticeText) {
-                noticeText.textContent = `วันนี้ท่านได้ลงเวลาเข้างานและออกงานในเวลาทำการปกติครบแล้ว สามารถเลือกช่วงเวลา "ปฏิบัติงานนอกเวลา" หากต้องการลงเวลานอกเวลา`;
+                noticeText.textContent = `วันนี้ท่านได้ลงเวลาเข้าและเลิกงานในเวลาทำการปกติครบแล้ว สามารถเลือกช่วงเวลา "ปฏิบัติงานนอกเวลา" หากต้องการลงเวลานอกเวลา`;
             }
             if (btnSubmitMain) btnSubmitMain.disabled = true;
             if (btnSubmitLabel) btnSubmitLabel.textContent = 'ลงเวลาทำการปกติของวันนี้ครบแล้ว';
         } else {
             noticeBox?.classList.add('hidden');
             if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (this.settings?.single_click_checkin) {
-                btnSubmitLabel.textContent = 'บันทึกลงเวลาปฏิบัติงาน (รูปแบบพิเศษ)';
-            } else {
-                btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติราชการ';
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
             }
         }
     }
@@ -699,9 +773,6 @@ export class CheckinController {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    /**
-     * จับพิกัด GPS และค้นหาชื่อสถานที่ด้วยความเร็วสูงสุด โดยไม่บล็อกการบันทึกข้อมูล
-     */
     async #initGpsLocation() {
         if (!this.settings?.require_gps) return;
 
@@ -718,7 +789,7 @@ export class CheckinController {
         }
 
         coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
-        locNameEl.textContent = 'กำลังค้นหาสถานที่...';
+        locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
 
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -727,7 +798,7 @@ export class CheckinController {
                 this.gpsData.lat = lat;
                 this.gpsData.lng = lng;
                 this.gpsData.ready = true;
-                this.gpsData.locationName = `พิกัด (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+                this.gpsData.locationName = `ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
 
                 coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
@@ -742,7 +813,6 @@ export class CheckinController {
                     mapLink.classList.remove('hidden');
                 }
 
-                // ค้นหาชื่อสถานที่แบบความเร็วสูง (ไม่บล็อกหน้าจอ)
                 this.locationResolvePromise = AttendanceModel.resolveLocationName(lat, lng).then(resolvedPlace => {
                     this.gpsData.locationName = resolvedPlace;
                     if (locNameEl) locNameEl.textContent = resolvedPlace;
@@ -932,11 +1002,15 @@ export class CheckinController {
             return;
         }
 
+        const btnSubmitMain = document.getElementById('btnSubmitCheckinMain');
+        if (btnSubmitMain) btnSubmitMain.disabled = true;
+
+        const isNormalModeSetting = !Boolean(this.settings?.single_click_checkin);
         const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
         const shiftObj = (this.settings.work_shifts || [])[shiftIdx] || {
             name: 'เวลาราชการปกติ',
-            check_in: '08:30',
-            check_out: '16:30',
+            check_in: this.settings.standard_check_in || '08:30',
+            check_out: this.settings.standard_check_out || '16:30',
             is_custom: false,
             is_overtime: false,
             is_overnight: false
@@ -950,23 +1024,36 @@ export class CheckinController {
         const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
         const allowStartMin = UIHelpers.timeToMinutes(this.settings?.allow_checkin_start_time || '06:00');
         const stdOutMin = UIHelpers.timeToMinutes(this.settings?.standard_check_out || '16:30');
+        const todayIso = UIHelpers.getTodayISO();
+
         const hasUnclosedRegular = Boolean(
             this.activeRegularRecord &&
             this.activeRegularRecord.check_in_time &&
             !this.activeRegularRecord.check_out_time
         );
 
-        const isOvertimeByTimeWindow = !hasUnclosedRegular && (nowMin < allowStartMin || nowMin > stdOutMin);
-        const effectiveOvertimeShift = Boolean(shiftObj.is_overtime || isOvertimeByTimeWindow);
+        const isRegularCompletedToday = Boolean(
+            this.activeRegularRecord &&
+            this.activeRegularRecord.check_in_time &&
+            this.activeRegularRecord.check_out_time &&
+            this.activeRegularRecord.work_date === todayIso
+        );
 
-        UIHelpers.showLoading('กำลังบันทึกเวลาปฏิบัติราชการ...');
+        // หากยังมีรายการลงเวลาเข้างานปกติที่ยังไม่ได้ลงเวลาเลิกงานค้างอยู่ (hasUnclosedRegular)
+        // ต้องบังคับให้เป็นการบันทึกเวลาเลิกงานตามปกติก่อนเสมอ (ไม่ให้เข้าโหมดนอกเวลา)
+        const isOvertimeByTimeWindow = !hasUnclosedRegular && (nowMin < allowStartMin || nowMin > stdOutMin || isRegularCompletedToday);
+        const effectiveOvertimeShift = !hasUnclosedRegular && Boolean(
+            (!isNormalModeSetting && shiftObj.is_overtime) ||
+            isOvertimeByTimeWindow
+        );
+
+        UIHelpers.showLoading('กำลังบันทึกเวลาปฏิบัติงาน กรุณารอสักครู่...');
 
         try {
-            // หากชื่อสถานทีกำลังค้นหาอยู่ในเสี้ยววินาทีสุดท้าย ให้รอไม่เกิน 600ms เพื่อไม่ให้หน่วงตอนบันทึกข้อมูล
             if (this.settings.require_gps && this.locationResolvePromise) {
                 await Promise.race([
                     this.locationResolvePromise,
-                    new Promise(r => setTimeout(r, 600))
+                    new Promise(r => setTimeout(r, 800))
                 ]);
             }
 
@@ -979,15 +1066,24 @@ export class CheckinController {
                 );
             }
 
+            const stdInRef = UIHelpers.formatTime24(this.settings.standard_check_in || '08:30');
+            const stdOutRef = UIHelpers.formatTime24(this.settings.standard_check_out || '16:30');
+
             const res = await AttendanceModel.submitCheckinOrCheckout({
                 personnel_id: this.currentUser.personnel_id,
                 user_id: this.currentUser.id,
-                work_date: UIHelpers.getTodayISO(),
-                shift_name: formattedShiftName,
-                shift_check_in: shiftObj.check_in || this.settings.standard_check_in || '08:30',
-                shift_check_out: shiftObj.check_out || this.settings.standard_check_out || '16:30',
-                custom_check_in_time: customCheckIn || '',
-                custom_check_out_time: customCheckOut || '',
+                work_date: todayIso,
+                shift_name: (isNormalModeSetting && !effectiveOvertimeShift)
+                    ? `เวลาราชการปกติ (${stdInRef} - ${stdOutRef})`
+                    : formattedShiftName,
+                shift_check_in: (isNormalModeSetting && !effectiveOvertimeShift)
+                    ? stdInRef
+                    : (shiftObj.check_in || stdInRef),
+                shift_check_out: (isNormalModeSetting && !effectiveOvertimeShift)
+                    ? stdOutRef
+                    : (shiftObj.check_out || stdOutRef),
+                custom_check_in_time: (isNormalModeSetting && !effectiveOvertimeShift) ? '' : (customCheckIn || ''),
+                custom_check_out_time: (isNormalModeSetting && !effectiveOvertimeShift) ? '' : (customCheckOut || ''),
                 is_overtime_shift: effectiveOvertimeShift,
                 is_overnight: Boolean(shiftObj.is_overnight),
                 single_click_checkin: Boolean(this.settings.single_click_checkin || effectiveOvertimeShift),
@@ -999,6 +1095,7 @@ export class CheckinController {
 
             UIHelpers.hideLoading();
             if (!res.success) {
+                this.#updateStatusCardsAndMainButton();
                 await UIHelpers.alert('ไม่สามารถลงเวลาได้', res.message, 'warning');
                 return;
             }
@@ -1007,6 +1104,7 @@ export class CheckinController {
             await UIHelpers.showToast(res.message, 'success', 3000);
         } catch (err) {
             UIHelpers.hideLoading();
+            this.#updateStatusCardsAndMainButton();
             await UIHelpers.alert('เกิดข้อผิดพลาด', err.message, 'error');
         }
     }
@@ -1033,7 +1131,7 @@ export class CheckinController {
             checkOutTime = UIHelpers.formatTime24(document.getElementById('spCustomCheckout').value || '16:30');
         }
 
-        UIHelpers.showLoading('กำลังส่งคำขอลงเวลากรณีพิเศษ...');
+        UIHelpers.showLoading('กำลังส่งคำขอลงเวลากรณีพิเศษ กรุณารอสักครู่...');
         try {
             let finalPhotoUrl = '';
             if (this.settings.require_photo && this.capturedPhotoDataUrl) {

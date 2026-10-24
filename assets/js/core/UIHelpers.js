@@ -1,17 +1,17 @@
 /**
  * @file assets/js/core/UIHelpers.js
- * @description คลาสจัดการ UI, ซ่อนชื่อไฟล์บนแถบ URL รองรับทั้ง GitHub Pages และ Cloudflare Pages, พิมพ์ PDF A4 แนวนอน, ตรวจสอบลิงก์รูปโลโก้ & Google Drive
+ * @description คลาสจัดการ UI, ระบบ Popup รอโหลดระหว่างประมวลผลทั้งระบบ (แสดงผลทันที 0ms), ซ่อนชื่อไฟล์บนแถบ URL, พิมพ์ PDF A4 แนวนอน, ตรวจสอบลิงก์รูปโลโก้ & Google Drive
  */
 
 import { Config } from './Config.js';
 
 export class UIHelpers {
     static #progressTimer = null;
+    static #hideTimer = null;
     static #currentProgress = 0;
 
     static VIEW_PAGE_STORAGE_KEY = 'bma_checkin_active_view_page_v2_9';
 
-    // รูปแบบชื่อหน้าทั้งหมดของระบบ (รองรับทั้งแบบมี .html บน GitHub Pages และแบบตัด .html อัตโนมัติบน Cloudflare Pages)
     static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|personnel|users|settings)(\.html)?\/?$/i;
 
     static THAI_MONTHS_SHORT = [
@@ -24,12 +24,6 @@ export class UIHelpers {
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
-    /**
-     * คืนค่า Path รากของเว็บไซต์โดยไม่มีชื่อไฟล์:
-     * - บน GitHub Pages คืนค่า "/CheckinApp/"
-     * - บน Cloudflare Pages คืนค่า "/"
-     * @returns {string}
-     */
     static getRootBasePath() {
         const pathname = window.location.pathname || '/';
         if (UIHelpers.KNOWN_PAGES_REGEX.test(pathname)) {
@@ -41,11 +35,6 @@ export class UIHelpers {
         return pathname.endsWith('/') ? pathname : `${pathname}/`;
     }
 
-    /**
-     * ซ่อนชื่อไฟล์ออกจากแถบ URL ของเบราว์เซอร์ในทุกหน้า (รองรับทั้ง GitHub Pages และ Cloudflare Pages)
-     * พร้อมจดจำชื่อไฟล์หน้าปัจจุบันไว้ใน sessionStorage เพื่อรองรับการกด Refresh (F5)
-     * @param {string} explicitPageName ชื่อไฟล์หน้าที่กำลังแสดงผล
-     */
     static maskUrlToRoot(explicitPageName = '') {
         try {
             const pathname = window.location.pathname || '/';
@@ -377,7 +366,18 @@ export class UIHelpers {
         return base64DataUrl;
     }
 
-    static showLoading(message = 'กำลังโหลดข้อมูล...') {
+    /**
+     * แสดง Popup รอโหลดระหว่างรอการประมวลผลทั้งระบบ (Login, บันทึก, แก้ไข, ลบ)
+     * ใช้ Inline Style z-index: 999999 เพื่อให้แสดงผลขึ้นหน้าจอทันที (0ms) อยู่เหนือทุก Modal
+     * @param {string} message ข้อความสถานะการทำงาน
+     */
+    static showLoading(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') {
+        // ยกเลิก Timer ปิดหน้าต่างอันเก่า (ถ้ามี) เพื่อป้องกันไม่ให้ Popup ถูกซ่อนก่อนเวลา
+        if (UIHelpers.#hideTimer) {
+            clearTimeout(UIHelpers.#hideTimer);
+            UIHelpers.#hideTimer = null;
+        }
+
         let topBar = document.getElementById('bmaTopProgressBar');
         if (!topBar) {
             topBar = document.createElement('div');
@@ -389,18 +389,21 @@ export class UIHelpers {
         if (!spinner) {
             spinner = document.createElement('div');
             spinner.id = 'bmaGlobalSpinner';
-            spinner.className = 'fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-200';
+            spinner.style.cssText = 'position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background-color: rgba(4, 31, 17, 0.65); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); transition: opacity 0.15s ease;';
             spinner.innerHTML = `
-                <div class="bma-card px-8 py-6 flex flex-col items-center gap-3.5 w-80 sm:w-96 text-center shadow-2xl">
+                <div class="bma-card px-7 py-6 flex flex-col items-center gap-3.5 w-80 sm:w-96 text-center shadow-2xl border-2 border-[#007B3E]" style="background-color: var(--bma-surface-1); border-radius: 1.25rem;">
                     <div class="bma-spin-ring"></div>
-                    <p id="bmaGlobalSpinnerText" class="text-sm font-bold bma-text-main"></p>
-                    <div class="w-full space-y-1">
+                    <div class="space-y-1">
+                        <p id="bmaGlobalSpinnerText" class="text-sm sm:text-base font-extrabold bma-text-main">กำลังประมวลผล...</p>
+                        <p class="text-xs bma-text-sub">ระบบกำลังดำเนินการ กรุณารอสักครู่</p>
+                    </div>
+                    <div class="w-full space-y-1.5 pt-1">
                         <div class="bma-ajax-progress-track">
-                            <div id="bmaGlobalProgressFill" class="bma-ajax-progress-fill" style="width: 15%;"></div>
+                            <div id="bmaGlobalProgressFill" class="bma-ajax-progress-fill" style="width: 20%;"></div>
                         </div>
                         <div class="flex items-center justify-between text-[11px] font-bold bma-text-sub">
-                            <span>กำลังประมวลผล</span>
-                            <span id="bmaGlobalProgressPercent">15%</span>
+                            <span><i class="fa-solid fa-circle-notch fa-spin mr-1" style="color: var(--bma-primary);"></i>กำลังเชื่อมต่อระบบ</span>
+                            <span id="bmaGlobalProgressPercent">20%</span>
                         </div>
                     </div>
                 </div>
@@ -412,19 +415,24 @@ export class UIHelpers {
         if (textEl) textEl.textContent = message;
 
         spinner.classList.remove('hidden');
+        spinner.style.display = 'flex';
+        spinner.style.opacity = '1';
         topBar.style.opacity = '1';
 
+        // บังคับให้เบราว์เซอร์คำนวณ Layout ทันที (Force Synchronous Reflow) เพื่อให้ผู้ใช้เห็น Popup ทันทีที่กดปุ่ม
+        void spinner.offsetHeight;
+
         if (UIHelpers.#progressTimer) clearInterval(UIHelpers.#progressTimer);
-        UIHelpers.#currentProgress = 22;
+        UIHelpers.#currentProgress = 24;
         UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
 
         UIHelpers.#progressTimer = setInterval(() => {
-            if (UIHelpers.#currentProgress < 90) {
-                const step = UIHelpers.#currentProgress < 55 ? 14 : 6;
-                UIHelpers.#currentProgress = Math.min(90, UIHelpers.#currentProgress + step);
+            if (UIHelpers.#currentProgress < 92) {
+                const step = UIHelpers.#currentProgress < 60 ? 12 : 5;
+                UIHelpers.#currentProgress = Math.min(92, UIHelpers.#currentProgress + step);
                 UIHelpers.#updateProgressDOM(UIHelpers.#currentProgress);
             }
-        }, 100);
+        }, 90);
     }
 
     static #updateProgressDOM(percent) {
@@ -444,15 +452,23 @@ export class UIHelpers {
 
         UIHelpers.#updateProgressDOM(100);
 
-        setTimeout(() => {
+        if (UIHelpers.#hideTimer) {
+            clearTimeout(UIHelpers.#hideTimer);
+        }
+
+        UIHelpers.#hideTimer = setTimeout(() => {
             const spinner = document.getElementById('bmaGlobalSpinner');
             const topBar = document.getElementById('bmaTopProgressBar');
-            if (spinner) spinner.classList.add('hidden');
+            if (spinner) {
+                spinner.style.display = 'none';
+                spinner.classList.add('hidden');
+            }
             if (topBar) {
                 topBar.style.opacity = '0';
-                setTimeout(() => { topBar.style.width = '0%'; }, 150);
+                setTimeout(() => { topBar.style.width = '0%'; }, 120);
             }
-        }, 100);
+            UIHelpers.#hideTimer = null;
+        }, 120);
     }
 
     static renderTableSkeleton(rows = 5, cols = 6) {

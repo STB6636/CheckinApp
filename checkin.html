@@ -85,7 +85,7 @@
                         <i class="fa-solid fa-right-to-bracket"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold bma-text-sub">เวลาเข้างานปกติวันนี้ (24 ชม.)</span>
+                        <span id="todayCheckinCardTitle" class="text-xs font-bold bma-text-sub">เวลาเข้างานปกติวันนี้ (24 ชม.)</span>
                         <p id="todayCheckinTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold bma-text-sub">เวลาออกงานปกติวันนี้ (24 ชม.)</span>
+                        <span id="todayCheckoutCardTitle" class="text-xs font-bold bma-text-sub">เวลาออกงานปกติวันนี้ (24 ชม.)</span>
                         <p id="todayCheckoutTime" class="text-xl font-extrabold bma-text-main mt-0.5">ยังไม่ได้ลงเวลา</p>
                     </div>
                 </div>
@@ -214,11 +214,12 @@
                         <div class="p-3.5 bma-info-box flex flex-wrap items-center justify-between gap-2 text-xs">
                             <span class="font-bold bma-text-main flex items-center gap-1.5">
                                 <i class="fa-solid fa-sliders" style="color: var(--bma-primary);"></i>
-                                <span>เงื่อนไขช่วงเวลาที่เลือก:</span>
+                                <span>เงื่อนไขการบันทึกเวลา:</span>
                             </span>
                             <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success">รูปแบบปกติ</span>
                         </div>
 
+                        <!-- กล่องเลือกช่วงเวลาทำงาน (ในโหมดรูปแบบปกติ จะซ่อนไว้ตั้งแต่เริ่มเวลาเข้างานจนกว่าจะกดบันทึกเวลาเลิกงานเสร็จสิ้น) -->
                         <div id="shiftSelectorContainer">
                             <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold bma-text-main mb-1.5">เลือกช่วงเวลาทำงาน</label>
                             <select id="checkinShiftSelect" class="bma-select text-sm font-semibold"></select>
@@ -242,10 +243,10 @@
                     </div>
 
                     <div class="space-y-3 pt-2">
-                        <!-- ปุ่มบันทึกลงเวลาหลัก -->
+                        <!-- ปุ่มบันทึกลงเวลาหลัก (เปลี่ยนชื่อเป็น "บันทึกลงเวลาเข้าปฏิบัติงาน") -->
                         <button type="button" id="btnSubmitCheckinMain" class="btn-bma-primary w-full py-4 text-base shadow-xl">
                             <i class="fa-solid fa-fingerprint text-xl text-[#FDD835]"></i>
-                            <span id="btnSubmitCheckinLabel">บันทึกลงเวลาปฏิบัติราชการ</span>
+                            <span id="btnSubmitCheckinLabel">บันทึกลงเวลาเข้าปฏิบัติงาน</span>
                         </button>
 
                         <!-- ปุ่มขอลงเวลากรณีพิเศษ -->
