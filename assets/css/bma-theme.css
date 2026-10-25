@@ -1489,3 +1489,60 @@ div[id^="modal"]:not(.hidden),
         margin-bottom: 2.5rem !important; /* 40px Desktop */
     }
 }
+
+/* ============================================================================
+ * Shimmer Skeleton Loader (Plan V2.18)
+ * ============================================================================ */
+@keyframes bma-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.bma-skeleton-shimmer {
+    background: linear-gradient(90deg, rgba(226, 232, 240, 0.6) 25%, rgba(241, 245, 249, 0.9) 37%, rgba(226, 232, 240, 0.6) 63%);
+    background-size: 200% 100%;
+    animation: bma-shimmer 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+html.dark .bma-skeleton-shimmer {
+    background: linear-gradient(90deg, rgba(30, 41, 59, 0.7) 25%, rgba(51, 65, 85, 0.9) 37%, rgba(30, 41, 59, 0.7) 63%);
+    background-size: 200% 100%;
+}
+
+/* ============================================================================
+ * Data Health Preview Cell Highlights (Bulk Import - Plan V2.18)
+ * ============================================================================ */
+.cell-health-valid {
+    background-color: rgba(16, 185, 129, 0.08) !important;
+    color: #047857 !important;
+}
+html.dark .cell-health-valid {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    color: #34D399 !important;
+}
+
+.cell-health-healed {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #B45309 !important;
+}
+html.dark .cell-health-healed {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    color: #FBBF24 !important;
+}
+
+.cell-health-error {
+    background-color: rgba(244, 63, 94, 0.12) !important;
+    color: #BE123C !important;
+    outline: 1px dashed rgba(244, 63, 94, 0.6) !important;
+    outline-offset: -1px;
+}
+html.dark .cell-health-error {
+    background-color: rgba(244, 63, 94, 0.2) !important;
+    color: #FB7185 !important;
+    outline: 1px dashed rgba(244, 63, 94, 0.6) !important;
+    outline-offset: -1px;
+}

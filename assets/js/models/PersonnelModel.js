@@ -71,16 +71,18 @@ export class PersonnelModel {
             const linkedAccounts = Array.isArray(person.user_accounts)
                 ? person.user_accounts
                 : (person.user_accounts ? [person.user_accounts] : []);
-            const accountRole = linkedAccounts[0]?.role || 'User';
-            const roleMeta = PersonnelModel.getRolePastelMeta(accountRole);
+            const hasAccount = linkedAccounts.length > 0;
+            const accountRole = hasAccount ? (linkedAccounts[0]?.role || 'User') : 'none';
+            const roleMeta = hasAccount ? PersonnelModel.getRolePastelMeta(accountRole) : null;
 
             return {
                 ...person,
                 id: String(person.id),
+                has_account: hasAccount,
                 account_role: accountRole,
                 account_username: linkedAccounts[0]?.username || '',
                 role_meta: roleMeta,
-                badge_color: roleMeta.hexColor
+                badge_color: roleMeta ? roleMeta.hexColor : '#CBD5E1'
             };
         });
 
@@ -107,6 +109,90 @@ export class PersonnelModel {
             return null;
         }
         return data;
+    }
+
+    /**
+     * สร้างบัญชีผู้ใช้งานอัตโนมัติภายหลัง (Late Auto-Provisioning) สำหรับบุคลากรที่ยังไม่มีบัญชี
+     * @param {string|number} personId 
+     * @returns {Promise<{success: boolean, username?: string, password?: string, fullName?: string, message: string}>}
+     */
+    static async quickCreateAccount(personId) {
+        const db = DatabaseService.getInstance().client;
+        const person = await PersonnelModel.getById(personId);
+        if (!person) {
+            return { success: false, message: 'ไม่พบข้อมูลบุคลากรในระบบ' };
+        }
+
+        const linkedAccounts = Array.isArray(person.user_accounts)
+            ? person.user_accounts
+            : (person.user_accounts ? [person.user_accounts] : []);
+        if (linkedAccounts.length > 0) {
+            return { success: false, message: 'บุคลากรท่านนี้มีบัญชีผู้ใช้งานในระบบอยู่แล้ว' };
+        }
+
+        const cleanNationalId = String(person.national_id || '').replace(/[\s-]/g, '');
+        if (cleanNationalId.length !== 13) {
+            return {
+                success: false,
+                message: `ไม่สามารถสร้างบัญชีได้เนื่องจากเลขประจำตัวประชาชนไม่ครบ 13 หลัก (ปัจจุบันมี ${cleanNationalId.length} หลัก)`
+            };
+        }
+
+        // ตรวจสอบความถูกต้องของเลขบัตรประชาชน
+        const idValidation = UIHelpers.validateThaiNationalId(cleanNationalId, false);
+        if (!idValidation.valid) {
+            return { success: false, message: idValidation.message };
+        }
+
+        // ตรวจสอบว่ามี username นี้ใน user_accounts แล้วหรือไม่
+        const { data: existingUser } = await db
+            .from('user_accounts')
+            .select('id')
+            .eq('username', cleanNationalId)
+            .maybeSingle();
+
+        if (existingUser) {
+            return {
+                success: false,
+                message: `มีบัญชีผู้ใช้งานชื่อ ${cleanNationalId} ในระบบแล้ว ไม่สามารถสร้างซ้ำได้`
+            };
+        }
+
+        const autoPassword = UIHelpers.getLast6DigitsFromNationalId(cleanNationalId);
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+
+        const userPayload = {
+            personnel_id: person.id,
+            username: cleanNationalId,
+            password: autoPassword,
+            full_name: fullName,
+            national_id: cleanNationalId,
+            role: 'User',
+            visibility_level: 'none',
+            scope_bureau: person.bureau || '',
+            scope_division: person.division || '',
+            is_active: true
+        };
+
+        const { data: createdUser, error: userErr } = await db
+            .from('user_accounts')
+            .insert(userPayload)
+            .select()
+            .single();
+
+        if (userErr) {
+            console.error('Quick create user account error:', userErr);
+            return { success: false, message: 'ไม่สามารถสร้างบัญชีผู้ใช้งานได้: ' + userErr.message };
+        }
+
+        return {
+            success: true,
+            username: cleanNationalId,
+            password: autoPassword,
+            fullName,
+            data: createdUser,
+            message: 'สร้างบัญชีผู้ใช้งานสำเร็จ'
+        };
     }
 
     /**

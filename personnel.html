@@ -340,6 +340,10 @@
                     <i class="fa-solid fa-xmark mr-1"></i> ปิดหน้าต่าง
                 </button>
                 <div class="flex items-center gap-2">
+                    <button type="button" id="btnResumeCreateAccount" class="hidden inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>สร้างบัญชีอัตโนมัติ</span>
+                    </button>
                     <button type="button" id="btnResumeEditPersonnel" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition cursor-pointer">
                         <i class="fa-solid fa-pen"></i>
                         <span>แก้ไขข้อมูล</span>
@@ -350,6 +354,173 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: ระบบนำเข้าข้อมูลบุคลากรแบบอัจฉริยะ (Smart Bulk Import Modal) -->
+    <div id="modalPersonnelBulkImport" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+        <div class="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-5 sm:p-7 border border-slate-200 dark:border-slate-700 my-6 flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00744B] to-[#00C08A] text-white flex items-center justify-center text-lg shadow-md shrink-0">
+                        <i class="fa-solid fa-file-import"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-white">ระบบนำเข้าข้อมูลบุคลากรแบบอัจฉริยะ (Smart Bulk Import)</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">ตรวจสอบความถูกต้องอัตโนมัติ (Data Health) จับคู่ข้อมูลด้วย AI Fuzzy Matching และแก้ไขได้ในตาราง</p>
+                    </div>
+                </div>
+                <button type="button" id="btnCloseBulkImportModal" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+                
+                <!-- Dropzone Area -->
+                <div id="dropzoneBulkPersonnel" class="p-6 border-2 border-dashed border-emerald-500/40 hover:border-emerald-500 rounded-2xl bg-emerald-50/30 dark:bg-emerald-950/20 text-center transition-all cursor-pointer">
+                    <input type="file" id="inputBulkPersonnelFile" accept=".xlsx,.xls,.csv" class="hidden">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-900/50 text-[#00744B] dark:text-emerald-300 flex items-center justify-center text-xl mb-3 shadow-xs">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <p class="text-sm font-bold text-slate-700 dark:text-slate-200">
+                        ลากไฟล์ Excel / CSV มาวางที่นี่ หรือ <span class="text-[#00744B] dark:text-emerald-400 underline">คลิกเพื่อเลือกไฟล์</span>
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">รองรับไฟล์รูปแบบ .xlsx, .xls, .csv (UTF-8) ตามมาตรฐานแบบฟอร์ม กทม.</p>
+                    <div class="mt-3 flex items-center justify-center gap-2">
+                        <button type="button" id="btnDownloadImportTemplate" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 transition shadow-2xs">
+                            <i class="fa-solid fa-download text-sky-500"></i>
+                            <span>ดาวน์โหลดแบบฟอร์มตัวอย่าง (Template Excel)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Status Badges (Data Health Summary) -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[11px] font-semibold text-slate-400">ทั้งหมดในไฟล์</span>
+                            <span id="bulkImportKpiTotal" class="font-extrabold text-slate-800 dark:text-white text-base">0 รายการ</span>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">ถูกต้องสมบูรณ์</span>
+                            <span id="bulkImportKpiValid" class="font-extrabold text-emerald-700 dark:text-emerald-300 text-base">0 รายการ</span>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[11px] font-semibold text-amber-600 dark:text-amber-400">ปรับแก้อัตโนมัติ</span>
+                            <span id="bulkImportKpiHealed" class="font-extrabold text-amber-700 dark:text-amber-300 text-base">0 รายการ</span>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-700 dark:text-rose-300 flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="block text-[11px] font-semibold text-rose-600 dark:text-rose-400">ข้อมูลผิดพลาด</span>
+                            <span id="bulkImportKpiErrors" class="font-extrabold text-rose-700 dark:text-rose-300 text-base">0 รายการ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Table Container -->
+                <div id="bulkImportPreviewContainer" class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-white dark:bg-slate-900/60">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                            <i class="fa-solid fa-table text-[#00744B]"></i>
+                            <span>ตัวอย่างข้อมูลและผลการตรวจสอบ (คลิกที่ช่องเพื่อแก้ไขข้อมูลได้โดยตรง)</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-[11px]">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ถูกต้อง</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> ปรับคำอัตโนมัติ</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> ต้องแก้ไข</span>
+                        </div>
+                    </div>
+                    <div class="max-h-72 overflow-x-auto overflow-y-auto">
+                        <table id="bulkImportPreviewTable" class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold sticky top-0 border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="p-2.5 text-center w-12">#</th>
+                                    <th class="p-2.5">สถานะ</th>
+                                    <th class="p-2.5">เลขบัตร ปชช.</th>
+                                    <th class="p-2.5">คำนำหน้า</th>
+                                    <th class="p-2.5">ชื่อ</th>
+                                    <th class="p-2.5">นามสกุล</th>
+                                    <th class="p-2.5">ตำแหน่ง</th>
+                                    <th class="p-2.5">ระดับ</th>
+                                    <th class="p-2.5">สำนักงาน/กอง</th>
+                                    <th class="p-2.5">ส่วน/ฝ่าย</th>
+                                    <th class="p-2.5">กลุ่มงาน</th>
+                                    <th class="p-2.5 text-center">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkImportPreviewTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <tr>
+                                    <td colspan="12" class="text-center py-8 text-slate-400">
+                                        กรุณาเลือกหรือวางไฟล์ Excel เพื่อแสดงผลตัวอย่างการตรวจสอบข้อมูล
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Auto-Account Creation Option Switch -->
+                <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white block">สร้างบัญชีผู้ใช้งานอัตโนมัติ (Auto-Provisioning)</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400 block">เปิดใช้งานบัญชีระดับ 'User' โดยใช้เลขบัตร ปชช. 13 หลักเป็น Username และ 6 ตัวท้ายเป็นรหัสผ่าน</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="chkAutoCreateAccountsBulk" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                    </label>
+                </div>
+
+                <!-- Progress Bar Container (During Upload/Save) -->
+                <div id="bulkImportProgressContainer" class="hidden p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold">
+                        <span id="bulkImportProgressText" class="text-[#00744B] dark:text-emerald-400">กำลังประมวลผลข้อมูล... 0%</span>
+                        <span class="text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-1"></i>โปรดอย่าปิดหน้าต่างนี้</span>
+                    </div>
+                    <div class="w-full h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <div id="bulkImportProgressBar" class="h-full bg-gradient-to-r from-[#00744B] to-[#00C08A] transition-all duration-300 w-0"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Action Footer -->
+            <div class="pt-4 mt-4 flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700 shrink-0">
+                <button type="button" id="btnCancelBulkImport" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+                    ยกเลิก
+                </button>
+                <button type="button" id="btnConfirmBulkImport" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="fa-solid fa-check-double"></i>
+                    <span>ยืนยันการนำเข้าข้อมูลบุคลากร</span>
+                </button>
+            </div>
+
         </div>
     </div>
 

@@ -72,9 +72,23 @@ export class AppLayout {
         const currentUser = AuthService.requireAuth(allowedRoles);
         if (!currentUser) return { currentUser: null, settings: null };
 
+        // Enforce RBAC Silent Redirect: Unauthorized access silently redirects to dashboard
+        if (activePage === 'settings' && currentUser.role !== 'SuperAdmin') {
+            window.location.replace('dashboard.html');
+            return { currentUser: null, settings: null };
+        }
+
         if (activePage === 'users' && !AppLayout.canViewUsersMenu(currentUser)) {
             window.location.replace('dashboard.html');
             return { currentUser: null, settings: null };
+        }
+
+        // Ensure page-specific modals container exists
+        let modalsContainer = document.getElementById('bmaPageModalsContainer');
+        if (!modalsContainer) {
+            modalsContainer = document.createElement('div');
+            modalsContainer.id = 'bmaPageModalsContainer';
+            document.body.appendChild(modalsContainer);
         }
 
         AppLayout.#currentUser = currentUser;
@@ -158,17 +172,75 @@ export class AppLayout {
         document.getElementById('bmaSidebarBackdrop')?.classList.add('hidden');
     }
 
+    /**
+     * เรนเดอร์ Shimmer Skeleton สำหรับส่วนเนื้อหาหลัก <main> ระหว่างการเปลี่ยนหน้าแบบ SPA
+     * @returns {string}
+     */
+    static renderMainSkeleton() {
+        return `
+            <div class="space-y-6 animate-pulse">
+                <!-- Floating Header Skeleton -->
+                <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6 p-6">
+                    <div class="-mt-12 mx-2 rounded-2xl p-5 bg-slate-200 dark:bg-slate-700 bma-skeleton-shimmer h-20 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-slate-300 dark:bg-slate-600"></div>
+                            <div class="space-y-2">
+                                <div class="w-48 h-4 rounded-md bg-slate-300 dark:bg-slate-600"></div>
+                                <div class="w-72 h-3 rounded-md bg-slate-300 dark:bg-slate-600"></div>
+                            </div>
+                        </div>
+                        <div class="hidden sm:flex gap-2">
+                            <div class="w-28 h-9 rounded-xl bg-slate-300 dark:bg-slate-600"></div>
+                            <div class="w-28 h-9 rounded-xl bg-slate-300 dark:bg-slate-600"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filters Skeleton -->
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-700/50 bma-skeleton-shimmer"></div>
+                        <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-700/50 bma-skeleton-shimmer"></div>
+                        <div class="h-10 rounded-xl bg-slate-100 dark:bg-slate-700/50 bma-skeleton-shimmer"></div>
+                    </div>
+
+                    <!-- Table Rows Skeleton -->
+                    <div class="mt-6 space-y-3">
+                        <div class="h-12 rounded-xl bg-slate-100 dark:bg-slate-700/60 bma-skeleton-shimmer"></div>
+                        <div class="h-14 rounded-xl bg-slate-50 dark:bg-slate-800/60 bma-skeleton-shimmer"></div>
+                        <div class="h-14 rounded-xl bg-slate-50 dark:bg-slate-800/60 bma-skeleton-shimmer"></div>
+                        <div class="h-14 rounded-xl bg-slate-50 dark:bg-slate-800/60 bma-skeleton-shimmer"></div>
+                        <div class="h-14 rounded-xl bg-slate-50 dark:bg-slate-800/60 bma-skeleton-shimmer"></div>
+                        <div class="h-14 rounded-xl bg-slate-50 dark:bg-slate-800/60 bma-skeleton-shimmer"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * SPA Dynamic View Loader: โหลดและสลับเฉพาะเนื้อหา <main> และ Modal ประจำหน้า
+     * โดยคง Sidebar, Topbar และ Footer ไว้ถาวรใน DOM 100% พร้อม Shimmer Skeleton
+     * @param {string} targetFile 
+     * @param {boolean} pushHistory 
+     */
     static async navigateAjaxPage(targetFile, pushHistory = true) {
         const cleanFile = targetFile.split('?')[0].split('#')[0].split('/').pop();
         const routeInfo = AppLayout.PAGE_ROUTES[cleanFile];
 
-        // 1. ตรวจสอบสิทธิ์การเข้าถึงเมนูผู้ใช้งาน (Users)
-        if (cleanFile === 'users.html' && !AppLayout.canViewUsersMenu(AppLayout.#currentUser)) {
-            await UIHelpers.showToast('ท่านไม่มีสิทธิ์เข้าถึงเมนูจัดการบัญชีผู้ใช้งาน', 'warning', 2500);
+        if (!routeInfo) {
+            window.location.href = targetFile;
             return;
         }
 
-        // 2. ถ้าเป็นหน้าปัจจุบันอยู่แล้ว ให้ปิดเมนูด้านข้างบนมือถือและไม่ต้องโหลดซ้ำ
+        // 1. ตรวจสอบสิทธิ์การเข้าถึงแบบ RBAC Zero Visual Surface พร้อม Silent Redirect (ไม่แสดง Popup/Alert)
+        if (cleanFile === 'settings.html' && AppLayout.#currentUser?.role !== 'SuperAdmin') {
+            return AppLayout.navigateAjaxPage('dashboard.html', false);
+        }
+
+        if (cleanFile === 'users.html' && !AppLayout.canViewUsersMenu(AppLayout.#currentUser)) {
+            return AppLayout.navigateAjaxPage('dashboard.html', false);
+        }
+
+        // 2. ถ้าเป็นหน้าปัจจุบันอยู่แล้ว ให้ปิด Mobile Drawer และไม่ต้องโหลดซ้ำ
         const currentActive = sessionStorage.getItem(UIHelpers.VIEW_PAGE_STORAGE_KEY) || window.location.pathname.split('/').pop() || 'dashboard.html';
         if (cleanFile === currentActive) {
             document.getElementById('bmaSidebarDrawer')?.classList.add('-translate-x-full');
@@ -184,9 +256,15 @@ export class AppLayout {
         sessionStorage.setItem(UIHelpers.VIEW_PAGE_STORAGE_KEY, cleanFile);
 
         // 5. อัปเดตสถานะ Active Navigation บนแถบเมนูและ Breadcrumb ทันที
-        AppLayout.#updateActiveNavState(cleanFile.replace('.html', ''), routeInfo?.pageTitle || '', '');
+        AppLayout.#updateActiveNavState(routeInfo.activePage, routeInfo.pageTitle || '', '');
 
-        // 6. คำนวณ URL ปลายทางที่แน่นอน (รองรับทั้ง file:///, localhost, และ GitHub Pages)
+        // 6. แสดง Shimmer Skeleton ใน <main> ระหว่างโหลด
+        const mainEl = document.querySelector('main');
+        if (mainEl) {
+            mainEl.innerHTML = AppLayout.renderMainSkeleton();
+        }
+
+        // 7. คำนวณ URL ปลายทางที่แน่นอน (รองรับ file:///, localhost, และ GitHub Pages)
         let targetUrl = cleanFile;
         try {
             if (window.location.protocol === 'file:') {
@@ -202,8 +280,64 @@ export class AppLayout {
             targetUrl = cleanFile;
         }
 
-        // 7. นำทางไปยังเป้าหมายอย่างปลอดภัยและแม่นยำ
-        window.location.href = targetUrl;
+        // 8. ดึงข้อมูล HTML ของหน้าปลายทางผ่าน fetch และ DOMParser
+        try {
+            const res = await fetch(targetUrl);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const htmlText = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            // 8.1 สลับเนื้อหาและคลาสของแท็ก <main>
+            const newMain = doc.querySelector('main');
+            if (mainEl && newMain) {
+                mainEl.className = newMain.className;
+                mainEl.innerHTML = newMain.innerHTML;
+            }
+
+            // 8.2 จัดการ Modals ประจำหน้าใน Container #bmaPageModalsContainer
+            let modalsContainer = document.getElementById('bmaPageModalsContainer');
+            if (!modalsContainer) {
+                modalsContainer = document.createElement('div');
+                modalsContainer.id = 'bmaPageModalsContainer';
+                document.body.appendChild(modalsContainer);
+            }
+
+            // ลบ Modals หน้าเดิมที่เคยอยู่ใน body เพื่อไม่ให้ DOM ID ซ้ำซ้อน
+            document.querySelectorAll('body > [id^="modal"]').forEach(el => el.remove());
+            modalsContainer.innerHTML = '';
+
+            // คัดลอก Modals ของหน้าใหม่เข้ามาใส่ใน container
+            const newModals = doc.querySelectorAll('body > [id^="modal"], body > .fixed[id^="modal"], #bmaPageModalsContainer > [id^="modal"]');
+            newModals.forEach(modal => {
+                modalsContainer.appendChild(modal.cloneNode(true));
+            });
+
+            // 8.3 ปรับปรุง History State และ Root Masking
+            if (pushHistory) {
+                history.pushState({ file: cleanFile }, '', cleanFile);
+            }
+            UIHelpers.maskUrlToRoot(cleanFile);
+
+            // 8.4 โหลดและกำหนด Controller ประจำหน้าผ่าน Dynamic Import
+            if (routeInfo.controllerPath && routeInfo.controllerClass) {
+                try {
+                    const module = await import(`${routeInfo.controllerPath}?spa_v=${Date.now()}`);
+                    if (module[routeInfo.controllerClass]) {
+                        new module[routeInfo.controllerClass]();
+                    }
+                } catch (ctrlErr) {
+                    console.error(`Failed to initialize controller for ${cleanFile}:`, ctrlErr);
+                }
+            }
+
+            // 8.5 อัปเดตกระดิ่งแจ้งเตือน
+            AppLayout.refreshNotificationBell(AppLayout.#currentUser);
+
+        } catch (fetchErr) {
+            console.warn('SPA dynamic view fetch failed, falling back to full navigation:', fetchErr);
+            window.location.href = targetUrl;
+        }
     }
 
     static #renderSidebar(currentUser, settings, activePage) {

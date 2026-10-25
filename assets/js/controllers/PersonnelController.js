@@ -17,6 +17,8 @@ export class PersonnelController {
         this.headerColor = '#007B3E';
         this.searchKeyword = '';
         this.canDeletePersonnel = false;
+        this.bulkImportRows = [];
+        this.isProcessingBulkImport = false;
         this.init();
     }
 
@@ -197,6 +199,23 @@ export class PersonnelController {
         const posFull = `${person.position_title || ''}${person.position_level || ''}`;
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
 
+        // แสดง '-' หากกลุ่มงานเป็น 'ไม่มี' หรือว่างเปล่า
+        const workGroupText = (!person.work_group || person.work_group.trim() === 'ไม่มี') ? '-' : person.work_group;
+
+        // สิทธิ์ระดับบัญชี: หากยังไม่มีบัญชี ให้แสดงปุ่ม [+ สร้างบัญชี]
+        const roleColumnHtml = person.has_account === false
+            ? `
+                <button type="button" data-action="auto-create-account" data-id="${person.id}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 transition-all cursor-pointer shadow-2xs" title="คลิกเพื่อสร้างบัญชีผู้ใช้งานอัตโนมัติ">
+                    <i class="fa-solid fa-user-plus text-[11px]"></i>
+                    <span>+ สร้างบัญชี</span>
+                </button>
+            `
+            : `
+                <span class="bma-badge ${roleMeta.badgeClass}">${roleMeta.label}</span>
+            `;
+
+        const dotClass = person.has_account === false ? 'bg-amber-400' : (roleMeta.dotClass || 'bg-emerald-400');
+
         // ซ่อนปุ่มลบหากเป็น Admin (ทั้งขอบเขต "ส่วน/ฝ่าย" และ "สำนักงาน") อนุญาตให้ลบได้เฉพาะ SuperAdmin
         const deleteBtnHtml = this.canDeletePersonnel
             ? `
@@ -211,7 +230,7 @@ export class PersonnelController {
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td>
                     <div class="flex items-center gap-2.5 whitespace-nowrap">
-                        <span class="w-3 h-3 rounded-full shrink-0 ${roleMeta.dotClass}"></span>
+                        <span class="w-3 h-3 rounded-full shrink-0 ${dotClass}"></span>
                         <span class="font-bold bma-text-main">${fullName}</span>
                     </div>
                 </td>
@@ -219,9 +238,9 @@ export class PersonnelController {
                     <span class="font-semibold bma-text-main">${posFull}</span>
                     <span class="block text-xs bma-text-sub">${person.position_type || ''}</span>
                 </td>
-                <td class="text-xs bma-text-sub">${person.work_group || '-'}</td>
+                <td class="text-xs bma-text-sub">${workGroupText}</td>
                 <td class="text-center">
-                    <span class="bma-badge ${roleMeta.badgeClass}">${roleMeta.label}</span>
+                    ${roleColumnHtml}
                 </td>
                 <td class="text-center space-x-1 whitespace-nowrap">
                     <button type="button" data-action="edit-personnel" data-id="${person.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
@@ -368,22 +387,11 @@ export class PersonnelController {
             UIHelpers.exportToExcelUTF8(templateRows, 'Template_นำเข้าข้อมูลบุคลากร', 'Template');
         });
 
-        document.getElementById('inputImportPersonnelExcel')?.addEventListener('change', async (e) => {
+        document.getElementById('inputImportPersonnelExcel')?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
             e.target.value = '';
-
-            UIHelpers.showLoading('กำลังอ่านและนำเข้าข้อมูลบุคลากรจากไฟล์ Excel...');
-            try {
-                const rows = await UIHelpers.parseExcelFileUTF8(file);
-                const res = await PersonnelModel.bulkImportFromExcel(rows, true);
-                UIHelpers.hideLoading();
-                await this.loadPersonnelData();
-                await UIHelpers.alert(res.success ? 'นำเข้าข้อมูลสำเร็จ' : 'แจ้งเตือนการนำเข้า', res.message, res.success ? 'success' : 'warning');
-            } catch (err) {
-                UIHelpers.hideLoading();
-                await UIHelpers.alert('ไม่สามารถอ่านไฟล์ Excel ได้', err.message, 'error');
-            }
+            this.#openBulkImportModal(file);
         });
 
         document.getElementById('personnelTableBody')?.addEventListener('click', async (e) => {
@@ -391,6 +399,11 @@ export class PersonnelController {
             if (btn) {
                 const action = btn.dataset.action;
                 const id = btn.dataset.id;
+
+                if (action === 'auto-create-account') {
+                    await this.#handleQuickCreateAccount(id);
+                    return;
+                }
 
                 if (action === 'edit-personnel') {
                     const person = this.personnelList.find(p => p.id === id);
@@ -447,6 +460,77 @@ export class PersonnelController {
                 this.#closePersonnelResumeModal();
             }
         });
+
+        // Event listeners ระบบ Smart Bulk Import Modal
+        document.getElementById('btnCloseBulkImportModal')?.addEventListener('click', () => {
+            this.#closeBulkImportModal();
+        });
+        document.getElementById('btnCancelBulkImport')?.addEventListener('click', () => {
+            this.#closeBulkImportModal();
+        });
+        document.getElementById('btnDownloadImportTemplate')?.addEventListener('click', () => {
+            const templateRows = PersonnelModel.getExcelTemplateRows();
+            UIHelpers.exportToExcelUTF8(templateRows, 'Template_นำเข้าข้อมูลบุคลากร', 'Template');
+        });
+
+        const dropzone = document.getElementById('dropzoneBulkPersonnel');
+        const inputBulkFile = document.getElementById('inputBulkPersonnelFile');
+
+        dropzone?.addEventListener('click', (e) => {
+            if (e.target.closest('#btnDownloadImportTemplate')) return;
+            inputBulkFile?.click();
+        });
+
+        dropzone?.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.classList.add('border-emerald-600', 'bg-emerald-100/50');
+        });
+
+        dropzone?.addEventListener('dragleave', () => {
+            dropzone.classList.remove('border-emerald-600', 'bg-emerald-100/50');
+        });
+
+        dropzone?.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-emerald-600', 'bg-emerald-100/50');
+            const file = e.dataTransfer.files?.[0];
+            if (file) this.#processBulkImportFile(file);
+        });
+
+        inputBulkFile?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) this.#processBulkImportFile(file);
+        });
+
+        document.getElementById('btnConfirmBulkImport')?.addEventListener('click', async () => {
+            await this.#handleExecuteBulkImport();
+        });
+
+        // Preview Table Inline Edit & Row Delete
+        const previewTbody = document.getElementById('bulkImportPreviewTableBody');
+        previewTbody?.addEventListener('blur', (e) => {
+            const cell = e.target.closest('[contenteditable="true"]');
+            if (cell) {
+                const tr = cell.closest('tr');
+                const rIdx = parseInt(tr.dataset.rowIdx, 10);
+                const field = cell.dataset.field;
+                if (!isNaN(rIdx) && this.bulkImportRows[rIdx] && field) {
+                    this.bulkImportRows[rIdx].cells[field].value = cell.textContent.trim();
+                    this.#revalidateRow(rIdx);
+                }
+            }
+        }, true);
+
+        previewTbody?.addEventListener('click', (e) => {
+            const delBtn = e.target.closest('button[data-action="delete-preview-row"]');
+            if (delBtn) {
+                const idx = parseInt(delBtn.dataset.idx, 10);
+                if (!isNaN(idx)) {
+                    this.bulkImportRows.splice(idx, 1);
+                    this.#renderBulkImportPreview();
+                }
+            }
+        });
     }
 
     /**
@@ -474,9 +558,27 @@ export class PersonnelController {
         }
 
         const elBadge = document.getElementById('perResumeRoleBadge');
-        if (elBadge) {
-            elBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs px-2.5 py-0.5 rounded-full font-bold`;
-            elBadge.textContent = roleMeta.label;
+        const btnResumeCreate = document.getElementById('btnResumeCreateAccount');
+
+        if (person.has_account === false) {
+            if (elBadge) {
+                elBadge.className = 'bma-badge bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded-full font-bold';
+                elBadge.textContent = 'ยังไม่มีบัญชี';
+            }
+            if (btnResumeCreate) {
+                btnResumeCreate.classList.remove('hidden');
+                btnResumeCreate.onclick = async () => {
+                    await this.#handleQuickCreateAccount(person.id);
+                };
+            }
+        } else {
+            if (elBadge) {
+                elBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs px-2.5 py-0.5 rounded-full font-bold`;
+                elBadge.textContent = roleMeta.label;
+            }
+            if (btnResumeCreate) {
+                btnResumeCreate.classList.add('hidden');
+            }
         }
 
         const elNationalId = document.getElementById('perResumeNationalId');
@@ -506,7 +608,10 @@ export class PersonnelController {
         if (elDivision) elDivision.textContent = person.division || '-';
 
         const elWorkGroup = document.getElementById('perResumeWorkGroupName');
-        if (elWorkGroup) elWorkGroup.textContent = person.work_group || '-';
+        if (elWorkGroup) {
+            const wg = (!person.work_group || person.work_group.trim() === 'ไม่มี') ? '-' : person.work_group;
+            elWorkGroup.textContent = wg;
+        }
 
         // จัดการปุ่มแก้ไขใน Resume Modal
         const btnEdit = document.getElementById('btnResumeEditPersonnel');
@@ -589,6 +694,510 @@ export class PersonnelController {
             UIHelpers.hideLoading();
             await UIHelpers.alert('เกิดข้อผิดพลาด', err.message, 'error');
         }
+    }
+
+    async #handleQuickCreateAccount(personId) {
+        const person = this.personnelList.find(p => p.id === personId);
+        if (!person) return;
+
+        const cleanNid = String(person.national_id || '').replace(/\D/g, '');
+        if (cleanNid.length !== 13) {
+            await UIHelpers.alert(
+                'ข้อมูลไม่ครบถ้วน',
+                `ไม่สามารถสร้างบัญชีได้เนื่องจากบุคลากรท่านนี้มีเลขประจำตัวประชาชนไม่ครบ 13 หลัก (ปัจจุบันมี ${cleanNid.length} หลัก)\nกรุณาแก้ไขข้อมูลบุคลากรให้ถูกต้องก่อนดำเนินการ`,
+                'warning'
+            );
+            return;
+        }
+
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+        const autoPass = UIHelpers.getLast6DigitsFromNationalId(cleanNid);
+
+        const confirmed = await UIHelpers.confirm(
+            'ยืนยันการสร้างบัญชีผู้ใช้งาน',
+            `ต้องการสร้างบัญชีผู้ใช้งานสำหรับ "${fullName}" หรือไม่?\n• ชื่อผู้ใช้ (Username): ${cleanNid}\n• รหัสผ่านเริ่มต้น (Password): ${autoPass}\n• ระดับบัญชี: User`,
+            'สร้างบัญชีทันที',
+            'question'
+        );
+        if (!confirmed) return;
+
+        UIHelpers.showLoading('กำลังสร้างบัญชีผู้ใช้งาน...');
+        const res = await PersonnelModel.quickCreateAccount(personId);
+        UIHelpers.hideLoading();
+
+        if (!res.success) {
+            await UIHelpers.alert('สร้างบัญชีไม่สำเร็จ', res.message, 'error');
+            return;
+        }
+
+        // Reactive State & UI Update
+        person.has_account = true;
+        person.account_role = 'User';
+        person.account_username = res.username;
+        person.role_meta = PersonnelModel.getRolePastelMeta('User');
+
+        this.#renderGroupedTable();
+
+        const resumeModal = document.getElementById('modalPersonnelResumeProfile');
+        if (resumeModal && !resumeModal.classList.contains('hidden')) {
+            this.#openPersonnelResumeModal(person);
+        }
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'สร้างบัญชีผู้ใช้งานสำเร็จ!',
+            html: `
+                <div class="text-left text-xs sm:text-sm space-y-2.5 p-3.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 mt-2 font-sans">
+                    <div><b>ชื่อ-นามสกุล:</b> <span class="text-slate-800 dark:text-slate-200">${res.fullName || fullName}</span></div>
+                    <div><b>ชื่อผู้ใช้ (Username):</b> <code class="text-emerald-700 dark:text-emerald-400 font-mono font-bold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">${res.username}</code></div>
+                    <div><b>รหัสผ่านเริ่มต้น (Password):</b> <code class="text-rose-600 dark:text-rose-400 font-mono font-bold bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded">${res.password}</code></div>
+                    <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-200 dark:border-slate-700">หมายเหตุ: รหัสผ่านเริ่มต้นคือเลขบัตรประชาชน 6 ตัวท้าย สามารถแจ้งให้ผู้ใช้เข้าสู่ระบบได้ทันที</div>
+                </div>
+            `,
+            confirmButtonColor: '#00744B',
+            confirmButtonText: 'ตกลง'
+        });
+    }
+
+    #diceCoefficient(str1, str2) {
+        const s1 = String(str1 || '').trim().toLowerCase();
+        const s2 = String(str2 || '').trim().toLowerCase();
+        if (s1 === s2) return 1.0;
+        if (s1.length < 2 || s2.length < 2) return 0.0;
+        const getBigrams = str => {
+            const map = new Map();
+            for (let i = 0; i < str.length - 1; i++) {
+                const bg = str.substring(i, i + 2);
+                map.set(bg, (map.get(bg) || 0) + 1);
+            }
+            return map;
+        };
+        const b1 = getBigrams(s1);
+        const b2 = getBigrams(s2);
+        let intersection = 0;
+        for (const [key, val] of b1) {
+            if (b2.has(key)) intersection += Math.min(val, b2.get(key));
+        }
+        return (2.0 * intersection) / ((s1.length - 1) + (s2.length - 1));
+    }
+
+    #findBestFuzzyMatch(value, candidates, threshold = 0.5) {
+        if (!value || !candidates || candidates.length === 0) return { match: null, score: 0, isExact: false };
+        const trimmed = String(value).trim();
+        const exact = candidates.find(c => c.trim().toLowerCase() === trimmed.toLowerCase());
+        if (exact) return { match: exact, score: 1.0, isExact: true };
+
+        let bestMatch = null;
+        let bestScore = 0;
+        for (const c of candidates) {
+            const score = this.#diceCoefficient(trimmed, c);
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = c;
+            }
+        }
+        return (bestScore >= threshold) ? { match: bestMatch, score: bestScore, isExact: false } : { match: null, score: bestScore, isExact: false };
+    }
+
+    #openBulkImportModal(initialFile = null) {
+        this.bulkImportRows = [];
+        this.isProcessingBulkImport = false;
+
+        const modal = document.getElementById('modalPersonnelBulkImport');
+        if (!modal) return;
+
+        // Reset KPIs
+        document.getElementById('bulkImportKpiTotal').textContent = '0 รายการ';
+        document.getElementById('bulkImportKpiValid').textContent = '0 รายการ';
+        document.getElementById('bulkImportKpiHealed').textContent = '0 รายการ';
+        document.getElementById('bulkImportKpiErrors').textContent = '0 รายการ';
+
+        // Reset Progress
+        const prog = document.getElementById('bulkImportProgressContainer');
+        if (prog) prog.classList.add('hidden');
+        const pbar = document.getElementById('bulkImportProgressBar');
+        if (pbar) pbar.style.width = '0%';
+
+        // Reset Table
+        const tbody = document.getElementById('bulkImportPreviewTableBody');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400">กรุณาเลือกหรือวางไฟล์ Excel เพื่อแสดงผลตัวอย่างการตรวจสอบข้อมูล</td></tr>`;
+        }
+
+        // Reset Buttons
+        const confirmBtn = document.getElementById('btnConfirmBulkImport');
+        if (confirmBtn) confirmBtn.disabled = true;
+
+        modal.classList.remove('hidden');
+
+        if (initialFile) {
+            this.#processBulkImportFile(initialFile);
+        }
+    }
+
+    #closeBulkImportModal() {
+        if (this.isProcessingBulkImport) return;
+        const modal = document.getElementById('modalPersonnelBulkImport');
+        modal?.classList.add('hidden');
+        const inputFile = document.getElementById('inputBulkPersonnelFile');
+        if (inputFile) inputFile.value = '';
+    }
+
+    async #processBulkImportFile(file) {
+        const tbody = document.getElementById('bulkImportPreviewTableBody');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2 text-[#00744B]"></i>กำลังอ่านและวิเคราะห์ความสมบูรณ์ของโครงสร้างข้อมูล (Data Health Analysis)...</td></tr>`;
+        }
+
+        try {
+            const rawRows = await UIHelpers.parseExcelFileUTF8(file);
+            if (!Array.isArray(rawRows) || rawRows.length === 0) {
+                if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-rose-500 font-bold">ไม่พบข้อมูลแถวในไฟล์ที่เลือก กรุณาตรวจสอบไฟล์</td></tr>`;
+                return;
+            }
+
+            // Reference datasets from settings
+            const prefixes = this.settings.prefixes || ['นาย', 'นาง', 'นางสาว'];
+            const posTitles = SettingsModel.getUniquePositionTitles(this.settings, '');
+            const posLevels = ['ปฏิบัติงาน', 'ชำนาญงาน', 'อาวุโส', 'ปฏิบัติการ', 'ชำนาญการ', 'ชำนาญการพิเศษ', 'เชี่ยวชาญ', 'ทรงคุณวุฒิ'];
+            const bureaus = SettingsModel.getUniqueBureaus(this.settings, '');
+            const divisions = SettingsModel.getUniqueDivisions(this.settings, '');
+
+            const existingNidsInDb = new Set(this.personnelList.map(p => String(p.national_id || '').replace(/\D/g, '')).filter(Boolean));
+            const seenNidsInFile = new Set();
+
+            const parsedRows = [];
+
+            for (let i = 0; i < rawRows.length; i++) {
+                const row = rawRows[i];
+
+                // 1. National ID
+                const rawNid = String(row['เลขบัตรประชาชน'] || row['เลขประจำตัวประชาชน'] || row['national_id'] || row['id_card'] || '').replace(/\D/g, '');
+                let nidStatus = 'valid';
+                let nidMsg = '';
+                if (!rawNid) {
+                    nidStatus = 'error';
+                    nidMsg = 'ไม่ได้ระบุเลขบัตรประชาชน';
+                } else if (rawNid.length !== 13) {
+                    nidStatus = 'error';
+                    nidMsg = `เลขบัตรไม่ครบ 13 หลัก (${rawNid.length} หลัก)`;
+                } else if (!UIHelpers.validateThaiNationalId(rawNid, false).valid) {
+                    nidStatus = 'error';
+                    nidMsg = 'รูปแบบเลขบัตรประชาชนไม่ถูกต้องตามหลักตรวจสอบ (Checksum)';
+                } else if (seenNidsInFile.has(rawNid)) {
+                    nidStatus = 'error';
+                    nidMsg = 'เลขบัตรประชาชนซ้ำในไฟล์ชุดนี้';
+                } else if (existingNidsInDb.has(rawNid)) {
+                    nidStatus = 'error';
+                    nidMsg = 'เลขบัตรประชาชนนี้มีอยู่ในฐานข้อมูลแล้ว';
+                } else {
+                    seenNidsInFile.add(rawNid);
+                }
+
+                // 2. Prefix
+                const rawPrefix = String(row['คำนำหน้า'] || row['คำนำหน้านาม'] || row['prefix'] || '').trim();
+                let prefixVal = rawPrefix;
+                let prefixStatus = 'valid';
+                if (!rawPrefix) {
+                    prefixStatus = 'error';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawPrefix, prefixes, 0.4);
+                    if (match.match) {
+                        prefixVal = match.match;
+                        prefixStatus = match.isExact ? 'valid' : 'healed';
+                    } else {
+                        prefixStatus = 'error';
+                    }
+                }
+
+                // 3. First Name & Last Name
+                const firstName = String(row['ชื่อ'] || row['first_name'] || row['name'] || '').trim();
+                const firstNameStatus = firstName ? 'valid' : 'error';
+
+                const lastName = String(row['นามสกุล'] || row['last_name'] || row['surname'] || '').trim();
+                const lastNameStatus = lastName ? 'valid' : 'error';
+
+                // 4. Position Title
+                const rawPosTitle = String(row['ตำแหน่ง'] || row['ตำแหน่งในสายงาน'] || row['position_title'] || row['position'] || '').trim();
+                let posTitleVal = rawPosTitle;
+                let posTitleStatus = 'valid';
+                if (!rawPosTitle) {
+                    posTitleStatus = 'error';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawPosTitle, posTitles, 0.5);
+                    if (match.match) {
+                        posTitleVal = match.match;
+                        posTitleStatus = match.isExact ? 'valid' : 'healed';
+                    } else {
+                        posTitleStatus = 'healed';
+                    }
+                }
+
+                // 5. Position Level
+                const rawPosLevel = String(row['ระดับ'] || row['ระดับตำแหน่ง'] || row['position_level'] || row['level'] || '').trim();
+                let posLevelVal = rawPosLevel;
+                let posLevelStatus = 'valid';
+                if (!rawPosLevel) {
+                    posLevelVal = 'ปฏิบัติงาน';
+                    posLevelStatus = 'healed';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawPosLevel, posLevels, 0.5);
+                    if (match.match) {
+                        posLevelVal = match.match;
+                        posLevelStatus = match.isExact ? 'valid' : 'healed';
+                    } else {
+                        posLevelVal = 'ปฏิบัติงาน';
+                        posLevelStatus = 'healed';
+                    }
+                }
+
+                // 6. Bureau
+                const rawBureau = String(row['สำนักงาน/กอง'] || row['สำนัก'] || row['กอง'] || row['bureau'] || '').trim();
+                let bureauVal = rawBureau;
+                let bureauStatus = 'valid';
+                if (!rawBureau) {
+                    bureauVal = this.currentUser.scope_bureau || 'สำนักเทศกิจ';
+                    bureauStatus = 'healed';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawBureau, bureaus, 0.45);
+                    if (match.match) {
+                        bureauVal = match.match;
+                        bureauStatus = match.isExact ? 'valid' : 'healed';
+                    } else {
+                        bureauStatus = 'healed';
+                    }
+                }
+
+                // 7. Division
+                const rawDivision = String(row['ส่วน/ฝ่าย'] || row['ฝ่าย'] || row['ส่วน'] || row['division'] || '').trim();
+                let divisionVal = rawDivision;
+                let divisionStatus = 'valid';
+                if (!rawDivision) {
+                    divisionVal = this.currentUser.scope_division || 'ฝ่ายบริหารงานทั่วไป';
+                    divisionStatus = 'healed';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawDivision, divisions, 0.45);
+                    if (match.match) {
+                        divisionVal = match.match;
+                        divisionStatus = match.isExact ? 'valid' : 'healed';
+                    } else {
+                        divisionStatus = 'healed';
+                    }
+                }
+
+                // 8. Work Group
+                const rawWorkGroup = String(row['กลุ่มงาน'] || row['งาน'] || row['work_group'] || '').trim();
+                const workGroupVal = (!rawWorkGroup || rawWorkGroup === 'ไม่มี') ? '-' : rawWorkGroup;
+                const workGroupStatus = 'valid';
+
+                // Determine Row Overall Health Status
+                const hasError = [nidStatus, prefixStatus, firstNameStatus, lastNameStatus, posTitleStatus, posLevelStatus, bureauStatus, divisionStatus].includes('error');
+                const hasHealed = [nidStatus, prefixStatus, firstNameStatus, lastNameStatus, posTitleStatus, posLevelStatus, bureauStatus, divisionStatus].includes('healed');
+                const overallStatus = hasError ? 'error' : (hasHealed ? 'healed' : 'valid');
+
+                parsedRows.push({
+                    index: i + 1,
+                    status: overallStatus,
+                    cells: {
+                        national_id: { value: rawNid, status: nidStatus, msg: nidMsg },
+                        prefix: { value: prefixVal, status: prefixStatus },
+                        first_name: { value: firstName, status: firstNameStatus },
+                        last_name: { value: lastName, status: lastNameStatus },
+                        position_title: { value: posTitleVal, status: posTitleStatus },
+                        position_level: { value: posLevelVal, status: posLevelStatus },
+                        bureau: { value: bureauVal, status: bureauStatus },
+                        division: { value: divisionVal, status: divisionStatus },
+                        work_group: { value: workGroupVal, status: workGroupStatus }
+                    }
+                });
+            }
+
+            this.bulkImportRows = parsedRows;
+            this.#renderBulkImportPreview();
+
+        } catch (err) {
+            console.error('Process bulk import file error:', err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการประมวลผลไฟล์: ${err.message}</td></tr>`;
+            }
+        }
+    }
+
+    #renderBulkImportPreview() {
+        const tbody = document.getElementById('bulkImportPreviewTableBody');
+        if (!tbody) return;
+
+        let total = this.bulkImportRows.length;
+        let validCount = 0;
+        let healedCount = 0;
+        let errorCount = 0;
+
+        let html = '';
+        this.bulkImportRows.forEach((row, rIdx) => {
+            if (row.status === 'valid') validCount++;
+            else if (row.status === 'healed') healedCount++;
+            else if (row.status === 'error') errorCount++;
+
+            const statusBadge = row.status === 'valid'
+                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">ถูกต้อง</span>`
+                : (row.status === 'healed'
+                    ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300">ปรับแก้</span>`
+                    : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-700 dark:text-rose-300">ผิดพลาด</span>`);
+
+            const c = row.cells;
+
+            html += `
+                <tr data-row-idx="${rIdx}" class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                    <td class="p-2.5 text-center font-mono text-slate-400">${rIdx + 1}</td>
+                    <td class="p-2.5 text-center">${statusBadge}</td>
+                    <td class="p-2.5 font-mono cell-health-${c.national_id.status}" contenteditable="true" data-field="national_id" title="${c.national_id.msg || ''}">${c.national_id.value}</td>
+                    <td class="p-2.5 cell-health-${c.prefix.status}" contenteditable="true" data-field="prefix">${c.prefix.value}</td>
+                    <td class="p-2.5 cell-health-${c.first_name.status}" contenteditable="true" data-field="first_name">${c.first_name.value}</td>
+                    <td class="p-2.5 cell-health-${c.last_name.status}" contenteditable="true" data-field="last_name">${c.last_name.value}</td>
+                    <td class="p-2.5 cell-health-${c.position_title.status}" contenteditable="true" data-field="position_title">${c.position_title.value}</td>
+                    <td class="p-2.5 cell-health-${c.position_level.status}" contenteditable="true" data-field="position_level">${c.position_level.value}</td>
+                    <td class="p-2.5 cell-health-${c.bureau.status}" contenteditable="true" data-field="bureau">${c.bureau.value}</td>
+                    <td class="p-2.5 cell-health-${c.division.status}" contenteditable="true" data-field="division">${c.division.value}</td>
+                    <td class="p-2.5 cell-health-${c.work_group.status}" contenteditable="true" data-field="work_group">${c.work_group.value}</td>
+                    <td class="p-2.5 text-center">
+                        <button type="button" data-action="delete-preview-row" data-idx="${rIdx}" class="text-slate-400 hover:text-rose-500 p-1 cursor-pointer" title="ลบแถวนี้">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+
+        // Update KPIs
+        document.getElementById('bulkImportKpiTotal').textContent = `${total} รายการ`;
+        document.getElementById('bulkImportKpiValid').textContent = `${validCount} รายการ`;
+        document.getElementById('bulkImportKpiHealed').textContent = `${healedCount} รายการ`;
+        document.getElementById('bulkImportKpiErrors').textContent = `${errorCount} รายการ`;
+
+        // Update Confirm button
+        const confirmBtn = document.getElementById('btnConfirmBulkImport');
+        if (confirmBtn) {
+            confirmBtn.disabled = (validCount + healedCount === 0);
+        }
+    }
+
+    #revalidateRow(rIdx) {
+        const row = this.bulkImportRows[rIdx];
+        if (!row) return;
+
+        const c = row.cells;
+        const rawNid = String(c.national_id.value || '').replace(/\D/g, '');
+        c.national_id.value = rawNid;
+
+        if (rawNid.length === 13 && UIHelpers.validateThaiNationalId(rawNid, false).valid) {
+            c.national_id.status = 'valid';
+            c.national_id.msg = '';
+        } else {
+            c.national_id.status = 'error';
+            c.national_id.msg = 'เลขบัตร ปชช. ไม่ถูกต้อง';
+        }
+
+        c.first_name.status = c.first_name.value.trim() ? 'valid' : 'error';
+        c.last_name.status = c.last_name.value.trim() ? 'valid' : 'error';
+        c.prefix.status = c.prefix.value.trim() ? 'valid' : 'error';
+
+        const hasError = Object.values(c).some(cell => cell.status === 'error');
+        const hasHealed = Object.values(c).some(cell => cell.status === 'healed');
+        row.status = hasError ? 'error' : (hasHealed ? 'healed' : 'valid');
+
+        this.#renderBulkImportPreview();
+    }
+
+    async #handleExecuteBulkImport() {
+        const importable = this.bulkImportRows.filter(r => r.status === 'valid' || r.status === 'healed');
+        if (importable.length === 0) {
+            await UIHelpers.alert('ไม่พบรายการที่ถูกต้อง', 'กรุณาแก้ไขข้อมูลที่ผิดพลาดให้ถูกต้องก่อนยืนยันการนำเข้า', 'warning');
+            return;
+        }
+
+        const autoCreateAccounts = document.getElementById('chkAutoCreateAccountsBulk')?.checked ?? true;
+
+        const confirmed = await UIHelpers.confirm(
+            'ยืนยันการนำเข้าข้อมูลบุคลากร',
+            `ระบบจะนำเข้าข้อมูลที่ผ่านการตรวจสอบจำนวน ${importable.length} รายการ (จากทั้งหมด ${this.bulkImportRows.length} รายการ)\n${autoCreateAccounts ? '• พร้อมสร้างบัญชีผู้ใช้อัตโนมัติ (Username: เลขบัตร 13 หลัก / Password: 6 ตัวท้าย)\n' : ''}ยืนยันการดำเนินการหรือไม่?`,
+            'ยืนยันนำเข้าข้อมูล',
+            'question'
+        );
+        if (!confirmed) return;
+
+        this.isProcessingBulkImport = true;
+        const confirmBtn = document.getElementById('btnConfirmBulkImport');
+        const cancelBtn = document.getElementById('btnCancelBulkImport');
+        if (confirmBtn) confirmBtn.disabled = true;
+        if (cancelBtn) cancelBtn.disabled = true;
+
+        const progressContainer = document.getElementById('bulkImportProgressContainer');
+        const progressBar = document.getElementById('bulkImportProgressBar');
+        const progressText = document.getElementById('bulkImportProgressText');
+        progressContainer?.classList.remove('hidden');
+
+        let successCount = 0;
+        let accountCount = 0;
+        const total = importable.length;
+        const chunkSize = 5;
+
+        for (let i = 0; i < total; i += chunkSize) {
+            const chunk = importable.slice(i, i + chunkSize);
+
+            for (const r of chunk) {
+                const c = r.cells;
+                const payload = {
+                    national_id: c.national_id.value,
+                    prefix: c.prefix.value,
+                    first_name: c.first_name.value,
+                    last_name: c.last_name.value,
+                    position_type: 'ประเภททั่วไป',
+                    position_title: c.position_title.value,
+                    position_level: c.position_level.value,
+                    organization: 'กรุงเทพมหานคร',
+                    bureau: c.bureau.value,
+                    division: c.division.value,
+                    work_group: c.work_group.value === '-' ? '' : c.work_group.value
+                };
+
+                const shouldAutoCreate = autoCreateAccounts && payload.national_id.length === 13;
+                const res = await PersonnelModel.create(payload, shouldAutoCreate);
+                if (res.success) {
+                    successCount++;
+                    if (res.accountCreated) accountCount++;
+                }
+            }
+
+            const processed = Math.min(i + chunkSize, total);
+            const percent = Math.round((processed / total) * 100);
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            if (progressText) progressText.textContent = `กำลังนำเข้าข้อมูล... ${percent}% (${processed}/${total} รายการ)`;
+
+            await new Promise(resolve => setTimeout(resolve, 40));
+        }
+
+        this.isProcessingBulkImport = false;
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (cancelBtn) cancelBtn.disabled = false;
+
+        this.#closeBulkImportModal();
+        await this.loadPersonnelData();
+
+        await Swal.fire({
+            icon: 'success',
+            title: 'นำเข้าข้อมูลบุคลากรสำเร็จ!',
+            html: `
+                <div class="text-left text-sm space-y-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 mt-2 font-sans">
+                    <p><b>บันทึกข้อมูลบุคลากรสำเร็จ:</b> <span class="text-emerald-600 font-bold">${successCount}</span> รายการ</p>
+                    ${autoCreateAccounts ? `<p><b>สร้างบัญชีผู้ใช้งานอัตโนมัติ:</b> <span class="text-emerald-600 font-bold">${accountCount}</span> บัญชี</p>` : ''}
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">ข้อมูลได้รับการบันทึกและพร้อมใช้งานในระบบทันที</p>
+                </div>
+            `,
+            confirmButtonColor: '#00744B',
+            confirmButtonText: 'ตกลง'
+        });
     }
 }
 
