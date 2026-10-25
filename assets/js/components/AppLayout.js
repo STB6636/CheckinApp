@@ -434,15 +434,15 @@ export class AppLayout {
         const footerDesc = settings.footer_description || '';
 
         footerEl.innerHTML = `
-            <footer class="mt-10 py-4 px-4 lg:px-8 bma-footer-bar flex flex-col items-center justify-center text-center mb-14 lg:mb-0">
-                <div class="text-xs font-bold text-white">
+            <footer class="mt-10 py-3.5 px-4 lg:px-8 bma-footer-bar flex flex-col items-center justify-center text-center mb-14 lg:mb-0 transition-colors">
+                <div class="text-xs font-semibold text-slate-600 dark:text-slate-300">
                     <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
-                    <span>${settings.organization_name}</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-200">${settings.organization_name}</span>
                     <span> • สังกัด </span>
-                    <span class="footer-highlight">${settings.bureau_name}</span>
+                    <span class="footer-highlight text-[#00744B] dark:text-[#00C08A] font-bold">${settings.bureau_name}</span>
                     <span> © พ.ศ. ${yearBuddhist}</span>
                 </div>
-                ${footerDesc ? `<div class="text-[11px] footer-desc-line mt-0.5">${footerDesc}</div>` : ''}
+                ${footerDesc ? `<div class="text-[11px] footer-desc-line text-slate-500 dark:text-slate-400 mt-0.5 font-medium">${footerDesc}</div>` : ''}
             </footer>
         `;
     }

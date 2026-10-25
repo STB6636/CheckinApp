@@ -219,27 +219,51 @@ html.dark .bma-admin-topbar {
     background-color: rgba(17, 35, 27, 0.92);
 }
 
-/* แถบ Footer สีเขียว กทม. สวยงาม ตัวอักษรสีขาว/ทอง อ่านง่าย */
+/* Modern Civic Muted Sage Admin Footer (สไตล์โมเดิร์น เรียบหรู สะอาดตา) */
 .bma-footer-bar {
-    background-color: #00351B !important;
-    background-image: linear-gradient(90deg, #002B15 0%, #004D26 50%, #006834 100%) !important;
-    color: #FFFFFF !important;
-    border-top: 3px solid #FDD835 !important;
-    box-shadow: 0 -4px 16px rgba(0, 53, 27, 0.15);
+    background: rgba(255, 255, 255, 0.75) !important;
+    background-image: none !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    color: #475569 !important;
+    border-top: 1px solid rgba(203, 213, 225, 0.8) !important;
+    box-shadow: 0 -1px 3px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+html.dark .bma-footer-bar {
+    background: rgba(11, 19, 43, 0.85) !important;
+    background-image: none !important;
+    color: #94A3B8 !important;
+    border-top: 1px solid rgba(30, 41, 59, 0.8) !important;
+    box-shadow: 0 -1px 3px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
 .bma-footer-bar span,
 .bma-footer-bar div {
-    color: #E2F8EC !important;
+    color: #475569 !important;
+}
+
+html.dark .bma-footer-bar span,
+html.dark .bma-footer-bar div {
+    color: #94A3B8 !important;
 }
 
 .bma-footer-bar .footer-highlight {
-    color: #FDD835 !important;
-    font-weight: 800;
+    color: #00744B !important;
+    font-weight: 700 !important;
+}
+
+html.dark .bma-footer-bar .footer-highlight {
+    color: #00C08A !important;
 }
 
 .bma-footer-bar .footer-desc-line {
-    color: rgba(255, 255, 255, 0.78) !important;
+    color: #64748B !important;
+    font-size: 0.725rem !important;
+}
+
+html.dark .bma-footer-bar .footer-desc-line {
+    color: #64748B !important;
 }
 
 /* ============================================================================
@@ -1285,7 +1309,7 @@ html.dark .swal2-popup.bma-swal-popup .swal2-cancel {
     border: 1px solid rgba(226, 232, 240, 0.8) !important;
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
     position: relative !important;
-    padding: 1.25rem 1.25rem 0.875rem 1.25rem !important;
+    padding: 0.875rem 0.875rem 0.75rem 0.875rem !important;
     overflow: visible !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
@@ -1322,14 +1346,22 @@ html.dark #dashboardKpiCardsGrid .stat-card {
 }
 
 #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child {
+    padding-left: 2.85rem !important;
+    width: 100% !important;
+    min-height: 3.25rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
     text-align: right !important;
 }
 
 #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
     color: #64748B !important;
-    font-size: 0.775rem !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.025em !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.015em !important;
+    word-break: break-word !important;
 }
 
 html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child span {
@@ -1338,9 +1370,9 @@ html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > di
 
 #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > div:first-child h3 {
     color: #0F172A !important;
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
     font-weight: 800 !important;
-    margin-top: 0.2rem !important;
+    margin-top: 0.15rem !important;
     line-height: 1.2 !important;
 }
 
@@ -1357,15 +1389,15 @@ html.dark #dashboardKpiCardsGrid .stat-card .stat-content > div:first-child > di
 /* Material Floating Icon Box (Offset -top-4 left-4) */
 #dashboardKpiCardsGrid .stat-card .stat-icon-box {
     position: absolute !important;
-    top: -1.25rem !important;
-    left: 1rem !important;
-    width: 3.5rem !important;
-    height: 3.5rem !important;
-    border-radius: 0.875rem !important;
+    top: -0.875rem !important;
+    left: 0.875rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    border-radius: 0.75rem !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 1.4rem !important;
+    font-size: 1.15rem !important;
     color: #FFFFFF !important;
     border: none !important;
     backdrop-filter: none !important;
@@ -1429,3 +1461,15 @@ html.dark #dashboardKpiCardsGrid .stat-card .mt-4 span {
 html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
     background: #334155 !important;
 }
+/* ============================================================================
+ * Modal Visibility & Flex Centering Immunity Contract
+ * ============================================================================ */
+div[id^="modal"].hidden,
+.fixed.inset-0.hidden {
+    display: none !important;
+}
+
+div[id^="modal"]:not(.hidden),
+.fixed.inset-0:not(.hidden) {
+    display: flex !important;
+}

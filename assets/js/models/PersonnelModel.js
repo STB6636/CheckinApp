@@ -76,6 +76,7 @@ export class PersonnelModel {
 
             return {
                 ...person,
+                id: String(person.id),
                 account_role: accountRole,
                 account_username: linkedAccounts[0]?.username || '',
                 role_meta: roleMeta,

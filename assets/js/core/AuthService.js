@@ -28,6 +28,13 @@ export class AuthService {
                 return null;
             }
 
+            if (sessionData && sessionData.role) {
+                const r = String(sessionData.role).toLowerCase();
+                if (r === 'superadmin') sessionData.role = 'SuperAdmin';
+                else if (r === 'admin') sessionData.role = 'Admin';
+                else if (r === 'user') sessionData.role = 'User';
+            }
+
             if (extendSession) {
                 sessionData.last_active_at = now;
                 sessionData.expires_at = now + AuthService.SESSION_TTL_MS;
@@ -43,8 +50,14 @@ export class AuthService {
 
     static setCurrentUser(userObj, loginMode = 'checkin') {
         const now = Date.now();
+        let role = userObj.role || 'User';
+        if (String(role).toLowerCase() === 'superadmin') role = 'SuperAdmin';
+        else if (String(role).toLowerCase() === 'admin') role = 'Admin';
+        else if (String(role).toLowerCase() === 'user') role = 'User';
+
         const payload = {
             ...userObj,
+            role,
             last_login_mode: loginMode || userObj.last_login_mode || 'checkin',
             last_active_at: now,
             expires_at: now + AuthService.SESSION_TTL_MS

@@ -34,7 +34,7 @@ export class UserModel {
             return [];
         }
 
-        const accounts = data || [];
+        const accounts = (data || []).map(acc => ({ ...acc, id: String(acc.id) }));
         if (!currentUser || currentUser.role === 'SuperAdmin') {
             return accounts;
         }
