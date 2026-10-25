@@ -332,18 +332,20 @@ export class UIHelpers {
         if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
 
         const scriptUrl = String(settings?.google_drive_script_url || '').trim();
-        const folderId = String(settings?.google_drive_folder_id || '').trim();
+        const cleanFolderId = String(settings?.google_drive_folder_id || '').trim();
 
         if (scriptUrl && scriptUrl.includes('script.google.com')) {
+            const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
+
+            // Attempt 1: Upload to configured folderId
             try {
-                const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
                 const response = await fetch(scriptUrl, {
                     method: 'POST',
                     redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({
                         action: 'upload',
-                        folderId,
+                        folderId: cleanFolderId,
                         fileName,
                         mimeType: 'image/jpeg',
                         base64Data: base64DataUrl
@@ -354,7 +356,31 @@ export class UIHelpers {
                     return result.url;
                 }
             } catch (err) {
-                console.warn('Google Drive upload fallback:', err);
+                console.warn('Google Drive upload attempt 1 failed:', err);
+            }
+
+            // Attempt 2: If cleanFolderId was non-empty and failed, retry with default folder ('')
+            if (cleanFolderId) {
+                try {
+                    const fallbackResponse = await fetch(scriptUrl, {
+                        method: 'POST',
+                        redirect: 'follow',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'upload',
+                            folderId: '',
+                            fileName,
+                            mimeType: 'image/jpeg',
+                            base64Data: base64DataUrl
+                        })
+                    });
+                    const fallbackResult = await fallbackResponse.json();
+                    if (fallbackResult && fallbackResult.success && fallbackResult.url) {
+                        return fallbackResult.url;
+                    }
+                } catch (err2) {
+                    console.warn('Google Drive upload attempt 2 failed:', err2);
+                }
             }
         }
 

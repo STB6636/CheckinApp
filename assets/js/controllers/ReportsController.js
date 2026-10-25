@@ -19,6 +19,7 @@ export class ReportsController {
         this.dateMode = 'single';
         this.groupViewMode = 'division';
         this.selectedStatusKeys = new Set(['normal', 'late']);
+        this.currentPhotoBlobUrl = null;
         this.init();
     }
 
@@ -418,11 +419,11 @@ export class ReportsController {
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
         const statusColor = this.#getStatusColor(rec.status_category);
 
-        // 1. ส่วนหัว Banner
+        // 1. ส่วนหัว Banner (ซ่อนป้ายตาม Plan V2.23 และรักษา 100% Contract)
         const roleBadge = document.getElementById('resumeRoleBadge');
         if (roleBadge) {
             roleBadge.textContent = roleMeta.label;
-            roleBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs`;
+            roleBadge.className = 'hidden';
         }
 
         const cleanTitle = (person.position_title || rec.position_title || '').trim();
@@ -448,12 +449,16 @@ export class ReportsController {
         if (orgEl) orgEl.textContent = hierarchyLine;
 
         const dateHeadline = document.getElementById('resumeRowDateHeadline');
-        if (dateHeadline) dateHeadline.textContent = rec.work_date_thai_full;
+        if (dateHeadline) {
+            dateHeadline.textContent = rec.work_date_thai_full;
+            dateHeadline.className = 'hidden';
+        }
 
         const rowStatusBadge = document.getElementById('resumeRowStatusBadge');
         if (rowStatusBadge) {
             rowStatusBadge.textContent = rec.status_label;
             rowStatusBadge.style.backgroundColor = statusColor;
+            rowStatusBadge.className = 'hidden';
         }
 
         // 2. รูปที่ถ่ายมาขนาดใหญ่ของ Row นั้นๆ
@@ -461,11 +466,34 @@ export class ReportsController {
         const largePhotoBox = document.getElementById('resumeLargePhotoBox');
         const fullPhotoLink = document.getElementById('resumeOpenFullPhotoLink');
 
+        if (this.currentPhotoBlobUrl) {
+            URL.revokeObjectURL(this.currentPhotoBlobUrl);
+            this.currentPhotoBlobUrl = null;
+        }
+
         if (largePhotoBox) {
             if (photoUrl) {
                 largePhotoBox.innerHTML = `<img src="${photoUrl}" alt="${rec.full_name}" class="w-full h-full object-cover">`;
                 if (fullPhotoLink) {
-                    fullPhotoLink.href = photoUrl;
+                    if (photoUrl.startsWith('data:image/')) {
+                        try {
+                            const parts = photoUrl.split(',');
+                            const mime = parts[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
+                            const bstr = atob(parts[1]);
+                            let n = bstr.length;
+                            const u8arr = new Uint8Array(n);
+                            while (n--) {
+                                u8arr[n] = bstr.charCodeAt(n);
+                            }
+                            const blob = new Blob([u8arr], { type: mime });
+                            this.currentPhotoBlobUrl = URL.createObjectURL(blob);
+                            fullPhotoLink.href = this.currentPhotoBlobUrl;
+                        } catch (err) {
+                            fullPhotoLink.href = photoUrl;
+                        }
+                    } else {
+                        fullPhotoLink.href = photoUrl;
+                    }
                     fullPhotoLink.classList.remove('hidden');
                 }
             } else {
@@ -548,6 +576,10 @@ export class ReportsController {
     }
 
     #closeResumeModal() {
+        if (this.currentPhotoBlobUrl) {
+            URL.revokeObjectURL(this.currentPhotoBlobUrl);
+            this.currentPhotoBlobUrl = null;
+        }
         document.getElementById('modalPersonnelResumeProfile')?.classList.add('hidden');
     }
 

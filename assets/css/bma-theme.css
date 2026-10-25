@@ -1464,14 +1464,18 @@ html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
 /* ============================================================================
  * Modal Visibility & Flex Centering Immunity Contract
  * ============================================================================ */
-div[id^="modal"].hidden,
+div[id^="modal"].fixed.inset-0.hidden,
 .fixed.inset-0.hidden {
     display: none !important;
 }
 
-div[id^="modal"]:not(.hidden),
+div[id^="modal"].fixed.inset-0:not(.hidden),
 .fixed.inset-0:not(.hidden) {
     display: flex !important;
+}
+
+#modalSettingsBody {
+    display: block !important;
 }
 
 /* ============================================================================

@@ -30,8 +30,19 @@ function doPost(e) {
       var decodedBytes = Utilities.base64Decode(cleanBase64);
       var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
 
-      var file = folder.createFile(blob);
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      var file;
+      try {
+        file = folder.createFile(blob);
+      } catch (createErr) {
+        var fallbackFolder = getOrCreateTargetFolder('');
+        file = fallbackFolder.createFile(blob);
+      }
+
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (shareErr) {
+        // Shared folders inherit public view permissions; ignore individual ACL exception
+      }
 
       var fileId = file.getId();
       var directImageUrl = 'https://lh3.googleusercontent.com/d/' + fileId;

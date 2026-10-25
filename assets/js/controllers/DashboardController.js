@@ -255,15 +255,15 @@ export class DashboardController {
         tbody.innerHTML = pagedRecords.map((rec, idx) => {
             const color = colors[rec.status_category] || rec.row_color || '#007B3E';
             const runningNo = startIndex + idx + 1;
+            const cleanTitle = (rec.position_title || '').trim();
+            const cleanLevel = (rec.position_level || '').replace(/^ระดับ\s*/, '').trim();
+            const mergedPosition = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || rec.position_full || '-');
 
             return `
                 <tr>
                     <td class="font-semibold text-center whitespace-nowrap">${runningNo}</td>
                     <td class="font-bold bma-text-main whitespace-nowrap">${rec.full_name}</td>
-                    <td class="font-medium bma-text-main leading-snug">
-                        <span class="block font-semibold">${rec.position_title || '-'}</span>
-                        ${rec.position_level ? `<span class="text-xs bma-text-sub block">ระดับ${rec.position_level}</span>` : ''}
-                    </td>
+                    <td class="font-medium bma-text-main whitespace-nowrap">${mergedPosition}</td>
                     <td class="leading-snug">
                         <div class="font-bold text-xs" style="color: var(--bma-primary);">${rec.bureau || '-'}</div>
                         <div class="text-xs bma-text-sub mt-0.5">${rec.division || '-'}</div>

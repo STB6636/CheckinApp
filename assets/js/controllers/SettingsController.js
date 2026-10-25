@@ -344,8 +344,9 @@ export class SettingsController {
         this.settings.google_drive_folder_id = document.getElementById('setGDriveFolderId').value.trim();
         this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
         this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
-        this.settings.filter_shifts_by_realtime = document.getElementById('toggleFilterShiftsByRealtime')?.checked ?? true;
-        this.settings.single_click_checkin = document.getElementById('toggleSingleClickCheckin').checked;
+        const radioSingle = document.querySelector('input[name="checkinRecordingMode"][value="single_click"]');
+        const chkSingle = document.getElementById('toggleSingleClickCheckin');
+        this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
 
         this.settings.allow_checkin_start_time = UIHelpers.formatTime24(document.getElementById('setAllowCheckinStartTime')?.value || '06:00');
         this.settings.standard_check_in = UIHelpers.formatTime24(document.getElementById('setStdCheckIn').value || '08:30');
@@ -505,7 +506,8 @@ export class SettingsController {
             }
         });
 
-        document.getElementById('btnVerifyGoogleDriveLink')?.addEventListener('click', async () => {
+        const btnVerifyGDrive = document.getElementById('btnVerifyGDrive') || document.getElementById('btnVerifyGoogleDriveLink');
+        btnVerifyGDrive?.addEventListener('click', async () => {
             const scriptUrl = document.getElementById('setGDriveScriptUrl').value.trim();
             const folderId = document.getElementById('setGDriveFolderId').value.trim();
             const badge = document.getElementById('gdriveVerifyBadge');
@@ -835,7 +837,7 @@ export class SettingsController {
         const initialTitles = SettingsModel.getUniquePositionTitles(this.settings, types[0]);
 
         const bodyHtml = `
-            <div class="p-3.5 rounded-xl bma-info-box space-y-3">
+            <div class="p-3.5 rounded-xl bma-info-box grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-extrabold bma-text-main mb-1">1. เลือกประเภทตำแหน่ง (ค่าหลักแม่) *</label>
                     <select id="modalStep3PosType" class="bma-select text-sm font-semibold" required>
