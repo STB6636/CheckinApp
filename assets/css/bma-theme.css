@@ -1473,3 +1473,19 @@ div[id^="modal"]:not(.hidden),
 .fixed.inset-0:not(.hidden) {
     display: flex !important;
 }
+
+/* ============================================================================
+ * Checkin Floating Header Table Cards Spacing Contract (Plan V2.15)
+ * ป้องกันการชนกันของ Floating Header (-mt-6) กับกล่องลงเวลาด้านบน (สุทธิ 32px / 40px)
+ * ============================================================================ */
+.bma-checkin-table-card {
+    margin-top: 3.5rem !important;  /* 56px Mobile -> สุทธิ: 56px - 24px = 32px */
+    margin-bottom: 2rem !important;  /* 32px Mobile */
+}
+
+@media (min-width: 640px) {
+    .bma-checkin-table-card {
+        margin-top: 4rem !important;    /* 64px Desktop -> สุทธิ: 64px - 24px = 40px */
+        margin-bottom: 2.5rem !important; /* 40px Desktop */
+    }
+}
