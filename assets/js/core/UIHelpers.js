@@ -602,6 +602,278 @@ export class UIHelpers {
         }
     }
 
+    /**
+     * ส่งออกไฟล์แม่แบบ Excel ด้วย ExcelJS พร้อม Data Validation Dropdowns เชื่อมโยงข้ามแผ่นงาน
+     * @param {Object} params
+     * @param {Object} params.settings ข้อมูลการตั้งค่าระบบและ Master Data (affiliations, positions, prefixes)
+     * @param {Array<Object>} params.templateRows ข้อมูลตัวอย่างสำหรับแผ่นงานที่ 1
+     * @param {string} params.fileName ชื่อไฟล์ผลลัพธ์
+     */
+    static async exportTemplateWithValidationsExcel({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) {
+        if (!window.ExcelJS) {
+            console.warn('ExcelJS not loaded, falling back to exportMultiSheetExcel');
+            const affiliations = settings?.affiliations || [];
+            const positions = settings?.positions || [];
+            UIHelpers.exportMultiSheetExcel([
+                {
+                    sheetName: 'ตารางข้อมูลนำเข้า',
+                    data: templateRows || [],
+                    colWidths: [18, 12, 16, 16, 16, 22, 14, 18, 24, 24, 20]
+                },
+                {
+                    sheetName: 'โครงสร้างสังกัด',
+                    data: affiliations.map(a => ({
+                        'หน่วยงาน': a.organization || 'กรุงเทพมหานคร',
+                        'สำนักงาน/กอง': a.bureau || '',
+                        'ส่วน/ฝ่าย': a.division || '',
+                        'กลุ่มงาน': a.group || '-'
+                    })),
+                    colWidths: [18, 26, 26, 22]
+                },
+                {
+                    sheetName: 'โครงสร้างตำแหน่ง',
+                    data: positions.map(p => ({
+                        'ประเภทตำแหน่ง': p.type || '',
+                        'ตำแหน่ง': p.title || '',
+                        'ระดับ': p.level || ''
+                    })),
+                    colWidths: [18, 24, 16]
+                }
+            ], fileName);
+            return;
+        }
+
+        const workbook = new window.ExcelJS.Workbook();
+        workbook.creator = 'กรุงเทพมหานคร (BMA)';
+        workbook.lastModifiedBy = 'ระบบบันทึกเวลาปฏิบัติราชการ กทม.';
+        workbook.created = new Date();
+        workbook.modified = new Date();
+
+        const affiliations = settings?.affiliations || [];
+        const positions = settings?.positions || [];
+        const prefixes = settings?.prefixes || ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'];
+
+        // --- Sheet 1: ตารางข้อมูลนำเข้า ---
+        const ws1 = workbook.addWorksheet('ตารางข้อมูลนำเข้า', {
+            views: [{ showGridLines: true, state: 'frozen', xSplit: 0, ySplit: 1 }]
+        });
+
+        const headers1 = [
+            { header: 'เลขบัตรประชาชน', key: 'national_id', width: 20 },
+            { header: 'คำนำหน้า', key: 'prefix', width: 14 },
+            { header: 'ชื่อ', key: 'first_name', width: 18 },
+            { header: 'นามสกุล', key: 'last_name', width: 18 },
+            { header: 'ประเภทตำแหน่ง', key: 'position_type', width: 18 },
+            { header: 'ตำแหน่ง', key: 'position_title', width: 26 },
+            { header: 'ระดับ', key: 'position_level', width: 16 },
+            { header: 'หน่วยงาน', key: 'organization', width: 20 },
+            { header: 'สำนักงาน/กอง', key: 'bureau', width: 28 },
+            { header: 'ส่วน/ฝ่าย', key: 'division', width: 28 },
+            { header: 'กลุ่มงาน', key: 'work_group', width: 24 }
+        ];
+
+        ws1.columns = headers1;
+
+        // Populate sample data rows in Sheet 1
+        if (Array.isArray(templateRows) && templateRows.length > 0) {
+            templateRows.forEach(row => {
+                ws1.addRow({
+                    national_id: String(row['เลขบัตรประชาชน'] || row['national_id'] || ''),
+                    prefix: String(row['คำนำหน้า'] || row['prefix'] || ''),
+                    first_name: String(row['ชื่อ'] || row['first_name'] || ''),
+                    last_name: String(row['นามสกุล'] || row['last_name'] || ''),
+                    position_type: String(row['ประเภทตำแหน่ง'] || row['position_type'] || ''),
+                    position_title: String(row['ตำแหน่ง'] || row['position_title'] || ''),
+                    position_level: String(row['ระดับ'] || row['position_level'] || ''),
+                    organization: String(row['หน่วยงาน'] || row['organization'] || ''),
+                    bureau: String(row['สำนักงาน/กอง'] || row['bureau'] || ''),
+                    division: String(row['ส่วน/ฝ่าย'] || row['division'] || ''),
+                    work_group: String(row['กลุ่มงาน'] || row['work_group'] || '')
+                });
+            });
+        }
+
+        // --- Sheet 2: โครงสร้างสังกัด ---
+        const ws2 = workbook.addWorksheet('โครงสร้างสังกัด', {
+            views: [{ showGridLines: true, state: 'frozen', xSplit: 0, ySplit: 1 }]
+        });
+        ws2.columns = [
+            { header: 'หน่วยงาน', key: 'organization', width: 20 },
+            { header: 'สำนักงาน/กอง', key: 'bureau', width: 28 },
+            { header: 'ส่วน/ฝ่าย', key: 'division', width: 28 },
+            { header: 'กลุ่มงาน', key: 'group', width: 24 }
+        ];
+        affiliations.forEach(a => {
+            ws2.addRow({
+                organization: a.organization || 'กรุงเทพมหานคร',
+                bureau: a.bureau || '',
+                division: a.division || '',
+                group: a.group || '-'
+            });
+        });
+
+        // --- Sheet 3: โครงสร้างตำแหน่ง ---
+        const ws3 = workbook.addWorksheet('โครงสร้างตำแหน่ง', {
+            views: [{ showGridLines: true, state: 'frozen', xSplit: 0, ySplit: 1 }]
+        });
+        ws3.columns = [
+            { header: 'ประเภทตำแหน่ง', key: 'type', width: 20 },
+            { header: 'ตำแหน่ง', key: 'title', width: 28 },
+            { header: 'ระดับ', key: 'level', width: 18 }
+        ];
+        positions.forEach(p => {
+            ws3.addRow({
+                type: p.type || '',
+                title: p.title || '',
+                level: p.level || ''
+            });
+        });
+
+        // Format Headers for all 3 worksheets (BMA Emerald #00744B, White Text, Bold, Thin Border)
+        [ws1, ws2, ws3].forEach(ws => {
+            const headerRow = ws.getRow(1);
+            headerRow.height = 28;
+            headerRow.eachCell(cell => {
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FF00744B' }
+                };
+                cell.font = {
+                    name: 'Sarabun',
+                    bold: true,
+                    color: { argb: 'FFFFFFFF' },
+                    size: 11
+                };
+                cell.alignment = {
+                    vertical: 'middle',
+                    horizontal: 'center',
+                    wrapText: false
+                };
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FF005234' } },
+                    left: { style: 'thin', color: { argb: 'FF005234' } },
+                    bottom: { style: 'medium', color: { argb: 'FF003C26' } },
+                    right: { style: 'thin', color: { argb: 'FF005234' } }
+                };
+            });
+        });
+
+        // Data Validation Formulas
+        const affMaxRow = Math.max(2, affiliations.length + 1);
+        const posMaxRow = Math.max(2, positions.length + 1);
+        const prefixFormula = `"${prefixes.join(',')}"`;
+        const posTypeFormula = `'โครงสร้างตำแหน่ง'!$A$2:$A$${posMaxRow}`;
+        const posTitleFormula = `'โครงสร้างตำแหน่ง'!$B$2:$B$${posMaxRow}`;
+        const posLevelFormula = `'โครงสร้างตำแหน่ง'!$C$2:$C$${posMaxRow}`;
+        const orgFormula = `'โครงสร้างสังกัด'!$A$2:$A$${affMaxRow}`;
+        const bureauFormula = `'โครงสร้างสังกัด'!$B$2:$B$${affMaxRow}`;
+        const divisionFormula = `'โครงสร้างสังกัด'!$C$2:$C$${affMaxRow}`;
+        const workGroupFormula = `'โครงสร้างสังกัด'!$D$2:$D$${affMaxRow}`;
+
+        // Apply Data Validations on Sheet 1 (Rows 2 to 300)
+        for (let r = 2; r <= 300; r++) {
+            const row = ws1.getRow(r);
+
+            // Set font for clean look
+            row.eachCell({ includeEmpty: false }, cell => {
+                cell.font = { name: 'Sarabun', size: 10 };
+            });
+
+            // Col 2: คำนำหน้า (B)
+            row.getCell(2).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [prefixFormula],
+                showErrorMessage: true,
+                errorTitle: 'คำนำหน้าไม่ถูกต้อง',
+                error: 'กรุณาเลือกคำนำหน้าจากรายการที่กำหนด'
+            };
+
+            // Col 5: ประเภทตำแหน่ง (E)
+            row.getCell(5).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [posTypeFormula],
+                showErrorMessage: true,
+                errorTitle: 'ประเภทตำแหน่งไม่ถูกต้อง',
+                error: 'กรุณาเลือกประเภทตำแหน่งจากรายการที่กำหนด'
+            };
+
+            // Col 6: ตำแหน่ง (F)
+            row.getCell(6).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [posTitleFormula],
+                showErrorMessage: true,
+                errorTitle: 'ตำแหน่งไม่ถูกต้อง',
+                error: 'กรุณาเลือกตำแหน่งจากรายการที่กำหนด'
+            };
+
+            // Col 7: ระดับ (G)
+            row.getCell(7).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [posLevelFormula],
+                showErrorMessage: true,
+                errorTitle: 'ระดับตำแหน่งไม่ถูกต้อง',
+                error: 'กรุณาเลือกระดับตำแหน่งจากรายการที่กำหนด'
+            };
+
+            // Col 8: หน่วยงาน (H)
+            row.getCell(8).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [orgFormula],
+                showErrorMessage: true,
+                errorTitle: 'หน่วยงานไม่ถูกต้อง',
+                error: 'กรุณาเลือกหน่วยงานจากรายการที่กำหนด'
+            };
+
+            // Col 9: สำนักงาน/กอง (I)
+            row.getCell(9).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [bureauFormula],
+                showErrorMessage: true,
+                errorTitle: 'สำนักงาน/กองไม่ถูกต้อง',
+                error: 'กรุณาเลือกสำนักงาน/กองจากรายการที่กำหนด'
+            };
+
+            // Col 10: ส่วน/ฝ่าย (J)
+            row.getCell(10).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [divisionFormula],
+                showErrorMessage: true,
+                errorTitle: 'ส่วน/ฝ่ายไม่ถูกต้อง',
+                error: 'กรุณาเลือกส่วน/ฝ่ายจากรายการที่กำหนด'
+            };
+
+            // Col 11: กลุ่มงาน (K)
+            row.getCell(11).dataValidation = {
+                type: 'list',
+                allowBlank: true,
+                formulae: [workGroupFormula],
+                showErrorMessage: true,
+                errorTitle: 'กลุ่มงานไม่ถูกต้อง',
+                error: 'กรุณาเลือกกลุ่มงานจากรายการที่กำหนด'
+            };
+        }
+
+        // Generate binary buffer and download in browser
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }
+
     static parseExcelFileUTF8(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
