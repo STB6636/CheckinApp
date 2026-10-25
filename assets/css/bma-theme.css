@@ -1574,3 +1574,19 @@ html.dark .cell-health-error {
     outline-offset: 2px;
 }
 
+/* ============================================================================
+ * Zero-Scroll Executive Resume Profile Modal Contract (Plan V2.22)
+ * Height constrained to <= 520px, guaranteed zero vertical scrolling on standard viewports
+ * ============================================================================ */
+#modalPersonnelResumeProfile > div {
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-height: 600px) {
+    #modalPersonnelResumeProfile > div {
+        max-height: 520px;
+    }
+}
+

@@ -23,7 +23,7 @@ export class Config {
         { key: 'late', label: 'มาสาย', defaultColor: '#EAB308', icon: 'fa-user-clock' },
         { key: 'absent_duty', label: 'ขาดราชการ', defaultColor: '#EA580C', icon: 'fa-user-slash' },
         { key: 'no_checkin', label: 'ไม่ลงเวลา', defaultColor: '#E11D48', icon: 'fa-user-xmark' },
-        { key: 'overtime', label: 'ปฏิบัติงานนอกเวลาราชการ', defaultColor: '#2563EB', icon: 'fa-business-time' }
+        { key: 'overtime', label: 'ปฏิบัติงานนอกเวลา', defaultColor: '#2563EB', icon: 'fa-business-time' }
     ];
 
     static DEFAULT_SETTINGS = {

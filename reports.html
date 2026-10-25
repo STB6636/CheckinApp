@@ -200,7 +200,7 @@
                         <option value="ปฏิบัติงานปกติ">ปฏิบัติงานปกติ</option>
                         <option value="มาสาย">มาสาย</option>
                         <option value="ขาดราชการ">ขาดราชการ</option>
-                        <option value="ปฏิบัติงานนอกเวลาราชการ">ปฏิบัติงานนอกเวลาราชการ</option>
+                        <option value="ปฏิบัติงานนอกเวลา">ปฏิบัติงานนอกเวลา</option>
                     </select>
                 </div>
 
@@ -220,190 +220,138 @@
         </div>
     </div>
 
-    <!-- Modal 2: International Resume Profile Modal -->
-    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/65 backdrop-blur-xs overflow-y-auto">
-        <div class="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl my-8 border border-slate-200 dark:border-slate-700">
+    <!-- Modal 2: International Resume Profile Modal (Zero-Scroll Executive Redesign) -->
+    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs">
+        <div class="w-full max-w-4xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col">
 
-            <!-- Executive Resume Header Banner -->
-            <div class="p-6 sm:p-7 relative bg-gradient-to-r from-[#00351B] via-[#005B2E] to-[#00744B] text-white">
-                <button type="button" id="btnCloseResumeModalTop" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+            <!-- 1. Executive Resume Header Banner (~80px) -->
+            <div class="shrink-0 px-6 py-4 relative bg-gradient-to-r from-[#00351B] via-[#005B2E] to-[#00744B] text-white">
+                <button type="button" id="btnCloseResumeModalTop" class="absolute top-3.5 right-4 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
                 </button>
 
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pr-10">
-                    <div class="space-y-1 min-w-0">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-full bg-white/15 text-[#F6DE51] text-[11px] font-bold uppercase tracking-wider">
-                                Attendance Record &amp; Personnel Profile
-                            </span>
-                            <span id="resumeRoleBadge" class="bma-badge role-pastel-user text-xs">User</span>
-                        </div>
-                        <h3 id="resumeFullName" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight truncate">-</h3>
-                        <p id="resumePositionHeadline" class="text-sm sm:text-base font-semibold text-emerald-100">-</p>
-                        <p id="resumeOrgHeadline" class="text-xs text-[#F6DE51] font-medium">-</p>
+                <div class="flex items-center justify-between gap-4 pr-8">
+                    <!-- 3 บรรทัดหลักตามคำสั่งของผู้ใช้งาน -->
+                    <div class="space-y-0.5 min-w-0">
+                        <h3 id="resumeFullName" class="text-xl sm:text-2xl font-extrabold text-white tracking-tight truncate">-</h3>
+                        <p id="resumePositionHeadline" class="text-xs sm:text-sm font-bold text-emerald-100 truncate">-</p>
+                        <p id="resumeOrgHeadline" class="text-xs text-[#F6DE51] font-semibold truncate">-</p>
                     </div>
 
-                    <div class="bg-black/25 px-4 py-2.5 rounded-2xl border border-white/15 text-left sm:text-right shrink-0">
-                        <span class="text-[11px] font-bold text-emerald-200 block">วันที่ปฏิบัติราชการของรายการนี้</span>
-                        <span id="resumeRowDateHeadline" class="text-base font-extrabold text-[#F6DE51] block">-</span>
-                        <span id="resumeRowStatusBadge" class="bma-badge text-white text-xs mt-1">ปฏิบัติงานปกติ</span>
+                    <!-- วันที่และสถานะประจำแถว -->
+                    <div class="bg-black/25 px-3.5 py-1.5 rounded-xl border border-white/15 text-right shrink-0 hidden sm:block">
+                        <span id="resumeRowDateHeadline" class="text-xs font-extrabold text-[#F6DE51] block">-</span>
+                        <span id="resumeRowStatusBadge" class="bma-badge text-white text-[11px] mt-0.5">ปฏิบัติงานปกติ</span>
+                        <span id="resumeRoleBadge" class="hidden">User</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Profile Body -->
-            <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 2. Profile Body Content (~380px) -->
+            <div class="p-5 grid grid-cols-1 md:grid-cols-12 gap-5">
 
-                <!-- Left Column (5/12): Photo & Identity -->
-                <div class="lg:col-span-5 space-y-5">
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-camera text-[#00744B]"></i>
-                            <span>ภาพถ่ายยืนยันการลงเวลา (เฉพาะรายการนี้)</span>
+                <!-- ฝั่งซ้าย (5/12): รูปถ่าย 3:4 และใต้รูปมีแผนที่ Google Map -->
+                <div class="md:col-span-5 flex flex-col gap-3">
+                    
+                    <!-- รูปถ่าย 3:4 พร้อมปุ่มเปิดรูปเต็ม -->
+                    <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/50 p-2.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                        <div id="resumeLargePhotoBox" class="shrink-0 w-24 h-32 aspect-[3/4] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 flex items-center justify-center shadow-inner">
+                            <i class="fa-solid fa-user-tie text-2xl text-[#00744B]"></i>
                         </div>
-
-                        <div id="resumeLargePhotoBox" class="resume-large-photo-frame rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 aspect-3/4 flex items-center justify-center shadow-inner">
-                            <div class="text-center p-4 text-slate-400 text-xs">
-                                <i class="fa-solid fa-user-tie text-5xl mb-2 block text-[#00744B]"></i>
-                                <span>ไม่มีภาพถ่ายในรายการนี้</span>
-                            </div>
-                        </div>
-                        <div class="text-center mt-2">
-                            <a id="resumeOpenFullPhotoLink" href="#" target="_blank" rel="noopener" class="hidden text-xs font-bold underline text-[#00744B] dark:text-emerald-400">
-                                <i class="fa-solid fa-magnifying-glass-plus mr-1"></i>คลิกเพื่อเปิดดูรูปภาพขนาดเต็ม
+                        <div class="space-y-1">
+                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-300 block">ภาพถ่ายยืนยัน</span>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">อัตราส่วน 3:4 แนวตั้ง</p>
+                            <a id="resumeOpenFullPhotoLink" href="#" target="_blank" rel="noopener" class="hidden inline-flex items-center gap-1 text-xs font-bold text-[#00744B] dark:text-emerald-400 hover:underline pt-1">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                                <span>เปิดดูรูปขนาดเต็ม</span>
                             </a>
                         </div>
                     </div>
 
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-id-card text-[#00744B]"></i>
-                            <span>ข้อมูลประจำตัว (Personal Identity)</span>
+                    <!-- ใต้รูป: พิกัดตำแหน่งและแผนที่ Google Map (เฉพาะรายการนี้) -->
+                    <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                                <i class="fa-solid fa-map-location-dot text-[#00744B]"></i>
+                                <span>พิกัดสถานที่</span>
+                            </span>
+                            <a id="resumeRowGoogleMapLink" href="#" target="_blank" rel="noopener" class="hidden text-[11px] font-bold text-[#0971CE] hover:underline">
+                                เปิด Google Maps &rarr;
+                            </a>
                         </div>
-                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-2 text-xs">
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-500 font-semibold">เลขบัตรประชาชน 13 หลัก:</span>
-                                <span id="resumeNationalId" class="font-mono font-bold text-slate-800 dark:text-white">-</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-1.5 border-t border-slate-200 dark:border-slate-700">
-                                <span class="text-slate-500 font-semibold">ชื่อบัญชีผู้ใช้ (Username):</span>
-                                <span id="resumeUsername" class="font-mono font-bold text-slate-800 dark:text-white">-</span>
-                            </div>
-                            <div class="flex items-center justify-between pt-1.5 border-t border-slate-200 dark:border-slate-700">
-                                <span class="text-slate-500 font-semibold">ประเภท / ระดับตำแหน่ง:</span>
-                                <span id="resumePosSpec" class="font-bold text-slate-800 dark:text-white text-right">-</span>
-                            </div>
+                        <div class="text-[11px] text-slate-600 dark:text-slate-300 truncate">
+                            <span class="font-semibold text-slate-400">สถานที่: </span>
+                            <span id="resumeRowLocationName" class="font-bold text-[#00744B] dark:text-emerald-400">-</span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Right Column (7/12): Record Details + GPS Map + Hierarchy -->
-                <div class="lg:col-span-7 space-y-5">
-
-                    <!-- Details -->
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-clock text-[#00744B]"></i>
-                            <span>รายละเอียดการลงเวลาของรายการที่เลือก</span>
+                        <div class="text-[11px] font-mono font-bold text-slate-600 dark:text-slate-400 truncate">
+                            <span class="font-sans font-semibold text-slate-400">พิกัด DD: </span>
+                            <span id="resumeRowGpsCoords">-</span>
                         </div>
-
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-3 text-xs">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-                                    <span class="text-slate-500 block font-semibold">วันที่ปฏิบัติราชการ</span>
-                                    <span id="resumeRowFullDate" class="text-sm font-extrabold text-slate-800 dark:text-white mt-0.5 block">-</span>
-                                </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
-                                    <span class="text-slate-500 block font-semibold">ช่วงเวลา / ผลัดปฏิบัติงาน</span>
-                                    <span id="resumeRowShiftName" class="text-sm font-extrabold text-slate-800 dark:text-white mt-0.5 block">-</span>
-                                </div>
+                        <div class="w-full h-28 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 relative">
+                            <div id="resumeRowMapPlaceholder" class="text-xs text-slate-400 flex flex-col items-center justify-center h-full gap-1">
+                                <i class="fa-solid fa-location-dot text-base text-slate-400"></i>
+                                <span class="text-[11px]">ไม่มีข้อมูลพิกัด GPS</span>
                             </div>
-
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
-                                    <span class="text-slate-500 block font-semibold">เวลาเข้างาน (24 ชม.)</span>
-                                    <span id="resumeRowCheckinTime" class="text-base font-mono font-extrabold text-[#00744B] dark:text-emerald-400 mt-0.5 block">-</span>
-                                </div>
-                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
-                                    <span class="text-slate-500 block font-semibold">เวลาออกงาน (24 ชม.)</span>
-                                    <span id="resumeRowCheckoutTime" class="text-base font-mono font-extrabold text-[#0971CE] dark:text-sky-400 mt-0.5 block">-</span>
-                                </div>
-                                <div class="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
-                                    <span class="text-slate-500 block font-semibold">หมายเหตุ</span>
-                                    <span id="resumeRowRemark" class="text-xs font-bold text-slate-700 dark:text-slate-300 mt-1 block">-</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GPS Map -->
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-map-location-dot text-[#00744B]"></i>
-                            <span>พิกัดตำแหน่งและแผนที่ Google Map (เฉพาะรายการนี้)</span>
-                        </div>
-
-                        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 space-y-2.5 text-xs">
-                            <div class="flex items-start justify-between gap-2">
-                                <span class="text-slate-500 font-bold whitespace-nowrap">ชื่อสถานที่:</span>
-                                <span id="resumeRowLocationName" class="font-extrabold text-[#00744B] dark:text-emerald-400 text-right">-</span>
-                            </div>
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-slate-500 font-bold">พิกัด GPS (Lat, Lng):</span>
-                                <div class="flex items-center gap-2">
-                                    <span id="resumeRowGpsCoords" class="font-mono font-bold text-slate-800 dark:text-white">-</span>
-                                    <a id="resumeRowGoogleMapLink" href="#" target="_blank" rel="noopener" class="hidden text-xs font-bold underline text-[#0971CE]">
-                                        เปิดใน Google Maps &rarr;
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="w-full h-44 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 flex items-center justify-center relative">
-                                <div id="resumeRowMapPlaceholder" class="text-xs text-slate-400 flex flex-col items-center gap-1">
-                                    <i class="fa-solid fa-location-dot text-xl text-slate-400"></i>
-                                    <span>ไม่มีข้อมูลพิกัด GPS ในรายการนี้</span>
-                                </div>
-                                <iframe id="resumeRowMapIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Hierarchy -->
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-                            <i class="fa-solid fa-sitemap text-[#00744B]"></i>
-                            <span>โครงสร้างสังกัด (Organization Hierarchy)</span>
-                        </div>
-
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">1. หน่วยงาน</span>
-                                <span id="resumeOrgName" class="font-bold text-slate-800 dark:text-white mt-0.5 block truncate">-</span>
-                            </div>
-                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">2. สำนักงาน/กอง</span>
-                                <span id="resumeBureauName" class="font-bold text-[#00744B] dark:text-emerald-400 mt-0.5 block truncate">-</span>
-                            </div>
-                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">3. ส่วน/ฝ่าย</span>
-                                <span id="resumeDivisionName" class="font-bold text-slate-800 dark:text-white mt-0.5 block truncate">-</span>
-                            </div>
-                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <span class="text-[10px] font-bold uppercase text-slate-400 block">4. กลุ่มงาน</span>
-                                <span id="resumeWorkGroupName" class="font-bold text-slate-800 dark:text-white mt-0.5 block truncate">-</span>
-                            </div>
+                            <iframe id="resumeRowMapIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
 
                 </div>
+
+                <!-- ฝั่งขวา (7/12): รายละเอียดการลงเวลาปฏิบัติราชการ -->
+                <div class="md:col-span-7 flex flex-col justify-between">
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-clipboard-check text-[#00744B]"></i>
+                            <span>รายละเอียดการลงเวลาปฏิบัติราชการ</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5 text-xs">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                                <span class="text-[11px] text-slate-400 font-semibold block">วันที่ปฏิบัติราชการ</span>
+                                <span id="resumeRowFullDate" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white mt-0.5 block truncate">-</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                                <span class="text-[11px] text-slate-400 font-semibold block">ช่วงเวลา / ผลัดปฏิบัติงาน</span>
+                                <span id="resumeRowShiftName" class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white mt-0.5 block truncate">-</span>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-center">
+                                <span class="text-[11px] text-emerald-800 dark:text-emerald-300 font-bold block">เวลาเข้างาน</span>
+                                <span id="resumeRowCheckinTime" class="text-lg font-mono font-black text-[#00744B] dark:text-emerald-400 mt-0.5 block">-</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-sky-50/60 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-800/40 text-center">
+                                <span class="text-[11px] text-sky-800 dark:text-sky-300 font-bold block">เวลาออกงาน</span>
+                                <span id="resumeRowCheckoutTime" class="text-lg font-mono font-black text-[#0971CE] dark:text-sky-400 mt-0.5 block">-</span>
+                            </div>
+
+                            <div class="col-span-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                                <span class="text-[11px] text-slate-400 font-semibold block">หมายเหตุ</span>
+                                <span id="resumeRowRemark" class="text-xs font-bold text-slate-700 dark:text-slate-300 mt-0.5 block">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- กล่องเก็บ ID ที่ซ่อนไว้เพื่อรักษา 100% DOM ID Preservation Contract -->
+                    <div class="hidden" aria-hidden="true">
+                        <span id="resumeNationalId"></span>
+                        <span id="resumeUsername"></span>
+                        <span id="resumePosSpec"></span>
+                        <span id="resumeOrgName"></span>
+                        <span id="resumeBureauName"></span>
+                        <span id="resumeDivisionName"></span>
+                        <span id="resumeWorkGroupName"></span>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Modal Footer -->
-            <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-                <span class="text-xs text-slate-500 font-medium">ข้อมูลโปรไฟล์และหลักฐานการลงเวลาปฏิบัติราชการรายบุคคล</span>
-                <button type="button" id="btnCloseResumeModalBottom" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
-                    <i class="fa-solid fa-check"></i>
-                    <span>ปิดหน้าต่างโปรไฟล์</span>
+            <!-- 3. Modal Footer (~48px) -->
+            <div class="shrink-0 px-6 py-2.5 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
+                <span class="text-[11px] text-slate-500 font-medium">ระบบบันทึกเวลาปฏิบัติราชการดิจิทัล กรุงเทพมหานคร</span>
+                <button type="button" id="btnCloseResumeModalBottom" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-sm transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                    <span>ปิดหน้าต่าง</span>
                 </button>
             </div>
 

@@ -598,11 +598,12 @@ export class AttendanceModel {
         if (
             log.is_overtime ||
             matchingShift?.is_overtime ||
+            log.status === 'ปฏิบัติงานนอกเวลา' ||
             log.status === 'ปฏิบัติงานนอกเวลาราชการ'
         ) {
             return {
                 status_key: 'overtime',
-                status_label: 'ปฏิบัติงานนอกเวลาราชการ',
+                status_label: 'ปฏิบัติงานนอกเวลา',
                 row_color: colors.overtime || '#2563EB'
             };
         }
@@ -703,7 +704,7 @@ export class AttendanceModel {
 
     static async getTodayRegularRecordForUser(personnelId, userId, workDate = UIHelpers.getTodayISO()) {
         const list = await AttendanceModel.getTodayRecordsListForUser(personnelId, userId, workDate);
-        return list.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
+        return list.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลา' && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
     }
 
     static async getActiveRegularRecordForCheckout(personnelId, userId, settings) {
@@ -713,6 +714,7 @@ export class AttendanceModel {
             .from('attendance_logs')
             .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, check_in_photo, check_out_photo, check_in_lat, check_in_lng, check_out_lat, check_out_lng, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at')
             .eq('is_overtime', false)
+            .neq('status', 'ปฏิบัติงานนอกเวลา')
             .neq('status', 'ปฏิบัติงานนอกเวลาราชการ')
             .not('check_in_time', 'is', null)
             .is('check_out_time', null)
@@ -940,7 +942,7 @@ export class AttendanceModel {
             const otCheckOut = UIHelpers.formatTime24(payload.custom_check_out_time || shiftEndRef);
 
             const duplicateOt = todayLogs.find(r =>
-                (r.is_overtime || r.status === 'ปฏิบัติงานนอกเวลาราชการ') &&
+                (r.is_overtime || r.status === 'ปฏิบัติงานนอกเวลา' || r.status === 'ปฏิบัติงานนอกเวลาราชการ') &&
                 (
                     r.shift_name === otShiftName ||
                     (UIHelpers.formatTime24(r.check_in_time) === otCheckIn && UIHelpers.formatTime24(r.check_out_time) === otCheckOut)
@@ -969,7 +971,7 @@ export class AttendanceModel {
                 check_out_lat: payload.lat ?? null,
                 check_out_lng: payload.lng ?? null,
                 check_out_location: payload.location_name || '',
-                status: 'ปฏิบัติงานนอกเวลาราชการ',
+                status: 'ปฏิบัติงานนอกเวลา',
                 remark: payload.remark || (payload.is_overnight ? 'ปฏิบัติงานนอกเวลา (ข้ามวัน)' : 'ปฏิบัติงานนอกเวลา'),
                 row_color: colors.overtime || '#2563EB',
                 is_overtime: true,
@@ -994,7 +996,7 @@ export class AttendanceModel {
             };
         }
 
-        const regularRecordToday = todayLogs.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
+        const regularRecordToday = todayLogs.find(r => !r.is_overtime && r.status !== 'ปฏิบัติงานนอกเวลา' && r.status !== 'ปฏิบัติงานนอกเวลาราชการ') || null;
         const startAllowRef = UIHelpers.formatTime24(settings.allow_checkin_start_time || '06:00');
         const startAllowMin = UIHelpers.timeToMinutes(startAllowRef);
 
@@ -1120,7 +1122,7 @@ export class AttendanceModel {
         const colors = settings.category_colors || Config.DEFAULT_SETTINGS.category_colors;
 
         const isOvertimeShift = Boolean(payload.is_overtime);
-        const targetStatus = isOvertimeShift ? 'ปฏิบัติงานนอกเวลาราชการ' : 'ปฏิบัติงานปกติ';
+        const targetStatus = isOvertimeShift ? 'ปฏิบัติงานนอกเวลา' : 'ปฏิบัติงานปกติ';
         const targetColor = isOvertimeShift ? (colors.overtime || '#2563EB') : (colors.normal || '#007B3E');
 
         const checkIn24 = UIHelpers.formatTime24(payload.check_in_time || settings.standard_check_in || '08:30');
@@ -1221,9 +1223,9 @@ export class AttendanceModel {
 
         let updatedCount = 0;
         for (const item of (targetLogs || [])) {
-            const isOt = Boolean(item.is_overtime || item.status === 'ปฏิบัติงานนอกเวลาราชการ');
+            const isOt = Boolean(item.is_overtime || item.status === 'ปฏิบัติงานนอกเวลา' || item.status === 'ปฏิบัติงานนอกเวลาราชการ');
             const newStatus = decision === 'approved'
-                ? (isOt ? 'ปฏิบัติงานนอกเวลาราชการ' : 'ปฏิบัติงานปกติ')
+                ? (isOt ? 'ปฏิบัติงานนอกเวลา' : 'ปฏิบัติงานปกติ')
                 : 'ขาดราชการ';
             const newColor = decision === 'approved'
                 ? (isOt ? (colors.overtime || '#2563EB') : (colors.normal || '#007B3E'))
@@ -1345,8 +1347,11 @@ export class AttendanceModel {
             full_name: `${person.prefix}${person.first_name} ${person.last_name}`,
             position_type: person.position_type,
             position_title: person.position_title,
-            position_level: person.position_level,
-            position_full: `${person.position_title}${person.position_level ? ' ระดับ' + person.position_level : ''}`,
+            position_full: (() => {
+                const cleanTitle = (person.position_title || '').trim();
+                const cleanLevel = (person.position_level || '').replace(/^ระดับ\s*/, '').trim();
+                return cleanTitle ? `${cleanTitle}${cleanLevel}` : '-';
+            })(),
             organization: person.organization,
             bureau: person.bureau,
             division: person.division,
@@ -1384,22 +1389,24 @@ export class AttendanceModel {
         const settings = await SettingsModel.getSettings(false);
         const colors = settings.category_colors || Config.DEFAULT_SETTINGS.category_colors;
 
-        const isOvertime = payload.status === 'ปฏิบัติงานนอกเวลาราชการ';
+        const isOvertime = payload.status === 'ปฏิบัติงานนอกเวลา' || payload.status === 'ปฏิบัติงานนอกเวลาราชการ';
         const statusColorMap = {
             'ปฏิบัติงานปกติ': colors.normal || '#007B3E',
             'มาสาย': colors.late || '#EAB308',
             'ขาดราชการ': colors.absent_duty || '#EA580C',
             'ไม่ลงเวลา': colors.no_checkin || '#E11D48',
+            'ปฏิบัติงานนอกเวลา': colors.overtime || '#2563EB',
             'ปฏิบัติงานนอกเวลาราชการ': colors.overtime || '#2563EB'
         };
 
+        const canonicalStatus = payload.status === 'ปฏิบัติงานนอกเวลาราชการ' ? 'ปฏิบัติงานนอกเวลา' : (payload.status || 'ปฏิบัติงานปกติ');
         const recordData = {
             personnel_id: payload.personnel_id,
             work_date: payload.work_date,
-            shift_name: payload.shift_name || (isOvertime ? 'ปฏิบัติงานนอกเวลาราชการ' : 'เวลาราชการปกติ (08:30 - 16:30)'),
+            shift_name: payload.shift_name || (isOvertime ? 'ปฏิบัติงานนอกเวลา' : 'เวลาราชการปกติ (08:30 - 16:30)'),
             check_in_time: payload.check_in_time ? UIHelpers.formatTime24(payload.check_in_time) : null,
             check_out_time: payload.check_out_time ? UIHelpers.formatTime24(payload.check_out_time) : null,
-            status: payload.status || 'ปฏิบัติงานปกติ',
+            status: canonicalStatus,
             remark: payload.remark || '',
             row_color: payload.row_color || statusColorMap[payload.status] || '#007B3E',
             is_overtime: isOvertime,
@@ -1496,7 +1503,7 @@ export class AttendanceModel {
                 },
                 {
                     key: 'overtime',
-                    label: 'ปฏิบัติงานนอกเวลาราชการ',
+                    label: 'ปฏิบัติงานนอกเวลา',
                     count: overtimeCount,
                     percent: calcPercent(overtimeCount),
                     color: '#2563EB',
