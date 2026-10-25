@@ -382,16 +382,19 @@ export class PersonnelController {
             UIHelpers.exportToExcelUTF8(rows, `ข้อมูลบุคลากร_${UIHelpers.getTodayISO()}`, 'Personnel');
         });
 
+        document.getElementById('btnOpenBulkImportModal')?.addEventListener('click', () => {
+            this.#openBulkImportModal();
+        });
+
         document.getElementById('btnTemplatePersonnelExcel')?.addEventListener('click', () => {
-            const templateRows = PersonnelModel.getExcelTemplateRows();
-            UIHelpers.exportToExcelUTF8(templateRows, 'Template_นำเข้าข้อมูลบุคลากร', 'Template');
+            this.#downloadMultiSheetTemplate();
         });
 
         document.getElementById('inputImportPersonnelExcel')?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             if (!file) return;
             e.target.value = '';
-            this.#openBulkImportModal(file);
+            this.#processBulkImportFile(file);
         });
 
         document.getElementById('personnelTableBody')?.addEventListener('click', async (e) => {
@@ -469,8 +472,7 @@ export class PersonnelController {
             this.#closeBulkImportModal();
         });
         document.getElementById('btnDownloadImportTemplate')?.addEventListener('click', () => {
-            const templateRows = PersonnelModel.getExcelTemplateRows();
-            UIHelpers.exportToExcelUTF8(templateRows, 'Template_นำเข้าข้อมูลบุคลากร', 'Template');
+            this.#downloadMultiSheetTemplate();
         });
 
         const dropzone = document.getElementById('dropzoneBulkPersonnel');
@@ -499,14 +501,15 @@ export class PersonnelController {
 
         inputBulkFile?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
-            if (file) this.#processBulkImportFile(file);
+            if (!file) return;
+            this.#processBulkImportFile(file);
         });
 
         document.getElementById('btnConfirmBulkImport')?.addEventListener('click', async () => {
             await this.#handleExecuteBulkImport();
         });
 
-        // Preview Table Inline Edit & Row Delete
+        // Preview Table Inline Edit, Select Change & Row Delete
         const previewTbody = document.getElementById('bulkImportPreviewTableBody');
         previewTbody?.addEventListener('blur', (e) => {
             const cell = e.target.closest('[contenteditable="true"]');
@@ -520,6 +523,22 @@ export class PersonnelController {
                 }
             }
         }, true);
+
+        previewTbody?.addEventListener('change', (e) => {
+            const select = e.target.closest('.bulk-inline-select');
+            if (select) {
+                const rIdx = parseInt(select.dataset.rowIdx, 10);
+                const field = select.dataset.field;
+                const newVal = select.value.trim();
+                if (!isNaN(rIdx) && this.bulkImportRows[rIdx] && field && newVal) {
+                    const cell = this.bulkImportRows[rIdx].cells[field];
+                    cell.value = newVal;
+                    cell.status = 'healed';
+                    delete cell.availableOptions;
+                    this.#revalidateRow(rIdx);
+                }
+            }
+        });
 
         previewTbody?.addEventListener('click', (e) => {
             const delBtn = e.target.closest('button[data-action="delete-preview-row"]');
@@ -821,7 +840,7 @@ export class PersonnelController {
         // Reset Table
         const tbody = document.getElementById('bulkImportPreviewTableBody');
         if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400">กรุณาเลือกหรือวางไฟล์ Excel เพื่อแสดงผลตัวอย่างการตรวจสอบข้อมูล</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="14" class="text-center py-8 text-slate-400">กรุณาเลือกหรือวางไฟล์ Excel เพื่อแสดงผลตัวอย่างการตรวจสอบข้อมูล</td></tr>`;
         }
 
         // Reset Buttons
@@ -841,25 +860,32 @@ export class PersonnelController {
         modal?.classList.add('hidden');
         const inputFile = document.getElementById('inputBulkPersonnelFile');
         if (inputFile) inputFile.value = '';
+        const inputImport = document.getElementById('inputImportPersonnelExcel');
+        if (inputImport) inputImport.value = '';
     }
 
     async #processBulkImportFile(file) {
         const tbody = document.getElementById('bulkImportPreviewTableBody');
         if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2 text-[#00744B]"></i>กำลังอ่านและวิเคราะห์ความสมบูรณ์ของโครงสร้างข้อมูล (Data Health Analysis)...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="14" class="text-center py-8 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2 text-[#00744B]"></i>กำลังอ่านและวิเคราะห์ความสมบูรณ์ของโครงสร้างข้อมูล (Data Health Analysis)...</td></tr>`;
         }
 
         try {
             const rawRows = await UIHelpers.parseExcelFileUTF8(file);
             if (!Array.isArray(rawRows) || rawRows.length === 0) {
-                if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-rose-500 font-bold">ไม่พบข้อมูลแถวในไฟล์ที่เลือก กรุณาตรวจสอบไฟล์</td></tr>`;
+                if (tbody) tbody.innerHTML = `<tr><td colspan="14" class="text-center py-8 text-rose-500 font-bold">ไม่พบข้อมูลแถวในไฟล์ที่เลือก กรุณาตรวจสอบไฟล์</td></tr>`;
                 return;
             }
 
-            // Reference datasets from settings
+            // Reference master datasets from settings
             const prefixes = this.settings.prefixes || ['นาย', 'นาง', 'นางสาว'];
+            const posTypes = SettingsModel.getUniquePositionTypes(this.settings);
+            const validPosTypes = posTypes.length > 0 ? posTypes : ['ประเภททั่วไป', 'ประเภทวิชาการ', 'ประเภทอำนวยการ', 'ประเภทบริหาร'];
             const posTitles = SettingsModel.getUniquePositionTitles(this.settings, '');
-            const posLevels = ['ปฏิบัติงาน', 'ชำนาญงาน', 'อาวุโส', 'ปฏิบัติการ', 'ชำนาญการ', 'ชำนาญการพิเศษ', 'เชี่ยวชาญ', 'ทรงคุณวุฒิ'];
+            const rawPosLevels = SettingsModel.getUniquePositionLevels(this.settings, '', '');
+            const posLevels = rawPosLevels.length > 0 ? rawPosLevels : ['ปฏิบัติงาน', 'ชำนาญงาน', 'อาวุโส', 'ทักษะพิเศษ', 'ปฏิบัติการ', 'ชำนาญการ', 'ชำนาญการพิเศษ', 'เชี่ยวชาญ', 'ทรงคุณวุฒิ'];
+            const orgs = SettingsModel.getUniqueOrganizations(this.settings);
+            const validOrgs = orgs.length > 0 ? orgs : ['กรุงเทพมหานคร'];
             const bureaus = SettingsModel.getUniqueBureaus(this.settings, '');
             const divisions = SettingsModel.getUniqueDivisions(this.settings, '');
 
@@ -871,7 +897,7 @@ export class PersonnelController {
             for (let i = 0; i < rawRows.length; i++) {
                 const row = rawRows[i];
 
-                // 1. National ID
+                // 1. National ID (13 หลัก)
                 const rawNid = String(row['เลขบัตรประชาชน'] || row['เลขประจำตัวประชาชน'] || row['national_id'] || row['id_card'] || '').replace(/\D/g, '');
                 let nidStatus = 'valid';
                 let nidMsg = '';
@@ -894,121 +920,194 @@ export class PersonnelController {
                     seenNidsInFile.add(rawNid);
                 }
 
-                // 2. Prefix
+                // 2. Prefix (คำนำหน้า)
                 const rawPrefix = String(row['คำนำหน้า'] || row['คำนำหน้านาม'] || row['prefix'] || '').trim();
                 let prefixVal = rawPrefix;
                 let prefixStatus = 'valid';
+                let prefixOpts = null;
                 if (!rawPrefix) {
                     prefixStatus = 'error';
+                    prefixOpts = prefixes;
                 } else {
-                    const match = this.#findBestFuzzyMatch(rawPrefix, prefixes, 0.4);
-                    if (match.match) {
+                    const match = this.#findBestFuzzyMatch(rawPrefix, prefixes, 0.55);
+                    if (match.isExact) {
                         prefixVal = match.match;
-                        prefixStatus = match.isExact ? 'valid' : 'healed';
+                        prefixStatus = 'valid';
+                    } else if (match.match) {
+                        prefixVal = match.match;
+                        prefixStatus = 'healed';
                     } else {
                         prefixStatus = 'error';
+                        prefixOpts = prefixes;
                     }
                 }
 
-                // 3. First Name & Last Name
+                // 3. First Name & Last Name (ชื่อ และ นามสกุล)
                 const firstName = String(row['ชื่อ'] || row['first_name'] || row['name'] || '').trim();
                 const firstNameStatus = firstName ? 'valid' : 'error';
 
                 const lastName = String(row['นามสกุล'] || row['last_name'] || row['surname'] || '').trim();
                 const lastNameStatus = lastName ? 'valid' : 'error';
 
-                // 4. Position Title
-                const rawPosTitle = String(row['ตำแหน่ง'] || row['ตำแหน่งในสายงาน'] || row['position_title'] || row['position'] || '').trim();
-                let posTitleVal = rawPosTitle;
-                let posTitleStatus = 'valid';
-                if (!rawPosTitle) {
-                    posTitleStatus = 'error';
+                // 4. Position Type (ประเภทตำแหน่ง)
+                const rawPosType = String(row['ประเภทตำแหน่ง'] || row['ประเภท'] || row['position_type'] || '').trim();
+                let posTypeVal = rawPosType;
+                let posTypeStatus = 'valid';
+                let posTypeOpts = null;
+                if (!rawPosType) {
+                    posTypeVal = validPosTypes[0] || 'ประเภททั่วไป';
+                    posTypeStatus = 'healed';
                 } else {
-                    const match = this.#findBestFuzzyMatch(rawPosTitle, posTitles, 0.5);
-                    if (match.match) {
-                        posTitleVal = match.match;
-                        posTitleStatus = match.isExact ? 'valid' : 'healed';
+                    const match = this.#findBestFuzzyMatch(rawPosType, validPosTypes, 0.55);
+                    if (match.isExact) {
+                        posTypeVal = match.match;
+                        posTypeStatus = 'valid';
+                    } else if (match.match) {
+                        posTypeVal = match.match;
+                        posTypeStatus = 'healed';
                     } else {
-                        posTitleStatus = 'healed';
+                        posTypeStatus = 'error';
+                        posTypeOpts = validPosTypes;
                     }
                 }
 
-                // 5. Position Level
+                // 5. Position Title (ตำแหน่ง)
+                const rawPosTitle = String(row['ตำแหน่ง'] || row['ตำแหน่งในสายงาน'] || row['position_title'] || row['position'] || '').trim();
+                let posTitleVal = rawPosTitle;
+                let posTitleStatus = 'valid';
+                let posTitleOpts = null;
+                if (!rawPosTitle) {
+                    posTitleStatus = 'error';
+                    posTitleOpts = posTitles;
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawPosTitle, posTitles, 0.55);
+                    if (match.isExact) {
+                        posTitleVal = match.match;
+                        posTitleStatus = 'valid';
+                    } else if (match.match) {
+                        posTitleVal = match.match;
+                        posTitleStatus = 'healed';
+                    } else {
+                        posTitleStatus = 'error';
+                        posTitleOpts = posTitles;
+                    }
+                }
+
+                // 6. Position Level (ระดับ)
                 const rawPosLevel = String(row['ระดับ'] || row['ระดับตำแหน่ง'] || row['position_level'] || row['level'] || '').trim();
                 let posLevelVal = rawPosLevel;
                 let posLevelStatus = 'valid';
+                let posLevelOpts = null;
                 if (!rawPosLevel) {
                     posLevelVal = 'ปฏิบัติงาน';
                     posLevelStatus = 'healed';
                 } else {
-                    const match = this.#findBestFuzzyMatch(rawPosLevel, posLevels, 0.5);
-                    if (match.match) {
+                    const match = this.#findBestFuzzyMatch(rawPosLevel, posLevels, 0.55);
+                    if (match.isExact) {
                         posLevelVal = match.match;
-                        posLevelStatus = match.isExact ? 'valid' : 'healed';
-                    } else {
-                        posLevelVal = 'ปฏิบัติงาน';
+                        posLevelStatus = 'valid';
+                    } else if (match.match) {
+                        posLevelVal = match.match;
                         posLevelStatus = 'healed';
+                    } else {
+                        posLevelStatus = 'error';
+                        posLevelOpts = posLevels;
                     }
                 }
 
-                // 6. Bureau
+                // 7. Organization (หน่วยงาน)
+                const rawOrg = String(row['หน่วยงาน'] || row['สังกัดใหญ่'] || row['organization'] || '').trim();
+                let orgVal = rawOrg;
+                let orgStatus = 'valid';
+                if (!rawOrg) {
+                    orgVal = validOrgs[0] || 'กรุงเทพมหานคร';
+                    orgStatus = 'healed';
+                } else {
+                    const match = this.#findBestFuzzyMatch(rawOrg, validOrgs, 0.55);
+                    if (match.isExact) {
+                        orgVal = match.match;
+                        orgStatus = 'valid';
+                    } else if (match.match) {
+                        orgVal = match.match;
+                        orgStatus = 'healed';
+                    } else {
+                        orgVal = validOrgs[0] || 'กรุงเทพมหานคร';
+                        orgStatus = 'healed';
+                    }
+                }
+
+                // 8. Bureau (สำนักงาน/กอง)
                 const rawBureau = String(row['สำนักงาน/กอง'] || row['สำนัก'] || row['กอง'] || row['bureau'] || '').trim();
                 let bureauVal = rawBureau;
                 let bureauStatus = 'valid';
+                let bureauOpts = null;
                 if (!rawBureau) {
                     bureauVal = this.currentUser.scope_bureau || 'สำนักเทศกิจ';
                     bureauStatus = 'healed';
                 } else {
-                    const match = this.#findBestFuzzyMatch(rawBureau, bureaus, 0.45);
-                    if (match.match) {
+                    const match = this.#findBestFuzzyMatch(rawBureau, bureaus, 0.55);
+                    if (match.isExact) {
                         bureauVal = match.match;
-                        bureauStatus = match.isExact ? 'valid' : 'healed';
-                    } else {
+                        bureauStatus = 'valid';
+                    } else if (match.match) {
+                        bureauVal = match.match;
                         bureauStatus = 'healed';
+                    } else {
+                        bureauStatus = 'error';
+                        bureauOpts = bureaus;
                     }
                 }
 
-                // 7. Division
+                // 9. Division (ส่วน/ฝ่าย)
                 const rawDivision = String(row['ส่วน/ฝ่าย'] || row['ฝ่าย'] || row['ส่วน'] || row['division'] || '').trim();
                 let divisionVal = rawDivision;
                 let divisionStatus = 'valid';
+                let divisionOpts = null;
                 if (!rawDivision) {
                     divisionVal = this.currentUser.scope_division || 'ฝ่ายบริหารงานทั่วไป';
                     divisionStatus = 'healed';
                 } else {
-                    const match = this.#findBestFuzzyMatch(rawDivision, divisions, 0.45);
-                    if (match.match) {
+                    const match = this.#findBestFuzzyMatch(rawDivision, divisions, 0.55);
+                    if (match.isExact) {
                         divisionVal = match.match;
-                        divisionStatus = match.isExact ? 'valid' : 'healed';
-                    } else {
+                        divisionStatus = 'valid';
+                    } else if (match.match) {
+                        divisionVal = match.match;
                         divisionStatus = 'healed';
+                    } else {
+                        divisionStatus = 'error';
+                        divisionOpts = divisions;
                     }
                 }
 
-                // 8. Work Group
+                // 10. Work Group (กลุ่มงาน)
                 const rawWorkGroup = String(row['กลุ่มงาน'] || row['งาน'] || row['work_group'] || '').trim();
                 const workGroupVal = (!rawWorkGroup || rawWorkGroup === 'ไม่มี') ? '-' : rawWorkGroup;
                 const workGroupStatus = 'valid';
 
-                // Determine Row Overall Health Status
-                const hasError = [nidStatus, prefixStatus, firstNameStatus, lastNameStatus, posTitleStatus, posLevelStatus, bureauStatus, divisionStatus].includes('error');
-                const hasHealed = [nidStatus, prefixStatus, firstNameStatus, lastNameStatus, posTitleStatus, posLevelStatus, bureauStatus, divisionStatus].includes('healed');
+                // Row overall health
+                const cells = {
+                    national_id: { value: rawNid, status: nidStatus, msg: nidMsg },
+                    prefix: { value: prefixVal, status: prefixStatus, ...(prefixOpts ? { availableOptions: prefixOpts, msg: 'กรุณาเลือกคำนำหน้าที่ถูกต้อง' } : {}) },
+                    first_name: { value: firstName, status: firstNameStatus, ...(firstNameStatus === 'error' ? { msg: 'กรุณาระบุชื่อ' } : {}) },
+                    last_name: { value: lastName, status: lastNameStatus, ...(lastNameStatus === 'error' ? { msg: 'กรุณาระบุนามสกุล' } : {}) },
+                    position_type: { value: posTypeVal, status: posTypeStatus, ...(posTypeOpts ? { availableOptions: posTypeOpts, msg: 'กรุณาเลือกประเภทตำแหน่งที่ถูกต้อง' } : {}) },
+                    position_title: { value: posTitleVal, status: posTitleStatus, ...(posTitleOpts ? { availableOptions: posTitleOpts, msg: 'กรุณาเลือกตำแหน่งที่ถูกต้อง' } : {}) },
+                    position_level: { value: posLevelVal, status: posLevelStatus, ...(posLevelOpts ? { availableOptions: posLevelOpts, msg: 'กรุณาเลือกระดับที่ถูกต้อง' } : {}) },
+                    organization: { value: orgVal, status: orgStatus },
+                    bureau: { value: bureauVal, status: bureauStatus, ...(bureauOpts ? { availableOptions: bureauOpts, msg: 'กรุณาเลือกสำนักงาน/กองที่ถูกต้อง' } : {}) },
+                    division: { value: divisionVal, status: divisionStatus, ...(divisionOpts ? { availableOptions: divisionOpts, msg: 'กรุณาเลือกส่วน/ฝ่ายที่ถูกต้อง' } : {}) },
+                    work_group: { value: workGroupVal, status: workGroupStatus }
+                };
+
+                const hasError = Object.values(cells).some(c => c.status === 'error');
+                const hasHealed = Object.values(cells).some(c => c.status === 'healed');
                 const overallStatus = hasError ? 'error' : (hasHealed ? 'healed' : 'valid');
 
                 parsedRows.push({
                     index: i + 1,
                     status: overallStatus,
-                    cells: {
-                        national_id: { value: rawNid, status: nidStatus, msg: nidMsg },
-                        prefix: { value: prefixVal, status: prefixStatus },
-                        first_name: { value: firstName, status: firstNameStatus },
-                        last_name: { value: lastName, status: lastNameStatus },
-                        position_title: { value: posTitleVal, status: posTitleStatus },
-                        position_level: { value: posLevelVal, status: posLevelStatus },
-                        bureau: { value: bureauVal, status: bureauStatus },
-                        division: { value: divisionVal, status: divisionStatus },
-                        work_group: { value: workGroupVal, status: workGroupStatus }
-                    }
+                    cells
                 });
             }
 
@@ -1018,7 +1117,7 @@ export class PersonnelController {
         } catch (err) {
             console.error('Process bulk import file error:', err);
             if (tbody) {
-                tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการประมวลผลไฟล์: ${err.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการประมวลผลไฟล์: ${err.message}</td></tr>`;
             }
         }
     }
@@ -1046,21 +1145,37 @@ export class PersonnelController {
 
             const c = row.cells;
 
+            const renderCell = (field, cell) => {
+                if (cell.status === 'error' && Array.isArray(cell.availableOptions) && cell.availableOptions.length > 0) {
+                    return `
+                        <td class="p-1 cell-health-error" title="${cell.msg || ''}">
+                            <select class="bma-select-inline-fix text-xs rounded-lg border-rose-300 bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 py-1 px-1.5 bulk-inline-select cursor-pointer focus:ring-1 focus:ring-emerald-500 w-full" data-row-idx="${rIdx}" data-field="${field}">
+                                <option value="" disabled selected>${cell.value ? `เลือกแทน "${cell.value}"` : '-- เลือกข้อมูลที่ถูกต้อง --'}</option>
+                                ${cell.availableOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                            </select>
+                        </td>
+                    `;
+                }
+                return `<td class="p-2.5 cell-health-${cell.status}" contenteditable="true" data-field="${field}" title="${cell.msg || ''}">${cell.value || ''}</td>`;
+            };
+
             html += `
                 <tr data-row-idx="${rIdx}" class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                     <td class="p-2.5 text-center font-mono text-slate-400">${rIdx + 1}</td>
                     <td class="p-2.5 text-center">${statusBadge}</td>
                     <td class="p-2.5 font-mono cell-health-${c.national_id.status}" contenteditable="true" data-field="national_id" title="${c.national_id.msg || ''}">${c.national_id.value}</td>
-                    <td class="p-2.5 cell-health-${c.prefix.status}" contenteditable="true" data-field="prefix">${c.prefix.value}</td>
-                    <td class="p-2.5 cell-health-${c.first_name.status}" contenteditable="true" data-field="first_name">${c.first_name.value}</td>
-                    <td class="p-2.5 cell-health-${c.last_name.status}" contenteditable="true" data-field="last_name">${c.last_name.value}</td>
-                    <td class="p-2.5 cell-health-${c.position_title.status}" contenteditable="true" data-field="position_title">${c.position_title.value}</td>
-                    <td class="p-2.5 cell-health-${c.position_level.status}" contenteditable="true" data-field="position_level">${c.position_level.value}</td>
-                    <td class="p-2.5 cell-health-${c.bureau.status}" contenteditable="true" data-field="bureau">${c.bureau.value}</td>
-                    <td class="p-2.5 cell-health-${c.division.status}" contenteditable="true" data-field="division">${c.division.value}</td>
-                    <td class="p-2.5 cell-health-${c.work_group.status}" contenteditable="true" data-field="work_group">${c.work_group.value}</td>
+                    ${renderCell('prefix', c.prefix)}
+                    ${renderCell('first_name', c.first_name)}
+                    ${renderCell('last_name', c.last_name)}
+                    ${renderCell('position_type', c.position_type)}
+                    ${renderCell('position_title', c.position_title)}
+                    ${renderCell('position_level', c.position_level)}
+                    ${renderCell('organization', c.organization)}
+                    ${renderCell('bureau', c.bureau)}
+                    ${renderCell('division', c.division)}
+                    ${renderCell('work_group', c.work_group)}
                     <td class="p-2.5 text-center">
-                        <button type="button" data-action="delete-preview-row" data-idx="${rIdx}" class="text-slate-400 hover:text-rose-500 p-1 cursor-pointer" title="ลบแถวนี้">
+                        <button type="button" data-action="delete-preview-row" data-idx="${rIdx}" class="text-slate-400 hover:text-rose-500 p-1 cursor-pointer transition-colors" title="ลบแถวนี้">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
@@ -1096,12 +1211,19 @@ export class PersonnelController {
             c.national_id.msg = '';
         } else {
             c.national_id.status = 'error';
-            c.national_id.msg = 'เลขบัตร ปชช. ไม่ถูกต้อง';
+            c.national_id.msg = 'เลขบัตร ปชช. ไม่ถูกต้อง (ต้องมี 13 หลักและคำนวณ Checksum ผ่าน)';
         }
 
         c.first_name.status = c.first_name.value.trim() ? 'valid' : 'error';
         c.last_name.status = c.last_name.value.trim() ? 'valid' : 'error';
-        c.prefix.status = c.prefix.value.trim() ? 'valid' : 'error';
+        c.prefix.status = c.prefix.value.trim() ? (c.prefix.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.position_type.status = c.position_type.value.trim() ? (c.position_type.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.position_title.status = c.position_title.value.trim() ? (c.position_title.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.position_level.status = c.position_level.value.trim() ? (c.position_level.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.organization.status = c.organization.value.trim() ? 'valid' : 'error';
+        c.bureau.status = c.bureau.value.trim() ? (c.bureau.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.division.status = c.division.value.trim() ? (c.division.status === 'healed' ? 'healed' : 'valid') : 'error';
+        c.work_group.status = 'valid';
 
         const hasError = Object.values(c).some(cell => cell.status === 'error');
         const hasHealed = Object.values(c).some(cell => cell.status === 'healed');
@@ -1153,13 +1275,13 @@ export class PersonnelController {
                     prefix: c.prefix.value,
                     first_name: c.first_name.value,
                     last_name: c.last_name.value,
-                    position_type: 'ประเภททั่วไป',
+                    position_type: c.position_type.value || 'ประเภททั่วไป',
                     position_title: c.position_title.value,
                     position_level: c.position_level.value,
-                    organization: 'กรุงเทพมหานคร',
+                    organization: c.organization.value || 'กรุงเทพมหานคร',
                     bureau: c.bureau.value,
                     division: c.division.value,
-                    work_group: c.work_group.value === '-' ? '' : c.work_group.value
+                    work_group: (!c.work_group.value || c.work_group.value === '-') ? '' : c.work_group.value
                 };
 
                 const shouldAutoCreate = autoCreateAccounts && payload.national_id.length === 13;
@@ -1198,6 +1320,88 @@ export class PersonnelController {
             confirmButtonColor: '#00744B',
             confirmButtonText: 'ตกลง'
         });
+    }
+
+    /**
+     * ดาวน์โหลดไฟล์แม่แบบ Excel แบบหลายแผ่นงาน (3 แผ่นงาน: ตารางข้อมูลนำเข้า, โครงสร้างสังกัด, โครงสร้างตำแหน่ง)
+     */
+    #downloadMultiSheetTemplate() {
+        // 1. แผ่นงานที่ 1: ตารางข้อมูลนำเข้า (พร้อมตัวอย่างข้อมูล 2 รายการตามมาตรฐาน 11 คอลัมน์)
+        const templateRows = [
+            {
+                'เลขบัตรประชาชน': '1100400123456',
+                'คำนำหน้า': 'นาย',
+                'ชื่อ': 'สมชาย',
+                'นามสกุล': 'ใจดี',
+                'ประเภทตำแหน่ง': 'ประเภททั่วไป',
+                'ตำแหน่ง': 'เจ้าพนักงานเทศกิจ',
+                'ระดับ': 'ปฏิบัติงาน',
+                'หน่วยงาน': 'กรุงเทพมหานคร',
+                'สำนักงาน/กอง': 'สำนักเทศกิจ',
+                'ส่วน/ฝ่าย': 'ฝ่ายบริหารงานทั่วไป',
+                'กลุ่มงาน': 'งานสารบรรณ'
+            },
+            {
+                'เลขบัตรประชาชน': '1100400789012',
+                'คำนำหน้า': 'นางสาว',
+                'ชื่อ': 'สมศรี',
+                'นามสกุล': 'รักสงบ',
+                'ประเภทตำแหน่ง': 'ประเภทวิชาการ',
+                'ตำแหน่ง': 'นิติกร',
+                'ระดับ': 'ปฏิบัติการ',
+                'หน่วยงาน': 'กรุงเทพมหานคร',
+                'สำนักงาน/กอง': 'สำนักเทศกิจ',
+                'ส่วน/ฝ่าย': 'กองนิติการและบังคับคดี',
+                'กลุ่มงาน': 'กลุ่มงานคดี'
+            }
+        ];
+        const templateColWidths = [
+            { wch: 18 }, // เลขบัตรประชาชน
+            { wch: 12 }, // คำนำหน้า
+            { wch: 16 }, // ชื่อ
+            { wch: 16 }, // นามสกุล
+            { wch: 16 }, // ประเภทตำแหน่ง
+            { wch: 22 }, // ตำแหน่ง
+            { wch: 14 }, // ระดับ
+            { wch: 18 }, // หน่วยงาน
+            { wch: 24 }, // สำนักงาน/กอง
+            { wch: 24 }, // ส่วน/ฝ่าย
+            { wch: 20 }  // กลุ่มงาน
+        ];
+
+        // 2. แผ่นงานที่ 2: โครงสร้างสังกัด (ดึงจาก Master Settings)
+        const affiliations = this.settings.affiliations || [];
+        const affiliationRows = affiliations.map(a => ({
+            'หน่วยงาน': a.organization || 'กรุงเทพมหานคร',
+            'สำนักงาน/กอง': a.bureau || '',
+            'ส่วน/ฝ่าย': a.division || '',
+            'กลุ่มงาน': a.group || '-'
+        }));
+        const affiliationColWidths = [
+            { wch: 18 },
+            { wch: 26 },
+            { wch: 26 },
+            { wch: 22 }
+        ];
+
+        // 3. แผ่นงานที่ 3: โครงสร้างตำแหน่ง (ดึงจาก Master Settings)
+        const positions = this.settings.positions || [];
+        const positionRows = positions.map(p => ({
+            'ประเภทตำแหน่ง': p.type || '',
+            'ตำแหน่ง': p.title || '',
+            'ระดับ': p.level || ''
+        }));
+        const positionColWidths = [
+            { wch: 18 },
+            { wch: 24 },
+            { wch: 16 }
+        ];
+
+        UIHelpers.exportMultiSheetExcel([
+            { sheetName: 'ตารางข้อมูลนำเข้า', data: templateRows, colWidths: templateColWidths },
+            { sheetName: 'โครงสร้างสังกัด', data: affiliationRows, colWidths: affiliationColWidths },
+            { sheetName: 'โครงสร้างตำแหน่ง', data: positionRows, colWidths: positionColWidths }
+        ], 'Template_นำเข้าข้อมูลบุคลากร_กทม');
     }
 }
 

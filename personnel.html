@@ -49,11 +49,10 @@
                             <span>เพิ่มข้อมูลบุคลากร</span>
                         </button>
 
-                        <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
-                            <i class="fa-solid fa-file-import"></i>
-                            <span>นำเข้า Excel</span>
-                            <input type="file" id="inputImportPersonnelExcel" accept=".xlsx,.xls,.csv" class="hidden">
-                        </label>
+                        <button type="button" id="btnOpenBulkImportModal" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-file-import text-amber-300"></i>
+                            <span>นำเข้าหลายรายการ</span>
+                        </button>
 
                         <button type="button" id="btnExportPersonnelExcel" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
                             <i class="fa-solid fa-file-excel text-emerald-300"></i>
@@ -383,6 +382,7 @@
                 <!-- Dropzone Area -->
                 <div id="dropzoneBulkPersonnel" class="p-6 border-2 border-dashed border-emerald-500/40 hover:border-emerald-500 rounded-2xl bg-emerald-50/30 dark:bg-emerald-950/20 text-center transition-all cursor-pointer">
                     <input type="file" id="inputBulkPersonnelFile" accept=".xlsx,.xls,.csv" class="hidden">
+                    <input type="file" id="inputImportPersonnelExcel" accept=".xlsx,.xls,.csv" class="hidden">
                     <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-900/50 text-[#00744B] dark:text-emerald-300 flex items-center justify-center text-xl mb-3 shadow-xs">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
@@ -461,8 +461,10 @@
                                     <th class="p-2.5">คำนำหน้า</th>
                                     <th class="p-2.5">ชื่อ</th>
                                     <th class="p-2.5">นามสกุล</th>
+                                    <th class="p-2.5">ประเภทตำแหน่ง</th>
                                     <th class="p-2.5">ตำแหน่ง</th>
                                     <th class="p-2.5">ระดับ</th>
+                                    <th class="p-2.5">หน่วยงาน</th>
                                     <th class="p-2.5">สำนักงาน/กอง</th>
                                     <th class="p-2.5">ส่วน/ฝ่าย</th>
                                     <th class="p-2.5">กลุ่มงาน</th>
@@ -471,7 +473,7 @@
                             </thead>
                             <tbody id="bulkImportPreviewTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
                                 <tr>
-                                    <td colspan="12" class="text-center py-8 text-slate-400">
+                                    <td colspan="14" class="text-center py-8 text-slate-400">
                                         กรุณาเลือกหรือวางไฟล์ Excel เพื่อแสดงผลตัวอย่างการตรวจสอบข้อมูล
                                     </td>
                                 </tr>

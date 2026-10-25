@@ -575,6 +575,33 @@ export class UIHelpers {
         document.body.removeChild(link);
     }
 
+    /**
+     * ส่งออกไฟล์ Excel แบบหลายแผ่นงาน (Multi-Sheet Workbook) พร้อมกำหนดความกว้างคอลัมน์
+     * @param {Array<{sheetName: string, data: Array<Object>, colWidths?: Array<number|{wch: number}>}>} sheets 
+     * @param {string} fileName 
+     */
+    static exportMultiSheetExcel(sheets, fileName = 'export_data') {
+        if (window.XLSX && Array.isArray(sheets) && sheets.length > 0) {
+            const workbook = window.XLSX.utils.book_new();
+            sheets.forEach(sheetItem => {
+                const sheetName = String(sheetItem.sheetName || 'Sheet').slice(0, 31);
+                const data = Array.isArray(sheetItem.data) ? sheetItem.data : [];
+                const worksheet = window.XLSX.utils.json_to_sheet(data);
+                if (Array.isArray(sheetItem.colWidths)) {
+                    worksheet['!cols'] = sheetItem.colWidths.map(w => typeof w === 'number' ? { wch: w } : w);
+                }
+                window.XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+            });
+            window.XLSX.writeFile(workbook, `${fileName}.xlsx`);
+            return;
+        }
+
+        // Fallback หากไม่มี XLSX ให้ส่งออกแผ่นงานแรกเป็น CSV
+        if (Array.isArray(sheets) && sheets.length > 0) {
+            UIHelpers.exportToExcelUTF8(sheets[0].data || [], fileName, sheets[0].sheetName || 'Sheet1');
+        }
+    }
+
     static parseExcelFileUTF8(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
