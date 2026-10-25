@@ -16,111 +16,160 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
-    <!-- Deep Emerald Sidebar Navigation -->
+    <!-- Dark Slate Sidebar Navigation -->
     <div id="bmaSidebarContainer"></div>
 
-    <!-- พื้นที่หลักด้านขวา -->
+    <!-- Main Content Area -->
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
 
-        <!-- Topbar Navigation -->
+        <!-- Glassmorphic Topbar Navigation -->
         <div id="bmaTopbarContainer"></div>
 
-        <!-- เนื้อหาหลักของหน้า "ภาพรวม" -->
-        <main class="flex-1 p-4 lg:p-8 space-y-6">
+        <!-- Main Content -->
+        <main class="flex-1 p-4 lg:p-8 space-y-7">
 
-            <!-- เฉพาะเมื่อ Responsive Mobile เท่านั้น: เมนูทางลัดไอคอนสีสไตล์ iPhone -->
+            <!-- Responsive Mobile Shortcuts -->
             <div id="mobileShortcutContainer"></div>
 
-            <!-- แถบตัวกรองวันที่ประจำวัน -->
-            <div class="bma-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- Date Filter & Quick Actions Bar -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3 flex-wrap">
-                    <label for="dashboardDateFilter" class="text-sm font-bold bma-text-main">
-                        <i class="fa-regular fa-calendar-check mr-1.5" style="color: var(--bma-primary);"></i>ข้อมูลประจำวันที่:
+                    <label for="dashboardDateFilter" class="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-400 flex items-center justify-center text-sm shadow-xs">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </span>
+                        <span>ข้อมูลประจำวันที่:</span>
                     </label>
-                    <input type="date" id="dashboardDateFilter" class="bma-input w-auto py-1.5 px-3 text-sm font-semibold">
-                    <span id="dashboardThaiDateBadge" class="bma-badge bma-badge-success text-xs">15 ม.ค. 69</span>
-                    <button type="button" id="btnRefreshDashboard" class="btn-bma-soft text-xs py-2 px-3.5">
+                    <input type="date" id="dashboardDateFilter" class="bma-input w-auto py-1.5 px-3 text-xs sm:text-sm font-semibold rounded-xl border-slate-300 dark:border-slate-600 focus:ring-emerald-500">
+                    <span id="dashboardThaiDateBadge" class="bma-badge bma-badge-success text-xs font-bold px-3 py-1 rounded-full">15 ม.ค. 69</span>
+                    <button type="button" id="btnRefreshDashboard" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition shadow-xs cursor-pointer">
                         <i class="fa-solid fa-rotate"></i>
                         <span>อัปเดตข้อมูล</span>
                     </button>
                 </div>
 
-                <div class="text-xs bma-text-sub font-semibold">
-                    <i class="fa-solid fa-palette mr-1" style="color: var(--bma-primary);"></i>สีสถานะดึงตามการตั้งค่าระบบ
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#00744B] animate-pulse"></span>
+                    <span>สีสถานะคำนวณตามการตั้งค่าระบบราชการ BMA</span>
                 </div>
             </div>
 
-            <!-- ส่วนแสดง Jewel-Tone Stat Cards 5 ใบ -->
-            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
-                <div class="bma-card p-5"><div class="bma-skeleton h-28 w-full"></div></div>
+            <!-- Material Dashboard PRO - 5 Offset Floating Icon Stat Cards Grid -->
+            <div id="dashboardKpiCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 sm:gap-5">
+                <!-- Skeleton Loading Placeholders -->
+                <div class="material-stat-card">
+                    <div class="material-stat-icon-box stat-icon-mint"><i class="fa-solid fa-users"></i></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase">บุคลากรทั้งหมด</span>
+                        <h3 class="text-2xl font-extrabold text-slate-700 dark:text-slate-200 mt-1">-</h3>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-400 font-medium">กำลังโหลด...</div>
+                </div>
+                <div class="material-stat-card">
+                    <div class="material-stat-icon-box stat-icon-green"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase">ปฏิบัติงานปกติ</span>
+                        <h3 class="text-2xl font-extrabold text-slate-700 dark:text-slate-200 mt-1">-</h3>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-400 font-medium">กำลังโหลด...</div>
+                </div>
+                <div class="material-stat-card">
+                    <div class="material-stat-icon-box stat-icon-amber"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase">มาสาย</span>
+                        <h3 class="text-2xl font-extrabold text-slate-700 dark:text-slate-200 mt-1">-</h3>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-400 font-medium">กำลังโหลด...</div>
+                </div>
+                <div class="material-stat-card">
+                    <div class="material-stat-icon-box stat-icon-magenta"><i class="fa-solid fa-user-xmark"></i></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase">ขาด/ภารกิจ/ลา</span>
+                        <h3 class="text-2xl font-extrabold text-slate-700 dark:text-slate-200 mt-1">-</h3>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-400 font-medium">กำลังโหลด...</div>
+                </div>
+                <div class="material-stat-card">
+                    <div class="material-stat-icon-box stat-icon-blue"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-slate-400 uppercase">นอกเวลาราชการ</span>
+                        <h3 class="text-2xl font-extrabold text-slate-700 dark:text-slate-200 mt-1">-</h3>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-xs text-slate-400 font-medium">กำลังโหลด...</div>
+                </div>
             </div>
 
-            <!-- ตารางสรุปรายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล (แสดง 5 รายการล่าสุด + ตัวเลือก [5,10,15,20] + ปุ่มหน้าถัดไป) -->
-            <div class="bma-card p-5 space-y-4" style="border-top: 3px solid var(--g1);">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-base font-extrabold bma-text-main">รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</h3>
-                        <p class="text-xs bma-text-sub">แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น</p>
+            <!-- Material Dashboard PRO - Floating Emerald Header Table Card -->
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                <!-- Floating Emerald Header (Offset -mt-6) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
+                            <i class="fa-solid fa-clipboard-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base sm:text-lg font-extrabold tracking-wide text-white">รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล</h3>
+                            <p class="text-xs text-emerald-100/90 font-medium mt-0.5">แสดงรายชื่อผู้ที่ลงเวลาปฏิบัติงานล่าสุดในวันที่เลือกตามขอบเขตการมองเห็น</p>
+                        </div>
                     </div>
-                    <a href="reports.html" class="btn-bma-soft text-xs py-2 px-3.5 no-underline self-start sm:self-auto">
+                    <a href="reports.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition-all shadow-sm self-start sm:self-auto no-underline cursor-pointer">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         <span>เปิดหน้ารายงานฉบับเต็ม</span>
                     </a>
                 </div>
 
-                <!-- แถบควบคุมการแบ่งหน้า (ตัวเลือกแสดง [5, 10, 15, 20] รายการต่อหน้า และปุ่มหน้าก่อนหน้า/หน้าถัดไป) -->
-                <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bma-info-box text-xs">
-                    <div class="flex items-center gap-2">
-                        <label for="dashboardPageSizeSelect" class="font-bold bma-text-main">แสดงรายการต่อหน้า:</label>
-                        <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-2.5 text-xs font-bold">
-                            <option value="5" selected>5 รายการ</option>
-                            <option value="10">10 รายการ</option>
-                            <option value="15">15 รายการ</option>
-                            <option value="20">20 รายการ</option>
-                        </select>
+                <!-- Card Body -->
+                <div class="p-4 sm:p-6 space-y-4">
+                    <!-- Pagination & Size Select Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                        <div class="flex items-center gap-2">
+                            <label for="dashboardPageSizeSelect" class="font-bold text-slate-700 dark:text-slate-300">แสดงรายการต่อหน้า:</label>
+                            <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-3 text-xs font-bold rounded-lg border-slate-300 dark:border-slate-600">
+                                <option value="5" selected>5 รายการ</option>
+                                <option value="10">10 รายการ</option>
+                                <option value="15">15 รายการ</option>
+                                <option value="20">20 รายการ</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btnDashboardPrevPage" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shadow-xs">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <span>ก่อนหน้า</span>
+                            </button>
+                            <span id="dashboardPageInfoText" class="font-bold text-slate-700 dark:text-slate-200 px-2.5">หน้า 1 / 1</span>
+                            <button type="button" id="btnDashboardNextPage" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white transition cursor-pointer shadow-xs">
+                                <span>หน้าถัดไป</span>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="btnDashboardPrevPage" class="btn-bma-outline py-1 px-3 text-xs">
-                            <i class="fa-solid fa-chevron-left"></i>
-                            <span>ก่อนหน้า</span>
-                        </button>
-                        <span id="dashboardPageInfoText" class="font-bold bma-text-main px-2">หน้า 1 / 1</span>
-                        <button type="button" id="btnDashboardNextPage" class="btn-bma-primary py-1 px-3 text-xs">
-                            <span>หน้าถัดไป</span>
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                    <!-- Modern Responsive Table -->
+                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                        <table class="bma-table text-sm w-full text-left">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                    <th class="min-w-[180px] py-3.5 px-3 whitespace-nowrap">ชื่อ-นามสกุล</th>
+                                    <th class="min-w-[200px] py-3.5 px-3">ตำแหน่ง</th>
+                                    <th class="min-w-[210px] py-3.5 px-3">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
+                                    <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาเข้างาน</th>
+                                    <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาออกงาน</th>
+                                    <th class="w-40 text-center py-3.5 px-3 whitespace-nowrap">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardRecentTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                        </table>
                     </div>
-                </div>
-
-                <!-- ตารางจัดสัดส่วนความกว้างคอลัมน์ให้พอดีกับข้อมูล -->
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th class="min-w-[180px] whitespace-nowrap">ชื่อ-นามสกุล</th>
-                                <th class="min-w-[200px]">ตำแหน่ง</th>
-                                <th class="min-w-[210px]">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
-                                <th class="w-28 text-center whitespace-nowrap">เวลาเข้างาน</th>
-                                <th class="w-28 text-center whitespace-nowrap">เวลาออกงาน</th>
-                                <th class="w-40 text-center whitespace-nowrap">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboardRecentTableBody"></tbody>
-                    </table>
                 </div>
             </div>
 
         </main>
 
-        <!-- Footer ระบบ -->
+        <!-- System Footer -->
         <div id="bmaFooterContainer"></div>
     </div>
 

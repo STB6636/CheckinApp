@@ -37,6 +37,7 @@ export class UIHelpers {
 
     static maskUrlToRoot(explicitPageName = '') {
         try {
+            if (window.location.protocol === 'file:') return;
             const pathname = window.location.pathname || '/';
             const match = pathname.match(UIHelpers.KNOWN_PAGES_REGEX);
             const detectedPage = match ? `${match[1].toLowerCase()}.html` : '';

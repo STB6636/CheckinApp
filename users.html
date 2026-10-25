@@ -5,102 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการบัญชีผู้ใช้งาน - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=2.2">
+    <link rel="stylesheet" href="assets/css/bma-theme.css">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
-    <!-- Sidebar -->
+    <!-- Dark Slate Sidebar -->
     <div id="bmaSidebarContainer"></div>
 
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
-        <!-- Topbar -->
+        <!-- Glassmorphic Topbar -->
         <div id="bmaTopbarContainer"></div>
 
-        <main class="flex-1 p-4 lg:p-8 space-y-6">
+        <main class="flex-1 p-4 lg:p-8 space-y-7">
 
-            <!-- แถบเครื่องมือจัดการบัญชีผู้ใช้งานและนำเข้า-ส่งออก Excel -->
-            <div class="bma-card p-5 space-y-4">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
-                    <div>
-                        <h2 class="text-base font-bold bma-text-main flex items-center gap-2">
-                            <i class="fa-solid fa-users-gear" style="color: var(--bma-primary);"></i>
-                            <span>จัดการบัญชีผู้ใช้งานและอนุมัติการเปลี่ยนรหัสผ่าน</span>
-                        </h2>
-                        <p class="text-xs bma-text-sub mt-0.5">ผูกบัญชีเข้ากับข้อมูลบุคลากร กำหนดสิทธิ์การมองเห็น และอนุมัติรีเซ็ตรหัสผ่านเป็นเลข 6 ตัวท้ายของบัตรประชาชน</p>
+            <!-- Material Dashboard PRO - Master Floating Purple Header Card -->
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                
+                <!-- Floating Imperial Purple Header (Offset -mt-6) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] text-white shadow-lg shadow-purple-900/30 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-xl shadow-inner shrink-0">
+                            <i class="fa-solid fa-users-gear"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-extrabold tracking-wide text-white">จัดการบัญชีผู้ใช้งานและอนุมัติการเปลี่ยนรหัสผ่าน</h2>
+                            <p class="text-xs text-purple-200/90 font-medium mt-0.5">ผูกบัญชีเข้ากับข้อมูลบุคลากร กำหนดสิทธิ์การมองเห็น และอนุมัติรีเซ็ตรหัสผ่านเป็นเลข 6 ตัวท้ายของบัตรประชาชน</p>
+                        </div>
                     </div>
 
+                    <!-- Action Pill Buttons -->
                     <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" id="btnOpenAddUserModal" class="btn-bma-primary text-xs py-2.5 px-4 shadow">
+                        <button type="button" id="btnOpenAddUserModal" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-[#480080] hover:bg-purple-50 transition shadow-md cursor-pointer">
                             <i class="fa-solid fa-user-shield"></i>
                             <span>เพิ่มบัญชีผู้ใช้งาน</span>
                         </button>
 
-                        <label class="btn-bma-soft text-xs py-2.5 px-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
                             <i class="fa-solid fa-file-import"></i>
                             <span>นำเข้า Excel</span>
                             <input type="file" id="inputImportUsersExcel" accept=".xlsx,.xls,.csv" class="hidden">
                         </label>
 
-                        <button type="button" id="btnExportUsersExcel" class="btn-bma-outline text-xs py-2 px-3">
-                            <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                        <button type="button" id="btnExportUsersExcel" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-file-excel text-emerald-300"></i>
                             <span>ส่งออก Excel</span>
                         </button>
 
-                        <button type="button" id="btnTemplateUsersExcel" class="btn-bma-outline text-xs py-2 px-3">
-                            <i class="fa-solid fa-download text-sky-500"></i>
+                        <button type="button" id="btnTemplateUsersExcel" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-download text-amber-300"></i>
                             <span>Template Excel</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- ตัวกรองค้นหาบัญชี และตัวกรองเฉพาะผู้ขอรีเซ็ตรหัสผ่าน -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                    <div class="md:col-span-6 relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                        </span>
-                        <input type="text" id="searchUserInput" class="bma-input pl-9 py-2 text-sm" placeholder="ค้นหา Username, ชื่อ-นามสกุล, เลขบัตรประชาชน...">
+                <!-- Card Body -->
+                <div class="p-4 sm:p-6 space-y-5">
+                    
+                    <!-- Search & Filter Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 items-center">
+                        <div class="md:col-span-6 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="searchUserInput" class="bma-input pl-9 py-2 text-xs sm:text-sm rounded-xl border-slate-300 dark:border-slate-600 focus:ring-purple-500 w-full" placeholder="ค้นหา Username, ชื่อ-นามสกุล, เลขบัตรประชาชน...">
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <select id="filterUserRole" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
+                                <option value="all">ทุกบทบาท (All Roles)</option>
+                                <option value="SuperAdmin" id="optFilterSuperAdmin">SuperAdmin</option>
+                                <option value="Admin">Admin</option>
+                                <option value="User">User</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <select id="filterResetRequest" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
+                                <option value="all">สถานะรหัสผ่านทั้งหมด</option>
+                                <option value="pending">เฉพาะที่ขอรีเซ็ตรหัสผ่าน (รออนุมัติ)</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="md:col-span-3">
-                        <select id="filterUserRole" class="bma-select py-2 text-xs font-semibold">
-                            <option value="all">ทุกบทบาท (All Roles)</option>
-                            <option value="SuperAdmin" id="optFilterSuperAdmin">SuperAdmin</option>
-                            <option value="Admin">Admin</option>
-                            <option value="User">User</option>
-                        </select>
+                    <!-- Modern Responsive Table -->
+                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                        <table class="bma-table text-sm w-full text-left">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                    <th class="min-w-[170px] py-3.5 px-3">ชื่อบัญชี (Username)</th>
+                                    <th class="min-w-[200px] py-3.5 px-3">ชื่อ-นามสกุล (บุคลากรที่ผูก)</th>
+                                    <th class="w-32 py-3.5 px-3 text-center">ระดับสิทธิ์ (Role)</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">ขอบเขตการมองเห็น</th>
+                                    <th class="min-w-[160px] text-center py-3.5 px-3">คำสั่ง (อนุมัติเปลี่ยนรหัสผ่าน)</th>
+                                    <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                        </table>
                     </div>
 
-                    <div class="md:col-span-3">
-                        <select id="filterResetRequest" class="bma-select py-2 text-xs font-semibold">
-                            <option value="all">สถานะรหัสผ่านทั้งหมด</option>
-                            <option value="pending">เฉพาะที่ขอรีเซ็ตรหัสผ่าน (รออนุมัติ)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ตารางแสดงบัญชีผู้ใช้งาน พร้อมคอลัมน์ "คำสั่ง" สำหรับอนุมัติ/ไม่อนุมัติเปลี่ยนรหัสผ่าน -->
-            <div class="bma-card p-5">
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th>ชื่อบัญชี (Username)</th>
-                                <th>ชื่อ-นามสกุล (บุคลากรที่ผูก)</th>
-                                <th>ระดับสิทธิ์ (Role)</th>
-                                <th>ขอบเขตการมองเห็น</th>
-                                <th class="text-center">คำสั่ง (อนุมัติเปลี่ยนรหัสผ่าน)</th>
-                                <th class="w-32 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody"></tbody>
-                    </table>
                 </div>
             </div>
 
@@ -111,29 +124,31 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal เพิ่ม/แก้ไขบัญชีผู้ใช้งาน และผูกข้อมูลบุคลากรแบบฟิลเตอร์ค้นหาชื่อได้ใน Dropdown (V2.1) -->
+    <!-- Modal เพิ่ม/แก้ไขบัญชีผู้ใช้งาน -->
     <div id="modalUserAccountForm" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-        <div class="w-full max-w-xl bma-card bma-modal-surface p-6 shadow-2xl my-8">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
-                <h3 id="modalUserTitle" class="text-lg font-bold bma-text-main flex items-center gap-2">
-                    <i class="fa-solid fa-user-shield" style="color: var(--bma-primary);"></i>
+        <div class="w-full max-w-xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl my-8 border border-slate-200 dark:border-slate-700">
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 id="modalUserTitle" class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </span>
                     <span>เพิ่มบัญชีผู้ใช้งานและผูกข้อมูลบุคลากร</span>
                 </h3>
-                <button type="button" id="btnCloseUserModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
-                    <i class="fa-solid fa-xmark"></i>
+                <button type="button" id="btnCloseUserModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
             <form id="formUserAccount" class="space-y-4">
                 <input type="hidden" id="usrAccountId">
 
-                <!-- 1. เลือกผูกข้อมูลบุคลากรแบบฟิลเตอร์ค้นหาชื่อได้ในฟิลด์ Dropdown -->
-                <div class="p-3.5 rounded-xl border bma-border bg-emerald-500/5 space-y-2.5">
-                    <label class="block text-xs font-bold bma-text-main">
-                        <i class="fa-solid fa-link mr-1" style="color: var(--bma-primary);"></i>ข้อมูลบุคลากร (ค้นหาและเลือกบุคลากรเพื่อผูกบัญชี)
+                <!-- 1. ค้นหาและเลือกบุคลากรเพื่อผูกบัญชี -->
+                <div class="p-3.5 rounded-2xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200/60 dark:border-purple-800/40 space-y-2">
+                    <label class="block text-xs font-bold text-slate-800 dark:text-white">
+                        <i class="fa-solid fa-link mr-1 text-[#480080]"></i>ข้อมูลบุคลากร (ค้นหาและเลือกบุคลากรเพื่อผูกบัญชี)
                     </label>
-                    <input type="text" id="usrPersonnelSearchFilter" class="bma-input text-xs py-1.5" placeholder="พิมพ์ชื่อ-นามสกุล หรือเลขบัตรประชาชน เพื่อกรองรายชื่อใน Dropdown ด้านล่าง...">
-                    <select id="usrPersonnelSelect" class="bma-select text-sm">
+                    <input type="text" id="usrPersonnelSearchFilter" class="bma-input text-xs py-1.5 rounded-xl" placeholder="พิมพ์ชื่อ-นามสกุล หรือเลขบัตรประชาชน เพื่อกรองรายชื่อใน Dropdown ด้านล่าง...">
+                    <select id="usrPersonnelSelect" class="bma-select text-sm rounded-xl">
                         <option value="">-- เลือกบุคลากรในสังกัด (หรือกรอกชื่อเองด้านล่าง) --</option>
                     </select>
                 </div>
@@ -141,73 +156,74 @@
                 <!-- 2. ชื่อ-นามสกุล และ เลขบัตรประชาชน -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">ชื่อ-นามสกุล *</label>
-                        <input type="text" id="usrFullName" class="bma-input text-sm" placeholder="ชื่อ-นามสกุลของผู้ใช้งาน" required>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อ-นามสกุล *</label>
+                        <input type="text" id="usrFullName" class="bma-input text-sm rounded-xl" placeholder="ชื่อ-นามสกุลของผู้ใช้งาน" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">เลขบัตรประชาชน 13 หลัก</label>
-                        <input type="text" id="usrNationalId" maxlength="13" class="bma-input text-sm font-mono" placeholder="สำหรับใช้รีเซ็ตรหัส 6 ตัวท้าย">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เลขบัตรประชาชน 13 หลัก</label>
+                        <input type="text" id="usrNationalId" maxlength="13" class="bma-input text-sm font-mono rounded-xl" placeholder="สำหรับใช้รีเซ็ตรหัส 6 ตัวท้าย">
                     </div>
                 </div>
 
                 <!-- 3. ชื่อบัญชี, รหัสผ่าน และ ยืนยันรหัสผ่าน -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">ชื่อบัญชี (Username) *</label>
-                        <input type="text" id="usrUsername" class="bma-input text-sm font-mono" placeholder="Username" required>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อบัญชี (Username) *</label>
+                        <input type="text" id="usrUsername" class="bma-input text-sm font-mono rounded-xl" placeholder="Username" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">รหัสผ่าน (Password) <span id="usrPwdRequiredStar">*</span></label>
-                        <input type="password" id="usrPassword" class="bma-input text-sm" placeholder="รหัสผ่าน">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">รหัสผ่าน (Password) <span id="usrPwdRequiredStar">*</span></label>
+                        <input type="password" id="usrPassword" class="bma-input text-sm rounded-xl" placeholder="รหัสผ่าน">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold bma-text-main mb-1">ยืนยันรหัสผ่าน <span id="usrConfirmRequiredStar">*</span></label>
-                        <input type="password" id="usrConfirmPassword" class="bma-input text-sm" placeholder="ยืนยันรหัสผ่าน">
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ยืนยันรหัสผ่าน <span id="usrConfirmRequiredStar">*</span></label>
+                        <input type="password" id="usrConfirmPassword" class="bma-input text-sm rounded-xl" placeholder="ยืนยันรหัสผ่าน">
                     </div>
                 </div>
 
-                <!-- 4. Role ระดับสิทธิ์บัญชี (Radio: SuperAdmin, Admin, User) -->
-                <div class="pt-2 border-t bma-border">
-                    <label class="block text-xs font-bold bma-text-main mb-2">ระดับสิทธิ์บัญชีผู้ใช้งาน (Role) *</label>
+                <!-- 4. Role ระดับสิทธิ์บัญชี -->
+                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">ระดับสิทธิ์บัญชีผู้ใช้งาน (Role) *</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        <label id="radioRoleSuperAdminWrap" class="flex items-center gap-2 p-3 rounded-xl border bma-border cursor-pointer hover:border-emerald-500">
-                            <input type="radio" name="usrRoleRadio" value="SuperAdmin" class="accent-emerald-600">
+                        <label id="radioRoleSuperAdminWrap" class="flex items-center gap-2.5 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-500 bg-white dark:bg-slate-800">
+                            <input type="radio" name="usrRoleRadio" value="SuperAdmin" class="accent-[#480080]">
                             <div class="text-xs">
-                                <span class="font-bold block bma-text-main">SuperAdmin</span>
-                                <span class="bma-text-sub">ทำได้ทุกอย่างทุกเมนู</span>
+                                <span class="font-bold block text-slate-800 dark:text-white">SuperAdmin</span>
+                                <span class="text-slate-400">ทำได้ทุกอย่างทุกเมนู</span>
                             </div>
                         </label>
 
-                        <label class="flex items-center gap-2 p-3 rounded-xl border bma-border cursor-pointer hover:border-emerald-500">
-                            <input type="radio" name="usrRoleRadio" value="Admin" class="accent-emerald-600">
+                        <label class="flex items-center gap-2.5 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-500 bg-white dark:bg-slate-800">
+                            <input type="radio" name="usrRoleRadio" value="Admin" class="accent-[#480080]">
                             <div class="text-xs">
-                                <span class="font-bold block bma-text-main">Admin</span>
-                                <span class="bma-text-sub">ดูแลตามขอบเขตที่ตั้งไว้</span>
+                                <span class="font-bold block text-slate-800 dark:text-white">Admin</span>
+                                <span class="text-slate-400">ดูแลตามขอบเขตที่ตั้งไว้</span>
                             </div>
                         </label>
 
-                        <label class="flex items-center gap-2 p-3 rounded-xl border bma-border cursor-pointer hover:border-emerald-500">
-                            <input type="radio" name="usrRoleRadio" value="User" class="accent-emerald-600" checked>
+                        <label class="flex items-center gap-2.5 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-500 bg-white dark:bg-slate-800">
+                            <input type="radio" name="usrRoleRadio" value="User" class="accent-[#480080]" checked>
                             <div class="text-xs">
-                                <span class="font-bold block bma-text-main">User</span>
-                                <span class="bma-text-sub">ลงเวลาปฏิบัติราชการ</span>
+                                <span class="font-bold block text-slate-800 dark:text-white">User</span>
+                                <span class="text-slate-400">ลงเวลาปฏิบัติราชการ</span>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <!-- 5. ขอบเขตการมองเห็น (แสดงเมื่อเลือก Role เป็น Admin) -->
-                <div id="adminScopeConfigBox" class="hidden p-4 rounded-xl border border-indigo-500/40 bg-indigo-500/10 space-y-3">
-                    <div class="text-xs font-bold text-indigo-500">
-                        <i class="fa-solid fa-eye mr-1"></i>กำหนดขอบเขตการมองเห็นและอนุมัติสำหรับ Admin *
+                <!-- 5. ขอบเขตการมองเห็น Admin -->
+                <div id="adminScopeConfigBox" class="hidden p-4 rounded-2xl border border-indigo-500/40 bg-indigo-500/10 space-y-3">
+                    <div class="text-xs font-bold text-indigo-500 flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>กำหนดขอบเขตการมองเห็นและอนุมัติสำหรับ Admin *</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border bma-border bg-white/60 dark:bg-slate-900/50 cursor-pointer">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/50 cursor-pointer">
                             <input type="radio" name="usrVisibilityLevel" value="bureau" class="accent-indigo-600">
                             <span>ระดับ <b>สำนักงาน/กอง</b></span>
                         </label>
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border bma-border bg-white/60 dark:bg-slate-900/50 cursor-pointer">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/50 cursor-pointer">
                             <input type="radio" name="usrVisibilityLevel" value="division" class="accent-indigo-600" checked>
                             <span>ระดับ <b>ส่วน/ฝ่าย</b></span>
                         </label>
@@ -215,19 +231,19 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-semibold bma-text-main mb-1">เลือกสำนักงาน/กอง *</label>
-                            <select id="usrScopeBureau" class="bma-select text-xs"></select>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เลือกสำนักงาน/กอง *</label>
+                            <select id="usrScopeBureau" class="bma-select text-xs rounded-xl"></select>
                         </div>
                         <div id="usrScopeDivisionWrap">
-                            <label class="block text-xs font-semibold bma-text-main mb-1">เลือกส่วน/ฝ่าย *</label>
-                            <select id="usrScopeDivision" class="bma-select text-xs"></select>
+                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เลือกส่วน/ฝ่าย *</label>
+                            <select id="usrScopeDivision" class="bma-select text-xs rounded-xl"></select>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end gap-2 border-t bma-border">
-                    <button type="button" id="btnCancelUserModal" class="btn-bma-outline text-sm">ยกเลิก</button>
-                    <button type="submit" class="btn-bma-primary text-sm">
+                <div class="pt-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" id="btnCancelUserModal" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
+                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>บันทึกบัญชีผู้ใช้งาน</span>
                     </button>

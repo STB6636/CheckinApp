@@ -16,101 +16,112 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
-    <!-- Sidebar -->
+    <!-- Dark Slate Sidebar -->
     <div id="bmaSidebarContainer"></div>
 
     <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
-        <!-- Topbar -->
+        <!-- Glassmorphic Topbar -->
         <div id="bmaTopbarContainer"></div>
 
-        <main class="flex-1 p-4 lg:p-8 space-y-6">
+        <main class="flex-1 p-4 lg:p-8 space-y-7">
 
-            <!-- แถบเครื่องมือด้านบน -->
-            <div class="bma-card p-5 space-y-4" style="border-top: 4px solid var(--g1);">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b bma-border pb-4">
-                    <div>
-                        <h2 class="text-base font-extrabold bma-text-main flex items-center gap-2">
-                            <i class="fa-solid fa-id-card-clip" style="color: var(--bma-primary);"></i>
-                            <span>ทะเบียนข้อมูลบุคลากรในสังกัด</span>
-                        </h2>
-                        <p class="text-xs bma-text-sub mt-0.5">บริหารจัดการรายชื่อบุคลากร ตำแหน่ง สังกัด และสร้างบัญชีผู้ใช้อัตโนมัติจากเลขบัตรประชาชน 13 หลัก</p>
+            <!-- Material Dashboard PRO - Master Floating Header Card -->
+            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                
+                <!-- Floating Emerald Header (Offset -mt-6) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-xl shadow-inner shrink-0">
+                            <i class="fa-solid fa-id-card-clip"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-extrabold tracking-wide text-white">ทะเบียนข้อมูลบุคลากรในสังกัด</h2>
+                            <p class="text-xs text-emerald-100/90 font-medium mt-0.5">บริหารจัดการรายชื่อบุคลากร ตำแหน่ง สังกัด และสร้างบัญชีผู้ใช้อัตโนมัติจากเลขบัตรประชาชน 13 หลัก</p>
+                        </div>
                     </div>
 
+                    <!-- Action Pill Buttons -->
                     <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" id="btnOpenAddPersonnel" class="btn-bma-primary text-xs py-2.5 px-4 shadow">
+                        <button type="button" id="btnOpenAddPersonnel" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-[#00744B] hover:bg-emerald-50 transition shadow-md cursor-pointer">
                             <i class="fa-solid fa-user-plus"></i>
                             <span>เพิ่มข้อมูลบุคลากร</span>
                         </button>
 
-                        <label class="btn-bma-soft text-xs py-2.5 px-3 cursor-pointer">
+                        <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
                             <i class="fa-solid fa-file-import"></i>
                             <span>นำเข้า Excel</span>
                             <input type="file" id="inputImportPersonnelExcel" accept=".xlsx,.xls,.csv" class="hidden">
                         </label>
 
-                        <button type="button" id="btnExportPersonnelExcel" class="btn-bma-outline text-xs py-2 px-3">
-                            <i class="fa-solid fa-file-excel text-emerald-600"></i>
+                        <button type="button" id="btnExportPersonnelExcel" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-file-excel text-emerald-300"></i>
                             <span>ส่งออก Excel</span>
                         </button>
 
-                        <button type="button" id="btnTemplatePersonnelExcel" class="btn-bma-outline text-xs py-2 px-3">
-                            <i class="fa-solid fa-download text-sky-500"></i>
+                        <button type="button" id="btnTemplatePersonnelExcel" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-download text-sky-300"></i>
                             <span>Template Excel</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- แถบค้นหา, สลับมุมมอง Group By 2 มุมมอง และคำอธิบายสีป้ายกำกับตามระดับสิทธิ์ -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
-                    <div class="lg:col-span-5 relative">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center bma-text-sub">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                <!-- Card Body -->
+                <div class="p-4 sm:p-6 space-y-5">
+                    
+                    <!-- Search, Group By & Legend Controls -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 items-center">
+                        <div class="lg:col-span-5 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            </span>
+                            <input type="text" id="searchPersonnelInput" class="bma-input pl-9 py-2 text-xs sm:text-sm rounded-xl border-slate-300 dark:border-slate-600 focus:ring-emerald-500 w-full" placeholder="ค้นหาชื่อ-นามสกุล, เลขบัตรประชาชน, ตำแหน่ง, สังกัด...">
+                        </div>
+
+                        <div class="lg:col-span-4 flex items-center gap-2">
+                            <label for="selectPersonnelGroupBy" class="text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                                <i class="fa-solid fa-layer-group mr-1 text-[#00744B]"></i>มุมมองจัดกลุ่ม:
+                            </label>
+                            <select id="selectPersonnelGroupBy" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
+                                <option value="division" selected>มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
+                                <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
+                            </select>
+                        </div>
+
+                        <div class="lg:col-span-3 flex items-center justify-end gap-1.5 flex-wrap text-xs">
+                            <span class="font-bold text-slate-500 dark:text-slate-400 mr-1">สีป้ายสิทธิ์:</span>
+                            <span class="bma-badge role-pastel-superadmin text-[11px] px-2.5 py-0.5 rounded-full font-bold">SuperAdmin</span>
+                            <span class="bma-badge role-pastel-admin text-[11px] px-2.5 py-0.5 rounded-full font-bold">Admin</span>
+                            <span class="bma-badge role-pastel-user text-[11px] px-2.5 py-0.5 rounded-full font-bold">User</span>
+                        </div>
+                    </div>
+
+                    <!-- Count Bar -->
+                    <div class="flex items-center justify-between text-xs px-1">
+                        <span class="font-bold text-slate-500 dark:text-slate-400">
+                            จำนวนบุคลากรที่แสดงผล: <strong id="personnelTotalCountBadge" class="text-[#00744B] dark:text-emerald-400 text-sm font-extrabold">0</strong> คน
                         </span>
-                        <input type="text" id="searchPersonnelInput" class="bma-input pl-9 py-2 text-sm" placeholder="ค้นหาชื่อ-นามสกุล, เลขบัตรประชาชน, ตำแหน่ง, สังกัด...">
                     </div>
 
-                    <div class="lg:col-span-4 flex items-center gap-2">
-                        <label for="selectPersonnelGroupBy" class="text-xs font-bold bma-text-sub whitespace-nowrap">มุมมองจัดกลุ่ม:</label>
-                        <select id="selectPersonnelGroupBy" class="bma-select py-2 text-xs font-semibold">
-                            <option value="division">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
-                            <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
-                        </select>
+                    <!-- Modern Responsive Table -->
+                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                        <table class="bma-table text-sm w-full text-left">
+                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="w-16 text-center py-3.5 px-3">ลำดับ</th>
+                                    <th class="min-w-[200px] py-3.5 px-3">คำนำหน้า + ชื่อ + นามสกุล</th>
+                                    <th class="min-w-[200px] py-3.5 px-3">ตำแหน่ง + ระดับ</th>
+                                    <th class="w-44 py-3.5 px-3 font-mono text-center">เลขบัตรประชาชน 13 หลัก</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">สังกัดย่อย (กลุ่มงาน)</th>
+                                    <th class="w-32 text-center py-3.5 px-3">ระดับบัญชี</th>
+                                    <th class="w-36 text-center py-3.5 px-3">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personnelTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                        </table>
                     </div>
 
-                    <div class="lg:col-span-3 flex items-center justify-end gap-1.5 flex-wrap text-xs">
-                        <span class="font-bold bma-text-sub mr-1">สีป้ายสิทธิ์:</span>
-                        <span class="bma-badge role-pastel-superadmin text-[11px]">SuperAdmin</span>
-                        <span class="bma-badge role-pastel-admin text-[11px]">Admin</span>
-                        <span class="bma-badge role-pastel-user text-[11px]">User</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ตารางแสดงข้อมูลบุคลากร (Group By 2 มุมมอง) -->
-            <div class="bma-card p-5" style="border-top: 3px solid var(--g1);">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold bma-text-sub">
-                        จำนวนบุคลากรที่แสดงผล: <strong id="personnelTotalCountBadge" class="bma-text-main">0</strong> คน
-                    </span>
-                </div>
-
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            <tr>
-                                <th class="w-16 text-center">ลำดับ</th>
-                                <th>คำนำหน้า + ชื่อ + นามสกุล</th>
-                                <th>ตำแหน่ง + ระดับ</th>
-                                <th>เลขบัตรประชาชน 13 หลัก</th>
-                                <th>สังกัดย่อย (กลุ่มงาน)</th>
-                                <th class="text-center">ระดับบัญชี</th>
-                                <th class="w-36 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="personnelTableBody"></tbody>
-                    </table>
                 </div>
             </div>
 
@@ -121,16 +132,18 @@
 
     <div id="bmaMobileBottomNav"></div>
 
-    <!-- Modal เพิ่ม / แก้ไขข้อมูลบุคลากร (เอาสีป้ายกำกับบุคลากรออก โดยกำหนดตายตัวตามระดับบัญชีผู้ใช้งาน) -->
+    <!-- Modal เพิ่ม / แก้ไขข้อมูลบุคลากร -->
     <div id="modalPersonnelForm" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-        <div class="w-full max-w-2xl bma-card bma-modal-surface p-6 shadow-2xl my-8">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b bma-border">
-                <h3 id="modalPersonnelTitle" class="text-lg font-bold bma-text-main flex items-center gap-2">
-                    <i class="fa-solid fa-user-pen" style="color: var(--bma-primary);"></i>
+        <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-6 sm:p-7 border border-slate-200 dark:border-slate-700 my-8">
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 id="modalPersonnelTitle" class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </span>
                     <span>เพิ่มข้อมูลบุคลากรใหม่</span>
                 </h3>
-                <button type="button" id="btnClosePersonnelModal" class="p-1.5 rounded-lg bma-text-sub hover:bg-black/10">
-                    <i class="fa-solid fa-xmark"></i>
+                <button type="button" id="btnClosePersonnelModal" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
@@ -140,87 +153,91 @@
                 <!-- ข้อมูลส่วนตัว -->
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     <div class="sm:col-span-3">
-                        <label class="block text-xs font-bold bma-text-main mb-1">คำนำหน้าชื่อ *</label>
-                        <select id="perPrefix" class="bma-select text-sm" required></select>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">คำนำหน้าชื่อ *</label>
+                        <select id="perPrefix" class="bma-select text-sm rounded-xl" required></select>
                     </div>
                     <div class="sm:col-span-4">
-                        <label class="block text-xs font-bold bma-text-main mb-1">ชื่อจริง *</label>
-                        <input type="text" id="perFirstName" class="bma-input text-sm" placeholder="ระบุชื่อจริง" required>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ชื่อจริง *</label>
+                        <input type="text" id="perFirstName" class="bma-input text-sm rounded-xl" placeholder="ระบุชื่อจริง" required>
                     </div>
                     <div class="sm:col-span-5">
-                        <label class="block text-xs font-bold bma-text-main mb-1">นามสกุล *</label>
-                        <input type="text" id="perLastName" class="bma-input text-sm" placeholder="ระบุนามสกุล" required>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">นามสกุล *</label>
+                        <input type="text" id="perLastName" class="bma-input text-sm rounded-xl" placeholder="ระบุนามสกุล" required>
                     </div>
                 </div>
 
-                <!-- หมายเลขบัตรประชาชน 13 หลัก (เอาช่องเลือกสีป้ายกำกับออกตามข้อกำหนด) -->
+                <!-- หมายเลขบัตรประชาชน 13 หลัก -->
                 <div>
-                    <label class="block text-xs font-bold bma-text-main mb-1">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                         หมายเลขบัตรประจำตัวประชาชน (13 หลัก)
                     </label>
-                    <input type="text" id="perNationalId" maxlength="13" class="bma-input text-sm font-mono tracking-wider" placeholder="ระบุเลขบัตรประชาชน 13 หลัก (ระบบตรวจสอบความถูกต้องอัตโนมัติ)">
+                    <input type="text" id="perNationalId" maxlength="13" class="bma-input text-sm font-mono tracking-wider rounded-xl" placeholder="ระบุเลขบัตรประชาชน 13 หลัก (ระบบตรวจสอบความถูกต้องอัตโนมัติ)">
                     <p id="perNationalIdStatus" class="text-xs mt-1 hidden"></p>
                 </div>
 
                 <!-- กล่องติ๊กถูก "เพิ่มบัญชีผู้ใช้อัตโนมัติ" -->
-                <div id="autoCreateAccountBox" class="p-3.5 rounded-xl bma-info-box">
+                <div id="autoCreateAccountBox" class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40">
                     <label class="flex items-start gap-3 cursor-pointer">
-                        <input type="checkbox" id="chkAutoCreateAccount" class="w-5 h-5 accent-emerald-600 mt-0.5 shrink-0" checked>
+                        <input type="checkbox" id="chkAutoCreateAccount" class="w-5 h-5 accent-[#00744B] mt-0.5 shrink-0 rounded" checked>
                         <div class="text-xs">
-                            <span class="font-bold text-sm bma-text-main block">เพิ่มบัญชีผู้ใช้อัตโนมัติ (Role: User - ป้ายสีเขียวพาสเทล)</span>
-                            <span class="bma-text-sub block mt-0.5">
+                            <span class="font-bold text-sm text-[#00744B] dark:text-emerald-300 block">เพิ่มบัญชีผู้ใช้อัตโนมัติ (Role: User - ป้ายสีเขียวพาสเทล)</span>
+                            <span class="text-slate-600 dark:text-slate-400 block mt-0.5 leading-relaxed">
                                 ระบบจะสร้างบัญชีผู้ใช้งานให้อัตโนมัติโดยใช้ <b>Username = หมายเลขบัตรประชาชน 13 หลัก</b> และ <b>Password = หมายเลข 6 ตัวท้ายของบัตรประชาชน</b>
-                                <span id="autoPasswordPreview" class="font-mono font-bold text-emerald-700 ml-1"></span>
+                                <span id="autoPasswordPreview" class="font-mono font-bold text-[#00744B] ml-1"></span>
                             </span>
                         </div>
                     </label>
                 </div>
 
-                <!-- ข้อมูลตำแหน่ง (Dropdown กรองค่าไม่ซ้ำจากตั้งค่าระบบ) -->
-                <div class="pt-2 border-t bma-border">
-                    <div class="text-xs font-bold uppercase tracking-wider bma-text-sub mb-2.5">ข้อมูลตำแหน่ง (ดึงจากตั้งค่าระบบ)</div>
+                <!-- ข้อมูลตำแหน่ง -->
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+                        <i class="fa-solid fa-briefcase mr-1 text-[#00744B]"></i>ข้อมูลตำแหน่ง (ดึงจากตั้งค่าระบบ)
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">ประเภทตำแหน่ง *</label>
-                            <select id="perPosType" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ประเภทตำแหน่ง *</label>
+                            <select id="perPosType" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">ตำแหน่งในสายงาน *</label>
-                            <select id="perPosTitle" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ตำแหน่งในสายงาน *</label>
+                            <select id="perPosTitle" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">ระดับตำแหน่ง *</label>
-                            <select id="perPosLevel" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ระดับตำแหน่ง *</label>
+                            <select id="perPosLevel" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                     </div>
                 </div>
 
-                <!-- ข้อมูลสังกัด (Dropdown กรองค่าไม่ซ้ำจากตั้งค่าระบบ) -->
-                <div class="pt-2 border-t bma-border">
-                    <div class="text-xs font-bold uppercase tracking-wider bma-text-sub mb-2.5">ข้อมูลสังกัด (ดึงจากตั้งค่าระบบ)</div>
+                <!-- ข้อมูลสังกัด -->
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2.5">
+                        <i class="fa-solid fa-sitemap mr-1 text-[#00744B]"></i>ข้อมูลสังกัด (ดึงจากตั้งค่าระบบ)
+                    </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">หน่วยงาน *</label>
-                            <select id="perOrganization" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">หน่วยงาน *</label>
+                            <select id="perOrganization" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">สำนักงาน/กอง *</label>
-                            <select id="perBureau" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">สำนักงาน/กอง *</label>
+                            <select id="perBureau" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">ส่วน/ฝ่าย *</label>
-                            <select id="perDivision" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ส่วน/ฝ่าย *</label>
+                            <select id="perDivision" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold bma-text-main mb-1">กลุ่มงาน *</label>
-                            <select id="perWorkGroup" class="bma-select text-sm" required></select>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">กลุ่มงาน *</label>
+                            <select id="perWorkGroup" class="bma-select text-sm rounded-xl" required></select>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end gap-2 border-t bma-border">
-                    <button type="button" id="btnCancelPersonnelModal" class="btn-bma-outline text-sm">ยกเลิก</button>
-                    <button type="submit" class="btn-bma-primary text-sm">
+                <div class="pt-4 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" id="btnCancelPersonnelModal" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
+                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
                         <span>บันทึกข้อมูลบุคลากร</span>
                     </button>
