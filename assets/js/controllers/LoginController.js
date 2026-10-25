@@ -6,6 +6,7 @@
 import { AuthService } from '../core/AuthService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
+import { Config } from '../core/Config.js';
 
 export class LoginController {
     constructor() {
@@ -27,6 +28,7 @@ export class LoginController {
 
         this.#updateThemeButtonUI();
         this.#bindEvents();
+        this.#loadRememberedUser();
         await this.#loadOrganizationBranding();
     }
 
@@ -102,6 +104,13 @@ export class LoginController {
 
         document.getElementById('btnLoginAdmin')?.addEventListener('click', () => {
             this.#handleLogin('admin');
+        });
+
+        document.getElementById('loginUsername')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('loginPassword')?.focus();
+            }
         });
 
         document.getElementById('loginPassword')?.addEventListener('keydown', (e) => {
@@ -192,11 +201,52 @@ export class LoginController {
                 return;
             }
 
+            this.#persistRememberedUser(username);
+
             await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
             window.location.replace(result.redirectUrl);
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);
+        }
+    }
+
+    #loadRememberedUser() {
+        try {
+            const storageKeyMe = Config.STORAGE_KEYS?.REMEMBER_ME || 'bma_remember_me';
+            const storageKeyUser = Config.STORAGE_KEYS?.REMEMBER_USERNAME || 'bma_remember_username';
+            const rememberedUsername = localStorage.getItem(storageKeyUser);
+            const isRemember = localStorage.getItem(storageKeyMe) === 'true';
+            const chkEl = document.getElementById('chkRememberMe');
+            const userInput = document.getElementById('loginUsername');
+            const pwdInput = document.getElementById('loginPassword');
+
+            if (chkEl && isRemember && rememberedUsername) {
+                chkEl.checked = true;
+                if (userInput) userInput.value = rememberedUsername;
+                if (pwdInput) {
+                    setTimeout(() => pwdInput.focus(), 50);
+                }
+            }
+        } catch (err) {
+            console.warn('Could not read remembered user credentials from localStorage:', err);
+        }
+    }
+
+    #persistRememberedUser(username) {
+        try {
+            const storageKeyMe = Config.STORAGE_KEYS?.REMEMBER_ME || 'bma_remember_me';
+            const storageKeyUser = Config.STORAGE_KEYS?.REMEMBER_USERNAME || 'bma_remember_username';
+            const isRemember = document.getElementById('chkRememberMe')?.checked;
+            if (isRemember && username && username.trim()) {
+                localStorage.setItem(storageKeyUser, username.trim());
+                localStorage.setItem(storageKeyMe, 'true');
+            } else {
+                localStorage.removeItem(storageKeyUser);
+                localStorage.setItem(storageKeyMe, 'false');
+            }
+        } catch (err) {
+            console.warn('Could not persist remembered user credentials:', err);
         }
     }
 

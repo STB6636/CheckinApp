@@ -13,7 +13,9 @@ export class Config {
         SESSION_USER: 'bma_checkin_session_user_v2_7',
         THEME_MODE: 'bma_checkin_theme_mode_v2_7',
         CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_7',
-        WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7'
+        WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7',
+        REMEMBER_ME: 'bma_remember_me',
+        REMEMBER_USERNAME: 'bma_remember_username'
     };
 
     static OFFICIAL_STATUSES = [

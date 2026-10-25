@@ -1546,3 +1546,31 @@ html.dark .cell-health-error {
     outline: 1px dashed rgba(244, 63, 94, 0.6) !important;
     outline-offset: -1px;
 }
+
+/* ============================================================================
+ * Login Remember Me Toggle Switch Animation Contract (Plan V2.21)
+ * ============================================================================ */
+#chkRememberMe:checked ~ .bma-toggle-track,
+.peer:checked ~ .bma-toggle-track {
+    background-color: #00744B !important;
+}
+
+#chkRememberMe:checked ~ .bma-toggle-track .bma-toggle-knob,
+.peer:checked ~ .bma-toggle-track .bma-toggle-knob {
+    transform: translateX(1rem) !important;
+}
+
+.bma-toggle-knob {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.bma-toggle-track {
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#chkRememberMe:focus-visible ~ .bma-toggle-track,
+.peer:focus-visible ~ .bma-toggle-track {
+    outline: 2px solid #00744B;
+    outline-offset: 2px;
+}
+
