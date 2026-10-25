@@ -104,18 +104,17 @@
                         </span>
                     </div>
 
-                    <!-- Modern Responsive Table -->
-                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                    <!-- Modern Responsive Table (6 คอลัมน์ตามมาตรฐาน PDPA) -->
+                    <div class="bma-table-container rounded-xl overflow-x-auto border border-slate-200/80 dark:border-slate-700/60">
                         <table class="bma-table text-sm w-full text-left">
                             <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
                                 <tr>
-                                    <th class="w-16 text-center py-3.5 px-3">ลำดับ</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">คำนำหน้า + ชื่อ + นามสกุล</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">ตำแหน่ง + ระดับ</th>
-                                    <th class="w-44 py-3.5 px-3 font-mono text-center">เลขบัตรประชาชน 13 หลัก</th>
-                                    <th class="min-w-[180px] py-3.5 px-3">สังกัดย่อย (กลุ่มงาน)</th>
-                                    <th class="w-32 text-center py-3.5 px-3">ระดับบัญชี</th>
-                                    <th class="w-36 text-center py-3.5 px-3">จัดการ</th>
+                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">ชื่อ-นามสกุล</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">ตำแหน่ง</th>
+                                    <th class="min-w-[150px] py-3.5 px-3">กลุ่มงาน</th>
+                                    <th class="w-28 text-center py-3.5 px-3">ระดับบัญชี</th>
+                                    <th class="w-28 text-center py-3.5 px-3">จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody id="personnelTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
@@ -243,6 +242,114 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: ข้อมูลประวัติบุคลากร (Personnel Resume Profile Modal) -->
+    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+        <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-6 sm:p-7 border border-slate-200 dark:border-slate-700 my-8">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3.5 mb-5 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
+                    <span class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-sm shadow-xs">
+                        <i class="fa-solid fa-address-card"></i>
+                    </span>
+                    <span>ประวัติและข้อมูลบุคลากร (Personnel Profile)</span>
+                </h3>
+                <button type="button" id="btnClosePersonnelResumeModal" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Profile Hero Box (Photo + Headlines) -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-slate-50 dark:to-slate-800/50 border border-emerald-500/20">
+                <!-- 3:4 Photo Frame -->
+                <div id="perResumePhotoBox" class="shrink-0 aspect-[3/4] w-24 sm:w-28 rounded-2xl bg-slate-100 dark:bg-slate-700 flex flex-col items-center justify-center text-slate-400 border border-slate-200 dark:border-slate-600 shadow-sm overflow-hidden">
+                    <i class="fa-solid fa-user text-3xl sm:text-4xl"></i>
+                    <span class="text-[10px] mt-1 font-semibold text-slate-400">3 : 4</span>
+                </div>
+
+                <!-- Headline Info -->
+                <div class="flex-1 text-center sm:text-left space-y-1.5">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <h4 id="perResumeFullName" class="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white">-</h4>
+                        <span id="perResumeRoleBadge" class="bma-badge role-pastel-user text-xs px-2.5 py-0.5 rounded-full font-bold">User</span>
+                    </div>
+                    <p id="perResumePositionHeadline" class="text-sm font-semibold text-[#00744B] dark:text-emerald-400">-</p>
+                    <p id="perResumeAffiliationHeadline" class="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center sm:justify-start gap-1.5">
+                        <i class="fa-solid fa-building-user text-slate-400"></i>
+                        <span>-</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Detailed Information Sections -->
+            <div class="mt-5 space-y-4">
+                <!-- Section 1: ข้อมูลส่วนบุคคลและบัญชีผู้ใช้งาน -->
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 space-y-3">
+                    <h5 class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-emerald-600"></i>
+                        <span>ข้อมูลส่วนบุคคลและบัญชีผู้ใช้งาน</span>
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">เลขประจำตัวประชาชน:</span>
+                            <span id="perResumeNationalId" class="font-mono font-bold text-slate-800 dark:text-slate-100 text-sm">-</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">ชื่อบัญชีผู้ใช้ (Username):</span>
+                            <span id="perResumeUsername" class="font-mono font-bold text-slate-800 dark:text-slate-100 text-sm">-</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">ประเภทตำแหน่ง:</span>
+                            <span id="perResumePositionType" class="font-bold text-slate-800 dark:text-slate-100">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: สังกัดราชการ (4 ระดับ) -->
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 space-y-3">
+                    <h5 class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-sitemap text-emerald-600"></i>
+                        <span>โครงสร้างสังกัดราชการ (4 ระดับ)</span>
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">1. สังกัด/หน่วยงานหลัก:</span>
+                            <span id="perResumeOrgName" class="font-bold text-slate-800 dark:text-slate-100">กรุงเทพมหานคร</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">2. สำนักงาน / กอง:</span>
+                            <span id="perResumeBureauName" class="font-bold text-slate-800 dark:text-slate-100">-</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">3. ส่วน / ฝ่าย:</span>
+                            <span id="perResumeDivisionName" class="font-bold text-slate-800 dark:text-slate-100">-</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                            <span class="block text-slate-400 mb-0.5 font-semibold">4. กลุ่มงาน:</span>
+                            <span id="perResumeWorkGroupName" class="font-bold text-slate-800 dark:text-slate-100">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Footer -->
+            <div class="pt-5 mt-5 flex items-center justify-between gap-3 border-t border-slate-200 dark:border-slate-700">
+                <button type="button" id="btnClosePersonnelResumeModalBottom" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">
+                    <i class="fa-solid fa-xmark mr-1"></i> ปิดหน้าต่าง
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btnResumeEditPersonnel" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-pen"></i>
+                        <span>แก้ไขข้อมูล</span>
+                    </button>
+                    <button type="button" id="btnResumeDeletePersonnel" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>ลบบุคลากร</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

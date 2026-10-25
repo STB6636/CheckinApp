@@ -72,14 +72,14 @@
                     
                     <!-- Search & Filter Controls -->
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 items-center">
-                        <div class="md:col-span-6 relative">
+                        <div class="md:col-span-8 relative">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                                 <i class="fa-solid fa-magnifying-glass text-xs"></i>
                             </span>
                             <input type="text" id="searchUserInput" class="bma-input pl-9 py-2 text-xs sm:text-sm rounded-xl border-slate-300 dark:border-slate-600 focus:ring-purple-500 w-full" placeholder="ค้นหา Username, ชื่อ-นามสกุล, เลขบัตรประชาชน...">
                         </div>
 
-                        <div class="md:col-span-3">
+                        <div class="md:col-span-4">
                             <select id="filterUserRole" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
                                 <option value="all">ทุกบทบาท (All Roles)</option>
                                 <option value="SuperAdmin" id="optFilterSuperAdmin">SuperAdmin</option>
@@ -88,32 +88,68 @@
                             </select>
                         </div>
 
-                        <div class="md:col-span-3">
-                            <select id="filterResetRequest" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
-                                <option value="all">สถานะรหัสผ่านทั้งหมด</option>
-                                <option value="pending">เฉพาะที่ขอรีเซ็ตรหัสผ่าน (รออนุมัติ)</option>
-                            </select>
-                        </div>
+                        <!-- ซ่อน element filterResetRequest เพื่อรักษา DOM ID 363 ตัว -->
+                        <select id="filterResetRequest" class="hidden">
+                            <option value="all" selected>สถานะรหัสผ่านทั้งหมด</option>
+                            <option value="pending">เฉพาะที่ขอรีเซ็ตรหัสผ่าน (รออนุมัติ)</option>
+                        </select>
                     </div>
 
-                    <!-- Modern Responsive Table -->
-                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                    <!-- Modern Responsive Table 1: บัญชีผู้ใช้งานหลัก -->
+                    <div class="bma-table-container rounded-xl overflow-x-auto border border-slate-200/80 dark:border-slate-700/60">
                         <table class="bma-table text-sm w-full text-left">
                             <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
                                 <tr>
                                     <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                    <th class="min-w-[170px] py-3.5 px-3">ชื่อบัญชี (Username)</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">ชื่อ-นามสกุล (บุคลากรที่ผูก)</th>
+                                    <th class="min-w-[150px] py-3.5 px-3">ชื่อบัญชี (Username)</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">ชื่อ-นามสกุล (บุคลากรที่ผูก)</th>
                                     <th class="w-32 py-3.5 px-3 text-center">ระดับสิทธิ์ (Role)</th>
-                                    <th class="min-w-[180px] py-3.5 px-3">ขอบเขตการมองเห็น</th>
-                                    <th class="min-w-[160px] text-center py-3.5 px-3">คำสั่ง (อนุมัติเปลี่ยนรหัสผ่าน)</th>
-                                    <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
+                                    <th class="min-w-[160px] py-3.5 px-3">ขอบเขตการมองเห็น</th>
+                                    <th class="w-28 text-center py-3.5 px-3">จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
                         </table>
                     </div>
 
+                </div>
+            </div>
+
+            <!-- Card ตารางที่ 2: คำสั่ง (อนุมัติเปลี่ยนรหัสผ่าน) -->
+            <div class="bma-card rounded-3xl mt-12 sm:mt-14 mb-8 sm:mb-10 p-0 shadow-sm border border-slate-200/80 dark:border-slate-800">
+                <!-- Floating Header สีส้ม/อำพัน BMA Accent (#FFB449 / #D97706) -->
+                <div class="bma-card-header-gradient mx-4 sm:mx-6 -mt-6 p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-lg text-white" style="background: linear-gradient(135deg, #FFB449 0%, #D97706 100%);">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg shadow-inner">
+                            <i class="fa-solid fa-key text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                                <span>คำสั่ง (อนุมัติเปลี่ยนรหัสผ่าน)</span>
+                                <span id="pendingResetCountBadge" class="px-2.5 py-0.5 text-xs font-extrabold rounded-full bg-white text-amber-700 shadow-sm">0</span>
+                            </h2>
+                            <p class="text-xs text-amber-50">รายการคำขอรีเซ็ตรหัสผ่านจากผู้ใช้งานที่รอการตรวจสอบและอนุมัติ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table 2 Body -->
+                <div class="p-4 sm:p-6 space-y-4">
+                    <div class="bma-table-container rounded-xl overflow-x-auto border border-slate-200/80 dark:border-slate-700/60">
+                        <table class="bma-table text-sm w-full text-left">
+                            <thead class="bg-amber-50/70 dark:bg-amber-950/30 text-slate-700 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-amber-200/60 dark:border-amber-800/40">
+                                <tr>
+                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                    <th class="min-w-[150px] py-3.5 px-3">ชื่อบัญชี (Username)</th>
+                                    <th class="min-w-[180px] py-3.5 px-3">ชื่อ-นามสกุล (บุคลากร)</th>
+                                    <th class="w-32 py-3.5 px-3 text-center">ระดับสิทธิ์ (Role)</th>
+                                    <th class="min-w-[160px] py-3.5 px-3">ขอบเขตการมองเห็น</th>
+                                    <th class="min-w-[170px] text-center py-3.5 px-3">คำสั่งดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="passwordResetTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 

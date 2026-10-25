@@ -54,12 +54,12 @@ export class UsersController {
     }
 
     /**
-     * ซ่อนหรือแสดงหัวคอลัมน์ "จัดการ" ในตารางตามสิทธิ์ของผู้ใช้งาน
+     * ซ่อนหรือแสดงหัวคอลัมน์ "จัดการ" ในตารางตามสิทธิ์ของผู้ใช้งาน (index 5)
      */
     #toggleManageColumnHeader() {
         const tableHeaders = document.querySelectorAll('#usersTableBody')?.[0]?.closest('table')?.querySelectorAll('thead th');
-        if (tableHeaders && tableHeaders.length >= 7) {
-            const manageHeaderTh = tableHeaders[6];
+        if (tableHeaders && tableHeaders.length >= 6) {
+            const manageHeaderTh = tableHeaders[5];
             if (manageHeaderTh) {
                 manageHeaderTh.classList.toggle('hidden', !this.canEditOrDeleteUsers);
             }
@@ -96,9 +96,13 @@ export class UsersController {
 
     async loadUsersAndPersonnel() {
         const tbody = document.getElementById('usersTableBody');
-        const colCount = this.canEditOrDeleteUsers ? 7 : 6;
+        const resetTbody = document.getElementById('passwordResetTableBody');
+        const colCount = this.canEditOrDeleteUsers ? 6 : 5;
         if (tbody) {
             tbody.innerHTML = UIHelpers.renderTableSkeleton(5, colCount);
+        }
+        if (resetTbody) {
+            resetTbody.innerHTML = UIHelpers.renderTableSkeleton(3, 6);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบัญชีผู้ใช้งาน...');
@@ -141,12 +145,15 @@ export class UsersController {
     #renderUsersTable() {
         this.#toggleManageColumnHeader();
         const tbody = document.getElementById('usersTableBody');
+        const resetTbody = document.getElementById('passwordResetTableBody');
+        const badgeResetCount = document.getElementById('pendingResetCountBadge');
         if (!tbody) return;
 
         const keyword = (document.getElementById('searchUserInput')?.value || '').toLowerCase().trim();
         const roleFilter = document.getElementById('filterUserRole')?.value || 'all';
         const resetFilter = document.getElementById('filterResetRequest')?.value || 'all';
 
+        // 1. ตารางหลัก: บัญชีผู้ใช้งาน (Main Users Table - 6 คอลัมน์)
         const filtered = this.usersList.filter(u => {
             if (roleFilter !== 'all' && u.role !== roleFilter) return false;
             if (resetFilter === 'pending' && !u.password_reset_requested) return false;
@@ -155,71 +162,107 @@ export class UsersController {
             return text.includes(keyword);
         });
 
-        const colSpan = this.canEditOrDeleteUsers ? 7 : 6;
+        const colSpan = this.canEditOrDeleteUsers ? 6 : 5;
 
         if (filtered.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
-            return;
+        } else {
+            tbody.innerHTML = filtered.map((u, idx) => {
+                const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+
+                let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
+                if (u.role === 'SuperAdmin') {
+                    scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
+                } else if (u.role === 'Admin') {
+                    scopeDesc = u.visibility_level === 'bureau'
+                        ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
+                        : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+                }
+
+                // คอลัมน์ "จัดการ": แสดงเฉพาะผู้ที่มีสิทธิ์แก้ไขหรือลบ (SuperAdmin) เท่านั้น ส่วน Admin ขอบเขต "สำนักงาน" จะมองไม่เห็นคอลัมน์นี้
+                const manageColumnHtml = this.canEditOrDeleteUsers
+                    ? `
+                        <td class="text-center space-x-1 whitespace-nowrap">
+                            <button type="button" data-action="edit-user" data-id="${u.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                            <button type="button" data-action="delete-user" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    `
+                    : '';
+
+                return `
+                    <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
+                        <td class="text-center font-semibold">${idx + 1}</td>
+                        <td class="font-mono font-bold bma-text-main">${u.username}</td>
+                        <td>
+                            <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
+                            <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
+                        </td>
+                        <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
+                        <td class="text-xs bma-text-sub">${scopeDesc}</td>
+                        ${manageColumnHtml}
+                    </tr>
+                `;
+            }).join('');
         }
 
-        tbody.innerHTML = filtered.map((u, idx) => {
-            const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+        // 2. ตารางที่ 2: คำขอรีเซ็ตรหัสผ่าน (Password Reset Requests Table - 6 คอลัมน์)
+        const totalPendingResets = this.usersList.filter(u => u.password_reset_requested);
+        if (badgeResetCount) {
+            badgeResetCount.textContent = String(totalPendingResets.length);
+        }
 
-            let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
-            if (u.role === 'SuperAdmin') {
-                scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
-            } else if (u.role === 'Admin') {
-                scopeDesc = u.visibility_level === 'bureau'
-                    ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
-                    : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+        if (resetTbody) {
+            const filteredResets = totalPendingResets.filter(u => {
+                if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+                if (!keyword) return true;
+                const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.scope_bureau || ''} ${u.scope_division || ''}`.toLowerCase();
+                return text.includes(keyword);
+            });
+
+            if (filteredResets.length === 0) {
+                resetTbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>`;
+            } else {
+                resetTbody.innerHTML = filteredResets.map((u, idx) => {
+                    const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+
+                    let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
+                    if (u.role === 'SuperAdmin') {
+                        scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
+                    } else if (u.role === 'Admin') {
+                        scopeDesc = u.visibility_level === 'bureau'
+                            ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
+                            : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+                    }
+
+                    return `
+                        <tr class="bg-amber-50/20 dark:bg-amber-950/10">
+                            <td class="text-center font-semibold">${idx + 1}</td>
+                            <td class="font-mono font-bold bma-text-main">${u.username}</td>
+                            <td>
+                                <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
+                                <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
+                            </td>
+                            <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
+                            <td class="text-xs bma-text-sub">${scopeDesc}</td>
+                            <td class="text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="button" data-action="approve-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-primary py-1 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm" title="อนุมัติรีเซ็ตรหัสผ่าน">
+                                        <i class="fa-solid fa-check"></i> อนุมัติ
+                                    </button>
+                                    <button type="button" data-action="reject-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-3 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-rose-300 dark:border-rose-800 rounded-lg" title="ไม่อนุมัติ">
+                                        <i class="fa-solid fa-xmark"></i> ไม่อนุมัติ
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             }
-
-            let commandHtml = `<span class="text-xs bma-text-muted">ปกติ</span>`;
-            if (u.password_reset_requested) {
-                commandHtml = `
-                    <div class="flex flex-col items-center gap-1.5">
-                        <span class="bma-badge bma-badge-warning">ขอรีเซ็ตรหัสผ่าน</span>
-                        <div class="flex items-center gap-1">
-                            <button type="button" data-action="approve-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-primary py-1 px-2.5 text-xs">
-                                <i class="fa-solid fa-check"></i> อนุมัติ
-                            </button>
-                            <button type="button" data-action="reject-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500 border-rose-500/40">
-                                <i class="fa-solid fa-xmark"></i> ไม่อนุมัติ
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // คอลัมน์ "จัดการ": แสดงเฉพาะผู้ที่มีสิทธิ์แก้ไขหรือลบ (SuperAdmin) เท่านั้น ส่วน Admin ขอบเขต "สำนักงาน" จะมองไม่เห็นคอลัมน์นี้
-            const manageColumnHtml = this.canEditOrDeleteUsers
-                ? `
-                    <td class="text-center space-x-1 whitespace-nowrap">
-                        <button type="button" data-action="edit-user" data-id="${u.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button type="button" data-action="delete-user" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                `
-                : '';
-
-            return `
-                <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
-                    <td class="text-center font-semibold">${idx + 1}</td>
-                    <td class="font-mono font-bold bma-text-main">${u.username}</td>
-                    <td>
-                        <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
-                        <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
-                    </td>
-                    <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
-                    <td class="text-xs bma-text-sub">${scopeDesc}</td>
-                    <td class="text-center">${commandHtml}</td>
-                    ${manageColumnHtml}
-                </tr>
-            `;
-        }).join('');
+        }
     }
 
     #toggleAdminScopeUI() {
@@ -390,7 +433,7 @@ export class UsersController {
             }
         });
 
-        document.getElementById('usersTableBody')?.addEventListener('click', async (e) => {
+        const handleTableActionClick = async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (!btn) return;
             const action = btn.dataset.action;
@@ -449,7 +492,10 @@ export class UsersController {
                     }
                 }
             }
-        });
+        };
+
+        document.getElementById('usersTableBody')?.addEventListener('click', handleTableActionClick);
+        document.getElementById('passwordResetTableBody')?.addEventListener('click', handleTableActionClick);
     }
 
     async #handleSaveUserAccount() {

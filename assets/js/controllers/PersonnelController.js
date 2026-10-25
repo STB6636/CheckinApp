@@ -123,7 +123,7 @@ export class PersonnelController {
     async loadPersonnelData() {
         const tbody = document.getElementById('personnelTableBody');
         if (tbody) {
-            tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 7);
+            tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 6);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบุคลากร...');
@@ -150,7 +150,7 @@ export class PersonnelController {
         if (totalBadge) totalBadge.textContent = String(filtered.length);
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
             return;
         }
 
@@ -162,7 +162,7 @@ export class PersonnelController {
             for (const [divisionName, content] of Object.entries(divisionsObj)) {
                 html += `
                     <tr style="background-color: ${this.headerColor}18;">
-                        <td colspan="7" class="font-bold text-sm py-2.5 px-4" style="color: ${this.headerColor}; border-left: 4px solid ${this.headerColor};">
+                        <td colspan="6" class="font-bold text-sm py-2.5 px-4" style="color: ${this.headerColor}; border-left: 4px solid ${this.headerColor};">
                             <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
                         </td>
                     </tr>
@@ -172,7 +172,7 @@ export class PersonnelController {
                     for (const [groupName, members] of Object.entries(content)) {
                         html += `
                             <tr class="bg-slate-100/80 dark:bg-slate-800/50">
-                                <td colspan="7" class="font-semibold text-xs py-2 pl-8 bma-text-main">
+                                <td colspan="6" class="font-semibold text-xs py-2 pl-8 bma-text-main">
                                     <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600"></i>กลุ่มงาน: ${groupName} (${members.length} คน)
                                 </td>
                             </tr>
@@ -193,8 +193,8 @@ export class PersonnelController {
     }
 
     #buildPersonRowHtml(person, indexNo) {
-        const fullName = `${person.prefix}${person.first_name} ${person.last_name}`;
-        const posFull = `${person.position_title}${person.position_level ? ' ระดับ' + person.position_level : ''}`;
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+        const posFull = `${person.position_title || ''}${person.position_level || ''}`;
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
 
         // ซ่อนปุ่มลบหากเป็น Admin (ทั้งขอบเขต "ส่วน/ฝ่าย" และ "สำนักงาน") อนุญาตให้ลบได้เฉพาะ SuperAdmin
@@ -207,7 +207,7 @@ export class PersonnelController {
             : '';
 
         return `
-            <tr>
+            <tr class="cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-700/50 transition-colors" data-person-id="${person.id}">
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td>
                     <div class="flex items-center gap-2.5 whitespace-nowrap">
@@ -219,7 +219,6 @@ export class PersonnelController {
                     <span class="font-semibold bma-text-main">${posFull}</span>
                     <span class="block text-xs bma-text-sub">${person.position_type || ''}</span>
                 </td>
-                <td class="font-mono text-xs">${person.national_id || '<span class="bma-text-muted">ไม่ระบุ</span>'}</td>
                 <td class="text-xs bma-text-sub">${person.work_group || '-'}</td>
                 <td class="text-center">
                     <span class="bma-badge ${roleMeta.badgeClass}">${roleMeta.label}</span>
@@ -389,30 +388,151 @@ export class PersonnelController {
 
         document.getElementById('personnelTableBody')?.addEventListener('click', async (e) => {
             const btn = e.target.closest('button[data-action]');
-            if (!btn) return;
-            const action = btn.dataset.action;
-            const id = btn.dataset.id;
+            if (btn) {
+                const action = btn.dataset.action;
+                const id = btn.dataset.id;
 
-            if (action === 'edit-personnel') {
-                const person = this.personnelList.find(p => p.id === id);
-                if (person) this.#openModal(person);
-            } else if (action === 'delete-personnel') {
-                // บล็อกคำสั่งลบทันทีหากไม่ใช่ SuperAdmin
-                if (!this.canDeletePersonnel) {
-                    await UIHelpers.alert('ไม่มีสิทธิ์ลบข้อมูล', 'บัญชีผู้ใช้งานระดับ Admin ไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้', 'warning');
-                    return;
+                if (action === 'edit-personnel') {
+                    const person = this.personnelList.find(p => p.id === id);
+                    if (person) this.#openModal(person);
+                } else if (action === 'delete-personnel') {
+                    // บล็อกคำสั่งลบทันทีหากไม่ใช่ SuperAdmin
+                    if (!this.canDeletePersonnel) {
+                        await UIHelpers.alert('ไม่มีสิทธิ์ลบข้อมูล', 'บัญชีผู้ใช้งานระดับ Admin ไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้', 'warning');
+                        return;
+                    }
+
+                    const name = btn.dataset.name || 'รายชื่อนี้';
+                    const confirmed = await UIHelpers.confirm(
+                        'ยืนยันการลบข้อมูลบุคลากร',
+                        `คุณต้องการลบข้อมูลของ "${name}" ออกจากระบบใช่หรือไม่?`,
+                        'ลบข้อมูล',
+                        'warning'
+                    );
+                    if (confirmed) {
+                        UIHelpers.showLoading('กำลังลบข้อมูลบุคลากร...');
+                        const res = await PersonnelModel.delete(id, this.currentUser);
+                        UIHelpers.hideLoading();
+                        if (res.success) {
+                            await this.loadPersonnelData();
+                            await UIHelpers.showToast(res.message, 'success', 2500);
+                        } else {
+                            await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
+                        }
+                    }
                 }
+                return;
+            }
 
-                const name = btn.dataset.name || 'รายชื่อนี้';
+            // คลิกที่แถวบุคลากรเพื่อเปิด Resume Profile Modal
+            const row = e.target.closest('tr[data-person-id]');
+            if (row) {
+                const personId = row.dataset.personId;
+                const person = this.personnelList.find(p => p.id === personId);
+                if (person) {
+                    this.#openPersonnelResumeModal(person);
+                }
+            }
+        });
+
+        // Event listeners ปิด Resume Profile Modal
+        document.getElementById('btnClosePersonnelResumeModal')?.addEventListener('click', () => {
+            this.#closePersonnelResumeModal();
+        });
+        document.getElementById('btnClosePersonnelResumeModalBottom')?.addEventListener('click', () => {
+            this.#closePersonnelResumeModal();
+        });
+        document.getElementById('modalPersonnelResumeProfile')?.addEventListener('click', (e) => {
+            if (e.target.id === 'modalPersonnelResumeProfile') {
+                this.#closePersonnelResumeModal();
+            }
+        });
+    }
+
+    /**
+     * เปิด Resume Profile Modal แสดงข้อมูลประวัติบุคลากรแบบละเอียด
+     * @param {Object} person 
+     */
+    #openPersonnelResumeModal(person) {
+        const modal = document.getElementById('modalPersonnelResumeProfile');
+        if (!modal || !person) return;
+
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+        const posFull = `${person.position_title || ''}${person.position_level || ''}`;
+        const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
+
+        const elFullName = document.getElementById('perResumeFullName');
+        if (elFullName) elFullName.textContent = fullName || '-';
+
+        const elPosition = document.getElementById('perResumePositionHeadline');
+        if (elPosition) elPosition.textContent = posFull || '-';
+
+        const elAffiliation = document.getElementById('perResumeAffiliationHeadline');
+        if (elAffiliation) {
+            const affText = `${person.bureau || '-'} > ${person.division || '-'}`;
+            elAffiliation.innerHTML = `<i class="fa-solid fa-building-user text-slate-400"></i><span>${affText}</span>`;
+        }
+
+        const elBadge = document.getElementById('perResumeRoleBadge');
+        if (elBadge) {
+            elBadge.className = `bma-badge ${roleMeta.badgeClass} text-xs px-2.5 py-0.5 rounded-full font-bold`;
+            elBadge.textContent = roleMeta.label;
+        }
+
+        const elNationalId = document.getElementById('perResumeNationalId');
+        if (elNationalId) {
+            const rawNid = String(person.national_id || '').replace(/\D/g, '');
+            const formattedNid = rawNid.length === 13
+                ? `${rawNid[0]}-${rawNid.slice(1, 5)}-${rawNid.slice(5, 10)}-${rawNid.slice(10, 12)}-${rawNid[12]}`
+                : (person.national_id || '-');
+            elNationalId.textContent = formattedNid;
+        }
+
+        const elUsername = document.getElementById('perResumeUsername');
+        if (elUsername) {
+            elUsername.textContent = person.username || person.national_id || '-';
+        }
+
+        const elPosType = document.getElementById('perResumePositionType');
+        if (elPosType) elPosType.textContent = person.position_type || '-';
+
+        const elOrg = document.getElementById('perResumeOrgName');
+        if (elOrg) elOrg.textContent = person.organization || 'กรุงเทพมหานคร';
+
+        const elBureau = document.getElementById('perResumeBureauName');
+        if (elBureau) elBureau.textContent = person.bureau || '-';
+
+        const elDivision = document.getElementById('perResumeDivisionName');
+        if (elDivision) elDivision.textContent = person.division || '-';
+
+        const elWorkGroup = document.getElementById('perResumeWorkGroupName');
+        if (elWorkGroup) elWorkGroup.textContent = person.work_group || '-';
+
+        // จัดการปุ่มแก้ไขใน Resume Modal
+        const btnEdit = document.getElementById('btnResumeEditPersonnel');
+        if (btnEdit) {
+            btnEdit.onclick = () => {
+                this.#closePersonnelResumeModal();
+                this.#openModal(person);
+            };
+        }
+
+        // จัดการปุ่มลบใน Resume Modal (เฉพาะ SuperAdmin เท่านั้น)
+        const btnDelete = document.getElementById('btnResumeDeletePersonnel');
+        if (btnDelete) {
+            btnDelete.classList.toggle('hidden', !this.canDeletePersonnel);
+            btnDelete.onclick = async () => {
+                if (!this.canDeletePersonnel) return;
                 const confirmed = await UIHelpers.confirm(
                     'ยืนยันการลบข้อมูลบุคลากร',
-                    `คุณต้องการลบข้อมูลของ "${name}" ออกจากระบบใช่หรือไม่?`,
+                    `คุณต้องการลบข้อมูลของ "${fullName}" ออกจากระบบใช่หรือไม่?`,
                     'ลบข้อมูล',
                     'warning'
                 );
                 if (confirmed) {
+                    this.#closePersonnelResumeModal();
                     UIHelpers.showLoading('กำลังลบข้อมูลบุคลากร...');
-                    const res = await PersonnelModel.delete(id);
+                    const res = await PersonnelModel.delete(person.id, this.currentUser);
                     UIHelpers.hideLoading();
                     if (res.success) {
                         await this.loadPersonnelData();
@@ -421,8 +541,15 @@ export class PersonnelController {
                         await UIHelpers.alert('ลบไม่สำเร็จ', res.message, 'error');
                     }
                 }
-            }
-        });
+            };
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    #closePersonnelResumeModal() {
+        const modal = document.getElementById('modalPersonnelResumeProfile');
+        modal?.classList.add('hidden');
     }
 
     async #handleSavePersonnel() {

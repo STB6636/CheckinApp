@@ -968,7 +968,7 @@ html.dark .bma-textarea {
 
 .bma-table-container {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: auto !important;
     border-radius: 0.85rem;
     border: 1px solid var(--bma-thead-border);
     background-color: var(--bma-surface-1);
