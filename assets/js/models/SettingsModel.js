@@ -49,7 +49,7 @@ export class SettingsModel {
         }
 
         const db = DatabaseService.getInstance().client;
-        const { data, error } = await db
+        let { data, error } = await db
             .from('system_settings')
             .select('*')
             .eq('id', 1)
@@ -95,7 +95,11 @@ export class SettingsModel {
             standard_check_out: UIHelpers.formatTime24(data.standard_check_out || Config.DEFAULT_SETTINGS.standard_check_out),
             late_threshold_minutes: Number(data.late_threshold_minutes ?? Config.DEFAULT_SETTINGS.late_threshold_minutes),
             checkout_grace_minutes: Number(data.checkout_grace_minutes ?? Config.DEFAULT_SETTINGS.checkout_grace_minutes),
-            filter_shifts_by_realtime: Boolean(data.filter_shifts_by_realtime ?? Config.DEFAULT_SETTINGS.filter_shifts_by_realtime),
+            filter_shifts_by_realtime: typeof data.filter_shifts_by_realtime === 'boolean'
+                ? data.filter_shifts_by_realtime
+                : (localStorage.getItem('bma_filter_shifts_by_realtime') !== null
+                    ? localStorage.getItem('bma_filter_shifts_by_realtime') !== 'false'
+                    : Boolean(Config.DEFAULT_SETTINGS.filter_shifts_by_realtime)),
             google_drive_script_url: String(data.google_drive_script_url ?? ''),
             google_drive_folder_id: String(data.google_drive_folder_id ?? ''),
             footer_description: String(data.footer_description ?? Config.DEFAULT_SETTINGS.footer_description),
@@ -129,7 +133,7 @@ export class SettingsModel {
             standard_check_out: UIHelpers.formatTime24(payload.standard_check_out || '16:30'),
             late_threshold_minutes: Number(payload.late_threshold_minutes ?? 30),
             checkout_grace_minutes: Number(payload.checkout_grace_minutes ?? 30),
-            filter_shifts_by_realtime: Boolean(payload.filter_shifts_by_realtime ?? true),
+            filter_shifts_by_realtime: payload.filter_shifts_by_realtime !== false,
             google_drive_script_url: String(payload.google_drive_script_url || '').trim(),
             google_drive_folder_id: String(payload.google_drive_folder_id || '').trim(),
             prefixes: payload.prefixes || [],
@@ -141,23 +145,41 @@ export class SettingsModel {
             updated_at: new Date().toISOString()
         };
 
-        const { data, error } = await db
+        let { data, error } = await db
             .from('system_settings')
             .upsert(updateData, { onConflict: 'id' })
             .select()
             .single();
 
         if (error) {
+            if (String(error.message || '').includes('filter_shifts_by_realtime')) {
+                const fallbackUpdateData = { ...updateData };
+                delete fallbackUpdateData.filter_shifts_by_realtime;
+                const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
+                data = retryRes.data;
+                error = retryRes.error;
+            }
+        }
+        if (error) {
             console.error('Update system_settings error:', error);
             return { success: false, message: 'ไม่สามารถบันทึกการตั้งค่าระบบได้: ' + error.message };
         }
 
-        sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(data));
-        window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: data }));
+        const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
+        localStorage.setItem('bma_filter_shifts_by_realtime', String(filterRealtimeVal));
+        const normalizedSavedData = {
+            ...Config.DEFAULT_SETTINGS,
+            ...data,
+            filter_shifts_by_realtime: typeof data?.filter_shifts_by_realtime === 'boolean'
+                ? data.filter_shifts_by_realtime
+                : filterRealtimeVal
+        };
+        sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
+        window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));
 
         return {
             success: true,
-            data,
+            data: normalizedSavedData,
             message: 'บันทึกการตั้งค่าระบบเรียบร้อยแล้ว'
         };
     }

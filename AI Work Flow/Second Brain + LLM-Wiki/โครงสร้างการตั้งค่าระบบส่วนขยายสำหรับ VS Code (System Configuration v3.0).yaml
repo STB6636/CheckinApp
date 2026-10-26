@@ -1,0 +1,32 @@
+workflow_name: "Enterprise_AI_Software_Engineering_Pipeline"
+version: "3.0.0_VSCode_Codebase_Map_and_Token_Optimizer"
+
+global_constraints:
+  minimum_model_version: "Flash 3.8 High"
+  fallback_behavior: "reject_if_below_minimum_model"
+  communication_format: "Structured_Markdown_and_JSON_Handoff"
+  code_completeness_policy: "NO_PLACEHOLDERS_OR_TRUNCATION"
+  skill_enforcement_policy: "STRICT_PRIORITY_OVER_DEFAULT_KNOWLEDGE"
+  token_optimization_policy: "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY"
+
+vscode_workspace_integration:
+  map_directory: "./.ai_map/"
+  process_flow_map_file: "./.ai_map/00_PROCESS_FLOW_MAP.md"
+  file_function_index_md: "./.ai_map/01_FILE_FUNCTION_INDEX.md"
+  machine_readable_index_json: "./.ai_map/CODE_INDEX.json"
+  auto_indexer_script: "./.ai_map/vscode_ast_mapper.mjs"
+  max_unmapped_file_read_lines: 80
+  surgical_context_padding_lines: 10
+
+agents:
+  # --- เอเจนต์ใหม่ที่เพิ่มเข้ามาใน Version 3.0 สำหรับจัดการสารบัญโค้ดใน VS Code ---
+  subagent_code_mapper:
+    id: "agent_09_code_mapper"
+    role: "VS Code Codebase Cartographer & AST Index Architect"
+    model: "Flash 3.8 High"
+    temperature: 0.05
+    top_p: 0.8
+    max_output_tokens: 32768
+    execution_phases:
+      - "Phase_0_PreFlight_Map_Lookup_and_Line_Targeting"
+      - "Phase_3_and_4_PostEdit_Incremental_Map_Sync"

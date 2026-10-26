@@ -344,6 +344,10 @@ export class SettingsController {
         this.settings.google_drive_folder_id = document.getElementById('setGDriveFolderId').value.trim();
         this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
         this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
+        const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
+        if (elFilterRealtime) {
+            this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);
+        }
         const radioSingle = document.querySelector('input[name="checkinRecordingMode"][value="single_click"]');
         const chkSingle = document.getElementById('toggleSingleClickCheckin');
         this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
@@ -373,6 +377,9 @@ export class SettingsController {
             if (!res.success) {
                 await UIHelpers.alert('บันทึกไม่สำเร็จ', res.message, 'error');
                 return false;
+            }
+            if (res.data) {
+                this.settings = res.data;
             }
             this.#renderAllSettings();
             if (showToastAlert) {
@@ -537,6 +544,10 @@ export class SettingsController {
 
         document.getElementById('toggleSingleClickCheckin')?.addEventListener('change', (e) => {
             this.#syncCheckinModeUI(e.target.checked);
+        });
+
+        document.getElementById('toggleFilterShiftsByRealtime')?.addEventListener('change', (e) => {
+            this.settings.filter_shifts_by_realtime = Boolean(e.target.checked);
         });
 
         document.querySelectorAll('input[name="checkinRecordingMode"]').forEach(radio => {

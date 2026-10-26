@@ -214,7 +214,8 @@ export class CheckinController {
 
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
-        const mustUseOvertimeWindow = !hasUnclosedRegular && (isBeforeAllowStart || isAfterStdOut || hasCompletedRegularToday);
+        const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
+        const mustUseOvertimeWindow = !hasUnclosedRegular && (hasCompletedRegularToday || (isRealtimeFilterEnabled && (isBeforeAllowStart || isAfterStdOut)));
 
         let candidateShifts = allShifts.map((s, originalIdx) => ({ ...s, originalIdx }));
 
@@ -434,7 +435,8 @@ export class CheckinController {
             return;
         }
 
-        if (isNormalModeSetting && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut) {
+        const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
+        if (isNormalModeSetting && isRealtimeFilterEnabled && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut) {
             shiftSelectorContainer?.classList.add('hidden');
             mainCustomBox?.classList.add('hidden');
 
@@ -465,8 +467,8 @@ export class CheckinController {
 
         const isOvertimeContext = Boolean(
             shiftObj.is_overtime ||
-            isBeforeAllowStart ||
-            isAfterStdOut ||
+            (isRealtimeFilterEnabled && isBeforeAllowStart) ||
+            (isRealtimeFilterEnabled && isAfterStdOut) ||
             isRegularCompletedToday
         );
 
@@ -1042,9 +1044,10 @@ export class CheckinController {
             this.activeRegularRecord.work_date === todayIso
         );
 
-        const isOvertimeByTimeWindow = !hasUnclosedRegular && (nowMin < allowStartMin || nowMin > stdOutMin || isRegularCompletedToday);
+        const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
+        const isOvertimeByTimeWindow = !hasUnclosedRegular && (isRegularCompletedToday || (isRealtimeFilterEnabled && (nowMin < allowStartMin || nowMin > stdOutMin)));
         const effectiveOvertimeShift = !hasUnclosedRegular && Boolean(
-            (!isNormalModeSetting && shiftObj.is_overtime) ||
+            ((!isNormalModeSetting || !isRealtimeFilterEnabled) && shiftObj.is_overtime) ||
             isOvertimeByTimeWindow
         );
 

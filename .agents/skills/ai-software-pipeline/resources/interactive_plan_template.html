@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>Interactive Plan</title>
+<script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<style>
+  .chip{font-size:12px;padding:2px 8px;border-radius:9999px;border:1px solid var(--border)}
+  .step.off{opacity:.45}
+  .step.off .step-title{text-decoration:line-through}
+  textarea,input[type=text]{background:var(--background);color:var(--foreground);border:1px solid var(--border)}
+</style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-6">
+<!--
+  HOW TO USE (for the orchestrator):
+  1. Copy this file to <artifact_dir>/pipeline/<task_id>/interactive_plan.html
+  2. Replace ONLY the JSON inside <script id="plan-data"> with the real plan.
+     It must mirror implementation_plan.md (same steps, same file list, same questions).
+  3. Write it with ArtifactMetadata UserFacing=true.
+-->
+<script id="plan-data" type="application/json">
+{
+  "title": "ตัวอย่าง: ปรับปรุงหน้า Check-in",
+  "task_id": "PIPE-20261026-example",
+  "mode": "PLAN",
+  "goal": "อธิบายเป้าหมายของงานในหนึ่งถึงสองประโยค",
+  "context": ["[[checkinapp_project_context]] — Static HTML + Supabase + GitHub Pages"],
+  "steps": [
+    {"id": "S1", "phase": "Phase 1", "agent": "agent_01_ba_sa", "title": "วิเคราะห์ความต้องการ", "detail": "รายละเอียดขั้นตอน", "files": [], "risk": "low", "optional": false},
+    {"id": "S2", "phase": "Phase 3B", "agent": "agent_04_frontend", "title": "แก้ไขหน้าจอ", "detail": "รายละเอียดขั้นตอน", "files": ["[MODIFY] checkin.html"], "risk": "medium", "optional": false},
+    {"id": "S3", "phase": "Phase 5", "agent": "agent_06_devops", "title": "เพิ่ม GitHub Actions", "detail": "ขั้นตอนเสริม ผู้ใช้เลือกตัดออกได้", "files": ["[NEW] .github/workflows/pages.yml"], "risk": "low", "optional": true}
+  ],
+  "questions": [
+    {"id": "Q1", "text": "ตัวอย่างคำถามที่ต้องตัดสินใจ", "options": ["ตัวเลือก A (แนะนำ)", "ตัวเลือก B"], "default": 0}
+  ],
+  "verification": ["รัน test ...", "ตรวจด้วยมือใน browser ..."]
+}
+</script>
+
+<div class="max-w-4xl mx-auto space-y-5">
+  <header class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      <span id="mode" class="chip bg-[var(--primary)] text-[var(--primary-foreground)]"></span>
+      <span id="taskid" class="chip text-[var(--muted-foreground)]"></span>
+      <span id="counter" class="chip text-[var(--muted-foreground)]"></span>
+    </div>
+    <h1 id="title" class="text-xl font-semibold"></h1>
+    <p id="goal" class="text-sm text-[var(--muted-foreground)] mt-1"></p>
+    <ul id="context" class="text-xs text-[var(--muted-foreground)] mt-3 list-disc pl-5 space-y-0.5"></ul>
+  </header>
+
+  <section>
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-semibold">ขั้นตอนการดำเนินงาน</h2>
+      <span class="text-xs text-[var(--muted-foreground)]">ติ๊กออกเพื่อตัดขั้นตอน · คลิกชื่อเพื่อดูรายละเอียด/เพิ่มความเห็น</span>
+    </div>
+    <ol id="steps" class="space-y-2"></ol>
+  </section>
+
+  <section id="qwrap" class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+    <h2 class="font-semibold mb-3">คำถามที่ต้องตัดสินใจ</h2>
+    <div id="questions" class="space-y-4"></div>
+  </section>
+
+  <section class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5">
+    <h2 class="font-semibold mb-2">แผนการทดสอบ</h2>
+    <ul id="verification" class="text-sm list-disc pl-5 space-y-1"></ul>
+  </section>
+
+  <section class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 space-y-3">
+    <h2 class="font-semibold">ความเห็นเพิ่มเติม & ส่งกลับ</h2>
+    <textarea id="general" rows="3" class="w-full rounded-lg p-2 text-sm" placeholder="ความเห็นทั่วไปต่อแผน (ถ้ามี)"></textarea>
+    <div class="flex flex-wrap gap-2">
+      <button id="approve" class="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">✅ อนุมัติแผนนี้</button>
+      <button id="revise" class="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)]">✏️ ขอแก้ไขแผน</button>
+    </div>
+    <div id="outWrap" class="hidden space-y-2">
+      <p class="text-xs text-[var(--muted-foreground)]">คัดลอกข้อความด้านล่าง (คัดลอกให้อัตโนมัติแล้วถ้าทำได้) แล้ววางในแชทเพื่อส่งให้ Orchestrator</p>
+      <textarea id="out" rows="9" readonly class="w-full rounded-lg p-2 text-xs font-mono"></textarea>
+      <button id="copy" class="px-3 py-1.5 rounded-lg text-xs border border-[var(--border)]">📋 คัดลอก</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const P = JSON.parse(document.getElementById('plan-data').textContent);
+const state = { on: {}, notes: {}, answers: {} };
+const riskCls = { low: 'text-green-600', medium: 'text-amber-600', high: 'text-red-600' };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+$('mode').textContent = P.mode; $('taskid').textContent = P.task_id;
+$('title').textContent = P.title; $('goal').textContent = P.goal;
+(P.context || []).forEach(c => { const li = document.createElement('li'); li.textContent = c; $('context').appendChild(li); });
+(P.verification || []).forEach(v => { const li = document.createElement('li'); li.textContent = v; $('verification').appendChild(li); });
+
+function counter() {
+  const n = P.steps.filter(s => state.on[s.id]).length;
+  $('counter').textContent = `${n}/${P.steps.length} ขั้นตอนที่เลือก`;
+}
+
+P.steps.forEach((s, i) => {
+  state.on[s.id] = true; state.notes[s.id] = '';
+  const li = document.createElement('li');
+  li.className = 'step bg-[var(--card)] border border-[var(--border)] rounded-xl p-3';
+  li.innerHTML = `
+    <div class="flex items-start gap-3">
+      <input type="checkbox" checked class="mt-1 h-4 w-4" aria-label="เลือกขั้นตอน ${esc(s.id)}">
+      <div class="flex-1 min-w-0">
+        <button class="step-title text-left font-medium w-full">${i + 1}. ${esc(s.title)}</button>
+        <div class="flex flex-wrap gap-1.5 mt-1">
+          <span class="chip text-[var(--muted-foreground)]">${esc(s.phase)}</span>
+          <span class="chip text-[var(--muted-foreground)]">${esc(s.agent)}</span>
+          <span class="chip ${riskCls[s.risk] || ''}">risk: ${esc(s.risk)}</span>
+          ${s.optional ? '<span class="chip text-[var(--muted-foreground)]">optional</span>' : ''}
+        </div>
+        <div class="detail hidden mt-2 space-y-2">
+          <p class="text-sm text-[var(--muted-foreground)]">${esc(s.detail)}</p>
+          ${(s.files || []).length ? `<ul class="text-xs font-mono space-y-0.5">${s.files.map(f => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}
+          <input type="text" class="note w-full rounded-lg p-2 text-sm" placeholder="ความเห็น/สิ่งที่อยากให้แก้ในขั้นตอนนี้">
+        </div>
+      </div>
+    </div>`;
+  const cb = li.querySelector('input[type=checkbox]');
+  cb.addEventListener('change', () => { state.on[s.id] = cb.checked; li.classList.toggle('off', !cb.checked); counter(); });
+  li.querySelector('.step-title').addEventListener('click', () => li.querySelector('.detail').classList.toggle('hidden'));
+  li.querySelector('.note').addEventListener('input', e => state.notes[s.id] = e.target.value);
+  $('steps').appendChild(li);
+});
+counter();
+
+if (!(P.questions || []).length) $('qwrap').classList.add('hidden');
+(P.questions || []).forEach(q => {
+  state.answers[q.id] = q.options[q.default || 0];
+  const d = document.createElement('div');
+  d.innerHTML = `<p class="text-sm font-medium mb-1.5">${esc(q.id)}. ${esc(q.text)}</p>
+    <div class="flex flex-wrap gap-2">${q.options.map((o, k) => `
+      <label class="chip cursor-pointer flex items-center gap-1.5 py-1"><input type="radio" name="${esc(q.id)}" value="${k}" ${k === (q.default || 0) ? 'checked' : ''}>${esc(o)}</label>`).join('')}
+      <label class="chip cursor-pointer flex items-center gap-1.5 py-1"><input type="radio" name="${esc(q.id)}" value="other">อื่นๆ</label>
+    </div>
+    <input type="text" class="other hidden mt-2 w-full rounded-lg p-2 text-sm" placeholder="ระบุคำตอบของคุณ">`;
+  const other = d.querySelector('.other');
+  d.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', () => {
+    const isOther = r.value === 'other';
+    other.classList.toggle('hidden', !isOther);
+    state.answers[q.id] = isOther ? (other.value || '(อื่นๆ)') : q.options[+r.value];
+  }));
+  other.addEventListener('input', () => state.answers[q.id] = other.value);
+  $('questions').appendChild(d);
+});
+
+function build(decision) {
+  const L = [`[PLAN FEEDBACK] ${P.task_id}`, `การตัดสินใจ: ${decision}`, ''];
+  const removed = P.steps.filter(s => !state.on[s.id]);
+  L.push('ขั้นตอนที่เลือกดำเนินการ: ' + P.steps.filter(s => state.on[s.id]).map(s => s.id).join(', '));
+  if (removed.length) L.push('ขั้นตอนที่ตัดออก: ' + removed.map(s => `${s.id} (${s.title})`).join(', '));
+  const notes = P.steps.filter(s => state.notes[s.id].trim());
+  if (notes.length) { L.push('', 'ความเห็นรายขั้นตอน:'); notes.forEach(s => L.push(`- ${s.id} ${s.title}: ${state.notes[s.id].trim()}`)); }
+  if ((P.questions || []).length) { L.push('', 'คำตอบ:'); P.questions.forEach(q => L.push(`- ${q.id}: ${state.answers[q.id]}`)); }
+  if ($('general').value.trim()) L.push('', 'ความเห็นทั่วไป: ' + $('general').value.trim());
+  return L.join('\n');
+}
+function emit(decision) {
+  $('out').value = build(decision); $('outWrap').classList.remove('hidden');
+  navigator.clipboard && navigator.clipboard.writeText($('out').value).catch(() => {});
+}
+$('approve').addEventListener('click', () => emit('อนุมัติ — ดำเนินการตามแผน'));
+$('revise').addEventListener('click', () => emit('ขอแก้ไขแผนตามความเห็นด้านล่าง'));
+$('copy').addEventListener('click', () => { $('out').select(); navigator.clipboard ? navigator.clipboard.writeText($('out').value) : document.execCommand('copy'); });
+</script>
+</body>
+</html>
+

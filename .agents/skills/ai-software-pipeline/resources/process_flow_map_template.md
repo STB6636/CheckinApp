@@ -1,0 +1,20 @@
+# สารบัญกระบวนการทำงานของเว็บแอปพลิเคชัน (Web App End-to-End Process Flow Map)
+
+## 1. กระบวนการ: ระบบยืนยันตัวตนและเข้าสู่ระบบ (User Authentication & JWT Session Flow)
+- **Flow ID:** `FLOW_AUTH_01`
+- **ลำดับการเรียกใช้งานข้ามไฟล์ (Call Chain & Line Pointers):**
+  1. `[Frontend UI]` `src/app/login/page.tsx` -> `LoginPage()` **[Lines 18-94]** : รับค่าอีเมลและรหัสผ่านจากฟอร์มและตรวจสอบความถูกต้องเบื้องต้น
+  2. `[Frontend Hook/State]` `src/hooks/useAuth.ts` -> `loginMutation()` **[Lines 32-68]** : เรียก API Client และจัดการสถานะ Loading/Error
+  3. `[API Client]` `src/lib/apiClient.ts` -> `postAuthLogin()` **[Lines 45-62]** : ส่งคำขอ `POST /api/v1/auth/login` พร้อมแนบ CSRF Header
+  4. `[Backend Route]` `src/server/routes/auth.routes.ts` -> `authRouter.post('/login')` **[Lines 14-22]** : ตรวจสอบ Schema ด้วย Middleware แล้วส่งต่อให้ Controller
+  5. `[Backend Controller]` `src/server/controllers/auth.controller.ts` -> `handleUserLogin()` **[Lines 25-70]** : รับ Request Body และเรียกใช้ AuthService
+  6. `[Backend Service]` `src/server/services/auth.service.ts` -> `authenticateAndIssueTokens()` **[Lines 40-115]** : ตรวจสอบรหัสผ่านด้วย Argon2, สร้าง Access/Refresh Token และบันทึก Session
+  7. `[Database Repository]` `src/server/repositories/user.repo.ts` -> `findUserByEmailWithCredentials()` **[Lines 19-38]** : คิวรีตาราง `users` และ `user_sessions`
+
+## 2. กระบวนการ: การสร้างคำสั่งซื้อและตัดสต็อกสินค้า (Order Creation & Inventory Deduction Flow)
+- **Flow ID:** `FLOW_ORDER_01`
+- **ลำดับการเรียกใช้งานข้ามไฟล์ (Call Chain & Line Pointers):**
+  1. `[Frontend Component]` `src/components/checkout/CheckoutSubmitButton.tsx` -> `handleConfirmOrder()` **[Lines 28-75]**
+  2. `[Backend Controller]` `src/server/controllers/order.controller.ts` -> `createOrderController()` **[Lines 30-82]**
+  3. `[Backend Service]` `src/server/services/order.service.ts` -> `executeOrderTransaction()` **[Lines 55-160]**
+  4. `[Database Repository]` `src/server/repositories/inventory.repo.ts` -> `decrementStockAtomic()` **[Lines 42-88]**

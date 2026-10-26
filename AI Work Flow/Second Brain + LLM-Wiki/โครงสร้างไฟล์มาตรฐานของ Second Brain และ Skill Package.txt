@@ -1,0 +1,15 @@
+project_root/
+├── second_brain_vault/                  # คลังสมองที่สอง (LLM-Wiki รูปแบบ Markdown + Wiki-links)
+│   ├── 00_INDEX_MOC.md                  # สารบัญหลัก (Map of Content) ที่ AI อ่านเป็นอันดับแรก
+│   ├── 01_architecture_decisions/       # บันทึกการตัดสินใจทางสถาปัตยกรรม (ADR)
+│   ├── 02_domain_logic_and_rules/       # กฎทางธุรกิจและโครงสร้างข้อมูลเฉพาะโดเมน
+│   ├── 03_bug_postmortems_and_fixes/    # ประวัติบั๊กที่เคยเจอ สาเหตุ และวิธีแก้ที่ผ่านการพิสูจน์แล้ว
+│   └── 04_project_contexts/             # บริบทของแต่ละโปรเจกต์และสถานะปัจจุบัน
+│
+└── ai_skills_registry/                  # คลังสกิลที่ AI สกัดออกมาเพื่อนำกลับมาใช้ซ้ำ
+    ├── SKILL_CATALOG.json               # ดัชนีสกิลทั้งหมดพร้อมเงื่อนไขการเรียกใช้ (Trigger Conditions)
+    └── skills/
+        └── <skill_id_name>/             # โฟลเดอร์ของแต่ละสกิล
+            ├── SKILL.md                 # คู่มือคำสั่ง ขั้นตอน กฎเหล็ก และรูปแบบโค้ดของสกิลนี้
+            ├── templates/               # โครงสร้างโค้ดต้นแบบแบบเต็ม (Boilerplate Templates)
+            └── scripts/                 # สคริปต์ตรวจสอบหรือเครื่องมือช่วยรันอัตโนมัติ

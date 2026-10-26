@@ -1590,7 +1590,8 @@ html.dark .cell-health-error {
 
 @media (min-height: 600px) {
     #modalPersonnelResumeProfile > div {
-        max-height: 520px;
+        max-height: calc(100vh - 2.5rem);
+        overflow: hidden;
     }
 }
 

@@ -1,0 +1,39 @@
+workflow_name: "Enterprise_AI_Software_Engineering_Pipeline"
+version: "2.0.0_Self_Evolving_SecondBrain_and_Skills"
+
+global_constraints:
+  minimum_model_version: "Flash 3.8 High"
+  fallback_behavior: "reject_if_below_minimum_model"
+  communication_format: "Structured_Markdown_and_JSON_Handoff"
+  code_completeness_policy: "NO_PLACEHOLDERS_OR_TRUNCATION"
+  skill_enforcement_policy: "STRICT_PRIORITY_OVER_DEFAULT_KNOWLEDGE"
+
+storage_architecture:
+  second_brain_vault_path: "./second_brain_vault/"
+  second_brain_index_file: "./second_brain_vault/00_INDEX_MOC.md"
+  skill_registry_path: "./ai_skills_registry/"
+  skill_catalog_file: "./ai_skills_registry/SKILL_CATALOG.json"
+
+agents:
+  # --- เอเจนต์ใหม่ที่เพิ่มเข้ามาใน Version 2.0 ---
+  subagent_second_brain:
+    id: "agent_07_second_brain"
+    role: "Second Brain & Knowledge Graph Architect (LLM-Wiki Manager)"
+    model: "Flash 3.8 High"
+    temperature: 0.1
+    top_p: 0.85
+    max_output_tokens: 32768
+    execution_phases:
+      - "Phase_0_PreFlight_Context_Retrieval"
+      - "Phase_6_PostFlight_Knowledge_Ingestion"
+
+  subagent_skill_smith:
+    id: "agent_08_skill_smith"
+    role: "Skill Extractor, Packager & Routing Engineer"
+    model: "Flash 3.8 High"
+    temperature: 0.1
+    top_p: 0.8
+    max_output_tokens: 32768
+    execution_phases:
+      - "Phase_0_PreFlight_Skill_Matching"
+      - "Phase_6_PostFlight_Skill_Extraction"

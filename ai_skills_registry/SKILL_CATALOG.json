@@ -1,0 +1,22 @@
+{
+  "skills": [
+    {
+      "skill_id": "vscode_surgical_codebase_mapping",
+      "name": "VS Code Surgical Context & Automated AST Codebase Mapping",
+      "version": "3.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "agent_01_ba_sa",
+        "agent_02_architect",
+        "agent_03_backend",
+        "agent_04_frontend",
+        "agent_05_qa_security",
+        "agent_06_devops",
+        "agent_09_code_mapper"
+      ],
+      "trigger_conditions": "บังคับโหลดทุกครั้งที่มีการค้นหา อ่าน แก้ไข ปรับปรุง หรือเพิ่มฟีเจอร์ในโปรเจกต์เพื่อบังคับใช้โหมด MAP_FIRST_SURGICAL_LINE_RANGE_ONLY และการซิงค์สารบัญ .ai_map/",
+      "skill_file_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/SKILL.md",
+      "templates_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/templates/"
+    }
+  ]
+}

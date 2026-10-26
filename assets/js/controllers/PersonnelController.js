@@ -570,6 +570,13 @@ export class PersonnelController {
         const elFullName = document.getElementById('perResumeFullName');
         if (elFullName) elFullName.textContent = fullName || '-';
 
+        const elAvatarInitials = document.getElementById('perResumeAvatarInitials');
+        if (elAvatarInitials) {
+            const fChar = String(person.first_name || '').trim().charAt(0);
+            const lChar = String(person.last_name || '').trim().charAt(0);
+            elAvatarInitials.textContent = (fChar + lChar) || 'บก';
+        }
+
         const elPosition = document.getElementById('perResumePositionHeadline');
         if (elPosition) elPosition.textContent = posFull || '-';
 
@@ -614,7 +621,16 @@ export class PersonnelController {
 
         const elUsername = document.getElementById('perResumeUsername');
         if (elUsername) {
-            elUsername.textContent = person.username || person.national_id || '-';
+            if (person.has_account === false) {
+                elUsername.textContent = 'ยังไม่ได้สร้างบัญชีผู้ใช้งาน';
+                elUsername.className = 'font-bold text-amber-600 dark:text-amber-400 text-sm';
+            } else {
+                const rawNid = String(person.national_id || '').replace(/\D/g, '');
+                const uname = String(person.username || '').trim();
+                const extraUser = (uname && uname !== rawNid) ? ` (Username: ${uname})` : '';
+                elUsername.textContent = `เชื่อมโยงบัญชีแล้ว • ใช้งานปกติ${extraUser}`;
+                elUsername.className = 'font-bold text-emerald-700 dark:text-emerald-400 text-sm';
+            }
         }
 
         const elPosType = document.getElementById('perResumePositionType');
