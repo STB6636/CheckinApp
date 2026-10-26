@@ -35,8 +35,33 @@
     </script>
     
     <!-- Custom Theme & Checkin Styles -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
+        /* Smooth vertical civic ambient gradient using BMA 9-color palette without pattern/clutter */
+        body.checkin-civic-gradient,
+        .checkin-civic-gradient {
+            background: 
+                radial-gradient(ellipse 70% 50% at 90% 8%, rgba(9, 113, 206, 0.14) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 8% 85%, rgba(235, 61, 169, 0.10) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 75%, rgba(255, 180, 73, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 15% 20%, rgba(72, 0, 128, 0.12) 0%, transparent 60%),
+                linear-gradient(180deg, #CDE5D8 0%, #DCECE3 22%, #E2EDF2 50%, #ECE6F3 75%, #DEEBE2 100%) !important;
+            background-color: #CDE5D8 !important;
+            min-height: 100vh !important;
+        }
+        html.dark body.checkin-civic-gradient,
+        html.dark .checkin-civic-gradient {
+            background: 
+                radial-gradient(ellipse 70% 50% at 90% 8%, rgba(9, 113, 206, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 8% 85%, rgba(235, 61, 169, 0.14) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 75%, rgba(255, 180, 73, 0.14) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 15% 20%, rgba(72, 0, 128, 0.20) 0%, transparent 60%),
+                linear-gradient(180deg, #071911 0%, #0D261B 22%, #0F212D 50%, #15162D 78%, #0B1120 100%) !important;
+            background-color: #071911 !important;
+            min-height: 100vh !important;
+        }
         .camera-portrait-3-4 {
             aspect-ratio: 3 / 4;
             max-height: 280px;
@@ -552,8 +577,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. หมายเหตุ / เหตุผลความจำเป็น *</label>
-                    <textarea id="spRemark" rows="3" class="bma-input text-sm rounded-xl resize-none" placeholder="เช่น ไปราชการนอกสถานที่ / อบรมสัมมนา / ปฏิบัติหน้าที่พิเศษ..." required></textarea>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. เลือกหมายเหตุ / เหตุผล *</label>
+                    <select id="spRemarkSelect" class="bma-select text-sm rounded-xl w-full" required></select>
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -569,8 +594,14 @@
     </div>
 
     <!-- Minimal Civic Footer -->
-    <footer class="mt-auto py-4 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800">
-        <p>ระบบลงเวลาปฏิบัติราชการออนไลน์ • สำนักเทศกิจ กรุงเทพมหานคร © พ.ศ. 2569</p>
+    <footer class="mt-auto py-4 px-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs text-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200/60 dark:border-slate-800">
+        <div>
+            <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
+            <span id="footerCheckinOrg" class="font-bold text-slate-800 dark:text-white">กรุงเทพมหานคร</span>
+            <span> • สังกัด </span>
+            <span id="footerCheckinBureau" class="text-[#00744B] dark:text-emerald-400 font-bold">สำนักเทศกิจ</span>
+        </div>
+        <div id="footerCheckinDesc" class="text-[11px] text-slate-400 mt-0.5"></div>
     </footer>
 
     <!-- Bootstrap Controller Script -->

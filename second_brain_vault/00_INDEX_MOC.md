@@ -19,6 +19,7 @@ _ยังไม่มีโน้ตแยกเฉพาะ (ดูดัช�
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
+- [[fix_v22_checkin_loading_hang_92_percent]] — Post-mortem V22: แก้ไขหน้าลงเวลาค้างที่ 92% จาก CDN Scripts และ DOM IDs ตกหล่นใน `checkin.html` (Flow 4, 6)
 
 ## 04 — Project Contexts
 - [[checkinapp_project_context]] — CheckinApp (BMA Check-in App V2.1–V2.7): โครงสร้างโปรเจกต์, Supabase, GitHub Pages และดัชนีกระบวนการทำงานทั้ง 12 Flows (`FLOW_AUTH_01` – `FLOW_USERS_01`)

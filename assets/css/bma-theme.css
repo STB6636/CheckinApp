@@ -1460,7 +1460,8 @@ html.dark #dashboardKpiCardsGrid .stat-card .mt-4 span {
 }
 html.dark #dashboardKpiCardsGrid .stat-card .stat-progress-track {
     background: #334155 !important;
-}
+}
+
 /* ============================================================================
  * Modal Visibility & Flex Centering Immunity Contract
  * ============================================================================ */
@@ -1626,3 +1627,37 @@ html.dark .bma-sticky-checkin-bar {
         padding: 0 !important;
     }
 }
+/* ============================================================================
+ * Sticky Check-in Bottom Action Bar (Plan V2.22)
+ * On mobile (<1024px), docked to bottom edge; on desktop (>=1024px), flows naturally
+ * ============================================================================ */
+.bma-sticky-checkin-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.08), 0 -8px 10px -6px rgba(0, 0, 0, 0.04);
+    padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+}
+html.dark .bma-sticky-checkin-bar {
+    background: rgba(17, 24, 22, 0.96);
+    border-top-color: rgba(51, 65, 85, 0.8);
+    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+@media (min-width: 1024px) {
+    .bma-sticky-checkin-bar {
+        position: static !important;
+        background: transparent !important;
+        border-top: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+}
+    }
+}
+

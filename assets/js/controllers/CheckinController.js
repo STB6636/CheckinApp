@@ -49,11 +49,16 @@ export class CheckinController {
         this.#bindEvents();
 
         UIHelpers.showLoading('กำลังเตรียมระบบลงเวลาปฏิบัติราชการ...');
-        this.settings = await SettingsModel.getSettings(false);
-        this.#renderUserAndSettingsInfo();
-        this.#applyDynamicWorkspaceLayout();
-        await this.#refreshAllAttendanceData();
-        UIHelpers.hideLoading();
+        try {
+            this.settings = await SettingsModel.getSettings(false);
+            this.#renderUserAndSettingsInfo();
+            this.#applyDynamicWorkspaceLayout();
+            await this.#refreshAllAttendanceData();
+        } catch (err) {
+            console.error('CheckinController initialization error:', err);
+        } finally {
+            UIHelpers.hideLoading();
+        }
 
         if (this.settings.require_photo) {
             this.#stopCameraAndShowStandby();
@@ -257,14 +262,19 @@ export class CheckinController {
     }
 
     #renderUserAndSettingsInfo() {
-        const org = this.settings.organization_name || 'กรุงเทพมหานคร';
-        const bureau = this.settings.bureau_name || 'สำนักเทศกิจ';
-        const footerDesc = this.settings.footer_description || '';
+        const org = this.settings?.organization_name || 'กรุงเทพมหานคร';
+        const bureau = this.settings?.bureau_name || 'สำนักเทศกิจ';
+        const footerDesc = this.settings?.footer_description || '';
 
-        document.getElementById('checkinOrgName').textContent = org;
-        document.getElementById('checkinBureauName').textContent = bureau;
-        document.getElementById('footerCheckinOrg').textContent = org;
-        document.getElementById('footerCheckinBureau').textContent = bureau;
+        const setElText = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        };
+
+        setElText('checkinOrgName', org);
+        setElText('checkinBureauName', bureau);
+        setElText('footerCheckinOrg', org);
+        setElText('footerCheckinBureau', bureau);
 
         const descEl = document.getElementById('footerCheckinDesc');
         if (descEl) {
@@ -272,27 +282,28 @@ export class CheckinController {
             descEl.classList.toggle('hidden', !footerDesc);
         }
 
-        if (this.settings.logo_url) {
-            document.getElementById('checkinLogoBox').innerHTML = `<img src="${this.settings.logo_url}" alt="Logo" class="w-full h-full object-contain rounded-xl bg-white p-0.5">`;
+        const logoBox = document.getElementById('checkinLogoBox');
+        if (this.settings?.logo_url && logoBox) {
+            logoBox.innerHTML = `<img src="${this.settings.logo_url}" alt="Logo" class="w-full h-full object-contain rounded-xl bg-white p-0.5">`;
         }
 
         if (['SuperAdmin', 'Admin'].includes(this.currentUser.role)) {
             document.getElementById('btnGoAdminDashboard')?.classList.remove('hidden');
         }
 
-        document.getElementById('userFullNameText').textContent = this.currentUser.full_name;
-        document.getElementById('userRoleBadge').textContent = this.currentUser.role;
+        setElText('userFullNameText', this.currentUser.full_name);
+        setElText('userRoleBadge', this.currentUser.role);
 
         const p = this.currentUser.personnel;
         if (p) {
-            document.getElementById('userPositionText').textContent = `${p.position_title} ${p.position_level ? 'ระดับ' + p.position_level : ''} (${p.position_type || '-'})`;
-            document.getElementById('userAffiliationText').textContent = `${p.organization} • ${p.bureau} • ${p.division} ${p.work_group ? '• ' + p.work_group : ''}`;
+            setElText('userPositionText', `${p.position_title} ${p.position_level ? 'ระดับ' + p.position_level : ''} (${p.position_type || '-'})`);
+            setElText('userAffiliationText', `${p.organization} • ${p.bureau} • ${p.division} ${p.work_group ? '• ' + p.work_group : ''}`);
         } else {
-            document.getElementById('userPositionText').textContent = `รหัสผู้ใช้งาน: ${this.currentUser.username}`;
-            document.getElementById('userAffiliationText').textContent = `${org} • ${this.currentUser.scope_bureau || bureau}`;
+            setElText('userPositionText', `รหัสผู้ใช้งาน: ${this.currentUser.username}`);
+            setElText('userAffiliationText', `${org} • ${this.currentUser.scope_bureau || bureau}`);
         }
 
-        const allShifts = this.settings.work_shifts || [];
+        const allShifts = this.settings?.work_shifts || [];
         const spSelect = document.getElementById('spShiftSelect');
         if (spSelect) {
             spSelect.innerHTML = allShifts.map((s, idx) =>
@@ -300,12 +311,18 @@ export class CheckinController {
             ).join('');
         }
 
-        const remarks = this.settings.remarks || [];
-        document.getElementById('spRemarkSelect').innerHTML = remarks.map(r =>
-            `<option value="${r}">${r}</option>`
-        ).join('');
+        const remarks = this.settings?.remarks || [];
+        const spRemarkSelect = document.getElementById('spRemarkSelect');
+        if (spRemarkSelect) {
+            spRemarkSelect.innerHTML = remarks.map(r =>
+                `<option value="${r}">${r}</option>`
+            ).join('');
+        }
 
-        document.getElementById('spWorkDate').value = UIHelpers.getTodayISO();
+        const spWorkDate = document.getElementById('spWorkDate');
+        if (spWorkDate) {
+            spWorkDate.value = UIHelpers.getTodayISO();
+        }
     }
 
     async #refreshAllAttendanceData() {

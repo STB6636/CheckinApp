@@ -51,3 +51,4 @@ linked_flows: ["FLOW_CHECKIN_01", "FLOW_CHECKIN_02", "FLOW_SPECIAL_01"]
 - **Thumb Reachability 100%:** ปุ่มลงเวลาอยู่ตำแหน่งธรรมชาติของนิ้วโป้งเสมอ
 - **100% Backward Compatibility:** DOM IDs เดิมทั้ง 93 สัญลักษณ์ใน `CheckinController.js` ทำงานได้ครบถ้วน
 - **Responsive Symmetry:** ประสบการณ์ใช้งานบนมือถือเทียบเท่า Mobile App ตัวจริง ขณะที่บนคอมพิวเตอร์มีพื้นที่ทำงานกว้างขวางและเป็นสัดส่วนด้วยระบบแท็บ
+
