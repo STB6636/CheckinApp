@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261026-codebase-mapping-v3"
+last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.0)
@@ -13,13 +13,16 @@ last_updated_phase: "PIPE-20261026-codebase-mapping-v3"
 ## 01 — Architecture Decisions (ADR)
 - [[adr_001_vscode_surgical_codebase_map]] — ADR-001: ระบบสารบัญโค้ดอัตโนมัติและการเข้าถึงไฟล์แบบเจาะจงบรรทัด (VS Code Surgical Context & Codebase Mapping v3.0)
 - [[adr_002_mobile_checkin_sticky_drawer]] — ADR-002: สถาปัตยกรรมหน้าลงเวลามือถือแบบ Zero-Scroll ด้วย Sticky Bottom Bar, Two-Tier Banner และ Hamburger History Drawer (Flow 1, 2, 4)
+- [[adr_003_double_layer_rbac_hierarchy]] — ADR-003: สถาปัตยกรรม Double-Layer RBAC 3 ระดับ (SuperAdmin, Admin กอง, Admin ฝ่าย) ใน AuthService.js และ ReportsController.js (`FLOW_AUTH_01`, `FLOW_REPORTS_01`, `FLOW_USERS_01`)
+- [[adr_004_checkin_viewport_lock_and_drawer]] — ADR-004: สถาปัตยกรรม Off-canvas Slide Drawer และ Zero-Scroll Viewport Lock บน checkin.html พร้อมการรักษา DOM IDs 98 จุด (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
 
 ## 02 — Domain Logic & Rules
-_ยังไม่มีโน้ตแยกเฉพาะ (ดูดัชนี `FLOW_AUTH_01` ถึง `FLOW_USERS_01` ใน [[checkinapp_project_context]] และ `.ai_map/00_PROCESS_FLOW_MAP.md`)_
+- [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
 - [[fix_v22_checkin_loading_hang_92_percent]] — Post-mortem V22: แก้ไขหน้าลงเวลาค้างที่ 92% จาก CDN Scripts และ DOM IDs ตกหล่นใน `checkin.html` (Flow 4, 6)
+- [[fix_attendance_model_missing_position_level]] — Post-mortem: แก้ไข Root Cause คีย์ position_level ตกหล่นใน AttendanceModel และการจัดรูปแบบตำแหน่ง+ระดับติดกันใน DashboardController (`FLOW_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_SPECIAL_REQ_01`)
 
 ## 04 — Project Contexts
 - [[checkinapp_project_context]] — CheckinApp (BMA Check-in App V2.1–V2.7): โครงสร้างโปรเจกต์, Supabase, GitHub Pages และดัชนีกระบวนการทำงานทั้ง 12 Flows (`FLOW_AUTH_01` – `FLOW_USERS_01`)
@@ -33,3 +36,6 @@ _ยังไม่มีโน้ตแยกเฉพาะ (ดูดัช�
 ## Skill Registry (`ai_skills_registry/`)
 - ดัชนีสกิล: `ai_skills_registry/SKILL_CATALOG.json`
 - [[vscode_surgical_codebase_mapping]] — VS Code Surgical Context & Automated AST Codebase Mapping (`v3.0.0`)
+- [[client_side_hierarchical_rbac]] — Client-Side 3-Tier Granular Permission Gate Pattern (`v1.0.0`)
+- [[offcanvas_drawer_race_free_tab_mounting]] — Zero-Scroll Viewport-Locked & Race-Free Mobile Slide Drawer Pattern (`v1.0.0`)
+- [[civil_servant_position_level_formatter]] — Civil Service Position & Level String Normalizer Pattern (`v1.0.0`)

@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T08:59:39.424Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `32` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `381`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T09:07:34.415Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `378`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -651,26 +651,6 @@
 | `<div#bmaFooterContainer>` | `html_dom_section` | **L158 - L158** | `id="bmaFooterContainer"` | HTML DOM Section L158-L158 |
 | `<div#modalUserAccountForm>` | `html_dom_section` | **L164 - L289** | `id="modalUserAccountForm"` | HTML DOM Section L164-L289 |
 | `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L291 - L291** | `<script>` | Bootstrap script L291-L291 |
-
----
-
-## File: `verify_qa.mjs`
-- **Layer:** Application Module
-- **Hash:** `b650761fead931e4` | **Total Lines:** `40` | **Imports:** `1` | **Exports:** `None`
-
-> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
-
----
-
-## File: `verify_suite.mjs`
-- **Layer:** Application Module
-- **Hash:** `43cafd7df8e4cc5f` | **Total Lines:** `273` | **Imports:** `3` | **Exports:** `None`
-
-| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
-| :--- | :--- | :--- | :--- | :--- |
-| `runTest` | `function` | **L12 - L22** | `(name, fn) => inferred` | Function L12-L22 |
-| `formatPosition` | `function` | **L56 - L60** | `(p) => inferred` | Function L56-L60 |
-| `assert` | `public method` | **L120 - L124** | `(reportsControllerJs.includes("if (this.isAdminDivision) => any` | public method L120-L124 (5 lines) |
 
 ---
 

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-26T08:59:39.424Z",
-  "totalFilesScanned": 32,
-  "totalSymbolsIndexed": 381,
+  "generatedAt": "2026-10-26T09:07:34.415Z",
+  "totalFilesScanned": 30,
+  "totalSymbolsIndexed": 378,
   "files": [
     {
       "filePath": "approvals.html",
@@ -3465,57 +3465,6 @@
           "endLine": 291,
           "signature": "<script>",
           "summary": "Bootstrap script L291-L291"
-        }
-      ]
-    },
-    {
-      "filePath": "verify_qa.mjs",
-      "layer": "Application Module",
-      "fileHash": "b650761fead931e4",
-      "totalLines": 40,
-      "importsCount": 1,
-      "importsPreview": [
-        "import fs from 'fs';"
-      ],
-      "exports": [],
-      "symbols": []
-    },
-    {
-      "filePath": "verify_suite.mjs",
-      "layer": "Application Module",
-      "fileHash": "43cafd7df8e4cc5f",
-      "totalLines": 273,
-      "importsCount": 3,
-      "importsPreview": [
-        "import fs from 'fs';",
-        "import assert from 'assert';",
-        "import { AuthService } from './assets/js/core/AuthService.js';"
-      ],
-      "exports": [],
-      "symbols": [
-        {
-          "name": "runTest",
-          "kind": "function",
-          "startLine": 12,
-          "endLine": 22,
-          "signature": "(name, fn) => inferred",
-          "summary": "Function L12-L22"
-        },
-        {
-          "name": "formatPosition",
-          "kind": "function",
-          "startLine": 56,
-          "endLine": 60,
-          "signature": "(p) => inferred",
-          "summary": "Function L56-L60"
-        },
-        {
-          "name": "assert",
-          "kind": "public method",
-          "startLine": 120,
-          "endLine": 124,
-          "signature": "(reportsControllerJs.includes(\"if (this.isAdminDivision) => any",
-          "summary": "public method L120-L124 (5 lines)"
         }
       ]
     }
