@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-26T04:42:14.568Z",
+  "generatedAt": "2026-10-26T06:05:06.041Z",
   "totalFilesScanned": 30,
-  "totalSymbolsIndexed": 367,
+  "totalSymbolsIndexed": 373,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "9571f56833b25f13",
-      "totalLines": 1182,
+      "fileHash": "3023ee9d110d693d",
+      "totalLines": 1247,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1178,
+          "endLine": 1243,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (1167 lines)"
+          "summary": "Class Definition (1232 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -480,25 +480,41 @@
           "name": "CheckinController.#bindEvents",
           "kind": "private method",
           "startLine": 849,
-          "endLine": 987,
+          "endLine": 1052,
           "signature": "() => any",
-          "summary": "private method L849-L987 (139 lines)"
+          "summary": "private method L849-L1052 (204 lines)"
+        },
+        {
+          "name": "setDesktopActiveTab",
+          "kind": "arrow_fn",
+          "startLine": 999,
+          "endLine": 1018,
+          "signature": "(activeName) => inferred",
+          "summary": "Arrow Function L999-L1018"
+        },
+        {
+          "name": "closeMobileDrawer",
+          "kind": "arrow_fn",
+          "startLine": 1037,
+          "endLine": 1045,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L1037-L1045"
         },
         {
           "name": "CheckinController.#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 989,
-          "endLine": 1114,
+          "startLine": 1054,
+          "endLine": 1179,
           "signature": "() => Promise<any>",
-          "summary": "private async method L989-L1114 (126 lines)"
+          "summary": "private async method L1054-L1179 (126 lines)"
         },
         {
           "name": "CheckinController.#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 1116,
-          "endLine": 1177,
+          "startLine": 1181,
+          "endLine": 1242,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L1116-L1177 (62 lines)"
+          "summary": "private async method L1181-L1242 (62 lines)"
         }
       ]
     },
@@ -2539,8 +2555,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b5ae9c004c1dc6ee",
-      "totalLines": 494,
+      "fileHash": "eacd1b7145748a5f",
+      "totalLines": 580,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2549,113 +2565,145 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 42,
+          "endLine": 46,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L42"
+          "summary": "HTML DOM Section L3-L46"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 80,
-          "endLine": 422,
+          "startLine": 108,
+          "endLine": 465,
           "signature": "<main>",
-          "summary": "HTML DOM Section L80-L422"
+          "summary": "HTML DOM Section L108-L465"
+        },
+        {
+          "name": "<div#checkinWorkspaceWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 111,
+          "endLine": 325,
+          "signature": "id=\"checkinWorkspaceWrapper\"",
+          "summary": "HTML DOM Section L111-L325"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 146,
-          "endLine": 198,
+          "startLine": 164,
+          "endLine": 221,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L146-L198"
+          "summary": "HTML DOM Section L164-L221"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 163,
-          "endLine": 173,
+          "startLine": 182,
+          "endLine": 194,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L163-L173"
+          "summary": "HTML DOM Section L182-L194"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 201,
-          "endLine": 296,
+          "startLine": 224,
+          "endLine": 322,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L201-L296"
+          "summary": "HTML DOM Section L224-L322"
         },
         {
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 204,
-          "endLine": 246,
+          "startLine": 227,
+          "endLine": 270,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L204-L246"
+          "summary": "HTML DOM Section L227-L270"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 227,
-          "endLine": 233,
+          "startLine": 251,
+          "endLine": 257,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L227-L233"
+          "summary": "HTML DOM Section L251-L257"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 249,
-          "endLine": 294,
+          "startLine": 273,
+          "endLine": 320,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L249-L294"
+          "summary": "HTML DOM Section L273-L320"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 259,
-          "endLine": 262,
+          "startLine": 283,
+          "endLine": 286,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L259-L262"
+          "summary": "HTML DOM Section L283-L286"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 264,
-          "endLine": 273,
+          "startLine": 288,
+          "endLine": 297,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L264-L273"
+          "summary": "HTML DOM Section L288-L297"
+        },
+        {
+          "name": "<div#desktopPanesContainer>",
+          "kind": "html_dom_section",
+          "startLine": 328,
+          "endLine": 463,
+          "signature": "id=\"desktopPanesContainer\"",
+          "summary": "HTML DOM Section L328-L463"
+        },
+        {
+          "name": "<div#desktopHistoryWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 331,
+          "endLine": 418,
+          "signature": "id=\"desktopHistoryWrapper\"",
+          "summary": "HTML DOM Section L331-L418"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 324,
-          "endLine": 341,
+          "startLine": 357,
+          "endLine": 374,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L324-L341"
+          "summary": "HTML DOM Section L357-L374"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 343,
-          "endLine": 383,
+          "startLine": 377,
+          "endLine": 415,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L343-L383"
+          "summary": "HTML DOM Section L377-L415"
+        },
+        {
+          "name": "<div#desktopSpecialWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 421,
+          "endLine": 461,
+          "signature": "id=\"desktopSpecialWrapper\"",
+          "summary": "HTML DOM Section L421-L461"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 454,
-          "endLine": 463,
+          "startLine": 543,
+          "endLine": 552,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L454-L463"
+          "summary": "HTML DOM Section L543-L552"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 492,
-          "endLine": 492,
+          "startLine": 577,
+          "endLine": 577,
           "signature": "<script>",
-          "summary": "Bootstrap script L492-L492"
+          "summary": "Bootstrap script L577-L577"
         }
       ]
     },

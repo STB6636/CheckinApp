@@ -12,6 +12,7 @@ last_updated_phase: "PIPE-20261026-codebase-mapping-v3"
 
 ## 01 — Architecture Decisions (ADR)
 - [[adr_001_vscode_surgical_codebase_map]] — ADR-001: ระบบสารบัญโค้ดอัตโนมัติและการเข้าถึงไฟล์แบบเจาะจงบรรทัด (VS Code Surgical Context & Codebase Mapping v3.0)
+- [[adr_002_mobile_checkin_sticky_drawer]] — ADR-002: สถาปัตยกรรมหน้าลงเวลามือถือแบบ Zero-Scroll ด้วย Sticky Bottom Bar, Two-Tier Banner และ Hamburger History Drawer (Flow 1, 2, 4)
 
 ## 02 — Domain Logic & Rules
 _ยังไม่มีโน้ตแยกเฉพาะ (ดูดัชนี `FLOW_AUTH_01` ถึง `FLOW_USERS_01` ใน [[checkinapp_project_context]] และ `.ai_map/00_PROCESS_FLOW_MAP.md`)_

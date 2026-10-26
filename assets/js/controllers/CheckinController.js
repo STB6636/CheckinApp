@@ -148,7 +148,7 @@ export class CheckinController {
             const clockEl = document.getElementById('liveClockDisplay');
             const dateEl = document.getElementById('liveDateDisplay');
             if (clockEl) {
-                clockEl.textContent = `${hh}:${mm}:${ss} น.`;
+                clockEl.textContent = `${hh}:${mm} น.`;
             }
             if (dateEl) {
                 dateEl.textContent = UIHelpers.formatThaiShortDate(UIHelpers.getTodayISO());
@@ -983,6 +983,71 @@ export class CheckinController {
         document.getElementById('formSpecialRequest')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.#handleSubmitSpecialRequest(closeSpecialModal);
+        });
+
+        // Desktop Top Navigation Tabs
+        const tabCheckin = document.getElementById('tabDesktopCheckin');
+        const tabHistory = document.getElementById('tabDesktopHistory');
+        const tabSpecial = document.getElementById('tabDesktopSpecial');
+        const paneCheckin = document.getElementById('checkinWorkspaceWrapper');
+        const paneHistory = document.getElementById('desktopHistoryWrapper');
+        const paneSpecial = document.getElementById('desktopSpecialWrapper');
+        const drawer = document.getElementById('mobileHistoryDrawer');
+        const drawerMount = document.getElementById('mobileDrawerHistoryMount');
+        const desktopPanes = document.getElementById('desktopPanesContainer');
+
+        const setDesktopActiveTab = (activeName) => {
+            const activeClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00744B] text-white flex items-center gap-2 shadow-xs transition cursor-pointer';
+            const inactiveClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer';
+
+            if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {
+                desktopPanes.appendChild(paneHistory);
+                desktopPanes.appendChild(paneSpecial);
+            }
+
+            if (tabCheckin) tabCheckin.className = activeName === 'checkin' ? activeClass : inactiveClass;
+            if (tabHistory) tabHistory.className = activeName === 'history' ? activeClass : inactiveClass;
+            if (tabSpecial) tabSpecial.className = activeName === 'special' ? activeClass : inactiveClass;
+
+            paneCheckin?.classList.toggle('hidden', activeName !== 'checkin');
+            paneHistory?.classList.toggle('hidden', activeName !== 'history');
+            paneSpecial?.classList.toggle('hidden', activeName !== 'special');
+
+            if (activeName === 'history') this.#renderPersonalAttendanceTabs();
+            if (activeName === 'special') this.#renderSpecialRequestsHistoryTable();
+        };
+
+        tabCheckin?.addEventListener('click', () => setDesktopActiveTab('checkin'));
+        tabHistory?.addEventListener('click', () => setDesktopActiveTab('history'));
+        tabSpecial?.addEventListener('click', () => setDesktopActiveTab('special'));
+
+        // Mobile Hamburger Drawer
+        document.getElementById('btnMobileHistoryMenu')?.addEventListener('click', () => {
+            if (drawerMount && paneHistory && paneSpecial) {
+                drawerMount.appendChild(paneHistory);
+                drawerMount.appendChild(paneSpecial);
+                paneHistory.classList.remove('hidden');
+                paneSpecial.classList.remove('hidden');
+            }
+            drawer?.classList.remove('hidden');
+            this.#renderPersonalAttendanceTabs();
+            this.#renderSpecialRequestsHistoryTable();
+        });
+
+        const closeMobileDrawer = () => {
+            drawer?.classList.add('hidden');
+            if (desktopPanes && paneHistory && paneSpecial) {
+                desktopPanes.appendChild(paneHistory);
+                desktopPanes.appendChild(paneSpecial);
+                paneHistory.classList.add('hidden');
+                paneSpecial.classList.add('hidden');
+            }
+        };
+
+        document.getElementById('btnCloseMobileDrawer')?.addEventListener('click', closeMobileDrawer);
+        document.getElementById('btnMobileHistoryDrawerBackdrop')?.addEventListener('click', closeMobileDrawer);
+        document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', () => {
+            modalSpecial?.classList.remove('hidden');
         });
     }
 

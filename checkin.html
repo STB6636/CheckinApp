@@ -1,42 +1,46 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบลงเวลาปฏิบัติราชการ (Smart Check-in) - กรุงเทพมหานคร</title>
+    
+    <!-- Google Fonts: Sarabun & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 Pro/Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class'
-        };
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bma: {
+                            gold: '#C5A059',
+                            dark: '#00351B',
+                            primary: '#00744B',
+                            light: '#00A368',
+                            accent: '#F2B82E'
+                        }
+                    }
+                }
+            }
+        }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Custom Theme & Checkin Styles -->
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
-        /* Smooth vertical civic ambient gradient using BMA 9-color palette without pattern/clutter */
-        body.checkin-civic-gradient,
-        .checkin-civic-gradient {
-            background: 
-                radial-gradient(ellipse 70% 50% at 90% 8%, rgba(9, 113, 206, 0.14) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 45% at 8% 85%, rgba(235, 61, 169, 0.10) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 85% 75%, rgba(255, 180, 73, 0.12) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 45% at 15% 20%, rgba(72, 0, 128, 0.12) 0%, transparent 60%),
-                linear-gradient(180deg, #CDE5D8 0%, #DCECE3 22%, #E2EDF2 50%, #ECE6F3 75%, #DEEBE2 100%) !important;
-            background-color: #CDE5D8 !important;
-            min-height: 100vh !important;
-        }
-        html.dark body.checkin-civic-gradient,
-        html.dark .checkin-civic-gradient {
-            background: 
-                radial-gradient(ellipse 70% 50% at 90% 8%, rgba(9, 113, 206, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 45% at 8% 85%, rgba(235, 61, 169, 0.14) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 85% 75%, rgba(255, 180, 73, 0.14) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 45% at 15% 20%, rgba(72, 0, 128, 0.20) 0%, transparent 60%),
-                linear-gradient(180deg, #071911 0%, #0D261B 22%, #0F212D 50%, #15162D 78%, #0B1120 100%) !important;
-            background-color: #071911 !important;
-            min-height: 100vh !important;
+        .camera-portrait-3-4 {
+            aspect-ratio: 3 / 4;
+            max-height: 280px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -58,6 +62,12 @@
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
+                <!-- Mobile Hamburger History Drawer Button (Mobile Only) -->
+                <button id="btnMobileHistoryMenu" type="button" class="inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-300 hover:bg-emerald-100 transition shadow-xs cursor-pointer" title="เมนูประวัติฯ">
+                    <i class="fa-solid fa-bars"></i>
+                    <span>เมนูประวัติฯ</span>
+                </button>
+
                 <a id="btnGoAdminDashboard" href="dashboard.html" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-300 hover:bg-emerald-100 transition shadow-xs">
                     <i class="fa-solid fa-gauge-high"></i>
                     <span class="hidden sm:inline">ระบบผู้ดูแล</span>
@@ -76,350 +86,429 @@
         </div>
     </header>
 
-    <!-- Main Check-in Workspace -->
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+    <!-- Desktop Navigation Tabs Bar (Visible on Desktop >= 1024px) -->
+    <nav class="hidden lg:block bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs sticky top-[61px] z-20">
+        <div class="max-w-5xl mx-auto px-4 lg:px-8 flex items-center gap-2 py-2.5">
+            <button type="button" id="tabDesktopCheckin" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00744B] text-white flex items-center gap-2 shadow-xs transition cursor-pointer">
+                <i class="fa-solid fa-fingerprint"></i>
+                <span>ลงเวลาปฏิบัติราชการ</span>
+            </button>
+            <button type="button" id="tabDesktopHistory" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>ตารางประวัติการลงเวลาส่วนตัว</span>
+            </button>
+            <button type="button" id="tabDesktopSpecial" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>ประวัติการขอลงเวลากรณีพิเศษ</span>
+            </button>
+        </div>
+    </nav>
 
-        <!-- Upper Workspace Section (Hero, Status & Punch-Clock Controls) -->
-        <div class="space-y-6">
+    <!-- Main Check-in Workspace Container (with extra bottom padding for mobile sticky bar) -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-4 sm:py-6 pb-28 lg:pb-8">
 
-            <!-- Material Dashboard PRO - Hero User Card with Live Digital Clock -->
-        <div class="relative bg-white dark:bg-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-200/80 dark:border-slate-700/60 overflow-hidden">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-extrabold shadow-lg bg-gradient-to-tr from-[#00744B] to-[#00C08A]">
-                        <i class="fa-solid fa-user-shield"></i>
+        <!-- 1. Check-in Workspace View -->
+        <div id="checkinWorkspaceWrapper" class="space-y-4">
+
+            <!-- Two-Tier Header: Tier 1 (Slim Name Banner) & Tier 2 (Balanced Clock Card) -->
+            <div class="space-y-2">
+                <!-- Tier 1: Slim Top Banner (Name & Role Only, minimal height) -->
+                <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] text-white rounded-xl px-3.5 py-1.5 shadow-sm flex items-center justify-between text-xs min-h-[34px]">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <i class="fa-solid fa-user-circle text-emerald-300 shrink-0 text-sm"></i>
+                        <span id="userFullNameText" class="font-bold truncate text-slate-100">กำลังโหลด...</span>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h2 id="userFullNameText" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-white">กำลังโหลดข้อมูล...</h2>
-                            <span id="userRoleBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-[#00744B] dark:text-emerald-300">User</span>
-                        </div>
-                        <p id="userPositionText" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium mt-0.5">-</p>
-                        <p id="userAffiliationText" class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">-</p>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <span id="userRoleBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white">User</span>
+                        <!-- Hidden metadata elements to preserve full CheckinController backward compatibility -->
+                        <span id="userPositionText" class="hidden"></span>
+                        <span id="userAffiliationText" class="hidden"></span>
                     </div>
                 </div>
 
-                <div class="w-full md:w-auto text-left md:text-right border-t md:border-t-0 pt-3 md:pt-0 border-slate-100 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-900/50 px-4 py-2.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
-                    <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center md:justify-end gap-1.5">
+                <!-- Tier 2: Balanced Live Clock Card (Small Date on top, hh:mm digital clock) -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-4 text-center shadow-md border border-slate-200/80 dark:border-slate-700/60 relative overflow-hidden">
+                    <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 mb-0.5">
                         <span class="w-2 h-2 rounded-full bg-[#00744B] animate-ping"></span>
-                        <span>เวลาราชการ (24 ชม.)</span>
+                        <span id="liveDateDisplay">-</span>
                     </div>
-                    <div id="liveClockDisplay" class="text-2xl sm:text-3xl font-extrabold tracking-widest text-[#00744B] dark:text-emerald-400 font-mono">00:00:00</div>
-                    <div id="liveDateDisplay" class="text-xs font-bold text-slate-600 dark:text-slate-300 mt-0.5">15 ม.ค. 69</div>
+                    <div id="liveClockDisplay" class="text-3xl sm:text-4xl font-extrabold tracking-wider text-[#00744B] dark:text-emerald-400 font-mono">
+                        00:00 น.
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Today Attendance Status Cards (Normal vs Out) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between border-l-4 border-l-[#00744B]">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm bg-gradient-to-tr from-[#00744B] to-[#00A368]">
-                        <i class="fa-solid fa-right-to-bracket"></i>
+            <!-- Today Attendance Status Cards (Normal vs Out) -->
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-4">
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#00744B]">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span id="todayCheckinCardTitle" class="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 truncate">เวลาเข้างาน</span>
+                        <span id="todayCheckinBadge" class="bma-badge bma-badge-warning text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">รอลงเวลาเข้า</span>
                     </div>
+                    <p id="todayCheckinTime" class="text-sm sm:text-lg font-extrabold text-slate-800 dark:text-white">ยังไม่ได้ลงเวลา</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#0971CE]">
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span id="todayCheckoutCardTitle" class="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 truncate">เวลาออกงาน</span>
+                        <span id="todayCheckoutBadge" class="bma-badge bma-badge-sky text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">รอลงเวลาออก</span>
+                    </div>
+                    <p id="todayCheckoutTime" class="text-sm sm:text-lg font-extrabold text-slate-800 dark:text-white">ยังไม่ได้ลงเวลา</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Workspace Grid: Camera, GPS & Check-in Controls -->
+            <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+
+                <!-- Camera Viewfinder Card (5/12) -->
+                <div id="cameraSectionCard" class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 flex flex-col justify-between">
                     <div>
-                        <span id="todayCheckinCardTitle" class="text-xs font-bold text-slate-500 dark:text-slate-400">เวลาเข้างานปกติวันนี้ (24 ชม.)</span>
-                        <p id="todayCheckinTime" class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white mt-0.5">ยังไม่ได้ลงเวลา</p>
-                    </div>
-                </div>
-                <span id="todayCheckinBadge" class="bma-badge bma-badge-warning text-xs font-bold px-3 py-1 rounded-full">รอลงเวลาเข้า</span>
-            </div>
-
-            <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between border-l-4 border-l-[#0971CE]">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm bg-gradient-to-tr from-[#0971CE] to-[#0284C7]">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </div>
-                    <div>
-                        <span id="todayCheckoutCardTitle" class="text-xs font-bold text-slate-500 dark:text-slate-400">เวลาออกงานปกติวันนี้ (24 ชม.)</span>
-                        <p id="todayCheckoutTime" class="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white mt-0.5">ยังไม่ได้ลงเวลา</p>
-                    </div>
-                </div>
-                <span id="todayCheckoutBadge" class="bma-badge bma-badge-sky text-xs font-bold px-3 py-1 rounded-full">รอลงเวลาออก</span>
-            </div>
-        </div>
-
-        <!-- Dynamic Workspace Grid: Camera, GPS & Check-in Controls -->
-        <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-
-            <!-- Camera Viewfinder Card (5/12) -->
-            <div id="cameraSectionCard" class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-5 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-3.5">
-                        <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white flex items-center gap-2">
-                            <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-xs shadow-xs">
-                                <i class="fa-solid fa-camera"></i>
-                            </span>
-                            <span>ภาพถ่ายยืนยันตัวตน (3:4)</span>
-                        </h3>
-                        <span id="photoRequirementBadge" class="bma-badge bma-badge-danger text-xs font-bold px-2.5 py-0.5 rounded-full">บังคับถ่ายภาพ</span>
-                    </div>
-
-                    <div class="camera-portrait-3-4 rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-900 flex items-center justify-center relative shadow-inner">
-                        <video id="cameraVideoStream" class="hidden w-full h-full object-cover" autoplay playsinline muted></video>
-                        <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
-                        <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="ภาพถ่ายลงเวลา 3:4">
-
-                        <div id="cameraStandbyOverlay" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 text-white p-5 text-center">
-                            <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center mb-3 shadow-lg">
-                                <i class="fa-solid fa-camera-retro text-2xl text-emerald-400"></i>
-                            </div>
-                            <p id="cameraStatusMessage" class="text-sm font-bold text-white">กล้องถูกปิดไว้ชั่วคราว</p>
-                            <p class="text-xs text-slate-400 mt-1 mb-4">กรุณากดปุ่มเปิดกล้องเมื่อต้องการถ่ายรูปยืนยันตัวตน</p>
-                            <button type="button" id="btnStartCameraOverlay" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
-                                <i class="fa-solid fa-video"></i>
-                                <span>เปิดกล้องเพื่อถ่ายรูป</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 flex items-center justify-center gap-2.5">
-                    <button type="button" id="btnStartCameraBottom" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
-                        <i class="fa-solid fa-video"></i>
-                        <span>เปิดกล้องเพื่อถ่ายรูป</span>
-                    </button>
-
-                    <button type="button" id="btnCapturePhoto" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer hidden">
-                        <i class="fa-solid fa-camera text-base text-yellow-300"></i>
-                        <span>ถ่ายภาพ</span>
-                    </button>
-
-                    <button type="button" id="btnStopCamera" class="inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition cursor-pointer hidden" title="ปิดกล้อง">
-                        <i class="fa-solid fa-video-slash"></i>
-                        <span>ปิดกล้อง</span>
-                    </button>
-
-                    <button type="button" id="btnRetakePhoto" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-white dark:bg-slate-700 border-2 border-[#00744B] text-[#00744B] dark:text-emerald-300 hover:bg-emerald-50 transition cursor-pointer hidden">
-                        <i class="fa-solid fa-rotate-right"></i>
-                        <span>ถ่ายใหม่อีกครั้ง</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right Column: GPS + Action Controls (7/12) -->
-            <div id="rightColumnWrapper" class="lg:col-span-7 flex flex-col justify-between gap-6">
-
-                <!-- GPS & Real-time Location Card -->
-                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-5 space-y-3.5 flex flex-col justify-between">
-                    <div class="space-y-3.5">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] flex items-center justify-center text-xs shadow-xs">
-                                    <i class="fa-solid fa-location-crosshairs"></i>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-xs shadow-xs">
+                                    <i class="fa-solid fa-camera"></i>
                                 </span>
-                                <span>ตำแหน่งสถานที่ปฏิบัติงาน (GPS &amp; Map)</span>
+                                <span>ภาพถ่ายยืนยันตัวตน (3:4)</span>
                             </h3>
-                            <span id="gpsRequirementBadge" class="bma-badge bma-badge-danger text-xs font-bold px-2.5 py-0.5 rounded-full">บังคับเปิด GPS</span>
+                            <span id="photoRequirementBadge" class="bma-badge bma-badge-danger text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">บังคับถ่ายภาพ</span>
                         </div>
 
-                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1.5 text-xs">
-                            <div class="flex items-start justify-between gap-2">
-                                <span class="text-slate-500 font-bold whitespace-nowrap">สถานที่ปฏิบัติงาน:</span>
-                                <span id="gpsLocationNameText" class="font-extrabold text-xs sm:text-sm text-[#00744B] dark:text-emerald-400 text-right">กำลังระบุชื่อสถานที่...</span>
-                            </div>
-                            <div class="flex items-start justify-between gap-2">
-                                <span class="text-slate-500 font-bold whitespace-nowrap">พิกัด (Lat, Lng):</span>
-                                <span id="gpsCoordsText" class="font-mono font-bold text-slate-600 dark:text-slate-300 text-right">กำลังค้นหาสัญญาณ GPS...</span>
-                            </div>
-                        </div>
+                        <div class="camera-portrait-3-4 rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-900 flex items-center justify-center relative shadow-inner">
+                            <video id="cameraVideoStream" class="hidden w-full h-full object-cover" autoplay playsinline muted></video>
+                            <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
+                            <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="Captured Portrait">
 
-                        <div id="googleMapEmbedWrapper" class="w-full h-44 sm:h-48 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 flex items-center justify-center relative shadow-inner">
-                            <div id="googleMapPlaceholder" class="text-xs text-slate-400 flex flex-col items-center gap-1.5">
-                                <i class="fa-solid fa-map-location-dot text-2xl text-[#00744B]"></i>
-                                <span>กำลังโหลดแผนที่ Google Map...</span>
+                            <!-- Standby & Hint Overlay -->
+                            <div id="cameraStandbyOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center text-white bg-slate-900/80 backdrop-blur-xs">
+                                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mb-2 text-[#00C08A] shadow-inner">
+                                    <i class="fa-solid fa-camera text-xl"></i>
+                                </div>
+                                <h4 class="text-xs sm:text-sm font-bold">กล้องพร้อมใช้งาน</h4>
+                                <p id="cameraStatusMessage" class="text-[10px] sm:text-xs text-slate-300 mt-1 max-w-xs leading-relaxed">
+                                    กดปุ่มด้านล่างเพื่อเปิดกล้องแล้วบันทึกภาพถ่ายยืนยันตัวตน
+                                </p>
+                                <button type="button" id="btnStartCameraOverlay" class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg transition cursor-pointer">
+                                    <i class="fa-solid fa-video"></i>
+                                    <span>เปิดกล้องเพื่อถ่ายรูป</span>
+                                </button>
                             </div>
-                            <iframe id="googleMapRealtimeIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between gap-2 pt-2">
-                        <button type="button" id="btnRefreshGps" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer w-full">
-                            <i class="fa-solid fa-location-arrow text-[#00744B]"></i>
-                            <span>ตรวจสอบพิกัด GPS อีกครั้ง</span>
-                        </button>
-                        <a id="linkViewGoogleMap" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] hover:bg-sky-100 transition whitespace-nowrap hidden no-underline">
-                            <i class="fa-solid fa-up-right-from-square"></i>
-                            <span>เปิดแผนที่</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Shift Selection & Action Button Card -->
-                <div id="checkinActionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-5 space-y-4 flex flex-col justify-between">
-                    <div class="space-y-3.5">
-                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 flex flex-wrap items-center justify-between gap-2 text-xs">
-                            <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-sliders text-[#00744B]"></i>
-                                <span>เงื่อนไขการบันทึกเวลา:</span>
-                            </span>
-                            <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success text-xs font-bold px-2.5 py-0.5 rounded-full">รูปแบบปกติ</span>
-                        </div>
-
-                        <div id="shiftSelectorContainer">
-                            <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">เลือกช่วงเวลาทำงาน</label>
-                            <select id="checkinShiftSelect" class="bma-select text-sm font-semibold rounded-xl w-full"></select>
-                        </div>
-
-                        <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเข้างาน (24 ชม.) *</label>
-                                <input type="text" id="mainCustomCheckin" class="bma-input text-sm font-mono text-center rounded-xl" value="08:30" placeholder="08:30">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเลิกงาน (24 ชม.) *</label>
-                                <input type="text" id="mainCustomCheckout" class="bma-input text-sm font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
-                            </div>
-                        </div>
-
-                        <div id="regularCompletedNoticeBox" class="hidden p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
-                            <i class="fa-solid fa-circle-info mr-1"></i>
-                            <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2.5 pt-2">
-                        <!-- Hero Primary Checkin Button -->
-                        <button type="button" id="btnSubmitCheckinMain" class="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-base font-extrabold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-xl shadow-emerald-900/30 transition transform hover:-translate-y-0.5 cursor-pointer">
-                            <i class="fa-solid fa-fingerprint text-xl text-yellow-300"></i>
-                            <span id="btnSubmitCheckinLabel">บันทึกลงเวลาเข้าปฏิบัติงาน</span>
+                    <!-- Camera Control Buttons -->
+                    <div class="mt-3.5 space-y-2">
+                        <button type="button" id="btnStartCameraBottom" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] hover:bg-emerald-100 transition cursor-pointer border border-emerald-500/30">
+                            <i class="fa-solid fa-camera"></i>
+                            <span>เปิดกล้องเพื่อถ่ายรูป</span>
                         </button>
 
-                        <!-- Special Request Button -->
-                        <button type="button" id="btnOpenSpecialRequestModal" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 transition cursor-pointer border border-indigo-200 dark:border-indigo-800/40">
-                            <i class="fa-solid fa-calendar-plus"></i>
-                            <span>ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)</span>
+                        <button type="button" id="btnCapturePhoto" class="hidden w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-md transition cursor-pointer">
+                            <i class="fa-solid fa-camera-retro"></i>
+                            <span>ถ่ายภาพเดี๋ยวนี้</span>
                         </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        </div>
-
-        <!-- Material Dashboard PRO - Personal History Card with Dual Tabs -->
-        <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-14 sm:mt-16 mb-8 sm:mb-10">
-            <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base sm:text-lg font-extrabold tracking-wide text-white">ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว</h3>
-                        <p class="text-xs text-emerald-100/90 font-medium mt-0.5">สลับแท็บเพื่อดูรายการลงเวลาเฉพาะวันปัจจุบัน หรือดูประวัติการลงเวลาย้อนหลัง</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-2 p-1 rounded-xl bg-white/20 backdrop-blur-md self-start sm:self-auto">
-                    <button type="button" id="btnTabTodayHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-white text-[#00744B] shadow-xs cursor-pointer">
-                        <i class="fa-solid fa-calendar-day mr-1"></i>วันปัจจุบัน (<span id="todayHistoryCountBadge">0</span>)
-                    </button>
-                    <button type="button" id="btnTabPastHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition text-white hover:bg-white/10 cursor-pointer">
-                        <i class="fa-solid fa-clock-rotate-left mr-1"></i>ย้อนหลัง (<span id="pastHistoryCountBadge">0</span>)
-                    </button>
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-6 space-y-4">
-                <div id="todayHistoryTabPanel" class="space-y-3">
-                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                        <table class="bma-table text-sm w-full text-left">
-                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                <tr>
-                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                    <th class="min-w-[120px] py-3.5 px-3">วันที่</th>
-                                    <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
-                                    <th class="w-28 text-center py-3.5 px-3">เวลาเข้างาน</th>
-                                    <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">สถานที่ปฏิบัติงาน</th>
-                                    <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="todayPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="pastHistoryTabPanel" class="hidden space-y-3">
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 text-xs">
-                        <div class="flex items-center gap-2">
-                            <label for="selectPastPageSize" class="font-bold text-slate-700 dark:text-slate-300">แสดงข้อมูลหน้าละ:</label>
-                            <select id="selectPastPageSize" class="bma-select w-auto py-1 px-3 text-xs font-bold rounded-lg">
-                                <option value="5">5 แถว</option>
-                                <option value="10">10 แถว</option>
-                                <option value="15">15 แถว</option>
-                            </select>
-                        </div>
 
                         <div class="flex items-center gap-2">
-                            <button type="button" id="btnPastPrevPage" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition cursor-pointer shadow-xs">
-                                <i class="fa-solid fa-chevron-left"></i>
-                                <span>ก่อนหน้า</span>
+                            <button type="button" id="btnRetakePhoto" class="hidden flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span>ถ่ายรูปใหม่</span>
                             </button>
-                            <span id="pastPageInfoText" class="font-bold text-slate-700 dark:text-slate-300 px-2.5">หน้า 1 / 1</span>
-                            <button type="button" id="btnPastNextPage" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white transition cursor-pointer shadow-xs">
-                                <span>หน้าถัดไป</span>
-                                <i class="fa-solid fa-chevron-right"></i>
+                            <button type="button" id="btnStopCamera" class="hidden flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 hover:bg-rose-100 transition cursor-pointer">
+                                <i class="fa-solid fa-stop"></i>
+                                <span>ปิดกล้อง</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: GPS Location Card & Action Controls (7/12) -->
+                <div id="rightColumnWrapper" class="lg:col-span-7 flex flex-col justify-between gap-4 sm:gap-6">
+
+                    <!-- GPS Location Card -->
+                    <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 space-y-3 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] flex items-center justify-center text-xs shadow-xs">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </span>
+                                    <span>ข้อมูลพิกัดและสถานที่ (GPS)</span>
+                                </h3>
+                                <span id="gpsRequirementBadge" class="bma-badge bma-badge-sky text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">บันทึกพิกัดจริง</span>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1.5 text-xs">
+                                <div class="flex items-start justify-between gap-2">
+                                    <span class="text-slate-500 dark:text-slate-400 font-semibold shrink-0">พิกัดละติจูด, ลองจิจูด:</span>
+                                    <span id="gpsCoordsText" class="font-mono font-bold text-slate-700 dark:text-slate-200 text-right truncate">กำลังระบุตำแหน่ง...</span>
+                                </div>
+                                <div class="flex items-start justify-between gap-2">
+                                    <span class="text-slate-500 dark:text-slate-400 font-semibold shrink-0">สถานที่ใกล้เคียง:</span>
+                                    <span id="gpsLocationNameText" class="font-extrabold text-[#00744B] dark:text-emerald-400 text-right truncate">กำลังค้นหาชื่อสถานที่...</span>
+                                </div>
+                            </div>
+
+                            <!-- Embedded Realtime Google Map Viewfinder -->
+                            <div id="googleMapEmbedWrapper" class="mt-2.5 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 h-28 sm:h-36 relative bg-slate-100 dark:bg-slate-900 shadow-inner">
+                                <div id="googleMapPlaceholder" class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 text-xs">
+                                    <i class="fa-solid fa-map-location-dot text-2xl text-slate-300 dark:text-slate-600 mb-1"></i>
+                                    <span>กำลังโหลดแผนที่ Google Map...</span>
+                                </div>
+                                <iframe id="googleMapRealtimeIframe" class="hidden w-full h-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2 pt-1">
+                            <button type="button" id="btnRefreshGps" class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer w-full">
+                                <i class="fa-solid fa-location-arrow text-[#00744B]"></i>
+                                <span>ตรวจสอบพิกัด GPS อีกครั้ง</span>
+                            </button>
+                            <a id="linkViewGoogleMap" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] hover:bg-sky-100 transition whitespace-nowrap hidden no-underline">
+                                <i class="fa-solid fa-up-right-from-square"></i>
+                                <span>เปิดแผนที่</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Shift Selection & Action Button Card -->
+                    <div id="checkinActionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 space-y-3.5 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-sliders text-[#00744B]"></i>
+                                    <span>เงื่อนไขการบันทึกเวลา:</span>
+                                </span>
+                                <span id="checkinRecordingModeTag" class="bma-badge bma-badge-success text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">รูปแบบปกติ</span>
+                            </div>
+
+                            <div id="shiftSelectorContainer">
+                                <label id="checkinShiftSelectLabel" for="checkinShiftSelect" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เลือกช่วงเวลาทำงาน</label>
+                                <select id="checkinShiftSelect" class="bma-select text-sm font-semibold rounded-xl w-full"></select>
+                            </div>
+
+                            <div id="mainCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเข้างาน (24 ชม.) *</label>
+                                    <input type="text" id="mainCustomCheckin" class="bma-input text-sm font-mono text-center rounded-xl" value="08:30" placeholder="08:30">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเลิกงาน (24 ชม.) *</label>
+                                    <input type="text" id="mainCustomCheckout" class="bma-input text-sm font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
+                                </div>
+                            </div>
+
+                            <div id="regularCompletedNoticeBox" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                                <i class="fa-solid fa-circle-info mr-1"></i>
+                                <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2.5 pt-2">
+                            <!-- Hero Primary Checkin Button (Sticky docked at mobile bottom edge, static within card on desktop) -->
+                            <div class="bma-sticky-checkin-bar">
+                                <button type="button" id="btnSubmitCheckinMain" class="w-full inline-flex items-center justify-center gap-2 py-3.5 sm:py-4 px-6 rounded-2xl text-base font-extrabold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-xl shadow-emerald-900/30 transition transform hover:-translate-y-0.5 cursor-pointer">
+                                    <i class="fa-solid fa-fingerprint text-xl text-yellow-300"></i>
+                                    <span id="btnSubmitCheckinLabel">บันทึกลงเวลาเข้าปฏิบัติงาน</span>
+                                </button>
+                            </div>
+
+                            <!-- Special Request Button (Desktop only on action card; on mobile accessible via Hamburger Drawer) -->
+                            <button type="button" id="btnOpenSpecialRequestModal" class="hidden lg:inline-flex w-full items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 transition cursor-pointer border border-indigo-200 dark:border-indigo-800/40">
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                <span>ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                        <table class="bma-table text-sm w-full text-left">
-                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                <tr>
-                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                    <th class="min-w-[120px] py-3.5 px-3">วันที่</th>
-                                    <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
-                                    <th class="w-28 text-center py-3.5 px-3">เวลาเข้างาน</th>
-                                    <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">สถานที่ปฏิบัติงาน</th>
-                                    <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pastPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
+
         </div>
 
-        <!-- Special Requests History Card -->
-        <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-14 sm:mt-16 mb-8 sm:mb-10">
-            <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] text-white shadow-lg shadow-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
-                        <i class="fa-solid fa-file-signature"></i>
+        <!-- Desktop Tab Containers (Also adopted by Mobile Hamburger Drawer when opened) -->
+        <div id="desktopPanesContainer">
+
+            <!-- 2. Personal Attendance History Card (Desktop Tab 2) -->
+            <div id="desktopHistoryWrapper" class="hidden">
+                <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                    <div class="-mt-4 mx-3 sm:mx-6 rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-extrabold tracking-wide text-white">ตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว</h3>
+                                <p class="text-xs text-emerald-100/90 font-medium mt-0.5">สลับแท็บเพื่อดูรายการลงเวลาเฉพาะวันปัจจุบัน หรือดูประวัติการลงเวลาย้อนหลัง</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 p-1 rounded-xl bg-white/20 backdrop-blur-md self-start sm:self-auto">
+                            <button type="button" id="btnTabTodayHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-white text-[#00744B] shadow-xs cursor-pointer">
+                                <i class="fa-solid fa-calendar-day mr-1"></i>วันปัจจุบัน (<span id="todayHistoryCountBadge">0</span>)
+                            </button>
+                            <button type="button" id="btnTabPastHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition text-white hover:bg-white/10 cursor-pointer">
+                                <i class="fa-solid fa-clock-rotate-left mr-1"></i>ย้อนหลัง (<span id="pastHistoryCountBadge">0</span>)
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-base sm:text-lg font-extrabold tracking-wide text-white">ตารางประวัติการขอลงเวลากรณีพิเศษ</h3>
-                        <p class="text-xs text-purple-200/90 font-medium mt-0.5">แสดงสถานะการอนุมัติหรือปฏิเสธคำขอลงเวลากรณีพิเศษ</p>
+
+                    <!-- History Tab Panels -->
+                    <div class="p-3 sm:p-6">
+                        <!-- Panel วันปัจจุบัน -->
+                        <div id="todayHistoryTabPanel" class="space-y-4">
+                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                <table class="bma-table text-sm w-full text-left">
+                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                        <tr>
+                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                            <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
+                                            <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
+                                            <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
+                                            <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
+                                            <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
+                                            <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="todayPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Panel ย้อนหลัง -->
+                        <div id="pastHistoryTabPanel" class="space-y-4 hidden">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <label for="selectPastPageSize" class="font-bold text-slate-700 dark:text-slate-300">แสดงหน้าละ:</label>
+                                    <select id="selectPastPageSize" class="bma-select text-xs py-1 px-2.5 rounded-lg">
+                                        <option value="5" selected>5 รายการ</option>
+                                        <option value="10">10 รายการ</option>
+                                        <option value="20">20 รายการ</option>
+                                    </select>
+                                </div>
+                                <span id="pastPageInfoText" class="font-bold text-slate-500 dark:text-slate-400">หน้า 1 / 1</span>
+                            </div>
+
+                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                <table class="bma-table text-sm w-full text-left">
+                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                        <tr>
+                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                            <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
+                                            <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
+                                            <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
+                                            <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
+                                            <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
+                                            <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pastPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                </table>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2">
+                                <button type="button" id="btnPastPrevPage" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <i class="fa-solid fa-chevron-left"></i> หน้าก่อนหน้า
+                                </button>
+                                <button type="button" id="btnPastNextPage" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                                    หน้าถัดไป <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <span id="specialRequestTotalBadge" class="bma-badge bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full self-start sm:self-auto">0 รายการ</span>
             </div>
 
-            <div class="p-4 sm:p-6">
-                <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                    <table class="bma-table text-sm w-full text-left">
-                        <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                            <tr>
-                                <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                <th class="min-w-[120px] py-3.5 px-3">วันที่ขอลงเวลา</th>
-                                <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
-                                <th class="w-36 text-center py-3.5 px-3">เวลาเข้า - เลิกงาน</th>
-                                <th class="min-w-[180px] py-3.5 px-3">หมายเหตุ / เหตุผล</th>
-                                <th class="w-32 text-center py-3.5 px-3">สถานะคำขอ</th>
-                                <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="personalSpecialRequestsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                    </table>
+            <!-- 3. Special Requests History Card (Desktop Tab 3) -->
+            <div id="desktopSpecialWrapper" class="hidden">
+                <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                    <div class="-mt-4 mx-3 sm:mx-6 rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] text-white shadow-lg shadow-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-lg font-extrabold tracking-wide text-white">ตารางประวัติการขอลงเวลากรณีพิเศษ</h3>
+                                <p class="text-xs text-purple-200/90 font-medium mt-0.5">แสดงสถานะการอนุมัติหรือปฏิเสธคำขอลงเวลากรณีพิเศษ</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 self-start sm:self-auto">
+                            <button type="button" id="btnOpenSpecialFromDesktopTab" onclick="document.getElementById('modalSpecialRequest')?.classList.remove('hidden')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white flex items-center gap-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>+ ยื่นขอลงเวลาใหม่</span>
+                            </button>
+                            <span id="specialRequestTotalBadge" class="bma-badge bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">0 รายการ</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 sm:p-6">
+                        <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                            <table class="bma-table text-sm w-full text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                        <th class="min-w-[120px] py-3.5 px-3">วันที่ขอลงเวลา</th>
+                                        <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
+                                        <th class="w-36 text-center py-3.5 px-3">เวลาเข้า - เลิกงาน</th>
+                                        <th class="min-w-[180px] py-3.5 px-3">หมายเหตุ / เหตุผล</th>
+                                        <th class="w-32 text-center py-3.5 px-3">สถานะคำขอ</th>
+                                        <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="personalSpecialRequestsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
 
     </main>
+
+    <!-- Mobile Hamburger History Drawer (Off-Canvas) -->
+    <div id="mobileHistoryDrawer" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div id="btnMobileHistoryDrawerBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity cursor-pointer"></div>
+
+        <!-- Off-canvas Drawer Panel -->
+        <div class="absolute inset-y-0 right-0 max-w-full w-full sm:w-[580px] bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col z-10 overflow-hidden">
+            <!-- Drawer Header -->
+            <div class="p-4 bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex items-center justify-between shrink-0 shadow-md">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-sm shadow-inner">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base leading-tight">เมนูประวัติและคำขอพิเศษ</h3>
+                        <p class="text-[11px] text-emerald-200/90 font-medium">ดูประวัติการลงเวลาและยื่นคำขอกรณีพิเศษ</p>
+                    </div>
+                </div>
+                <button type="button" id="btnCloseMobileDrawer" class="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center cursor-pointer transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <!-- Drawer Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Quick Action: ยื่นขอลงเวลากรณีพิเศษ -->
+                <div class="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/40 space-y-2 shadow-xs">
+                    <div class="text-xs font-extrabold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-calendar-plus text-indigo-600 dark:text-indigo-400"></i>
+                        <span>ยื่นขอลงเวลากรณีพิเศษ</span>
+                    </div>
+                    <p class="text-[11px] text-indigo-700 dark:text-indigo-300 leading-relaxed">
+                        สำหรับกรณีไปราชการนอกสถานที่ หรือมีเหตุจำเป็นที่ไม่สามารถลงเวลาปกติได้ ระบบจะลงเวลาเข้าและเลิกงานให้อัตโนมัติหลังได้รับอนุมัติ
+                    </p>
+                    <button type="button" id="btnOpenSpecialRequestDrawer" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm cursor-pointer transition">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>กรอกแบบคำขอลงเวลากรณีพิเศษ</span>
+                    </button>
+                </div>
+
+                <!-- Dynamic Mount Container for History Cards in Drawer -->
+                <div id="mobileDrawerHistoryMount" class="space-y-6"></div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal ขอลงเวลากรณีพิเศษ -->
     <div id="modalSpecialRequest" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
@@ -443,52 +532,48 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">1. เลือกวันที่ปฏิบัติราชการ *</label>
-                    <input type="date" id="spWorkDate" class="bma-input rounded-xl" required>
+                    <input type="date" id="spWorkDate" class="bma-input text-sm rounded-xl" required>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">2. เลือกช่วงเวลาทำงาน *</label>
-                    <select id="spShiftSelect" class="bma-select font-semibold rounded-xl" required></select>
+                    <select id="spShiftSelect" class="bma-select text-sm rounded-xl w-full" required></select>
                 </div>
 
-                <div id="spCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                <div id="spCustomTimeContainer" class="hidden grid grid-cols-2 gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ระบุเวลาเข้างาน (24 ชม.) *</label>
-                        <input type="text" id="spCustomCheckin" class="bma-input font-mono text-center rounded-xl" value="08:30" placeholder="08:30">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเข้างาน *</label>
+                        <input type="text" id="spCustomCheckin" class="bma-input text-sm font-mono text-center rounded-xl" value="08:30" placeholder="08:30">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ระบุเวลาเลิกงาน (24 ชม.) *</label>
-                        <input type="text" id="spCustomCheckout" class="bma-input font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเลิกงาน *</label>
+                        <input type="text" id="spCustomCheckout" class="bma-input text-sm font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. เลือกหมายเหตุ / เหตุผล *</label>
-                    <select id="spRemarkSelect" class="bma-select rounded-xl" required></select>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. หมายเหตุ / เหตุผลความจำเป็น *</label>
+                    <textarea id="spRemark" rows="3" class="bma-input text-sm rounded-xl resize-none" placeholder="เช่น ไปราชการนอกสถานที่ / อบรมสัมมนา / ปฏิบัติหน้าที่พิเศษ..." required></textarea>
                 </div>
 
-                <div class="pt-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
-                    <button type="button" id="btnCancelSpecialModal" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
-                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>ส่งคำขออนุมัติ</span>
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" id="btnCancelSpecialModal" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="btnSubmitSpecialModal" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg shadow-emerald-900/30 transition cursor-pointer">
+                        ส่งคำขอลงเวลากรณีพิเศษ
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="w-full py-4 px-6 bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 text-center mt-8 text-xs text-slate-500">
-        <div>
-            <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
-            <span id="footerCheckinOrg" class="font-bold text-slate-800 dark:text-white">กรุงเทพมหานคร</span>
-            <span> • สังกัด </span>
-            <span id="footerCheckinBureau" class="text-[#00744B] dark:text-emerald-400 font-bold">สำนักเทศกิจ</span>
-        </div>
-        <div id="footerCheckinDesc" class="text-[11px] text-slate-400 mt-0.5"></div>
+    <!-- Minimal Civic Footer -->
+    <footer class="mt-auto py-4 text-center text-xs text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-slate-800">
+        <p>ระบบลงเวลาปฏิบัติราชการออนไลน์ • สำนักเทศกิจ กรุงเทพมหานคร © พ.ศ. 2569</p>
     </footer>
 
+    <!-- Bootstrap Controller Script -->
     <script type="module" src="assets/js/controllers/CheckinController.js"></script>
 </body>
 </html>

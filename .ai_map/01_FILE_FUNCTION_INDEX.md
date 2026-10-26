@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T04:42:14.568Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `367`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T06:05:06.041Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `373`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,11 +64,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `9571f56833b25f13` | **Total Lines:** `1182` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `3023ee9d110d693d` | **Total Lines:** `1247` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L1178** | `export class CheckinController` | Class Definition (1167 lines) |
+| `CheckinController` | `class` | **L12 - L1243** | `export class CheckinController` | Class Definition (1232 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L37** | `() => any` | public constructor L13-L37 (25 lines) |
 | `CheckinController.init` | `public async method` | **L39 - L75** | `() => Promise<any>` | public async method L39-L75 (37 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L77 - L117** | `() => any` | private method L77-L117 (41 lines) |
@@ -90,9 +90,11 @@
 | `CheckinController.#capturePhotoAndStopStream` | `private method` | **L715 - L745** | `() => any` | private method L715-L745 (31 lines) |
 | `CheckinController.#resetPageAfterSave` | `private async method` | **L747 - L755** | `() => Promise<any>` | private async method L747-L755 (9 lines) |
 | `CheckinController.#initGpsLocation` | `private async method` | **L763 - L847** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `CheckinController.#bindEvents` | `private method` | **L849 - L987** | `() => any` | private method L849-L987 (139 lines) |
-| `CheckinController.#handleMainCheckin` | `private async method` | **L989 - L1114** | `() => Promise<any>` | private async method L989-L1114 (126 lines) |
-| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1116 - L1177** | `(closeModalCallback) => Promise<any>` | private async method L1116-L1177 (62 lines) |
+| `CheckinController.#bindEvents` | `private method` | **L849 - L1052** | `() => any` | private method L849-L1052 (204 lines) |
+| `setDesktopActiveTab` | `arrow_fn` | **L999 - L1018** | `(activeName) => inferred` | Arrow Function L999-L1018 |
+| `closeMobileDrawer` | `arrow_fn` | **L1037 - L1045** | `() => inferred` | Arrow Function L1037-L1045 |
+| `CheckinController.#handleMainCheckin` | `private async method` | **L1054 - L1179** | `() => Promise<any>` | private async method L1054-L1179 (126 lines) |
+| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1181 - L1242** | `(closeModalCallback) => Promise<any>` | private async method L1181-L1242 (62 lines) |
 
 ---
 
@@ -448,24 +450,28 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b5ae9c004c1dc6ee` | **Total Lines:** `494` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `eacd1b7145748a5f` | **Total Lines:** `580` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L42** | `<head>` | HTML DOM Section L3-L42 |
-| `<main>` | `html_dom_section` | **L80 - L422** | `<main>` | HTML DOM Section L80-L422 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L146 - L198** | `id="cameraSectionCard"` | HTML DOM Section L146-L198 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L163 - L173** | `id="cameraStandbyOverlay"` | HTML DOM Section L163-L173 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L201 - L296** | `id="rightColumnWrapper"` | HTML DOM Section L201-L296 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L204 - L246** | `id="gpsSectionCard"` | HTML DOM Section L204-L246 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L227 - L233** | `id="googleMapEmbedWrapper"` | HTML DOM Section L227-L233 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L249 - L294** | `id="checkinActionCard"` | HTML DOM Section L249-L294 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L259 - L262** | `id="shiftSelectorContainer"` | HTML DOM Section L259-L262 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L264 - L273** | `id="mainCustomTimeContainer"` | HTML DOM Section L264-L273 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L324 - L341** | `id="todayHistoryTabPanel"` | HTML DOM Section L324-L341 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L343 - L383** | `id="pastHistoryTabPanel"` | HTML DOM Section L343-L383 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L454 - L463** | `id="spCustomTimeContainer"` | HTML DOM Section L454-L463 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L492 - L492** | `<script>` | Bootstrap script L492-L492 |
+| `<head>` | `html_dom_section` | **L3 - L46** | `<head>` | HTML DOM Section L3-L46 |
+| `<main>` | `html_dom_section` | **L108 - L465** | `<main>` | HTML DOM Section L108-L465 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L111 - L325** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L111-L325 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L164 - L221** | `id="cameraSectionCard"` | HTML DOM Section L164-L221 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L182 - L194** | `id="cameraStandbyOverlay"` | HTML DOM Section L182-L194 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L224 - L322** | `id="rightColumnWrapper"` | HTML DOM Section L224-L322 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L227 - L270** | `id="gpsSectionCard"` | HTML DOM Section L227-L270 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L251 - L257** | `id="googleMapEmbedWrapper"` | HTML DOM Section L251-L257 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L273 - L320** | `id="checkinActionCard"` | HTML DOM Section L273-L320 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L283 - L286** | `id="shiftSelectorContainer"` | HTML DOM Section L283-L286 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L288 - L297** | `id="mainCustomTimeContainer"` | HTML DOM Section L288-L297 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L328 - L463** | `id="desktopPanesContainer"` | HTML DOM Section L328-L463 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L331 - L418** | `id="desktopHistoryWrapper"` | HTML DOM Section L331-L418 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L357 - L374** | `id="todayHistoryTabPanel"` | HTML DOM Section L357-L374 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L377 - L415** | `id="pastHistoryTabPanel"` | HTML DOM Section L377-L415 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L421 - L461** | `id="desktopSpecialWrapper"` | HTML DOM Section L421-L461 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L543 - L552** | `id="spCustomTimeContainer"` | HTML DOM Section L543-L552 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L577 - L577** | `<script>` | Bootstrap script L577-L577 |
 
 ---
 
