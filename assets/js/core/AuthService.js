@@ -346,4 +346,26 @@ export class AuthService {
         }
         return false;
     }
+
+    static canEditAttendanceRecord(currentUser, record = null) {
+        if (!currentUser) return false;
+        if (currentUser.role === 'SuperAdmin') return true;
+        if (currentUser.role === 'Admin') {
+            // Admin ขอบเขต สำนักงาน/กอง สามารถแก้ไขข้อมูลได้
+            if (currentUser.visibility_level === 'bureau' || currentUser.visibility_level === 'all') {
+                return record ? AuthService.canViewRecordByScope(currentUser, record) : true;
+            }
+            // Admin ขอบเขต ส่วน/ฝ่าย ไม่สามารถแก้ไขได้
+            return false;
+        }
+        return false;
+    }
+
+    static canDeleteAttendanceRecord(currentUser, record = null) {
+        if (!currentUser) return false;
+        // เฉพาะ SuperAdmin เท่านั้นที่สามารถลบข้อมูลการลงเวลาได้
+        if (currentUser.role === 'SuperAdmin') return true;
+        // Admin ทุกขอบเขต (ทั้ง สำนักงาน/กอง และ ส่วน/ฝ่าย) ลบไม่ได้
+        return false;
+    }
 }

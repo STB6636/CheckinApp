@@ -34,6 +34,18 @@ export class ReportsController {
         this.currentUser = layout.currentUser;
         this.settings = layout.settings || await SettingsModel.getSettings(false);
 
+        // สิทธิ์ 3 ระดับ: SuperAdmin = แก้+ลบ, Admin กอง = แก้ได้ ห้ามลบ, Admin ฝ่าย = Read-only
+        this.isSuperAdmin = this.currentUser.role === 'SuperAdmin';
+        this.isAdminBureau = this.currentUser.role === 'Admin' && this.currentUser.visibility_level !== 'division';
+        this.isAdminDivision = this.currentUser.role === 'Admin' && this.currentUser.visibility_level === 'division';
+        this.canAddRecord = this.isSuperAdmin || this.isAdminBureau;
+        this.canManageRecords = this.isSuperAdmin || this.isAdminBureau;
+
+        const btnAdd = document.getElementById('btnOpenAddReportRecord');
+        if (btnAdd) {
+            btnAdd.classList.toggle('hidden', !this.canAddRecord);
+        }
+
         const mobileShortcutEl = document.getElementById('reportMobileShortcutContainer');
         if (mobileShortcutEl) {
             mobileShortcutEl.innerHTML = AppLayout.getMobileShortcutGridHtml(this.currentUser);
@@ -136,7 +148,10 @@ export class ReportsController {
     #populatePersonnelDropdown() {
         const selectEl = document.getElementById('repPersonnelSelect');
         if (!selectEl) return;
-        selectEl.innerHTML = this.allPersonnel.map(p =>
+        const allowedPersonnel = this.isSuperAdmin
+            ? (this.allPersonnel || [])
+            : (this.allPersonnel || []).filter(p => AuthService.canViewRecordByScope(this.currentUser, p));
+        selectEl.innerHTML = allowedPersonnel.map(p =>
             `<option value="${p.id}">${p.prefix}${p.first_name} ${p.last_name} (${p.division})</option>`
         ).join('');
     }
@@ -288,7 +303,7 @@ export class ReportsController {
                                 <th class="w-28 text-center">เวลาออกงาน</th>
                                 <th class="min-w-[200px]">พิกัด GPS</th>
                                 <th class="min-w-[140px]">หมายเหตุ</th>
-                                <th class="w-24 text-center no-print">จัดการ</th>
+                                ${this.canManageRecords ? '<th class="w-24 text-center no-print">จัดการ</th>' : ''}
                             </tr>
                         </thead>
                         <tbody>
@@ -301,7 +316,7 @@ export class ReportsController {
     }
 
     #buildGroupedRowsForTag(tagRecords, groupHeaderColor, forPrintPdf) {
-        const colSpan = forPrintPdf ? 7 : 8;
+        const colSpan = (forPrintPdf || !this.canManageRecords) ? 7 : 8;
         if (!tagRecords || tagRecords.length === 0) {
             return `<tr><td colspan="${colSpan}" class="text-center py-6 bma-text-sub">ไม่มีข้อมูลบุคลากรในสถานะนี้</td></tr>`;
         }
@@ -390,16 +405,20 @@ export class ReportsController {
                 <td class="text-xs text-slate-600 dark:text-slate-300">
                     ${remarkDisplay}
                 </td>
+${this.canManageRecords ? `
                 <td class="text-center space-x-1 whitespace-nowrap no-print">
-                    <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    ${rec.log_id ? `
+                    ${AuthService.canEditAttendanceRecord(this.currentUser, rec) ? `
+                        <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    ` : ''}
+                    ${(AuthService.canDeleteAttendanceRecord(this.currentUser, rec) && rec.log_id) ? `
                         <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${rec.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     ` : ''}
                 </td>
+                ` : ''}
             </tr>
         `;
     }
@@ -584,6 +603,21 @@ export class ReportsController {
     }
 
     #openModal(rec = null) {
+        if (!rec && !this.canAddRecord) {
+            UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'ผู้ดูแลระบบระดับส่วน/ฝ่าย ไม่มีสิทธิ์เพิ่มข้อมูลการลงเวลา', 'warning');
+            return;
+        }
+        if (rec) {
+            if (this.isAdminDivision) {
+                UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'ผู้ดูแลระบบระดับส่วน/ฝ่าย ไม่มีสิทธิ์แก้ไขข้อมูลการลงเวลา', 'warning');
+                return;
+            }
+            if (!this.isSuperAdmin && !AuthService.canViewRecordByScope(this.currentUser, rec)) {
+                UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'คุณไม่มีสิทธิ์แก้ไขข้อมูลของบุคลากรนอกสังกัดที่ได้รับมอบหมาย', 'warning');
+                return;
+            }
+        }
+        this.#populatePersonnelDropdown();
         const modal = document.getElementById('modalReportAttendance');
         const defaultDate = document.getElementById('reportSingleDateInput')?.value || UIHelpers.getTodayISO();
 
@@ -750,8 +784,19 @@ export class ReportsController {
                 if (action === 'edit-record') {
                     const rowUid = btn.dataset.rowUid;
                     const rec = this.records.find(r => r.row_uid === rowUid);
-                    if (rec) this.#openModal(rec);
+                    if (!rec) return;
+
+                    if (!AuthService.canEditAttendanceRecord(this.currentUser, rec)) {
+                        UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'คุณไม่มีสิทธิ์แก้ไขข้อมูลการลงเวลาของรายการนี้', 'warning');
+                        return;
+                    }
+
+                    this.#openModal(rec);
                 } else if (action === 'delete-record') {
+                    if (!AuthService.canDeleteAttendanceRecord(this.currentUser)) {
+                        UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'เฉพาะผู้ดูแลระบบระดับสูงสุด (SuperAdmin) เท่านั้นที่สามารถลบข้อมูลการลงเวลาได้', 'warning');
+                        return;
+                    }
                     const logId = btn.dataset.logid;
                     const name = btn.dataset.name;
                     const confirmed = await UIHelpers.confirm(
@@ -783,9 +828,21 @@ export class ReportsController {
     }
 
     async #handleSaveReportRecord() {
+        if (this.isAdminDivision) {
+            await UIHelpers.alert('ไม่มีสิทธิ์ดำเนินการ', 'ผู้ดูแลระบบระดับส่วน/ฝ่าย ไม่มีสิทธิ์เพิ่มหรือแก้ไขข้อมูลการลงเวลา', 'warning');
+            return;
+        }
+
+        const selectedPersonnelId = document.getElementById('repPersonnelSelect').value;
+        const targetPerson = (this.allPersonnel || []).find(p => p.id === selectedPersonnelId);
+        if (!this.isSuperAdmin && targetPerson && !AuthService.canViewRecordByScope(this.currentUser, targetPerson)) {
+            await UIHelpers.alert('ไม่มีสิทธิ์ดำเนินการ', 'ไม่สามารถบันทึกข้อมูลบุคลากรนอกสังกัดที่ได้รับมอบหมายได้', 'warning');
+            return;
+        }
+
         const payload = {
             log_id: document.getElementById('repLogId').value || null,
-            personnel_id: document.getElementById('repPersonnelSelect').value,
+            personnel_id: selectedPersonnelId,
             work_date: document.getElementById('repWorkDate').value,
             check_in_time: UIHelpers.formatTime24(document.getElementById('repCheckinTime').value),
             check_out_time: UIHelpers.formatTime24(document.getElementById('repCheckoutTime').value),

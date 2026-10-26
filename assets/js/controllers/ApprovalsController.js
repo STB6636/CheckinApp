@@ -135,7 +135,9 @@ export class ApprovalsController {
     #buildRequestRowHtml(req, indexNo) {
         const p = req.personnel || {};
         const fullName = p.first_name ? `${p.prefix}${p.first_name} ${p.last_name}` : 'ไม่ระบุชื่อบุคลากร';
-        const posFull = p.position_title ? `${p.position_title}${p.position_level ? ' ระดับ' + p.position_level : ''}` : '-';
+        const cleanTitle = (p.position_title || '').trim();
+        const cleanLevel = (p.position_level || '').replace(/^ระดับ\s*/, '').trim();
+        const posFull = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || (p.position_full || '').replace(/\s*ระดับ\s*/g, '').trim() || '-');
         const timeRange = `${req.check_in_time ? req.check_in_time.slice(0, 5) : '-'} - ${req.check_out_time ? req.check_out_time.slice(0, 5) : '-'} น.`;
         const isPending = req.approval_status === 'pending';
         const isChecked = this.selectedIds.has(req.id) ? 'checked' : '';
@@ -144,11 +146,11 @@ export class ApprovalsController {
         if (isPending) {
             commandColHtml = `
                 <div class="flex items-center justify-center gap-1.5">
-                    <button type="button" data-action="approve-single" data-id="${req.id}" class="btn-bma-primary py-1.5 px-3 text-xs">
-                        <i class="fa-solid fa-check"></i> อนุมัติ
+                    <button type="button" data-action="approve-single" data-id="${req.id}" class="w-8.5 h-8.5 rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 shadow-xs flex items-center justify-center transition cursor-pointer" title="อนุมัติ">
+                        <i class="fa-solid fa-check text-sm"></i>
                     </button>
-                    <button type="button" data-action="reject-single" data-id="${req.id}" class="btn-bma-outline py-1.5 px-3 text-xs text-rose-500 border-rose-500/40">
-                        <i class="fa-solid fa-xmark"></i> ไม่อนุมัติ
+                    <button type="button" data-action="reject-single" data-id="${req.id}" class="w-8.5 h-8.5 rounded-lg text-white bg-rose-600 hover:bg-rose-700 active:scale-95 shadow-xs flex items-center justify-center transition cursor-pointer" title="ไม่อนุมัติ">
+                        <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
             `;

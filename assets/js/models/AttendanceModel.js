@@ -1347,6 +1347,7 @@ export class AttendanceModel {
             full_name: `${person.prefix}${person.first_name} ${person.last_name}`,
             position_type: person.position_type,
             position_title: person.position_title,
+            position_level: person.position_level,
             position_full: (() => {
                 const cleanTitle = (person.position_title || '').trim();
                 const cleanLevel = (person.position_level || '').replace(/^ระดับ\s*/, '').trim();

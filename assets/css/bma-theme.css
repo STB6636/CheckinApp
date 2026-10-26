@@ -409,6 +409,7 @@ html.dark .bma-modal-surface {
 .camera-portrait-3-4 {
     width: 100%;
     max-width: 300px;
+    max-height: 220px;
     aspect-ratio: 3 / 4;
     margin-left: auto;
     margin-right: auto;
@@ -1628,36 +1629,31 @@ html.dark .bma-sticky-checkin-bar {
     }
 }
 /* ============================================================================
- * Sticky Check-in Bottom Action Bar (Plan V2.22)
- * On mobile (<1024px), docked to bottom edge; on desktop (>=1024px), flows naturally
+ * Checkin Mobile Viewport Lock Utilities (Zero-Scroll Lock)
  * ============================================================================ */
-.bma-sticky-checkin-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 40;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    background: rgba(255, 255, 255, 0.96);
-    border-top: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.08), 0 -8px 10px -6px rgba(0, 0, 0, 0.04);
-    padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
-}
-html.dark .bma-sticky-checkin-bar {
-    background: rgba(17, 24, 22, 0.96);
-    border-top-color: rgba(51, 65, 85, 0.8);
-    box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.4);
+@media (max-width: 1023px) {
+    body.checkin-viewport-lock {
+        min-height: 100dvh;
+        max-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 @media (min-width: 1024px) {
-    .bma-sticky-checkin-bar {
-        position: static !important;
-        background: transparent !important;
-        border-top: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
+    body.checkin-viewport-lock {
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden;
+    }
+    body.checkin-viewport-lock main {
+        height: calc(100dvh - 105px);
+        max-height: calc(100dvh - 105px);
+        overflow-y: auto;
     }
 }
-    }
-}
+
+/* Single Action Icon Buttons (w-8.5 h-8.5 / 34px) */
+.w-8\.5 { width: 2.125rem; }
+.h-8\.5 { height: 2.125rem; }
 

@@ -131,6 +131,14 @@ export class CheckinController {
         if (label) {
             label.textContent = isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา';
         }
+        const drawerIcon = document.getElementById('drawerThemeIcon');
+        const drawerLabel = document.getElementById('drawerThemeLabel');
+        if (drawerIcon) {
+            drawerIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+        if (drawerLabel) {
+            drawerLabel.textContent = isDark ? 'โหมดสว่าง' : 'โหมดถนอมสายตา';
+        }
     }
 
     #checkAndShowWelcomeToast() {
@@ -289,6 +297,15 @@ export class CheckinController {
 
         if (['SuperAdmin', 'Admin'].includes(this.currentUser.role)) {
             document.getElementById('btnGoAdminDashboard')?.classList.remove('hidden');
+            document.getElementById('drawerLinkAdminDashboard')?.classList.remove('hidden');
+        }
+
+        setElText('drawerUserFullName', this.currentUser.full_name);
+        setElText('drawerUserRole', this.currentUser.role);
+        if (p) {
+            setElText('drawerUserAffiliation', `${p.organization || ''} • ${p.bureau || ''}`);
+        } else {
+            setElText('drawerUserAffiliation', `${org} • ${this.currentUser.scope_bureau || bureau}`);
         }
 
         setElText('userFullNameText', this.currentUser.full_name);
@@ -889,6 +906,25 @@ export class CheckinController {
             }
         });
 
+        document.getElementById('btnDrawerThemeToggle')?.addEventListener('click', () => {
+            UIHelpers.toggleTheme();
+            this.#updateThemeButtonUI();
+        });
+
+        document.getElementById('btnDrawerLogout')?.addEventListener('click', async () => {
+            const confirmed = await UIHelpers.confirm(
+                'ยืนยันการออกจากระบบ',
+                'คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?',
+                'ออกจากระบบ',
+                'question'
+            );
+            if (confirmed) {
+                this.#stopCameraHardwareStream();
+                AuthService.clearSession();
+                window.location.replace(UIHelpers.getRootBasePath());
+            }
+        });
+
         document.getElementById('btnStartCameraOverlay')?.addEventListener('click', () => this.#openCameraOnDemand());
         document.getElementById('btnStartCameraBottom')?.addEventListener('click', () => this.#openCameraOnDemand());
         document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
@@ -1038,8 +1074,13 @@ export class CheckinController {
         tabHistory?.addEventListener('click', () => setDesktopActiveTab('history'));
         tabSpecial?.addEventListener('click', () => setDesktopActiveTab('special'));
 
-        // Mobile Hamburger Drawer
-        document.getElementById('btnMobileHistoryMenu')?.addEventListener('click', () => {
+        // Mobile Hamburger Off-canvas Slide Drawer
+        const drawerPanel = document.getElementById('mobileDrawerPanel');
+        const drawerBackdrop = document.getElementById('btnMobileHistoryDrawerBackdrop');
+        let isDrawerClosing = false;
+
+        const openMobileDrawer = () => {
+            if (isDrawerClosing) return;
             if (drawerMount && paneHistory && paneSpecial) {
                 drawerMount.appendChild(paneHistory);
                 drawerMount.appendChild(paneSpecial);
@@ -1047,22 +1088,59 @@ export class CheckinController {
                 paneSpecial.classList.remove('hidden');
             }
             drawer?.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                drawerBackdrop?.classList.remove('opacity-0');
+                drawerBackdrop?.classList.add('opacity-100');
+                drawerPanel?.classList.remove('translate-x-full');
+                drawerPanel?.classList.add('translate-x-0');
+            });
             this.#renderPersonalAttendanceTabs();
             this.#renderSpecialRequestsHistoryTable();
-        });
-
-        const closeMobileDrawer = () => {
-            drawer?.classList.add('hidden');
-            if (desktopPanes && paneHistory && paneSpecial) {
-                desktopPanes.appendChild(paneHistory);
-                desktopPanes.appendChild(paneSpecial);
-                paneHistory.classList.add('hidden');
-                paneSpecial.classList.add('hidden');
-            }
         };
 
-        document.getElementById('btnCloseMobileDrawer')?.addEventListener('click', closeMobileDrawer);
-        document.getElementById('btnMobileHistoryDrawerBackdrop')?.addEventListener('click', closeMobileDrawer);
+        const closeMobileDrawer = (targetTab = null) => {
+            if (isDrawerClosing) return;
+            isDrawerClosing = true;
+
+            drawerBackdrop?.classList.remove('opacity-100');
+            drawerBackdrop?.classList.add('opacity-0');
+            drawerPanel?.classList.remove('translate-x-0');
+            drawerPanel?.classList.add('translate-x-full');
+
+            setTimeout(() => {
+                drawer?.classList.add('hidden');
+                if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {
+                    desktopPanes.appendChild(paneHistory);
+                    desktopPanes.appendChild(paneSpecial);
+                }
+                if (targetTab) {
+                    setDesktopActiveTab(targetTab);
+                } else {
+                    const isHistoryActive = tabHistory?.classList.contains('bg-[#00744B]');
+                    const isSpecialActive = tabSpecial?.classList.contains('bg-[#00744B]');
+                    paneHistory?.classList.toggle('hidden', !isHistoryActive);
+                    paneSpecial?.classList.toggle('hidden', !isSpecialActive);
+                }
+                isDrawerClosing = false;
+            }, 300);
+        };
+
+        document.getElementById('btnMobileHistoryMenu')?.addEventListener('click', openMobileDrawer);
+        document.getElementById('btnCloseMobileDrawer')?.addEventListener('click', () => closeMobileDrawer());
+        document.getElementById('btnMobileHistoryDrawerBackdrop')?.addEventListener('click', () => closeMobileDrawer());
+
+        document.getElementById('btnDrawerNavCheckin')?.addEventListener('click', () => closeMobileDrawer('checkin'));
+        document.getElementById('btnDrawerNavHistory')?.addEventListener('click', () => {
+            if (paneHistory) {
+                paneHistory.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+        document.getElementById('btnDrawerNavSpecial')?.addEventListener('click', () => {
+            if (paneSpecial) {
+                paneSpecial.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
         document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', () => {
             modalSpecial?.classList.remove('hidden');
         });

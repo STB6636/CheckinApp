@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T06:26:12.652Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `374`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T08:59:39.424Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `32` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `381`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f6e95be31089d036` | **Total Lines:** `123` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8a14cb01f0d9d539` | **Total Lines:** `123` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -46,62 +46,63 @@
 
 ## File: `assets/js/controllers/ApprovalsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `9b31aeeefe31b0d6` | **Total Lines:** `277` | **Imports:** `3` | **Exports:** `ApprovalsController`
+- **Hash:** `3a33be265e987154` | **Total Lines:** `279` | **Imports:** `3` | **Exports:** `ApprovalsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ApprovalsController` | `class` | **L10 - L273** | `export class ApprovalsController` | Class Definition (264 lines) |
+| `ApprovalsController` | `class` | **L10 - L275** | `export class ApprovalsController` | Class Definition (266 lines) |
 | `ApprovalsController.constructor` | `public constructor` | **L11 - L17** | `() => any` | public constructor L11-L17 (7 lines) |
 | `ApprovalsController.init` | `public async method` | **L19 - L31** | `() => Promise<any>` | public async method L19-L31 (13 lines) |
 | `ApprovalsController.loadRequests` | `public async method` | **L33 - L50** | `() => Promise<any>` | public async method L33-L50 (18 lines) |
 | `ApprovalsController.#updateBulkSelectionCount` | `private method` | **L52 - L62** | `() => any` | private method L52-L62 (11 lines) |
 | `ApprovalsController.#renderGroupedApprovalsTable` | `private method` | **L69 - L133** | `() => any` | - 'group': สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน |
-| `ApprovalsController.#buildRequestRowHtml` | `private method` | **L135 - L179** | `(req, indexNo) => any` | private method L135-L179 (45 lines) |
-| `ApprovalsController.#bindEvents` | `private method` | **L181 - L238** | `() => any` | private method L181-L238 (58 lines) |
-| `ApprovalsController.#processDecision` | `private async method` | **L240 - L272** | `(ids, decision) => Promise<any>` | private async method L240-L272 (33 lines) |
+| `ApprovalsController.#buildRequestRowHtml` | `private method` | **L135 - L181** | `(req, indexNo) => any` | private method L135-L181 (47 lines) |
+| `ApprovalsController.#bindEvents` | `private method` | **L183 - L240** | `() => any` | private method L183-L240 (58 lines) |
+| `ApprovalsController.#processDecision` | `private async method` | **L242 - L274** | `(ids, decision) => Promise<any>` | private async method L242-L274 (33 lines) |
 
 ---
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `6f326edc686ba99e` | **Total Lines:** `1264` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `72a36d8e85d898f3` | **Total Lines:** `1342` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L1260** | `export class CheckinController` | Class Definition (1249 lines) |
+| `CheckinController` | `class` | **L12 - L1338** | `export class CheckinController` | Class Definition (1327 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L37** | `() => any` | public constructor L13-L37 (25 lines) |
 | `CheckinController.init` | `public async method` | **L39 - L80** | `() => Promise<any>` | public async method L39-L80 (42 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L82 - L122** | `() => any` | private method L82-L122 (41 lines) |
-| `CheckinController.#updateThemeButtonUI` | `private method` | **L124 - L134** | `() => any` | private method L124-L134 (11 lines) |
-| `CheckinController.#checkAndShowWelcomeToast` | `private method` | **L136 - L144** | `() => any` | private method L136-L144 (9 lines) |
-| `CheckinController.#startLiveClock24` | `private method` | **L146 - L173** | `() => any` | private method L146-L173 (28 lines) |
-| `updateClock` | `arrow_fn` | **L147 - L170** | `() => inferred` | Arrow Function L147-L170 |
-| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L175 - L195** | `(shift, nowMin, allowStartMin) => any` | private method L175-L195 (21 lines) |
-| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L197 - L262** | `() => any` | private method L197-L262 (66 lines) |
-| `CheckinController.#renderUserAndSettingsInfo` | `private method` | **L264 - L326** | `() => any` | private method L264-L326 (63 lines) |
-| `setElText` | `arrow_fn` | **L269 - L272** | `(id, text) => inferred` | Arrow Function L269-L272 |
-| `CheckinController.#refreshAllAttendanceData` | `private async method` | **L328 - L345** | `() => Promise<any>` | private async method L328-L345 (18 lines) |
-| `CheckinController.#updateStatusCardsAndMainButton` | `private method` | **L347 - L532** | `() => any` | private method L347-L532 (186 lines) |
-| `CheckinController.#renderPersonalAttendanceTabs` | `private method` | **L534 - L577** | `() => any` | private method L534-L577 (44 lines) |
-| `CheckinController.#buildHistoryRowHtml` | `private method` | **L579 - L598** | `(item, rowNumber) => any` | private method L579-L598 (20 lines) |
-| `CheckinController.#renderSpecialRequestsHistoryTable` | `private method` | **L600 - L642** | `() => any` | private method L600-L642 (43 lines) |
-| `CheckinController.#stopCameraHardwareStream` | `private method` | **L644 - L654** | `() => any` | private method L644-L654 (11 lines) |
-| `CheckinController.#stopCameraAndShowStandby` | `private method` | **L656 - L680** | `() => any` | private method L656-L680 (25 lines) |
-| `CheckinController.#openCameraOnDemand` | `private async method` | **L682 - L730** | `() => Promise<any>` | private async method L682-L730 (49 lines) |
-| `CheckinController.#capturePhotoAndStopStream` | `private method` | **L732 - L762** | `() => any` | private method L732-L762 (31 lines) |
-| `CheckinController.#resetPageAfterSave` | `private async method` | **L764 - L772** | `() => Promise<any>` | private async method L764-L772 (9 lines) |
-| `CheckinController.#initGpsLocation` | `private async method` | **L780 - L864** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `CheckinController.#bindEvents` | `private method` | **L866 - L1069** | `() => any` | private method L866-L1069 (204 lines) |
-| `setDesktopActiveTab` | `arrow_fn` | **L1016 - L1035** | `(activeName) => inferred` | Arrow Function L1016-L1035 |
-| `closeMobileDrawer` | `arrow_fn` | **L1054 - L1062** | `() => inferred` | Arrow Function L1054-L1062 |
-| `CheckinController.#handleMainCheckin` | `private async method` | **L1071 - L1196** | `() => Promise<any>` | private async method L1071-L1196 (126 lines) |
-| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1198 - L1259** | `(closeModalCallback) => Promise<any>` | private async method L1198-L1259 (62 lines) |
+| `CheckinController.#updateThemeButtonUI` | `private method` | **L124 - L142** | `() => any` | private method L124-L142 (19 lines) |
+| `CheckinController.#checkAndShowWelcomeToast` | `private method` | **L144 - L152** | `() => any` | private method L144-L152 (9 lines) |
+| `CheckinController.#startLiveClock24` | `private method` | **L154 - L181** | `() => any` | private method L154-L181 (28 lines) |
+| `updateClock` | `arrow_fn` | **L155 - L178** | `() => inferred` | Arrow Function L155-L178 |
+| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L183 - L203** | `(shift, nowMin, allowStartMin) => any` | private method L183-L203 (21 lines) |
+| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L205 - L270** | `() => any` | private method L205-L270 (66 lines) |
+| `CheckinController.#renderUserAndSettingsInfo` | `private method` | **L272 - L343** | `() => any` | private method L272-L343 (72 lines) |
+| `setElText` | `arrow_fn` | **L277 - L280** | `(id, text) => inferred` | Arrow Function L277-L280 |
+| `CheckinController.#refreshAllAttendanceData` | `private async method` | **L345 - L362** | `() => Promise<any>` | private async method L345-L362 (18 lines) |
+| `CheckinController.#updateStatusCardsAndMainButton` | `private method` | **L364 - L549** | `() => any` | private method L364-L549 (186 lines) |
+| `CheckinController.#renderPersonalAttendanceTabs` | `private method` | **L551 - L594** | `() => any` | private method L551-L594 (44 lines) |
+| `CheckinController.#buildHistoryRowHtml` | `private method` | **L596 - L615** | `(item, rowNumber) => any` | private method L596-L615 (20 lines) |
+| `CheckinController.#renderSpecialRequestsHistoryTable` | `private method` | **L617 - L659** | `() => any` | private method L617-L659 (43 lines) |
+| `CheckinController.#stopCameraHardwareStream` | `private method` | **L661 - L671** | `() => any` | private method L661-L671 (11 lines) |
+| `CheckinController.#stopCameraAndShowStandby` | `private method` | **L673 - L697** | `() => any` | private method L673-L697 (25 lines) |
+| `CheckinController.#openCameraOnDemand` | `private async method` | **L699 - L747** | `() => Promise<any>` | private async method L699-L747 (49 lines) |
+| `CheckinController.#capturePhotoAndStopStream` | `private method` | **L749 - L779** | `() => any` | private method L749-L779 (31 lines) |
+| `CheckinController.#resetPageAfterSave` | `private async method` | **L781 - L789** | `() => Promise<any>` | private async method L781-L789 (9 lines) |
+| `CheckinController.#initGpsLocation` | `private async method` | **L797 - L881** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
+| `CheckinController.#bindEvents` | `private method` | **L883 - L1147** | `() => any` | private method L883-L1147 (265 lines) |
+| `setDesktopActiveTab` | `arrow_fn` | **L1052 - L1071** | `(activeName) => inferred` | Arrow Function L1052-L1071 |
+| `openMobileDrawer` | `arrow_fn` | **L1082 - L1099** | `() => inferred` | Arrow Function L1082-L1099 |
+| `closeMobileDrawer` | `arrow_fn` | **L1101 - L1126** | `(targetTab = null) => inferred` | Arrow Function L1101-L1126 |
+| `CheckinController.#handleMainCheckin` | `private async method` | **L1149 - L1274** | `() => Promise<any>` | private async method L1149-L1274 (126 lines) |
+| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1276 - L1337** | `(closeModalCallback) => Promise<any>` | private async method L1276-L1337 (62 lines) |
 
 ---
 
 ## File: `assets/js/controllers/DashboardController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `979b497cb7f0dc94` | **Total Lines:** `291` | **Imports:** `5` | **Exports:** `DashboardController`
+- **Hash:** `dc96e00efca0d3c5` | **Total Lines:** `291` | **Imports:** `5` | **Exports:** `DashboardController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -178,29 +179,29 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `6b8b7d376db9ec1c` | **Total Lines:** `821` | **Imports:** `6` | **Exports:** `ReportsController`
+- **Hash:** `efca49f0179e15dd` | **Total Lines:** `878` | **Imports:** `6` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L13 - L812** | `export class ReportsController` | Class Definition (800 lines) |
+| `ReportsController` | `class` | **L13 - L869** | `export class ReportsController` | Class Definition (857 lines) |
 | `ReportsController.constructor` | `public constructor` | **L14 - L24** | `() => any` | public constructor L14-L24 (11 lines) |
-| `ReportsController.init` | `public async method` | **L26 - L54** | `() => Promise<any>` | public async method L26-L54 (29 lines) |
-| `ReportsController.#getStatusColor` | `private method` | **L56 - L62** | `(statusKey) => any` | private method L56-L62 (7 lines) |
-| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L64 - L86** | `() => any` | private method L64-L86 (23 lines) |
-| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L88 - L97** | `() => any` | private method L88-L97 (10 lines) |
-| `ReportsController.loadReportData` | `public async method` | **L99 - L134** | `() => Promise<any>` | public async method L99-L134 (36 lines) |
-| `ReportsController.#populatePersonnelDropdown` | `private method` | **L136 - L142** | `() => any` | private method L136-L142 (7 lines) |
-| `ReportsController.#formatGpsCoordinates` | `private method` | **L144 - L152** | `(lat, lng) => any` | private method L144-L152 (9 lines) |
-| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L154 - L221** | `(forPrintPdf = false) => any` | private method L154-L221 (68 lines) |
-| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L223 - L301** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L223-L301 (79 lines) |
-| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L303 - L345** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L303-L345 (43 lines) |
-| `ReportsController.#buildSingleRowHtml` | `private method` | **L347 - L405** | `(rec, indexNo, forPrintPdf) => any` | private method L347-L405 (59 lines) |
-| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L414 - L576** | `(rowUid) => any` | private method L414-L576 (163 lines) |
-| `ReportsController.#closeResumeModal` | `private method` | **L578 - L584** | `() => any` | private method L578-L584 (7 lines) |
-| `ReportsController.#openModal` | `private method` | **L586 - L603** | `(rec = null) => any` | private method L586-L603 (18 lines) |
-| `ReportsController.#closeModal` | `private method` | **L605 - L607** | `() => any` | private method L605-L607 (3 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L609 - L783** | `() => any` | private method L609-L783 (175 lines) |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L785 - L811** | `() => Promise<any>` | private async method L785-L811 (27 lines) |
+| `ReportsController.init` | `public async method` | **L26 - L66** | `() => Promise<any>` | public async method L26-L66 (41 lines) |
+| `ReportsController.#getStatusColor` | `private method` | **L68 - L74** | `(statusKey) => any` | private method L68-L74 (7 lines) |
+| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L76 - L98** | `() => any` | private method L76-L98 (23 lines) |
+| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L100 - L109** | `() => any` | private method L100-L109 (10 lines) |
+| `ReportsController.loadReportData` | `public async method` | **L111 - L146** | `() => Promise<any>` | public async method L111-L146 (36 lines) |
+| `ReportsController.#populatePersonnelDropdown` | `private method` | **L148 - L157** | `() => any` | private method L148-L157 (10 lines) |
+| `ReportsController.#formatGpsCoordinates` | `private method` | **L159 - L167** | `(lat, lng) => any` | private method L159-L167 (9 lines) |
+| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L169 - L236** | `(forPrintPdf = false) => any` | private method L169-L236 (68 lines) |
+| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L238 - L316** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L238-L316 (79 lines) |
+| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L318 - L360** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L318-L360 (43 lines) |
+| `ReportsController.#buildSingleRowHtml` | `private method` | **L362 - L424** | `(rec, indexNo, forPrintPdf) => any` | private method L362-L424 (63 lines) |
+| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L433 - L595** | `(rowUid) => any` | private method L433-L595 (163 lines) |
+| `ReportsController.#closeResumeModal` | `private method` | **L597 - L603** | `() => any` | private method L597-L603 (7 lines) |
+| `ReportsController.#openModal` | `private method` | **L605 - L637** | `(rec = null) => any` | private method L605-L637 (33 lines) |
+| `ReportsController.#closeModal` | `private method` | **L639 - L641** | `() => any` | private method L639-L641 (3 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L643 - L828** | `() => any` | private method L643-L828 (186 lines) |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L830 - L868** | `() => Promise<any>` | private async method L830-L868 (39 lines) |
 
 ---
 
@@ -271,11 +272,11 @@
 
 ## File: `assets/js/core/AuthService.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `93d1afd919e5ba7e` | **Total Lines:** `349` | **Imports:** `3` | **Exports:** `AuthService`
+- **Hash:** `6ecb4ba989cb6124` | **Total Lines:** `372` | **Imports:** `3` | **Exports:** `AuthService`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AuthService` | `class` | **L10 - L349** | `export class AuthService` | Class Definition (340 lines) |
+| `AuthService` | `class` | **L10 - L371** | `export class AuthService` | Class Definition (362 lines) |
 | `AuthService.getCurrentUser` | `static public method` | **L13 - L49** | `(extendSession = true) => any` | static public method L13-L49 (37 lines) |
 | `AuthService.setCurrentUser` | `static public method` | **L51 - L66** | `(userObj, loginMode = 'checkin') => any` | static public method L51-L66 (16 lines) |
 | `AuthService.clearSession` | `static public method` | **L68 - L71** | `() => any` | static public method L68-L71 (4 lines) |
@@ -286,6 +287,8 @@
 | `AuthService.requestPasswordResetByNationalId` | `static public async method` | **L265 - L306** | `(nationalId) => Promise<any>` | static public async method L265-L306 (42 lines) |
 | `AuthService.requireAuth` | `static public method` | **L308 - L330** | `(allowedRoles = ['SuperAdmin', 'Admin', 'User']) => any` | static public method L308-L330 (23 lines) |
 | `AuthService.canViewRecordByScope` | `static public method` | **L332 - L348** | `(currentUser, targetRecord) => any` | static public method L332-L348 (17 lines) |
+| `AuthService.canEditAttendanceRecord` | `static public method` | **L350 - L362** | `(currentUser, record = null) => any` | static public method L350-L362 (13 lines) |
+| `AuthService.canDeleteAttendanceRecord` | `static public method` | **L364 - L370** | `(currentUser, record = null) => any` | static public method L364-L370 (7 lines) |
 
 ---
 
@@ -354,11 +357,11 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `0cbc55c5c8e82c46` | **Total Lines:** `1515` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `708f46f20130afb1` | **Total Lines:** `1516` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AttendanceModel` | `class` | **L12 - L1515** | `export class AttendanceModel` | Class Definition (1504 lines) |
+| `AttendanceModel` | `class` | **L12 - L1516** | `export class AttendanceModel` | Class Definition (1505 lines) |
 | `AttendanceModel.#calculateDistanceMeters` | `static private method` | **L16 - L27** | `(lat1, lon1, lat2, lon2) => any` | static private method L16-L27 (12 lines) |
 | `AttendanceModel.#minutesToTime24` | `static private method` | **L29 - L34** | `(totalMinutes) => any` | static private method L29-L34 (6 lines) |
 | `AttendanceModel.#isForbiddenLocationTerm` | `static private method` | **L44 - L74** | `(rawName, tags = {}) => any` | static private method L44-L74 (31 lines) |
@@ -381,11 +384,11 @@
 | `AttendanceModel.processSpecialRequestsBulk` | `static public async method` | **L1210 - L1255** | `(logIds, decision, approverUserId) => Promise<any>` | static public async method L1210-L1255 (46 lines) |
 | `AttendanceModel.getDatesBetween` | `static public method` | **L1257 - L1274** | `(startDate, endDate) => any` | static public method L1257-L1274 (18 lines) |
 | `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L1276 - L1335** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L1276-L1335 (60 lines) |
-| `AttendanceModel.#formatReportRow` | `static private method` | **L1337 - L1381** | `(person, log, workDate, evalStatus) => any` | static private method L1337-L1381 (45 lines) |
-| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1383 - L1385** | `(workDate, currentUser) => Promise<any>` | static public async method L1383-L1385 (3 lines) |
-| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1387 - L1436** | `(payload) => Promise<any>` | static public async method L1387-L1436 (50 lines) |
-| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1438 - L1449** | `(logId) => Promise<any>` | static public async method L1438-L1449 (12 lines) |
-| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1451 - L1514** | `(dailyRecords) => any` | static public method L1451-L1514 (64 lines) |
+| `AttendanceModel.#formatReportRow` | `static private method` | **L1337 - L1382** | `(person, log, workDate, evalStatus) => any` | static private method L1337-L1382 (46 lines) |
+| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1384 - L1386** | `(workDate, currentUser) => Promise<any>` | static public async method L1384-L1386 (3 lines) |
+| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1388 - L1437** | `(payload) => Promise<any>` | static public async method L1388-L1437 (50 lines) |
+| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1439 - L1450** | `(logId) => Promise<any>` | static public async method L1439-L1450 (12 lines) |
+| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1452 - L1515** | `(dailyRecords) => any` | static public method L1452-L1515 (64 lines) |
 
 ---
 
@@ -451,7 +454,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e68595027b29b766` | **Total Lines:** `611` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `37d711738cfb8e3a` | **Total Lines:** `664` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -471,8 +474,9 @@
 | `<div#todayHistoryTabPanel>` | `html_dom_section` | **L382 - L399** | `id="todayHistoryTabPanel"` | HTML DOM Section L382-L399 |
 | `<div#pastHistoryTabPanel>` | `html_dom_section` | **L402 - L440** | `id="pastHistoryTabPanel"` | HTML DOM Section L402-L440 |
 | `<div#desktopSpecialWrapper>` | `html_dom_section` | **L446 - L486** | `id="desktopSpecialWrapper"` | HTML DOM Section L446-L486 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L568 - L577** | `id="spCustomTimeContainer"` | HTML DOM Section L568-L577 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L608 - L608** | `<script>` | Bootstrap script L608-L608 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L498 - L588** | `id="mobileDrawerPanel"` | HTML DOM Section L498-L588 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L621 - L630** | `id="spCustomTimeContainer"` | HTML DOM Section L621-L630 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L661 - L661** | `<script>` | Bootstrap script L661-L661 |
 
 ---
 
@@ -647,6 +651,26 @@
 | `<div#bmaFooterContainer>` | `html_dom_section` | **L158 - L158** | `id="bmaFooterContainer"` | HTML DOM Section L158-L158 |
 | `<div#modalUserAccountForm>` | `html_dom_section` | **L164 - L289** | `id="modalUserAccountForm"` | HTML DOM Section L164-L289 |
 | `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L291 - L291** | `<script>` | Bootstrap script L291-L291 |
+
+---
+
+## File: `verify_qa.mjs`
+- **Layer:** Application Module
+- **Hash:** `b650761fead931e4` | **Total Lines:** `40` | **Imports:** `1` | **Exports:** `None`
+
+> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
+## File: `verify_suite.mjs`
+- **Layer:** Application Module
+- **Hash:** `43cafd7df8e4cc5f` | **Total Lines:** `273` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L12 - L22** | `(name, fn) => inferred` | Function L12-L22 |
+| `formatPosition` | `function` | **L56 - L60** | `(p) => inferred` | Function L56-L60 |
+| `assert` | `public method` | **L120 - L124** | `(reportsControllerJs.includes("if (this.isAdminDivision) => any` | public method L120-L124 (5 lines) |
 
 ---
 

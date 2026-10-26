@@ -257,7 +257,7 @@ export class DashboardController {
             const runningNo = startIndex + idx + 1;
             const cleanTitle = (rec.position_title || '').trim();
             const cleanLevel = (rec.position_level || '').replace(/^ระดับ\s*/, '').trim();
-            const mergedPosition = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || rec.position_full || '-');
+            const mergedPosition = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || (rec.position_full || '').replace(/\s*ระดับ\s*/g, '').trim() || '-');
 
             return `
                 <tr>
