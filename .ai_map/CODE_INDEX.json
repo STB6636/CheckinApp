@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-26T09:07:34.415Z",
+  "generatedAt": "2026-10-26T10:08:49.277Z",
   "totalFilesScanned": 30,
   "totalSymbolsIndexed": 378,
   "files": [
@@ -286,7 +286,7 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "72a36d8e85d898f3",
+      "fileHash": "2b5d7bacdf42c48c",
       "totalLines": 1342,
       "importsCount": 5,
       "importsPreview": [
@@ -992,16 +992,17 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "efca49f0179e15dd",
-      "totalLines": 878,
-      "importsCount": 6,
+      "fileHash": "ea3f58ab90dacdba",
+      "totalLines": 890,
+      "importsCount": 7,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
         "import { UIHelpers } from '../core/UIHelpers.js';",
         "import { AppLayout } from '../components/AppLayout.js';",
         "import { SettingsModel } from '../models/SettingsModel.js';",
         "import { PersonnelModel } from '../models/PersonnelModel.js';",
-        "import { AttendanceModel } from '../models/AttendanceModel.js';"
+        "import { AttendanceModel } from '../models/AttendanceModel.js';",
+        "import { AuthService } from '../core/AuthService.js';"
       ],
       "exports": [
         "ReportsController"
@@ -1010,154 +1011,154 @@
         {
           "name": "ReportsController",
           "kind": "class",
-          "startLine": 13,
-          "endLine": 869,
+          "startLine": 14,
+          "endLine": 881,
           "signature": "export class ReportsController",
-          "summary": "Class Definition (857 lines)"
+          "summary": "Class Definition (868 lines)"
         },
         {
           "name": "ReportsController.constructor",
           "kind": "public constructor",
-          "startLine": 14,
-          "endLine": 24,
+          "startLine": 15,
+          "endLine": 25,
           "signature": "() => any",
-          "summary": "public constructor L14-L24 (11 lines)"
+          "summary": "public constructor L15-L25 (11 lines)"
         },
         {
           "name": "ReportsController.init",
           "kind": "public async method",
-          "startLine": 26,
-          "endLine": 66,
+          "startLine": 27,
+          "endLine": 67,
           "signature": "() => Promise<any>",
-          "summary": "public async method L26-L66 (41 lines)"
+          "summary": "public async method L27-L67 (41 lines)"
         },
         {
           "name": "ReportsController.#getStatusColor",
           "kind": "private method",
-          "startLine": 68,
-          "endLine": 74,
+          "startLine": 69,
+          "endLine": 75,
           "signature": "(statusKey) => any",
-          "summary": "private method L68-L74 (7 lines)"
+          "summary": "private method L69-L75 (7 lines)"
         },
         {
           "name": "ReportsController.#renderStatusTagFilterChips",
           "kind": "private method",
-          "startLine": 76,
-          "endLine": 98,
+          "startLine": 77,
+          "endLine": 99,
           "signature": "() => any",
-          "summary": "private method L76-L98 (23 lines)"
+          "summary": "private method L77-L99 (23 lines)"
         },
         {
           "name": "ReportsController.#getFormattedReportDateSubtitle",
           "kind": "private method",
-          "startLine": 100,
-          "endLine": 109,
+          "startLine": 101,
+          "endLine": 110,
           "signature": "() => any",
-          "summary": "private method L100-L109 (10 lines)"
+          "summary": "private method L101-L110 (10 lines)"
         },
         {
           "name": "ReportsController.loadReportData",
           "kind": "public async method",
-          "startLine": 111,
-          "endLine": 146,
+          "startLine": 112,
+          "endLine": 158,
           "signature": "() => Promise<any>",
-          "summary": "public async method L111-L146 (36 lines)"
+          "summary": "public async method L112-L158 (47 lines)"
         },
         {
           "name": "ReportsController.#populatePersonnelDropdown",
           "kind": "private method",
-          "startLine": 148,
-          "endLine": 157,
+          "startLine": 160,
+          "endLine": 169,
           "signature": "() => any",
-          "summary": "private method L148-L157 (10 lines)"
+          "summary": "private method L160-L169 (10 lines)"
         },
         {
           "name": "ReportsController.#formatGpsCoordinates",
           "kind": "private method",
-          "startLine": 159,
-          "endLine": 167,
+          "startLine": 171,
+          "endLine": 179,
           "signature": "(lat, lng) => any",
-          "summary": "private method L159-L167 (9 lines)"
+          "summary": "private method L171-L179 (9 lines)"
         },
         {
           "name": "ReportsController.#renderSeparateTablesBySelectedTags",
           "kind": "private method",
-          "startLine": 169,
-          "endLine": 236,
+          "startLine": 181,
+          "endLine": 248,
           "signature": "(forPrintPdf = false) => any",
-          "summary": "private method L169-L236 (68 lines)"
+          "summary": "private method L181-L248 (68 lines)"
         },
         {
           "name": "ReportsController.#renderSingleStatusTableHtml",
           "kind": "private method",
-          "startLine": 238,
-          "endLine": 316,
+          "startLine": 250,
+          "endLine": 328,
           "signature": "(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L238-L316 (79 lines)"
+          "summary": "private method L250-L328 (79 lines)"
         },
         {
           "name": "ReportsController.#buildGroupedRowsForTag",
           "kind": "private method",
-          "startLine": 318,
-          "endLine": 360,
+          "startLine": 330,
+          "endLine": 372,
           "signature": "(tagRecords, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L318-L360 (43 lines)"
+          "summary": "private method L330-L372 (43 lines)"
         },
         {
           "name": "ReportsController.#buildSingleRowHtml",
           "kind": "private method",
-          "startLine": 362,
-          "endLine": 424,
+          "startLine": 374,
+          "endLine": 436,
           "signature": "(rec, indexNo, forPrintPdf) => any",
-          "summary": "private method L362-L424 (63 lines)"
+          "summary": "private method L374-L436 (63 lines)"
         },
         {
           "name": "ReportsController.#openResumeProfileForSpecificRow",
           "kind": "private method",
-          "startLine": 433,
-          "endLine": 595,
+          "startLine": 445,
+          "endLine": 607,
           "signature": "(rowUid) => any",
-          "summary": "private method L433-L595 (163 lines)"
+          "summary": "private method L445-L607 (163 lines)"
         },
         {
           "name": "ReportsController.#closeResumeModal",
           "kind": "private method",
-          "startLine": 597,
-          "endLine": 603,
+          "startLine": 609,
+          "endLine": 615,
           "signature": "() => any",
-          "summary": "private method L597-L603 (7 lines)"
+          "summary": "private method L609-L615 (7 lines)"
         },
         {
           "name": "ReportsController.#openModal",
           "kind": "private method",
-          "startLine": 605,
-          "endLine": 637,
+          "startLine": 617,
+          "endLine": 649,
           "signature": "(rec = null) => any",
-          "summary": "private method L605-L637 (33 lines)"
+          "summary": "private method L617-L649 (33 lines)"
         },
         {
           "name": "ReportsController.#closeModal",
           "kind": "private method",
-          "startLine": 639,
-          "endLine": 641,
+          "startLine": 651,
+          "endLine": 653,
           "signature": "() => any",
-          "summary": "private method L639-L641 (3 lines)"
+          "summary": "private method L651-L653 (3 lines)"
         },
         {
           "name": "ReportsController.#bindEvents",
           "kind": "private method",
-          "startLine": 643,
-          "endLine": 828,
+          "startLine": 655,
+          "endLine": 840,
           "signature": "() => any",
-          "summary": "private method L643-L828 (186 lines)"
+          "summary": "private method L655-L840 (186 lines)"
         },
         {
           "name": "ReportsController.#handleSaveReportRecord",
           "kind": "private async method",
-          "startLine": 830,
-          "endLine": 868,
+          "startLine": 842,
+          "endLine": 880,
           "signature": "() => Promise<any>",
-          "summary": "private async method L830-L868 (39 lines)"
+          "summary": "private async method L842-L880 (39 lines)"
         }
       ]
     },
@@ -2587,8 +2588,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "37d711738cfb8e3a",
-      "totalLines": 664,
+      "fileHash": "c4771ff8777f5c3f",
+      "totalLines": 669,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2597,153 +2598,153 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 71,
+          "endLine": 76,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L71"
+          "summary": "HTML DOM Section L3-L76"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 133,
-          "endLine": 490,
+          "startLine": 138,
+          "endLine": 495,
           "signature": "<main>",
-          "summary": "HTML DOM Section L133-L490"
+          "summary": "HTML DOM Section L138-L495"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
-          "startLine": 136,
-          "endLine": 350,
+          "startLine": 141,
+          "endLine": 355,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L136-L350"
+          "summary": "HTML DOM Section L141-L355"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 189,
-          "endLine": 246,
+          "startLine": 194,
+          "endLine": 251,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L189-L246"
+          "summary": "HTML DOM Section L194-L251"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 207,
-          "endLine": 219,
+          "startLine": 212,
+          "endLine": 224,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L207-L219"
+          "summary": "HTML DOM Section L212-L224"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 249,
-          "endLine": 347,
+          "startLine": 254,
+          "endLine": 352,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L249-L347"
+          "summary": "HTML DOM Section L254-L352"
         },
         {
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 252,
-          "endLine": 295,
+          "startLine": 257,
+          "endLine": 300,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L252-L295"
+          "summary": "HTML DOM Section L257-L300"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 276,
-          "endLine": 282,
+          "startLine": 281,
+          "endLine": 287,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L276-L282"
+          "summary": "HTML DOM Section L281-L287"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 298,
-          "endLine": 345,
+          "startLine": 303,
+          "endLine": 350,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L298-L345"
+          "summary": "HTML DOM Section L303-L350"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 308,
-          "endLine": 311,
+          "startLine": 313,
+          "endLine": 316,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L308-L311"
+          "summary": "HTML DOM Section L313-L316"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 313,
-          "endLine": 322,
+          "startLine": 318,
+          "endLine": 327,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L313-L322"
+          "summary": "HTML DOM Section L318-L327"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 353,
-          "endLine": 488,
+          "startLine": 358,
+          "endLine": 493,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L353-L488"
+          "summary": "HTML DOM Section L358-L493"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 356,
-          "endLine": 443,
+          "startLine": 361,
+          "endLine": 448,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L356-L443"
+          "summary": "HTML DOM Section L361-L448"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 382,
-          "endLine": 399,
+          "startLine": 387,
+          "endLine": 404,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L382-L399"
+          "summary": "HTML DOM Section L387-L404"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 402,
-          "endLine": 440,
+          "startLine": 407,
+          "endLine": 445,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L402-L440"
+          "summary": "HTML DOM Section L407-L445"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 446,
-          "endLine": 486,
+          "startLine": 451,
+          "endLine": 491,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L446-L486"
+          "summary": "HTML DOM Section L451-L491"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 498,
-          "endLine": 588,
+          "startLine": 503,
+          "endLine": 593,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L498-L588"
+          "summary": "HTML DOM Section L503-L593"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 621,
-          "endLine": 630,
+          "startLine": 626,
+          "endLine": 635,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L621-L630"
+          "summary": "HTML DOM Section L626-L635"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 661,
-          "endLine": 661,
+          "startLine": 666,
+          "endLine": 666,
           "signature": "<script>",
-          "summary": "Bootstrap script L661-L661"
+          "summary": "Bootstrap script L666-L666"
         }
       ]
     },
@@ -2876,8 +2877,8 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "61ad956590a68120",
-      "totalLines": 286,
+      "fileHash": "28f91152b5e46064",
+      "totalLines": 288,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2886,49 +2887,49 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 48,
+          "endLine": 50,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L48"
+          "summary": "HTML DOM Section L3-L50"
         },
         {
           "name": "<div#mobileOrgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 73,
-          "endLine": 73,
+          "startLine": 75,
+          "endLine": 75,
           "signature": "id=\"mobileOrgLogoWrapper\"",
-          "summary": "HTML DOM Section L73-L73"
+          "summary": "HTML DOM Section L75-L75"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 80,
-          "endLine": 191,
+          "startLine": 82,
+          "endLine": 193,
           "signature": "<main>",
-          "summary": "HTML DOM Section L80-L191"
+          "summary": "HTML DOM Section L82-L193"
         },
         {
           "name": "<div#orgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 86,
-          "endLine": 88,
+          "startLine": 88,
+          "endLine": 90,
           "signature": "id=\"orgLogoWrapper\"",
-          "summary": "HTML DOM Section L86-L88"
+          "summary": "HTML DOM Section L88-L90"
         },
         {
           "name": "<form#loginForm>",
           "kind": "html_dom_section",
-          "startLine": 100,
-          "endLine": 188,
+          "startLine": 102,
+          "endLine": 190,
           "signature": "id=\"loginForm\"",
-          "summary": "HTML DOM Section L100-L188"
+          "summary": "HTML DOM Section L102-L190"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 284,
-          "endLine": 284,
+          "startLine": 286,
+          "endLine": 286,
           "signature": "<script>",
-          "summary": "Bootstrap script L284-L284"
+          "summary": "Bootstrap script L286-L286"
         }
       ]
     },

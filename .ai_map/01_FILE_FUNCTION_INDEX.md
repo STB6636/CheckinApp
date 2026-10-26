@@ -1,6 +1,6 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T09:07:34.415Z`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T10:08:49.277Z`
 - **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `378`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
@@ -64,7 +64,7 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `72a36d8e85d898f3` | **Total Lines:** `1342` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `2b5d7bacdf42c48c` | **Total Lines:** `1342` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -179,29 +179,29 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `efca49f0179e15dd` | **Total Lines:** `878` | **Imports:** `6` | **Exports:** `ReportsController`
+- **Hash:** `ea3f58ab90dacdba` | **Total Lines:** `890` | **Imports:** `7` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L13 - L869** | `export class ReportsController` | Class Definition (857 lines) |
-| `ReportsController.constructor` | `public constructor` | **L14 - L24** | `() => any` | public constructor L14-L24 (11 lines) |
-| `ReportsController.init` | `public async method` | **L26 - L66** | `() => Promise<any>` | public async method L26-L66 (41 lines) |
-| `ReportsController.#getStatusColor` | `private method` | **L68 - L74** | `(statusKey) => any` | private method L68-L74 (7 lines) |
-| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L76 - L98** | `() => any` | private method L76-L98 (23 lines) |
-| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L100 - L109** | `() => any` | private method L100-L109 (10 lines) |
-| `ReportsController.loadReportData` | `public async method` | **L111 - L146** | `() => Promise<any>` | public async method L111-L146 (36 lines) |
-| `ReportsController.#populatePersonnelDropdown` | `private method` | **L148 - L157** | `() => any` | private method L148-L157 (10 lines) |
-| `ReportsController.#formatGpsCoordinates` | `private method` | **L159 - L167** | `(lat, lng) => any` | private method L159-L167 (9 lines) |
-| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L169 - L236** | `(forPrintPdf = false) => any` | private method L169-L236 (68 lines) |
-| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L238 - L316** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L238-L316 (79 lines) |
-| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L318 - L360** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L318-L360 (43 lines) |
-| `ReportsController.#buildSingleRowHtml` | `private method` | **L362 - L424** | `(rec, indexNo, forPrintPdf) => any` | private method L362-L424 (63 lines) |
-| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L433 - L595** | `(rowUid) => any` | private method L433-L595 (163 lines) |
-| `ReportsController.#closeResumeModal` | `private method` | **L597 - L603** | `() => any` | private method L597-L603 (7 lines) |
-| `ReportsController.#openModal` | `private method` | **L605 - L637** | `(rec = null) => any` | private method L605-L637 (33 lines) |
-| `ReportsController.#closeModal` | `private method` | **L639 - L641** | `() => any` | private method L639-L641 (3 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L643 - L828** | `() => any` | private method L643-L828 (186 lines) |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L830 - L868** | `() => Promise<any>` | private async method L830-L868 (39 lines) |
+| `ReportsController` | `class` | **L14 - L881** | `export class ReportsController` | Class Definition (868 lines) |
+| `ReportsController.constructor` | `public constructor` | **L15 - L25** | `() => any` | public constructor L15-L25 (11 lines) |
+| `ReportsController.init` | `public async method` | **L27 - L67** | `() => Promise<any>` | public async method L27-L67 (41 lines) |
+| `ReportsController.#getStatusColor` | `private method` | **L69 - L75** | `(statusKey) => any` | private method L69-L75 (7 lines) |
+| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L77 - L99** | `() => any` | private method L77-L99 (23 lines) |
+| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L101 - L110** | `() => any` | private method L101-L110 (10 lines) |
+| `ReportsController.loadReportData` | `public async method` | **L112 - L158** | `() => Promise<any>` | public async method L112-L158 (47 lines) |
+| `ReportsController.#populatePersonnelDropdown` | `private method` | **L160 - L169** | `() => any` | private method L160-L169 (10 lines) |
+| `ReportsController.#formatGpsCoordinates` | `private method` | **L171 - L179** | `(lat, lng) => any` | private method L171-L179 (9 lines) |
+| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L181 - L248** | `(forPrintPdf = false) => any` | private method L181-L248 (68 lines) |
+| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L250 - L328** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L250-L328 (79 lines) |
+| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L330 - L372** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L330-L372 (43 lines) |
+| `ReportsController.#buildSingleRowHtml` | `private method` | **L374 - L436** | `(rec, indexNo, forPrintPdf) => any` | private method L374-L436 (63 lines) |
+| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L445 - L607** | `(rowUid) => any` | private method L445-L607 (163 lines) |
+| `ReportsController.#closeResumeModal` | `private method` | **L609 - L615** | `() => any` | private method L609-L615 (7 lines) |
+| `ReportsController.#openModal` | `private method` | **L617 - L649** | `(rec = null) => any` | private method L617-L649 (33 lines) |
+| `ReportsController.#closeModal` | `private method` | **L651 - L653** | `() => any` | private method L651-L653 (3 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L655 - L840** | `() => any` | private method L655-L840 (186 lines) |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L842 - L880** | `() => Promise<any>` | private async method L842-L880 (39 lines) |
 
 ---
 
@@ -454,29 +454,29 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `37d711738cfb8e3a` | **Total Lines:** `664` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c4771ff8777f5c3f` | **Total Lines:** `669` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L71** | `<head>` | HTML DOM Section L3-L71 |
-| `<main>` | `html_dom_section` | **L133 - L490** | `<main>` | HTML DOM Section L133-L490 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L136 - L350** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L136-L350 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L189 - L246** | `id="cameraSectionCard"` | HTML DOM Section L189-L246 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L207 - L219** | `id="cameraStandbyOverlay"` | HTML DOM Section L207-L219 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L249 - L347** | `id="rightColumnWrapper"` | HTML DOM Section L249-L347 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L252 - L295** | `id="gpsSectionCard"` | HTML DOM Section L252-L295 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L276 - L282** | `id="googleMapEmbedWrapper"` | HTML DOM Section L276-L282 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L298 - L345** | `id="checkinActionCard"` | HTML DOM Section L298-L345 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L308 - L311** | `id="shiftSelectorContainer"` | HTML DOM Section L308-L311 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L313 - L322** | `id="mainCustomTimeContainer"` | HTML DOM Section L313-L322 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L353 - L488** | `id="desktopPanesContainer"` | HTML DOM Section L353-L488 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L356 - L443** | `id="desktopHistoryWrapper"` | HTML DOM Section L356-L443 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L382 - L399** | `id="todayHistoryTabPanel"` | HTML DOM Section L382-L399 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L402 - L440** | `id="pastHistoryTabPanel"` | HTML DOM Section L402-L440 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L446 - L486** | `id="desktopSpecialWrapper"` | HTML DOM Section L446-L486 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L498 - L588** | `id="mobileDrawerPanel"` | HTML DOM Section L498-L588 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L621 - L630** | `id="spCustomTimeContainer"` | HTML DOM Section L621-L630 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L661 - L661** | `<script>` | Bootstrap script L661-L661 |
+| `<head>` | `html_dom_section` | **L3 - L76** | `<head>` | HTML DOM Section L3-L76 |
+| `<main>` | `html_dom_section` | **L138 - L495** | `<main>` | HTML DOM Section L138-L495 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L141 - L355** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L141-L355 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L194 - L251** | `id="cameraSectionCard"` | HTML DOM Section L194-L251 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L212 - L224** | `id="cameraStandbyOverlay"` | HTML DOM Section L212-L224 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L254 - L352** | `id="rightColumnWrapper"` | HTML DOM Section L254-L352 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L257 - L300** | `id="gpsSectionCard"` | HTML DOM Section L257-L300 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L281 - L287** | `id="googleMapEmbedWrapper"` | HTML DOM Section L281-L287 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L303 - L350** | `id="checkinActionCard"` | HTML DOM Section L303-L350 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L313 - L316** | `id="shiftSelectorContainer"` | HTML DOM Section L313-L316 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L318 - L327** | `id="mainCustomTimeContainer"` | HTML DOM Section L318-L327 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L358 - L493** | `id="desktopPanesContainer"` | HTML DOM Section L358-L493 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L361 - L448** | `id="desktopHistoryWrapper"` | HTML DOM Section L361-L448 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L387 - L404** | `id="todayHistoryTabPanel"` | HTML DOM Section L387-L404 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L407 - L445** | `id="pastHistoryTabPanel"` | HTML DOM Section L407-L445 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L451 - L491** | `id="desktopSpecialWrapper"` | HTML DOM Section L451-L491 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L503 - L593** | `id="mobileDrawerPanel"` | HTML DOM Section L503-L593 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L626 - L635** | `id="spCustomTimeContainer"` | HTML DOM Section L626-L635 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L666 - L666** | `<script>` | Bootstrap script L666-L666 |
 
 ---
 
@@ -513,16 +513,16 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `61ad956590a68120` | **Total Lines:** `286` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `28f91152b5e46064` | **Total Lines:** `288` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L48** | `<head>` | HTML DOM Section L3-L48 |
-| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L73 - L73** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L73-L73 |
-| `<main>` | `html_dom_section` | **L80 - L191** | `<main>` | HTML DOM Section L80-L191 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L86 - L88** | `id="orgLogoWrapper"` | HTML DOM Section L86-L88 |
-| `<form#loginForm>` | `html_dom_section` | **L100 - L188** | `id="loginForm"` | HTML DOM Section L100-L188 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L284 - L284** | `<script>` | Bootstrap script L284-L284 |
+| `<head>` | `html_dom_section` | **L3 - L50** | `<head>` | HTML DOM Section L3-L50 |
+| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L75 - L75** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L75-L75 |
+| `<main>` | `html_dom_section` | **L82 - L193** | `<main>` | HTML DOM Section L82-L193 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L88 - L90** | `id="orgLogoWrapper"` | HTML DOM Section L88-L90 |
+| `<form#loginForm>` | `html_dom_section` | **L102 - L190** | `id="loginForm"` | HTML DOM Section L102-L190 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L286 - L286** | `<script>` | Bootstrap script L286-L286 |
 
 ---
 

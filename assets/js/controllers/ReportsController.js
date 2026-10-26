@@ -9,6 +9,7 @@ import { AppLayout } from '../components/AppLayout.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
+import { AuthService } from '../core/AuthService.js';
 
 export class ReportsController {
     constructor() {
@@ -140,6 +141,17 @@ export class ReportsController {
             this.#populatePersonnelDropdown();
             this.#renderStatusTagFilterChips();
             this.#renderSeparateTablesBySelectedTags(false);
+        } catch (err) {
+            console.error('[ReportsController] loadReportData failed:', err);
+            const masterContainer = document.getElementById('reportTablesMasterContainer');
+            if (masterContainer) {
+                masterContainer.innerHTML = `
+                    <div class="p-6 bg-red-50 border border-red-200 rounded-2xl text-center">
+                        <i class="bi bi-exclamation-triangle-fill text-red-500 text-3xl mb-2 inline-block"></i>
+                        <p class="text-sm font-semibold text-red-700">เกิดข้อผิดพลาดในการโหลดข้อมูลรายงาน</p>
+                        <p class="text-xs text-red-500 mt-1">${UIHelpers.escapeHtml(err.message || 'ไม่สามารถประมวลผลข้อมูลได้')}</p>
+                    </div>`;
+            }
         } finally {
             UIHelpers.hideLoading();
         }

@@ -94,30 +94,30 @@ export class CheckinController {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.remove('hidden');
 
-            cameraCard.className = 'lg:col-span-5 bma-card p-5 flex flex-col justify-between';
-            rightWrapper.className = 'lg:col-span-7 flex flex-col justify-between gap-6';
-            gpsCard.className = 'bma-card p-5 space-y-3.5 flex flex-col justify-between';
-            actionCard.className = 'bma-card p-5 space-y-4 flex flex-col justify-between';
+            cameraCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 flex flex-col justify-between';
+            rightWrapper.className = 'lg:col-span-7 flex flex-col justify-between gap-3 lg:gap-3.5';
+            gpsCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
+            actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
         } else if (!showPhoto && showGps) {
             cameraCard.classList.add('hidden');
             gpsCard.classList.remove('hidden');
 
-            rightWrapper.className = 'lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch';
-            gpsCard.className = 'lg:col-span-7 bma-card p-5 space-y-3.5 flex flex-col justify-between h-full';
-            actionCard.className = 'lg:col-span-5 bma-card p-5 space-y-4 flex flex-col justify-between h-full';
+            rightWrapper.className = 'lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch';
+            gpsCard.className = 'lg:col-span-7 bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full';
+            actionCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full';
         } else if (showPhoto && !showGps) {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.add('hidden');
 
-            cameraCard.className = 'lg:col-span-5 bma-card p-5 flex flex-col justify-between h-full';
+            cameraCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 flex flex-col justify-between h-full';
             rightWrapper.className = 'lg:col-span-7 flex flex-col justify-stretch';
-            actionCard.className = 'bma-card p-6 space-y-5 flex flex-col justify-between h-full w-full';
+            actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full w-full';
         } else {
             cameraCard.classList.add('hidden');
             gpsCard.classList.add('hidden');
 
             rightWrapper.className = 'lg:col-span-12 max-w-2xl w-full mx-auto';
-            actionCard.className = 'bma-card p-6 sm:p-8 space-y-5 flex flex-col justify-between w-full shadow-xl';
+            actionCard.className = 'bma-card p-4 sm:p-5 space-y-3 flex flex-col justify-between w-full shadow-xl';
         }
     }
 
@@ -300,6 +300,7 @@ export class CheckinController {
             document.getElementById('drawerLinkAdminDashboard')?.classList.remove('hidden');
         }
 
+        const p = this.currentUser.personnel;
         setElText('drawerUserFullName', this.currentUser.full_name);
         setElText('drawerUserRole', this.currentUser.role);
         if (p) {
@@ -311,7 +312,6 @@ export class CheckinController {
         setElText('userFullNameText', this.currentUser.full_name);
         setElText('userRoleBadge', this.currentUser.role);
 
-        const p = this.currentUser.personnel;
         if (p) {
             setElText('userPositionText', `${p.position_title} ${p.position_level ? 'ระดับ' + p.position_level : ''} (${p.position_type || '-'})`);
             setElText('userAffiliationText', `${p.organization} • ${p.bureau} • ${p.division} ${p.work_group ? '• ' + p.work_group : ''}`);
