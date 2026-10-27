@@ -29,7 +29,7 @@ export class CheckinController {
         this.activeHistoryTab = 'today';
         this.todayHistoryList = [];
         this.pastHistoryList = [];
-        this.pastPageSize = 5;
+        this.pastPageSize = 10;
         this.pastCurrentPage = 1;
         this.specialRequestsList = [];
         this.lastEvaluatedMinute = -1;
@@ -354,13 +354,13 @@ export class CheckinController {
         const todayIso = UIHelpers.getTodayISO();
         const [activeReg, allHistory, specialRequests] = await Promise.all([
             AttendanceModel.getActiveRegularRecordForCheckout(this.currentUser.personnel_id, this.currentUser.id, this.settings),
-            AttendanceModel.getPersonalAttendanceHistory(this.currentUser.personnel_id, this.currentUser.id, 150),
+            AttendanceModel.getPersonalAttendanceHistory(this.currentUser.personnel_id, this.currentUser.id, 35),
             AttendanceModel.getPersonalSpecialRequests(this.currentUser.personnel_id, this.currentUser.id)
         ]);
 
         this.activeRegularRecord = activeReg;
         this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
-        this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso);
+        this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso).slice(0, 30);
         this.specialRequestsList = specialRequests;
 
         this.#evaluateTimeWindowAndPopulateShifts();
@@ -984,7 +984,7 @@ export class CheckinController {
         });
 
         document.getElementById('selectPastPageSize')?.addEventListener('change', (e) => {
-            this.pastPageSize = parseInt(e.target.value, 10) || 5;
+            this.pastPageSize = parseInt(e.target.value, 10) || 10;
             this.pastCurrentPage = 1;
             this.#renderPersonalAttendanceTabs();
         });

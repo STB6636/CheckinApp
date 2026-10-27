@@ -21,6 +21,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[rule_camera_portrait_3_4_aspect_ratio]] — Domain Rule: กฎและมาตรฐานการกำหนดขนาดกรอบกล้องแนวตั้ง 3:4 และการขยายเต็มการ์ดโมดอล (ขอบ ~2px-4px) บน checkin.html (`FLOW_PHOTO_01`, `FLOW_CHECKIN_01`)
 - [[rule_desktop_zero_scroll_and_gps_layout]] — Domain Rule: กฎการจัดสัดส่วน Grid 4:8 และความสูง Zero-Scroll บนหน้าจอเดสก์ท็อป PC (`FLOW_LAYOUT_01`, `FLOW_GPS_01`)
 - [[rule_shift_select_empty_and_soft_ui_alerts]] — Domain Rule: Dropdown กะว่างเริ่มต้น, การเลื่อนจอ Smooth Scroll และ SweetAlerts Soft UI Dashboard (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`)
+- [[rule_personal_attendance_history_limit_and_pagination]] — Domain Rule: การจำกัดข้อมูลประวัติการลงเวลาส่วนตัวย้อนหลัง 30 รายการ และระบบแบ่งหน้า [5, 10, 15, 20, 30] (`FLOW_CHECKIN_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

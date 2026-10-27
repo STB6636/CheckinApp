@@ -1,0 +1,24 @@
+{
+  "pipeline_id": "PIPE-20261027-limit-personal-history-30",
+  "targets": [
+    {
+      "file": "checkin.html",
+      "symbol": "select#selectPastPageSize",
+      "line_range": "412-418",
+      "reason": "ปรับตัวเลือกการแสดงรายการต่อหน้าให้มี [5, 10, 15, 20, 30] รายการ"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#refreshAllAttendanceData",
+      "line_range": "355-365",
+      "reason": "จำกัดจำนวนประวัติย้อนหลังสูงสุด 30 รายการ (.slice(0, 30))"
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.getPersonalAttendanceHistory",
+      "line_range": "743-755",
+      "reason": "ปรับค่า Query Limit ให้เหมาะสมกับการดึงข้อมูล 35 รายการล่าสุด"
+    }
+  ]
+}
+

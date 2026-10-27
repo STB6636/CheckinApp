@@ -740,7 +740,7 @@ export class AttendanceModel {
         return await AttendanceModel.getTodayRegularRecordForUser(personnelId, userId, todayIso);
     }
 
-    static async getPersonalAttendanceHistory(personnelId, userId, limit = 150) {
+    static async getPersonalAttendanceHistory(personnelId, userId, limit = 35) {
         const db = DatabaseService.getInstance().client;
         const settings = await SettingsModel.getSettings(false);
 

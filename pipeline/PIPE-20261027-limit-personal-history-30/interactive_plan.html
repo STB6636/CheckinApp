@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานจำลอง: จำกัดประวัติย้อนหลังสูงสุด 30 รายการ และตัวเลือกหน้า [5, 10, 15, 20, 30]</title>
+    <!-- Google Fonts & Tailwind -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Header -->
+        <div class="p-6 rounded-3xl bg-gradient-to-r from-[#003822] via-[#005B3A] to-[#00744B] border border-emerald-500/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-300">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>PIPE-20261027-limit-personal-history-30</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white">แผนงาน: ปรับปรุงตารางประวัติการลงเวลาปฏิบัติราชการส่วนตัว</h1>
+                <p class="text-xs sm:text-sm text-emerald-100/90">แสดงประวัติย้อนหลังล่าสุดสูงสุด 30 รายการ • เพิ่มตัวเลือกแสดงหน้าละ [5, 10, 15, 20, 30] รายการ</p>
+            </div>
+            <div class="px-4 py-2.5 rounded-2xl bg-black/30 border border-white/10 text-xs text-center shrink-0">
+                <div class="text-slate-400 font-bold">โหมดการทำงาน</div>
+                <div class="text-emerald-400 font-extrabold text-sm mt-0.5">FULL (SubAgents Flash)</div>
+            </div>
+        </div>
+
+        <!-- Interactive Simulation Card -->
+        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2 text-xs font-extrabold text-emerald-400">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>ตัวอย่างหน้าจอจำลองแบบโต้ตอบ (Interactive Simulation)</span>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">สูงสุด 30 รายการ</span>
+            </div>
+
+            <!-- Controls bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                <div class="flex items-center gap-3">
+                    <label for="simPageSize" class="font-bold text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-ol text-emerald-400"></i>
+                        <span>แสดงหน้าละ:</span>
+                    </label>
+                    <select id="simPageSize" class="bg-slate-800 text-white font-bold text-xs py-1.5 px-3 rounded-xl border border-slate-700 cursor-pointer focus:border-emerald-500 outline-none">
+                        <option value="5">5 รายการ</option>
+                        <option value="10" selected>10 รายการ</option>
+                        <option value="15">15 รายการ</option>
+                        <option value="20">20 รายการ</option>
+                        <option value="30">30 รายการ</option>
+                    </select>
+                </div>
+                <div id="simPageInfo" class="font-bold text-emerald-400 text-xs sm:text-right">
+                    หน้า 1 / 3 (ทั้งหมด 30 รายการ)
+                </div>
+            </div>
+
+            <!-- Mock Table -->
+            <div class="rounded-2xl border border-slate-800 overflow-hidden shadow-lg bg-slate-950">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-900/90 text-slate-300 uppercase font-black tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="w-14 text-center py-3 px-3">ลำดับ</th>
+                                <th class="min-w-[120px] py-3 px-3">วันที่ปฏิบัติงาน</th>
+                                <th class="min-w-[160px] py-3 px-3">ช่วงเวลา / กะ</th>
+                                <th class="w-24 text-center py-3 px-3">เวลาเข้า</th>
+                                <th class="w-24 text-center py-3 px-3">เวลาออก</th>
+                                <th class="w-28 text-center py-3 px-3">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="simTableBody" class="divide-y divide-slate-800/80 text-slate-300">
+                            <!-- Injected by script -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination buttons -->
+            <div class="flex items-center justify-between pt-1">
+                <button type="button" id="simPrevBtn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-chevron-left"></i> หน้าก่อนหน้า
+                </button>
+                <div class="text-[11px] text-slate-500 font-semibold">
+                    <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>ดึงประวัติย้อนหลังล่าสุดไม่เกิน 30 วันทำการ
+                </div>
+                <button type="button" id="simNextBtn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-200 hover:bg-slate-700 transition disabled:opacity-30 disabled:cursor-not-allowed">
+                    หน้าถัดไป <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scope of Edits -->
+        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-3 text-xs">
+            <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                <i class="fa-solid fa-file-code text-emerald-400"></i>
+                <span>ขอบเขตการแก้ไขโค้ด (Surgical Modifications)</span>
+            </h3>
+            <ul class="space-y-2 text-slate-300 pl-4 list-disc">
+                <li><code class="text-emerald-400 font-mono">checkin.html</code> [บรรทัด 413-417]: เพิ่มตัวเลือกใน <code class="font-mono">#selectPastPageSize</code> ให้มี <code class="text-sky-300 font-mono">[5, 10, 15, 20, 30]</code> รายการ</li>
+                <li><code class="text-emerald-400 font-mono">CheckinController.js</code> [บรรทัด 357]: ดึงข้อมูลจำกัด 35 รายการล่าสุดเพื่อความรวดเร็วของฐานข้อมูล</li>
+                <li><code class="text-emerald-400 font-mono">CheckinController.js</code> [บรรทัด 363]: กรองเฉพาะวันก่อนหน้าและตัดให้เหลือไม่เกิน 30 รายการ <code class="font-mono text-sky-300">.slice(0, 30)</code></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Simulation Script -->
+    <script>
+        // Generate 30 mock items
+        const mockItems = [];
+        const baseDate = new Date();
+        for (let i = 1; i <= 30; i++) {
+            const d = new Date(baseDate);
+            d.setDate(d.getDate() - i);
+            mockItems.push({
+                rowNum: i,
+                date: d.toLocaleDateString('th-TH', { year: '2-digit', month: 'short', day: 'numeric' }),
+                shift: 'เวลาราชการปกติ (08:30 - 16:30 น.)',
+                inTime: '08:2' + (i % 10) + ' น.',
+                outTime: '16:3' + (i % 8) + ' น.',
+                status: i % 7 === 0 ? 'สาย' : 'ตรงเวลา',
+                color: i % 7 === 0 ? '#F97316' : '#00744B'
+            });
+        }
+
+        let curPage = 1;
+        let pageSize = 10;
+
+        function renderSim() {
+            const total = mockItems.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (curPage > totalPages) curPage = totalPages;
+            if (curPage < 1) curPage = 1;
+
+            const start = (curPage - 1) * pageSize;
+            const paged = mockItems.slice(start, start + pageSize);
+
+            document.getElementById('simPageInfo').textContent = `หน้า ${curPage} / ${totalPages} (ทั้งหมด ${total} รายการ)`;
+            document.getElementById('simPrevBtn').disabled = curPage <= 1;
+            document.getElementById('simNextBtn').disabled = curPage >= totalPages;
+
+            const tbody = document.getElementById('simTableBody');
+            tbody.innerHTML = paged.map(item => `
+                <tr class="hover:bg-slate-900/60 transition">
+                    <td class="text-center py-2.5 px-3 font-semibold text-slate-400">${item.rowNum}</td>
+                    <td class="py-2.5 px-3 font-bold text-white">${item.date}</td>
+                    <td class="py-2.5 px-3 text-slate-300">${item.shift}</td>
+                    <td class="text-center py-2.5 px-3 font-mono font-bold text-emerald-400">${item.inTime}</td>
+                    <td class="text-center py-2.5 px-3 font-mono font-bold text-sky-400">${item.outTime}</td>
+                    <td class="text-center py-2.5 px-3">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white shadow-xs" style="background-color: ${item.color};">
+                            ${item.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('simPageSize').addEventListener('change', (e) => {
+            pageSize = parseInt(e.target.value, 10);
+            curPage = 1;
+            renderSim();
+        });
+
+        document.getElementById('simPrevBtn').addEventListener('click', () => {
+            if (curPage > 1) { curPage--; renderSim(); }
+        });
+
+        document.getElementById('simNextBtn').addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(mockItems.length / pageSize));
+            if (curPage < totalPages) { curPage++; renderSim(); }
+        });
+
+        renderSim();
+    </script>
+
+</body>
+</html>
+

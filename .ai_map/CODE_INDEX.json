@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T09:08:33.905Z",
-  "totalFilesScanned": 48,
-  "totalSymbolsIndexed": 404,
+  "generatedAt": "2026-10-27T09:28:13.950Z",
+  "totalFilesScanned": 50,
+  "totalSymbolsIndexed": 405,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,7 +286,7 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "22341cd8e05426d0",
+      "fileHash": "fd9e0e974bc77694",
       "totalLines": 1538,
       "importsCount": 5,
       "importsPreview": [
@@ -2030,7 +2030,7 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "708f46f20130afb1",
+      "fileHash": "eea3fb04c6a5b932",
       "totalLines": 1516,
       "importsCount": 5,
       "importsPreview": [
@@ -2161,7 +2161,7 @@
           "kind": "static public async method",
           "startLine": 743,
           "endLine": 779,
-          "signature": "(personnelId, userId, limit = 150) => Promise<any>",
+          "signature": "(personnelId, userId, limit = 35) => Promise<any>",
           "summary": "static public async method L743-L779 (37 lines)"
         },
         {
@@ -2588,8 +2588,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a085f84450209a42",
-      "totalLines": 671,
+      "fileHash": "5b261626c5b3e77e",
+      "totalLines": 673,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2606,9 +2606,9 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 138,
-          "endLine": 497,
+          "endLine": 499,
           "signature": "<main>",
-          "summary": "HTML DOM Section L138-L497"
+          "summary": "HTML DOM Section L138-L499"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
@@ -2686,17 +2686,17 @@
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
           "startLine": 360,
-          "endLine": 495,
+          "endLine": 497,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L360-L495"
+          "summary": "HTML DOM Section L360-L497"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
           "startLine": 363,
-          "endLine": 450,
+          "endLine": 452,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L363-L450"
+          "summary": "HTML DOM Section L363-L452"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
@@ -2710,41 +2710,41 @@
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
           "startLine": 409,
-          "endLine": 447,
+          "endLine": 449,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L409-L447"
+          "summary": "HTML DOM Section L409-L449"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 453,
-          "endLine": 493,
+          "startLine": 455,
+          "endLine": 495,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L453-L493"
+          "summary": "HTML DOM Section L455-L495"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 505,
-          "endLine": 595,
+          "startLine": 507,
+          "endLine": 597,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L505-L595"
+          "summary": "HTML DOM Section L507-L597"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 628,
-          "endLine": 637,
+          "startLine": 630,
+          "endLine": 639,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L628-L637"
+          "summary": "HTML DOM Section L630-L639"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 668,
-          "endLine": 668,
+          "startLine": 670,
+          "endLine": 670,
           "signature": "<script>",
-          "summary": "Bootstrap script L668-L668"
+          "summary": "Bootstrap script L670-L670"
         }
       ]
     },
@@ -3271,6 +3271,38 @@
           "summary": "HTML DOM Section L3-L12"
         }
       ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-limit-personal-history-30/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "9917b04409d8f17c",
+      "totalLines": 197,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 23,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L23"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-limit-personal-history-30/qa_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "664e29be6509b349",
+      "totalLines": 58,
+      "importsCount": 2,
+      "importsPreview": [
+        "import assert from 'node:assert';",
+        "import fs from 'node:fs';"
+      ],
+      "exports": [],
+      "symbols": []
     },
     {
       "filePath": "pipeline/PIPE-20261027-pc-viewport-no-scroll-and-gps-height/interactive_plan.html",

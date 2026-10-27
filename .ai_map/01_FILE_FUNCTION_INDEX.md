@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T09:08:33.905Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `48` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `404`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T09:28:13.950Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `50` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `405`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,7 +64,7 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `22341cd8e05426d0` | **Total Lines:** `1538` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `fd9e0e974bc77694` | **Total Lines:** `1538` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -357,7 +357,7 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `708f46f20130afb1` | **Total Lines:** `1516` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `eea3fb04c6a5b932` | **Total Lines:** `1516` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -375,7 +375,7 @@
 | `AttendanceModel.resolveLocationName` | `static public async method` | **L575 - L578** | `(lat, lng) => Promise<any>` | static public async method L575-L578 (4 lines) |
 | `AttendanceModel.evaluateOfficialStatus` | `static public method` | **L580 - L681** | `(log, settings) => any` | static public method L580-L681 (102 lines) |
 | `AttendanceModel.getActiveRegularRecordForCheckout` | `static public async method` | **L710 - L741** | `(personnelId, userId, settings) => Promise<any>` | static public async method L710-L741 (32 lines) |
-| `AttendanceModel.getPersonalAttendanceHistory` | `static public async method` | **L743 - L779** | `(personnelId, userId, limit = 150) => Promise<any>` | static public async method L743-L779 (37 lines) |
+| `AttendanceModel.getPersonalAttendanceHistory` | `static public async method` | **L743 - L779** | `(personnelId, userId, limit = 35) => Promise<any>` | static public async method L743-L779 (37 lines) |
 | `AttendanceModel.getPersonalSpecialRequests` | `static public async method` | **L781 - L807** | `(personnelId, userId) => Promise<any>` | static public async method L781-L807 (27 lines) |
 | `AttendanceModel.deletePendingSpecialRequestByUser` | `static public async method` | **L809 - L843** | `(logId, personnelId, userId) => Promise<any>` | static public async method L809-L843 (35 lines) |
 | `AttendanceModel.submitCheckinOrCheckout` | `static public async method` | **L845 - L1114** | `(payload) => Promise<any>` | static public async method L845-L1114 (270 lines) |
@@ -454,12 +454,12 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `a085f84450209a42` | **Total Lines:** `671` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5b261626c5b3e77e` | **Total Lines:** `673` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L72** | `<head>` | HTML DOM Section L3-L72 |
-| `<main>` | `html_dom_section` | **L138 - L497** | `<main>` | HTML DOM Section L138-L497 |
+| `<main>` | `html_dom_section` | **L138 - L499** | `<main>` | HTML DOM Section L138-L499 |
 | `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L141 - L357** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L141-L357 |
 | `<div#cameraSectionCard>` | `html_dom_section` | **L194 - L251** | `id="cameraSectionCard"` | HTML DOM Section L194-L251 |
 | `<div#cameraStandbyOverlay>` | `html_dom_section` | **L212 - L224** | `id="cameraStandbyOverlay"` | HTML DOM Section L212-L224 |
@@ -469,14 +469,14 @@
 | `<div#checkinActionCard>` | `html_dom_section` | **L303 - L352** | `id="checkinActionCard"` | HTML DOM Section L303-L352 |
 | `<div#shiftSelectorContainer>` | `html_dom_section` | **L313 - L318** | `id="shiftSelectorContainer"` | HTML DOM Section L313-L318 |
 | `<div#mainCustomTimeContainer>` | `html_dom_section` | **L320 - L329** | `id="mainCustomTimeContainer"` | HTML DOM Section L320-L329 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L360 - L495** | `id="desktopPanesContainer"` | HTML DOM Section L360-L495 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L363 - L450** | `id="desktopHistoryWrapper"` | HTML DOM Section L363-L450 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L360 - L497** | `id="desktopPanesContainer"` | HTML DOM Section L360-L497 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L363 - L452** | `id="desktopHistoryWrapper"` | HTML DOM Section L363-L452 |
 | `<div#todayHistoryTabPanel>` | `html_dom_section` | **L389 - L406** | `id="todayHistoryTabPanel"` | HTML DOM Section L389-L406 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L409 - L447** | `id="pastHistoryTabPanel"` | HTML DOM Section L409-L447 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L453 - L493** | `id="desktopSpecialWrapper"` | HTML DOM Section L453-L493 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L505 - L595** | `id="mobileDrawerPanel"` | HTML DOM Section L505-L595 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L628 - L637** | `id="spCustomTimeContainer"` | HTML DOM Section L628-L637 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L668 - L668** | `<script>` | Bootstrap script L668-L668 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L409 - L449** | `id="pastHistoryTabPanel"` | HTML DOM Section L409-L449 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L455 - L495** | `id="desktopSpecialWrapper"` | HTML DOM Section L455-L495 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L507 - L597** | `id="mobileDrawerPanel"` | HTML DOM Section L507-L597 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L630 - L639** | `id="spCustomTimeContainer"` | HTML DOM Section L630-L639 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L670 - L670** | `<script>` | Bootstrap script L670-L670 |
 
 ---
 
@@ -634,6 +634,24 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
+
+---
+
+## File: `pipeline/PIPE-20261027-limit-personal-history-30/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `9917b04409d8f17c` | **Total Lines:** `197` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L23** | `<head>` | HTML DOM Section L3-L23 |
+
+---
+
+## File: `pipeline/PIPE-20261027-limit-personal-history-30/qa_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `664e29be6509b349` | **Total Lines:** `58` | **Imports:** `2` | **Exports:** `None`
+
+> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
 ---
 
