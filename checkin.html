@@ -131,7 +131,7 @@
     </nav>
 
     <!-- Main Check-in Workspace Container (with extra bottom padding for mobile sticky bar) -->
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-2.5 lg:py-2 pb-24 lg:pb-2">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-2.5 lg:py-1.5 pb-24 lg:pb-1.5">
 
         <!-- 1. Check-in Workspace View -->
         <div id="checkinWorkspaceWrapper" class="space-y-2 lg:space-y-2.5">
@@ -153,7 +153,7 @@
                 </div>
 
                 <!-- Tier 2: Balanced Live Clock Card (Small Date on top, hh:mm digital clock) -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-2.5 sm:p-3 lg:py-2 lg:px-4 text-center shadow-md border border-slate-200/80 dark:border-slate-700/60 relative overflow-hidden">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-2.5 sm:p-3 lg:py-1.5 lg:px-4 text-center shadow-md border border-slate-200/80 dark:border-slate-700/60 relative overflow-hidden">
                     <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 mb-0.5">
                         <span class="w-2 h-2 rounded-full bg-[#00744B] animate-ping"></span>
                         <span id="liveDateDisplay">-</span>
@@ -166,7 +166,7 @@
 
             <!-- Today Attendance Status Cards (Normal vs Out) -->
             <div class="grid grid-cols-2 gap-2.5 sm:gap-4">
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-2.5 sm:p-3 lg:py-2 lg:px-3 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#00744B]">
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-2.5 sm:p-3 lg:py-1.5 lg:px-3 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#00744B]">
                     <div class="flex items-center justify-between gap-1 mb-1">
                         <span id="todayCheckinCardTitle" class="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 truncate">เวลาเข้างาน</span>
                         <span id="todayCheckinBadge" class="bma-badge bma-badge-warning text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">รอลงเวลาเข้า</span>
@@ -174,7 +174,7 @@
                     <p id="todayCheckinTime" class="text-sm sm:text-lg font-extrabold text-slate-800 dark:text-white">ยังไม่ได้ลงเวลา</p>
                 </div>
 
-                <div class="bg-white dark:bg-slate-800 rounded-xl p-2.5 sm:p-3 lg:py-2 lg:px-3 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#0971CE]">
+                <div class="bg-white dark:bg-slate-800 rounded-xl p-2.5 sm:p-3 lg:py-1.5 lg:px-3 shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between border-l-4 border-l-[#0971CE]">
                     <div class="flex items-center justify-between gap-1 mb-1">
                         <span id="todayCheckoutCardTitle" class="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 truncate">เวลาออกงาน</span>
                         <span id="todayCheckoutBadge" class="bma-badge bma-badge-sky text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">รอลงเวลาออก</span>
@@ -187,7 +187,7 @@
             <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
 
                 <!-- Camera Viewfinder Card (5/12) -->
-                <div id="cameraSectionCard" class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-2 sm:p-2.5 flex flex-col justify-between">
+                <div id="cameraSectionCard" class="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-2 sm:p-2.5 flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-2.5 px-1">
                             <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-2">
@@ -246,8 +246,8 @@
                     </div>
                 </div>
 
-                <!-- Right Column: GPS Location Card & Action Controls (7/12) -->
-                <div id="rightColumnWrapper" class="lg:col-span-7 flex flex-col justify-between gap-4 sm:gap-6">
+                <!-- Right Column: GPS Location Card & Action Controls (8/12) -->
+                <div id="rightColumnWrapper" class="lg:col-span-8 flex flex-col gap-3 lg:gap-3.5">
 
                     <!-- GPS Location Card -->
                     <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 space-y-3 flex flex-col justify-between">
@@ -274,7 +274,7 @@
                             </div>
 
                             <!-- Embedded Realtime Google Map Viewfinder -->
-                            <div id="googleMapEmbedWrapper" class="mt-2.5 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 h-20 sm:h-24 lg:h-20 relative bg-slate-100 dark:bg-slate-900 shadow-inner">
+                            <div id="googleMapEmbedWrapper" class="mt-2.5 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 h-20 sm:h-24 lg:h-32 relative bg-slate-100 dark:bg-slate-900 shadow-inner">
                                 <div id="googleMapPlaceholder" class="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 text-xs">
                                     <i class="fa-solid fa-map-location-dot text-2xl text-slate-300 dark:text-slate-600 mb-1"></i>
                                     <span>กำลังโหลดแผนที่ Google Map...</span>

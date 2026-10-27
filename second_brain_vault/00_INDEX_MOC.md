@@ -19,6 +19,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
 - [[rule_camera_portrait_3_4_aspect_ratio]] — Domain Rule: กฎและมาตรฐานการกำหนดขนาดกรอบกล้องแนวตั้ง 3:4 และการขยายเต็มการ์ดโมดอล (ขอบ ~2px-4px) บน checkin.html (`FLOW_PHOTO_01`, `FLOW_CHECKIN_01`)
+- [[rule_desktop_zero_scroll_and_gps_layout]] — Domain Rule: กฎการจัดสัดส่วน Grid 4:8 และความสูง Zero-Scroll บนหน้าจอเดสก์ท็อป PC (`FLOW_LAYOUT_01`, `FLOW_GPS_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

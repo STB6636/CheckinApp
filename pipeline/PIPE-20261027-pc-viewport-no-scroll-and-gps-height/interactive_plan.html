@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนปรับความสูงหน้าจอ PC กำจัด Scroll Bar และขยายโมดอล GPS — CheckinApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-800 p-6 rounded-2xl border border-emerald-500/30 shadow-2xl flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold rounded-full">
+                    PIPE-20261027-pc-viewport-no-scroll-and-gps-height
+                </span>
+                <h1 class="text-xl md:text-2xl font-black mt-2 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-desktop text-emerald-400"></i>
+                    <span>แผนปรับความสูงหน้าจอ PC ไร้ Scroll Bar และขยายโมดอล GPS อย่างสมดุล</span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-300 mt-1">
+                    เป้าหมาย: แก้ปัญหาความสูงรวมเกินหน้าจอบน PC จนเกิด Scroll Bar และขยายความสูงการ์ด GPS พร้อมจัดระยะห่างระหว่างการ์ดให้สวยงาม
+                </p>
+            </div>
+            <div class="text-right">
+                <span class="inline-block px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-extrabold rounded-xl">
+                    <i class="fa-solid fa-bolt mr-1"></i> Streamlined: SubAgent 2 ตัว (Flash Model)
+                </span>
+            </div>
+        </div>
+
+        <!-- 2 Core Issues & Solutions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Issue 1: Scroll Bar on PC -->
+            <div class="bg-slate-800/80 border border-rose-500/30 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-2 text-rose-400 font-bold mb-3">
+                    <i class="fa-solid fa-arrows-up-down"></i>
+                    <span>ปัญหาที่ 1: Scroll Bar ปรากฏบนจอ PC</span>
+                </div>
+                <div class="space-y-2 text-xs text-slate-300">
+                    <p class="leading-relaxed">
+                        จากภาพ <code class="text-rose-300 font-bold">media_1793070323544_6b8222ff.png</code> ที่ความละเอียด 1920x1080:
+                    </p>
+                    <div class="p-3 bg-rose-950/30 border border-rose-800/40 rounded-xl space-y-1">
+                        <div>• ความกว้างการ์ดกล้องเดิม (5 จาก 12 คอลัมน์) = ~390px</div>
+                        <div>• เมื่อสัดส่วนเป็น 3:4 ความสูงกล้องจึงพุ่งขึ้นไปถึง ~500px</div>
+                        <div>• ความสูงรวมของหน้าจอพุ่งถึง <strong>950px</strong> ซึ่งเกินพื้นที่ Viewport ของ Chrome (~880px) ทำให้มี Scroll Bar ด้านขวายื่นออกมา</div>
+                    </div>
+                    <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl text-emerald-300">
+                        <strong>วิธีแก้:</strong> ปรับสัดส่วน Grid เป็น <strong>4 : 8 คอลัมน์</strong> (กล้อง 4 คอลัมน์ กว้าง ~310px, ความสูงกล้อง 3:4 จะลดลงเหลือ ~390px, ความสูงการ์ดรวมเหลือ ~480px) ทำให้ความสูงทั้งหน้ารวม Footer เหลือเพียง <strong>~800px</strong> จึงแสดงผลได้ครบใน 1 หน้าจอ 100% ไร้ Scroll Bar
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issue 2: GPS Gap & Height -->
+            <div class="bg-slate-800/80 border border-sky-500/30 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-2 text-sky-400 font-bold mb-3">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>ปัญหาที่ 2: โมดอล GPS เตี้ยและช่องว่างตรงกลางกว้างเกินไป</span>
+                </div>
+                <div class="space-y-2 text-xs text-slate-300">
+                    <p class="leading-relaxed">
+                        ในการ์ดฝั่งขวา พบช่องว่างสีขาวขนาดใหญ่คั่นกลางระหว่างการ์ด GPS กับการ์ดเงื่อนไขบันทึกเวลา:
+                    </p>
+                    <div class="p-3 bg-rose-950/30 border border-rose-800/40 rounded-xl space-y-1">
+                        <div>• คลาส <code class="text-rose-300">justify-between</code> ในคอนเทนเนอร์ ผลักการ์ด 2 ใบไปคนละทิศ</div>
+                        <div>• กรอบแผนที่ Google Map บน PC มีความสูงเพียง <code class="text-rose-300">lg:h-20</code> (80px) ทำให้ตัวการ์ด GPS สั้นเกินไปและเหลือช่องว่างโหว่</div>
+                    </div>
+                    <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl text-emerald-300">
+                        <strong>วิธีแก้:</strong> ปลด <code class="text-rose-300">justify-between</code> ออก แล้วใช้ระยะห่างธรรมชาติ <code class="text-emerald-300">gap-3 lg:gap-3.5</code> พร้อม <strong>ขยายความสูงแผนที่ Google Map</strong> จาก 80px เป็น <strong>128px (lg:h-32)</strong> ทำให้การ์ด GPS สูงขึ้น เต็มตา สวยงาม และช่องว่างมีระยะพอดี
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Height Budget Table -->
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 overflow-hidden">
+            <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-amber-400"></i>
+                <span>ตารางการคำนวณความสูงบน Desktop PC (Height Budget Calculation)</span>
+            </h2>
+            <div class="overflow-x-auto text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950/60 text-slate-400 border-b border-slate-700">
+                            <th class="p-2.5">ส่วนประกอบ</th>
+                            <th class="p-2.5">ก่อนแก้ (Overflown)</th>
+                            <th class="p-2.5">หลังปรับสัดส่วนใหม่ (Optimal)</th>
+                            <th class="p-2.5">สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr>
+                            <td class="p-2.5 font-bold">1. Topbar Header + Desktop Nav</td>
+                            <td class="p-2.5 text-slate-400">90px</td>
+                            <td class="p-2.5 text-emerald-300">84px</td>
+                            <td class="p-2.5 text-slate-400">คงที่</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold">2. Banner ชื่อ + นาฬิกาดิจิทัล + สถานะเวลา</td>
+                            <td class="p-2.5 text-slate-400">190px</td>
+                            <td class="p-2.5 text-emerald-300">175px (กระชับ lg:py-1.5)</td>
+                            <td class="p-2.5 text-emerald-400 font-bold">-15px</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold">3. การ์ดกล้อง (คอลัมน์ซ้าย)</td>
+                            <td class="p-2.5 text-rose-400 font-bold">596px (5 คอลัมน์)</td>
+                            <td class="p-2.5 text-emerald-300 font-bold">482px (4 คอลัมน์, กล้อง 390px)</td>
+                            <td class="p-2.5 text-emerald-400 font-bold">-114px</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold">4. การ์ด GPS + การ์ดบันทึกเวลา (คอลัมน์ขวา)</td>
+                            <td class="p-2.5 text-rose-400">430px (ช่องโหว่ 166px!)</td>
+                            <td class="p-2.5 text-emerald-300">484px (ขยาย Map + gap 12px)</td>
+                            <td class="p-2.5 text-emerald-400 font-bold">สมดุลสวยงาม</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold">5. แถบ Footer</td>
+                            <td class="p-2.5 text-slate-400">45px</td>
+                            <td class="p-2.5 text-emerald-300">40px</td>
+                            <td class="p-2.5 text-slate-400">คงที่</td>
+                        </tr>
+                        <tr class="bg-slate-950/80 font-black text-sm">
+                            <td class="p-2.5 text-white">ความสูงรวมทั้งหน้า (Total Height)</td>
+                            <td class="p-2.5 text-rose-400">~950px (เกินจอ)</td>
+                            <td class="p-2.5 text-emerald-400">~795px (พอดีจอ 1080p)</td>
+                            <td class="p-2.5 text-emerald-400">ไร้ Scroll Bar 100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SubAgent Execution Plan -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5">
+            <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-400"></i>
+                <span>ขั้นตอนการทำงานแบบประหยัดโทเคน (2 SubAgents Flash 3.8 High)</span>
+            </h2>
+
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">1</div>
+                    <div>
+                        <div class="text-xs font-bold text-emerald-300">SubAgent ตัวที่ 1 (Implementer): Flash Model</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            แก้ไข <code class="text-sky-300">checkin.html</code> และ <code class="text-sky-300">CheckinController.js</code>: ปรับ Grid บน Desktop เป็น 4:8, ขยายกรอบแผนที่ GPS เป็น <code class="text-sky-300">lg:h-32</code> (128px), นำ <code class="text-sky-300">justify-between</code> ออก, และกระชับ padding บน PC พร้อมรัน AST mapper
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">2</div>
+                    <div>
+                        <div class="text-xs font-bold text-sky-300">SubAgent ตัวที่ 2 (QA Reviewer): Flash Model</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            ตรวจสอบ Git Diff, ตรวจสอบ DOM IDs 110 จุดบน <code class="text-sky-300">checkin.html</code>, และเทียบการทำงานกับ Branch <code class="text-sky-300">origin/main</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">3</div>
+                    <div>
+                        <div class="text-xs font-bold text-amber-300">Orchestrator: Commit & Push to Test-UXUI</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            ตรวจสอบผลลัพธ์รอบสุดท้ายและ Push ขึ้น Branch <code class="text-amber-300">Test-UXUI</code> พร้อมสรุปรายงานให้ผู้ใช้
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

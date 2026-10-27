@@ -1,0 +1,41 @@
+{
+  "pipeline_id": "PIPE-20261027-pc-viewport-no-scroll-and-gps-height",
+  "flow_ids": ["FLOW_LAYOUT_01", "FLOW_GPS_01"],
+  "target_branch": "Test-UXUI",
+  "base_branch": "main",
+  "subagents_configured": {
+    "worker": {
+      "type": "agent_04_frontend",
+      "model": "flash",
+      "scope": "Adjust PC grid proportions (4:8 cols), expand GPS map height, and eliminate justify-between gap in checkin.html and CheckinController.js"
+    },
+    "reviewer": {
+      "type": "agent_05_qa_security",
+      "model": "flash",
+      "scope": "Verify git diff against plan, test viewport heights, and compare with origin/main"
+    }
+  },
+  "targets": [
+    {
+      "file": "checkin.html",
+      "lines": [133, 185],
+      "action": "Fine-tune PC vertical padding in main and header cards (lg:py-1.5, space-y-2) to ensure total height fits viewport < 820px"
+    },
+    {
+      "file": "checkin.html",
+      "lines": [190, 252],
+      "action": "Change #cameraSectionCard to lg:col-span-4 (width ~310px, camera height ~390px, card height ~480px)"
+    },
+    {
+      "file": "checkin.html",
+      "lines": [250, 300],
+      "action": "Change #rightColumnWrapper to lg:col-span-8 flex flex-col gap-3 lg:gap-3.5 (remove justify-between), and expand #googleMapEmbedWrapper to lg:h-32 (128px) so GPS card height expands and balances with checkin card"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [93, 116],
+      "action": "Update #applyDynamicWorkspaceLayout() to use lg:col-span-4 for cameraCard and lg:col-span-8 flex flex-col gap-3 lg:gap-3.5 for rightWrapper, removing justify-between"
+    }
+  ]
+}
+

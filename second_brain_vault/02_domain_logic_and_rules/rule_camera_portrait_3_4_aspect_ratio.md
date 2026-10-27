@@ -24,3 +24,4 @@ related_notes: ["[[adr_004_checkin_viewport_lock_and_drawer]]", "[[checkinapp_pr
    - ใน `CheckinController.#applyDynamicWorkspaceLayout()` ต้องรักษาคลาส `p-2 sm:p-2.5` ไม่ให้เขียนทับด้วย `p-3.5 lg:p-4`
 3. **DOM Contract Invariance:**
    - ต้องรักษา DOM IDs ทั้ง 12 จุดของระบบกล้องให้คงอยู่ครบถ้วน 100%
+
