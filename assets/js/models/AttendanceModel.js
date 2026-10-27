@@ -577,6 +577,28 @@ export class AttendanceModel {
         return res.locationName;
     }
 
+    /**
+     * สุ่มพิกัด GPS ขาออกในรัศมีที่กำหนด (default 6 - 20 เมตร)
+     * @param {number} lat 
+     * @param {number} lng 
+     * @param {number} maxRadiusMeters 
+     * @param {number} minRadiusMeters 
+     * @returns {{lat: number|null, lng: number|null}}
+     */
+    static calculateGpsJitter(lat, lng, maxRadiusMeters = 20, minRadiusMeters = 6) {
+        if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+            return { lat: null, lng: null };
+        }
+        const r = minRadiusMeters + Math.random() * (maxRadiusMeters - minRadiusMeters);
+        const theta = Math.random() * 2 * Math.PI;
+        const deltaLat = (r * Math.cos(theta)) / 111320;
+        const deltaLng = (r * Math.sin(theta)) / (111320 * Math.cos(lat * Math.PI / 180));
+        return {
+            lat: Number((lat + deltaLat).toFixed(7)),
+            lng: Number((lng + deltaLng).toFixed(7))
+        };
+    }
+
     static evaluateOfficialStatus(log, settings) {
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
@@ -1028,6 +1050,30 @@ export class AttendanceModel {
                 is_special_request: false
             }, settings);
 
+            let outLat = payload.lat ?? null;
+            let outLng = payload.lng ?? null;
+            let outLocName = payload.location_name || '';
+
+            if (settings.randomize_gps_checkout && payload.lat != null && payload.lng != null) {
+                const numLat = Number(payload.lat);
+                const numLng = Number(payload.lng);
+                if (!isNaN(numLat) && !isNaN(numLng)) {
+                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                    if (jittered.lat !== null && jittered.lng !== null) {
+                        outLat = jittered.lat;
+                        outLng = jittered.lng;
+                        try {
+                            const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
+                            if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
+                                outLocName = locMeta.locationName;
+                            }
+                        } catch (e) {
+                            console.warn('Resolve single-click jittered checkout location error:', e);
+                        }
+                    }
+                }
+            }
+
             const insertBoth = {
                 personnel_id: payload.personnel_id || null,
                 user_id: payload.user_id || null,
@@ -1040,9 +1086,9 @@ export class AttendanceModel {
                 check_in_lat: payload.lat ?? null,
                 check_in_lng: payload.lng ?? null,
                 check_in_location: payload.location_name || '',
-                check_out_lat: payload.lat ?? null,
-                check_out_lng: payload.lng ?? null,
-                check_out_location: payload.location_name || '',
+                check_out_lat: outLat,
+                check_out_lng: outLng,
+                check_out_location: outLocName,
                 status: evalResult.status_label,
                 remark: payload.remark || '',
                 row_color: evalResult.row_color,
@@ -1128,6 +1174,30 @@ export class AttendanceModel {
         const checkIn24 = UIHelpers.formatTime24(payload.check_in_time || settings.standard_check_in || '08:30');
         const checkOut24 = UIHelpers.formatTime24(payload.check_out_time || settings.standard_check_out || '16:30');
 
+        let outLat = payload.lat ?? null;
+        let outLng = payload.lng ?? null;
+        let outLocName = payload.location_name || 'ขอลงเวลากรณีพิเศษ';
+
+        if (settings.randomize_gps_checkout && payload.lat != null && payload.lng != null) {
+            const numLat = Number(payload.lat);
+            const numLng = Number(payload.lng);
+            if (!isNaN(numLat) && !isNaN(numLng)) {
+                const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                if (jittered.lat !== null && jittered.lng !== null) {
+                    outLat = jittered.lat;
+                    outLng = jittered.lng;
+                    try {
+                        const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
+                        if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
+                            outLocName = locMeta.locationName;
+                        }
+                    } catch (e) {
+                        console.warn('Resolve special request jittered checkout location error:', e);
+                    }
+                }
+            }
+        }
+
         const db = DatabaseService.getInstance().client;
         const insertData = {
             personnel_id: payload.personnel_id || null,
@@ -1141,6 +1211,9 @@ export class AttendanceModel {
             check_in_lat: payload.lat ?? null,
             check_in_lng: payload.lng ?? null,
             check_in_location: payload.location_name || 'ขอลงเวลากรณีพิเศษ',
+            check_out_lat: outLat,
+            check_out_lng: outLng,
+            check_out_location: outLocName,
             status: targetStatus,
             remark: payload.remark,
             row_color: targetColor,

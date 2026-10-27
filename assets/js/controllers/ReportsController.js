@@ -21,6 +21,7 @@ export class ReportsController {
         this.groupViewMode = 'division';
         this.selectedStatusKeys = new Set(['normal', 'late']);
         this.currentPhotoBlobUrl = null;
+        this.currentPhotoBlobUrlOut = null;
         this.init();
     }
 
@@ -259,12 +260,13 @@ export class ReportsController {
                     <table>
                         <colgroup>
                             <col style="width: 5%;">
-                            <col style="width: 20%;">
-                            <col style="width: 20%;">
-                            <col style="width: 10%;">
-                            <col style="width: 10%;">
-                            <col style="width: 20%;">
-                            <col style="width: 15%;">
+                            <col style="width: 17%;">
+                            <col style="width: 16%;">
+                            <col style="width: 8%;">
+                            <col style="width: 8%;">
+                            <col style="width: 17%;">
+                            <col style="width: 17%;">
+                            <col style="width: 12%;">
                         </colgroup>
                         <thead>
                             <tr>
@@ -273,7 +275,8 @@ export class ReportsController {
                                 <th>ตำแหน่ง</th>
                                 <th style="text-align: center;">เวลาเข้างาน</th>
                                 <th style="text-align: center;">เวลาออกงาน</th>
-                                <th>พิกัด GPS</th>
+                                <th>พิกัด GPS เข้างาน</th>
+                                <th>พิกัด GPS ออกงาน</th>
                                 <th>หมายเหตุ</th>
                             </tr>
                         </thead>
@@ -308,13 +311,14 @@ export class ReportsController {
                     <table class="bma-table text-sm">
                         <thead>
                             <tr>
-                                <th class="w-14 text-center">ลำดับ</th>
-                                <th class="min-w-[180px]">ชื่อ-นามสกุล</th>
-                                <th class="min-w-[180px]">ตำแหน่ง</th>
-                                <th class="w-28 text-center">เวลาเข้างาน</th>
-                                <th class="w-28 text-center">เวลาออกงาน</th>
-                                <th class="min-w-[200px]">พิกัด GPS</th>
-                                <th class="min-w-[140px]">หมายเหตุ</th>
+                                <th class="w-12 text-center">ลำดับ</th>
+                                <th class="min-w-[150px]">ชื่อ-นามสกุล</th>
+                                <th class="min-w-[150px]">ตำแหน่ง</th>
+                                <th class="w-24 text-center">เวลาเข้างาน</th>
+                                <th class="w-24 text-center">เวลาออกงาน</th>
+                                <th class="min-w-[170px]">พิกัด GPS เข้างาน</th>
+                                <th class="min-w-[170px]">พิกัด GPS ออกงาน</th>
+                                <th class="min-w-[120px]">หมายเหตุ</th>
                                 ${this.canManageRecords ? '<th class="w-24 text-center no-print">จัดการ</th>' : ''}
                             </tr>
                         </thead>
@@ -328,7 +332,7 @@ export class ReportsController {
     }
 
     #buildGroupedRowsForTag(tagRecords, groupHeaderColor, forPrintPdf) {
-        const colSpan = (forPrintPdf || !this.canManageRecords) ? 7 : 8;
+        const colSpan = (forPrintPdf || !this.canManageRecords) ? 8 : 9;
         if (!tagRecords || tagRecords.length === 0) {
             return `<tr><td colspan="${colSpan}" class="text-center py-6 bma-text-sub">ไม่มีข้อมูลบุคลากรในสถานะนี้</td></tr>`;
         }
@@ -374,22 +378,36 @@ export class ReportsController {
     #buildSingleRowHtml(rec, indexNo, forPrintPdf) {
         const posDisplay = rec.position_full || '-';
         const remarkDisplay = rec.remark || '-';
-        const lat = rec.check_in_lat ?? rec.check_out_lat;
-        const lng = rec.check_in_lng ?? rec.check_out_lng;
-        const gpsCoords = this.#formatGpsCoordinates(lat, lng);
-        const locName = (rec.check_in_location || rec.check_out_location || '').trim();
+
+        const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
+        const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
+        const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
+        const inLocName = (rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '') || '').trim();
+
+        const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location);
+        const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
+        const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
+        const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
+        let outLocName = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        if (!outLocName && !isCheckedOut && !rec.is_special_request) {
+            outLocName = '-';
+        }
 
         if (forPrintPdf) {
             return `
                 <tr>
                     <td style="text-align: center;">${indexNo}</td>
-                    <td>${rec.full_name}</td>
+                    <td>${rec.full_name || '-'}</td>
                     <td>${posDisplay}</td>
                     <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_in_time || '-'}</td>
                     <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_out_time || '-'}</td>
                     <td style="font-size: 11px;">
-                        <div style="font-weight: 600;">${locName || '-'}</div>
-                        ${gpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${gpsCoords}</div>` : ''}
+                        <div style="font-weight: 600;">${inLocName || '-'}</div>
+                        ${inGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${inGpsCoords}</div>` : ''}
+                    </td>
+                    <td style="font-size: 11px;">
+                        <div style="font-weight: 600;">${outLocName || '-'}</div>
+                        ${outGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${outGpsCoords}</div>` : ''}
                     </td>
                     <td>${remarkDisplay}</td>
                 </tr>
@@ -397,11 +415,11 @@ export class ReportsController {
         }
 
         return `
-            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rec.row_uid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
+            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rec.row_uid || ''}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
                 <td class="text-center font-semibold">${indexNo}</td>
                 <td>
                     <div class="font-bold bma-text-main flex items-center gap-1.5">
-                        <span>${rec.full_name}</span>
+                        <span>${rec.full_name || '-'}</span>
                         <i class="fa-regular fa-id-badge text-xs text-emerald-600 opacity-75"></i>
                     </div>
                 </td>
@@ -409,10 +427,16 @@ export class ReportsController {
                 <td class="text-center font-mono font-bold">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
                 <td class="text-center font-mono font-bold">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
                 <td>
-                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]" title="${locName || '-'}">
-                        ${locName ? `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${locName}` : '-'}
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${inLocName || '-'}">
+                        ${inLocName && inLocName !== '-' ? `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${inLocName}` : (inLocName || '-')}
                     </div>
-                    ${gpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${gpsCoords}</div>` : ''}
+                    ${inGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${inGpsCoords}</div>` : ''}
+                </td>
+                <td>
+                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${outLocName || '-'}">
+                        ${outLocName && outLocName !== '-' ? `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${outLocName}` : (outLocName || '-')}
+                    </div>
+                    ${outGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${outGpsCoords}</div>` : ''}
                 </td>
                 <td class="text-xs text-slate-600 dark:text-slate-300">
                     ${remarkDisplay}
@@ -420,12 +444,12 @@ export class ReportsController {
 ${this.canManageRecords ? `
                 <td class="text-center space-x-1 whitespace-nowrap no-print">
                     ${AuthService.canEditAttendanceRecord(this.currentUser, rec) ? `
-                        <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
+                        <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid || ''}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     ` : ''}
                     ${(AuthService.canDeleteAttendanceRecord(this.currentUser, rec) && rec.log_id) ? `
-                        <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${rec.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
+                        <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${rec.full_name || ''}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     ` : ''}
@@ -492,23 +516,35 @@ ${this.canManageRecords ? `
             rowStatusBadge.className = 'hidden';
         }
 
-        // 2. รูปที่ถ่ายมาขนาดใหญ่ของ Row นั้นๆ
-        const photoUrl = rec.check_in_photo || rec.check_out_photo || '';
-        const largePhotoBox = document.getElementById('resumeLargePhotoBox');
-        const fullPhotoLink = document.getElementById('resumeOpenFullPhotoLink');
+        // 2. รูปถ่ายเข้างาน และ รูปถ่ายออกงาน
+        const photoUrlIn = rec.check_in_photo || (rec.is_special_request ? rec.check_out_photo : '') || '';
+        let photoUrlOut = rec.check_out_photo || '';
+        if (!photoUrlOut && rec.is_special_request) {
+            photoUrlOut = rec.check_in_photo || '';
+        }
+
+        const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location || rec.check_out_photo);
 
         if (this.currentPhotoBlobUrl) {
             URL.revokeObjectURL(this.currentPhotoBlobUrl);
             this.currentPhotoBlobUrl = null;
         }
+        if (this.currentPhotoBlobUrlOut) {
+            URL.revokeObjectURL(this.currentPhotoBlobUrlOut);
+            this.currentPhotoBlobUrlOut = null;
+        }
 
-        if (largePhotoBox) {
-            if (photoUrl) {
-                largePhotoBox.innerHTML = `<img src="${photoUrl}" alt="${rec.full_name}" class="w-full h-full object-cover">`;
-                if (fullPhotoLink) {
-                    if (photoUrl.startsWith('data:image/')) {
+        const setupPhotoBox = (boxId, linkId, photo, fallbackMsg, isOut = false) => {
+            const photoBox = document.getElementById(boxId);
+            const photoLink = document.getElementById(linkId);
+            if (!photoBox) return;
+
+            if (photo) {
+                photoBox.innerHTML = `<img src="${photo}" alt="${rec.full_name || ''}" class="w-full h-full object-cover">`;
+                if (photoLink) {
+                    if (photo.startsWith('data:image/')) {
                         try {
-                            const parts = photoUrl.split(',');
+                            const parts = photo.split(',');
                             const mime = parts[0].match(/:(.*?);/)?.[1] || 'image/jpeg';
                             const bstr = atob(parts[1]);
                             let n = bstr.length;
@@ -517,26 +553,35 @@ ${this.canManageRecords ? `
                                 u8arr[n] = bstr.charCodeAt(n);
                             }
                             const blob = new Blob([u8arr], { type: mime });
-                            this.currentPhotoBlobUrl = URL.createObjectURL(blob);
-                            fullPhotoLink.href = this.currentPhotoBlobUrl;
+                            const blobUrl = URL.createObjectURL(blob);
+                            if (isOut) {
+                                this.currentPhotoBlobUrlOut = blobUrl;
+                            } else {
+                                this.currentPhotoBlobUrl = blobUrl;
+                            }
+                            photoLink.href = blobUrl;
                         } catch (err) {
-                            fullPhotoLink.href = photoUrl;
+                            photoLink.href = photo;
                         }
                     } else {
-                        fullPhotoLink.href = photoUrl;
+                        photoLink.href = photo;
                     }
-                    fullPhotoLink.classList.remove('hidden');
+                    photoLink.classList.remove('hidden');
                 }
             } else {
-                largePhotoBox.innerHTML = `
-                    <div class="text-center p-4 text-emerald-200/80 text-xs">
-                        <i class="fa-solid fa-camera-slash text-4xl mb-2 block text-[#FDD835]"></i>
-                        <span>รายการนี้ไม่มีภาพถ่ายบันทึกไว้</span>
+                photoBox.innerHTML = `
+                    <div class="text-center p-3 text-emerald-200/80 text-xs">
+                        <i class="fa-solid fa-camera-slash text-3xl mb-1.5 block text-[#FDD835]"></i>
+                        <span class="text-[11px] leading-tight block">${fallbackMsg}</span>
                     </div>
                 `;
-                fullPhotoLink?.classList.add('hidden');
+                photoLink?.classList.add('hidden');
             }
-        }
+        };
+
+        setupPhotoBox('resumeLargePhotoBox', 'resumeOpenFullPhotoLink', photoUrlIn, 'รายการนี้ไม่มีภาพถ่ายบันทึกไว้', false);
+        const outPhotoFallback = (isCheckedOut || rec.is_special_request) ? 'รายการนี้ไม่มีภาพถ่ายขาออก' : 'ยังไม่ได้ลงเวลาออกงาน';
+        setupPhotoBox('resumeLargePhotoBoxOut', 'resumeOpenFullPhotoLinkOut', photoUrlOut, outPhotoFallback, true);
 
         // 3. ข้อมูลประจำตัว (รักษา 100% Contract)
         const natEl = document.getElementById('resumeNationalId');
@@ -544,11 +589,11 @@ ${this.canManageRecords ? `
         const userEl = document.getElementById('resumeUsername');
         if (userEl) userEl.textContent = person.account_username || rec.national_id || '-';
         const specEl = document.getElementById('resumePosSpec');
-        if (specEl) specEl.textContent = `${rec.position_type || '-'} / ${rec.position_full}`;
+        if (specEl) specEl.textContent = `${rec.position_type || '-'} / ${rec.position_full || '-'}`;
 
         // 4. ข้อมูลการลงเวลาเฉพาะของ Row นี้
         const fullDateEl = document.getElementById('resumeRowFullDate');
-        if (fullDateEl) fullDateEl.textContent = rec.work_date_thai_full;
+        if (fullDateEl) fullDateEl.textContent = rec.work_date_thai_full || '-';
         const shiftEl = document.getElementById('resumeRowShiftName');
         if (shiftEl) shiftEl.textContent = rec.shift_name || '-';
         const inEl = document.getElementById('resumeRowCheckinTime');
@@ -558,40 +603,60 @@ ${this.canManageRecords ? `
         const remEl = document.getElementById('resumeRowRemark');
         if (remEl) remEl.textContent = rec.remark || 'ไม่มีหมายเหตุ';
 
-        // 5. พิกัดตำแหน่งและแผนที่ Google Map เฉพาะของ Row นี้
-        const lat = rec.check_in_lat ?? rec.check_out_lat;
-        const lng = rec.check_in_lng ?? rec.check_out_lng;
-        const locName = (rec.check_in_location || rec.check_out_location || 'ไม่ระบุสถานที่').trim();
+        // 5. พิกัดตำแหน่งและแผนที่ Google Map เฉพาะของ Row นี้ (ทั้งขาเข้า และ ขาออก)
+        const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
+        const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
+        const inLocName = (rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '') || 'ไม่ระบุสถานที่').trim();
 
-        const locNameEl = document.getElementById('resumeRowLocationName');
-        if (locNameEl) locNameEl.textContent = locName;
-
-        const coordsEl = document.getElementById('resumeRowGpsCoords');
-        const mapLinkEl = document.getElementById('resumeRowGoogleMapLink');
-        const mapIframeEl = document.getElementById('resumeRowMapIframe');
-        const mapPlaceholderEl = document.getElementById('resumeRowMapPlaceholder');
-
-        if (typeof lat === 'number' && typeof lng === 'number') {
-            const formattedGps = this.#formatGpsCoordinates(lat, lng);
-            if (coordsEl) coordsEl.textContent = formattedGps || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            if (mapLinkEl) {
-                mapLinkEl.href = `https://www.google.com/maps?q=${lat},${lng}`;
-                mapLinkEl.classList.remove('hidden');
-            }
-            if (mapIframeEl) {
-                mapIframeEl.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=17&output=embed`;
-                mapIframeEl.classList.remove('hidden');
-                mapPlaceholderEl?.classList.add('hidden');
-            }
-        } else {
-            if (coordsEl) coordsEl.textContent = 'ไม่ได้บันทึกพิกัด GPS';
-            mapLinkEl?.classList.add('hidden');
-            if (mapIframeEl) {
-                mapIframeEl.src = '';
-                mapIframeEl.classList.add('hidden');
-            }
-            mapPlaceholderEl?.classList.remove('hidden');
+        const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
+        const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
+        let outLocName = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        if (!outLocName) {
+            outLocName = (isCheckedOut || rec.is_special_request) ? 'ไม่ระบุสถานที่' : '-';
         }
+        const outFallbackGps = (isCheckedOut || rec.is_special_request) ? 'ไม่ได้บันทึกพิกัด GPS' : 'ยังไม่ได้ลงเวลาออกงาน';
+
+        const setupGpsAndMap = (coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => {
+            const locNameEl = document.getElementById(locNameId);
+            if (locNameEl) locNameEl.textContent = locName || '-';
+
+            const coordsEl = document.getElementById(coordsId);
+            const mapLinkEl = document.getElementById(linkId);
+            const mapIframeEl = document.getElementById(iframeId);
+            const mapPlaceholderEl = document.getElementById(placeholderId);
+
+            if (typeof lat === 'number' && typeof lng === 'number' && !isNaN(lat) && !isNaN(lng)) {
+                const formattedGps = this.#formatGpsCoordinates(lat, lng);
+                if (coordsEl) coordsEl.textContent = formattedGps || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                if (mapLinkEl) {
+                    mapLinkEl.href = `https://www.google.com/maps?q=${lat},${lng}`;
+                    mapLinkEl.classList.remove('hidden');
+                }
+                if (mapIframeEl) {
+                    mapIframeEl.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=17&output=embed`;
+                    mapIframeEl.classList.remove('hidden');
+                    mapPlaceholderEl?.classList.add('hidden');
+                }
+            } else {
+                if (coordsEl) coordsEl.textContent = fallbackMsg || 'ไม่ได้บันทึกพิกัด GPS';
+                mapLinkEl?.classList.add('hidden');
+                if (mapIframeEl) {
+                    mapIframeEl.src = '';
+                    mapIframeEl.classList.add('hidden');
+                }
+                mapPlaceholderEl?.classList.remove('hidden');
+            }
+        };
+
+        setupGpsAndMap(
+            'resumeRowGpsCoords', 'resumeRowGoogleMapLink', 'resumeRowMapIframe', 'resumeRowMapPlaceholder', 'resumeRowLocationName',
+            inLat, inLng, inLocName, 'ไม่ได้บันทึกพิกัด GPS'
+        );
+
+        setupGpsAndMap(
+            'resumeRowGpsCoordsOut', 'resumeRowGoogleMapLinkOut', 'resumeRowMapIframeOut', 'resumeRowMapPlaceholderOut', 'resumeRowLocationNameOut',
+            outLat, outLng, outLocName, outFallbackGps
+        );
 
         // 6. โครงสร้างสังกัด (รักษา 100% Contract)
         const orgNameEl = document.getElementById('resumeOrgName');
@@ -610,6 +675,10 @@ ${this.canManageRecords ? `
         if (this.currentPhotoBlobUrl) {
             URL.revokeObjectURL(this.currentPhotoBlobUrl);
             this.currentPhotoBlobUrl = null;
+        }
+        if (this.currentPhotoBlobUrlOut) {
+            URL.revokeObjectURL(this.currentPhotoBlobUrlOut);
+            this.currentPhotoBlobUrlOut = null;
         }
         document.getElementById('modalPersonnelResumeProfile')?.classList.add('hidden');
     }
@@ -744,11 +813,21 @@ ${this.canManageRecords ? `
                 return;
             }
             const rows = filtered.map((r, idx) => {
-                const lat = r.check_in_lat ?? r.check_out_lat;
-                const lng = r.check_in_lng ?? r.check_out_lng;
-                const gpsCoords = this.#formatGpsCoordinates(lat, lng);
-                const locName = (r.check_in_location || r.check_out_location || '').trim();
-                const gpsDisplay = [locName, gpsCoords].filter(Boolean).join(' ') || '-';
+                const inLat = r.check_in_lat ?? (r.is_special_request ? r.check_out_lat : null);
+                const inLng = r.check_in_lng ?? (r.is_special_request ? r.check_out_lng : null);
+                const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
+                const inLocName = (r.check_in_location || (r.is_special_request ? r.check_out_location : '') || '').trim();
+                const inGpsDisplay = [inLocName, inGpsCoords].filter(Boolean).join(' ') || '-';
+
+                const isCheckedOut = Boolean(r.check_out_time || r.check_out_lat || r.check_out_location);
+                const outLat = r.check_out_lat ?? (r.is_special_request ? r.check_in_lat : null);
+                const outLng = r.check_out_lng ?? (r.is_special_request ? r.check_in_lng : null);
+                const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
+                let outLocName = (r.check_out_location || (r.is_special_request ? r.check_in_location : '') || '').trim();
+                if (!outLocName && !isCheckedOut && !r.is_special_request) {
+                    outLocName = '-';
+                }
+                const outGpsDisplay = [outLocName, outGpsCoords].filter(Boolean).join(' ') || '-';
 
                 return {
                     'ลำดับ': idx + 1,
@@ -760,7 +839,8 @@ ${this.canManageRecords ? `
                     'กลุ่มงาน': r.work_group || '-',
                     'เวลาเข้างาน (24 ชม.)': r.check_in_time || '-',
                     'เวลาออกงาน (24 ชม.)': r.check_out_time || '-',
-                    'พิกัด GPS': gpsDisplay,
+                    'พิกัด GPS เข้างาน': inGpsDisplay,
+                    'พิกัด GPS ออกงาน': outGpsDisplay,
                     'สถานะ': r.status_label,
                     'หมายเหตุ': r.remark || ''
                 };
@@ -779,7 +859,8 @@ ${this.canManageRecords ? `
                 'กลุ่มงาน': 'กลุ่มงานตรวจและปฏิบัติการ 1',
                 'เวลาเข้างาน (24 ชม.)': '08:15',
                 'เวลาออกงาน (24 ชม.)': '16:35',
-                'พิกัด GPS': 'สำนักเทศกิจ 13.733790° N, 100.468261° E',
+                'พิกัด GPS เข้างาน': 'สำนักเทศกิจ 13.733790° N, 100.468261° E',
+                'พิกัด GPS ออกงาน': 'ศาลาว่าการ กทม. 13.756300° N, 100.501800° E',
                 'สถานะ': 'ปฏิบัติงานปกติ',
                 'หมายเหตุ': ''
             }];

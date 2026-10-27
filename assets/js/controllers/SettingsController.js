@@ -78,6 +78,11 @@ export class SettingsController {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
         }
 
+        const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
+        if (elRandGps) {
+            elRandGps.checked = Boolean(this.settings.randomize_gps_checkout);
+        }
+
         const isSingleClick = Boolean(this.settings.single_click_checkin);
         this.#syncCheckinModeUI(isSingleClick);
 
@@ -348,6 +353,10 @@ export class SettingsController {
         if (elFilterRealtime) {
             this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);
         }
+        const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
+        if (elRandGps) {
+            this.settings.randomize_gps_checkout = Boolean(elRandGps.checked);
+        }
         const radioSingle = document.querySelector('input[name="checkinRecordingMode"][value="single_click"]');
         const chkSingle = document.getElementById('toggleSingleClickCheckin');
         this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
@@ -548,6 +557,10 @@ export class SettingsController {
 
         document.getElementById('toggleFilterShiftsByRealtime')?.addEventListener('change', (e) => {
             this.settings.filter_shifts_by_realtime = Boolean(e.target.checked);
+        });
+
+        document.getElementById('toggleRandomizeGpsCheckout')?.addEventListener('change', (e) => {
+            this.settings.randomize_gps_checkout = Boolean(e.target.checked);
         });
 
         document.querySelectorAll('input[name="checkinRecordingMode"]').forEach(radio => {

@@ -36,6 +36,7 @@ export class Config {
         require_photo: true,
         require_gps: true,
         single_click_checkin: false,
+        randomize_gps_checkout: false,
         allow_checkin_start_time: '06:00',
         standard_check_in: '08:30',
         standard_check_out: '16:30',
