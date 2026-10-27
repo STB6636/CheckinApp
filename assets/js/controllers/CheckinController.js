@@ -905,7 +905,12 @@ export class CheckinController {
                 'ยืนยันการออกจากระบบ',
                 'คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?',
                 'ออกจากระบบ',
-                'question'
+                'question',
+                {
+                    infoNote: 'เมื่อออกจากระบบแล้ว ท่านจะต้องเข้าสู่ระบบใหม่อีกครั้งเพื่อลงเวลา',
+                    confirmGradient: 'from-rose-600 to-red-500',
+                    confirmIcon: '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>'
+                }
             );
             if (confirmed) {
                 this.#stopCameraHardwareStream();
@@ -924,7 +929,12 @@ export class CheckinController {
                 'ยืนยันการออกจากระบบ',
                 'คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?',
                 'ออกจากระบบ',
-                'question'
+                'question',
+                {
+                    infoNote: 'เมื่อออกจากระบบแล้ว ท่านจะต้องเข้าสู่ระบบใหม่อีกครั้งเพื่อลงเวลา',
+                    confirmGradient: 'from-rose-600 to-red-500',
+                    confirmIcon: '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>'
+                }
             );
             if (confirmed) {
                 this.#stopCameraHardwareStream();

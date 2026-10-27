@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T06:51:14.011Z",
-  "totalFilesScanned": 36,
-  "totalSymbolsIndexed": 384,
+  "generatedAt": "2026-10-27T07:11:34.565Z",
+  "totalFilesScanned": 37,
+  "totalSymbolsIndexed": 385,
   "files": [
     {
       "filePath": "approvals.html",
@@ -65,8 +65,8 @@
     {
       "filePath": "assets/js/components/AppLayout.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "40d7a49cbd1b1858",
-      "totalLines": 791,
+      "fileHash": "610a9b9be47dbf16",
+      "totalLines": 796,
       "importsCount": 6,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -84,9 +84,9 @@
           "name": "AppLayout",
           "kind": "class",
           "startLine": 13,
-          "endLine": 791,
+          "endLine": 796,
           "signature": "export class AppLayout",
-          "summary": "Class Definition (779 lines)"
+          "summary": "Class Definition (784 lines)"
         },
         {
           "name": "AppLayout.canViewUsersMenu",
@@ -188,9 +188,9 @@
           "name": "AppLayout.#bindGlobalDelegatedEvents",
           "kind": "static private method",
           "startLine": 683,
-          "endLine": 790,
+          "endLine": 795,
           "signature": "() => any",
-          "summary": "static private method L683-L790 (108 lines)"
+          "summary": "static private method L683-L795 (113 lines)"
         }
       ]
     },
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "2b7c29748e667297",
-      "totalLines": 1524,
+      "fileHash": "f192524652cc6766",
+      "totalLines": 1534,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1520,
+          "endLine": 1530,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (1509 lines)"
+          "summary": "Class Definition (1519 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -488,49 +488,49 @@
           "name": "CheckinController.#bindEvents",
           "kind": "private method",
           "startLine": 891,
-          "endLine": 1155,
+          "endLine": 1165,
           "signature": "() => any",
-          "summary": "private method L891-L1155 (265 lines)"
+          "summary": "private method L891-L1165 (275 lines)"
         },
         {
           "name": "setDesktopActiveTab",
           "kind": "arrow_fn",
-          "startLine": 1060,
-          "endLine": 1079,
+          "startLine": 1070,
+          "endLine": 1089,
           "signature": "(activeName) => inferred",
-          "summary": "Arrow Function L1060-L1079"
+          "summary": "Arrow Function L1070-L1089"
         },
         {
           "name": "openMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 1090,
-          "endLine": 1107,
+          "startLine": 1100,
+          "endLine": 1117,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1090-L1107"
+          "summary": "Arrow Function L1100-L1117"
         },
         {
           "name": "closeMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 1109,
-          "endLine": 1134,
+          "startLine": 1119,
+          "endLine": 1144,
           "signature": "(targetTab = null) => inferred",
-          "summary": "Arrow Function L1109-L1134"
+          "summary": "Arrow Function L1119-L1144"
         },
         {
           "name": "CheckinController.#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 1157,
-          "endLine": 1456,
+          "startLine": 1167,
+          "endLine": 1466,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1157-L1456 (300 lines)"
+          "summary": "private async method L1167-L1466 (300 lines)"
         },
         {
           "name": "CheckinController.#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 1458,
-          "endLine": 1519,
+          "startLine": 1468,
+          "endLine": 1529,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L1458-L1519 (62 lines)"
+          "summary": "private async method L1468-L1529 (62 lines)"
         }
       ]
     },
@@ -1775,8 +1775,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "f97ed932d91f3077",
-      "totalLines": 1083,
+      "fileHash": "962ee9e12db7e785",
+      "totalLines": 1115,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -1789,9 +1789,9 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1083,
+          "endLine": 1115,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1076 lines)"
+          "summary": "Class Definition (1108 lines)"
         },
         {
           "name": "UIHelpers.getRootBasePath",
@@ -1965,65 +1965,65 @@
           "name": "UIHelpers.confirm",
           "kind": "static public async method",
           "startLine": 534,
-          "endLine": 552,
-          "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') => Promise<any>",
-          "summary": "static public async method L534-L552 (19 lines)"
+          "endLine": 584,
+          "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>",
+          "summary": "static public async method L534-L584 (51 lines)"
         },
         {
           "name": "UIHelpers.validateThaiNationalId",
           "kind": "static public method",
-          "startLine": 554,
-          "endLine": 573,
+          "startLine": 586,
+          "endLine": 605,
           "signature": "(id, strictCheckDigit = false) => any",
-          "summary": "static public method L554-L573 (20 lines)"
+          "summary": "static public method L586-L605 (20 lines)"
         },
         {
           "name": "UIHelpers.getLast6DigitsFromNationalId",
           "kind": "static public method",
-          "startLine": 575,
-          "endLine": 579,
+          "startLine": 607,
+          "endLine": 611,
           "signature": "(nationalId) => any",
-          "summary": "static public method L575-L579 (5 lines)"
+          "summary": "static public method L607-L611 (5 lines)"
         },
         {
           "name": "UIHelpers.exportToExcelUTF8",
           "kind": "static public method",
-          "startLine": 581,
-          "endLine": 606,
+          "startLine": 613,
+          "endLine": 638,
           "signature": "(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any",
-          "summary": "static public method L581-L606 (26 lines)"
+          "summary": "static public method L613-L638 (26 lines)"
         },
         {
           "name": "UIHelpers.exportMultiSheetExcel",
           "kind": "static public method",
-          "startLine": 613,
-          "endLine": 633,
+          "startLine": 645,
+          "endLine": 665,
           "signature": "(sheets, fileName = 'export_data') => any",
-          "summary": "static public method L613-L633 (21 lines)"
+          "summary": "static public method L645-L665 (21 lines)"
         },
         {
           "name": "UIHelpers.exportTemplateWithValidationsExcel",
           "kind": "static public async method",
-          "startLine": 642,
-          "endLine": 905,
+          "startLine": 674,
+          "endLine": 937,
           "signature": "({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>",
-          "summary": "static public async method L642-L905 (264 lines)"
+          "summary": "static public async method L674-L937 (264 lines)"
         },
         {
           "name": "UIHelpers.parseExcelFileUTF8",
           "kind": "static public method",
-          "startLine": 907,
-          "endLine": 929,
+          "startLine": 939,
+          "endLine": 961,
           "signature": "(file) => any",
-          "summary": "static public method L907-L929 (23 lines)"
+          "summary": "static public method L939-L961 (23 lines)"
         },
         {
           "name": "UIHelpers.printReportInNewTab",
           "kind": "static public method",
-          "startLine": 931,
-          "endLine": 1082,
+          "startLine": 963,
+          "endLine": 1114,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L931-L1082 (152 lines)"
+          "summary": "static public method L963-L1114 (152 lines)"
         }
       ]
     },
@@ -3127,6 +3127,25 @@
           "endLine": 12,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-soft-ui-logout-alert/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "e165c3422abc9561",
+      "totalLines": 218,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
         }
       ]
     },

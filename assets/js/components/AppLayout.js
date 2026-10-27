@@ -698,7 +698,12 @@ export class AppLayout {
                     'ยืนยันการออกจากระบบ',
                     'คุณต้องการออกจากระบบผู้ดูแลระบบใช่หรือไม่?',
                     'ออกจากระบบ',
-                    'question'
+                    'question',
+                    {
+                        infoNote: 'การออกจากระบบจะยุติ Session การจัดการของผู้ดูแลระบบ',
+                        confirmGradient: 'from-rose-600 to-red-500',
+                        confirmIcon: '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>'
+                    }
                 );
                 if (confirmed) {
                     AuthService.clearSession();

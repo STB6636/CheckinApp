@@ -1,0 +1,24 @@
+{
+  "pipeline_id": "PIPE-20261027-soft-ui-logout-alert",
+  "branch": "Test-UXUI",
+  "surgical_targets": [
+    {
+      "file": "assets/js/core/UIHelpers.js",
+      "target_lines": "534-555",
+      "operation": "modernize_confirm_to_soft_ui",
+      "details": "ปรับปรุง UIHelpers.confirm ให้ใช้ Tailwind CSS SweetAlerts - Soft UI Dashboard คลาสและ Gradient"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "target_lines": "903-935",
+      "operation": "enhance_logout_soft_ui",
+      "details": "ปรับการเรียก alert ยืนยันออกจากระบบทั้งปุ่ม Desktop และ Mobile Drawer ให้แสดงการ์ดข้อความและปุ่ม Soft UI สี Rose-Red"
+    },
+    {
+      "file": "assets/js/components/AppLayout.js",
+      "target_lines": "693-709",
+      "operation": "enhance_admin_logout_soft_ui",
+      "details": "ปรับการเรียก alert ยืนยันออกจากระบบของ Sidebar แอดมินให้เป็นสไตล์ Soft UI Dashboard สอดคล้องกันทั้งแอป"
+    }
+  ]
+}

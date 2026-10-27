@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานปรับปรุงข้อความแจ้งเตือนเมื่อคลิกออกจากระบบ สไตล์ Soft UI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-rose-900 via-pink-900 to-slate-900 p-6 rounded-2xl border border-rose-500/30 shadow-2xl flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <span class="px-3 py-1 bg-rose-500/20 text-rose-300 border border-rose-400/30 text-xs font-bold rounded-full">
+                    PIPE-20261027-soft-ui-logout-alert
+                </span>
+                <h1 class="text-xl md:text-2xl font-black mt-2 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-rose-400"></i>
+                    <span>ปรับปรุงกล่องยืนยันออกจากระบบ สไตล์ Soft UI Dashboard (Creative Tim)</span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-300 mt-1">
+                    ตามมาตรฐาน <a href="https://www.creative-tim.com/learning-lab/tailwind/html/sweetAlerts/soft-ui-dashboard/" target="_blank" class="text-rose-300 underline font-semibold">Creative Tim Tailwind SweetAlerts Soft UI</a>
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-mono font-bold">
+                    Branch: Test-UXUI
+                </span>
+            </div>
+        </div>
+
+        <!-- Section 1: เปรียบเทียบรูปแบบเดิม vs รูปแบบใหม่ -->
+        <div class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-rose-400 flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                <span>1. เปรียบเทียบรูปแบบกล่องแจ้งเตือนออกจากระบบ</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Old Default Alert -->
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-700 space-y-3">
+                    <span class="px-2.5 py-0.5 bg-slate-700/50 text-slate-400 text-xs font-bold rounded-full">
+                        รูปแบบเดิม (Default SweetAlert2)
+                    </span>
+                    <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+                        <li>ใช้สีพื้นฐานแบบ Inline Color (#E11D48 / #64748B)</li>
+                        <li>ปุ่มทรงเหลี่ยมมนเล็ก ไม่มีเงาหรือมิติความนุ่มนวล</li>
+                        <li>ไม่มีการ์ดสรุปข้อความ ไม่มีไอคอนกำกับในปุ่มกด</li>
+                    </ul>
+                    <button onclick="testOldDefaultLogout()" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs text-slate-300 bg-slate-800 border border-slate-600 hover:bg-slate-700 transition-all cursor-pointer">
+                        <i class="fa-solid fa-eye mr-1.5"></i> ทดลองดูแบบเดิม
+                    </button>
+                </div>
+
+                <!-- New Soft UI Dashboard Alert -->
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-rose-500/40 space-y-3">
+                    <span class="px-2.5 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-full">
+                        รูปแบบใหม่ (Soft UI Dashboard)
+                    </span>
+                    <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                        <li>ขอบมนระดับพรีเมียม <code class="text-rose-300">rounded-2xl</code> พร้อม Backdrop Blur</li>
+                        <li>ปุ่มยืนยัน Soft UI Gradient Rose-Red (<code class="text-rose-300">from-rose-600 to-red-500</code>)</li>
+                        <li>ปุ่มยกเลิกสี Soft Slate นุ่มนวลตา พร้อมเอฟเฟกต์ <code class="text-rose-300">hover:scale-102</code></li>
+                        <li>การ์ดข้อความแจ้งเตือนสีนุ่มนวล พร้อมไอคอนออกจากระบบ</li>
+                    </ul>
+                    <button onclick="testSoftUiCheckinLogout()" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs text-white bg-gradient-to-tl from-rose-600 to-red-500 shadow-soft-md hover:scale-102 transition-all cursor-pointer">
+                        <i class="fa-solid fa-play mr-1.5"></i> ทดลองดูแบบใหม่ (Soft UI)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: จุดที่นำไปใช้งานในระบบ -->
+        <div class="bg-slate-800/90 rounded-2xl p-6 border border-slate-700 shadow-xl space-y-4">
+            <h2 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-base"></i>
+                <span>2. จุดที่ปรับใช้ในระบบทั้งแอปพลิเคชัน (3 จุดสำคัญ)</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Checkin Page Logout -->
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-500/30 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-bold text-emerald-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock-user"></i>
+                                <span>หน้าระบบลงเวลาปฏิบัติราชการ (checkin.html)</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ครอบคลุมทั้งปุ่ม <strong>"ออกจากระบบ"</strong> บนแถบเมนูบนหน้าจอคอมพิวเตอร์ และปุ่มออกจากระบบในเมนูด้านข้าง (Slide Drawer) บนมือถือ
+                        </p>
+                    </div>
+                    <button onclick="testSoftUiCheckinLogout()" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs text-white bg-gradient-to-tl from-rose-600 to-red-500 shadow-soft-md hover:scale-102 transition-all cursor-pointer">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> ทดลองกดออกจากระบบ (หน้าลงเวลา)
+                    </button>
+                </div>
+
+                <!-- Admin Layout Logout -->
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-sky-500/30 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-bold text-sky-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-gauge-high"></i>
+                                <span>หน้าผู้ดูแลระบบ (Admin Layout Shell)</span>
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ครอบคลุมปุ่ม <strong>"ออกจากระบบ"</strong> ด้านล่างของ Sidebar เมนูผู้ดูแลระบบ (ทุกหน้า: Dashboard, Approvals, Reports, Personnel, Users, Settings)
+                        </p>
+                    </div>
+                    <button onclick="testSoftUiAdminLogout()" class="w-full py-2.5 px-3 rounded-xl font-bold text-xs text-white bg-gradient-to-tl from-rose-600 to-red-500 shadow-soft-md hover:scale-102 transition-all cursor-pointer">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> ทดลองกดออกจากระบบ (หน้าผู้ดูแล)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script จำลอง SweetAlerts Modal -->
+    <script>
+        function testOldDefaultLogout() {
+            Swal.fire({
+                title: 'ยืนยันการออกจากระบบ',
+                text: 'คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#E11D48',
+                cancelButtonColor: '#64748B',
+                confirmButtonText: 'ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก'
+            });
+        }
+
+        function testSoftUiCheckinLogout() {
+            Swal.fire({
+                title: 'ยืนยันการออกจากระบบ',
+                html: `
+                    <div class="space-y-3 text-center py-1">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            คุณต้องการออกจากระบบลงเวลาปฏิบัติราชการใช่หรือไม่?
+                        </p>
+                        <div class="p-3 bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 rounded-xl text-xs text-rose-700 dark:text-rose-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-info text-rose-500 shrink-0"></i>
+                            <span>เมื่อออกจากระบบแล้ว ท่านจะต้องเข้าสู่ระบบใหม่อีกครั้งเพื่อลงเวลา</span>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-2xl p-5 shadow-2xl border border-rose-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: 'inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-rose-600 to-red-500 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white',
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                }
+            }).then((res) => {
+                if (res.isConfirmed) {
+                    Swal.fire({
+                        title: 'ออกจากระบบสำเร็จ',
+                        text: 'ระบบกำลังนำท่านกลับสู่หน้าหลัก...',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'rounded-2xl p-5 shadow-2xl border border-emerald-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm'
+                        }
+                    });
+                }
+            });
+        }
+
+        function testSoftUiAdminLogout() {
+            Swal.fire({
+                title: 'ยืนยันการออกจากระบบ',
+                html: `
+                    <div class="space-y-3 text-center py-1">
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            คุณต้องการออกจากระบบผู้ดูแลระบบใช่หรือไม่?
+                        </p>
+                        <div class="p-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-600 dark:text-slate-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-rose-500 shrink-0"></i>
+                            <span>การออกจากระบบจะยุติ Session การจัดการของผู้ดูแลระบบ</span>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-2xl p-5 shadow-2xl border border-rose-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: 'inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-rose-600 to-red-500 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white',
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

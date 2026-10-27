@@ -57,7 +57,16 @@ flows:
   4. `สถานที่ ตาม GPS:` (เฉพาะเมื่อเปิด GPS)
 - **การคืนสถานะปุ่มกด:** หากกดยกเลิกใน Modal ให้คืนสถานะปุ่มบันทึก (`btnSubmitMain.disabled = false; btnSubmitMain.innerHTML = originalBtnHtml;`)
 
-### 2.5 การรักษาความสมบูรณ์ของระบบเดิม (Compatibility Guarantee)
+### 2.5 การแจ้งเตือนออกจากระบบ (Soft UI Dashboard Logout Alert)
+- เมธอด `UIHelpers.confirm(title, text, confirmText, icon, options = {})` ได้รับการยกระดับเป็นมาตรฐาน Tailwind CSS SweetAlerts - Soft UI Dashboard:
+  - `customClass.popup`: `rounded-2xl p-5 shadow-2xl border border-rose-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md`
+  - `buttonsStyling: false`, `reverseButtons: true`
+  - ปุ่มยืนยันออกจากระบบ: Soft UI Gradient สี Rose-Red (`bg-gradient-to-tl from-rose-600 to-red-500 text-white shadow-soft-md hover:scale-102`) พร้อมไอคอน `<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>`
+  - ปุ่มยกเลิก: Soft UI Slate (`bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102`)
+  - รองรับการ์ด `options.infoNote` แนะนำผู้ใช้งานอย่างนุ่มนวล
+- ครอบคลุมทั้ง 3 จุด: Topbar หน้าลงเวลา (`#btnCheckinLogout`), Mobile Drawer หน้าลงเวลา (`#btnDrawerLogout`), และ Sidebar เมนูผู้ดูแลระบบ (`#btnSidebarLogout`)
+
+### 2.6 การรักษาความสมบูรณ์ของระบบเดิม (Compatibility Guarantee)
 - **โหมดปกติ (เวลาราชการปกติ 06:00-08:30 และการลงเวลาออกงาน):** `#shiftSelectorContainer` ถูกซ่อน ทำให้ `isShiftSelectorActive` เป็น `false` ระบบจึงทำงานได้รวดเร็วและไม่ถูกบล็อก
 - **ระบบคำขอพิเศษ (`#spShiftSelect`):** ทำงานเป็นอิสระต่อกัน 100%
 - **ความสูงหน้าจอเดสก์ท็อป PC:** SweetAlert ทำงานเป็น Modal Overlay ไม่กระทบ Layout ความสูงรวม (~840px ไร้ Scroll Bar 100%)

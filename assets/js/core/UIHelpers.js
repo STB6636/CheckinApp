@@ -531,24 +531,56 @@ export class UIHelpers {
         }
     }
 
-    static async confirm(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') {
+    static async confirm(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
+            let contentHtml = options.html || '';
+            if (!contentHtml) {
+                let noteHtml = '';
+                if (options.infoNote) {
+                    noteHtml = `
+                        <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2.5 text-left leading-relaxed">
+                            <i class="fa-solid fa-circle-info mt-0.5 shrink-0 text-amber-500 text-sm"></i>
+                            <div>${options.infoNote}</div>
+                        </div>
+                    `;
+                }
+                if (text || noteHtml) {
+                    contentHtml = `
+                        <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">
+                            ${text ? `<p class="mb-1">${text}</p>` : ''}
+                            ${noteHtml}
+                        </div>
+                    `;
+                }
+            }
+
+            const confirmBtnText = `${options.confirmIcon || (confirmText.includes('ออก') ? '<i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>' : '<i class="fa-solid fa-check mr-1.5"></i>')}${confirmText}`;
+
             const result = await window.Swal.fire({
                 title,
-                text,
-                icon,
+                ...(contentHtml ? { html: contentHtml } : { text }),
+                icon: options.icon || icon,
                 showCancelButton: true,
-                confirmButtonColor: icon === 'error' || icon === 'warning' ? '#E11D48' : (isDark ? '#34D399' : '#007B3E'),
-                cancelButtonColor: '#64748B',
-                confirmButtonText: confirmText,
-                cancelButtonText: 'ยกเลิก',
-                background: isDark ? '#183025' : '#FFFFFF',
+                buttonsStyling: false,
+                reverseButtons: true,
+                confirmButtonText: confirmBtnText,
+                cancelButtonText: options.cancelButtonText || 'ยกเลิก',
+                customClass: {
+                    popup: options.popupClass || 'rounded-2xl p-5 shadow-2xl border border-rose-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    htmlContainer: 'text-sm text-slate-600 dark:text-slate-300 m-0 pt-1',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: 'inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl ' + (options.confirmGradient || (icon === 'error' || icon === 'warning' ? 'from-rose-600 to-red-500' : 'from-[#00744B] to-emerald-500')) + ' hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white',
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                },
+                background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
             return Boolean(result.isConfirmed);
         }
-        return window.confirm(`${title}\n${text}`);
+        const fallbackMsg = options.infoNote ? `${title}\n${text}\n\nหมายเหตุ: ${options.infoNote}` : `${title}\n${text}`;
+        return window.confirm(fallbackMsg);
     }
 
     static validateThaiNationalId(id, strictCheckDigit = false) {

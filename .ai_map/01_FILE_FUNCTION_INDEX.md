@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T06:51:14.011Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `36` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `384`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T07:11:34.565Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `37` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `385`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -23,11 +23,11 @@
 
 ## File: `assets/js/components/AppLayout.js`
 - **Layer:** Shared UI Component Layer
-- **Hash:** `40d7a49cbd1b1858` | **Total Lines:** `791` | **Imports:** `6` | **Exports:** `AppLayout`
+- **Hash:** `610a9b9be47dbf16` | **Total Lines:** `796` | **Imports:** `6` | **Exports:** `AppLayout`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AppLayout` | `class` | **L13 - L791** | `export class AppLayout` | Class Definition (779 lines) |
+| `AppLayout` | `class` | **L13 - L796** | `export class AppLayout` | Class Definition (784 lines) |
 | `AppLayout.canViewUsersMenu` | `static public method` | **L58 - L65** | `(user) => any` | static public method L58-L65 (8 lines) |
 | `AppLayout.initAdminLayout` | `static public async method` | **L67 - L124** | `({ activePage, pageTitle, pageSubtitle = '' }) => Promise<any>` | static public async method L67-L124 (58 lines) |
 | `AppLayout.checkAndShowWelcomeToast` | `static public method` | **L126 - L135** | `(currentUser) => any` | static public method L126-L135 (10 lines) |
@@ -40,7 +40,7 @@
 | `AppLayout.getMobileShortcutGridHtml` | `static public method` | **L531 - L561** | `(currentUser) => any` | static public method L531-L561 (31 lines) |
 | `AppLayout.#renderFooter` | `static private method` | **L563 - L582** | `(settings) => any` | static private method L563-L582 (20 lines) |
 | `AppLayout.refreshNotificationBell` | `static public async method` | **L584 - L681** | `(currentUser) => Promise<any>` | static public async method L584-L681 (98 lines) |
-| `AppLayout.#bindGlobalDelegatedEvents` | `static private method` | **L683 - L790** | `() => any` | static private method L683-L790 (108 lines) |
+| `AppLayout.#bindGlobalDelegatedEvents` | `static private method` | **L683 - L795** | `() => any` | static private method L683-L795 (113 lines) |
 
 ---
 
@@ -64,11 +64,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `2b7c29748e667297` | **Total Lines:** `1524` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `f192524652cc6766` | **Total Lines:** `1534` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L1520** | `export class CheckinController` | Class Definition (1509 lines) |
+| `CheckinController` | `class` | **L12 - L1530** | `export class CheckinController` | Class Definition (1519 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L37** | `() => any` | public constructor L13-L37 (25 lines) |
 | `CheckinController.init` | `public async method` | **L39 - L80** | `() => Promise<any>` | public async method L39-L80 (42 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L82 - L122** | `() => any` | private method L82-L122 (41 lines) |
@@ -91,12 +91,12 @@
 | `CheckinController.#capturePhotoAndStopStream` | `private method` | **L757 - L787** | `() => any` | private method L757-L787 (31 lines) |
 | `CheckinController.#resetPageAfterSave` | `private async method` | **L789 - L797** | `() => Promise<any>` | private async method L789-L797 (9 lines) |
 | `CheckinController.#initGpsLocation` | `private async method` | **L805 - L889** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `CheckinController.#bindEvents` | `private method` | **L891 - L1155** | `() => any` | private method L891-L1155 (265 lines) |
-| `setDesktopActiveTab` | `arrow_fn` | **L1060 - L1079** | `(activeName) => inferred` | Arrow Function L1060-L1079 |
-| `openMobileDrawer` | `arrow_fn` | **L1090 - L1107** | `() => inferred` | Arrow Function L1090-L1107 |
-| `closeMobileDrawer` | `arrow_fn` | **L1109 - L1134** | `(targetTab = null) => inferred` | Arrow Function L1109-L1134 |
-| `CheckinController.#handleMainCheckin` | `private async method` | **L1157 - L1456** | `() => Promise<any>` | private async method L1157-L1456 (300 lines) |
-| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1458 - L1519** | `(closeModalCallback) => Promise<any>` | private async method L1458-L1519 (62 lines) |
+| `CheckinController.#bindEvents` | `private method` | **L891 - L1165** | `() => any` | private method L891-L1165 (275 lines) |
+| `setDesktopActiveTab` | `arrow_fn` | **L1070 - L1089** | `(activeName) => inferred` | Arrow Function L1070-L1089 |
+| `openMobileDrawer` | `arrow_fn` | **L1100 - L1117** | `() => inferred` | Arrow Function L1100-L1117 |
+| `closeMobileDrawer` | `arrow_fn` | **L1119 - L1144** | `(targetTab = null) => inferred` | Arrow Function L1119-L1144 |
+| `CheckinController.#handleMainCheckin` | `private async method` | **L1167 - L1466** | `() => Promise<any>` | private async method L1167-L1466 (300 lines) |
+| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1468 - L1529** | `(closeModalCallback) => Promise<any>` | private async method L1468-L1529 (62 lines) |
 
 ---
 
@@ -318,11 +318,11 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `f97ed932d91f3077` | **Total Lines:** `1083` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `962ee9e12db7e785` | **Total Lines:** `1115` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1083** | `export class UIHelpers` | Class Definition (1076 lines) |
+| `UIHelpers` | `class` | **L8 - L1115** | `export class UIHelpers` | Class Definition (1108 lines) |
 | `UIHelpers.getRootBasePath` | `static public method` | **L27 - L36** | `() => any` | static public method L27-L36 (10 lines) |
 | `UIHelpers.maskUrlToRoot` | `static public method` | **L38 - L61** | `(explicitPageName = '') => any` | static public method L38-L61 (24 lines) |
 | `UIHelpers.initTheme` | `static public method` | **L63 - L80** | `() => any` | static public method L63-L80 (18 lines) |
@@ -344,14 +344,14 @@
 | `UIHelpers.hideLoading` | `static public method` | **L478 - L503** | `() => any` | static public method L478-L503 (26 lines) |
 | `UIHelpers.renderTableSkeleton` | `static public method` | **L505 - L515** | `(rows = 5, cols = 6) => any` | static public method L505-L515 (11 lines) |
 | `UIHelpers.alert` | `static public async method` | **L517 - L532** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L517-L532 (16 lines) |
-| `UIHelpers.confirm` | `static public async method` | **L534 - L552** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') => Promise<any>` | static public async method L534-L552 (19 lines) |
-| `UIHelpers.validateThaiNationalId` | `static public method` | **L554 - L573** | `(id, strictCheckDigit = false) => any` | static public method L554-L573 (20 lines) |
-| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L575 - L579** | `(nationalId) => any` | static public method L575-L579 (5 lines) |
-| `UIHelpers.exportToExcelUTF8` | `static public method` | **L581 - L606** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L581-L606 (26 lines) |
-| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L613 - L633** | `(sheets, fileName = 'export_data') => any` | static public method L613-L633 (21 lines) |
-| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L642 - L905** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L642-L905 (264 lines) |
-| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L907 - L929** | `(file) => any` | static public method L907-L929 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L931 - L1082** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L931-L1082 (152 lines) |
+| `UIHelpers.confirm` | `static public async method` | **L534 - L584** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L534-L584 (51 lines) |
+| `UIHelpers.validateThaiNationalId` | `static public method` | **L586 - L605** | `(id, strictCheckDigit = false) => any` | static public method L586-L605 (20 lines) |
+| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L607 - L611** | `(nationalId) => any` | static public method L607-L611 (5 lines) |
+| `UIHelpers.exportToExcelUTF8` | `static public method` | **L613 - L638** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L613-L638 (26 lines) |
+| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L645 - L665** | `(sheets, fileName = 'export_data') => any` | static public method L645-L665 (21 lines) |
+| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L674 - L937** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L674-L937 (264 lines) |
+| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L939 - L961** | `(file) => any` | static public method L939-L961 (23 lines) |
+| `UIHelpers.printReportInNewTab` | `static public method` | **L963 - L1114** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L963-L1114 (152 lines) |
 
 ---
 
@@ -601,6 +601,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
+
+---
+
+## File: `pipeline/PIPE-20261027-soft-ui-logout-alert/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `e165c3422abc9561` | **Total Lines:** `218` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
 
 ---
 
