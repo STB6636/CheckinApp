@@ -35,3 +35,4 @@ flows:
 - **Responsive & Sticky TOC:** สารบัญด้านข้างเลื่อนติดตามหน้าจอ พร้อมปุ่มเปิดเมนูสารบัญบนหน้าจอมือถือ
 - **Print Optimization (`@media print`):** ซ่อนปุ่มและสารบัญอัตโนมัติเมื่อสั่งพิมพ์ เพื่อพิมพ์ลงกระดาษ A4 หรือบันทึกเป็น PDF สวยงาม
 - **ความแม่นยำ 100%:** อิงตามฟังก์ชันจริงล่าสุดบน Branch `Test-UXUI` (Dropdown กะว่าง, กล้อง Mirror, Soft UI Confirmation Modal)
+

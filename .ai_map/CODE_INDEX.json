@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T07:51:49.398Z",
-  "totalFilesScanned": 42,
-  "totalSymbolsIndexed": 397,
+  "generatedAt": "2026-10-27T08:23:32.488Z",
+  "totalFilesScanned": 47,
+  "totalSymbolsIndexed": 403,
   "files": [
     {
       "filePath": "approvals.html",
@@ -2818,8 +2818,8 @@
     {
       "filePath": "docs/manual/index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1204a1237d68fccd",
-      "totalLines": 578,
+      "fileHash": "fa1a0a3c187d3bbb",
+      "totalLines": 669,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2828,25 +2828,25 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 53,
+          "endLine": 58,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L53"
+          "summary": "HTML DOM Section L3-L58"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 125,
-          "endLine": 535,
+          "startLine": 130,
+          "endLine": 607,
           "signature": "<main>",
-          "summary": "HTML DOM Section L125-L535"
+          "summary": "HTML DOM Section L130-L607"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-admin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4308648a6569808f",
-      "totalLines": 881,
+      "fileHash": "e02425e34133b48a",
+      "totalLines": 1121,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2855,33 +2855,49 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 54,
+          "endLine": 57,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L54"
+          "summary": "HTML DOM Section L3-L57"
         },
         {
           "name": "<div#mobileTocPanel>",
           "kind": "html_dom_section",
-          "startLine": 93,
-          "endLine": 104,
+          "startLine": 96,
+          "endLine": 107,
           "signature": "id=\"mobileTocPanel\"",
-          "summary": "HTML DOM Section L93-L104"
+          "summary": "HTML DOM Section L96-L107"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 174,
-          "endLine": 755,
+          "startLine": 177,
+          "endLine": 897,
           "signature": "<main>",
-          "summary": "HTML DOM Section L174-L755"
+          "summary": "HTML DOM Section L177-L897"
+        },
+        {
+          "name": "<div#mockupModal>",
+          "kind": "html_dom_section",
+          "startLine": 906,
+          "endLine": 932,
+          "signature": "id=\"mockupModal\"",
+          "summary": "HTML DOM Section L906-L932"
+        },
+        {
+          "name": "<div#mockupModalPanel>",
+          "kind": "html_dom_section",
+          "startLine": 908,
+          "endLine": 931,
+          "signature": "id=\"mockupModalPanel\"",
+          "summary": "HTML DOM Section L908-L931"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-superadmin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "14f7dca7c4989bc1",
-      "totalLines": 737,
+      "fileHash": "1e3b715cf1248d95",
+      "totalLines": 1174,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2890,33 +2906,49 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 54,
+          "endLine": 57,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L54"
+          "summary": "HTML DOM Section L3-L57"
         },
         {
           "name": "<div#mobileTocPanel>",
           "kind": "html_dom_section",
-          "startLine": 93,
-          "endLine": 104,
+          "startLine": 96,
+          "endLine": 107,
           "signature": "id=\"mobileTocPanel\"",
-          "summary": "HTML DOM Section L93-L104"
+          "summary": "HTML DOM Section L96-L107"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 164,
-          "endLine": 611,
+          "startLine": 170,
+          "endLine": 922,
           "signature": "<main>",
-          "summary": "HTML DOM Section L164-L611"
+          "summary": "HTML DOM Section L170-L922"
+        },
+        {
+          "name": "<div#mockupModal>",
+          "kind": "html_dom_section",
+          "startLine": 931,
+          "endLine": 957,
+          "signature": "id=\"mockupModal\"",
+          "summary": "HTML DOM Section L931-L957"
+        },
+        {
+          "name": "<div#mockupModalPanel>",
+          "kind": "html_dom_section",
+          "startLine": 933,
+          "endLine": 956,
+          "signature": "id=\"mockupModalPanel\"",
+          "summary": "HTML DOM Section L933-L956"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-user.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9bf63fc79b5299ed",
-      "totalLines": 1063,
+      "fileHash": "d254a8b4da7e0788",
+      "totalLines": 1280,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2925,25 +2957,41 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 53,
+          "endLine": 57,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L53"
+          "summary": "HTML DOM Section L3-L57"
         },
         {
           "name": "<div#mobileTocPanel>",
           "kind": "html_dom_section",
-          "startLine": 92,
-          "endLine": 103,
+          "startLine": 96,
+          "endLine": 107,
           "signature": "id=\"mobileTocPanel\"",
-          "summary": "HTML DOM Section L92-L103"
+          "summary": "HTML DOM Section L96-L107"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 166,
-          "endLine": 935,
+          "startLine": 170,
+          "endLine": 1040,
           "signature": "<main>",
-          "summary": "HTML DOM Section L166-L935"
+          "summary": "HTML DOM Section L170-L1040"
+        },
+        {
+          "name": "<div#mockupModal>",
+          "kind": "html_dom_section",
+          "startLine": 1049,
+          "endLine": 1075,
+          "signature": "id=\"mockupModal\"",
+          "summary": "HTML DOM Section L1049-L1075"
+        },
+        {
+          "name": "<div#mockupModalPanel>",
+          "kind": "html_dom_section",
+          "startLine": 1051,
+          "endLine": 1074,
+          "signature": "id=\"mockupModalPanel\"",
+          "summary": "HTML DOM Section L1051-L1074"
         }
       ]
     },
@@ -3282,6 +3330,26 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/analyze_issues.js",
+      "layer": "Application Module",
+      "fileHash": "873c5fbf7b637af6",
+      "totalLines": 95,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/inspect_manuals.js",
+      "layer": "Application Module",
+      "fileHash": "ddfccd33b9699100",
+      "totalLines": 45,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": []
+    },
+    {
       "filePath": "pipeline/PIPE-20261027-user-manuals-html/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
       "fileHash": "45eabd318b645c95",
@@ -3299,6 +3367,36 @@
           "summary": "HTML DOM Section L3-L10"
         }
       ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/test_comprehensive_audit.js",
+      "layer": "Application Module",
+      "fileHash": "723035a3a6b64abf",
+      "totalLines": 167,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/test_inspect.js",
+      "layer": "Application Module",
+      "fileHash": "92924bb6135d3841",
+      "totalLines": 10,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/test_qa_check.js",
+      "layer": "Application Module",
+      "fileHash": "ad9f2756b302ff48",
+      "totalLines": 73,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": []
     },
     {
       "filePath": "reports.html",

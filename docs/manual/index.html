@@ -47,7 +47,12 @@
         @media print {
             .no-print { display: none !important; }
             .print-full { width: 100% !important; max-width: none !important; margin: 0 !important; }
+            .page-break { page-break-before: always; break-before: page; }
             body { background: white !important; color: black !important; }
+            header, footer, #btnBackToTop, .mockup-interactive-banner { display: none !important; }
+            main { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+            a { text-decoration: none !important; color: inherit !important; }
         }
     </style>
 </head>
@@ -67,9 +72,9 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button type="button" id="btnPrintManual" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition shadow-xs cursor-pointer" title="พิมพ์หน้านี้">
+                <button type="button" id="btnPrintManual" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition shadow-xs cursor-pointer" title="พิมพ์หน้านี้ / บันทึกเป็น PDF">
                     <i class="fa-solid fa-print"></i>
-                    <span class="hidden sm:inline">พิมพ์หน้านี้</span>
+                    <span class="hidden sm:inline">พิมพ์ / PDF</span>
                 </button>
                 <button type="button" id="btnToggleTheme" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition shadow-xs cursor-pointer" title="สลับโหมดสี">
                     <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -91,7 +96,7 @@
                     ศูนย์รวมคู่มือการใช้งานระบบลงเวลาปฏิบัติราชการออนไลน์
                 </h2>
                 <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal">
-                    ยินดีต้อนรับสู่ศูนย์เอกสารคู่มือการใช้งานระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร โปรดเลือกคู่มือตามระดับสิทธิ์และบทบาทการทำงานของท่าน เพื่อศึกษาวิธีการใช้งานอย่างถูกต้อง ครบถ้วน และปลอดภัย
+                    ยินดีต้อนรับสู่ศูนย์เอกสารคู่มือการใช้งานระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร โปรดเลือกคู่มือตามระดับสิทธิ์และบทบาทการทำงานของท่าน เพื่อศึกษาวิธีการใช้งานอย่างถูกต้อง ครบถ้วน และปลอดภัยตามมาตรฐานราชการ
                 </p>
                 <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs">
                     <a href="#manual-cards" class="px-4 py-2 rounded-xl bg-white text-[#00744B] font-extrabold hover:bg-emerald-50 transition shadow-md no-underline">
@@ -110,10 +115,10 @@
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div class="text-base font-extrabold text-white">ระบบจัดการสิทธิ์ 3 ระดับ</div>
-                    <p class="text-xs text-emerald-100 mt-1">แยกสิทธิ์การเข้าถึงชัดเจนตามโครงสร้างการบริหารราชการ กทม.</p>
+                    <p class="text-xs text-emerald-100 mt-1">แยกสิทธิ์การเข้าถึงชัดเจนตามโครงสร้างการบริหารราชการ กทม. (User, Admin, SuperAdmin)</p>
                     <div class="mt-4 flex items-center gap-1.5 flex-wrap justify-center text-[11px] font-bold">
                         <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/30 border border-emerald-300/40 text-emerald-200">User</span>
-                        <span class="px-2.5 py-0.5 rounded-full bg-sky-500/30 border border-sky-300/40 text-sky-200">Admin</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-sky-500/30 border border-sky-300/40 text-sky-200">Admin ฝ่าย / กอง</span>
                         <span class="px-2.5 py-0.5 rounded-full bg-purple-500/30 border border-purple-300/40 text-purple-200">SuperAdmin</span>
                     </div>
                 </div>
@@ -122,7 +127,7 @@
     </section>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-14 flex-1 w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-14 flex-1 w-full min-w-0">
 
         <!-- Section 1: Manual Cards -->
         <section id="manual-cards" class="space-y-6">
@@ -132,13 +137,13 @@
                     <span>เลือกคู่มือตามระดับสิทธิ์</span>
                 </div>
                 <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">คู่มือการใช้งานแยกตามบทบาท</h3>
-                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">คลิกที่การ์ดเพื่อเปิดคู่มือการใช้งานฉบับสมบูรณ์ พร้อมภาพจำลองขั้นตอนและวิธีแก้ปัญหา</p>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">คลิกที่การ์ดเพื่อเปิดคู่มือการใช้งานฉบับสมบูรณ์ พร้อมภาพจำลองขั้นตอนและวิธีแก้ปัญหาทีละขั้นตอน</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 
                 <!-- Card 1: User Manual -->
-                <div class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1">
+                <div onclick="window.location.href='manual-user.html'" class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border-2 border-slate-200/80 dark:border-slate-700/60 hover:border-emerald-500 dark:hover:border-emerald-500 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1 cursor-pointer h-full">
                     <div>
                         <!-- Header with Icon & Role Badge -->
                         <div class="flex items-start justify-between gap-3 mb-4">
@@ -150,7 +155,7 @@
                             </span>
                         </div>
 
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2">คู่มือผู้ใช้งานทั่วไป</h4>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2 group-hover:text-[#00744B] dark:group-hover:text-emerald-400 transition">คู่มือผู้ใช้งานทั่วไป</h4>
                         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                             สำหรับข้าราชการ ลูกจ้าง และบุคลากรผู้ปฏิบัติราชการทุกคน แนะนำขั้นตอนลงเวลาเข้า-ออกงาน การถ่ายภาพใบหน้า การระบุพิกัด GPS และการยื่นคำขอพิเศษ
                         </p>
@@ -163,7 +168,7 @@
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
-                                <span>เข้าสู่ระบบโหมดลงเวลา &amp; จดจำชื่อผู้ใช้</span>
+                                <span>เข้าสู่ระบบโหมดลงเวลา &amp; จดจำชื่อผู้ใช้ (7 วัน)</span>
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
@@ -175,17 +180,17 @@
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
-                                <span>ลงเวลาปกติ / พิเศษ / เลือกกะจาก Dropdown</span>
+                                <span>ลงเวลาปกติ / พิเศษ / ป้องกันเลือกกะผิดพลาด</span>
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
-                                <span>ยื่นคำขอพิเศษ / ตรวจสอบประวัติ 5 สถานะ / FAQ</span>
+                                <span>ยื่นคำขอพิเศษ / ตรวจสอบ 5 สถานะ / FAQ</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-6">
-                        <a href="manual-user.html" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#00744B] via-[#008A56] to-[#00A368] shadow-lg shadow-emerald-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
+                        <a href="manual-user.html" onclick="event.stopPropagation();" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#00744B] via-[#008A56] to-[#00A368] shadow-lg shadow-emerald-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
                             <span>เปิดคู่มือผู้ใช้งานทั่วไป</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
@@ -193,7 +198,7 @@
                 </div>
 
                 <!-- Card 2: Admin Manual -->
-                <div class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1">
+                <div onclick="window.location.href='manual-admin.html'" class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border-2 border-slate-200/80 dark:border-slate-700/60 hover:border-sky-500 dark:hover:border-sky-500 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1 cursor-pointer h-full">
                     <div>
                         <!-- Header with Icon & Role Badge -->
                         <div class="flex items-start justify-between gap-3 mb-4">
@@ -204,11 +209,11 @@
                                 <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300 border border-sky-300/40">
                                     ผู้ดูแล (Admin)
                                 </span>
-                                <span class="text-[10px] text-slate-400 font-semibold">รวมระดับกอง และฝ่าย</span>
+                                <span class="text-[10px] text-slate-400 font-semibold">ระดับกอง และระดับฝ่าย</span>
                             </div>
                         </div>
 
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2">คู่มือผู้ดูแลระบบ (Admin)</h4>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2 group-hover:text-[#0971CE] dark:group-hover:text-sky-400 transition">คู่มือผู้ดูแลระบบ (Admin)</h4>
                         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                             สำหรับผู้ดูแลระดับสำนักงาน/กอง และระดับส่วน/ฝ่าย ครอบคลุมการดูภาพรวมสถิติ การอนุมัติคำขอพิเศษ การออกรายงาน PDF/Excel และการจัดการข้อมูลบุคลากร
                         </p>
@@ -237,13 +242,13 @@
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-sky-500 mt-0.5"></i>
-                                <span>บุคลากร นำเข้า Excel หลายแผ่น &amp; อนุมัติรหัสผ่าน</span>
+                                <span>บุคลากร นำเข้า Excel 3 แผ่น &amp; อนุมัติรหัสผ่าน</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-6">
-                        <a href="manual-admin.html" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#0971CE] via-[#0284C7] to-[#38BDF8] shadow-lg shadow-blue-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
+                        <a href="manual-admin.html" onclick="event.stopPropagation();" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#0971CE] via-[#0284C7] to-[#38BDF8] shadow-lg shadow-blue-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
                             <span>เปิดคู่มือผู้ดูแลระบบ (Admin)</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
@@ -251,7 +256,7 @@
                 </div>
 
                 <!-- Card 3: SuperAdmin Manual -->
-                <div class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1">
+                <div onclick="window.location.href='manual-superadmin.html'" class="group bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-xl border-2 border-slate-200/80 dark:border-slate-700/60 hover:border-purple-500 dark:hover:border-purple-500 flex flex-col justify-between hover:shadow-2xl transition duration-300 hover:-translate-y-1 cursor-pointer h-full">
                     <div>
                         <!-- Header with Icon & Role Badge -->
                         <div class="flex items-start justify-between gap-3 mb-4">
@@ -263,7 +268,7 @@
                             </span>
                         </div>
 
-                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2">คู่มือผู้ดูแลระบบสูงสุด</h4>
+                        <h4 class="text-lg font-black text-slate-900 dark:text-white mb-2 group-hover:text-[#480080] dark:group-hover:text-purple-400 transition">คู่มือผู้ดูแลระบบสูงสุด</h4>
                         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
                             สำหรับผู้บริหารระบบเทคโนโลยีสารสนเทศ ดูแลการตั้งค่าโครงสร้างองค์กร โลโก้ สีระบบ การเชื่อมต่อ Google Drive การกำหนดกะทำงาน และตำแหน่ง/สังกัด
                         </p>
@@ -298,7 +303,7 @@
                     </div>
 
                     <div class="pt-6">
-                        <a href="manual-superadmin.html" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] shadow-lg shadow-purple-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
+                        <a href="manual-superadmin.html" onclick="event.stopPropagation();" class="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] shadow-lg shadow-purple-900/20 hover:brightness-105 active:scale-[0.99] transition no-underline">
                             <span>เปิดคู่มือผู้ดูแลระบบสูงสุด</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
@@ -338,13 +343,13 @@
                                     <span class="px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-900/50 dark:text-sky-300 font-bold block text-[11px]">
                                         Admin ฝ่าย
                                     </span>
-                                    <span class="text-[10px] text-slate-400 font-normal block mt-1">ขอบเขตเฉพาะฝ่าย</span>
+                                    <span class="text-[10px] text-slate-400 font-normal block mt-1">ขอบเขตเฉพาะส่วน/ฝ่าย</span>
                                 </th>
                                 <th class="py-4 px-3 text-center min-w-[140px]">
                                     <span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 font-bold block text-[11px]">
                                         Admin กอง
                                     </span>
-                                    <span class="text-[10px] text-slate-400 font-normal block mt-1">ขอบเขตทั้งกอง</span>
+                                    <span class="text-[10px] text-slate-400 font-normal block mt-1">ขอบเขตทั้งสำนักงาน/กอง</span>
                                 </th>
                                 <th class="py-4 px-3 text-center min-w-[150px]">
                                     <span class="px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 font-bold block text-[11px]">
@@ -356,8 +361,8 @@
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 font-medium">
 
-                            <!-- Group 1: การเข้าใช้งานระบบ -->
-                            <tr class="bg-slate-50/70 dark:bg-slate-900/40">
+                            <!-- Group 1: การเข้าใช้งานระบบและบัญชีผู้ใช้ -->
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/60">
                                 <td colspan="5" class="py-2.5 px-4 sm:px-6 font-extrabold text-[#00744B] dark:text-emerald-400 text-xs">
                                     <i class="fa-solid fa-right-to-bracket mr-1.5"></i>1. การเข้าใช้งานระบบและบัญชีผู้ใช้
                                 </td>
@@ -375,7 +380,7 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">เข้าสู่ระบบโหมดจัดการ (manage)</div>
-                                    <div class="text-[11px] text-slate-500">กดปุ่ม "เข้าสู่ระบบผู้ดูแลระบบ"</div>
+                                    <div class="text-[11px] text-slate-500">กดปุ่ม "เข้าสู่ระบบผู้ดูแลระบบ" เพื่อเข้าหน้า Dashboard</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-rose-400">ไม่มีสิทธิ์</div></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -385,24 +390,34 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">เปลี่ยนรหัสผ่านด้วยตนเอง &amp; แจ้งลืมรหัสผ่าน</div>
-                                    <div class="text-[11px] text-slate-500">ใช้รหัสเดิม หรือกรอกบัตร ปชช. 13 หลัก</div>
+                                    <div class="text-[11px] text-slate-500">ใช้รหัสเดิม หรือกรอกเลขประจำตัวประชาชน 13 หลัก</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                             </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">อนุมัติคำขอรีเซ็ตรหัสผ่าน (Reset Approval)</div>
+                                    <div class="text-[11px] text-slate-500">อนุมัติตั้งค่าใหม่เป็น 6 หลักท้ายบัตรประชาชน</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-emerald-600">สิทธิ์ระดับกอง</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                            </tr>
 
                             <!-- Group 2: หน้าลงเวลาปฏิบัติราชการ -->
-                            <tr class="bg-slate-50/70 dark:bg-slate-900/40">
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/60">
                                 <td colspan="5" class="py-2.5 px-4 sm:px-6 font-extrabold text-[#00744B] dark:text-emerald-400 text-xs">
                                     <i class="fa-solid fa-fingerprint mr-1.5"></i>2. หน้าลงเวลาปฏิบัติราชการ (checkin.html)
                                 </td>
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">บันทึกลงเวลาเข้า-ออกงาน (ปกติ / กะ)</div>
-                                    <div class="text-[11px] text-slate-500">ถ่ายภาพยืนยันตัวตน + บันทึกพิกัด GPS</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">บันทึกลงเวลาเข้า-ออกงาน (ปกติ / กะ / OT)</div>
+                                    <div class="text-[11px] text-slate-500">ถ่ายภาพยืนยันตัวตน + บันทึกพิกัด GPS อัตโนมัติ</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -421,8 +436,18 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">ยกเลิกคำขอพิเศษที่อยู่ระหว่างรออนุมัติ</div>
+                                    <div class="text-[11px] text-slate-500">ลบคำขอที่ส่งผิดพลาดก่อนผู้ดูแลจะพิจารณา</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">ดูประวัติการลงเวลาและคำขอพิเศษส่วนตัว</div>
-                                    <div class="text-[11px] text-slate-500">ดูรายการวันปัจจุบัน และย้อนหลังของตนเอง</div>
+                                    <div class="text-[11px] text-slate-500">ดูรายการวันปัจจุบัน และย้อนหลังพร้อม 5 สถานะ</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -431,9 +456,9 @@
                             </tr>
 
                             <!-- Group 3: เมนูระบบบริหารจัดการ -->
-                            <tr class="bg-slate-50/70 dark:bg-slate-900/40">
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/60">
                                 <td colspan="5" class="py-2.5 px-4 sm:px-6 font-extrabold text-[#0971CE] dark:text-sky-400 text-xs">
-                                    <i class="fa-solid fa-table-columns mr-1.5"></i>3. ขอบเขตข้อมูลและเมนูผู้ดูแล (Admin Menus)
+                                    <i class="fa-solid fa-table-columns mr-1.5"></i>3. ขอบเขตข้อมูลและเมนูผู้ดูแล (Admin Management)
                                 </td>
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
@@ -449,27 +474,7 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">ภาพรวมสถิติประจำวัน (dashboard.html)</div>
-                                    <div class="text-[11px] text-slate-500">การ์ดสถิติ 5 ด้าน &amp; ตารางสถานะรายบุคคล</div>
-                                </td>
-                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">รายงานการลงเวลา (reports.html)</div>
-                                    <div class="text-[11px] text-slate-500">กรองป้ายสถานะ, ดูรูปถ่าย/GPS, พิมพ์ PDF, ส่งออก Excel</div>
-                                </td>
-                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">เพิ่ม / แก้ไข / ลบบันทึกเวลาโดยผู้ดูแล</div>
-                                    <div class="text-[11px] text-slate-500">ปรับปรุงเวลาปฏิบัติราชการแทนบุคลากร</div>
+                                    <div class="text-[11px] text-slate-500">การ์ดสถิติ 5 ด้าน, วงกลมเปอร์เซ็นต์ &amp; ตารางประจำวัน</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -479,7 +484,27 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">อนุมัติคำขอลงเวลากรณีพิเศษ (approvals.html)</div>
-                                    <div class="text-[11px] text-slate-500">อนุมัติรายบุคคล และอนุมัติแบบกลุ่ม (Bulk)</div>
+                                    <div class="text-[11px] text-slate-500">พิจารณาคำขอรายคน และอนุมัติแบบกลุ่ม (Bulk Approval)</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">รายงานการลงเวลา (reports.html)</div>
+                                    <div class="text-[11px] text-slate-500">กรองป้าย Tag, ดูรูปถ่าย/GPS, พิมพ์ PDF, ส่งออก Excel</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">เพิ่ม / แก้ไข / ลบบันทึกเวลาโดยผู้ดูแล</div>
+                                    <div class="text-[11px] text-slate-500">ปรับปรุงเวลาปฏิบัติราชการแทนบุคลากรที่มีเหตุขัดข้อง</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -489,7 +514,7 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">จัดการข้อมูลบุคลากร (personnel.html)</div>
-                                    <div class="text-[11px] text-slate-500">เพิ่ม/แก้ไข/ลบ, นำเข้า Excel หลายแผ่น, สร้างบัญชีด่วน</div>
+                                    <div class="text-[11px] text-slate-500">เพิ่ม/แก้ไข/ลบ, นำเข้า Excel 3 แผ่น, สร้างบัญชีด่วน</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -498,23 +523,70 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">จัดการบัญชีผู้ใช้ &amp; รีเซ็ตรหัสผ่าน (users.html)</div>
-                                    <div class="text-[11px] text-slate-500">อนุมัติรีเซ็ตรหัสผ่านเป็น 6 หลักท้ายบัตร ปชช.</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">จัดการบัญชีผู้ใช้ &amp; กำหนดสิทธิ์ (users.html)</div>
+                                    <div class="text-[11px] text-slate-500">เพิ่ม/แก้ไขบัญชีผู้ใช้ และกำหนดขอบเขตบทบาท Admin</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-emerald-600">สิทธิ์ระดับกอง</div></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
                             </tr>
+
+                            <!-- Group 4: เมนูตั้งค่าระบบระดับสูง -->
+                            <tr class="bg-slate-50/80 dark:bg-slate-900/60">
+                                <td colspan="5" class="py-2.5 px-4 sm:px-6 font-extrabold text-[#480080] dark:text-purple-400 text-xs">
+                                    <i class="fa-solid fa-gears mr-1.5"></i>4. เมนูตั้งค่าระบบระดับสูง (System Configuration)
+                                </td>
+                            </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าระบบ (settings.html)</div>
-                                    <div class="text-[11px] text-slate-500">โลโก้, Google Drive, เกณฑ์เวลา, กะ, ตำแหน่ง 3 ขั้น, สังกัด 4 ขั้น</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าหน่วยงาน, โลโก้ และสีอัตลักษณ์ระบบ</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
-                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-emerald-600">เฉพาะ SuperAdmin</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-purple-600 font-bold">เฉพาะ SuperAdmin</div></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าเกณฑ์เวลา, Grace Period &amp; Single-Click</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 2: เกณฑ์เวลา &amp; สีรายงาน</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-purple-600 font-bold">เฉพาะ SuperAdmin</div></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าเชื่อมต่อกล้อง, GPS &amp; Google Drive</div>
+                                    <div class="text-[11px] text-slate-500">กำหนดรัศมีพิกัดเมตร และ Google Apps Script Web App</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-purple-600 font-bold">เฉพาะ SuperAdmin</div></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">จัดการกะมาตรฐาน, กะ 24 ชม. &amp; กะข้ามคืน</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 3: จัดการกะการทำงานมาตรฐาน</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-purple-600 font-bold">เฉพาะ SuperAdmin</div></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">โครงสร้างตำแหน่ง 3 ระดับ &amp; สังกัด 4 ระดับ</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 4 &amp; 5: คำนำหน้า, หมายเหตุ, ตำแหน่ง &amp; สังกัด</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i><div class="text-[10px] text-purple-600 font-bold">เฉพาะ SuperAdmin</div></td>
                             </tr>
                         </tbody>
                     </table>
@@ -526,7 +598,7 @@
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-xmark text-rose-500 text-sm"></i> ไม่มีสิทธิ์ / ซ่อนเมนู</span>
                     </div>
                     <div class="text-[11px]">
-                        * เมนู <code class="font-mono text-purple-600 dark:text-purple-400">users.html</code> จะแสดงเฉพาะผู้ใช้ที่มีระดับสิทธิ์ SuperAdmin หรือ Admin ที่มีขอบเขตระดับสำนักงาน/กอง (visibility_level = 'bureau')
+                        * เมนู <code class="font-mono text-purple-600 dark:text-purple-400">users.html</code> จะแสดงเฉพาะผู้ใช้ที่มีระดับสิทธิ์ SuperAdmin หรือ Admin ที่มีขอบเขตระดับสำนักงาน/กอง (<code class="font-mono">visibility_level = 'bureau'</code>) เท่านั้น
                     </div>
                 </div>
             </div>
@@ -534,16 +606,21 @@
 
     </main>
 
+    <!-- Back to Top Button -->
+    <button type="button" id="btnBackToTop" class="no-print fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[#00744B] text-white shadow-xl flex items-center justify-center text-sm opacity-0 pointer-events-none transition-all duration-300 hover:bg-[#005B3A] cursor-pointer z-30" title="กลับขึ้นด้านบน">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
     <!-- Footer -->
     <footer class="mt-auto bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2">
         <div class="flex items-center justify-center gap-2 font-bold text-slate-700 dark:text-slate-300">
             <i class="fa-solid fa-landmark text-[#00744B]"></i>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App)</span>
         </div>
-        <p>เอกสารคู่มือการใช้งานระบบ ฉบับ 27 ตุลาคม 2569 • เอกสารภายในหน่วยงาน</p>
+        <p>เอกสารคู่มือการใช้งานระบบ ฉบับ 27 ตุลาคม 2569 • เอกสารมาตรฐานหน่วยงาน</p>
     </footer>
 
-    <!-- Theme Toggle Script -->
+    <!-- Theme Toggle & Back to Top Script -->
     <script>
         const themeBtn = document.getElementById('btnToggleTheme');
         const themeIcon = document.getElementById('themeIcon');
@@ -571,6 +648,21 @@
             const newDark = !isCurrentlyDark;
             applyTheme(newDark);
             localStorage.setItem('bma_manual_theme', newDark ? 'dark' : 'light');
+        });
+
+        // Back to top
+        const backToTopBtn = document.getElementById('btnBackToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn?.classList.remove('opacity-0', 'pointer-events-none');
+                backToTopBtn?.classList.add('opacity-100', 'pointer-events-auto');
+            } else {
+                backToTopBtn?.classList.remove('opacity-100', 'pointer-events-auto');
+                backToTopBtn?.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+        backToTopBtn?.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คู่มือการใช้งาน: สำหรับผู้ดูแลระบบสูงสุด (SuperAdmin Manual) | ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร</title>
+    <title>คู่มือการใช้งาน: สำหรับผู้ดูแลระบบสูงสุด (SuperAdmin Master Manual) | ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร</title>
     <!-- Google Fonts: Sarabun & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,11 +23,10 @@
                             'green-hover': '#005B3A',
                             'green-light': '#E6F4EA',
                             blue: '#0971CE',
+                            'blue-light': '#E0F2FE',
                             amber: '#FFB449',
                             'amber-dark': '#D97706',
                             purple: '#480080',
-                            'purple-hover': '#380063',
-                            'purple-light': '#F3E8FF',
                             dark: '#0f172a',
                             darkcard: '#1e293b'
                         }
@@ -49,6 +48,10 @@
             .print-full { width: 100% !important; max-width: none !important; margin: 0 !important; }
             .page-break { page-break-before: always; break-before: page; }
             body { background: white !important; color: black !important; }
+            header, footer, aside, #btnBackToTop, #mobileTocDrawer, #mockupModal, .mockup-interactive-banner { display: none !important; }
+            main { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+            a { text-decoration: none !important; color: inherit !important; }
         }
     </style>
 </head>
@@ -113,72 +116,75 @@
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2">
                     <div class="text-xs font-black uppercase tracking-wider text-[#480080] dark:text-purple-400 flex items-center gap-2">
                         <i class="fa-solid fa-list-ol"></i>
-                        <span>สารบัญ SuperAdmin</span>
+                        <span>สารบัญคู่มือ</span>
                     </div>
                     <span class="text-[10px] text-slate-400 font-bold">9 หัวข้อ</span>
                 </div>
                 <nav id="desktopTocNav" class="space-y-1 text-xs">
                     <a href="#topic-1" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        1. ภาพรวมสิทธิ์สูงสุด (ทุกสังกัด)
+                        1. ภาพรวมสิทธิ์สูงสุด SuperAdmin
+                    </a>
+                    <a href="#topic-interactive-settings" class="toc-link block px-3 py-2 rounded-xl font-semibold text-purple-700 dark:text-purple-300 bg-purple-50/70 dark:bg-purple-950/40 hover:bg-purple-100 transition no-underline border-l-2 border-purple-500">
+                        ⚡ หน้าจอจำลอง Settings (5 แท็บ)
                     </a>
                     <a href="#topic-2" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        2. ตั้งค่าชื่อหน่วยงาน &amp; โลโก้
+                        2. แท็บ 1: ข้อมูลหน่วยงาน &amp; โลโก้
                     </a>
                     <a href="#topic-3" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        3. เกณฑ์เวลา &amp; เงื่อนไขลงเวลา
+                        3. แท็บ 2: เกณฑ์เวลา &amp; Single-Click
                     </a>
                     <a href="#topic-4" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        4. นโยบายกล้อง/GPS &amp; G-Drive
+                        4. แท็บ 3: กล้อง, GPS &amp; Google Drive
                     </a>
                     <a href="#topic-5" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        5. จัดการกะเวลาทำงาน (Shifts)
+                        5. แท็บ 4: กะการทำงาน &amp; นอกเวลา
                     </a>
                     <a href="#topic-6" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        6. โครงสร้างตำแหน่ง &amp; สังกัด 4 ขั้น
+                        6. แท็บ 5: ตำแหน่ง 3 ขั้น &amp; สังกัด 4 ขั้น
                     </a>
                     <a href="#topic-7" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        7. กำหนด Role &amp; Scope Admin
+                        7. มอบหมายบทบาท Admin กอง vs ฝ่าย
                     </a>
                     <a href="#topic-8" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
                         8. เมนูที่ใช้ร่วมกับ Admin
                     </a>
                     <a href="#topic-9" class="toc-link block px-3 py-2 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-slate-700 hover:text-[#480080] transition no-underline">
-                        9. ความปลอดภัย &amp; การสำรองข้อมูล
+                        9. ความปลอดภัย, สำรองข้อมูล &amp; FAQ
                     </a>
                 </nav>
             </div>
 
-            <!-- Privilege Capsule -->
-            <div class="bg-gradient-to-r from-purple-50 to-amber-50 dark:from-slate-800 dark:to-slate-800/80 p-4 rounded-2xl border border-purple-200/60 dark:border-slate-700 text-xs space-y-1.5">
-                <div class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
-                    <i class="fa-solid fa-crown text-[#FFB449]"></i>
-                    <span>SuperAdmin Highest Role</span>
+            <!-- Role Badge Capsule in Sidebar -->
+            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 p-4 rounded-2xl border border-purple-200/60 dark:border-slate-700 text-xs">
+                <div class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5 mb-1">
+                    <i class="fa-solid fa-crown text-[#480080] dark:text-purple-400"></i>
+                    <span>บทบาท SuperAdmin</span>
                 </div>
                 <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                    สิทธิ์ระดับสูงสุด เข้าถึงหน้าตั้งค่าระบบ (<code class="font-mono">settings.html</code>) และบริหารจัดการทุกโครงสร้างข้อมูลในระบบ
+                    มีอำนาจสูงสุดในการกำหนดค่าระบบ โครงสร้างองค์กร นโยบายกล้องและ GPS และการจัดการสิทธิ์ของ Admin ทุกระดับ
                 </p>
             </div>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Content Area with min-w-0 to prevent flex overflow -->
         <main class="flex-1 min-w-0 space-y-12">
 
             <!-- Title & Hero Banner -->
             <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-700/60 space-y-4">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-extrabold bg-purple-100 text-[#480080] dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300/40">
                     <i class="fa-solid fa-crown"></i>
-                    <span>คู่มือผู้ดูแลระบบสูงสุด (SuperAdmin Master Manual)</span>
+                    <span>คู่มือระดับสูงสุด (SuperAdmin Master Manual)</span>
                 </div>
                 <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                    คู่มือการใช้งานระบบ: สำหรับผู้ดูแลระบบสูงสุด (SuperAdmin)
+                    คู่มือการตั้งค่าและบริหารระบบ: สำหรับผู้ดูแลระบบสูงสุด (SuperAdmin)
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                    คู่มือฉบับนี้จัดทำขึ้นสำหรับผู้ดูแลระบบระดับองค์กรและผู้บริหารระบบเทคโนโลยีสารสนเทศ ครอบคลุมการตั้งค่านโยบายของระบบ ข้อมูลหน่วยงาน ตราสัญลักษณ์ การเชื่อมต่อคลาวด์ Google Drive การกำหนดเกณฑ์เวลามาตรฐาน การบริหารโครงสร้างตำแหน่ง 3 ระดับ และโครงสร้างสังกัด 4 ระดับ
+                    คู่มือนี้ครอบคลุมการตั้งค่าระบบผ่านหน้าจอ <code class="font-mono text-purple-600 dark:text-purple-400 font-bold">settings.html</code> ทั้ง 5 แท็บ พร้อมหน้าจอจำลองที่สามารถคลิกสลับแท็บเพื่อทดสอบการทำงานได้จริง และแนวปฏิบัติด้านความปลอดภัยข้อมูล PDPA
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#480080]"></i> ปรับปรุงล่าสุด: 27 ตุลาคม 2569</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#480080] dark:text-purple-400"></i> ปรับปรุงล่าสุด: 27 ตุลาคม 2569</span>
                     <span>•</span>
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-[#480080]"></i> หน้าตั้งค่าระบบ: settings.html</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-[#480080] dark:text-purple-400"></i> ควบคุมการทำงาน 5 แท็บหลัก</span>
                 </div>
             </div>
 
@@ -187,41 +193,297 @@
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <span class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center font-black text-lg shadow-xs shrink-0">1</span>
                     <div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">ภาพรวมสิทธิ์สูงสุดของผู้ดูแลระบบหลัก (SuperAdmin Overview &amp; Complete Scope)</h3>
-                        <p class="text-xs text-slate-500">ขอบเขตการเข้าถึงทุกเมนู ทุกสังกัด และสิทธิ์เฉพาะในการเข้าหน้าตั้งค่าระบบ</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">ภาพรวมระดับสิทธิ์สูงสุด (SuperAdmin Overview)</h3>
+                        <p class="text-xs text-slate-500">ขอบเขตอำนาจหน้าที่ สิทธิพิเศษในการตั้งค่าระบบ และการดูแลทุกหน่วยงาน</p>
                     </div>
                 </div>
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        ผู้ใช้งานที่มีบทบาทเป็น <b>SuperAdmin</b> จะมีขอบเขตการมองเห็นข้อมูลแบบสมบูรณ์ (<code class="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-purple-600">visibility_level = 'all'</code>) โดยไม่มีข้อจำกัดด้านสังกัด:
+                        ผู้ดูแลระบบสูงสุด (SuperAdmin) คือผู้ถือครองสิทธิ์การบริหารระบบระดับสูงสุด มีอำนาจหน้าที่สำคัญดังนี้:
                     </p>
 
-                    <!-- Scope Capabilities Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1.5">
-                            <span class="font-bold text-slate-800 dark:text-white block text-sm">
-                                <i class="fa-solid fa-earth-americas text-purple-600 mr-1"></i>มองเห็นทุกสังกัด
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <span class="font-extrabold text-[#480080] dark:text-purple-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-globe"></i>
+                                <span>1. ขอบเขตข้อมูลระดับองค์กร (Global Scope)</span>
                             </span>
-                            <p class="text-xs text-slate-500">สามารถดูและจัดการข้อมูลบุคลากร รายงาน และคำขอพิเศษของทุกสำนักงาน ทุกกอง และทุกฝ่าย</p>
+                            <p class="text-slate-500">มองเห็นและจัดการบุคลากร รายงาน และคำขอพิเศษได้ทุกสำนักงาน/กอง ทุกส่วน/ฝ่าย ทั่วทั้งกรุงเทพมหานคร</p>
                         </div>
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1.5">
-                            <span class="font-bold text-slate-800 dark:text-white block text-sm">
-                                <i class="fa-solid fa-sliders text-[#00744B] mr-1"></i>เมนูตั้งค่าระบบ
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <span class="font-extrabold text-[#00744B] flex items-center gap-1.5">
+                                <i class="fa-solid fa-gears"></i>
+                                <span>2. สิทธิ์เข้าถึงเมนู "ตั้งค่าระบบ" (settings.html)</span>
                             </span>
-                            <p class="text-xs text-slate-500">เป็นบทบาทเดียวที่เข้าถึงเมนู <b>"ตั้งค่าระบบ" (<code class="font-mono">settings.html</code>)</b> เพื่อปรับแต่งการทำงานหลักของแอป</p>
+                            <p class="text-slate-500">เป็นเพียงบทบาทเดียวที่สามารถเปิดเมนูตั้งค่าระบบเพื่อปรับแต่งอัตลักษณ์ เกณฑ์เวลา และโครงสร้างองค์กร</p>
                         </div>
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1.5">
-                            <span class="font-bold text-slate-800 dark:text-white block text-sm">
-                                <i class="fa-solid fa-users-gear text-[#0971CE] mr-1"></i>แต่งตั้งและควบคุม Admin
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <span class="font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <span>3. แต่งตั้งและกำหนด Scope ของ Admin</span>
                             </span>
-                            <p class="text-xs text-slate-500">สามารถสร้างบัญชีผู้ใช้ แต่งตั้ง Admin กอง / Admin ฝ่าย และกำหนดขอบเขตความรับผิดชอบ</p>
+                            <p class="text-slate-500">สามารถมอบหมายบทบาท Admin กอง (ทั้งกอง) หรือ Admin ฝ่าย (เฉพาะฝ่าย) ให้แก่บุคลากรได้</p>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                            <span class="font-extrabold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span>4. เชื่อมต่อ Google Drive และ Apps Script</span>
+                            </span>
+                            <p class="text-slate-500">กำหนด URL ของ Web App และ Drive Folder ID สำหรับรับภาพถ่ายลงเวลาปฏิบัติราชการ</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Topic 2: ตั้งค่าชื่อหน่วยงาน & โลโก้ -->
+            <!-- INTERACTIVE COMPONENT: Settings Tab Simulator -->
+            <section id="topic-interactive-settings" class="page-break bg-gradient-to-br from-purple-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-purple-950/30 rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-purple-500/40 space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-purple-200 dark:border-purple-800/60">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-[#480080] text-white flex items-center justify-center text-xl font-bold shadow-md">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">หน้าจอจำลองการตั้งค่าระบบ (Settings Interactive Simulator)</h3>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#480080] dark:bg-purple-950 dark:text-purple-300 animate-pulse">คลิกทดสอบได้จริง</span>
+                            </div>
+                            <p class="text-xs text-slate-500">คลิกที่แท็บด้านล่างทั้ง 5 แท็บ เพื่อดูและทดสอบหน้าจอตั้งค่าของแต่ละหมวดหมู่</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5 Interactive Tabs Bar -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-700" id="settingsSimTabNav">
+                    <button type="button" class="settings-sim-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-[#480080] text-white shadow-md" data-target="sim-panel-1">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>1. หน่วยงาน &amp; โลโก้</span>
+                    </button>
+                    <button type="button" class="settings-sim-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200" data-target="sim-panel-2">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>2. เวลา &amp; Single-Click</span>
+                    </button>
+                    <button type="button" class="settings-sim-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200" data-target="sim-panel-3">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>3. กล้อง, GPS &amp; Drive</span>
+                    </button>
+                    <button type="button" class="settings-sim-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200" data-target="sim-panel-4">
+                        <i class="fa-solid fa-business-time"></i>
+                        <span>4. กะการทำงาน</span>
+                    </button>
+                    <button type="button" class="settings-sim-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 hover:bg-slate-200" data-target="sim-panel-5">
+                        <i class="fa-solid fa-sitemap"></i>
+                        <span>5. ตำแหน่ง &amp; สังกัด</span>
+                    </button>
+                </div>
+
+                <!-- Simulation Tab Panels -->
+                <div class="bg-white dark:bg-slate-900/90 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-md">
+
+                    <!-- Panel 1: หน่วยงาน & โลโก้ -->
+                    <div id="sim-panel-1" class="settings-sim-panel space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-building-columns text-[#480080]"></i>
+                                <span>แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ตราสัญลักษณ์ (Branding &amp; Identity)</span>
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-mono">settings.html &gt; tab 1</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div class="space-y-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อหน่วยงานหลัก:</label>
+                                <input type="text" value="กรุงเทพมหานคร" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อสำนักงาน / กอง:</label>
+                                <input type="text" value="สำนักเทศกิจ" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
+                            </div>
+                            <div class="sm:col-span-2 space-y-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">URL โลโก้หน่วยงาน หรือ อัปโหลดภาพ:</label>
+                                <div class="flex gap-2">
+                                    <input type="text" value="https://example.bma.go.th/images/logo.png" readonly class="flex-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                                    <button type="button" class="mockup-btn px-3 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 cursor-pointer" data-title="ทดสอบลิงก์โลโก้" data-desc="ในการใช้งานจริง ปุ่มนี้จะทดสอบโหลดภาพจาก URL มาแสดงในกล่องพรีวิวทันที">
+                                        <i class="fa-solid fa-magnifying-glass mr-1"></i>ทดสอบลิงก์
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex justify-end">
+                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกข้อมูลหน่วยงาน" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกชื่อหน่วยงานและตราสัญลักษณ์ลงในตาราง system_settings ของฐานข้อมูล">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกแท็บที่ 1
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel 2: เวลา & Single-Click -->
+                    <div id="sim-panel-2" class="settings-sim-panel hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-[#00744B]"></i>
+                                <span>แท็บที่ 2: เกณฑ์เวลา &amp; เงื่อนไขการลงเวลา (Time Rules &amp; Recording Modes)</span>
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-mono">settings.html &gt; tab 2</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+                                <span class="text-[10px] text-slate-400 block font-bold">เริ่มเข้างาน</span>
+                                <span class="text-base font-black font-mono text-slate-800 dark:text-white mt-0.5 block">06:00 น.</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+                                <span class="text-[10px] text-emerald-600 block font-bold">เกณฑ์เข้างานปกติ</span>
+                                <span class="text-base font-black font-mono text-emerald-600 mt-0.5 block">08:30 น.</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+                                <span class="text-[10px] text-amber-600 block font-bold">ผ่อนผันสาย (Grace)</span>
+                                <span class="text-base font-black font-mono text-amber-600 mt-0.5 block">30 นาที</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
+                                <span class="text-[10px] text-blue-600 block font-bold">เกณฑ์เลิกงาน</span>
+                                <span class="text-base font-black font-mono text-blue-600 mt-0.5 block">16:30 น.</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-slate-800 dark:text-white block">โหมดบันทึกครั้งเดียว (Single-Click):</span>
+                                    <span class="text-[11px] text-slate-400">ลงเวลาเข้าและออกพร้อมกันในคลิกเดียว</span>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-[10px]">ปิดอยู่</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-slate-800 dark:text-white block">กรองกะตามเวลาจริง (Real-time Filter):</span>
+                                    <span class="text-[11px] text-slate-400">แสดงเฉพาะกะที่ตรงกับเวลาขณะเปิดแอป</span>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">เปิดใช้งาน</span>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex justify-end">
+                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกเกณฑ์เวลา" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกเกณฑ์เวลาและเงื่อนไขการคำนวณสายไปใช้งานทั่วทั้งระบบ">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกแท็บที่ 2
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel 3: กล้อง, GPS & Drive -->
+                    <div id="sim-panel-3" class="settings-sim-panel hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-[#0971CE]"></i>
+                                <span>แท็บที่ 3: นโยบายกล้อง, GPS &amp; Google Drive (Security &amp; Cloud Storage)</span>
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-mono">settings.html &gt; tab 3</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-slate-800 dark:text-white block">บังคับถ่ายภาพใบหน้า (Require Photo):</span>
+                                    <span class="text-[11px] text-slate-400">ต้องถ่ายภาพยืนยันตัวตนก่อนบันทึก</span>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">เปิดใช้งาน</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-slate-800 dark:text-white block">บังคับพิกัด GPS (Require GPS):</span>
+                                    <span class="text-[11px] text-slate-400">ต้องเปิดตำแหน่งและตรวจรัศมีเมตร</span>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">เปิดใช้งาน</span>
+                            </div>
+                            <div class="sm:col-span-2 space-y-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">Google Apps Script Web App URL (GAS Bridge):</label>
+                                <input type="text" value="https://script.google.com/macros/s/AKfycbx.../exec" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                            </div>
+                            <div class="sm:col-span-2 space-y-1.5">
+                                <label class="font-bold text-slate-700 dark:text-slate-300">Google Drive Folder ID (สำหรับจัดเก็บรูป 3:4):</label>
+                                <input type="text" value="1AbC_xyz9876543210FolderID" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                            </div>
+                        </div>
+                        <div class="pt-2 flex justify-end">
+                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกนโยบายความปลอดภัย" data-desc="ในการใช้งานจริง ปุ่มนี้จะเชื่อมต่อกับ Google Apps Script เพื่อทดสอบสิทธิ์การอัปโหลดไฟล์ไปยัง Drive">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกแท็บที่ 3
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Panel 4: กะการทำงาน -->
+                    <div id="sim-panel-4" class="settings-sim-panel hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-business-time text-[#480080]"></i>
+                                <span>แท็บที่ 4: จัดการกะการทำงานมาตรฐาน (Standard &amp; Custom Shifts)</span>
+                            </h4>
+                            <button type="button" class="mockup-btn px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 cursor-pointer" data-title="+ เพิ่มช่วงเวลาปฏิบัติงาน" data-desc="ในการใช้งานจริง ปุ่มนี้จะเปิด Modal สำหรับพิมพ์ชื่อกะ เวลาเริ่ม-สิ้นสุด และเงื่อนไขข้ามคืน">
+                                <i class="fa-solid fa-plus mr-1"></i>เพิ่มกะใหม่
+                            </button>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[11px] flex items-center justify-center">1</span>
+                                    <div>
+                                        <b class="text-slate-800 dark:text-white">เวลาราชการปกติ (08:30 - 16:30 น.)</b>
+                                        <span class="text-[10px] text-slate-400 block">กะมาตรฐานของหน่วยงาน</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">กะปกติ</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-purple-100 text-[#480080] font-bold text-[11px] flex items-center justify-center">2</span>
+                                    <div>
+                                        <b class="text-slate-800 dark:text-white">ปฏิบัติงานนอกเวลาราชการ (16:30 - 20:30 น.)</b>
+                                        <span class="text-[10px] text-purple-500 block">กะนอกเวลา (OT)</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full bg-purple-100 text-[#480080] font-bold text-[10px]">OT</span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 font-bold text-[11px] flex items-center justify-center">3</span>
+                                    <div>
+                                        <b class="text-slate-800 dark:text-white">เวรดึกข้ามคืน (23:00 - 07:00 น.)</b>
+                                        <span class="text-[10px] text-blue-500 block">กะข้ามคืน (Overnight Shift)</span>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold text-[10px]">ข้ามวัน</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel 5: ตำแหน่ง & สังกัด -->
+                    <div id="sim-panel-5" class="settings-sim-panel hidden space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-sitemap text-[#00744B]"></i>
+                                <span>แท็บที่ 5: โครงสร้างตำแหน่ง 3 ระดับ &amp; สังกัด 4 ระดับ (Cascading Hierarchy)</span>
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-mono">settings.html &gt; tab 5</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1.5">
+                                <b class="text-purple-600 dark:text-purple-400 block font-bold">โครงสร้างตำแหน่ง 3 ขั้น:</b>
+                                <ol class="list-decimal pl-4 space-y-0.5 text-slate-600 dark:text-slate-300">
+                                    <li>ประเภทตำแหน่ง (ทั่วไป, วิชาการ, อำนวยการ)</li>
+                                    <li>สายงาน / ชื่อตำแหน่ง (เจ้าพนักงานเทศกิจ)</li>
+                                    <li>ระดับตำแหน่ง (ปฏิบัติงาน, ชำนาญงาน)</li>
+                                </ol>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1.5">
+                                <b class="text-[#00744B] dark:text-emerald-400 block font-bold">โครงสร้างสังกัด 4 ขั้น:</b>
+                                <ol class="list-decimal pl-4 space-y-0.5 text-slate-600 dark:text-slate-300">
+                                    <li>หน่วยงานหลัก (กรุงเทพมหานคร)</li>
+                                    <li>สำนักงาน / กอง (สำนักเทศกิจ)</li>
+                                    <li>ส่วน / ฝ่าย (ฝ่ายตรวจและบังคับการ)</li>
+                                    <li>กลุ่มงาน (กลุ่มงานสายตรวจ 1)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Topic 2: ข้อมูลหน่วยงาน & โลโก้ -->
             <section id="topic-2" class="page-break bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-700/60 space-y-6">
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <span class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center font-black text-lg shadow-xs shrink-0">2</span>
@@ -238,23 +500,23 @@
 
                     <div class="space-y-3">
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block">1. ชื่อหน่วยงานหลัก และชื่อสำนักงาน/กอง:</strong>
+                            <strong class="text-slate-800 dark:text-white block text-sm">1. ชื่อหน่วยงานหลัก และชื่อสำนักงาน/กอง:</strong>
                             <p class="text-slate-500 text-xs">
-                                กำหนด <b>ชื่อหน่วยงานหลัก</b> (เช่น <i>กรุงเทพมหานคร</i>) และ <b>ชื่อสังกัด [สำนักงาน/กอง]</b> (เช่น <i>สำนักเทศกิจ</i>) ข้อมูลนี้จะแสดงบนแถบ Header ของทุกหน้าจอและบนหัวรายงาน PDF
+                                กำหนด <b>ชื่อหน่วยงานหลัก</b> (เช่น <i>กรุงเทพมหานคร</i>) และ <b>ชื่อสังกัด [สำนักงาน/กอง]</b> (เช่น <i>สำนักเทศกิจ</i>) ข้อมูลนี้จะแสดงบนแถบ Header ของทุกหน้าจอและบนหัวรายงาน PDF รูปแบบทางการ
                             </p>
                         </div>
 
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block">2. ข้อความ Header หน้าเข้าสู่ระบบ และ Footer:</strong>
+                            <strong class="text-slate-800 dark:text-white block text-sm">2. ข้อความ Header หน้าเข้าสู่ระบบ และ Footer:</strong>
                             <p class="text-slate-500 text-xs">
-                                กำหนดข้อความไตเติลระบบบนหน้า Login (เช่น <i>BMA e-Government Time Attendance System</i>) และคำอธิบายเชิงนโยบายใน Footer บรรทัดที่ 2
+                                กำหนดข้อความไตเติลระบบบนหน้า Login (เช่น <i>BMA Time Attendance System</i>) และคำอธิบายเชิงนโยบายใน Footer บรรทัดที่ 2
                             </p>
                         </div>
 
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <strong class="text-slate-800 dark:text-white block">3. รูปโลโก้หน่วยงาน:</strong>
+                            <strong class="text-slate-800 dark:text-white block text-sm">3. รูปโลโก้หน่วยงาน:</strong>
                             <p class="text-slate-500 text-xs">
-                                สามารถกำหนดได้ 2 วิธี: อัปโหลดไฟล์ภาพจากเครื่อง หรือวางลิงก์ URL ของรูปภาพ จากนั้นกดปุ่ม <b>"ตรวจสอบลิงก์"</b> เพื่อทดสอบการโหลดภาพ หากต้องการยกเลิกให้กดปุ่ม <b>"ล้างโลโก้"</b>
+                                สามารถกำหนดได้ 2 วิธี: อัปโหลดไฟล์ภาพจากเครื่อง หรือวางลิงก์ URL ของรูปภาพ จากนั้นกดปุ่ม <b>"ทดสอบลิงก์"</b> เพื่อทดสอบการโหลดภาพ หากต้องการยกเลิกให้กดปุ่ม <b>"ล้างโลโก้"</b>
                             </p>
                         </div>
                     </div>
@@ -337,7 +599,7 @@
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Camera & GPS Switches -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
                             <div class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm">
                                 <i class="fa-solid fa-sliders text-[#00744B]"></i>
                                 <span>สวิตช์ควบคุมฟังก์ชันการลงเวลา</span>
@@ -349,30 +611,24 @@
                                 </div>
                                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                     <b class="text-slate-800 dark:text-white block">บังคับพิกัด GPS (Require GPS):</b>
-                                    <span class="text-slate-500">หากเปิด ผู้ใช้จะต้องเปิดบริการระบุตำแหน่งบนเครื่องจึงจะกดบันทึกเวลาได้</span>
+                                    <span class="text-slate-500">หากเปิด ผู้ใช้จะต้องอนุญาต Location และตรวจพิกัดให้อยู่ในรัศมีที่กำหนด</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Google Drive Integration -->
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                        <!-- Google Drive Script Bridge -->
+                        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
                             <div class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm">
-                                <i class="fa-brands fa-google-drive text-[#00744B]"></i>
-                                <span>การจัดเก็บไฟล์รูปถ่ายใน Google Drive</span>
+                                <i class="fa-solid fa-brands fa-google-drive text-[#0971CE]"></i>
+                                <span>การเชื่อมต่อ Google Drive เก็บภาพถ่าย</span>
                             </div>
-                            <div class="space-y-1.5 text-xs">
-                                <div>
-                                    <span class="font-semibold text-slate-600 dark:text-slate-300">1. Google Apps Script Web App URL:</span>
-                                    <div class="font-mono text-[11px] text-slate-500 truncate">https://script.google.com/macros/s/.../exec</div>
-                                </div>
-                                <div>
-                                    <span class="font-semibold text-slate-600 dark:text-slate-300">2. Google Drive Folder ID:</span>
-                                    <div class="font-mono text-[11px] text-slate-500">รหัสโฟลเดอร์ปลายทางใน Drive</div>
-                                </div>
-                                <div class="pt-1">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-[11px]">
-                                        <i class="fa-solid fa-shield-check text-[#00744B]"></i>ปุ่ม "ตรวจสอบการเชื่อมต่อ Google Drive"
-                                    </span>
+                            <div class="space-y-2 text-xs text-slate-500">
+                                <p>
+                                    ระบบใช้ <b>Google Apps Script Web App</b> เป็นสะพานรับภาพถ่ายแบบ Base64 และแปลงเป็นไฟล์ <code class="font-mono">.jpg</code> จัดเก็บลงโฟลเดอร์ Google Drive ของหน่วยงานโดยอัตโนมัติ
+                                </p>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <span class="font-mono text-[11px] text-purple-600 dark:text-purple-400 block font-bold">Google Apps Script Web App:</span>
+                                    <span class="text-[10px]">ตั้งค่า Deploy เป็น "Anyone" เพื่อให้เว็บบราวเซอร์ส่งรูปได้โดยตรง</span>
                                 </div>
                             </div>
                         </div>
@@ -380,22 +636,21 @@
                 </div>
             </section>
 
-            <!-- Topic 5: จัดการกะเวลาทำงาน -->
+            <!-- Topic 5: กะการทำงาน & นอกเวลา -->
             <section id="topic-5" class="page-break bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-700/60 space-y-6">
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <span class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center font-black text-lg shadow-xs shrink-0">5</span>
                     <div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">การจัดการกะเวลาทำงาน (Work Shifts Management)</h3>
-                        <p class="text-xs text-slate-500">แท็บที่ 3: กะปกติ กะนอกเวลา (Tag สีม่วง) กะข้ามวัน และการจัดเรียงลำดับ</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">การกำหนดและจัดการกะการทำงาน (Work Shifts)</h3>
+                        <p class="text-xs text-slate-500">แท็บที่ 3: จัดการกะการทำงานมาตรฐาน กะ 24 ชั่วโมง กะข้ามคืน และการจัดลำดับ Dropdown</p>
                     </div>
                 </div>
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        เข้าไปที่ <b>แท็บที่ 3: "ช่วงเวลาปฏิบัติราชการ"</b> เพื่อสร้างและจัดการกะทำงานให้สอดคล้องกับรูปแบบการทำงานของแต่ละส่วน/ฝ่าย:
+                        ที่ <b>แท็บที่ 3: "จัดการกะการทำงานมาตรฐาน"</b> SuperAdmin สามารถกำหนดกะที่เปิดให้บุคลากรเลือกได้ใน Dropdown:
                     </p>
 
-                    <!-- Add Shift Steps -->
                     <div class="space-y-3">
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
@@ -541,24 +796,24 @@
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        นอกจากเมนูตั้งค่าระบบแล้ว SuperAdmin ยังสามารถเข้าใช้งานเมนูการบริหารจัดการอื่นๆ ได้เหมือน Admin ทุกประการ แต่จะมีขอบเขตข้อมูลครอบคลุมทั้งองค์กร:
+                        นอกจากเมนูตั้งค่าระบบแล้ว SuperAdmin ยังสามารถเข้าใช้งานเมนูการบริหารจัดการอื่นๆ ได้เหมือน Admin ทุกประการ แต่จะมีขอบเขตข้อมูลครอบคลุมทั้งองค์กร (คลิกเพื่อเปิดดูคู่มือของแต่ละส่วน):
                     </p>
 
                     <!-- Links to Admin Manual -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                        <a href="manual-admin.html#topic-3" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
+                        <a href="manual-admin.html#topic-3" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
                             <span class="font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-chart-pie mr-2 text-blue-500"></i>หน้าภาพรวม (Dashboard)</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
                         </a>
-                        <a href="manual-admin.html#topic-4" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
+                        <a href="manual-admin.html#topic-4" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
                             <span class="font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-bell-concierge mr-2 text-amber-500"></i>อนุมัติคำขอลงเวลาพิเศษ</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
                         </a>
-                        <a href="manual-admin.html#topic-5" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
+                        <a href="manual-admin.html#topic-5" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
                             <span class="font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-file-invoice mr-2 text-sky-500"></i>รายงาน และพิมพ์ PDF / Excel</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
                         </a>
-                        <a href="manual-admin.html#topic-7" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
+                        <a href="manual-admin.html#topic-7" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 hover:border-[#0971CE] transition flex items-center justify-between no-underline">
                             <span class="font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-id-card-clip mr-2 text-emerald-500"></i>จัดการบุคลากร &amp; นำเข้า Excel</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-slate-400"></i>
                         </a>
@@ -566,13 +821,13 @@
                 </div>
             </section>
 
-            <!-- Topic 9: ความปลอดภัย & การสำรองข้อมูล -->
+            <!-- Topic 9: ความปลอดภัย & การสำรองข้อมูล With FAQ Accordion -->
             <section id="topic-9" class="page-break bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-700/60 space-y-6">
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <span class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center font-black text-lg shadow-xs shrink-0">9</span>
                     <div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">แนวปฏิบัติด้านความปลอดภัยและการสำรองข้อมูล (Security &amp; Data Integrity)</h3>
-                        <p class="text-xs text-slate-500">การรักษาความปลอดภัยข้อมูลตาม PDPA การควบคุม Session และการสำรองฐานข้อมูล</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">แนวปฏิบัติด้านความปลอดภัยและการสำรองข้อมูล (Security &amp; FAQ)</h3>
+                        <p class="text-xs text-slate-500">การรักษาความปลอดภัยข้อมูลตาม PDPA การควบคุม Session และคำถามที่พบบ่อย</p>
                     </div>
                 </div>
 
@@ -583,7 +838,7 @@
                                 <i class="fa-solid fa-user-shield text-[#00744B] mr-1"></i>1. การปฏิบัติตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA):
                             </strong>
                             <p class="text-xs text-slate-500">
-                                ตารางบุคลากรและรายงานได้รับการออกแบบตามมาตรฐานข้อมูลส่วนบุคคล (ซ่อนข้อมูลละเอียดอ่อน เช่น ประวัติสุขภาพ มีเฉพาะข้อมูลที่จำเป็นต่อการปฏิบัติราชการ) และภาพถ่ายใบหน้าถูกจัดเก็บบน Google Drive ของหน่วยงานภายใต้สิทธิ์ที่จำกัด
+                                ตารางบุคลากรและรายงานได้รับการออกแบบตามมาตรฐานข้อมูลส่วนบุคคล (ซ่อนข้อมูลละเอียดอ่อน มีเฉพาะข้อมูลที่จำเป็นต่อการปฏิบัติราชการ) และภาพถ่ายใบหน้าถูกจัดเก็บบน Google Drive ของหน่วยงานภายใต้สิทธิ์ที่จำกัด
                             </p>
                         </div>
 
@@ -592,7 +847,7 @@
                                 <i class="fa-solid fa-clock-rotate-left text-[#0971CE] mr-1"></i>2. นโยบาย Session 7 วัน และการตรวจสอบความถูกต้อง:
                             </strong>
                             <p class="text-xs text-slate-500">
-                                แม้ระบบจะอนุญาตให้จำ Session ไว้ 7 วัน แต่ทุกครั้งที่มีการเปิดหน้าจอหรือนำทาง ระบบจะทำการตรวจสอบสถานะบัญชีกับฐานข้อมูล Supabase แบบ Real-time หากบัญชีถูกระงับหรือมีการบังคับเปลี่ยนรหัสผ่าน ระบบจะตัด Session ออกทันที
+                                แม้ระบบจะอนุญาตให้จำ Session ไว้ 7 วัน แต่ทุกครั้งที่มีการเปิดหน้าจอหรือนำทาง ระบบจะทำการตรวจสอบสถานะบัญชีกับฐานข้อมูลแบบ Real-time หากบัญชีถูกระงับหรือมีการบังคับเปลี่ยนรหัสผ่าน ระบบจะตัด Session ออกทันที
                             </p>
                         </div>
 
@@ -603,6 +858,62 @@
                             <p class="text-xs text-slate-500">
                                 แนะนำให้ SuperAdmin ตรวจสอบโควต้าพื้นที่จัดเก็บใน Google Drive ของหน่วยงานเป็นประจำทุกเดือน และส่งออกไฟล์รายงานประจำเดือน (Excel/PDF) จัดเก็บไว้ในระบบจัดเก็บเอกสารอิเล็กทรอนิกส์ของกรุงเทพมหานครอย่างสม่ำเสมอ
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Accordion for SuperAdmin -->
+                    <div class="pt-4 space-y-3">
+                        <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-purple-600"></i>
+                            <span>คำถามที่พบบ่อยสำหรับ SuperAdmin (FAQ)</span>
+                        </h4>
+
+                        <!-- FAQ 1 -->
+                        <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+                            <button type="button" class="faq-trigger w-full px-5 py-4 text-left font-extrabold text-slate-900 dark:text-white flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-question text-purple-600"></i>
+                                    <span>Q1: หากเปลี่ยนโลโก้หรือชื่อหน่วยงาน ข้อมูลจะอัปเดตไปที่ใดบ้าง?</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down faq-chevron text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 pt-1 text-slate-600 dark:text-slate-300 space-y-2 text-xs leading-relaxed border-t border-slate-200/60 dark:border-slate-700/60">
+                                <p>
+                                    ข้อมูลจะอัปเดตทันทีบน: 1) แถบ Header ของทุกหน้าจอทั้ง PC และมือถือ, 2) หน้าต่างเข้าสู่ระบบ (Login), 3) ส่วนหัวของรายงานราชการ (PDF) ที่สั่งพิมพ์ และ 4) หัวแผ่นงาน Excel ที่ส่งออก
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+                            <button type="button" class="faq-trigger w-full px-5 py-4 text-left font-extrabold text-slate-900 dark:text-white flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-question text-emerald-600"></i>
+                                    <span>Q2: เมื่อเปิด "โหมดบันทึกครั้งเดียว" ระบบจะลงเวลาเข้าและออกอย่างไร?</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down faq-chevron text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 pt-1 text-slate-600 dark:text-slate-300 space-y-2 text-xs leading-relaxed border-t border-slate-200/60 dark:border-slate-700/60">
+                                <p>
+                                    ระบบจะนำเวลาเริ่มงานและเลิกงานมาตรฐานของกะนั้นๆ มาบันทึกให้ทั้งขาเข้าและขาออกพร้อมกันทันที เหมาะสำหรับภารกิจพิเศษหรือการประชุมนอกสถานที่ที่ผู้ปฏิบัติงานไม่สะดวกบันทึก 2 เวลา
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="faq-item border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+                            <button type="button" class="faq-trigger w-full px-5 py-4 text-left font-extrabold text-slate-900 dark:text-white flex items-center justify-between gap-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-question text-blue-600"></i>
+                                    <span>Q3: การปิดสวิตช์ "บังคับพิกัด GPS" ส่งผลต่อการใช้งานอย่างไร?</span>
+                                </span>
+                                <i class="fa-solid fa-chevron-down faq-chevron text-slate-400 transition-transform duration-300"></i>
+                            </button>
+                            <div class="faq-content px-5 pb-4 pt-1 text-slate-600 dark:text-slate-300 space-y-2 text-xs leading-relaxed border-t border-slate-200/60 dark:border-slate-700/60">
+                                <p>
+                                    เมื่อปิดการบังคับ GPS หน้าจอลงเวลาจะไม่บล็อกการกดบันทึกแม้เครื่องของผู้ใช้จะไม่ได้เปิด GPS หรือหาพิกัดไม่พบ เหมาะสำหรับกรณีที่สัญญาณ GPS ภายในอาคารทึบมีปัญหา
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -616,6 +927,35 @@
         <i class="fa-solid fa-arrow-up"></i>
     </button>
 
+    <!-- Global Mockup Interactive Modal -->
+    <div id="mockupModal" class="no-print fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div id="mockupModalBackdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity opacity-0 cursor-pointer"></div>
+        <div id="mockupModalPanel" class="relative bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 transform scale-95 opacity-0 transition-all duration-200 space-y-4">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-[#480080] dark:text-purple-400 flex items-center justify-center text-lg font-bold shrink-0">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-purple-600 dark:text-purple-400 block">ตัวอย่างหน้าจอจำลอง (Mockup)</span>
+                        <h4 id="mockupModalTitle" class="text-base font-black text-slate-900 dark:text-white leading-tight">การทำงานของปุ่ม</h4>
+                    </div>
+                </div>
+                <button type="button" id="btnCloseMockupModal" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-300 leading-relaxed" id="mockupModalDesc">
+                คำอธิบายฟังก์ชันการทำงานจริง
+            </div>
+            <div class="flex justify-end pt-2">
+                <button type="button" id="btnConfirmMockupModal" class="px-5 py-2.5 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] transition shadow-md cursor-pointer">
+                    เข้าใจแล้ว
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-auto bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2">
         <div class="flex items-center justify-center gap-2 font-bold text-slate-700 dark:text-slate-300">
@@ -625,7 +965,7 @@
         <p>คู่มือการใช้งานสำหรับผู้ดูแลระบบสูงสุด (SuperAdmin Master Manual) • ฉบับ 27 ตุลาคม 2569</p>
     </footer>
 
-    <!-- Interactive Scripts: Theme, Mobile TOC, Scrollspy, Back to Top -->
+    <!-- Interactive Scripts: Theme, Mobile TOC, Scrollspy, Back to Top, Settings Simulator Tabs, FAQ Accordion, Mockup Alerts -->
     <script>
         // 1. Theme Logic
         const themeBtn = document.getElementById('btnToggleTheme');
@@ -730,6 +1070,104 @@
 
         backToTopBtn?.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 4. Settings Interactive Simulator Tabs
+        const simTabs = document.querySelectorAll('.settings-sim-tab');
+        const simPanels = document.querySelectorAll('.settings-sim-panel');
+
+        simTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = tab.getAttribute('data-target');
+
+                // Update active tab styles
+                simTabs.forEach(t => {
+                    t.classList.remove('bg-[#480080]', 'text-white', 'shadow-md');
+                    t.classList.add('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+                });
+                tab.classList.remove('bg-slate-100', 'text-slate-700', 'dark:bg-slate-800', 'dark:text-slate-300');
+                tab.classList.add('bg-[#480080]', 'text-white', 'shadow-md');
+
+                // Show target panel
+                simPanels.forEach(panel => {
+                    if (panel.id === targetId) {
+                        panel.classList.remove('hidden');
+                    } else {
+                        panel.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // 5. FAQ Accordion Logic
+        const faqTriggers = document.querySelectorAll('.faq-trigger');
+        faqTriggers.forEach((btn, index) => {
+            const content = btn.nextElementSibling;
+            const chevron = btn.querySelector('.faq-chevron');
+
+            if (index !== 0) {
+                content.style.display = 'none';
+            } else {
+                chevron?.classList.add('rotate-180');
+            }
+
+            btn.addEventListener('click', () => {
+                const isHidden = content.style.display === 'none';
+                if (isHidden) {
+                    content.style.display = 'block';
+                    chevron?.classList.add('rotate-180');
+                } else {
+                    content.style.display = 'none';
+                    chevron?.classList.remove('rotate-180');
+                }
+            });
+        });
+
+        // 6. Global Mockup Alert Modal
+        const mockupModal = document.getElementById('mockupModal');
+        const mockupModalBackdrop = document.getElementById('mockupModalBackdrop');
+        const mockupModalPanel = document.getElementById('mockupModalPanel');
+        const mockupModalTitle = document.getElementById('mockupModalTitle');
+        const mockupModalDesc = document.getElementById('mockupModalDesc');
+        const btnCloseMockupModal = document.getElementById('btnCloseMockupModal');
+        const btnConfirmMockupModal = document.getElementById('btnConfirmMockupModal');
+
+        function openMockupModal(title, desc) {
+            if (!mockupModal) return;
+            mockupModalTitle.textContent = title || 'ตัวอย่างหน้าจอจำลอง';
+            mockupModalDesc.innerHTML = `<span class="font-bold text-[#480080] dark:text-purple-400 block mb-1">💡 ในการใช้งานจริง:</span>${desc || 'ปุ่มนี้ทำหน้าที่ตามกระบวนการของ SuperAdmin'}`;
+            mockupModal.classList.remove('hidden');
+            setTimeout(() => {
+                mockupModalBackdrop?.classList.remove('opacity-0');
+                mockupModalBackdrop?.classList.add('opacity-100');
+                mockupModalPanel?.classList.remove('scale-95', 'opacity-0');
+                mockupModalPanel?.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeMockupModal() {
+            mockupModalBackdrop?.classList.remove('opacity-100');
+            mockupModalBackdrop?.classList.add('opacity-0');
+            mockupModalPanel?.classList.remove('scale-100', 'opacity-100');
+            mockupModalPanel?.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                mockupModal.classList.add('hidden');
+            }, 200);
+        }
+
+        btnCloseMockupModal?.addEventListener('click', closeMockupModal);
+        btnConfirmMockupModal?.addEventListener('click', closeMockupModal);
+        mockupModalBackdrop?.addEventListener('click', closeMockupModal);
+
+        document.querySelectorAll('.mockup-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const title = btn.getAttribute('data-title');
+                const desc = btn.getAttribute('data-desc');
+                openMockupModal(title, desc);
+            });
         });
     </script>
 </body>
