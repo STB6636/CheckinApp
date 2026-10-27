@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T06:00:51.819Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `35` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `383`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T06:51:14.011Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `36` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `384`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,11 +64,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `7290630037023efe` | **Total Lines:** `1471` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `2b7c29748e667297` | **Total Lines:** `1524` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L1467** | `export class CheckinController` | Class Definition (1456 lines) |
+| `CheckinController` | `class` | **L12 - L1520** | `export class CheckinController` | Class Definition (1509 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L37** | `() => any` | public constructor L13-L37 (25 lines) |
 | `CheckinController.init` | `public async method` | **L39 - L80** | `() => Promise<any>` | public async method L39-L80 (42 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L82 - L122** | `() => any` | private method L82-L122 (41 lines) |
@@ -95,8 +95,8 @@
 | `setDesktopActiveTab` | `arrow_fn` | **L1060 - L1079** | `(activeName) => inferred` | Arrow Function L1060-L1079 |
 | `openMobileDrawer` | `arrow_fn` | **L1090 - L1107** | `() => inferred` | Arrow Function L1090-L1107 |
 | `closeMobileDrawer` | `arrow_fn` | **L1109 - L1134** | `(targetTab = null) => inferred` | Arrow Function L1109-L1134 |
-| `CheckinController.#handleMainCheckin` | `private async method` | **L1157 - L1403** | `() => Promise<any>` | private async method L1157-L1403 (247 lines) |
-| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1405 - L1466** | `(closeModalCallback) => Promise<any>` | private async method L1405-L1466 (62 lines) |
+| `CheckinController.#handleMainCheckin` | `private async method` | **L1157 - L1456** | `() => Promise<any>` | private async method L1157-L1456 (300 lines) |
+| `CheckinController.#handleSubmitSpecialRequest` | `private async method` | **L1458 - L1519** | `(closeModalCallback) => Promise<any>` | private async method L1458-L1519 (62 lines) |
 
 ---
 
@@ -318,11 +318,11 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `e86c1292610bc2e9` | **Total Lines:** `1079` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `f97ed932d91f3077` | **Total Lines:** `1083` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1079** | `export class UIHelpers` | Class Definition (1072 lines) |
+| `UIHelpers` | `class` | **L8 - L1083** | `export class UIHelpers` | Class Definition (1076 lines) |
 | `UIHelpers.getRootBasePath` | `static public method` | **L27 - L36** | `() => any` | static public method L27-L36 (10 lines) |
 | `UIHelpers.maskUrlToRoot` | `static public method` | **L38 - L61** | `(explicitPageName = '') => any` | static public method L38-L61 (24 lines) |
 | `UIHelpers.initTheme` | `static public method` | **L63 - L80** | `() => any` | static public method L63-L80 (18 lines) |
@@ -335,23 +335,23 @@
 | `UIHelpers.timeToMinutes` | `static public method` | **L173 - L179** | `(timeStr) => any` | static public method L173-L179 (7 lines) |
 | `UIHelpers.getTodayISO` | `static public method` | **L181 - L185** | `() => any` | static public method L181-L185 (5 lines) |
 | `UIHelpers.getCurrentTimeHHMM` | `static public method` | **L187 - L192** | `() => any` | static public method L187-L192 (6 lines) |
-| `UIHelpers.capturePortrait3x4FromVideo` | `static public method` | **L194 - L224** | `(videoEl, canvasEl) => any` | static public method L194-L224 (31 lines) |
-| `UIHelpers.verifyImageUrl` | `static public method` | **L226 - L284** | `(rawUrl) => any` | static public method L226-L284 (59 lines) |
-| `UIHelpers.verifyGoogleDriveLink` | `static public async method` | **L286 - L328** | `(scriptUrl, folderId = '') => Promise<any>` | static public async method L286-L328 (43 lines) |
-| `UIHelpers.uploadPhotoToGoogleDrive` | `static public async method` | **L330 - L394** | `(base64DataUrl, fileNamePrefix, settings) => Promise<any>` | static public async method L330-L394 (65 lines) |
-| `UIHelpers.showLoading` | `static public method` | **L401 - L463** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L401-L463 (63 lines) |
-| `UIHelpers.#updateProgressDOM` | `static private method` | **L465 - L472** | `(percent) => any` | static private method L465-L472 (8 lines) |
-| `UIHelpers.hideLoading` | `static public method` | **L474 - L499** | `() => any` | static public method L474-L499 (26 lines) |
-| `UIHelpers.renderTableSkeleton` | `static public method` | **L501 - L511** | `(rows = 5, cols = 6) => any` | static public method L501-L511 (11 lines) |
-| `UIHelpers.alert` | `static public async method` | **L513 - L528** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L513-L528 (16 lines) |
-| `UIHelpers.confirm` | `static public async method` | **L530 - L548** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') => Promise<any>` | static public async method L530-L548 (19 lines) |
-| `UIHelpers.validateThaiNationalId` | `static public method` | **L550 - L569** | `(id, strictCheckDigit = false) => any` | static public method L550-L569 (20 lines) |
-| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L571 - L575** | `(nationalId) => any` | static public method L571-L575 (5 lines) |
-| `UIHelpers.exportToExcelUTF8` | `static public method` | **L577 - L602** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L577-L602 (26 lines) |
-| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L609 - L629** | `(sheets, fileName = 'export_data') => any` | static public method L609-L629 (21 lines) |
-| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L638 - L901** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L638-L901 (264 lines) |
-| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L903 - L925** | `(file) => any` | static public method L903-L925 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L927 - L1078** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L927-L1078 (152 lines) |
+| `UIHelpers.capturePortrait3x4FromVideo` | `static public method` | **L194 - L228** | `(videoEl, canvasEl) => any` | static public method L194-L228 (35 lines) |
+| `UIHelpers.verifyImageUrl` | `static public method` | **L230 - L288** | `(rawUrl) => any` | static public method L230-L288 (59 lines) |
+| `UIHelpers.verifyGoogleDriveLink` | `static public async method` | **L290 - L332** | `(scriptUrl, folderId = '') => Promise<any>` | static public async method L290-L332 (43 lines) |
+| `UIHelpers.uploadPhotoToGoogleDrive` | `static public async method` | **L334 - L398** | `(base64DataUrl, fileNamePrefix, settings) => Promise<any>` | static public async method L334-L398 (65 lines) |
+| `UIHelpers.showLoading` | `static public method` | **L405 - L467** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L405-L467 (63 lines) |
+| `UIHelpers.#updateProgressDOM` | `static private method` | **L469 - L476** | `(percent) => any` | static private method L469-L476 (8 lines) |
+| `UIHelpers.hideLoading` | `static public method` | **L478 - L503** | `() => any` | static public method L478-L503 (26 lines) |
+| `UIHelpers.renderTableSkeleton` | `static public method` | **L505 - L515** | `(rows = 5, cols = 6) => any` | static public method L505-L515 (11 lines) |
+| `UIHelpers.alert` | `static public async method` | **L517 - L532** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L517-L532 (16 lines) |
+| `UIHelpers.confirm` | `static public async method` | **L534 - L552** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') => Promise<any>` | static public async method L534-L552 (19 lines) |
+| `UIHelpers.validateThaiNationalId` | `static public method` | **L554 - L573** | `(id, strictCheckDigit = false) => any` | static public method L554-L573 (20 lines) |
+| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L575 - L579** | `(nationalId) => any` | static public method L575-L579 (5 lines) |
+| `UIHelpers.exportToExcelUTF8` | `static public method` | **L581 - L606** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L581-L606 (26 lines) |
+| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L613 - L633** | `(sheets, fileName = 'export_data') => any` | static public method L613-L633 (21 lines) |
+| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L642 - L905** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L642-L905 (264 lines) |
+| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L907 - L929** | `(file) => any` | static public method L907-L929 (23 lines) |
+| `UIHelpers.printReportInNewTab` | `static public method` | **L931 - L1082** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L931-L1082 (152 lines) |
 
 ---
 
@@ -454,7 +454,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3434741df6690fd9` | **Total Lines:** `667` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ccd7076ab776d3b8` | **Total Lines:** `667` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -541,6 +541,16 @@
 | `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L462 - L503** | `id="bulkImportPreviewContainer"` | HTML DOM Section L462-L503 |
 | `<div#bulkImportProgressContainer>` | `html_dom_section` | **L523 - L531** | `id="bulkImportProgressContainer"` | HTML DOM Section L523-L531 |
 | `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L549 - L549** | `<script>` | Bootstrap script L549-L549 |
+
+---
+
+## File: `pipeline/PIPE-20261027-camera-mirror-and-detailed-confirm-modal/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `2ffe5d857d2f7124` | **Total Lines:** `355` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
 
 ---
 

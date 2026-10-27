@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T06:00:51.819Z",
-  "totalFilesScanned": 35,
-  "totalSymbolsIndexed": 383,
+  "generatedAt": "2026-10-27T06:51:14.011Z",
+  "totalFilesScanned": 36,
+  "totalSymbolsIndexed": 384,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "7290630037023efe",
-      "totalLines": 1471,
+      "fileHash": "2b7c29748e667297",
+      "totalLines": 1524,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1467,
+          "endLine": 1520,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (1456 lines)"
+          "summary": "Class Definition (1509 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -520,17 +520,17 @@
           "name": "CheckinController.#handleMainCheckin",
           "kind": "private async method",
           "startLine": 1157,
-          "endLine": 1403,
+          "endLine": 1456,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1157-L1403 (247 lines)"
+          "summary": "private async method L1157-L1456 (300 lines)"
         },
         {
           "name": "CheckinController.#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 1405,
-          "endLine": 1466,
+          "startLine": 1458,
+          "endLine": 1519,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L1405-L1466 (62 lines)"
+          "summary": "private async method L1458-L1519 (62 lines)"
         }
       ]
     },
@@ -1775,8 +1775,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "e86c1292610bc2e9",
-      "totalLines": 1079,
+      "fileHash": "f97ed932d91f3077",
+      "totalLines": 1083,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -1789,9 +1789,9 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1079,
+          "endLine": 1083,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1072 lines)"
+          "summary": "Class Definition (1076 lines)"
         },
         {
           "name": "UIHelpers.getRootBasePath",
@@ -1893,137 +1893,137 @@
           "name": "UIHelpers.capturePortrait3x4FromVideo",
           "kind": "static public method",
           "startLine": 194,
-          "endLine": 224,
+          "endLine": 228,
           "signature": "(videoEl, canvasEl) => any",
-          "summary": "static public method L194-L224 (31 lines)"
+          "summary": "static public method L194-L228 (35 lines)"
         },
         {
           "name": "UIHelpers.verifyImageUrl",
           "kind": "static public method",
-          "startLine": 226,
-          "endLine": 284,
+          "startLine": 230,
+          "endLine": 288,
           "signature": "(rawUrl) => any",
-          "summary": "static public method L226-L284 (59 lines)"
+          "summary": "static public method L230-L288 (59 lines)"
         },
         {
           "name": "UIHelpers.verifyGoogleDriveLink",
           "kind": "static public async method",
-          "startLine": 286,
-          "endLine": 328,
+          "startLine": 290,
+          "endLine": 332,
           "signature": "(scriptUrl, folderId = '') => Promise<any>",
-          "summary": "static public async method L286-L328 (43 lines)"
+          "summary": "static public async method L290-L332 (43 lines)"
         },
         {
           "name": "UIHelpers.uploadPhotoToGoogleDrive",
           "kind": "static public async method",
-          "startLine": 330,
-          "endLine": 394,
+          "startLine": 334,
+          "endLine": 398,
           "signature": "(base64DataUrl, fileNamePrefix, settings) => Promise<any>",
-          "summary": "static public async method L330-L394 (65 lines)"
+          "summary": "static public async method L334-L398 (65 lines)"
         },
         {
           "name": "UIHelpers.showLoading",
           "kind": "static public method",
-          "startLine": 401,
-          "endLine": 463,
+          "startLine": 405,
+          "endLine": 467,
           "signature": "(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any",
-          "summary": "static public method L401-L463 (63 lines)"
+          "summary": "static public method L405-L467 (63 lines)"
         },
         {
           "name": "UIHelpers.#updateProgressDOM",
           "kind": "static private method",
-          "startLine": 465,
-          "endLine": 472,
+          "startLine": 469,
+          "endLine": 476,
           "signature": "(percent) => any",
-          "summary": "static private method L465-L472 (8 lines)"
+          "summary": "static private method L469-L476 (8 lines)"
         },
         {
           "name": "UIHelpers.hideLoading",
           "kind": "static public method",
-          "startLine": 474,
-          "endLine": 499,
+          "startLine": 478,
+          "endLine": 503,
           "signature": "() => any",
-          "summary": "static public method L474-L499 (26 lines)"
+          "summary": "static public method L478-L503 (26 lines)"
         },
         {
           "name": "UIHelpers.renderTableSkeleton",
           "kind": "static public method",
-          "startLine": 501,
-          "endLine": 511,
+          "startLine": 505,
+          "endLine": 515,
           "signature": "(rows = 5, cols = 6) => any",
-          "summary": "static public method L501-L511 (11 lines)"
+          "summary": "static public method L505-L515 (11 lines)"
         },
         {
           "name": "UIHelpers.alert",
           "kind": "static public async method",
-          "startLine": 513,
-          "endLine": 528,
+          "startLine": 517,
+          "endLine": 532,
           "signature": "(title, text = '', icon = 'success') => Promise<any>",
-          "summary": "static public async method L513-L528 (16 lines)"
+          "summary": "static public async method L517-L532 (16 lines)"
         },
         {
           "name": "UIHelpers.confirm",
           "kind": "static public async method",
-          "startLine": 530,
-          "endLine": 548,
+          "startLine": 534,
+          "endLine": 552,
           "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning') => Promise<any>",
-          "summary": "static public async method L530-L548 (19 lines)"
+          "summary": "static public async method L534-L552 (19 lines)"
         },
         {
           "name": "UIHelpers.validateThaiNationalId",
           "kind": "static public method",
-          "startLine": 550,
-          "endLine": 569,
+          "startLine": 554,
+          "endLine": 573,
           "signature": "(id, strictCheckDigit = false) => any",
-          "summary": "static public method L550-L569 (20 lines)"
+          "summary": "static public method L554-L573 (20 lines)"
         },
         {
           "name": "UIHelpers.getLast6DigitsFromNationalId",
           "kind": "static public method",
-          "startLine": 571,
-          "endLine": 575,
+          "startLine": 575,
+          "endLine": 579,
           "signature": "(nationalId) => any",
-          "summary": "static public method L571-L575 (5 lines)"
+          "summary": "static public method L575-L579 (5 lines)"
         },
         {
           "name": "UIHelpers.exportToExcelUTF8",
           "kind": "static public method",
-          "startLine": 577,
-          "endLine": 602,
+          "startLine": 581,
+          "endLine": 606,
           "signature": "(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any",
-          "summary": "static public method L577-L602 (26 lines)"
+          "summary": "static public method L581-L606 (26 lines)"
         },
         {
           "name": "UIHelpers.exportMultiSheetExcel",
           "kind": "static public method",
-          "startLine": 609,
-          "endLine": 629,
+          "startLine": 613,
+          "endLine": 633,
           "signature": "(sheets, fileName = 'export_data') => any",
-          "summary": "static public method L609-L629 (21 lines)"
+          "summary": "static public method L613-L633 (21 lines)"
         },
         {
           "name": "UIHelpers.exportTemplateWithValidationsExcel",
           "kind": "static public async method",
-          "startLine": 638,
-          "endLine": 901,
+          "startLine": 642,
+          "endLine": 905,
           "signature": "({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>",
-          "summary": "static public async method L638-L901 (264 lines)"
+          "summary": "static public async method L642-L905 (264 lines)"
         },
         {
           "name": "UIHelpers.parseExcelFileUTF8",
           "kind": "static public method",
-          "startLine": 903,
-          "endLine": 925,
+          "startLine": 907,
+          "endLine": 929,
           "signature": "(file) => any",
-          "summary": "static public method L903-L925 (23 lines)"
+          "summary": "static public method L907-L929 (23 lines)"
         },
         {
           "name": "UIHelpers.printReportInNewTab",
           "kind": "static public method",
-          "startLine": 927,
-          "endLine": 1078,
+          "startLine": 931,
+          "endLine": 1082,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L927-L1078 (152 lines)"
+          "summary": "static public method L931-L1082 (152 lines)"
         }
       ]
     },
@@ -2588,7 +2588,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3434741df6690fd9",
+      "fileHash": "ccd7076ab776d3b8",
       "totalLines": 667,
       "importsCount": 0,
       "importsPreview": [],
@@ -3013,6 +3013,25 @@
           "endLine": 549,
           "signature": "<script>",
           "summary": "Bootstrap script L549-L549"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-camera-mirror-and-detailed-confirm-modal/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "2ffe5d857d2f7124",
+      "totalLines": 355,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
         }
       ]
     },

@@ -1292,8 +1292,72 @@ export class CheckinController {
             selectedShiftLabel = shiftSelectEl.options[shiftSelectEl.selectedIndex].text;
         }
 
+        const isGpsActive = Boolean(this.settings?.require_gps);
+        const isSpecialShiftMode = Boolean(
+            effectiveOvertimeShift ||
+            isCustomShift ||
+            shiftObj.is_overtime ||
+            Boolean(this.settings?.single_click_checkin) ||
+            (isShiftSelectorActive && shiftObj.name !== 'เวลาราชการปกติ')
+        );
+
+        if (isGpsActive && this.locationResolvePromise) {
+            await Promise.race([
+                this.locationResolvePromise,
+                new Promise(r => setTimeout(r, 600))
+            ]);
+        }
+
+        const locName = (this.gpsData?.locationName || document.getElementById('gpsLocationName')?.textContent || 'ไม่ได้ระบุตำแหน่ง').trim();
+        const coordsStr = (this.gpsData?.lat && this.gpsData?.lng)
+            ? `${Number(this.gpsData.lat).toFixed(6)}, ${Number(this.gpsData.lng).toFixed(6)}`
+            : (document.getElementById('gpsCoordsText')?.textContent || '-').trim();
+
         const now = new Date();
         const currentTimeFormatted = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} น.`;
+
+        let modalDetailsHtml = '';
+        if (isSpecialShiftMode) {
+            const shiftCheckInTime = isCustomShift ? customCheckIn : (shiftObj.check_in || stdInRef);
+            const shiftCheckOutTime = isCustomShift ? customCheckOut : (shiftObj.check_out || stdOutRef);
+            modalDetailsHtml = `
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">ชื่อช่วงเวลา:</span>
+                    <span class="font-bold text-[#00744B] dark:text-emerald-400 text-right">${shiftObj.name || selectedShiftLabel}</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">เวลาเข้างาน:</span>
+                    <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${shiftCheckInTime} น.</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">เวลาออกงาน:</span>
+                    <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${shiftCheckOutTime} น.</span>
+                </div>
+            `;
+        } else {
+            modalDetailsHtml = `
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">ช่วงเวลาบันทึก:</span>
+                    <span class="font-bold text-[#00744B] dark:text-emerald-400">${hasUnclosedRegular ? 'เวลาออกงาน' : 'เวลาเข้างาน'}</span>
+                </div>
+                <div class="flex justify-between items-center gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">เวลาขณะบันทึก:</span>
+                    <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${currentTimeFormatted}</span>
+                </div>
+            `;
+        }
+
+        if (isGpsActive) {
+            modalDetailsHtml += `
+                <div class="flex flex-col sm:flex-row sm:justify-between items-start gap-1 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                    <span class="text-slate-500 dark:text-slate-400 shrink-0">สถานที่ ตาม GPS:</span>
+                    <div class="sm:text-right text-left text-slate-800 dark:text-white font-medium text-xs leading-relaxed">
+                        <div>${locName}</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">(พิกัด: ${coordsStr})</div>
+                    </div>
+                </div>
+            `;
+        }
 
         if (window.Swal) {
             const confirmResult = await window.Swal.fire({
@@ -1303,19 +1367,8 @@ export class CheckinController {
                         <p class="text-slate-600 dark:text-slate-300 text-center">
                             กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนกดยืนยัน
                         </p>
-                        <div class="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500 dark:text-slate-400">ประเภทรายการ:</span>
-                                <span class="font-bold text-slate-800 dark:text-white">${actionTitle || 'บันทึกลงเวลา'}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500 dark:text-slate-400">ช่วงเวลาทำงาน:</span>
-                                <span class="font-bold text-[#00744B] dark:text-emerald-400">${selectedShiftLabel || 'ช่วงเวลาปฏิบัติงาน'}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-slate-500 dark:text-slate-400">เวลาที่บันทึก:</span>
-                                <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${currentTimeFormatted}</span>
-                            </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+                            ${modalDetailsHtml}
                         </div>
                     </div>
                 `,

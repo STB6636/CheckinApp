@@ -1,0 +1,24 @@
+{
+  "pipeline_id": "PIPE-20261027-camera-mirror-and-detailed-confirm-modal",
+  "branch": "Test-UXUI",
+  "surgical_targets": [
+    {
+      "file": "checkin.html",
+      "target_lines": "203-206",
+      "operation": "add_class",
+      "details": "เพิ่ม class -scale-x-100 ให้กับ <video id=\"cameraVideoStream\">"
+    },
+    {
+      "file": "assets/js/core/UIHelpers.js",
+      "target_lines": "216-224",
+      "operation": "canvas_flip_horizontal",
+      "details": "ใน capturePortrait3x4FromVideo() ทำการ flip แกนนอนบน canvas เพื่อให้ภาพที่บันทึกตรงกับพรีวิวกล้องหน้า"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "target_lines": "1270-1340",
+      "operation": "enhance_confirm_modal",
+      "details": "แยกการแสดงผล Modal ยืนยันเป็น 2 รูปแบบ (ปกติ vs พิเศษ) พร้อมพิกัด GPS 2 บรรทัด"
+    }
+  ]
+}

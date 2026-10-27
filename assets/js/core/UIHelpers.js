@@ -218,7 +218,11 @@ export class UIHelpers {
         const ctx = canvasEl.getContext('2d');
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
+        ctx.save();
+        ctx.translate(targetWidth, 0);
+        ctx.scale(-1, 1);
         ctx.drawImage(videoEl, cropX, cropY, cropW, cropH, 0, 0, targetWidth, targetHeight);
+        ctx.restore();
 
         return canvasEl.toDataURL('image/jpeg', 0.78);
     }
