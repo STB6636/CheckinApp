@@ -437,7 +437,7 @@ html.dark .bma-modal-surface {
 
 @media (min-width: 1024px) {
     #checkinWorkspaceGrid {
-        grid-template-columns: 350px 1fr !important;
+        grid-template-columns: 4fr 6fr !important;
     }
     #checkinWorkspaceGrid:has(#cameraSectionCard.hidden) {
         grid-template-columns: 1fr !important;

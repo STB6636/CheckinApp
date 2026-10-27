@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T03:41:43.130Z",
+  "generatedAt": "2026-10-27T05:13:15.537Z",
   "totalFilesScanned": 33,
   "totalSymbolsIndexed": 381,
   "files": [
@@ -2588,7 +2588,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "76eebb6496fe0918",
+      "fileHash": "f1a80510a6ae610d",
       "totalLines": 665,
       "importsCount": 0,
       "importsPreview": [],
