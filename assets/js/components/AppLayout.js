@@ -420,7 +420,14 @@ export class AppLayout {
                             `;
                         }).join('')}
 
-                        <div class="pt-3 mt-3 border-t border-slate-800">
+                        <div class="pt-3 mt-3 border-t border-slate-800 space-y-1.5">
+                            <a href="docs/manual/index.html" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800/70 transition-all duration-200 no-underline">
+                                <div class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-sm text-sky-400 shrink-0">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <span class="flex-1 truncate">คู่มือการใช้งานระบบ</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+                            </a>
                             <a href="checkin.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all no-underline">
                                 <div class="w-7 h-7 rounded-lg bg-emerald-500/20 flex items-center justify-center text-sm text-emerald-400 shrink-0">
                                     <i class="fa-solid fa-camera-retro"></i>
@@ -773,6 +780,7 @@ export class AppLayout {
 
             const anchor = e.target.closest('a[href]');
             if (anchor) {
+                if (anchor.target === '_blank') return;
                 const href = anchor.getAttribute('href') || '';
                 if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
                 const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();

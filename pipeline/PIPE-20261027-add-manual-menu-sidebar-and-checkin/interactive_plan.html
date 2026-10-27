@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานจำลอง: เพิ่มเมนูคู่มือการใช้งานในระบบผู้ดูแลและระบบลงเวลา</title>
+    <!-- Google Fonts & Tailwind -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <div class="p-6 rounded-3xl bg-gradient-to-r from-[#003822] via-[#005B3A] to-[#00744B] border border-emerald-500/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-300">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>PIPE-20261027-add-manual-menu-sidebar-and-checkin</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white">แผนงาน: เพิ่มเมนูคู่มือการใช้งาน (Manual Access Links)</h1>
+                <p class="text-xs sm:text-sm text-emerald-100/90">แสดงผลใน Sidebar ผู้ดูแล (SuperAdmin & Admin), แท็บมุมมอง Desktop/Tablet และ Header บนมือถือ</p>
+            </div>
+            <div class="px-4 py-2.5 rounded-2xl bg-black/30 border border-white/10 text-xs text-center shrink-0">
+                <div class="text-slate-400 font-bold">โหมดการทำงาน</div>
+                <div class="text-emerald-400 font-extrabold text-sm mt-0.5">FULL (Multi-Agent SubAgents)</div>
+            </div>
+        </div>
+
+        <!-- 3 Interactive Previews -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Card 1: Sidebar Preview (Admin/SuperAdmin) -->
+            <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2 text-xs font-extrabold text-sky-400">
+                        <i class="fa-solid fa-bars-progress"></i>
+                        <span>1. Sidebar ระบบผู้ดูแล (Admin & SuperAdmin)</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-950 text-sky-300 border border-sky-800">Sidebar.js</span>
+                </div>
+                <p class="text-xs text-slate-400">แทรกเมนู "คู่มือการใช้งานระบบ" ระหว่างเมนูหลักกับปุ่ม "ไปหน้าลงเวลาปฏิบัติราชการ"</p>
+
+                <!-- Mockup Sidebar Window -->
+                <div class="p-4 rounded-2xl bg-[#111827] border border-slate-700/60 space-y-2 text-xs">
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider px-2">เมนูระบบบริหารจัดการ</div>
+                    <div class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 flex items-center gap-3">
+                        <i class="fa-solid fa-chart-pie text-slate-400"></i>
+                        <span>ภาพรวม (Dashboard)</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 flex items-center gap-3">
+                        <i class="fa-solid fa-file-invoice text-slate-400"></i>
+                        <span>รายงานการลงเวลา</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 flex items-center gap-3">
+                        <i class="fa-solid fa-id-card-clip text-slate-400"></i>
+                        <span>จัดการข้อมูลบุคลากร</span>
+                    </div>
+
+                    <!-- NEW MENU HIGHLIGHT -->
+                    <div class="pt-2 mt-2 border-t border-slate-800 space-y-2">
+                        <div class="relative p-2.5 rounded-xl bg-sky-500/15 border-2 border-sky-400 text-sky-300 font-extrabold flex items-center justify-between shadow-lg shadow-sky-950">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 rounded-lg bg-sky-500/20 flex items-center justify-center text-sky-400">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <span>คู่มือการใช้งานระบบ</span>
+                            </div>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500 text-white font-black animate-pulse">เพิ่มใหม่</span>
+                        </div>
+
+                        <!-- Existing Checkin Button -->
+                        <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-camera-retro"></i>
+                            <span>ไปหน้าลงเวลาปฏิบัติราชการ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: PC/Tablet Checkin Tabs -->
+            <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2 text-xs font-extrabold text-emerald-400">
+                        <i class="fa-solid fa-desktop"></i>
+                        <span>2. ระบบลงเวลา (PC & Tablet)</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">Tabs Bar</span>
+                </div>
+                <p class="text-xs text-slate-400">เพิ่มปุ่มแท็บ "คู่มือการใช้งาน" ต่อท้ายแท็บ "ประวัติการขอลงเวลากรณีพิเศษ"</p>
+
+                <!-- Mockup Tabs Bar Window -->
+                <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 text-xs">
+                    <div class="p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center gap-2 overflow-x-auto text-[11px]">
+                        <span class="px-3 py-1.5 rounded-lg bg-[#00744B] text-white font-bold flex items-center gap-1.5 shrink-0 shadow-xs">
+                            <i class="fa-solid fa-fingerprint"></i>ลงเวลา
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-clock-rotate-left"></i>ประวัติส่วนตัว
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 font-semibold flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid fa-file-signature"></i>ขอเวลาพิเศษ
+                        </span>
+                        <!-- NEW TAB HIGHLIGHT -->
+                        <span class="px-3 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-400 font-extrabold flex items-center gap-1.5 shrink-0 shadow-md">
+                            <i class="fa-solid fa-book-open"></i>คู่มือการใช้งาน
+                            <span class="text-[9px] px-1 rounded bg-sky-500 text-white font-black">NEW</span>
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">
+                        คลิกแล้วเปิดแท็บใหม่ไปยัง <code class="text-sky-400 font-mono">docs/manual/index.html</code> เพื่อให้ผู้ใช้สามารถอ่านคู่มือควบคู่ไปกับการลงเวลาได้ทันที
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card 3: Mobile Checkin Header -->
+            <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2 text-xs font-extrabold text-amber-400">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <span>3. ระบบลงเวลา (มือถือ Mobile)</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">Top Header</span>
+                </div>
+                <p class="text-xs text-slate-400">แสดงปุ่ม "คู่มือ" บนหน้าแรกแทนปุ่มระบบผู้ดูแล (ซึ่งมีอยู่ในเมนูแฮมเบอร์เกอร์แล้ว)</p>
+
+                <!-- Mockup Mobile Header -->
+                <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3 text-xs">
+                    <div class="p-3 bg-slate-900 rounded-2xl border border-slate-800 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <div class="w-8 h-8 rounded-lg bg-[#00744B] text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-landmark"></i>
+                            </div>
+                            <div class="truncate">
+                                <div class="font-extrabold text-white text-xs truncate">ระบบลงเวลา</div>
+                                <div class="text-[10px] text-emerald-400 truncate">กรุงเทพมหานคร</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <!-- NEW MOBILE MANUAL BUTTON -->
+                            <div class="px-2.5 py-1.5 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-400 text-xs font-extrabold flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-book-open"></i>
+                                <span>คู่มือ</span>
+                            </div>
+
+                            <!-- Mobile Hamburger -->
+                            <div class="w-8 h-8 rounded-xl bg-emerald-950/60 text-emerald-300 flex items-center justify-center border border-emerald-800/40">
+                                <i class="fa-solid fa-bars-staggered text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-slate-400">
+                        * ปุ่ม "ระบบผู้ดูแล" ซ่อนในหน้าจอแรกบนมือถือ แต่ยังสามารถเข้าถึงได้ผ่านปุ่มแฮมเบอร์เกอร์ (<i class="fa-solid fa-bars-staggered"></i>) เหมือนเดิมตามข้อสั่งการ
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Implementation Scope Table -->
+        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-4">
+            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                <i class="fa-solid fa-code text-emerald-400"></i>
+                <span>ตารางไฟล์ที่จะแก้ไขและขอบเขตการทำงาน (Surgical Edits)</span>
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                            <th class="py-3 px-4">ไฟล์เป้าหมาย</th>
+                            <th class="py-3 px-4">ฟังก์ชัน / ตำแหน่ง</th>
+                            <th class="py-3 px-4">การเปลี่ยนแปลง</th>
+                            <th class="py-3 px-4 text-center">สิทธิ์การมองเห็น</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        <tr>
+                            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">assets/js/components/AppLayout.js</td>
+                            <td class="py-3 px-4"><code>AppLayout.#renderSidebar()</code> [บรรทัด 420-435]</td>
+                            <td class="py-3 px-4">เพิ่มลิงก์ <code>docs/manual/index.html</code> แทรกระหว่างเมนูหลัก และปุ่มไปหน้าลงเวลา</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">SuperAdmin &amp; Admin</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">checkin.html</td>
+                            <td class="py-3 px-4"><code>nav.DesktopTabs</code> [บรรทัด 115-131]</td>
+                            <td class="py-3 px-4">เพิ่มปุ่มแท็บที่ 4 "คู่มือการใช้งาน" ต่อท้ายแท็บ "ประวัติการขอลงเวลากรณีพิเศษ"</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">Desktop &amp; Tablet</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">checkin.html</td>
+                            <td class="py-3 px-4"><code>header.topbar</code> [บรรทัด 90-112]</td>
+                            <td class="py-3 px-4">เพิ่มปุ่ม "คู่มือ" บนมือถือ (<code>inline-flex lg:hidden</code>) ข้างปุ่มแฮมเบอร์เกอร์</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">Mobile Only</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">assets/js/controllers/CheckinController.js</td>
+                            <td class="py-3 px-4"><code>CheckinController.#applyDynamicWorkspaceLayout()</code> [บรรทัด 301-306]</td>
+                            <td class="py-3 px-4">ปรับให้ปุ่ม <code>btnGoAdminDashboard</code> แสดงเฉพาะจอเดสก์ท็อป ไม่ไปโผล่บน Header มือถือ</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">ความถูกต้อง UI</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+

@@ -300,7 +300,11 @@ export class CheckinController {
         }
 
         if (['SuperAdmin', 'Admin'].includes(this.currentUser.role)) {
-            document.getElementById('btnGoAdminDashboard')?.classList.remove('hidden');
+            const btnGoAdmin = document.getElementById('btnGoAdminDashboard');
+            if (btnGoAdmin) {
+                btnGoAdmin.classList.remove('hidden');
+                btnGoAdmin.classList.add('max-lg:hidden');
+            }
             document.getElementById('drawerLinkAdminDashboard')?.classList.remove('hidden');
         }
 

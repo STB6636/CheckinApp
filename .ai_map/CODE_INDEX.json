@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T08:23:32.488Z",
-  "totalFilesScanned": 47,
-  "totalSymbolsIndexed": 403,
+  "generatedAt": "2026-10-27T09:08:33.905Z",
+  "totalFilesScanned": 48,
+  "totalSymbolsIndexed": 404,
   "files": [
     {
       "filePath": "approvals.html",
@@ -65,8 +65,8 @@
     {
       "filePath": "assets/js/components/AppLayout.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "610a9b9be47dbf16",
-      "totalLines": 796,
+      "fileHash": "cd7a2a65cc19c6f9",
+      "totalLines": 804,
       "importsCount": 6,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -84,9 +84,9 @@
           "name": "AppLayout",
           "kind": "class",
           "startLine": 13,
-          "endLine": 796,
+          "endLine": 804,
           "signature": "export class AppLayout",
-          "summary": "Class Definition (784 lines)"
+          "summary": "Class Definition (792 lines)"
         },
         {
           "name": "AppLayout.canViewUsersMenu",
@@ -140,57 +140,57 @@
           "name": "AppLayout.#renderSidebar",
           "kind": "static private method",
           "startLine": 343,
-          "endLine": 443,
+          "endLine": 450,
           "signature": "(currentUser, settings, activePage) => any",
-          "summary": "static private method L343-L443 (101 lines)"
+          "summary": "static private method L343-L450 (108 lines)"
         },
         {
           "name": "AppLayout.#renderTopbar",
           "kind": "static private method",
-          "startLine": 445,
-          "endLine": 501,
+          "startLine": 452,
+          "endLine": 508,
           "signature": "(currentUser, settings, pageTitle, pageSubtitle) => any",
-          "summary": "static private method L445-L501 (57 lines)"
+          "summary": "static private method L452-L508 (57 lines)"
         },
         {
           "name": "AppLayout.#renderMobileBottomNav",
           "kind": "static private method",
-          "startLine": 503,
-          "endLine": 529,
+          "startLine": 510,
+          "endLine": 536,
           "signature": "(currentUser, activePage) => any",
-          "summary": "static private method L503-L529 (27 lines)"
+          "summary": "static private method L510-L536 (27 lines)"
         },
         {
           "name": "AppLayout.getMobileShortcutGridHtml",
           "kind": "static public method",
-          "startLine": 531,
-          "endLine": 561,
+          "startLine": 538,
+          "endLine": 568,
           "signature": "(currentUser) => any",
-          "summary": "static public method L531-L561 (31 lines)"
+          "summary": "static public method L538-L568 (31 lines)"
         },
         {
           "name": "AppLayout.#renderFooter",
           "kind": "static private method",
-          "startLine": 563,
-          "endLine": 582,
+          "startLine": 570,
+          "endLine": 589,
           "signature": "(settings) => any",
-          "summary": "static private method L563-L582 (20 lines)"
+          "summary": "static private method L570-L589 (20 lines)"
         },
         {
           "name": "AppLayout.refreshNotificationBell",
           "kind": "static public async method",
-          "startLine": 584,
-          "endLine": 681,
+          "startLine": 591,
+          "endLine": 688,
           "signature": "(currentUser) => Promise<any>",
-          "summary": "static public async method L584-L681 (98 lines)"
+          "summary": "static public async method L591-L688 (98 lines)"
         },
         {
           "name": "AppLayout.#bindGlobalDelegatedEvents",
           "kind": "static private method",
-          "startLine": 683,
-          "endLine": 795,
+          "startLine": 690,
+          "endLine": 803,
           "signature": "() => any",
-          "summary": "static private method L683-L795 (113 lines)"
+          "summary": "static private method L690-L803 (114 lines)"
         }
       ]
     },
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "f192524652cc6766",
-      "totalLines": 1534,
+      "fileHash": "22341cd8e05426d0",
+      "totalLines": 1538,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1530,
+          "endLine": 1534,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (1519 lines)"
+          "summary": "Class Definition (1523 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -384,9 +384,9 @@
           "name": "CheckinController.#renderUserAndSettingsInfo",
           "kind": "private method",
           "startLine": 276,
-          "endLine": 347,
+          "endLine": 351,
           "signature": "() => any",
-          "summary": "private method L276-L347 (72 lines)"
+          "summary": "private method L276-L351 (76 lines)"
         },
         {
           "name": "setElText",
@@ -399,138 +399,138 @@
         {
           "name": "CheckinController.#refreshAllAttendanceData",
           "kind": "private async method",
-          "startLine": 349,
-          "endLine": 366,
+          "startLine": 353,
+          "endLine": 370,
           "signature": "() => Promise<any>",
-          "summary": "private async method L349-L366 (18 lines)"
+          "summary": "private async method L353-L370 (18 lines)"
         },
         {
           "name": "CheckinController.#updateStatusCardsAndMainButton",
           "kind": "private method",
-          "startLine": 368,
-          "endLine": 557,
+          "startLine": 372,
+          "endLine": 561,
           "signature": "() => any",
-          "summary": "private method L368-L557 (190 lines)"
+          "summary": "private method L372-L561 (190 lines)"
         },
         {
           "name": "CheckinController.#renderPersonalAttendanceTabs",
           "kind": "private method",
-          "startLine": 559,
-          "endLine": 602,
+          "startLine": 563,
+          "endLine": 606,
           "signature": "() => any",
-          "summary": "private method L559-L602 (44 lines)"
+          "summary": "private method L563-L606 (44 lines)"
         },
         {
           "name": "CheckinController.#buildHistoryRowHtml",
           "kind": "private method",
-          "startLine": 604,
-          "endLine": 623,
+          "startLine": 608,
+          "endLine": 627,
           "signature": "(item, rowNumber) => any",
-          "summary": "private method L604-L623 (20 lines)"
+          "summary": "private method L608-L627 (20 lines)"
         },
         {
           "name": "CheckinController.#renderSpecialRequestsHistoryTable",
           "kind": "private method",
-          "startLine": 625,
-          "endLine": 667,
+          "startLine": 629,
+          "endLine": 671,
           "signature": "() => any",
-          "summary": "private method L625-L667 (43 lines)"
+          "summary": "private method L629-L671 (43 lines)"
         },
         {
           "name": "CheckinController.#stopCameraHardwareStream",
           "kind": "private method",
-          "startLine": 669,
-          "endLine": 679,
+          "startLine": 673,
+          "endLine": 683,
           "signature": "() => any",
-          "summary": "private method L669-L679 (11 lines)"
+          "summary": "private method L673-L683 (11 lines)"
         },
         {
           "name": "CheckinController.#stopCameraAndShowStandby",
           "kind": "private method",
-          "startLine": 681,
-          "endLine": 705,
+          "startLine": 685,
+          "endLine": 709,
           "signature": "() => any",
-          "summary": "private method L681-L705 (25 lines)"
+          "summary": "private method L685-L709 (25 lines)"
         },
         {
           "name": "CheckinController.#openCameraOnDemand",
           "kind": "private async method",
-          "startLine": 707,
-          "endLine": 755,
+          "startLine": 711,
+          "endLine": 759,
           "signature": "() => Promise<any>",
-          "summary": "private async method L707-L755 (49 lines)"
+          "summary": "private async method L711-L759 (49 lines)"
         },
         {
           "name": "CheckinController.#capturePhotoAndStopStream",
           "kind": "private method",
-          "startLine": 757,
-          "endLine": 787,
+          "startLine": 761,
+          "endLine": 791,
           "signature": "() => any",
-          "summary": "private method L757-L787 (31 lines)"
+          "summary": "private method L761-L791 (31 lines)"
         },
         {
           "name": "CheckinController.#resetPageAfterSave",
           "kind": "private async method",
-          "startLine": 789,
-          "endLine": 797,
+          "startLine": 793,
+          "endLine": 801,
           "signature": "() => Promise<any>",
-          "summary": "private async method L789-L797 (9 lines)"
+          "summary": "private async method L793-L801 (9 lines)"
         },
         {
           "name": "CheckinController.#initGpsLocation",
           "kind": "private async method",
-          "startLine": 805,
-          "endLine": 889,
+          "startLine": 809,
+          "endLine": 893,
           "signature": "() => Promise<any>",
           "summary": "3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง [\"ใกล้เคียง \" + ชื่อซอย]"
         },
         {
           "name": "CheckinController.#bindEvents",
           "kind": "private method",
-          "startLine": 891,
-          "endLine": 1165,
+          "startLine": 895,
+          "endLine": 1169,
           "signature": "() => any",
-          "summary": "private method L891-L1165 (275 lines)"
+          "summary": "private method L895-L1169 (275 lines)"
         },
         {
           "name": "setDesktopActiveTab",
           "kind": "arrow_fn",
-          "startLine": 1070,
-          "endLine": 1089,
+          "startLine": 1074,
+          "endLine": 1093,
           "signature": "(activeName) => inferred",
-          "summary": "Arrow Function L1070-L1089"
+          "summary": "Arrow Function L1074-L1093"
         },
         {
           "name": "openMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 1100,
-          "endLine": 1117,
+          "startLine": 1104,
+          "endLine": 1121,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1100-L1117"
+          "summary": "Arrow Function L1104-L1121"
         },
         {
           "name": "closeMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 1119,
-          "endLine": 1144,
+          "startLine": 1123,
+          "endLine": 1148,
           "signature": "(targetTab = null) => inferred",
-          "summary": "Arrow Function L1119-L1144"
+          "summary": "Arrow Function L1123-L1148"
         },
         {
           "name": "CheckinController.#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 1167,
-          "endLine": 1466,
+          "startLine": 1171,
+          "endLine": 1470,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1167-L1466 (300 lines)"
+          "summary": "private async method L1171-L1470 (300 lines)"
         },
         {
           "name": "CheckinController.#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 1468,
-          "endLine": 1529,
+          "startLine": 1472,
+          "endLine": 1533,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L1468-L1529 (62 lines)"
+          "summary": "private async method L1472-L1533 (62 lines)"
         }
       ]
     },
@@ -2588,8 +2588,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ccd7076ab776d3b8",
-      "totalLines": 667,
+      "fileHash": "a085f84450209a42",
+      "totalLines": 671,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2605,146 +2605,146 @@
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 134,
-          "endLine": 493,
+          "startLine": 138,
+          "endLine": 497,
           "signature": "<main>",
-          "summary": "HTML DOM Section L134-L493"
+          "summary": "HTML DOM Section L138-L497"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
-          "startLine": 137,
-          "endLine": 353,
+          "startLine": 141,
+          "endLine": 357,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L137-L353"
+          "summary": "HTML DOM Section L141-L357"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 190,
-          "endLine": 247,
+          "startLine": 194,
+          "endLine": 251,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L190-L247"
+          "summary": "HTML DOM Section L194-L251"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 208,
-          "endLine": 220,
+          "startLine": 212,
+          "endLine": 224,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L208-L220"
+          "summary": "HTML DOM Section L212-L224"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 250,
-          "endLine": 350,
+          "startLine": 254,
+          "endLine": 354,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L250-L350"
+          "summary": "HTML DOM Section L254-L354"
         },
         {
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 253,
-          "endLine": 296,
+          "startLine": 257,
+          "endLine": 300,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L253-L296"
+          "summary": "HTML DOM Section L257-L300"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 277,
-          "endLine": 283,
+          "startLine": 281,
+          "endLine": 287,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L277-L283"
+          "summary": "HTML DOM Section L281-L287"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 299,
-          "endLine": 348,
+          "startLine": 303,
+          "endLine": 352,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L299-L348"
+          "summary": "HTML DOM Section L303-L352"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 309,
-          "endLine": 314,
+          "startLine": 313,
+          "endLine": 318,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L309-L314"
+          "summary": "HTML DOM Section L313-L318"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 316,
-          "endLine": 325,
+          "startLine": 320,
+          "endLine": 329,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L316-L325"
+          "summary": "HTML DOM Section L320-L329"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 356,
-          "endLine": 491,
+          "startLine": 360,
+          "endLine": 495,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L356-L491"
+          "summary": "HTML DOM Section L360-L495"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 359,
-          "endLine": 446,
+          "startLine": 363,
+          "endLine": 450,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L359-L446"
+          "summary": "HTML DOM Section L363-L450"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 385,
-          "endLine": 402,
+          "startLine": 389,
+          "endLine": 406,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L385-L402"
+          "summary": "HTML DOM Section L389-L406"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 405,
-          "endLine": 443,
+          "startLine": 409,
+          "endLine": 447,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L405-L443"
+          "summary": "HTML DOM Section L409-L447"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 449,
-          "endLine": 489,
+          "startLine": 453,
+          "endLine": 493,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L449-L489"
+          "summary": "HTML DOM Section L453-L493"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 501,
-          "endLine": 591,
+          "startLine": 505,
+          "endLine": 595,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L501-L591"
+          "summary": "HTML DOM Section L505-L595"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 624,
-          "endLine": 633,
+          "startLine": 628,
+          "endLine": 637,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L624-L633"
+          "summary": "HTML DOM Section L628-L637"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 664,
-          "endLine": 664,
+          "startLine": 668,
+          "endLine": 668,
           "signature": "<script>",
-          "summary": "Bootstrap script L664-L664"
+          "summary": "Bootstrap script L668-L668"
         }
       ]
     },
@@ -3193,6 +3193,25 @@
           "endLine": 549,
           "signature": "<script>",
           "summary": "Bootstrap script L549-L549"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-add-manual-menu-sidebar-and-checkin/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "eeb76a9323484906",
+      "totalLines": 226,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 23,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L23"
         }
       ]
     },

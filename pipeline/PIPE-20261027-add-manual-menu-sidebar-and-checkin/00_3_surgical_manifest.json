@@ -1,0 +1,24 @@
+{
+  "pipeline_id": "PIPE-20261027-add-manual-menu-sidebar-and-checkin",
+  "targets": [
+    {
+      "file": "assets/js/components/AppLayout.js",
+      "symbol": "AppLayout.#renderSidebar",
+      "line_range": "343-443",
+      "reason": "เพิ่มเมนู 'คู่มือการใช้งานระบบ' ใน Sidebar ระหว่างเมนูหลักกับปุ่มไปหน้าลงเวลา สำหรับ SuperAdmin และ Admin"
+    },
+    {
+      "file": "checkin.html",
+      "symbol": "nav.DesktopTabs & header.topbar",
+      "line_range": "90-131",
+      "reason": "เพิ่มปุ่มแท็บ 'คู่มือการใช้งาน' ต่อท้ายแท็บประวัติขอลงเวลาพิเศษในมุมมอง PC/Tablet และเพิ่มปุ่มคู่มือใน Header สำหรับมือถือแทนปุ่มระบบผู้ดูแล"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#applyDynamicWorkspaceLayout",
+      "line_range": "298-308",
+      "reason": "ปรับแต่งการแสดงผลปุ่มระบบผู้ดูแลให้แสดงเฉพาะบนจอใหญ่ และให้ปุ่มคู่มือแสดงผลอย่างถูกต้อง"
+    }
+  ]
+}
+
