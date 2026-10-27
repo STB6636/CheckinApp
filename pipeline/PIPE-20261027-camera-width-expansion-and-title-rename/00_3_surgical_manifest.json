@@ -1,0 +1,41 @@
+{
+  "pipeline_id": "PIPE-20261027-camera-width-expansion-and-title-rename",
+  "flow_ids": ["FLOW_LAYOUT_01", "FLOW_PHOTO_01", "FLOW_GPS_01"],
+  "target_branch": "Test-UXUI",
+  "base_branch": "main",
+  "subagents_configured": {
+    "worker": {
+      "type": "agent_04_frontend",
+      "model": "flash",
+      "scope": "Expand camera card width to 350px, adjust right column width to 1fr, remove justify-between from camera card, and rename card title to 'ถ่ายภาพยืนยันตัวตน'"
+    },
+    "reviewer": {
+      "type": "agent_05_qa_security",
+      "model": "flash",
+      "scope": "Verify git diff against plan, check 110 DOM IDs, test viewport height, and compare with origin/main"
+    }
+  },
+  "targets": [
+    {
+      "file": "checkin.html",
+      "lines": [187, 240],
+      "action": "Rename header span from 'ภาพถ่ายยืนยันตัวตน (3:4)' to 'ถ่ายภาพยืนยันตัวตน', adjust #cameraSectionCard to flex-col justify-start with tight gap to button"
+    },
+    {
+      "file": "checkin.html",
+      "lines": [187, 250],
+      "action": "Configure #checkinWorkspaceGrid on desktop as lg:grid-cols-[350px_1fr] to expand camera card width to 350px and allow right column to adjust accordingly"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [93, 116],
+      "action": "Update #applyDynamicWorkspaceLayout() to support the new grid proportions and justify-start layout"
+    },
+    {
+      "file": "assets/css/bma-theme.css",
+      "lines": [409, 425],
+      "action": "Ensure .camera-portrait-3-4 remains width: 100% and aspect-ratio: 3/4"
+    }
+  ]
+}
+

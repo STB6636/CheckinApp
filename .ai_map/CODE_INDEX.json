@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T03:21:17.681Z",
-  "totalFilesScanned": 32,
-  "totalSymbolsIndexed": 380,
+  "generatedAt": "2026-10-27T03:41:43.130Z",
+  "totalFilesScanned": 33,
+  "totalSymbolsIndexed": 381,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,7 +286,7 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "6eb2d86f2fefa948",
+      "fileHash": "294ae0caa5b95a0c",
       "totalLines": 1342,
       "importsCount": 5,
       "importsPreview": [
@@ -2588,7 +2588,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ca4da0d15cb6b58b",
+      "fileHash": "76eebb6496fe0918",
       "totalLines": 665,
       "importsCount": 0,
       "importsPreview": [],
@@ -3021,6 +3021,25 @@
       "layer": "Frontend HTML View & Entry Point",
       "fileHash": "441fd3c70f09c5ea",
       "totalLines": 182,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-camera-width-expansion-and-title-rename/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "890a7efe029fc39d",
+      "totalLines": 146,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],

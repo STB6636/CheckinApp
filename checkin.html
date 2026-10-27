@@ -184,17 +184,17 @@
             </div>
 
             <!-- Dynamic Workspace Grid: Camera, GPS & Check-in Controls -->
-            <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+            <div id="checkinWorkspaceGrid" class="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-4 sm:gap-5 items-stretch">
 
-                <!-- Camera Viewfinder Card (5/12) -->
-                <div id="cameraSectionCard" class="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-2 sm:p-2.5 flex flex-col justify-between">
+                <!-- Camera Viewfinder Card -->
+                <div id="cameraSectionCard" class="w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-2 sm:p-2.5 flex flex-col justify-start">
                     <div>
                         <div class="flex items-center justify-between mb-2.5 px-1">
                             <h3 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-2">
                                 <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-xs shadow-xs">
                                     <i class="fa-solid fa-camera"></i>
                                 </span>
-                                <span>ภาพถ่ายยืนยันตัวตน (3:4)</span>
+                                <span>ถ่ายภาพยืนยันตัวตน</span>
                             </h3>
                             <span id="photoRequirementBadge" class="bma-badge bma-badge-danger text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">บังคับถ่ายภาพ</span>
                         </div>
@@ -246,8 +246,8 @@
                     </div>
                 </div>
 
-                <!-- Right Column: GPS Location Card & Action Controls (8/12) -->
-                <div id="rightColumnWrapper" class="lg:col-span-8 flex flex-col gap-3 lg:gap-3.5">
+                <!-- Right Column: GPS Location Card & Action Controls -->
+                <div id="rightColumnWrapper" class="w-full flex flex-col gap-3 lg:gap-3.5">
 
                     <!-- GPS Location Card -->
                     <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 p-4 sm:p-5 space-y-3 flex flex-col justify-between">

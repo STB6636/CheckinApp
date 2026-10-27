@@ -94,8 +94,8 @@ export class CheckinController {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.remove('hidden');
 
-            cameraCard.className = 'lg:col-span-4 bma-card p-2 sm:p-2.5 flex flex-col justify-between';
-            rightWrapper.className = 'lg:col-span-8 flex flex-col gap-3 lg:gap-3.5';
+            cameraCard.className = 'w-full bma-card p-2 sm:p-2.5 flex flex-col justify-start';
+            rightWrapper.className = 'w-full flex flex-col gap-3 lg:gap-3.5';
             gpsCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
             actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
         } else if (!showPhoto && showGps) {
@@ -109,8 +109,8 @@ export class CheckinController {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.add('hidden');
 
-            cameraCard.className = 'lg:col-span-4 bma-card p-2 sm:p-2.5 flex flex-col justify-between h-full';
-            rightWrapper.className = 'lg:col-span-8 flex flex-col justify-stretch';
+            cameraCard.className = 'w-full bma-card p-2 sm:p-2.5 flex flex-col justify-start h-full';
+            rightWrapper.className = 'w-full flex flex-col justify-stretch';
             actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full w-full';
         } else {
             cameraCard.classList.add('hidden');

@@ -435,6 +435,15 @@ html.dark .bma-modal-surface {
     background-color: #07170E;
 }
 
+@media (min-width: 1024px) {
+    #checkinWorkspaceGrid {
+        grid-template-columns: 350px 1fr !important;
+    }
+    #checkinWorkspaceGrid:has(#cameraSectionCard.hidden) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 /* ============================================================================
  * Toast Notification Popup
  * ============================================================================ */
