@@ -27,3 +27,4 @@ flows:
 4. **การแบ่งหน้า (Pagination Calculation):**
    - `totalPages = Math.max(1, Math.ceil(totalPast / this.pastPageSize))`
    - ปุ่ม Next และ Prev สลับสถานะ `disabled` ตามหน้าปัจจุบันและหน้าสุดท้ายอย่างถูกต้อง
+
