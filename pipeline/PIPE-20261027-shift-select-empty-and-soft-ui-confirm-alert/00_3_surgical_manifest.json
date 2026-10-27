@@ -1,0 +1,41 @@
+{
+  "pipeline_id": "PIPE-20261027-shift-select-empty-and-soft-ui-confirm-alert",
+  "flow_ids": ["FLOW_CHECKIN_01", "FLOW_LAYOUT_01"],
+  "target_branch": "Test-UXUI",
+  "base_branch": "main",
+  "subagents_configured": {
+    "worker": {
+      "type": "agent_04_frontend",
+      "model": "flash",
+      "scope": "Implement empty-value dropdown placeholder, validation smooth-scroll, and Soft UI SweetAlert confirmation modal in CheckinController.js and checkin.html"
+    },
+    "reviewer": {
+      "type": "agent_05_qa_security",
+      "model": "flash",
+      "scope": "Verify git diff against plan, check 110 DOM IDs, test validation & confirmation flows, and compare with origin/main"
+    }
+  },
+  "targets": [
+    {
+      "file": "checkin.html",
+      "lines": [310, 314],
+      "action": "Add default placeholder option '-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --' with value='' inside #checkinShiftSelect"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [260, 270],
+      "action": "In #evaluateTimeWindowAndPopulateShifts(): Prepend placeholder option with value='' and default selectEl.value = ''"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [380, 390],
+      "action": "In #updateStatusCardsAndMainButton(): Handle empty value='' without NaN errors"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [1150, 1220],
+      "action": "In #handleMainCheckin(): Add empty shift validation with alert & mobile smooth-scroll, followed by Tailwind CSS SweetAlerts - Soft UI confirmation dialog showing shift name before saving"
+    }
+  ]
+}
+

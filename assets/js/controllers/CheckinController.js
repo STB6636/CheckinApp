@@ -259,13 +259,17 @@ export class CheckinController {
             }
         }
 
-        selectEl.innerHTML = timeFilteredShifts.map(s => {
+        const emptyOptionHtml = '<option value="">-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --</option>';
+        const shiftOptionsHtml = timeFilteredShifts.map(s => {
             const displayText = SettingsModel.formatShiftDisplayText(s);
             return `<option value="${s.originalIdx}">${displayText}</option>`;
         }).join('');
+        selectEl.innerHTML = emptyOptionHtml + shiftOptionsHtml;
 
         if (prevSelectedIdx && timeFilteredShifts.some(s => String(s.originalIdx) === String(prevSelectedIdx))) {
             selectEl.value = prevSelectedIdx;
+        } else {
+            selectEl.value = '';
         }
     }
 
@@ -380,8 +384,12 @@ export class CheckinController {
         const shiftSelectorContainer = document.getElementById('shiftSelectorContainer');
 
         const isNormalModeSetting = !Boolean(this.settings?.single_click_checkin);
-        const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
-        const shiftObj = (this.settings?.work_shifts || [])[shiftIdx] || {};
+        const shiftSelectVal = document.getElementById('checkinShiftSelect')?.value;
+        const hasSelectedShift = shiftSelectVal !== '' && shiftSelectVal !== null && shiftSelectVal !== undefined;
+        const shiftIdx = hasSelectedShift ? parseInt(shiftSelectVal, 10) : null;
+        const shiftObj = (shiftIdx !== null && !isNaN(shiftIdx))
+            ? ((this.settings?.work_shifts || [])[shiftIdx] || {})
+            : {};
 
         const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
         const allowStartRef = UIHelpers.formatTime24(this.settings?.allow_checkin_start_time || '06:00');
@@ -1168,10 +1176,58 @@ export class CheckinController {
         }
 
         const btnSubmitMain = document.getElementById('btnSubmitCheckinMain');
+        const originalBtnHtml = btnSubmitMain ? btnSubmitMain.innerHTML : '';
         if (btnSubmitMain) btnSubmitMain.disabled = true;
 
+        const shiftSelectEl = document.getElementById('checkinShiftSelect');
+        const shiftContainer = document.getElementById('shiftSelectorContainer');
+        const isShiftSelectorActive = shiftContainer && !shiftContainer.classList.contains('hidden');
+
+        if (isShiftSelectorActive && (!shiftSelectEl || shiftSelectEl.value === '')) {
+            if (btnSubmitMain) {
+                btnSubmitMain.disabled = false;
+                btnSubmitMain.innerHTML = originalBtnHtml;
+            }
+
+            if (window.Swal) {
+                await window.Swal.fire({
+                    title: 'กรุณาเลือกช่วงเวลาปฏิบัติงาน',
+                    html: `
+                        <div class="space-y-2 text-center py-1">
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                                ระบบตรวจพบว่าท่านยังไม่ได้ระบุช่วงเวลาทำงาน
+                            </p>
+                            <div class="p-2.5 bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300/40 rounded-xl text-xs text-amber-800 dark:text-amber-300 font-semibold">
+                                กรุณาคลิกเลือกช่วงเวลาจากรายการก่อนทำการบันทึกลงเวลา
+                            </div>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    confirmButtonText: '<i class="fa-solid fa-arrow-down mr-1.5"></i> ไปเลือกช่วงเวลา',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'rounded-2xl p-5 shadow-2xl border border-amber-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm',
+                        title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                        confirmButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-amber-500 to-amber-600 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white'
+                    }
+                });
+            } else {
+                await UIHelpers.alert('กรุณาเลือกช่วงเวลาปฏิบัติงาน', 'ระบบตรวจพบว่าท่านยังไม่ได้ระบุช่วงเวลาทำงาน กรุณาคลิกเลือกช่วงเวลาจากรายการก่อนทำการบันทึกลงเวลา', 'warning');
+            }
+
+            if (shiftSelectEl) {
+                shiftSelectEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                shiftSelectEl.focus();
+                shiftSelectEl.classList.add('ring-2', 'ring-rose-500', 'border-rose-500');
+                setTimeout(() => {
+                    shiftSelectEl.classList.remove('ring-2', 'ring-rose-500', 'border-rose-500');
+                }, 3000);
+            }
+            return;
+        }
+
         const isNormalModeSetting = !Boolean(this.settings?.single_click_checkin);
-        const shiftIdx = parseInt(document.getElementById('checkinShiftSelect')?.value || '0', 10);
+        const shiftIdx = (shiftSelectEl && shiftSelectEl.value !== '') ? parseInt(shiftSelectEl.value, 10) : 0;
         const shiftObj = (this.settings.work_shifts || [])[shiftIdx] || {
             name: 'เวลาราชการปกติ',
             check_in: this.settings.standard_check_in || '08:30',
@@ -1211,6 +1267,82 @@ export class CheckinController {
             isOvertimeByTimeWindow
         );
 
+        const stdInRef = UIHelpers.formatTime24(this.settings.standard_check_in || '08:30');
+        const stdOutRef = UIHelpers.formatTime24(this.settings.standard_check_out || '16:30');
+
+        let actionTitle = 'บันทึกลงเวลา';
+        if (hasUnclosedRegular) {
+            actionTitle = 'บันทึกลงเวลาเลิกงาน';
+        } else if (effectiveOvertimeShift) {
+            actionTitle = 'บันทึกลงเวลาปฏิบัติงานนอกเวลา';
+        } else if (this.settings.single_click_checkin) {
+            actionTitle = 'บันทึกลงเวลาปฏิบัติงาน (บันทึกครั้งเดียว)';
+        } else {
+            actionTitle = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
+        }
+
+        let selectedShiftLabel = formattedShiftName;
+        if (!isShiftSelectorActive || (isNormalModeSetting && !effectiveOvertimeShift)) {
+            if (hasUnclosedRegular && this.activeRegularRecord?.shift_name) {
+                selectedShiftLabel = this.activeRegularRecord.shift_name;
+            } else {
+                selectedShiftLabel = `เวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.)`;
+            }
+        } else if (shiftSelectEl && shiftSelectEl.selectedIndex >= 0 && shiftSelectEl.options[shiftSelectEl.selectedIndex]?.text) {
+            selectedShiftLabel = shiftSelectEl.options[shiftSelectEl.selectedIndex].text;
+        }
+
+        const now = new Date();
+        const currentTimeFormatted = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} น.`;
+
+        if (window.Swal) {
+            const confirmResult = await window.Swal.fire({
+                title: 'ยืนยันการบันทึกลงเวลา',
+                html: `
+                    <div class="space-y-3 text-left py-1 text-xs sm:text-sm">
+                        <p class="text-slate-600 dark:text-slate-300 text-center">
+                            กรุณาตรวจสอบความถูกต้องของข้อมูลก่อนกดยืนยัน
+                        </p>
+                        <div class="bg-slate-50 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 dark:text-slate-400">ประเภทรายการ:</span>
+                                <span class="font-bold text-slate-800 dark:text-white">${actionTitle || 'บันทึกลงเวลา'}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 dark:text-slate-400">ช่วงเวลาทำงาน:</span>
+                                <span class="font-bold text-[#00744B] dark:text-emerald-400">${selectedShiftLabel || 'ช่วงเวลาปฏิบัติงาน'}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 dark:text-slate-400">เวลาที่บันทึก:</span>
+                                <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${currentTimeFormatted}</span>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-solid fa-check mr-1.5"></i> ยืนยันบันทึกเวลา',
+                cancelButtonText: 'ยกเลิก',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-2xl p-5 shadow-2xl border border-emerald-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: 'inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-[#00744B] to-emerald-500 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white',
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                }
+            });
+
+            if (!confirmResult.isConfirmed) {
+                if (btnSubmitMain) {
+                    btnSubmitMain.disabled = false;
+                    btnSubmitMain.innerHTML = originalBtnHtml;
+                }
+                return;
+            }
+        }
+
         UIHelpers.showLoading('กำลังบันทึกเวลาปฏิบัติงาน กรุณารอสักครู่...');
 
         try {
@@ -1229,9 +1361,6 @@ export class CheckinController {
                     this.settings
                 );
             }
-
-            const stdInRef = UIHelpers.formatTime24(this.settings.standard_check_in || '08:30');
-            const stdOutRef = UIHelpers.formatTime24(this.settings.standard_check_out || '16:30');
 
             const res = await AttendanceModel.submitCheckinOrCheckout({
                 personnel_id: this.currentUser.personnel_id,

@@ -1,0 +1,41 @@
+{
+  "pipeline_id": "PIPE-20261027-shift-select-empty-default-and-scroll-alert",
+  "flow_ids": ["FLOW_CHECKIN_01", "FLOW_LAYOUT_01"],
+  "target_branch": "Test-UXUI",
+  "base_branch": "main",
+  "subagents_configured": {
+    "worker": {
+      "type": "agent_04_frontend",
+      "model": "flash",
+      "scope": "Add placeholder option to checkinShiftSelect, implement empty-value validation, alert, and mobile smooth scroll in CheckinController.js and checkin.html"
+    },
+    "reviewer": {
+      "type": "agent_05_qa_security",
+      "model": "flash",
+      "scope": "Verify git diff against plan, verify 110 DOM IDs, test validation logic, and compare with origin/main"
+    }
+  },
+  "targets": [
+    {
+      "file": "checkin.html",
+      "lines": [310, 314],
+      "action": "Add default placeholder option '-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --' with value='' inside #checkinShiftSelect"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [260, 270],
+      "action": "In #evaluateTimeWindowAndPopulateShifts(): Prepend placeholder option with value='' and set selectEl.value = '' by default unless an existing valid selection was made"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [380, 390],
+      "action": "In #updateStatusCardsAndMainButton(): Gracefully handle value='' without NaN errors"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": [1150, 1175],
+      "action": "In #handleMainCheckin(): Add validation for empty shift value; if empty, display warning alert, smooth-scroll to #checkinShiftSelect (especially on mobile), focus and highlight the element"
+    }
+  ]
+}
+
