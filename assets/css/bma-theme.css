@@ -408,19 +408,10 @@ html.dark .bma-modal-surface {
 
 .camera-portrait-3-4 {
     width: 100%;
-    max-width: 240px;
-    max-height: 175px;
     aspect-ratio: 3 / 4;
     margin-left: auto;
     margin-right: auto;
     position: relative;
-}
-
-@media (min-width: 1024px) {
-    .camera-portrait-3-4 {
-        max-height: 160px;
-        max-width: 220px;
-    }
 }
 
 .outdoor-emerald-frame {

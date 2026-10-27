@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-26T10:08:49.277Z",
-  "totalFilesScanned": 30,
-  "totalSymbolsIndexed": 378,
+  "generatedAt": "2026-10-27T02:47:34.659Z",
+  "totalFilesScanned": 31,
+  "totalSymbolsIndexed": 379,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,7 +286,7 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "2b5d7bacdf42c48c",
+      "fileHash": "a8d6842708055ff2",
       "totalLines": 1342,
       "importsCount": 5,
       "importsPreview": [
@@ -992,7 +992,7 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "ea3f58ab90dacdba",
+      "fileHash": "4b24a1a67f1ff51b",
       "totalLines": 890,
       "importsCount": 7,
       "importsPreview": [
@@ -2588,8 +2588,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c4771ff8777f5c3f",
-      "totalLines": 669,
+      "fileHash": "8ce871a9d88e367d",
+      "totalLines": 665,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2598,153 +2598,153 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 76,
+          "endLine": 72,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L76"
+          "summary": "HTML DOM Section L3-L72"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 138,
-          "endLine": 495,
+          "startLine": 134,
+          "endLine": 491,
           "signature": "<main>",
-          "summary": "HTML DOM Section L138-L495"
+          "summary": "HTML DOM Section L134-L491"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
-          "startLine": 141,
-          "endLine": 355,
+          "startLine": 137,
+          "endLine": 351,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L141-L355"
+          "summary": "HTML DOM Section L137-L351"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 194,
-          "endLine": 251,
+          "startLine": 190,
+          "endLine": 247,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L194-L251"
+          "summary": "HTML DOM Section L190-L247"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 212,
-          "endLine": 224,
+          "startLine": 208,
+          "endLine": 220,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L212-L224"
+          "summary": "HTML DOM Section L208-L220"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 254,
-          "endLine": 352,
+          "startLine": 250,
+          "endLine": 348,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L254-L352"
+          "summary": "HTML DOM Section L250-L348"
         },
         {
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 257,
-          "endLine": 300,
+          "startLine": 253,
+          "endLine": 296,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L257-L300"
+          "summary": "HTML DOM Section L253-L296"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 281,
-          "endLine": 287,
+          "startLine": 277,
+          "endLine": 283,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L281-L287"
+          "summary": "HTML DOM Section L277-L283"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 303,
-          "endLine": 350,
+          "startLine": 299,
+          "endLine": 346,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L303-L350"
+          "summary": "HTML DOM Section L299-L346"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 313,
-          "endLine": 316,
+          "startLine": 309,
+          "endLine": 312,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L313-L316"
+          "summary": "HTML DOM Section L309-L312"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 318,
-          "endLine": 327,
+          "startLine": 314,
+          "endLine": 323,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L318-L327"
+          "summary": "HTML DOM Section L314-L323"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 358,
-          "endLine": 493,
+          "startLine": 354,
+          "endLine": 489,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L358-L493"
+          "summary": "HTML DOM Section L354-L489"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 361,
-          "endLine": 448,
+          "startLine": 357,
+          "endLine": 444,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L361-L448"
+          "summary": "HTML DOM Section L357-L444"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 387,
-          "endLine": 404,
+          "startLine": 383,
+          "endLine": 400,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L387-L404"
+          "summary": "HTML DOM Section L383-L400"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 407,
-          "endLine": 445,
+          "startLine": 403,
+          "endLine": 441,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L407-L445"
+          "summary": "HTML DOM Section L403-L441"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 451,
-          "endLine": 491,
+          "startLine": 447,
+          "endLine": 487,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L451-L491"
+          "summary": "HTML DOM Section L447-L487"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 503,
-          "endLine": 593,
+          "startLine": 499,
+          "endLine": 589,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L503-L593"
+          "summary": "HTML DOM Section L499-L589"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 626,
-          "endLine": 635,
+          "startLine": 622,
+          "endLine": 631,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L626-L635"
+          "summary": "HTML DOM Section L622-L631"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 666,
-          "endLine": 666,
+          "startLine": 662,
+          "endLine": 662,
           "signature": "<script>",
-          "summary": "Bootstrap script L666-L666"
+          "summary": "Bootstrap script L662-L662"
         }
       ]
     },
@@ -3013,6 +3013,25 @@
           "endLine": 549,
           "signature": "<script>",
           "summary": "Bootstrap script L549-L549"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-camera-portrait-aspect-ratio-and-margins/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "441fd3c70f09c5ea",
+      "totalLines": 182,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
         }
       ]
     },

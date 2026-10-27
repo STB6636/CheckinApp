@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนปรับปรุงกรอบกล้องแนวตั้ง 3:4 และขยายเต็มการ์ด — CheckinApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-800 p-6 rounded-2xl border border-emerald-500/30 shadow-2xl flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold rounded-full">
+                    PIPE-20261027-camera-portrait-aspect-ratio-and-margins
+                </span>
+                <h1 class="text-xl md:text-2xl font-black mt-2 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-camera-rotate text-emerald-400"></i>
+                    <span>แผนปรับสัดส่วนกรอบกล้องแนวตั้ง 3:4 และขยายเกือบเต็มการ์ด (เหลือขอบ ~2px)</span>
+                </h1>
+                <p class="text-xs md:text-sm text-slate-300 mt-1">
+                    เป้าหมาย: แก้ปัญหากรอบกล้องขนาดเล็กผิดสัดส่วน (กลายเป็นแนวนอน) บน Desktop & Mobile ให้เป็นแนวตั้ง 3:4 จริง และขยายเต็มการ์ดโมดอล
+                </p>
+            </div>
+            <div class="text-right">
+                <span class="inline-block px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-extrabold rounded-xl">
+                    <i class="fa-solid fa-bolt mr-1"></i> Streamlined: SubAgent 2 ตัว (Flash Model)
+                </span>
+            </div>
+        </div>
+
+        <!-- Problem Analysis & Visual Comparison -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Current Problem -->
+            <div class="bg-slate-800/80 border border-rose-500/30 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-2 text-rose-400 font-bold mb-3">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>สภาพปัจจุบัน (พบในรูปที่ 1 และ 2)</span>
+                </div>
+                <div class="space-y-3 text-xs text-slate-300">
+                    <div class="p-3 bg-rose-950/30 border border-rose-800/40 rounded-xl">
+                        <strong class="text-rose-300 block mb-1">1. สัดส่วนกลายเป็นแนวนอน/สี่เหลี่ยมจัตุรัส:</strong>
+                        เดิมใน CSS มีการกำหนด <code class="bg-slate-900 px-1 py-0.5 rounded text-rose-300">max-height: 160px; max-width: 220px;</code> บน Desktop และ <code class="bg-slate-900 px-1 py-0.5 rounded text-rose-300">max-height: 175px;</code> บน Mobile ส่งผลให้ความสูงถูกล็อกเตี้ยเกินไป ความกว้าง 220px / ความสูง 160px = สัดส่วน 1.37:1 (แนวนอน!)
+                    </div>
+                    <div class="p-3 bg-rose-950/30 border border-rose-800/40 rounded-xl">
+                        <strong class="text-rose-300 block mb-1">2. พื้นที่ว่างสีขาวเหลือมหาศาล:</strong>
+                        การ์ด <code class="bg-slate-900 px-1 py-0.5 rounded text-rose-300">#cameraSectionCard</code> กว้างเกือบ 400px และสูง 500px แต่กรอบกล้องมีขนาดเพียง 220x160px ทำให้เหลือพื้นที่ว่างสีขาวรอบข้างและด้านล่างเยอะมาก
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proposed Solution -->
+            <div class="bg-slate-800/80 border border-emerald-500/30 rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold mb-3">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>แนวทางแก้ไขตามสเปก V21</span>
+                </div>
+                <div class="space-y-3 text-xs text-slate-300">
+                    <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl">
+                        <strong class="text-emerald-300 block mb-1">1. บังคับสัดส่วนแนวตั้ง 3:4 (Portrait):</strong>
+                        ปลดล็อก <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">max-height: 160px</code> และกำหนด <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">aspect-ratio: 3 / 4; width: 100%;</code> ทำให้ความสูงมากกว่าความกว้างเสมอ (กว้าง 3 ส่วน : สูง 4 ส่วน) ตรงกับกล้องฮาร์ดแวร์ 720x960 และตัวแคปภาพ 480x640
+                    </div>
+                    <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl">
+                        <strong class="text-emerald-300 block mb-1">2. ขยายเต็มการ์ด เหลือขอบรอบกรอบประมาณ 2px - 4px:</strong>
+                        ปรับ padding ของ <code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">#cameraSectionCard</code> ให้กระชับ (<code class="bg-slate-900 px-1 py-0.5 rounded text-emerald-300">p-2 sm:p-2.5</code>) และให้ตัวกรอบกล้องขยายเต็มความกว้าง 100% ชิดขอบการ์ดสวยงาม ไม่มีช่องว่างสีขาวเคว้งคว้าง
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Wireframe Demo -->
+        <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-6">
+            <h2 class="text-sm font-bold text-slate-200 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-eye text-sky-400"></i>
+                <span>ภาพจำลองโครงสร้างใหม่ (Wireframe Comparison)</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Old Layout Wireframe -->
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                    <div class="text-xs text-rose-400 font-bold mb-2">โครงสร้างเดิม (กล้องเล็ก ลอยอยู่ตรงกลาง)</div>
+                    <div class="bg-white text-slate-800 p-4 rounded-xl h-72 flex flex-col justify-between border">
+                        <div class="text-[11px] font-bold flex justify-between border-b pb-1">
+                            <span>ภาพถ่ายยืนยันตัวตน (3:4)</span>
+                            <span class="text-rose-600">บังคับถ่ายภาพ</span>
+                        </div>
+                        <div class="w-36 h-24 bg-slate-900 text-white text-[10px] rounded-lg mx-auto flex items-center justify-center border border-slate-700">
+                            กล้องจิ๋ว 160x120 (ช่องว่างเพียบ)
+                        </div>
+                        <div class="w-full py-1.5 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-lg text-center">
+                            เปิดกล้องเพื่อถ่ายรูป
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Layout Wireframe -->
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-emerald-500/40">
+                    <div class="text-xs text-emerald-400 font-bold mb-2">โครงสร้างใหม่ (แนวตั้ง 3:4 เต็มการ์ด เหลือขอบ 2px)</div>
+                    <div class="bg-white text-slate-800 p-2 rounded-xl h-72 flex flex-col justify-between border shadow">
+                        <div class="text-[11px] font-bold flex justify-between px-1">
+                            <span>ภาพถ่ายยืนยันตัวตน (3:4)</span>
+                            <span class="text-rose-600">บังคับถ่ายภาพ</span>
+                        </div>
+                        <div class="w-full flex-1 my-1.5 bg-slate-900 text-emerald-400 text-xs font-bold rounded-lg flex flex-col items-center justify-center border-2 border-emerald-500/40 shadow-inner">
+                            <i class="fa-solid fa-camera text-xl mb-1"></i>
+                            <span>กรอบแนวตั้ง 3:4 เต็มการ์ด</span>
+                            <span class="text-[9px] text-slate-300 font-normal">เหลือขอบโมดอลเพียง ~2px สวยงาม</span>
+                        </div>
+                        <div class="w-full py-2 bg-[#00744B] text-white text-[11px] font-bold rounded-lg text-center cursor-pointer shadow">
+                            <i class="fa-solid fa-camera mr-1"></i> เปิดกล้องเพื่อถ่ายรูป
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Execution Plan (SubAgents Flash 3.8 High) -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5">
+            <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-400"></i>
+                <span>ขั้นตอนการทำงานแบบประหยัดโทเคน (2 SubAgents Flash 3.8 High)</span>
+            </h2>
+
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">1</div>
+                    <div>
+                        <div class="text-xs font-bold text-emerald-300">SubAgent ตัวที่ 1 (Implementer): Flash Model</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            อ่านและแก้ไขไฟล์เฉพาะจุด: <code class="text-sky-300">assets/css/bma-theme.css</code> และ <code class="text-sky-300">checkin.html</code> ปรับสัดส่วนเป็นแนวตั้ง 3:4 ขยายเต็มการ์ด ปรับ padding เหลือขอบ ~2px พร้อมรัน AST Mapper sync และตรวจสอบ syntax
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">2</div>
+                    <div>
+                        <div class="text-xs font-bold text-sky-300">SubAgent ตัวที่ 2 (QA Reviewer): Flash Model</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            ตรวจสอบ Git Diff กับแผนงาน ตรวจสอบความถูกต้องของ DOM IDs 110 จุดในหน้า Checkin และเปรียบเทียบการทำงานของกล้องกับ <code class="text-sky-300">origin/main</code>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-900/60 rounded-xl border border-slate-700/60">
+                    <div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5">3</div>
+                    <div>
+                        <div class="text-xs font-bold text-amber-300">Orchestrator: Commit & Push to Test-UXUI</div>
+                        <p class="text-xs text-slate-300 mt-0.5">
+                            รวบรวมผลลัพธ์ ตรวจทานความเรียบร้อย และทำการ Git Commit พร้อม Push ขึ้น Branch <code class="text-amber-300">Test-UXUI</code> แล้วรายงานสรุปต่อผู้ใช้
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Files -->
+        <div class="p-4 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-slate-400 flex flex-wrap gap-4 justify-between">
+            <div>
+                <strong>ไฟล์เป้าหมายที่ต้องแก้ไข (แก้ไขเฉพาะจุด):</strong>
+                <ul class="list-disc list-inside mt-1 text-slate-300 space-y-0.5">
+                    <li><code class="text-emerald-400">assets/css/bma-theme.css</code> (บรรทัด 409-424)</li>
+                    <li><code class="text-emerald-400">checkin.html</code> (บรรทัด 65-74, 194-225)</li>
+                </ul>
+            </div>
+            <div>
+                <strong>Branch เป้าหมาย:</strong> <span class="text-emerald-400 font-mono font-bold">Test-UXUI</span>
+                <br>
+                <strong>Branch อ้างอิง:</strong> <span class="text-sky-400 font-mono font-bold">origin/main</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

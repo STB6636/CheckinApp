@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-26T10:08:49.277Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `30` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `378`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T02:47:34.659Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `31` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `379`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,7 +64,7 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `2b5d7bacdf42c48c` | **Total Lines:** `1342` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `a8d6842708055ff2` | **Total Lines:** `1342` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -179,7 +179,7 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `ea3f58ab90dacdba` | **Total Lines:** `890` | **Imports:** `7` | **Exports:** `ReportsController`
+- **Hash:** `4b24a1a67f1ff51b` | **Total Lines:** `890` | **Imports:** `7` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -454,29 +454,29 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c4771ff8777f5c3f` | **Total Lines:** `669` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8ce871a9d88e367d` | **Total Lines:** `665` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L76** | `<head>` | HTML DOM Section L3-L76 |
-| `<main>` | `html_dom_section` | **L138 - L495** | `<main>` | HTML DOM Section L138-L495 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L141 - L355** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L141-L355 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L194 - L251** | `id="cameraSectionCard"` | HTML DOM Section L194-L251 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L212 - L224** | `id="cameraStandbyOverlay"` | HTML DOM Section L212-L224 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L254 - L352** | `id="rightColumnWrapper"` | HTML DOM Section L254-L352 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L257 - L300** | `id="gpsSectionCard"` | HTML DOM Section L257-L300 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L281 - L287** | `id="googleMapEmbedWrapper"` | HTML DOM Section L281-L287 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L303 - L350** | `id="checkinActionCard"` | HTML DOM Section L303-L350 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L313 - L316** | `id="shiftSelectorContainer"` | HTML DOM Section L313-L316 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L318 - L327** | `id="mainCustomTimeContainer"` | HTML DOM Section L318-L327 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L358 - L493** | `id="desktopPanesContainer"` | HTML DOM Section L358-L493 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L361 - L448** | `id="desktopHistoryWrapper"` | HTML DOM Section L361-L448 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L387 - L404** | `id="todayHistoryTabPanel"` | HTML DOM Section L387-L404 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L407 - L445** | `id="pastHistoryTabPanel"` | HTML DOM Section L407-L445 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L451 - L491** | `id="desktopSpecialWrapper"` | HTML DOM Section L451-L491 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L503 - L593** | `id="mobileDrawerPanel"` | HTML DOM Section L503-L593 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L626 - L635** | `id="spCustomTimeContainer"` | HTML DOM Section L626-L635 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L666 - L666** | `<script>` | Bootstrap script L666-L666 |
+| `<head>` | `html_dom_section` | **L3 - L72** | `<head>` | HTML DOM Section L3-L72 |
+| `<main>` | `html_dom_section` | **L134 - L491** | `<main>` | HTML DOM Section L134-L491 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L137 - L351** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L137-L351 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L190 - L247** | `id="cameraSectionCard"` | HTML DOM Section L190-L247 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L208 - L220** | `id="cameraStandbyOverlay"` | HTML DOM Section L208-L220 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L250 - L348** | `id="rightColumnWrapper"` | HTML DOM Section L250-L348 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L253 - L296** | `id="gpsSectionCard"` | HTML DOM Section L253-L296 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L277 - L283** | `id="googleMapEmbedWrapper"` | HTML DOM Section L277-L283 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L299 - L346** | `id="checkinActionCard"` | HTML DOM Section L299-L346 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L309 - L312** | `id="shiftSelectorContainer"` | HTML DOM Section L309-L312 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L314 - L323** | `id="mainCustomTimeContainer"` | HTML DOM Section L314-L323 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L354 - L489** | `id="desktopPanesContainer"` | HTML DOM Section L354-L489 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L357 - L444** | `id="desktopHistoryWrapper"` | HTML DOM Section L357-L444 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L383 - L400** | `id="todayHistoryTabPanel"` | HTML DOM Section L383-L400 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L403 - L441** | `id="pastHistoryTabPanel"` | HTML DOM Section L403-L441 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L447 - L487** | `id="desktopSpecialWrapper"` | HTML DOM Section L447-L487 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L499 - L589** | `id="mobileDrawerPanel"` | HTML DOM Section L499-L589 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L622 - L631** | `id="spCustomTimeContainer"` | HTML DOM Section L622-L631 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L662 - L662** | `<script>` | Bootstrap script L662-L662 |
 
 ---
 
@@ -541,6 +541,16 @@
 | `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L462 - L503** | `id="bulkImportPreviewContainer"` | HTML DOM Section L462-L503 |
 | `<div#bulkImportProgressContainer>` | `html_dom_section` | **L523 - L531** | `id="bulkImportProgressContainer"` | HTML DOM Section L523-L531 |
 | `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L549 - L549** | `<script>` | Bootstrap script L549-L549 |
+
+---
+
+## File: `pipeline/PIPE-20261027-camera-portrait-aspect-ratio-and-margins/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `441fd3c70f09c5ea` | **Total Lines:** `182` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
 
 ---
 

@@ -94,7 +94,7 @@ export class CheckinController {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.remove('hidden');
 
-            cameraCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 flex flex-col justify-between';
+            cameraCard.className = 'lg:col-span-5 bma-card p-2 sm:p-2.5 flex flex-col justify-between';
             rightWrapper.className = 'lg:col-span-7 flex flex-col justify-between gap-3 lg:gap-3.5';
             gpsCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
             actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
@@ -109,7 +109,7 @@ export class CheckinController {
             cameraCard.classList.remove('hidden');
             gpsCard.classList.add('hidden');
 
-            cameraCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 flex flex-col justify-between h-full';
+            cameraCard.className = 'lg:col-span-5 bma-card p-2 sm:p-2.5 flex flex-col justify-between h-full';
             rightWrapper.className = 'lg:col-span-7 flex flex-col justify-stretch';
             actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full w-full';
         } else {

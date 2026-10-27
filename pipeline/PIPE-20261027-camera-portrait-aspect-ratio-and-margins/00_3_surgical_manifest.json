@@ -1,0 +1,36 @@
+{
+  "pipeline_id": "PIPE-20261027-camera-portrait-aspect-ratio-and-margins",
+  "flow_id": "FLOW_PHOTO_01",
+  "target_branch": "Test-UXUI",
+  "base_branch": "main",
+  "subagents_configured": {
+    "worker": {
+      "type": "agent_04_frontend",
+      "model": "flash",
+      "scope": "Read and edit camera frame styles in assets/css/bma-theme.css and checkin.html"
+    },
+    "reviewer": {
+      "type": "agent_05_qa_security",
+      "model": "flash",
+      "scope": "Verify git diff against plan and compare with origin/main"
+    }
+  },
+  "targets": [
+    {
+      "file": "assets/css/bma-theme.css",
+      "lines": [409, 424],
+      "action": "Remove restrictive max-height: 160px/175px and max-width: 220px/240px; enforce true portrait 3:4 aspect-ratio with width: 100%"
+    },
+    {
+      "file": "checkin.html",
+      "lines": [65, 74],
+      "action": "Sync inline style for .camera-portrait-3-4 with true portrait 3:4 aspect-ratio"
+    },
+    {
+      "file": "checkin.html",
+      "lines": [194, 250],
+      "action": "Adjust #cameraSectionCard padding to p-2 sm:p-2.5 to provide ~2px-4px border around camera viewfinder, keeping buttons and headers nicely aligned"
+    }
+  ]
+}
+
