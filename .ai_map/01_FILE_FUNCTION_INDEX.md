@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T07:11:34.565Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `37` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `385`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T07:51:49.398Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `42` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `397`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -496,6 +496,53 @@
 
 ---
 
+## File: `docs/manual/index.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `1204a1237d68fccd` | **Total Lines:** `578` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L53** | `<head>` | HTML DOM Section L3-L53 |
+| `<main>` | `html_dom_section` | **L125 - L535** | `<main>` | HTML DOM Section L125-L535 |
+
+---
+
+## File: `docs/manual/manual-admin.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `4308648a6569808f` | **Total Lines:** `881` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L54** | `<head>` | HTML DOM Section L3-L54 |
+| `<div#mobileTocPanel>` | `html_dom_section` | **L93 - L104** | `id="mobileTocPanel"` | HTML DOM Section L93-L104 |
+| `<main>` | `html_dom_section` | **L174 - L755** | `<main>` | HTML DOM Section L174-L755 |
+
+---
+
+## File: `docs/manual/manual-superadmin.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `14f7dca7c4989bc1` | **Total Lines:** `737` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L54** | `<head>` | HTML DOM Section L3-L54 |
+| `<div#mobileTocPanel>` | `html_dom_section` | **L93 - L104** | `id="mobileTocPanel"` | HTML DOM Section L93-L104 |
+| `<main>` | `html_dom_section` | **L164 - L611** | `<main>` | HTML DOM Section L164-L611 |
+
+---
+
+## File: `docs/manual/manual-user.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `9bf63fc79b5299ed` | **Total Lines:** `1063` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L53** | `<head>` | HTML DOM Section L3-L53 |
+| `<div#mobileTocPanel>` | `html_dom_section` | **L92 - L103** | `id="mobileTocPanel"` | HTML DOM Section L92-L103 |
+| `<main>` | `html_dom_section` | **L166 - L935** | `<main>` | HTML DOM Section L166-L935 |
+
+---
+
 ## File: `google_apps_script/DriveUploadBridge.gs`
 - **Layer:** Google Apps Script Serverless Bridge
 - **Hash:** `1ac041a0d3b1bc90` | **Total Lines:** `109` | **Imports:** `0` | **Exports:** `None`
@@ -611,6 +658,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
+
+---
+
+## File: `pipeline/PIPE-20261027-user-manuals-html/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `45eabd318b645c95` | **Total Lines:** `90` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L10** | `<head>` | HTML DOM Section L3-L10 |
 
 ---
 

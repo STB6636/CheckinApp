@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-27T07:11:34.565Z",
-  "totalFilesScanned": 37,
-  "totalSymbolsIndexed": 385,
+  "generatedAt": "2026-10-27T07:51:49.398Z",
+  "totalFilesScanned": 42,
+  "totalSymbolsIndexed": 397,
   "files": [
     {
       "filePath": "approvals.html",
@@ -2816,6 +2816,138 @@
       ]
     },
     {
+      "filePath": "docs/manual/index.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "1204a1237d68fccd",
+      "totalLines": 578,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 53,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L53"
+        },
+        {
+          "name": "<main>",
+          "kind": "html_dom_section",
+          "startLine": 125,
+          "endLine": 535,
+          "signature": "<main>",
+          "summary": "HTML DOM Section L125-L535"
+        }
+      ]
+    },
+    {
+      "filePath": "docs/manual/manual-admin.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "4308648a6569808f",
+      "totalLines": 881,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 54,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L54"
+        },
+        {
+          "name": "<div#mobileTocPanel>",
+          "kind": "html_dom_section",
+          "startLine": 93,
+          "endLine": 104,
+          "signature": "id=\"mobileTocPanel\"",
+          "summary": "HTML DOM Section L93-L104"
+        },
+        {
+          "name": "<main>",
+          "kind": "html_dom_section",
+          "startLine": 174,
+          "endLine": 755,
+          "signature": "<main>",
+          "summary": "HTML DOM Section L174-L755"
+        }
+      ]
+    },
+    {
+      "filePath": "docs/manual/manual-superadmin.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "14f7dca7c4989bc1",
+      "totalLines": 737,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 54,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L54"
+        },
+        {
+          "name": "<div#mobileTocPanel>",
+          "kind": "html_dom_section",
+          "startLine": 93,
+          "endLine": 104,
+          "signature": "id=\"mobileTocPanel\"",
+          "summary": "HTML DOM Section L93-L104"
+        },
+        {
+          "name": "<main>",
+          "kind": "html_dom_section",
+          "startLine": 164,
+          "endLine": 611,
+          "signature": "<main>",
+          "summary": "HTML DOM Section L164-L611"
+        }
+      ]
+    },
+    {
+      "filePath": "docs/manual/manual-user.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "9bf63fc79b5299ed",
+      "totalLines": 1063,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 53,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L53"
+        },
+        {
+          "name": "<div#mobileTocPanel>",
+          "kind": "html_dom_section",
+          "startLine": 92,
+          "endLine": 103,
+          "signature": "id=\"mobileTocPanel\"",
+          "summary": "HTML DOM Section L92-L103"
+        },
+        {
+          "name": "<main>",
+          "kind": "html_dom_section",
+          "startLine": 166,
+          "endLine": 935,
+          "signature": "<main>",
+          "summary": "HTML DOM Section L166-L935"
+        }
+      ]
+    },
+    {
       "filePath": "google_apps_script/DriveUploadBridge.gs",
       "layer": "Google Apps Script Serverless Bridge",
       "fileHash": "1ac041a0d3b1bc90",
@@ -3146,6 +3278,25 @@
           "endLine": 13,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L13"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261027-user-manuals-html/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "45eabd318b645c95",
+      "totalLines": 90,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 10,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L10"
         }
       ]
     },

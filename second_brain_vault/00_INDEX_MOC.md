@@ -29,6 +29,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 
 ## 04 — Project Contexts
 - [[checkinapp_project_context]] — CheckinApp (BMA Check-in App V2.1–V2.7): โครงสร้างโปรเจกต์, Supabase, GitHub Pages และดัชนีกระบวนการทำงานทั้ง 12 Flows (`FLOW_AUTH_01` – `FLOW_USERS_01`)
+- [[doc_system_user_manuals_html]] — คู่มือการใช้งานระบบ CheckinApp แบบ Standalone HTML แยก 3 ระดับสิทธิ์ (User / Admin / SuperAdmin) ใน `docs/manual/`
 
 ## Codebase Map (`.ai_map/`)
 - สารบัญกระบวนการทำงานและ Call Chain: `.ai_map/00_PROCESS_FLOW_MAP.md`
