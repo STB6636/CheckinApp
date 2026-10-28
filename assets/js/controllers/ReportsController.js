@@ -249,25 +249,37 @@ export class ReportsController {
     }
 
     #renderSingleStatusTableHtml(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) {
+        const showGps = Boolean(this.settings?.require_gps);
+        const colSpan = showGps
+            ? ((forPrintPdf || !this.canManageRecords) ? 8 : 9)
+            : ((forPrintPdf || !this.canManageRecords) ? 6 : 7);
+
         const tableRowsHtml = this.#buildGroupedRowsForTag(tagRecords, groupHeaderColor, forPrintPdf);
 
         if (forPrintPdf) {
-            return `
-                <div class="tag-section-block">
-                    <div class="tag-section-title" style="background-color: ${statusColor};">
-                        ตารางสถานะ: ${statusMeta.label} - ประจำวันที่ ${daySubtitle} (จำนวน ${tagRecords.length} รายการ)
-                    </div>
-                    <table>
+            const colgroupHtml = showGps ? `
                         <colgroup>
                             <col style="width: 5%;">
+                            <col style="width: 18%;">
                             <col style="width: 17%;">
-                            <col style="width: 16%;">
-                            <col style="width: 8%;">
-                            <col style="width: 8%;">
-                            <col style="width: 17%;">
-                            <col style="width: 17%;">
+                            <col style="width: 9%;">
+                            <col style="width: 9%;">
+                            <col style="width: 15%;">
+                            <col style="width: 15%;">
                             <col style="width: 12%;">
                         </colgroup>
+            ` : `
+                        <colgroup>
+                            <col style="width: 6%;">
+                            <col style="width: 25%;">
+                            <col style="width: 25%;">
+                            <col style="width: 12%;">
+                            <col style="width: 12%;">
+                            <col style="width: 20%;">
+                        </colgroup>
+            `;
+
+            const theadHtml = showGps ? `
                         <thead>
                             <tr>
                                 <th style="text-align: center;">ลำดับ</th>
@@ -280,6 +292,27 @@ export class ReportsController {
                                 <th>หมายเหตุ</th>
                             </tr>
                         </thead>
+            ` : `
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">ลำดับ</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>ตำแหน่ง</th>
+                                <th style="text-align: center;">เวลาเข้างาน</th>
+                                <th style="text-align: center;">เวลาออกงาน</th>
+                                <th>หมายเหตุ</th>
+                            </tr>
+                        </thead>
+            `;
+
+            return `
+                <div class="tag-section-block">
+                    <div class="tag-section-title" style="background-color: ${statusColor};">
+                        ตารางสถานะ: ${statusMeta.label} - ประจำวันที่ ${daySubtitle} (จำนวน ${tagRecords.length} รายการ)
+                    </div>
+                    <table>
+                        ${colgroupHtml}
+                        ${theadHtml}
                         <tbody>
                             ${tableRowsHtml}
                         </tbody>
@@ -287,6 +320,30 @@ export class ReportsController {
                 </div>
             `;
         }
+
+        const theadWebHtml = showGps ? `
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th class="min-w-[170px]">ชื่อ-นามสกุล</th>
+                                <th class="min-w-[160px]">ตำแหน่ง</th>
+                                <th class="w-28 text-center">เวลาเข้างาน</th>
+                                <th class="w-28 text-center">เวลาออกงาน</th>
+                                <th class="w-44 min-w-[180px]">พิกัด GPS เข้างาน</th>
+                                <th class="w-44 min-w-[180px]">พิกัด GPS ออกงาน</th>
+                                <th class="min-w-[130px]">หมายเหตุ</th>
+                                ${this.canManageRecords ? '<th class="w-24 text-center no-print">จัดการ</th>' : ''}
+                            </tr>
+        ` : `
+                            <tr>
+                                <th class="w-14 text-center">ลำดับ</th>
+                                <th class="min-w-[200px]">ชื่อ-นามสกุล</th>
+                                <th class="min-w-[200px]">ตำแหน่ง</th>
+                                <th class="w-32 text-center">เวลาเข้างาน</th>
+                                <th class="w-32 text-center">เวลาออกงาน</th>
+                                <th class="min-w-[180px]">หมายเหตุ</th>
+                                ${this.canManageRecords ? '<th class="w-24 text-center no-print">จัดการ</th>' : ''}
+                            </tr>
+        `;
 
         return `
             <div class="bma-card p-5 space-y-3" style="border-top: 4px solid ${statusColor};">
@@ -310,17 +367,7 @@ export class ReportsController {
                 <div class="bma-table-container">
                     <table class="bma-table text-sm">
                         <thead>
-                            <tr>
-                                <th class="w-12 text-center">ลำดับ</th>
-                                <th class="min-w-[150px]">ชื่อ-นามสกุล</th>
-                                <th class="min-w-[150px]">ตำแหน่ง</th>
-                                <th class="w-24 text-center">เวลาเข้างาน</th>
-                                <th class="w-24 text-center">เวลาออกงาน</th>
-                                <th class="min-w-[170px]">พิกัด GPS เข้างาน</th>
-                                <th class="min-w-[170px]">พิกัด GPS ออกงาน</th>
-                                <th class="min-w-[120px]">หมายเหตุ</th>
-                                ${this.canManageRecords ? '<th class="w-24 text-center no-print">จัดการ</th>' : ''}
-                            </tr>
+                            ${theadWebHtml}
                         </thead>
                         <tbody>
                             ${tableRowsHtml}
@@ -332,7 +379,11 @@ export class ReportsController {
     }
 
     #buildGroupedRowsForTag(tagRecords, groupHeaderColor, forPrintPdf) {
-        const colSpan = (forPrintPdf || !this.canManageRecords) ? 8 : 9;
+        const showGps = Boolean(this.settings?.require_gps);
+        const colSpan = showGps
+            ? ((forPrintPdf || !this.canManageRecords) ? 8 : 9)
+            : ((forPrintPdf || !this.canManageRecords) ? 6 : 7);
+
         if (!tagRecords || tagRecords.length === 0) {
             return `<tr><td colspan="${colSpan}" class="text-center py-6 bma-text-sub">ไม่มีข้อมูลบุคลากรในสถานะนี้</td></tr>`;
         }
@@ -341,32 +392,38 @@ export class ReportsController {
         let rowsHtml = '';
         let runningNo = 1;
 
-        for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
-            for (const [divisionName, content] of Object.entries(divisionsObj)) {
+        for (const [bureauName, divisionsObj] of Object.entries(grouped || {})) {
+            for (const [divisionName, content] of Object.entries(divisionsObj || {})) {
                 rowsHtml += `
                     <tr class="group-row" style="background-color: ${groupHeaderColor}18;">
                         <td colspan="${colSpan}" class="font-bold text-sm py-2.5 px-4" style="color: ${groupHeaderColor}; border-left: 4px solid ${groupHeaderColor};">
-                            <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
+                            <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName || '-'} &gt; ${divisionName || '-'}
                         </td>
                     </tr>
                 `;
 
                 if (this.groupViewMode === 'group') {
-                    for (const [groupName, members] of Object.entries(content)) {
+                    for (const [groupName, members] of Object.entries(content || {})) {
+                        const memberList = Array.isArray(members) ? members : [];
                         rowsHtml += `
                             <tr class="sub-group-row bg-emerald-950/5 dark:bg-slate-800/50">
                                 <td colspan="${colSpan}" class="font-semibold text-xs py-2 pl-8 bma-text-main">
-                                    กลุ่มงาน: ${groupName} (${members.length} รายการ)
+                                    กลุ่มงาน: ${groupName || '-'} (${memberList.length} รายการ)
                                 </td>
                             </tr>
                         `;
-                        for (const rec of members) {
-                            rowsHtml += this.#buildSingleRowHtml(rec, runningNo++, forPrintPdf);
+                        for (const rec of memberList) {
+                            if (rec) {
+                                rowsHtml += this.#buildSingleRowHtml(rec, runningNo++, forPrintPdf);
+                            }
                         }
                     }
                 } else {
-                    for (const rec of content) {
-                        rowsHtml += this.#buildSingleRowHtml(rec, runningNo++, forPrintPdf);
+                    const contentList = Array.isArray(content) ? content : [];
+                    for (const rec of contentList) {
+                        if (rec) {
+                            rowsHtml += this.#buildSingleRowHtml(rec, runningNo++, forPrintPdf);
+                        }
                     }
                 }
             }
@@ -376,8 +433,13 @@ export class ReportsController {
     }
 
     #buildSingleRowHtml(rec, indexNo, forPrintPdf) {
+        if (!rec) return '';
+
+        const showGps = Boolean(this.settings?.require_gps);
         const posDisplay = rec.position_full || '-';
         const remarkDisplay = rec.remark || '-';
+        const fullName = rec.full_name || '-';
+        const rowUid = rec.row_uid || '';
 
         const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
         const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
@@ -394,13 +456,7 @@ export class ReportsController {
         }
 
         if (forPrintPdf) {
-            return `
-                <tr>
-                    <td style="text-align: center;">${indexNo}</td>
-                    <td>${rec.full_name || '-'}</td>
-                    <td>${posDisplay}</td>
-                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_in_time || '-'}</td>
-                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_out_time || '-'}</td>
+            const gpsPrintCells = showGps ? `
                     <td style="font-size: 11px;">
                         <div style="font-weight: 600;">${inLocName || '-'}</div>
                         ${inGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${inGpsCoords}</div>` : ''}
@@ -409,47 +465,65 @@ export class ReportsController {
                         <div style="font-weight: 600;">${outLocName || '-'}</div>
                         ${outGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${outGpsCoords}</div>` : ''}
                     </td>
+            ` : '';
+
+            return `
+                <tr>
+                    <td style="text-align: center;">${indexNo}</td>
+                    <td>${fullName}</td>
+                    <td>${posDisplay}</td>
+                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_in_time || '-'}</td>
+                    <td style="text-align: center; font-family: monospace; font-weight: 700;">${rec.check_out_time || '-'}</td>
+                    ${gpsPrintCells}
                     <td>${remarkDisplay}</td>
                 </tr>
             `;
         }
 
-        return `
-            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rec.row_uid || ''}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
-                <td class="text-center font-semibold">${indexNo}</td>
-                <td>
-                    <div class="font-bold bma-text-main flex items-center gap-1.5">
-                        <span>${rec.full_name || '-'}</span>
-                        <i class="fa-regular fa-id-badge text-xs text-emerald-600 opacity-75"></i>
-                    </div>
-                </td>
-                <td class="font-medium">${posDisplay}</td>
-                <td class="text-center font-mono font-bold">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
-                <td class="text-center font-mono font-bold">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
-                <td>
+        const timeColClass = showGps
+            ? 'w-28 text-center font-mono font-bold'
+            : 'w-32 text-center font-mono font-bold';
+
+        const gpsWebCells = showGps ? `
+                <td class="w-44 min-w-[180px]">
                     <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${inLocName || '-'}">
                         ${inLocName && inLocName !== '-' ? `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${inLocName}` : (inLocName || '-')}
                     </div>
                     ${inGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${inGpsCoords}</div>` : ''}
                 </td>
-                <td>
+                <td class="w-44 min-w-[180px]">
                     <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${outLocName || '-'}">
                         ${outLocName && outLocName !== '-' ? `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${outLocName}` : (outLocName || '-')}
                     </div>
                     ${outGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${outGpsCoords}</div>` : ''}
                 </td>
-                <td class="text-xs text-slate-600 dark:text-slate-300">
+        ` : '';
+
+        return `
+            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rowUid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
+                <td class="w-14 text-center font-semibold">${indexNo}</td>
+                <td class="${showGps ? 'min-w-[170px]' : 'min-w-[200px]'}">
+                    <div class="font-bold bma-text-main flex items-center gap-1.5">
+                        <span>${fullName}</span>
+                        <i class="fa-regular fa-id-badge text-xs text-emerald-600 opacity-75"></i>
+                    </div>
+                </td>
+                <td class="${showGps ? 'min-w-[160px]' : 'min-w-[200px]'} font-medium">${posDisplay}</td>
+                <td class="${timeColClass}">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
+                <td class="${timeColClass}">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
+                ${gpsWebCells}
+                <td class="${showGps ? 'min-w-[130px]' : 'min-w-[180px]'} text-xs text-slate-600 dark:text-slate-300">
                     ${remarkDisplay}
                 </td>
 ${this.canManageRecords ? `
-                <td class="text-center space-x-1 whitespace-nowrap no-print">
+                <td class="w-24 text-center space-x-1 whitespace-nowrap no-print">
                     ${AuthService.canEditAttendanceRecord(this.currentUser, rec) ? `
-                        <button type="button" data-action="edit-record" data-row-uid="${rec.row_uid || ''}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
+                        <button type="button" data-action="edit-record" data-row-uid="${rowUid}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="บันทึก/แก้ไขเวลา">
                             <i class="fa-solid fa-pen"></i>
                         </button>
                     ` : ''}
                     ${(AuthService.canDeleteAttendanceRecord(this.currentUser, rec) && rec.log_id) ? `
-                        <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${rec.full_name || ''}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
+                        <button type="button" data-action="delete-record" data-logid="${rec.log_id}" data-name="${fullName}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบเวลา">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     ` : ''}
@@ -812,6 +886,7 @@ ${this.canManageRecords ? `
                 UIHelpers.alert('ไม่มีข้อมูลส่งออก', 'ไม่พบรายการใน TAG สถานะที่เลือก', 'warning');
                 return;
             }
+            const showGps = Boolean(this.settings?.require_gps);
             const rows = filtered.map((r, idx) => {
                 const inLat = r.check_in_lat ?? (r.is_special_request ? r.check_out_lat : null);
                 const inLng = r.check_in_lng ?? (r.is_special_request ? r.check_out_lng : null);
@@ -829,7 +904,7 @@ ${this.canManageRecords ? `
                 }
                 const outGpsDisplay = [outLocName, outGpsCoords].filter(Boolean).join(' ') || '-';
 
-                return {
+                const rowObj = {
                     'ลำดับ': idx + 1,
                     'วันที่ปฏิบัติราชการ': r.work_date_thai_full,
                     'ชื่อ-นามสกุล': r.full_name,
@@ -838,18 +913,25 @@ ${this.canManageRecords ? `
                     'ส่วน/ฝ่าย': r.division || '-',
                     'กลุ่มงาน': r.work_group || '-',
                     'เวลาเข้างาน (24 ชม.)': r.check_in_time || '-',
-                    'เวลาออกงาน (24 ชม.)': r.check_out_time || '-',
-                    'พิกัด GPS เข้างาน': inGpsDisplay,
-                    'พิกัด GPS ออกงาน': outGpsDisplay,
-                    'สถานะ': r.status_label,
-                    'หมายเหตุ': r.remark || ''
+                    'เวลาออกงาน (24 ชม.)': r.check_out_time || '-'
                 };
+
+                if (showGps) {
+                    rowObj['พิกัด GPS เข้างาน'] = inGpsDisplay;
+                    rowObj['พิกัด GPS ออกงาน'] = outGpsDisplay;
+                }
+
+                rowObj['สถานะ'] = r.status_label;
+                rowObj['หมายเหตุ'] = r.remark || '';
+
+                return rowObj;
             });
             UIHelpers.exportToExcelUTF8(rows, `รายงานลงเวลาปฏิบัติราชการ_${UIHelpers.getTodayISO()}`, 'AttendanceReport');
         });
 
         document.getElementById('btnTemplateReportExcel')?.addEventListener('click', () => {
-            const sample = [{
+            const showGps = Boolean(this.settings?.require_gps);
+            const sampleItem = {
                 'ลำดับ': 1,
                 'วันที่ปฏิบัติราชการ': UIHelpers.formatThaiFullDate(UIHelpers.getTodayISO()),
                 'ชื่อ-นามสกุล': 'นายสมชาย สายตรวจ',
@@ -858,12 +940,18 @@ ${this.canManageRecords ? `
                 'ส่วน/ฝ่าย': 'กองตรวจและปฏิบัติการพื้นที่ 1',
                 'กลุ่มงาน': 'กลุ่มงานตรวจและปฏิบัติการ 1',
                 'เวลาเข้างาน (24 ชม.)': '08:15',
-                'เวลาออกงาน (24 ชม.)': '16:35',
-                'พิกัด GPS เข้างาน': 'สำนักเทศกิจ 13.733790° N, 100.468261° E',
-                'พิกัด GPS ออกงาน': 'ศาลาว่าการ กทม. 13.756300° N, 100.501800° E',
-                'สถานะ': 'ปฏิบัติงานปกติ',
-                'หมายเหตุ': ''
-            }];
+                'เวลาออกงาน (24 ชม.)': '16:35'
+            };
+
+            if (showGps) {
+                sampleItem['พิกัด GPS เข้างาน'] = 'สำนักเทศกิจ 13.733790° N, 100.468261° E';
+                sampleItem['พิกัด GPS ออกงาน'] = 'ศาลาว่าการ กทม. 13.756300° N, 100.501800° E';
+            }
+
+            sampleItem['สถานะ'] = 'ปฏิบัติงานปกติ';
+            sampleItem['หมายเหตุ'] = '';
+
+            const sample = [sampleItem];
             UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');
         });
 

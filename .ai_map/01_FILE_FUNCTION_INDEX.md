@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-27T10:50:11.937Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `51` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `409`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T03:13:34.325Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `52` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `410`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -179,11 +179,11 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `de6c9a652a7e41ff` | **Total Lines:** `971` | **Imports:** `7` | **Exports:** `ReportsController`
+- **Hash:** `3c5b314e6591c364` | **Total Lines:** `1059` | **Imports:** `7` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L14 - L962** | `export class ReportsController` | Class Definition (949 lines) |
+| `ReportsController` | `class` | **L14 - L1050** | `export class ReportsController` | Class Definition (1037 lines) |
 | `ReportsController.constructor` | `public constructor` | **L15 - L26** | `() => any` | public constructor L15-L26 (12 lines) |
 | `ReportsController.init` | `public async method` | **L28 - L68** | `() => Promise<any>` | public async method L28-L68 (41 lines) |
 | `ReportsController.#getStatusColor` | `private method` | **L70 - L76** | `(statusKey) => any` | private method L70-L76 (7 lines) |
@@ -193,17 +193,17 @@
 | `ReportsController.#populatePersonnelDropdown` | `private method` | **L161 - L170** | `() => any` | private method L161-L170 (10 lines) |
 | `ReportsController.#formatGpsCoordinates` | `private method` | **L172 - L180** | `(lat, lng) => any` | private method L172-L180 (9 lines) |
 | `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L182 - L249** | `(forPrintPdf = false) => any` | private method L182-L249 (68 lines) |
-| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L251 - L332** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L251-L332 (82 lines) |
-| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L334 - L376** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L334-L376 (43 lines) |
-| `ReportsController.#buildSingleRowHtml` | `private method` | **L378 - L460** | `(rec, indexNo, forPrintPdf) => any` | private method L378-L460 (83 lines) |
-| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L469 - L672** | `(rowUid) => any` | private method L469-L672 (204 lines) |
-| `setupPhotoBox` | `arrow_fn` | **L537 - L580** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L537-L580 |
-| `setupGpsAndMap` | `arrow_fn` | **L619 - L649** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L619-L649 |
-| `ReportsController.#closeResumeModal` | `private method` | **L674 - L684** | `() => any` | private method L674-L684 (11 lines) |
-| `ReportsController.#openModal` | `private method` | **L686 - L718** | `(rec = null) => any` | private method L686-L718 (33 lines) |
-| `ReportsController.#closeModal` | `private method` | **L720 - L722** | `() => any` | private method L720-L722 (3 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L724 - L921** | `() => any` | private method L724-L921 (198 lines) |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L923 - L961** | `() => Promise<any>` | private async method L923-L961 (39 lines) |
+| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L251 - L379** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L251-L379 (129 lines) |
+| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L381 - L433** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L381-L433 (53 lines) |
+| `ReportsController.#buildSingleRowHtml` | `private method` | **L435 - L534** | `(rec, indexNo, forPrintPdf) => any` | private method L435-L534 (100 lines) |
+| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L543 - L746** | `(rowUid) => any` | private method L543-L746 (204 lines) |
+| `setupPhotoBox` | `arrow_fn` | **L611 - L654** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L611-L654 |
+| `setupGpsAndMap` | `arrow_fn` | **L693 - L723** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L693-L723 |
+| `ReportsController.#closeResumeModal` | `private method` | **L748 - L758** | `() => any` | private method L748-L758 (11 lines) |
+| `ReportsController.#openModal` | `private method` | **L760 - L792** | `(rec = null) => any` | private method L760-L792 (33 lines) |
+| `ReportsController.#closeModal` | `private method` | **L794 - L796** | `() => any` | private method L794-L796 (3 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L798 - L1009** | `() => any` | private method L798-L1009 (212 lines) |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1011 - L1049** | `() => Promise<any>` | private async method L1011-L1049 (39 lines) |
 
 ---
 
@@ -359,11 +359,11 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `17f0cd795c29bb45` | **Total Lines:** `1589` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `3cf11439ca9abf0d` | **Total Lines:** `1613` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AttendanceModel` | `class` | **L12 - L1589** | `export class AttendanceModel` | Class Definition (1578 lines) |
+| `AttendanceModel` | `class` | **L12 - L1613** | `export class AttendanceModel` | Class Definition (1602 lines) |
 | `AttendanceModel.#calculateDistanceMeters` | `static private method` | **L16 - L27** | `(lat1, lon1, lat2, lon2) => any` | static private method L16-L27 (12 lines) |
 | `AttendanceModel.#minutesToTime24` | `static private method` | **L29 - L34** | `(totalMinutes) => any` | static private method L29-L34 (6 lines) |
 | `AttendanceModel.#isForbiddenLocationTerm` | `static private method` | **L44 - L74** | `(rawName, tags = {}) => any` | static private method L44-L74 (31 lines) |
@@ -381,17 +381,17 @@
 | `AttendanceModel.getPersonalAttendanceHistory` | `static public async method` | **L765 - L801** | `(personnelId, userId, limit = 35) => Promise<any>` | static public async method L765-L801 (37 lines) |
 | `AttendanceModel.getPersonalSpecialRequests` | `static public async method` | **L803 - L829** | `(personnelId, userId) => Promise<any>` | static public async method L803-L829 (27 lines) |
 | `AttendanceModel.deletePendingSpecialRequestByUser` | `static public async method` | **L831 - L865** | `(logId, personnelId, userId) => Promise<any>` | static public async method L831-L865 (35 lines) |
-| `AttendanceModel.submitCheckinOrCheckout` | `static public async method` | **L867 - L1160** | `(payload) => Promise<any>` | static public async method L867-L1160 (294 lines) |
-| `AttendanceModel.submitSpecialRequest` | `static public async method` | **L1162 - L1240** | `(payload) => Promise<any>` | static public async method L1162-L1240 (79 lines) |
-| `AttendanceModel.getSpecialRequests` | `static public async method` | **L1242 - L1281** | `(currentUser, statusFilter = 'pending') => Promise<any>` | static public async method L1242-L1281 (40 lines) |
-| `AttendanceModel.processSpecialRequestsBulk` | `static public async method` | **L1283 - L1328** | `(logIds, decision, approverUserId) => Promise<any>` | static public async method L1283-L1328 (46 lines) |
-| `AttendanceModel.getDatesBetween` | `static public method` | **L1330 - L1347** | `(startDate, endDate) => any` | static public method L1330-L1347 (18 lines) |
-| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L1349 - L1408** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L1349-L1408 (60 lines) |
-| `AttendanceModel.#formatReportRow` | `static private method` | **L1410 - L1455** | `(person, log, workDate, evalStatus) => any` | static private method L1410-L1455 (46 lines) |
-| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1457 - L1459** | `(workDate, currentUser) => Promise<any>` | static public async method L1457-L1459 (3 lines) |
-| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1461 - L1510** | `(payload) => Promise<any>` | static public async method L1461-L1510 (50 lines) |
-| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1512 - L1523** | `(logId) => Promise<any>` | static public async method L1512-L1523 (12 lines) |
-| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1525 - L1588** | `(dailyRecords) => any` | static public method L1525-L1588 (64 lines) |
+| `AttendanceModel.submitCheckinOrCheckout` | `static public async method` | **L867 - L1184** | `(payload) => Promise<any>` | static public async method L867-L1184 (318 lines) |
+| `AttendanceModel.submitSpecialRequest` | `static public async method` | **L1186 - L1264** | `(payload) => Promise<any>` | static public async method L1186-L1264 (79 lines) |
+| `AttendanceModel.getSpecialRequests` | `static public async method` | **L1266 - L1305** | `(currentUser, statusFilter = 'pending') => Promise<any>` | static public async method L1266-L1305 (40 lines) |
+| `AttendanceModel.processSpecialRequestsBulk` | `static public async method` | **L1307 - L1352** | `(logIds, decision, approverUserId) => Promise<any>` | static public async method L1307-L1352 (46 lines) |
+| `AttendanceModel.getDatesBetween` | `static public method` | **L1354 - L1371** | `(startDate, endDate) => any` | static public method L1354-L1371 (18 lines) |
+| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L1373 - L1432** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L1373-L1432 (60 lines) |
+| `AttendanceModel.#formatReportRow` | `static private method` | **L1434 - L1479** | `(person, log, workDate, evalStatus) => any` | static private method L1434-L1479 (46 lines) |
+| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1481 - L1483** | `(workDate, currentUser) => Promise<any>` | static public async method L1481-L1483 (3 lines) |
+| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1485 - L1534** | `(payload) => Promise<any>` | static public async method L1485-L1534 (50 lines) |
+| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1536 - L1547** | `(logId) => Promise<any>` | static public async method L1536-L1547 (12 lines) |
+| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1549 - L1612** | `(dailyRecords) => any` | static public method L1549-L1612 (64 lines) |
 
 ---
 
@@ -755,6 +755,16 @@
 - **Hash:** `a37ef6d93fece8a2` | **Total Lines:** `73` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
+## File: `pipeline/PIPE-20261028-reports-column-widths-and-gps-visibility/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `15d6f2ed3ad030f6` | **Total Lines:** `231` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L23** | `<head>` | HTML DOM Section L3-L23 |
 
 ---
 

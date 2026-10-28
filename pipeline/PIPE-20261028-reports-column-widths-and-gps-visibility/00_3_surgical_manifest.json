@@ -1,0 +1,17 @@
+{
+  "pipeline_id": "PIPE-20261028-reports-column-widths-and-gps-visibility",
+  "targets": [
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#renderSingleStatusTableHtml & #buildGroupedRowsForTag & #buildSingleRowHtml & exportToExcel",
+      "line_range": "250-460, 820-860",
+      "reason": "ปรับความกว้างคอลัมน์เข้า-ออก และ GPS เข้า-ออก ให้เท่ากัน สมมาตร และซ่อน/แสดงคอลัมน์ GPS ตามค่า require_gps พร้อมปรับ colSpan อัตโนมัติ"
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.submitCheckinOrCheckout",
+      "line_range": "980-1010",
+      "reason": "เพิ่มการสุ่ม GPS Jitter 20 เมตรใน flow กะนอกเวลา (isOvertimeFlow) เมื่อเปิด randomize_gps_checkout"
+    }
+  ]
+}

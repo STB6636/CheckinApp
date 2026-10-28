@@ -978,6 +978,30 @@ export class AttendanceModel {
                 };
             }
 
+            let outLat = payload.lat ?? null;
+            let outLng = payload.lng ?? null;
+            let outLocName = payload.location_name || '';
+
+            if (settings.randomize_gps_checkout && payload.lat != null && payload.lng != null) {
+                const numLat = Number(payload.lat);
+                const numLng = Number(payload.lng);
+                if (!isNaN(numLat) && !isNaN(numLng)) {
+                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                    if (jittered.lat !== null && jittered.lng !== null) {
+                        outLat = jittered.lat;
+                        outLng = jittered.lng;
+                        try {
+                            const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
+                            if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
+                                outLocName = locMeta.locationName;
+                            }
+                        } catch (e) {
+                            console.warn('Resolve overtime jittered checkout location error:', e);
+                        }
+                    }
+                }
+            }
+
             const insertOtData = {
                 personnel_id: payload.personnel_id || null,
                 user_id: payload.user_id || null,
@@ -990,9 +1014,9 @@ export class AttendanceModel {
                 check_in_lat: payload.lat ?? null,
                 check_in_lng: payload.lng ?? null,
                 check_in_location: payload.location_name || '',
-                check_out_lat: payload.lat ?? null,
-                check_out_lng: payload.lng ?? null,
-                check_out_location: payload.location_name || '',
+                check_out_lat: outLat,
+                check_out_lng: outLng,
+                check_out_location: outLocName,
                 status: 'ปฏิบัติงานนอกเวลา',
                 remark: payload.remark || (payload.is_overnight ? 'ปฏิบัติงานนอกเวลา (ข้ามวัน)' : 'ปฏิบัติงานนอกเวลา'),
                 row_color: colors.overtime || '#2563EB',
