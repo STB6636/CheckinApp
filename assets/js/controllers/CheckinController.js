@@ -331,7 +331,20 @@ export class CheckinController {
         const allShifts = this.settings?.work_shifts || [];
         const spSelect = document.getElementById('spShiftSelect');
         if (spSelect) {
-            spSelect.innerHTML = allShifts.map((s, idx) =>
+            const stdIn = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
+            const stdOut = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
+            const disableNormal = Boolean(this.settings?.disable_normal_hours_checkin);
+
+            const filteredShifts = allShifts
+                .map((s, idx) => ({ s, idx }))
+                .filter(({ s }) => {
+                    if (!disableNormal) return true;
+                    const isNormalHours = String(s.name || '').includes('เวลาราชการปกติ') ||
+                        (!s.is_overtime && s.check_in === stdIn && s.check_out === stdOut);
+                    return !isNormalHours;
+                });
+
+            spSelect.innerHTML = filteredShifts.map(({ s, idx }) =>
                 `<option value="${idx}">${SettingsModel.formatShiftDisplayText(s)}</option>`
             ).join('');
         }
@@ -402,6 +415,11 @@ export class CheckinController {
         const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
         const stdOutMin = UIHelpers.timeToMinutes(stdOutRef);
         const graceMin = Number(this.settings?.checkout_grace_minutes ?? 30);
+        const stdInMin = UIHelpers.timeToMinutes(stdInRef);
+        const isWithinNormalHours = (stdInMin <= stdOutMin)
+            ? (nowMin >= stdInMin && nowMin < stdOutMin)
+            : (nowMin >= stdInMin || nowMin < stdOutMin);
+        btnSubmitMain?.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
 
         const hasUnclosedRegular = Boolean(
             regularRecord &&
@@ -451,6 +469,29 @@ export class CheckinController {
                 checkoutBadgeEl.textContent = isPastUnclosed ? 'ค้างลงเวลาเลิกงาน' : 'รอลงเวลาเลิกงาน';
                 checkoutBadgeEl.className = isPastUnclosed ? 'bma-badge bma-badge-danger' : 'bma-badge bma-badge-warning';
             }
+        }
+
+        if (this.settings?.disable_normal_hours_checkin && isWithinNormalHours) {
+            shiftSelectorContainer?.classList.add('hidden');
+            mainCustomBox?.classList.add('hidden');
+
+            if (modeTag) {
+                modeTag.textContent = isNormalModeSetting ? 'รูปแบบปกติ' : 'รูปแบบพิเศษ';
+                modeTag.className = isNormalModeSetting ? 'bma-badge bma-badge-success' : 'bma-badge bma-badge-indigo';
+            }
+
+            if (btnSubmitMain) {
+                btnSubmitMain.disabled = true;
+                btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            }
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = `ปิดรับการลงเวลาในช่วงเวลาปกติ (${stdInRef} - ${stdOutRef} น.)`;
+            }
+            noticeBox?.classList.remove('hidden');
+            if (noticeText) {
+                noticeText.textContent = `ขณะนี้อยู่ในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) ระบบเปิดใช้งานฟังก์ชันปิดรับการลงเวลาในเวลาปกติ จึงไม่สามารถบันทึกลงเวลาได้`;
+            }
+            return;
         }
 
         if (isNormalModeSetting && hasUnclosedRegular) {
@@ -1275,6 +1316,20 @@ export class CheckinController {
     }
 
     async #handleMainCheckin() {
+        if (this.settings?.disable_normal_hours_checkin) {
+            const stdInRef = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
+            const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
+            const stdInMin = UIHelpers.timeToMinutes(stdInRef);
+            const stdOutMin = UIHelpers.timeToMinutes(stdOutRef);
+            const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
+            const isWithinNormalHours = (stdInMin <= stdOutMin)
+                ? (nowMin >= stdInMin && nowMin < stdOutMin)
+                : (nowMin >= stdInMin || nowMin < stdOutMin);
+            if (isWithinNormalHours) {
+                await UIHelpers.alert('ไม่สามารถลงเวลาได้', `ระบบปิดรับการลงเวลาในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.)`, 'warning');
+                return;
+            }
+        }
         AuthService.getCurrentUser(true);
 
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {

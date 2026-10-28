@@ -82,6 +82,11 @@ export class SettingsController {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
         }
 
+        const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
+        if (elDisableNormal) {
+            elDisableNormal.checked = Boolean(this.settings.disable_normal_hours_checkin);
+        }
+
         const elRadius = document.getElementById('setRandomizeGpsRadius');
         if (elRadius) {
             elRadius.value = this.settings.randomize_gps_radius_meters || 20;
@@ -375,6 +380,10 @@ export class SettingsController {
         const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
         if (elFilterRealtime) {
             this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);
+        }
+        const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
+        if (elDisableNormal) {
+            this.settings.disable_normal_hours_checkin = Boolean(elDisableNormal.checked);
         }
         const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
         if (elRandGps) {

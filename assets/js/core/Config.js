@@ -42,6 +42,7 @@ export class Config {
         allow_checkin_start_time: '06:00',
         standard_check_in: '08:30',
         standard_check_out: '16:30',
+        disable_normal_hours_checkin: false,
         late_threshold_minutes: 30,
         checkout_grace_minutes: 30,
         filter_shifts_by_realtime: true,

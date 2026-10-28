@@ -1,0 +1,49 @@
+{
+  "pipeline_id": "PIPE-20261028-block-normal-hours-checkin",
+  "flow_id": "FLOW_CHECKIN_01",
+  "task_description": "Add disable_normal_hours_checkin setting (08:30-16:30): disable main checkin button for both normal and single-click modes during normal hours, and hide regular hours shift option in special checkin modal (special modal can still be submitted 24/7)",
+  "surgical_targets": [
+    {
+      "file": "assets/js/core/Config.js",
+      "target_symbols": ["Config.DEFAULT_SETTINGS"],
+      "surgical_line_range": "30-55",
+      "action": "add_default_disable_normal_hours_checkin"
+    },
+    {
+      "file": "settings.html",
+      "target_symbols": ["#toggleDisableNormalHoursCheckin"],
+      "surgical_line_range": "200-210",
+      "action": "add_switch_ui"
+    },
+    {
+      "file": "assets/js/controllers/SettingsController.js",
+      "target_symbols": ["SettingsController.#renderAllSettings", "SettingsController.#collectMainAndColorFieldsIntoSettings"],
+      "surgical_line_range": "80-90, 370-385",
+      "action": "bind_and_collect_setting"
+    },
+    {
+      "file": "assets/js/models/SettingsModel.js",
+      "target_symbols": ["SettingsModel.getSettings", "SettingsModel.updateSettings"],
+      "surgical_line_range": "95-125, 145-165",
+      "action": "normalize_and_persist_setting"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "target_symbols": [
+        "CheckinController.#renderAllDropdownsAndShifts",
+        "CheckinController.#updateStatusCardsAndMainButton",
+        "CheckinController.#handleMainCheckin"
+      ],
+      "surgical_line_range": "330-345, 420-550, 1000-1030",
+      "action": "enforce_normal_hours_lock_on_main_button_and_filter_special_shifts"
+    }
+  ],
+  "sql_migration": "ALTER TABLE system_settings ADD COLUMN IF NOT EXISTS disable_normal_hours_checkin BOOLEAN DEFAULT FALSE;",
+  "verification": [
+    "Syntax check node -c on all modified JavaScript files",
+    "Verify toggle UI in settings.html and SettingsController",
+    "Verify CheckinController disables main button and alerts during normal hours (08:30-16:30) for both normal and single-click modes",
+    "Verify spShiftSelect dropdown excludes 'เวลาราชการปกติ' when toggle is active, but special request modal can still be submitted at any time",
+    "Verify git diff against branch main"
+  ]
+}

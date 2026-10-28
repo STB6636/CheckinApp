@@ -105,6 +105,11 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_filter_shifts_by_realtime') !== null
                     ? localStorage.getItem('bma_filter_shifts_by_realtime') !== 'false'
                     : Boolean(Config.DEFAULT_SETTINGS.filter_shifts_by_realtime)),
+            disable_normal_hours_checkin: typeof data.disable_normal_hours_checkin === 'boolean'
+                ? data.disable_normal_hours_checkin
+                : (localStorage.getItem('bma_disable_normal_hours_checkin') !== null
+                    ? localStorage.getItem('bma_disable_normal_hours_checkin') === 'true'
+                    : Boolean(Config.DEFAULT_SETTINGS.disable_normal_hours_checkin)),
             google_drive_script_url: String(data.google_drive_script_url ?? ''),
             google_drive_folder_id: String(data.google_drive_folder_id ?? ''),
             footer_description: String(data.footer_description ?? Config.DEFAULT_SETTINGS.footer_description),
@@ -152,6 +157,7 @@ export class SettingsModel {
             late_threshold_minutes: Number(payload.late_threshold_minutes ?? 30),
             checkout_grace_minutes: Number(payload.checkout_grace_minutes ?? 30),
             filter_shifts_by_realtime: payload.filter_shifts_by_realtime !== false,
+            disable_normal_hours_checkin: Boolean(payload.disable_normal_hours_checkin),
             google_drive_script_url: String(payload.google_drive_script_url || '').trim(),
             google_drive_folder_id: String(payload.google_drive_folder_id || '').trim(),
             prefixes: payload.prefixes || [],
@@ -180,6 +186,10 @@ export class SettingsModel {
                 delete fallbackUpdateData.filter_shifts_by_realtime;
                 retryNeeded = true;
             }
+            if (String(error.message || '').includes('disable_normal_hours_checkin')) {
+                delete fallbackUpdateData.disable_normal_hours_checkin;
+                retryNeeded = true;
+            }
             if (String(error.message || '').includes('randomize_gps_radius_meters')) {
                 delete fallbackUpdateData.randomize_gps_radius_meters;
                 retryNeeded = true;
@@ -202,6 +212,8 @@ export class SettingsModel {
         const allowGalleryVal = Boolean(payload.allow_gallery_fallback);
         try { localStorage.setItem('bma_allow_gallery_fallback', String(allowGalleryVal)); } catch (e) {}
         const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
+        const disableNormalVal = Boolean(payload.disable_normal_hours_checkin);
+        try { localStorage.setItem('bma_disable_normal_hours_checkin', String(disableNormalVal)); } catch (e) {}
         localStorage.setItem('bma_filter_shifts_by_realtime', String(filterRealtimeVal));
         const randomizeGpsVal = Boolean(payload.randomize_gps_checkout);
         try { localStorage.setItem('bma_randomize_gps_checkout', String(randomizeGpsVal)); } catch (e) {}
@@ -221,7 +233,10 @@ export class SettingsModel {
                 : randomizeGpsVal,
             randomize_gps_radius_meters: typeof data?.randomize_gps_radius_meters === 'number'
                 ? data.randomize_gps_radius_meters
-                : randomizeRadiusVal
+                : randomizeRadiusVal,
+            disable_normal_hours_checkin: typeof data?.disable_normal_hours_checkin === 'boolean'
+                ? data.disable_normal_hours_checkin
+                : disableNormalVal
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));
