@@ -163,19 +163,39 @@
 
                             <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
                                 <div class="pr-3">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">อนุญาตเลือกภาพถ่ายจากเครื่องเมื่อเปิดใน LINE หรือไม่มีกล้อง</span>
+                                    <span class="text-xs text-slate-500 block mt-0.5">เมื่อเปิดใน LINE In-App Browser หรือไม่มีเว็บแคม ปุ่มถ่ายภาพจะเปิดคลังภาพ/กล้องของเครื่องให้อัตโนมัติ</span>
+                                </div>
+                                <input type="checkbox" id="toggleAllowGalleryFallback" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                            </label>
+
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
+                                <div class="pr-3">
                                     <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">บังคับพิกัด GPS</span>
                                     <span class="text-xs text-slate-500 block mt-0.5">ต้องอนุญาตตำแหน่งพิกัด GPS จึงจะลงเวลาได้</span>
                                 </div>
                                 <input type="checkbox" id="toggleRequireGps" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
                             </label>
 
-                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
-                                <div class="pr-3">
-                                    <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">สุ่มระยะ GPS ขาออกงาน (สำหรับการลงเวลารูปแบบพิเศษ)</span>
-                                    <span class="text-xs text-slate-500 block mt-0.5">สุ่มพิกัด GPS ขาออกในรัศมี 20 เมตร พร้อมค้นหาสถานที่ใกล้เคียง เพื่อให้พิกัดเข้า-ออกงานไม่ซ้ำกัน</span>
+                            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
+                                <label class="flex items-center justify-between cursor-pointer">
+                                    <div class="pr-3">
+                                        <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">สุ่มระยะ GPS ขาออกงาน (สำหรับการลงเวลารูปแบบพิเศษ)</span>
+                                        <span class="text-xs text-slate-500 block mt-0.5">สุ่มพิกัด GPS ขาออกในรัศมีที่กำหนด พร้อมค้นหาสถานที่ใกล้เคียง เพื่อให้พิกัดเข้า-ออกงานไม่ซ้ำกัน</span>
+                                    </div>
+                                    <input type="checkbox" id="toggleRandomizeGpsCheckout" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                </label>
+                                <div id="containerRandomizeGpsRadius" class="mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                                    <div class="pr-3">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">รัศมีระยะสุ่มพิกัด (เมตร)</span>
+                                        <span class="text-[11px] text-slate-500 block">กำหนดรัศมีสุ่มพิกัด GPS ขาออก (ค่าเริ่มต้น 20 เมตร, กำหนดได้ 5 - 100 เมตร)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <input type="number" id="setRandomizeGpsRadius" min="5" max="100" step="1" value="20" class="w-20 text-center font-mono font-bold text-sm bma-input py-1 px-2 rounded-xl">
+                                        <span class="text-xs text-slate-500 font-bold">เมตร</span>
+                                    </div>
                                 </div>
-                                <input type="checkbox" id="toggleRandomizeGpsCheckout" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
-                            </label>
+                            </div>
 
                             <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
                                 <div class="pr-3">

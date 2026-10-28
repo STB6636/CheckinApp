@@ -1,0 +1,47 @@
+{
+  "pipeline_id": "PIPE-20261028-line-and-no-camera-gallery-fallback",
+  "targets": [
+    {
+      "file": "assets/js/core/Config.js",
+      "symbol": "Config.DEFAULT_SETTINGS",
+      "line_range": "35-45",
+      "reason": "เพิ่ม allow_gallery_fallback: true และ randomize_gps_radius_meters: 20 ใน DEFAULT_SETTINGS"
+    },
+    {
+      "file": "assets/js/models/SettingsModel.js",
+      "symbol": "SettingsModel.getSettings & updateSettings",
+      "line_range": "100-145, 160-205",
+      "reason": "รองรับ allow_gallery_fallback และ randomize_gps_radius_meters พร้อม LocalStorage fallback"
+    },
+    {
+      "file": "settings.html",
+      "symbol": "toggleAllowGalleryFallback & setRandomizeGpsRadius",
+      "line_range": "160-190",
+      "reason": "เพิ่มสวิตช์ toggleAllowGalleryFallback และช่องระบุ setRandomizeGpsRadius (เมตร)"
+    },
+    {
+      "file": "assets/js/controllers/SettingsController.js",
+      "symbol": "SettingsController.init & #collectMainAndColorFieldsIntoSettings",
+      "line_range": "70-95, 350-380",
+      "reason": "ผูกค่าและบันทึก allow_gallery_fallback และ randomize_gps_radius_meters"
+    },
+    {
+      "file": "checkin.html",
+      "symbol": "#cameraSectionCard",
+      "line_range": "205-235",
+      "reason": "เพิ่มปุ่มชัตเตอร์ลอยบนกรอบรูปภาพ #btnInFrameShutter และ hidden file input #cameraFallbackFileInput"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#openCameraOnDemand & #handleFallbackPhotoSelected",
+      "line_range": "710-775, 940-965",
+      "reason": "ตรวจจับ LINE/ไม่มีกล้อง ควบคุมปุ่มชัตเตอร์ลอย และประมวลผล Canvas Crop 3:4"
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.calculateGpsJitter & submitCheckinOrCheckout & submitSpecialRequest",
+      "line_range": "580-605, 980-1070, 1175-1215",
+      "reason": "นำค่า settings.randomize_gps_radius_meters ไปใช้คำนวณสุ่มพิกัด GPS ขาออกตามระยะที่ผู้ใช้กำหนด"
+    }
+  ]
+}

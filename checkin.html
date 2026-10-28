@@ -208,6 +208,16 @@
                             <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
                             <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="Captured Portrait">
 
+                            <!-- Floating In-Frame Shutter Button -->
+                            <button type="button" id="btnInFrameShutter" class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-white text-emerald-800 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer border-4 border-emerald-600/70 z-20" title="กดถ่ายภาพ">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center shadow-inner">
+                                    <i class="fa-solid fa-camera text-base text-[#00744B]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Hidden Fallback File Input for LINE / No Camera -->
+                            <input type="file" id="cameraFallbackFileInput" accept="image/*" class="hidden">
+
                             <!-- Standby & Hint Overlay -->
                             <div id="cameraStandbyOverlay" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center text-white bg-slate-900/80 backdrop-blur-xs">
                                 <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mb-2 text-[#00C08A] shadow-inner">

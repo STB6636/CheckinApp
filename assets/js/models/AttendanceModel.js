@@ -585,11 +585,13 @@ export class AttendanceModel {
      * @param {number} minRadiusMeters 
      * @returns {{lat: number|null, lng: number|null}}
      */
-    static calculateGpsJitter(lat, lng, maxRadiusMeters = 20, minRadiusMeters = 6) {
+    static calculateGpsJitter(lat, lng, maxRadiusMeters = 20, minRadiusMeters = null) {
         if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
             return { lat: null, lng: null };
         }
-        const r = minRadiusMeters + Math.random() * (maxRadiusMeters - minRadiusMeters);
+        const maxR = Math.max(5, Number(maxRadiusMeters || 20));
+        const minR = minRadiusMeters != null ? minRadiusMeters : Math.max(2, Math.round(maxR * 0.3));
+        const r = minR + Math.random() * (maxR - minR);
         const theta = Math.random() * 2 * Math.PI;
         const deltaLat = (r * Math.cos(theta)) / 111320;
         const deltaLng = (r * Math.sin(theta)) / (111320 * Math.cos(lat * Math.PI / 180));
@@ -986,7 +988,8 @@ export class AttendanceModel {
                 const numLat = Number(payload.lat);
                 const numLng = Number(payload.lng);
                 if (!isNaN(numLat) && !isNaN(numLng)) {
-                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                    const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
+                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
                     if (jittered.lat !== null && jittered.lng !== null) {
                         outLat = jittered.lat;
                         outLng = jittered.lng;
@@ -1082,7 +1085,8 @@ export class AttendanceModel {
                 const numLat = Number(payload.lat);
                 const numLng = Number(payload.lng);
                 if (!isNaN(numLat) && !isNaN(numLng)) {
-                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                    const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
+                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
                     if (jittered.lat !== null && jittered.lng !== null) {
                         outLat = jittered.lat;
                         outLng = jittered.lng;
@@ -1206,7 +1210,8 @@ export class AttendanceModel {
             const numLat = Number(payload.lat);
             const numLng = Number(payload.lng);
             if (!isNaN(numLat) && !isNaN(numLng)) {
-                const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng);
+                const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
+                const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
                 if (jittered.lat !== null && jittered.lng !== null) {
                     outLat = jittered.lat;
                     outLng = jittered.lng;

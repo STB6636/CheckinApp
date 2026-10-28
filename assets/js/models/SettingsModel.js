@@ -95,6 +95,11 @@ export class SettingsModel {
             standard_check_out: UIHelpers.formatTime24(data.standard_check_out || Config.DEFAULT_SETTINGS.standard_check_out),
             late_threshold_minutes: Number(data.late_threshold_minutes ?? Config.DEFAULT_SETTINGS.late_threshold_minutes),
             checkout_grace_minutes: Number(data.checkout_grace_minutes ?? Config.DEFAULT_SETTINGS.checkout_grace_minutes),
+            allow_gallery_fallback: typeof data.allow_gallery_fallback === 'boolean'
+                ? data.allow_gallery_fallback
+                : (localStorage.getItem('bma_allow_gallery_fallback') !== null
+                    ? localStorage.getItem('bma_allow_gallery_fallback') !== 'false'
+                    : Boolean(Config.DEFAULT_SETTINGS.allow_gallery_fallback !== false)),
             filter_shifts_by_realtime: typeof data.filter_shifts_by_realtime === 'boolean'
                 ? data.filter_shifts_by_realtime
                 : (localStorage.getItem('bma_filter_shifts_by_realtime') !== null
@@ -109,6 +114,11 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_randomize_gps_checkout') !== null
                     ? localStorage.getItem('bma_randomize_gps_checkout') !== 'false'
                     : Boolean(Config.DEFAULT_SETTINGS.randomize_gps_checkout)),
+            randomize_gps_radius_meters: typeof data.randomize_gps_radius_meters === 'number'
+                ? data.randomize_gps_radius_meters
+                : (localStorage.getItem('bma_randomize_gps_radius_meters') !== null
+                    ? Number(localStorage.getItem('bma_randomize_gps_radius_meters')) || 20
+                    : Number(Config.DEFAULT_SETTINGS.randomize_gps_radius_meters ?? 20)),
             prefixes: Array.isArray(data.prefixes) ? data.prefixes : Config.DEFAULT_SETTINGS.prefixes,
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
@@ -131,9 +141,11 @@ export class SettingsModel {
             logo_url: payload.logo_url || '',
             footer_description: payload.footer_description ?? '',
             require_photo: Boolean(payload.require_photo),
+            allow_gallery_fallback: Boolean(payload.allow_gallery_fallback),
             require_gps: Boolean(payload.require_gps),
             single_click_checkin: Boolean(payload.single_click_checkin),
             randomize_gps_checkout: Boolean(payload.randomize_gps_checkout),
+            randomize_gps_radius_meters: Math.max(5, Math.min(100, Number(payload.randomize_gps_radius_meters || 20))),
             allow_checkin_start_time: UIHelpers.formatTime24(payload.allow_checkin_start_time || '06:00'),
             standard_check_in: UIHelpers.formatTime24(payload.standard_check_in || '08:30'),
             standard_check_out: UIHelpers.formatTime24(payload.standard_check_out || '16:30'),
@@ -160,8 +172,16 @@ export class SettingsModel {
         if (error) {
             let retryNeeded = false;
             const fallbackUpdateData = { ...updateData };
+            if (String(error.message || '').includes('allow_gallery_fallback')) {
+                delete fallbackUpdateData.allow_gallery_fallback;
+                retryNeeded = true;
+            }
             if (String(error.message || '').includes('filter_shifts_by_realtime')) {
                 delete fallbackUpdateData.filter_shifts_by_realtime;
+                retryNeeded = true;
+            }
+            if (String(error.message || '').includes('randomize_gps_radius_meters')) {
+                delete fallbackUpdateData.randomize_gps_radius_meters;
                 retryNeeded = true;
             }
             if (String(error.message || '').includes('randomize_gps_checkout')) {
@@ -179,19 +199,29 @@ export class SettingsModel {
             return { success: false, message: 'ไม่สามารถบันทึกการตั้งค่าระบบได้: ' + error.message };
         }
 
+        const allowGalleryVal = Boolean(payload.allow_gallery_fallback);
+        try { localStorage.setItem('bma_allow_gallery_fallback', String(allowGalleryVal)); } catch (e) {}
         const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
         localStorage.setItem('bma_filter_shifts_by_realtime', String(filterRealtimeVal));
         const randomizeGpsVal = Boolean(payload.randomize_gps_checkout);
         try { localStorage.setItem('bma_randomize_gps_checkout', String(randomizeGpsVal)); } catch (e) {}
+        const randomizeRadiusVal = Math.max(5, Math.min(100, Number(payload.randomize_gps_radius_meters || 20)));
+        try { localStorage.setItem('bma_randomize_gps_radius_meters', String(randomizeRadiusVal)); } catch (e) {}
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
+            allow_gallery_fallback: typeof data?.allow_gallery_fallback === 'boolean'
+                ? data.allow_gallery_fallback
+                : allowGalleryVal,
             filter_shifts_by_realtime: typeof data?.filter_shifts_by_realtime === 'boolean'
                 ? data.filter_shifts_by_realtime
                 : filterRealtimeVal,
             randomize_gps_checkout: typeof data?.randomize_gps_checkout === 'boolean'
                 ? data.randomize_gps_checkout
-                : randomizeGpsVal
+                : randomizeGpsVal,
+            randomize_gps_radius_meters: typeof data?.randomize_gps_radius_meters === 'number'
+                ? data.randomize_gps_radius_meters
+                : randomizeRadiusVal
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));

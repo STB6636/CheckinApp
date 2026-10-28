@@ -23,6 +23,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[rule_shift_select_empty_and_soft_ui_alerts]] — Domain Rule: Dropdown กะว่างเริ่มต้น, การเลื่อนจอ Smooth Scroll และ SweetAlerts Soft UI Dashboard (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`)
 - [[rule_personal_attendance_history_limit_and_pagination]] — Domain Rule: การจำกัดข้อมูลประวัติการลงเวลาส่วนตัวย้อนหลัง 30 รายการ และระบบแบ่งหน้า [5, 10, 15, 20, 30] (`FLOW_CHECKIN_01`)
 - [[rule_dual_gps_columns_and_jitter]] — Domain Rule: แยก 2 คอลัมน์พิกัด GPS เข้า-ออก, ระบบสุ่มระยะ GPS 20 ม. และการป้องกันตาราง Tag หาย (`FLOW_REPORTS_01`, `FLOW_GPS_01`, `FLOW_SPECIAL_REQ_01`)
+- [[rule_line_and_no_camera_gallery_fallback]] — Domain Rule: ปุ่มชัตเตอร์บนกรอบกล้อง 3:4, ปุ่มเดียวอัจฉริยะ (LINE & No-Camera) และการกำหนดระยะสุ่ม GPS (`FLOW_PHOTO_01`, `FLOW_CHECKIN_01`, `FLOW_GPS_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

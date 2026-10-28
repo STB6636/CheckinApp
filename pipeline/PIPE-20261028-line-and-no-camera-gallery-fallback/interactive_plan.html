@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานจำลอง: ปุ่มชัตเตอร์บนกรอบภาพ + ปุ่มเดียวอัจฉริยะ (LINE) + กำหนดระยะสุ่ม GPS</title>
+    <!-- Google Fonts & Tailwind -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Sarabun', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <div class="p-6 rounded-3xl bg-gradient-to-r from-[#003822] via-[#005B3A] to-[#00744B] border border-emerald-500/30 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-300">
+                    <i class="fa-solid fa-code-branch"></i>
+                    <span>Branch: Cam-GPS-modal</span>
+                    <span class="text-white/40">•</span>
+                    <i class="fa-solid fa-camera"></i>
+                    <span>PIPE-20261028-line-and-no-camera-gallery-fallback</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white">แผนงาน: ปุ่มชัตเตอร์บนกรอบภาพ + ปุ่มเดียวอัจฉริยะ + กำหนดระยะสุ่ม GPS</h1>
+                <p class="text-xs sm:text-sm text-emerald-100/90">ชัตเตอร์ลอยบนกรอบกล้อง 3:4 สไตล์โมเดิร์น • ปุ่มเดียวใน LINE สลับคลังภาพอัตโนมัติ • ปรับระยะสุ่ม GPS ในตั้งค่าระบบ</p>
+            </div>
+            <div class="px-4 py-2.5 rounded-2xl bg-black/30 border border-white/10 text-xs text-center shrink-0">
+                <div class="text-slate-400 font-bold">โครงสร้าง SubAgents</div>
+                <div class="text-emerald-400 font-extrabold text-sm mt-0.5">Streamlined (2 Flash 3.8 High)</div>
+            </div>
+        </div>
+
+        <!-- 2 Major Feature Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Feature 1: In-Frame Shutter Button Simulator -->
+            <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-camera-retro text-emerald-400"></i>
+                        <span>1. จำลอง: ปุ่มชัตเตอร์ลอยบนกรอบภาพ (In-Frame Shutter)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">กดถ่ายภาพได้โดยตรงบนกรอบกล้อง ไม่ต้องเลื่อนมือก้มไปกดปุ่มด้านล่าง</p>
+                </div>
+
+                <!-- Camera Preview Box -->
+                <div class="max-w-[280px] mx-auto bg-slate-950 rounded-2xl p-3 border border-slate-800 shadow-inner space-y-3">
+                    <div class="w-full aspect-[3/4] rounded-xl overflow-hidden border-2 border-emerald-500/50 bg-slate-900 flex flex-col items-center justify-center relative text-center shadow-lg">
+                        
+                        <!-- Simulated Video Stream -->
+                        <div id="simLiveVideo" class="absolute inset-0 bg-gradient-to-b from-slate-800 via-slate-900 to-emerald-950/40 flex flex-col items-center justify-center p-4">
+                            <i class="fa-solid fa-user text-6xl text-slate-600 mb-2"></i>
+                            <span class="text-xs font-bold text-emerald-400 animate-pulse">● กล้องสตรีมสด 3:4</span>
+                            <span class="text-[10px] text-slate-400 mt-0.5">กดปุ่มวงกลมสีขาวด้านล่างเพื่อถ่าย</span>
+                        </div>
+
+                        <!-- Captured Preview Overlay -->
+                        <div id="simCapturedOverlay" class="hidden absolute inset-0 bg-emerald-900/90 flex flex-col items-center justify-center p-4 text-center">
+                            <i class="fa-solid fa-circle-check text-4xl text-emerald-400 mb-2"></i>
+                            <span class="text-xs font-bold text-white">บันทึกภาพถ่ายแล้ว!</span>
+                            <span class="text-[10px] text-emerald-200 mt-1">พร้อมบันทึกลงเวลา</span>
+                        </div>
+
+                        <!-- FLOATING IN-FRAME SHUTTER BUTTON (ปุ่มชัตเตอร์บนรูป) -->
+                        <button type="button" id="btnInFrameShutter" onclick="triggerInFrameCapture()" class="absolute bottom-3 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-white text-emerald-800 shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer border-4 border-emerald-600/60 z-20" title="กดถ่ายภาพ">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center shadow-inner">
+                                <i class="fa-solid fa-camera text-base text-[#00744B]"></i>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="button" id="btnResetInFrame" onclick="resetInFrameCapture()" class="hidden text-xs text-slate-400 hover:text-white underline cursor-pointer">
+                            ถ่ายรูปใหม่ (รีเซ็ต)
+                        </button>
+                        <p class="text-[10px] text-slate-500 mt-1">
+                            * สไตล์เดียวกับแอปกล้องสมาร์ตโฟน (iPhone/Android Camera) ใช้งานคล่องตัวสูงสุด
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2: Customizable GPS Jitter Radius Setting -->
+            <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-map-pin text-sky-400"></i>
+                        <span>2. จำลอง: กำหนดระยะสุ่ม GPS ขาออกได้เองในตั้งค่า</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">เพิ่มช่องกำหนดระยะสุ่ม (เมตร) ควบคู่กับสวิตช์เปิด/ปิดใน settings.html</p>
+                </div>
+
+                <!-- Settings UI Simulation Card -->
+                <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <div class="pr-3">
+                            <span class="text-xs font-bold text-white block">สุ่มระยะ GPS ขาออกงาน (สำหรับการลงเวลารูปแบบพิเศษ)</span>
+                            <span class="text-[11px] text-slate-400 block mt-0.5">สุ่มพิกัด GPS ขาออก พร้อมค้นหาสถานที่ใกล้เคียง เพื่อให้พิกัดเข้า-ออกงานไม่ซ้ำกัน</span>
+                        </div>
+                        <input type="checkbox" id="simToggleJitter" checked onchange="toggleJitterRadiusInput(this.checked)" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                    </div>
+
+                    <!-- NEW CUSTOMIZABLE RADIUS INPUT -->
+                    <div id="simRadiusContainer" class="pt-3 border-t border-slate-800 flex items-center justify-between">
+                        <div class="pr-3">
+                            <span class="text-xs font-bold text-emerald-400 block">
+                                <i class="fa-solid fa-arrows-left-right-to-line mr-1"></i>รัศมีระยะสุ่มพิกัด (เมตร)
+                            </span>
+                            <span class="text-[10px] text-slate-400 block">ค่าเริ่มต้น 20 เมตร (กำหนดได้ระหว่าง 5 ถึง 100 เมตร)</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <input type="number" id="simRadiusInput" value="20" min="5" max="100" class="w-16 text-center font-mono font-bold text-xs bg-slate-900 border border-emerald-500/50 rounded-xl py-1 text-white">
+                            <span class="text-xs font-bold text-slate-400">ม.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Formula Display -->
+                <div class="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-xs text-slate-300 space-y-1">
+                    <span class="font-bold text-sky-400 block"><i class="fa-solid fa-calculator mr-1"></i>สูตรคำนวณใน AttendanceModel.js:</span>
+                    <p class="text-[11px] text-slate-400 font-mono">
+                        r = random(minRadius, maxRadius) <br>
+                        maxRadius = settings.randomize_gps_radius_meters || 20
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Single Button Experience for LINE & No Camera -->
+        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl space-y-3">
+            <div class="flex items-center gap-2 text-green-400 font-bold text-sm">
+                <i class="fa-brands fa-line text-lg"></i>
+                <span>3. ปุ่มถ่ายภาพปุ่มเดียวรองรับ LINE In-App Browser และเครื่องไม่มีกล้อง (Single Button)</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                ระบบใช้ปุ่มเดียวเดิม เมื่อเปิดในเบราว์เซอร์ปกติที่มีกล้องจะเปิดสตรีมวิดีโอสดและแสดงปุ่มชัตเตอร์กลมบนรูปภาพ แต่เมื่อเปิดใน <strong>LINE In-App Browser หรือเครื่องไม่มีกล้อง</strong> การกดปุ่มถ่ายภาพเดิมจะเรียกคลังภาพ/กล้องระบบจากเครื่อง (`<input type="file" accept="image/*">`) ขึ้นมาทันที ไร้ปุ่มแกลเลอรีแยกให้รกสายตา 100%
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        function triggerInFrameCapture() {
+            document.getElementById('simLiveVideo').classList.add('hidden');
+            document.getElementById('simCapturedOverlay').classList.remove('hidden');
+            document.getElementById('btnInFrameShutter').classList.add('hidden');
+            document.getElementById('btnResetInFrame').classList.remove('hidden');
+        }
+
+        function resetInFrameCapture() {
+            document.getElementById('simLiveVideo').classList.remove('hidden');
+            document.getElementById('simCapturedOverlay').classList.add('hidden');
+            document.getElementById('btnInFrameShutter').classList.remove('hidden');
+            document.getElementById('btnResetInFrame').classList.add('hidden');
+        }
+
+        function toggleJitterRadiusInput(isChecked) {
+            const container = document.getElementById('simRadiusContainer');
+            if (isChecked) {
+                container.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                container.classList.add('opacity-40', 'pointer-events-none');
+            }
+        }
+    </script>
+</body>
+</html>

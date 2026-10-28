@@ -670,6 +670,81 @@ export class CheckinController {
         }).join('');
     }
 
+    async #checkCameraHardware() {
+        try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                return false;
+            }
+            if (navigator.mediaDevices.enumerateDevices) {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                return devices.some(d => d.kind === 'videoinput');
+            }
+            return true;
+        } catch (e) {
+            console.warn('Check camera hardware error:', e);
+            return false;
+        }
+    }
+
+    #handleFallbackFileSelected(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.getElementById('cameraCaptureCanvas');
+                if (!canvas) return;
+                const targetWidth = 720;
+                const targetHeight = 960;
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+
+                const imgAspect = img.width / img.height;
+                const targetAspect = targetWidth / targetHeight; // 0.75 (3:4)
+
+                let sX = 0, sY = 0, sWidth = img.width, sHeight = img.height;
+                if (imgAspect > targetAspect) {
+                    sWidth = img.height * targetAspect;
+                    sX = (img.width - sWidth) / 2;
+                } else {
+                    sHeight = img.width / targetAspect;
+                    sY = (img.height - sHeight) / 2;
+                }
+
+                ctx.drawImage(img, sX, sY, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+                this.capturedPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+                const preview = document.getElementById('capturedPhotoPreview');
+                if (preview) {
+                    preview.src = this.capturedPhotoDataUrl;
+                    preview.classList.remove('hidden');
+                }
+
+                const video = document.getElementById('cameraVideoStream');
+                const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+                const btnInFrame = document.getElementById('btnInFrameShutter');
+                const btnStartBottom = document.getElementById('btnStartCameraBottom');
+                const btnCapture = document.getElementById('btnCapturePhoto');
+                const btnStop = document.getElementById('btnStopCamera');
+                const btnRetake = document.getElementById('btnRetakePhoto');
+
+                video?.classList.add('hidden');
+                standbyOverlay?.classList.add('hidden');
+                btnInFrame?.classList.add('hidden');
+                btnStartBottom?.classList.add('hidden');
+                btnCapture?.classList.add('hidden');
+                btnStop?.classList.add('hidden');
+                btnRetake?.classList.remove('hidden');
+
+                const fileInput = document.getElementById('cameraFallbackFileInput');
+                if (fileInput) fileInput.value = '';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
     #stopCameraHardwareStream() {
         if (this.mediaStream) {
             this.mediaStream.getTracks().forEach(track => track.stop());
@@ -679,6 +754,7 @@ export class CheckinController {
         if (video) {
             video.srcObject = null;
         }
+        document.getElementById('btnInFrameShutter')?.classList.add('hidden');
         this.isCameraRunning = false;
     }
 
@@ -689,6 +765,7 @@ export class CheckinController {
         const video = document.getElementById('cameraVideoStream');
         const preview = document.getElementById('capturedPhotoPreview');
         const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+        const btnInFrame = document.getElementById('btnInFrameShutter');
 
         const btnStartBottom = document.getElementById('btnStartCameraBottom');
         const btnCapture = document.getElementById('btnCapturePhoto');
@@ -701,6 +778,7 @@ export class CheckinController {
         }
         video?.classList.add('hidden');
         standbyOverlay?.classList.remove('hidden');
+        btnInFrame?.classList.add('hidden');
 
         btnStartBottom?.classList.remove('hidden');
         btnCapture?.classList.add('hidden');
@@ -713,11 +791,24 @@ export class CheckinController {
         const preview = document.getElementById('capturedPhotoPreview');
         const standbyOverlay = document.getElementById('cameraStandbyOverlay');
         const msgEl = document.getElementById('cameraStatusMessage');
+        const btnInFrame = document.getElementById('btnInFrameShutter');
 
         const btnStartBottom = document.getElementById('btnStartCameraBottom');
         const btnCapture = document.getElementById('btnCapturePhoto');
         const btnStop = document.getElementById('btnStopCamera');
         const btnRetake = document.getElementById('btnRetakePhoto');
+
+        const allowFallback = Boolean(this.settings?.allow_gallery_fallback !== false);
+        const isLineBrowser = /Line\//i.test(navigator.userAgent);
+        const hasCamera = await this.#checkCameraHardware();
+
+        if (allowFallback && (isLineBrowser || !hasCamera)) {
+            const fallbackInput = document.getElementById('cameraFallbackFileInput');
+            if (fallbackInput) {
+                fallbackInput.click();
+                return;
+            }
+        }
 
         try {
             this.#stopCameraHardwareStream();
@@ -738,6 +829,7 @@ export class CheckinController {
                 video.classList.remove('hidden');
             }
             standbyOverlay?.classList.add('hidden');
+            btnInFrame?.classList.remove('hidden');
 
             btnStartBottom?.classList.add('hidden');
             btnRetake?.classList.add('hidden');
@@ -746,6 +838,13 @@ export class CheckinController {
         } catch (err) {
             console.warn('Camera access error:', err);
             this.#stopCameraHardwareStream();
+            if (allowFallback) {
+                const fallbackInput = document.getElementById('cameraFallbackFileInput');
+                if (fallbackInput) {
+                    fallbackInput.click();
+                    return;
+                }
+            }
             standbyOverlay?.classList.remove('hidden');
             if (msgEl) {
                 msgEl.textContent = 'ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้กล้องบนเบราว์เซอร์';
@@ -763,6 +862,7 @@ export class CheckinController {
         const canvas = document.getElementById('cameraCaptureCanvas');
         const preview = document.getElementById('capturedPhotoPreview');
         const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+        const btnInFrame = document.getElementById('btnInFrameShutter');
 
         const btnStartBottom = document.getElementById('btnStartCameraBottom');
         const btnCapture = document.getElementById('btnCapturePhoto');
@@ -776,6 +876,7 @@ export class CheckinController {
 
         this.capturedPhotoDataUrl = UIHelpers.capturePortrait3x4FromVideo(video, canvas);
         this.#stopCameraHardwareStream();
+        btnInFrame?.classList.add('hidden');
 
         if (preview) {
             preview.src = this.capturedPhotoDataUrl;
@@ -950,8 +1051,13 @@ export class CheckinController {
         document.getElementById('btnStartCameraOverlay')?.addEventListener('click', () => this.#openCameraOnDemand());
         document.getElementById('btnStartCameraBottom')?.addEventListener('click', () => this.#openCameraOnDemand());
         document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
+        document.getElementById('btnInFrameShutter')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
         document.getElementById('btnStopCamera')?.addEventListener('click', () => this.#stopCameraAndShowStandby());
         document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#openCameraOnDemand());
+        document.getElementById('cameraFallbackFileInput')?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) this.#handleFallbackFileSelected(file);
+        });
 
         document.getElementById('btnRefreshGps')?.addEventListener('click', () => this.#initGpsLocation());
 

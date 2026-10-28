@@ -71,6 +71,10 @@ export class SettingsController {
         }
 
         document.getElementById('toggleRequirePhoto').checked = Boolean(this.settings.require_photo);
+        const elAllowGallery = document.getElementById('toggleAllowGalleryFallback');
+        if (elAllowGallery) {
+            elAllowGallery.checked = Boolean(this.settings.allow_gallery_fallback !== false);
+        }
         document.getElementById('toggleRequireGps').checked = Boolean(this.settings.require_gps);
 
         const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
@@ -78,9 +82,27 @@ export class SettingsController {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
         }
 
+        const elRadius = document.getElementById('setRandomizeGpsRadius');
+        if (elRadius) {
+            elRadius.value = this.settings.randomize_gps_radius_meters || 20;
+        }
         const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
         if (elRandGps) {
             elRandGps.checked = Boolean(this.settings.randomize_gps_checkout);
+            const elRadiusContainer = document.getElementById('containerRandomizeGpsRadius');
+            const syncRadiusVisibility = () => {
+                if (elRadiusContainer) {
+                    if (elRandGps.checked) {
+                        elRadiusContainer.classList.remove('opacity-40', 'pointer-events-none');
+                        if (elRadius) elRadius.disabled = false;
+                    } else {
+                        elRadiusContainer.classList.add('opacity-40', 'pointer-events-none');
+                        if (elRadius) elRadius.disabled = true;
+                    }
+                }
+            };
+            syncRadiusVisibility();
+            elRandGps.addEventListener('change', syncRadiusVisibility);
         }
 
         const isSingleClick = Boolean(this.settings.single_click_checkin);
@@ -348,6 +370,7 @@ export class SettingsController {
         this.settings.google_drive_script_url = document.getElementById('setGDriveScriptUrl').value.trim();
         this.settings.google_drive_folder_id = document.getElementById('setGDriveFolderId').value.trim();
         this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
+        this.settings.allow_gallery_fallback = document.getElementById('toggleAllowGalleryFallback')?.checked !== false;
         this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
         const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
         if (elFilterRealtime) {
@@ -357,6 +380,7 @@ export class SettingsController {
         if (elRandGps) {
             this.settings.randomize_gps_checkout = Boolean(elRandGps.checked);
         }
+        this.settings.randomize_gps_radius_meters = Number(document.getElementById('setRandomizeGpsRadius')?.value || 20);
         const radioSingle = document.querySelector('input[name="checkinRecordingMode"][value="single_click"]');
         const chkSingle = document.getElementById('toggleSingleClickCheckin');
         this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
