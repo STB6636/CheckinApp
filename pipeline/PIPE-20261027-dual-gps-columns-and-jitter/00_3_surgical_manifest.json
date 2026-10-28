@@ -1,0 +1,48 @@
+{
+  "pipeline_id": "PIPE-20261027-dual-gps-columns-and-jitter",
+  "targets": [
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#renderSingleStatusTableHtml & #buildSingleRowHtml & #openResumeProfileForSpecificRow",
+      "line_range": "250-607",
+      "reason": "แยก 2 คอลัมน์ GPS เข้างาน/ออกงาน ปรับ colSpan เป็น 8/9 และปรับฟอร์มโปรไฟล์ให้แสดงรูปและพิกัดขาออกคู่กับขาเข้า"
+    },
+    {
+      "file": "reports.html",
+      "symbol": "#modalPersonnelResumeProfile",
+      "line_range": "240-340",
+      "reason": "ปรับแต่งโครงสร้าง Modal ให้แสดง 2 คอลัมน์ เข้างาน vs ออกงาน (รูปถ่าย 3:4 และพิกัดแผนที่) ควบคุมความสูงไม่เกินหน้าจอ vh"
+    },
+    {
+      "file": "settings.html",
+      "symbol": "tabGPS & Settings Form",
+      "line_range": "165-185",
+      "reason": "เพิ่มสวิตช์เปิด/ปิดฟังก์ชันสุ่มระยะ GPS ขาออก 20 เมตรสำหรับการลงเวลารูปแบบพิเศษ"
+    },
+    {
+      "file": "assets/js/controllers/SettingsController.js",
+      "symbol": "SettingsController.init & #handleSaveSettings",
+      "line_range": "70-80, 345-355",
+      "reason": "ผูก event และจัดการบันทึก/โหลดค่า toggleRandomizeGpsCheckout"
+    },
+    {
+      "file": "assets/js/models/SettingsModel.js",
+      "symbol": "SettingsModel.getSettings & updateSettings",
+      "line_range": "90-140",
+      "reason": "เพิ่มฟิลด์ randomize_gps_checkout รองรับค่าเริ่มต้นและ localStorage fallback"
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.calculateGpsJitter & submitCheckinOrCheckout & submitSpecialRequest",
+      "line_range": "960-1165",
+      "reason": "ฟังก์ชันคำนวณสุ่มพิกัด GPS ในรัศมี 20 เมตร พร้อมค้นหาสถานที่สำหรับบันทึก check_out_lat/lng/location ในรูปแบบพิเศษ"
+    },
+    {
+      "file": "assets/js/core/Config.js",
+      "symbol": "Config.DEFAULT_SETTINGS",
+      "line_range": "30-45",
+      "reason": "เพิ่ม randomize_gps_checkout: false ใน DEFAULT_SETTINGS"
+    }
+  ]
+}
+

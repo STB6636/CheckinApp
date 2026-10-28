@@ -104,6 +104,11 @@ export class SettingsModel {
             google_drive_folder_id: String(data.google_drive_folder_id ?? ''),
             footer_description: String(data.footer_description ?? Config.DEFAULT_SETTINGS.footer_description),
             single_click_checkin: Boolean(data.single_click_checkin ?? Config.DEFAULT_SETTINGS.single_click_checkin),
+            randomize_gps_checkout: typeof data.randomize_gps_checkout === 'boolean'
+                ? data.randomize_gps_checkout
+                : (localStorage.getItem('bma_randomize_gps_checkout') !== null
+                    ? localStorage.getItem('bma_randomize_gps_checkout') !== 'false'
+                    : Boolean(Config.DEFAULT_SETTINGS.randomize_gps_checkout)),
             prefixes: Array.isArray(data.prefixes) ? data.prefixes : Config.DEFAULT_SETTINGS.prefixes,
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
@@ -128,6 +133,7 @@ export class SettingsModel {
             require_photo: Boolean(payload.require_photo),
             require_gps: Boolean(payload.require_gps),
             single_click_checkin: Boolean(payload.single_click_checkin),
+            randomize_gps_checkout: Boolean(payload.randomize_gps_checkout),
             allow_checkin_start_time: UIHelpers.formatTime24(payload.allow_checkin_start_time || '06:00'),
             standard_check_in: UIHelpers.formatTime24(payload.standard_check_in || '08:30'),
             standard_check_out: UIHelpers.formatTime24(payload.standard_check_out || '16:30'),
@@ -152,9 +158,17 @@ export class SettingsModel {
             .single();
 
         if (error) {
+            let retryNeeded = false;
+            const fallbackUpdateData = { ...updateData };
             if (String(error.message || '').includes('filter_shifts_by_realtime')) {
-                const fallbackUpdateData = { ...updateData };
                 delete fallbackUpdateData.filter_shifts_by_realtime;
+                retryNeeded = true;
+            }
+            if (String(error.message || '').includes('randomize_gps_checkout')) {
+                delete fallbackUpdateData.randomize_gps_checkout;
+                retryNeeded = true;
+            }
+            if (retryNeeded) {
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
                 error = retryRes.error;
@@ -167,12 +181,17 @@ export class SettingsModel {
 
         const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
         localStorage.setItem('bma_filter_shifts_by_realtime', String(filterRealtimeVal));
+        const randomizeGpsVal = Boolean(payload.randomize_gps_checkout);
+        try { localStorage.setItem('bma_randomize_gps_checkout', String(randomizeGpsVal)); } catch (e) {}
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
             filter_shifts_by_realtime: typeof data?.filter_shifts_by_realtime === 'boolean'
                 ? data.filter_shifts_by_realtime
-                : filterRealtimeVal
+                : filterRealtimeVal,
+            randomize_gps_checkout: typeof data?.randomize_gps_checkout === 'boolean'
+                ? data.randomize_gps_checkout
+                : randomizeGpsVal
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));
