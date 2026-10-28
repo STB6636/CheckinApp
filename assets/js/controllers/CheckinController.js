@@ -1689,7 +1689,7 @@ export class CheckinController {
         const customCoordsDisp = document.getElementById('spCustomCoordsDisplay');
         const customLocDisp = document.getElementById('spCustomLocNameDisplay');
 
-        const updateCustomPinAndLocation = async (lat, lng, flyTo = false) => {
+        const updateCustomPinAndLocation = async (lat, lng, flyTo = false, explicitName = null) => {
             const numLat = Number(lat);
             const numLng = Number(lng);
             if (isNaN(numLat) || isNaN(numLng)) return;
@@ -1708,12 +1708,23 @@ export class CheckinController {
                 this.spLeafletMap.flyTo([numLat, numLng], 16, { animate: true, duration: 1 });
             }
 
+            // หากมีชื่อสถานที่ที่เลือกมาโดยตรง ให้ใช้ชื่อนั้นทันทีโดยไม่ต้องมีคำว่า ใกล้เคียง หรือ บริเวณ
+            if (explicitName) {
+                const cleanName = String(explicitName).replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+                this.specialModalGps.customLocationName = cleanName;
+                if (customLocDisp) {
+                    customLocDisp.textContent = cleanName;
+                }
+                return;
+            }
+
             if (customLocDisp) {
                 customLocDisp.textContent = 'กำลังตรวจสอบชื่อสถานที่...';
             }
 
             try {
-                const locName = await AttendanceModel.resolveLocationName(numLat, numLng);
+                const rawLocName = await AttendanceModel.resolveLocationName(numLat, numLng);
+                const locName = (rawLocName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
                 this.specialModalGps.customLocationName = locName;
                 if (customLocDisp) {
                     customLocDisp.textContent = locName || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
@@ -1912,13 +1923,13 @@ export class CheckinController {
                 itemEl.addEventListener('click', async () => {
                     const lat = parseFloat(itemEl.dataset.lat);
                     const lng = parseFloat(itemEl.dataset.lng);
-                    const name = itemEl.dataset.name || '';
+                    const name = (itemEl.dataset.name || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
                     if (searchInput) {
                         searchInput.value = name;
                     }
                     hideSearchResults();
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        await updateCustomPinAndLocation(lat, lng, true);
+                        await updateCustomPinAndLocation(lat, lng, true, name);
                     }
                 });
             });
@@ -2252,7 +2263,7 @@ export class CheckinController {
             if (this.specialModalGps?.mode === 'custom' && this.specialModalGps.customLat != null && this.specialModalGps.customLng != null) {
                 finalLat = this.specialModalGps.customLat;
                 finalLng = this.specialModalGps.customLng;
-                finalLocName = this.specialModalGps.customLocationName || 'พิกัดกำหนดเอง';
+                finalLocName = (this.specialModalGps.customLocationName || 'พิกัดกำหนดเอง').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
             } else {
                 finalLat = this.settings.require_gps ? this.gpsData.lat : null;
                 finalLng = this.settings.require_gps ? this.gpsData.lng : null;

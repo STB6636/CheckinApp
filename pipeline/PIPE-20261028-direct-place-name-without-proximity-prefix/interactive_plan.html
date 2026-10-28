@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แผนปรับปรุง: บันทึกชื่อสถานที่โดยตรงสำหรับคำขอพิเศษ (ตัดคำว่าใกล้เคียง/บริเวณ)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 sm:p-8">
+<div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+  
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 p-6 sm:p-8 text-white">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+        <i class="fa-solid fa-map-location"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-white/20 uppercase tracking-wider mb-1">Proposal</span>
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">แผนปรับปรุง: บันทึกชื่อสถานที่โดยตรง (ตัดคำว่าใกล้เคียง/บริเวณ)</h1>
+        <p class="text-emerald-100 text-xs sm:text-sm mt-0.5">Pipeline: PIPE-20261028-direct-place-name-without-proximity-prefix | Branch: feature-lock-normal-hours</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 sm:p-8 space-y-6">
+
+    <!-- Objective Card -->
+    <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-2">
+      <h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">
+        <i class="fa-solid fa-bullseye text-emerald-600"></i> วัตถุประสงค์และความต้องการของผู้ใช้
+      </h3>
+      <p class="text-xs sm:text-sm text-emerald-900 leading-relaxed">
+        กรณีค้นหาด้วยสถานที่แล้วคลิกเลือกสถานที่นั้นๆ ในโมดอลคำขอลงเวลากรณีพิเศษ ให้ระบบบันทึก <b>"ชื่อสถานที่นั้นๆ โดยตรง"</b> เข้าสู่พิกัด GPS ขาเข้างาน (<code class="bg-emerald-100 px-1 py-0.5 rounded text-emerald-800">check_in_location</code>) โดย<b>ไม่ต้องมีคำว่า "ใกล้เคียง" หรือ "บริเวณ"</b> นำหน้า และสำหรับพิกัด GPS ขาออกงาน (<code class="bg-emerald-100 px-1 py-0.5 rounded text-emerald-800">check_out_location</code>) ให้ดำเนินการตามระบบสุ่มระยะ GPS (Jitter) ตามที่ออกแบบไว้ตามปกติ
+      </p>
+    </div>
+
+    <!-- Comparison Card (Before vs After) -->
+    <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50 space-y-3">
+      <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-code-compare text-indigo-600"></i> เปรียบเทียบผลลัพธ์การบันทึก (Before vs After)
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <!-- Before -->
+        <div class="p-4 rounded-xl bg-rose-50/60 border border-rose-200 space-y-2">
+          <div class="font-bold text-rose-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-xmark text-rose-600"></i> เดิม (ก่อนปรับปรุง)
+          </div>
+          <div class="space-y-1 text-slate-600">
+            <div><b>ผู้ใช้เลือก:</b> "สำนักงานเขตพระนคร"</div>
+            <div><b>ระบบบันทึกขาเข้า:</b> <span class="text-rose-700 font-bold bg-white px-2 py-0.5 rounded border border-rose-200">ใกล้เคียง สำนักงานเขตพระนคร</span> (หรือ <i>บริเวณ ถนนสามเสน</i>)</div>
+            <div class="text-[11px] text-slate-500 mt-1">*เนื่องจากถูก Reverse Geocoding ซ้ำและติด Prefix ระยะห่าง</div>
+          </div>
+        </div>
+
+        <!-- After -->
+        <div class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-300 space-y-2">
+          <div class="font-bold text-emerald-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i> ใหม่ (หลังปรับปรุง)
+          </div>
+          <div class="space-y-1 text-slate-700">
+            <div><b>ผู้ใช้เลือก:</b> "สำนักงานเขตพระนคร"</div>
+            <div><b>ระบบบันทึกขาเข้า:</b> <span class="text-emerald-800 font-bold bg-white px-2 py-0.5 rounded border border-emerald-300">สำนักงานเขตพระนคร</span> (ตรงตามที่เลือก 100%)</div>
+            <div><b>ระบบบันทึกขาออก:</b> สุ่มระยะ GPS 20 ม. รอบจุดเข้างาน และค้นหาพื้นที่ใกล้เคียงตามระบบสุ่มเดิมปกติ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Details -->
+    <div class="p-4 rounded-2xl bg-white border border-slate-200 text-xs sm:text-sm space-y-2">
+      <div class="font-bold text-slate-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-gear text-indigo-600"></i> การทำงานทางเทคนิค
+      </div>
+      <ol class="list-decimal list-inside space-y-1.5 text-slate-600 leading-relaxed text-xs">
+        <li>ในฟังก์ชัน <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">updateCustomPinAndLocation(lat, lng, flyTo, explicitName)</code> เมื่อมีการส่ง <code class="font-mono text-emerald-700">explicitName</code> (ชื่อสถานที่จากการคลิกเลือกในผลการค้นหา) ระบบจะตัดคำว่า "ใกล้เคียง" หรือ "บริเวณ" ออก และใช้ชื่อสถานที่นั้นโดยตรงทันที โดยไม่ต้องเรียก Reverse Geocoding ซ้ำ</li>
+        <li>ในฟังก์ชัน <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">#handleSubmitSpecialRequest</code> ค่า <code class="font-mono text-emerald-700">finalLocName</code> สำหรับขาเข้าจะถูกส่งเป็นชื่อสถานที่สะอาดตรงเป้าหมาย</li>
+        <li>พิกัดขาออกงาน (<code class="font-mono bg-slate-100 px-1 py-0.5 rounded">AttendanceModel.submitSpecialRequest</code>) ยังคงรันผ่าน <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">resolveJitteredCheckoutWithLocation</code> ทำการสุ่มระยะ GPS (ค่าเริ่มต้น 20 ม.) และค้นหาชื่อสถานที่ขาออกตามระบบเดิมปกติ 100%</li>
+      </ol>
+    </div>
+
+    <!-- Subagent Resource Allocation -->
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-900 space-y-2">
+      <div class="font-bold flex items-center gap-1.5 text-amber-950">
+        <i class="fa-solid fa-microchip"></i> การจัดสรรทรัพยากร SubAgents ตามคำสั่งผู้ใช้
+      </div>
+      <ul class="list-disc list-inside space-y-1">
+        <li><strong>SubAgent 1 (Implementation Specialist - Model: Flash 3.8 High):</strong> ปรับปรุงเฉพาะฟังก์ชัน <code class="font-mono">updateCustomPinAndLocation</code> และการส่งค่าใน <code class="font-mono">CheckinController.js</code></li>
+        <li><strong>SubAgent 2 (QA Auditor - Model: Flash 3.8 High):</strong> ตรวจทานความถูกต้องของชื่อสถานที่ขาเข้า และตรวจสอบว่าระบบสุ่มระยะ GPS ขาออกยังคงทำงานปกติ</li>
+        <li><strong>Orchestrator:</strong> ควบคุมกระบวนการ, อัปเดต Second Brain, รัน AST Mapper (<code class="font-mono">vscode_ast_mapper.mjs</code>) และ Commit/Push ขึ้นสู่ Branch <code class="font-mono font-bold">feature-lock-normal-hours</code></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
+

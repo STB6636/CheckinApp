@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-28T10:53:31.373Z",
-  "totalFilesScanned": 60,
-  "totalSymbolsIndexed": 441,
+  "generatedAt": "2026-10-28T11:07:07.830Z",
+  "totalFilesScanned": 61,
+  "totalSymbolsIndexed": 442,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "91d7109d754315fb",
-      "totalLines": 2295,
+      "fileHash": "8b15a85017ef0729",
+      "totalLines": 2306,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 2213,
+          "endLine": 2224,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (2202 lines)"
+          "summary": "Class Definition (2213 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -560,121 +560,121 @@
           "name": "CheckinController.#initSpecialModalGps",
           "kind": "private method",
           "startLine": 1680,
-          "endLine": 1772,
+          "endLine": 1783,
           "signature": "() => any",
-          "summary": "private method L1680-L1772 (93 lines)"
+          "summary": "private method L1680-L1783 (104 lines)"
         },
         {
           "name": "updateCustomPinAndLocation",
           "kind": "async_arrow_fn",
           "startLine": 1692,
-          "endLine": 1729,
-          "signature": "(lat, lng, flyTo = false) => inferred",
-          "summary": "Arrow Function L1692-L1729"
+          "endLine": 1740,
+          "signature": "(lat, lng, flyTo = false, explicitName = null) => inferred",
+          "summary": "Arrow Function L1692-L1740"
         },
         {
           "name": "setupMapIfAvailable",
           "kind": "arrow_fn",
-          "startLine": 1731,
-          "endLine": 1766,
+          "startLine": 1742,
+          "endLine": 1777,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1731-L1766"
+          "summary": "Arrow Function L1742-L1777"
         },
         {
           "name": "getDistanceInMeters",
           "kind": "arrow_fn",
-          "startLine": 1791,
-          "endLine": 1810,
+          "startLine": 1802,
+          "endLine": 1821,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L1791-L1810"
+          "summary": "Arrow Function L1802-L1821"
         },
         {
           "name": "calculateDistance",
           "kind": "arrow_fn",
-          "startLine": 1812,
-          "endLine": 1821,
+          "startLine": 1823,
+          "endLine": 1832,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L1812-L1821"
+          "summary": "Arrow Function L1823-L1832"
         },
         {
           "name": "getCategoryLabel",
           "kind": "arrow_fn",
-          "startLine": 1823,
-          "endLine": 1862,
+          "startLine": 1834,
+          "endLine": 1873,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1823-L1862"
+          "summary": "Arrow Function L1834-L1873"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 1864,
-          "endLine": 1872,
+          "startLine": 1875,
+          "endLine": 1883,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L1864-L1872"
+          "summary": "Arrow Function L1875-L1883"
         },
         {
           "name": "formatSubAddress",
           "kind": "arrow_fn",
-          "startLine": 1874,
-          "endLine": 1890,
+          "startLine": 1885,
+          "endLine": 1901,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1874-L1890"
+          "summary": "Arrow Function L1885-L1901"
         },
         {
           "name": "getMainName",
           "kind": "arrow_fn",
-          "startLine": 1892,
-          "endLine": 1900,
+          "startLine": 1903,
+          "endLine": 1911,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1892-L1900"
+          "summary": "Arrow Function L1903-L1911"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 1902,
-          "endLine": 1907,
+          "startLine": 1913,
+          "endLine": 1918,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1902-L1907"
+          "summary": "Arrow Function L1913-L1918"
         },
         {
           "name": "bindResultItemClicks",
           "kind": "arrow_fn",
-          "startLine": 1909,
-          "endLine": 1925,
+          "startLine": 1920,
+          "endLine": 1936,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1909-L1925"
+          "summary": "Arrow Function L1920-L1936"
         },
         {
           "name": "renderCoordsResult",
           "kind": "arrow_fn",
-          "startLine": 1927,
-          "endLine": 1951,
+          "startLine": 1938,
+          "endLine": 1962,
           "signature": "(lat, lng) => inferred",
-          "summary": "Arrow Function L1927-L1951"
+          "summary": "Arrow Function L1938-L1962"
         },
         {
           "name": "renderPlaceResults",
           "kind": "arrow_fn",
-          "startLine": 1953,
-          "endLine": 1998,
+          "startLine": 1964,
+          "endLine": 2009,
           "signature": "(items) => inferred",
-          "summary": "Arrow Function L1953-L1998"
+          "summary": "Arrow Function L1964-L2009"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 2003,
-          "endLine": 2175,
+          "startLine": 2014,
+          "endLine": 2186,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2003-L2175"
+          "summary": "Arrow Function L2014-L2186"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 2215,
-          "endLine": 2290,
+          "startLine": 2226,
+          "endLine": 2301,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L2215-L2290 (76 lines)"
+          "summary": "private async method L2226-L2301 (76 lines)"
         }
       ]
     },
@@ -3714,6 +3714,25 @@
           "endLine": 16,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261028-direct-place-name-without-proximity-prefix/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "55c6fb60cfeff297",
+      "totalLines": 105,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
         }
       ]
     },
