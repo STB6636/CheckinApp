@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T09:12:46.912Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `57` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `427`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T09:50:10.869Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `58` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `438`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,11 +64,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `efdea8dcb40a5bbe` | **Total Lines:** `1929` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `405c70f4879276e9` | **Total Lines:** `2186` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L1847** | `export class CheckinController` | Class Definition (1836 lines) |
+| `CheckinController` | `class` | **L12 - L2104** | `export class CheckinController` | Class Definition (2093 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L45** | `() => any` | public constructor L13-L45 (33 lines) |
 | `CheckinController.init` | `public async method` | **L47 - L88** | `() => Promise<any>` | public async method L47-L88 (42 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L90 - L130** | `() => any` | private method L90-L130 (41 lines) |
@@ -100,11 +100,20 @@
 | `closeMobileDrawer` | `arrow_fn` | **L1287 - L1312** | `(targetTab = null) => inferred` | Arrow Function L1287-L1312 |
 | `CheckinController.#handleMainCheckin` | `private async method` | **L1333 - L1646** | `() => Promise<any>` | private async method L1333-L1646 (314 lines) |
 | `CheckinController.#openSpecialRequestModal` | `private method` | **L1648 - L1678** | `() => any` | private method L1648-L1678 (31 lines) |
-| `CheckinController.#initSpecialModalGps` | `private method` | **L1680 - L1770** | `() => any` | private method L1680-L1770 (91 lines) |
-| `updateCustomPinAndLocation` | `async_arrow_fn` | **L1690 - L1727** | `(lat, lng, flyTo = false) => inferred` | Arrow Function L1690-L1727 |
-| `setupMapIfAvailable` | `arrow_fn` | **L1729 - L1764** | `() => inferred` | Arrow Function L1729-L1764 |
-| `performSearch` | `async_arrow_fn` | **L1789 - L1834** | `() => inferred` | Arrow Function L1789-L1834 |
-| `#handleSubmitSpecialRequest` | `private async method` | **L1849 - L1924** | `(closeModalCallback) => Promise<any>` | private async method L1849-L1924 (76 lines) |
+| `CheckinController.#initSpecialModalGps` | `private method` | **L1680 - L1772** | `() => any` | private method L1680-L1772 (93 lines) |
+| `updateCustomPinAndLocation` | `async_arrow_fn` | **L1692 - L1729** | `(lat, lng, flyTo = false) => inferred` | Arrow Function L1692-L1729 |
+| `setupMapIfAvailable` | `arrow_fn` | **L1731 - L1766** | `() => inferred` | Arrow Function L1731-L1766 |
+| `calculateDistance` | `arrow_fn` | **L1791 - L1816** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L1791-L1816 |
+| `getCategoryLabel` | `arrow_fn` | **L1818 - L1857** | `(item) => inferred` | Arrow Function L1818-L1857 |
+| `escapeHtml` | `arrow_fn` | **L1859 - L1867** | `(str) => inferred` | Arrow Function L1859-L1867 |
+| `formatSubAddress` | `arrow_fn` | **L1869 - L1885** | `(item) => inferred` | Arrow Function L1869-L1885 |
+| `getMainName` | `arrow_fn` | **L1887 - L1895** | `(item) => inferred` | Arrow Function L1887-L1895 |
+| `hideSearchResults` | `arrow_fn` | **L1897 - L1902** | `() => inferred` | Arrow Function L1897-L1902 |
+| `bindResultItemClicks` | `arrow_fn` | **L1904 - L1920** | `() => inferred` | Arrow Function L1904-L1920 |
+| `renderCoordsResult` | `arrow_fn` | **L1922 - L1946** | `(lat, lng) => inferred` | Arrow Function L1922-L1946 |
+| `renderPlaceResults` | `arrow_fn` | **L1948 - L1993** | `(items) => inferred` | Arrow Function L1948-L1993 |
+| `performSearch` | `async_arrow_fn` | **L1998 - L2066** | `() => inferred` | Arrow Function L1998-L2066 |
+| `#handleSubmitSpecialRequest` | `private async method` | **L2106 - L2181** | `(closeModalCallback) => Promise<any>` | private async method L2106-L2181 (76 lines) |
 
 ---
 
@@ -467,7 +476,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `edf818b7ea44ed12` | **Total Lines:** `752` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `27deb3909bfb8f53` | **Total Lines:** `753` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -489,7 +498,8 @@
 | `<div#desktopSpecialWrapper>` | `html_dom_section` | **L468 - L508** | `id="desktopSpecialWrapper"` | HTML DOM Section L468-L508 |
 | `<div#mobileDrawerPanel>` | `html_dom_section` | **L520 - L610** | `id="mobileDrawerPanel"` | HTML DOM Section L520-L610 |
 | `<div#spCustomTimeContainer>` | `html_dom_section` | **L643 - L652** | `id="spCustomTimeContainer"` | HTML DOM Section L643-L652 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L749 - L749** | `<script>` | Bootstrap script L749-L749 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L694 - L700** | `id="spSearchWrapper"` | HTML DOM Section L694-L700 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L750 - L750** | `<script>` | Bootstrap script L750-L750 |
 
 ---
 
@@ -827,6 +837,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L16** | `<head>` | HTML DOM Section L3-L16 |
+
+---
+
+## File: `pipeline/PIPE-20261028-special-modal-place-autocomplete/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `bd37c507e5cee2d3` | **Total Lines:** `227` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
 
 ---
 

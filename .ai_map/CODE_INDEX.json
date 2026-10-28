@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-28T09:12:46.912Z",
-  "totalFilesScanned": 57,
-  "totalSymbolsIndexed": 427,
+  "generatedAt": "2026-10-28T09:50:10.869Z",
+  "totalFilesScanned": 58,
+  "totalSymbolsIndexed": 438,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "efdea8dcb40a5bbe",
-      "totalLines": 1929,
+      "fileHash": "405c70f4879276e9",
+      "totalLines": 2186,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1847,
+          "endLine": 2104,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (1836 lines)"
+          "summary": "Class Definition (2093 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -560,41 +560,113 @@
           "name": "CheckinController.#initSpecialModalGps",
           "kind": "private method",
           "startLine": 1680,
-          "endLine": 1770,
+          "endLine": 1772,
           "signature": "() => any",
-          "summary": "private method L1680-L1770 (91 lines)"
+          "summary": "private method L1680-L1772 (93 lines)"
         },
         {
           "name": "updateCustomPinAndLocation",
           "kind": "async_arrow_fn",
-          "startLine": 1690,
-          "endLine": 1727,
+          "startLine": 1692,
+          "endLine": 1729,
           "signature": "(lat, lng, flyTo = false) => inferred",
-          "summary": "Arrow Function L1690-L1727"
+          "summary": "Arrow Function L1692-L1729"
         },
         {
           "name": "setupMapIfAvailable",
           "kind": "arrow_fn",
-          "startLine": 1729,
-          "endLine": 1764,
+          "startLine": 1731,
+          "endLine": 1766,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1729-L1764"
+          "summary": "Arrow Function L1731-L1766"
+        },
+        {
+          "name": "calculateDistance",
+          "kind": "arrow_fn",
+          "startLine": 1791,
+          "endLine": 1816,
+          "signature": "(lat1, lon1, lat2, lon2) => inferred",
+          "summary": "Arrow Function L1791-L1816"
+        },
+        {
+          "name": "getCategoryLabel",
+          "kind": "arrow_fn",
+          "startLine": 1818,
+          "endLine": 1857,
+          "signature": "(item) => inferred",
+          "summary": "Arrow Function L1818-L1857"
+        },
+        {
+          "name": "escapeHtml",
+          "kind": "arrow_fn",
+          "startLine": 1859,
+          "endLine": 1867,
+          "signature": "(str) => inferred",
+          "summary": "Arrow Function L1859-L1867"
+        },
+        {
+          "name": "formatSubAddress",
+          "kind": "arrow_fn",
+          "startLine": 1869,
+          "endLine": 1885,
+          "signature": "(item) => inferred",
+          "summary": "Arrow Function L1869-L1885"
+        },
+        {
+          "name": "getMainName",
+          "kind": "arrow_fn",
+          "startLine": 1887,
+          "endLine": 1895,
+          "signature": "(item) => inferred",
+          "summary": "Arrow Function L1887-L1895"
+        },
+        {
+          "name": "hideSearchResults",
+          "kind": "arrow_fn",
+          "startLine": 1897,
+          "endLine": 1902,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L1897-L1902"
+        },
+        {
+          "name": "bindResultItemClicks",
+          "kind": "arrow_fn",
+          "startLine": 1904,
+          "endLine": 1920,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L1904-L1920"
+        },
+        {
+          "name": "renderCoordsResult",
+          "kind": "arrow_fn",
+          "startLine": 1922,
+          "endLine": 1946,
+          "signature": "(lat, lng) => inferred",
+          "summary": "Arrow Function L1922-L1946"
+        },
+        {
+          "name": "renderPlaceResults",
+          "kind": "arrow_fn",
+          "startLine": 1948,
+          "endLine": 1993,
+          "signature": "(items) => inferred",
+          "summary": "Arrow Function L1948-L1993"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 1789,
-          "endLine": 1834,
+          "startLine": 1998,
+          "endLine": 2066,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1789-L1834"
+          "summary": "Arrow Function L1998-L2066"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 1849,
-          "endLine": 1924,
+          "startLine": 2106,
+          "endLine": 2181,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L1849-L1924 (76 lines)"
+          "summary": "private async method L2106-L2181 (76 lines)"
         }
       ]
     },
@@ -2692,8 +2764,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "edf818b7ea44ed12",
-      "totalLines": 752,
+      "fileHash": "27deb3909bfb8f53",
+      "totalLines": 753,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2843,12 +2915,20 @@
           "summary": "HTML DOM Section L643-L652"
         },
         {
+          "name": "<div#spSearchWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 694,
+          "endLine": 700,
+          "signature": "id=\"spSearchWrapper\"",
+          "summary": "HTML DOM Section L694-L700"
+        },
+        {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 749,
-          "endLine": 749,
+          "startLine": 750,
+          "endLine": 750,
           "signature": "<script>",
-          "summary": "Bootstrap script L749-L749"
+          "summary": "Bootstrap script L750-L750"
         }
       ]
     },
@@ -3699,6 +3779,25 @@
           "endLine": 16,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261028-special-modal-place-autocomplete/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "bd37c507e5cee2d3",
+      "totalLines": 227,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
         }
       ]
     },

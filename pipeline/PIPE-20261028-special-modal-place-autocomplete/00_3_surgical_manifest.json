@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "PIPE-20261028-special-modal-place-autocomplete",
+  "branch": "feature-lock-normal-hours",
+  "surgical_files": [
+    {
+      "path": "checkin.html",
+      "target_lines": "690-710",
+      "action": "ADD_SEARCH_SUGGESTIONS_DROPDOWN_CONTAINER",
+      "description": "Add relative container around #spMapSearchInput and create #spMapSearchResults floating dropdown container"
+    },
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "target_lines": "1780-1850",
+      "action": "IMPLEMENT_GOOGLE_MAPS_STYLE_SEARCH_AUTOCOMPLETE",
+      "description": "Add debounced search input listener, Nominatim search querying up to 5 items, rich card dropdown UI, click selection, and outside click dismissal"
+    }
+  ]
+}
+

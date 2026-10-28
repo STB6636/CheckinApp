@@ -690,12 +690,13 @@
                     <!-- Custom GPS Map & Search Box -->
                     <div id="spCustomGpsBox" class="hidden space-y-2">
                         <!-- Search Box / Direct Coordinate input -->
-                        <div class="flex gap-1.5">
-                            <div class="relative flex-1">
+                        <div class="flex gap-1.5 relative z-20">
+                            <div class="relative flex-1" id="spSearchWrapper">
                                 <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 text-xs">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </span>
-                                <input type="text" id="spMapSearchInput" placeholder="พิมพ์ชื่อสถานที่ หรือ ละติจูด, ลองจิจูด..." class="bma-input pl-8 text-xs py-2 rounded-xl w-full">
+                                <input type="text" id="spMapSearchInput" placeholder="พิมพ์ชื่อสถานที่ หรือ ละติจูด, ลองจิจูด..." class="bma-input pl-8 text-xs py-2 rounded-xl w-full" autocomplete="off">
+                                <div id="spMapSearchResults" class="absolute left-0 right-0 top-full mt-1.5 z-30 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-h-60 overflow-y-auto hidden divide-y divide-slate-100 dark:divide-slate-700/60"></div>
                             </div>
                             <button type="button" id="btnSpMapSearch" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0 transition flex items-center gap-1">
                                 <span>ค้นหา</span>

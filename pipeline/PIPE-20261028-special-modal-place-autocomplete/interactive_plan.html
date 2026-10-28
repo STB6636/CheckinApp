@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อกำหนดและแผนจำลอง: ระบบค้นหาสถานที่ใกล้เคียงสไตล์ Google Maps</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 sm:p-8">
+<div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 p-6 sm:p-8 text-white">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+        <i class="fa-solid fa-map-location-dot"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-white/20 uppercase tracking-wider mb-1">Detailed Specifications</span>
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">ข้อกำหนดและแผนจำลอง: ระบบค้นหาสถานที่ใกล้เคียงสไตล์ Google Maps</h1>
+        <p class="text-emerald-100 text-xs sm:text-sm mt-0.5">Pipeline: PIPE-20261028-special-modal-place-autocomplete | CheckinApp UX/UI</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="p-6 sm:p-8 space-y-6">
+
+    <!-- Section 1: Detailed Spec of Google Maps Autocomplete Items -->
+    <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 space-y-3">
+      <h3 class="text-base font-bold text-indigo-950 flex items-center gap-2">
+        <i class="fa-brands fa-google text-indigo-600"></i> รายละเอียดองค์ประกอบของรายการตัวเลือก (Google Maps Pattern Breakdown)
+      </h3>
+      <p class="text-xs sm:text-sm text-indigo-900 leading-relaxed">
+        เมื่อผู้ใช้พิมพ์คำค้นหาในช่องค้นหา ระบบจะประมวลผลข้อมูลสถานที่จาก Nominatim + พิกัดปัจจุบันของผู้ใช้ และจัดโครงสร้างการแสดงผลแต่ละรายการให้เหมือนกับ Google Maps ดังนี้:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+        <div class="bg-white p-3 rounded-xl border border-indigo-200 space-y-1">
+          <div class="font-bold text-slate-800 flex items-center gap-1.5 text-indigo-700">
+            <i class="fa-solid fa-heading"></i> 1. ชื่อสถานที่หลัก (Primary Place Name)
+          </div>
+          <p class="text-slate-600">แสดงชื่ออาคาร สถานที่สำคัญ หน่วยงานราชการ หรือจุดเด่นชัดเจน ตัวหนา ขนาด 12px (เช่น <b>เสาชิงช้า</b> หรือ <b>ศาลาว่าการ กทม. 1</b>)</p>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-indigo-200 space-y-1">
+          <div class="font-bold text-slate-800 flex items-center gap-1.5 text-emerald-700">
+            <i class="fa-solid fa-route"></i> 2. ระยะทางโดยประมาณ (Proximity Distance)
+          </div>
+          <p class="text-slate-600">คำนวณระยะห่างแบบ Haversine เทียบกับพิกัดปัจจุบันของผู้ใช้แบบ Real-time (เช่น <span class="text-emerald-700 font-bold">• 350 ม.</span> หรือ <span class="text-emerald-700 font-bold">• 2.4 กม.</span>)</p>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-indigo-200 space-y-1">
+          <div class="font-bold text-slate-800 flex items-center gap-1.5 text-slate-700">
+            <i class="fa-solid fa-map-pin"></i> 3. ข้อมูลที่อยู่ย่อย (Secondary Subtitle)
+          </div>
+          <p class="text-slate-600">แสดงชื่อถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด เพื่อแยกแยะสถานที่ชื่อซ้ำกันได้อย่างแม่นยำ</p>
+        </div>
+
+        <div class="bg-white p-3 rounded-xl border border-indigo-200 space-y-1">
+          <div class="font-bold text-slate-800 flex items-center gap-1.5 text-amber-700">
+            <i class="fa-solid fa-tag"></i> 4. ป้ายกำกับประเภทสถานที่ (Place Category Tag)
+          </div>
+          <p class="text-slate-600">ระบุประเภท เช่น "สถานที่ราชการ", "วัด/ศาสนสถาน", "โรงพยาบาล", "สวนสาธารณะ", "อาคาร/สำนักงาน"</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Interactive Live Preview (Simulated UI) -->
+    <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-laptop-code text-emerald-600"></i> ตัวอย่างหน้าจอจำลอง (Live Simulated Autocomplete Dropdown)
+        </h3>
+        <span class="text-xs text-slate-500">แบบสไตล์ Google Maps</span>
+      </div>
+
+      <!-- Mockup Window -->
+      <div class="max-w-md mx-auto bg-white p-4 rounded-2xl border border-slate-300 shadow-md relative">
+        <label class="block text-xs font-bold text-slate-700 mb-1">ค้นหาสถานที่หรือพิมพ์พิกัด</label>
+        
+        <!-- Search bar -->
+        <div class="relative">
+          <div class="relative flex items-center">
+            <span class="absolute left-3 text-slate-400 text-xs">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" value="เสาชิงช้า" class="w-full pl-9 pr-20 py-2.5 text-xs rounded-xl border border-emerald-500 ring-2 ring-emerald-100 bg-white text-slate-800 font-medium focus:outline-none" readonly>
+            <span class="absolute right-3 text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <i class="fa-solid fa-check text-emerald-600"></i> กำลังแสดง
+            </span>
+          </div>
+
+          <!-- Dropdown container -->
+          <div class="mt-1.5 w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-xs divide-y divide-slate-100 z-30">
+            
+            <!-- Item 1 -->
+            <div class="p-3 hover:bg-slate-50 cursor-pointer flex items-start gap-3 transition">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                <i class="fa-solid fa-location-dot"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="font-bold text-slate-800 truncate">เสาชิงช้า (The Giant Swing)</div>
+                  <span class="text-[10px] font-bold text-emerald-600 shrink-0 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    • 180 ม.
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 truncate mt-0.5">ถนนบำรุงเมือง แขวงเสาชิงช้า เขตพระนคร กรุงเทพมหานคร</div>
+                <div class="mt-1">
+                  <span class="inline-block text-[9.5px] font-medium text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                    โบราณสถาน / แลนด์มาร์ก
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="p-3 hover:bg-slate-50 cursor-pointer flex items-start gap-3 transition">
+              <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="font-bold text-slate-800 truncate">ศาลาว่าการกรุงเทพมหานคร (เสาชิงช้า)</div>
+                  <span class="text-[10px] font-bold text-emerald-600 shrink-0 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    • 250 ม.
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 truncate mt-0.5">ถนนดินสอ แขวงเสาชิงช้า เขตพระนคร กรุงเทพมหานคร</div>
+                <div class="mt-1">
+                  <span class="inline-block text-[9.5px] font-medium text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">
+                    สถานที่ราชการ กทม.
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="p-3 hover:bg-slate-50 cursor-pointer flex items-start gap-3 transition">
+              <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                <i class="fa-solid fa-place-of-worship"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="font-bold text-slate-800 truncate">วัดสุทัศนเทพวรารามราชวรมหาวิหาร</div>
+                  <span class="text-[10px] font-bold text-emerald-600 shrink-0 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    • 310 ม.
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 truncate mt-0.5">ตรงข้ามเสาชิงช้า ถนนบำรุงเมือง แขวงเสาชิงช้า เขตพระนคร กรุงเทพฯ</div>
+                <div class="mt-1">
+                  <span class="inline-block text-[9.5px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                    วัด / ศาสนสถาน
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="p-3 hover:bg-slate-50 cursor-pointer flex items-start gap-3 transition">
+              <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                <i class="fa-solid fa-tree"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="font-bold text-slate-800 truncate">ลานคนเมือง (กทม.)</div>
+                  <span class="text-[10px] font-bold text-emerald-600 shrink-0 bg-emerald-50 px-1.5 py-0.5 rounded">
+                    • 210 ม.
+                  </span>
+                </div>
+                <div class="text-[11px] text-slate-500 truncate mt-0.5">หน้าศาลาว่าการกรุงเทพมหานคร แขวงเสาชิงช้า เขตพระนคร</div>
+                <div class="mt-1">
+                  <span class="inline-block text-[9.5px] font-medium text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                    พื้นที่สาธารณะ / ลานกิจกรรม
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Interaction & Technical Logic -->
+    <div class="p-5 rounded-2xl bg-white border border-slate-200 space-y-3">
+      <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-gears text-indigo-600"></i> ลำดับกระบวนการทำงานเมื่อผู้ใช้ใช้งาน (Interaction Flow)
+      </h3>
+      <ol class="list-decimal list-inside space-y-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <li><strong>การพิมพ์คำค้นหา (Debounce 350ms):</strong> เมื่อพิมพ์ข้อความ ระบบจะหน่วงเวลา 350ms แล้วดึงข้อมูลจาก OpenStreetMap Nominatim Search API สูงสุด 5 รายการ พร้อมคัดเลือกสถานที่เฉพาะในประเทศไทย (<code class="bg-slate-100 px-1 py-0.5 rounded">countrycodes=th</code>)</li>
+        <li><strong>การคำนวณระยะทางแบบไดนามิก:</strong> คำนวณระยะห่างเชิงพิกัด (Haversine formula) จากพิกัดของอุปกรณ์ปัจจุบันของผู้ใช้ไปยังผลลัพธ์แต่ละแห่ง เพื่อแสดงผลระยะทาง (เช่น • 350 ม. หรือ • 2.4 กม.) เพิ่มความสะดวกในการตัดสินใจเลือกสถานที่</li>
+        <li><strong>การคลิกเลือกสถานที่:</strong>
+          <ul class="list-disc list-inside pl-4 mt-1 space-y-1">
+            <li>ใส่ชื่อสถานที่ที่เลือกลงในช่องค้นหา</li>
+            <li>ปิดเมนูตัวเลือกแบบลอยทันที</li>
+            <li>สั่งให้แผนที่ Leaflet บินอย่างนุ่มนวล (<code class="bg-slate-100 px-1 py-0.5 rounded">spLeafletMap.flyTo([lat, lng], 16)</code>)</li>
+            <li>ย้ายหมุดปักสีฟ้า (<code class="bg-slate-100 px-1 py-0.5 rounded">spLeafletMarker.setLatLng([lat, lng])</code>) ไปยังตำแหน่งนั้น</li>
+            <li>อัปเดตตัวเลขพิกัดใน <code class="bg-slate-100 px-1 py-0.5 rounded">#spCustomCoordsDisplay</code> และชื่อสถานที่ใน <code class="bg-slate-100 px-1 py-0.5 rounded">#spCustomLocNameDisplay</code></li>
+          </ul>
+        </li>
+        <li><strong>การคลิกปิดหรือยกเลิก:</strong> คลิกพื้นที่ภายนอก (Click Outside) หรือกดปุ่ม Escape จะปิดเมนูตัวเลือกอัตโนมัติ</li>
+      </ol>
+    </div>
+
+    <!-- Section 4: SubAgent Architecture Execution -->
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-900 space-y-2">
+      <div class="font-bold flex items-center gap-1.5 text-amber-950">
+        <i class="fa-solid fa-microchip"></i> รูปแบบการดำเนินงานโดย SubAgents (ลดขั้นตอน ประหยัดโทเคน)
+      </div>
+      <ul class="list-disc list-inside space-y-1">
+        <li><strong>SubAgent 1 (Implementation Specialist - Model: Flash 3.8 High):</strong> อ่านไฟล์และแก้ไขเฉพาะส่วนค้นหาใน <code class="font-mono">checkin.html</code> และ <code class="font-mono">CheckinController.js</code></li>
+        <li><strong>SubAgent 2 (QA Auditor - Model: Flash 3.8 High):</strong> ตรวจทานความถูกต้องของโค้ด เทียบผลลัพธ์กับแผน และเทียบความแตกต่างกับ Branch main</li>
+        <li><strong>Orchestrator:</strong> ควบคุม SubAgents, อัปเดต Second Brain, รัน AST Mapper (<code class="font-mono">vscode_ast_mapper.mjs</code>) และ Commit/Push ขึ้นสู่ Branch <code class="font-mono font-bold">feature-lock-normal-hours</code></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

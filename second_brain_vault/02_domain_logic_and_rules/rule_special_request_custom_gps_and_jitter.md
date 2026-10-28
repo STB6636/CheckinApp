@@ -16,9 +16,15 @@
    - **ปักหมุดแผนที่ / ระบุพิกัดเอง (`custom`):** อนุญาตให้ผู้ใช้ค้นหาสถานที่ หรือลากหมุดบนแผนที่ได้เอง
 2. **ระบบค้นหาและปักหมุดบนแผนที่ (Interactive Leaflet Map):**
    - ใช้ Leaflet.js v1.9.4 พร้อม OpenStreetMap tiles
-   - **การค้นหาสถานที่ (`#spMapSearchInput`):**
-     - รองรับการพิมพ์พิกัดโดยตรง รูปแบบ `lat, lng` (เช่น `13.7563, 100.5018`)
-     - รองรับการค้นหาชื่อสถานที่ผ่าน OpenStreetMap Nominatim API พร้อมจำกัดเฉพาะในประเทศไทย (`countrycodes=th&accept-language=th`)
+   - **การค้นหาสถานที่สไตล์ Google Maps Autocomplete (`#spMapSearchInput` & `#spMapSearchResults`):**
+     - รองรับการพิมพ์พิกัดโดยตรง รูปแบบ `lat, lng` (เช่น `13.7563, 100.5018`) และปักหมุดนำทางได้ทันที
+     - กลไก Debounce 350ms เมื่อผู้ใช้พิมพ์ตัวอักษรตั้งแต่ 2 ตัวขึ้นไป พร้อมปุ่มค้นหาและรองรับการกด Enter
+     - ค้นหาผ่าน OpenStreetMap Nominatim API พร้อมจำกัดเฉพาะในประเทศไทย (`countrycodes=th&accept-language=th&addressdetails=1`) สูงสุด 5 รายการ
+     - คำนวณระยะห่างระหว่างตำแหน่งปัจจุบันกับสถานที่ในรายการด้วยสูตร Haversine (`• xx ม.` หรือ `• xx.x กม.`)
+     - จำแนกประเภทสถานที่และแสดง Badge อัตโนมัติ (เช่น สถานที่ราชการ กทม., วัด, สถานศึกษา, สวนสาธารณะ, อาคารสำนักงาน ฯลฯ)
+     - มีระบบป้องกัน Race Condition ด้วย Search Sequence ID (`searchSeq`)
+     - รองรับการปิดกล่องผลลัพธ์เมื่อคลิกภายนอก (Click Outside) หรือกดปุ่ม `Escape`
+     - เมื่อผู้ใช้คลิกเลือกสถานที่ จะส่งพิกัดไปยัง `updateCustomPinAndLocation` และสั่ง `map.flyTo` ไปยังตำแหน่งใหม่อย่างนุ่มนวล
    - **การลากหมุด (Draggable Pin) & คลิกบนแผนที่:**
      - หมุดสามารถลากปล่อย (Drag & Drop) ได้อย่างอิสระ คล้ายระบบแชร์ Location ในแอป LINE
      - สามารถคลิกที่จุดใดก็ได้บนแผนที่เพื่อย้ายหมุดไปยังตำแหน่งนั้นทันที
@@ -29,3 +35,4 @@
 3. **การนำพิกัดไปใช้งาน:**
    - พิกัดที่เลือกในโหมด `custom` จะถูกส่งเป็นพิกัดขาเข้า (`lat`, `lng`, `location_name`)
    - และนำไปเป็นพิกัดตั้งต้นสำหรับระบบสุ่มพิกัดขาออก (`out_lat`, `out_lng`, `checkout_location_name`) ผ่าน `AttendanceModel.resolveJitteredCheckoutWithLocation`
+

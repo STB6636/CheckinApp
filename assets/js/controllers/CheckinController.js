@@ -1684,6 +1684,8 @@ export class CheckinController {
         const customBox = document.getElementById('spCustomGpsBox');
         const searchInput = document.getElementById('spMapSearchInput');
         const btnSearch = document.getElementById('btnSpMapSearch');
+        const searchWrapper = document.getElementById('spSearchWrapper');
+        const searchResultsEl = document.getElementById('spMapSearchResults');
         const customCoordsDisp = document.getElementById('spCustomCoordsDisplay');
         const customLocDisp = document.getElementById('spCustomLocNameDisplay');
 
@@ -1786,9 +1788,219 @@ export class CheckinController {
             }
         });
 
+        const calculateDistance = (lat1, lon1, lat2, lon2) => {
+            if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return '';
+            const nLat1 = Number(lat1);
+            const nLon1 = Number(lon1);
+            const nLat2 = Number(lat2);
+            const nLon2 = Number(lon2);
+            if (isNaN(nLat1) || isNaN(nLon1) || isNaN(nLat2) || isNaN(nLon2)) return '';
+
+            const R = 6371e3; // metres
+            const φ1 = nLat1 * Math.PI / 180;
+            const φ2 = nLat2 * Math.PI / 180;
+            const Δφ = (nLat2 - nLat1) * Math.PI / 180;
+            const Δλ = (nLon2 - nLon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const dist = R * c;
+
+            if (dist < 1000) {
+                return `• ${Math.round(dist)} ม.`;
+            } else {
+                return `• ${(dist / 1000).toFixed(1)} กม.`;
+            }
+        };
+
+        const getCategoryLabel = (item) => {
+            if (!item) return 'สถานที่ทั่วไป';
+            const type = (item.type || '').toLowerCase();
+            const cls = (item.class || '').toLowerCase();
+
+            if (cls === 'government' || type === 'government' || type === 'townhall' || type === 'courthouse' || type === 'public_building' || type === 'police') {
+                return 'สถานที่ราชการ กทม.';
+            }
+            if (cls === 'place_of_worship' || type === 'place_of_worship' || type === 'temple' || type === 'church' || type === 'mosque') {
+                return 'วัด / ศาสนสถาน';
+            }
+            if (cls === 'education' || type === 'school' || type === 'university' || type === 'college' || type === 'kindergarten') {
+                return 'สถานศึกษา';
+            }
+            if (cls === 'leisure' || type === 'park' || type === 'garden' || type === 'pitch' || type === 'playground') {
+                return 'สวนสาธารณะ / ลานกิจกรรม';
+            }
+            if (cls === 'building' || cls === 'office' || type === 'building' || type === 'office' || type === 'commercial') {
+                return 'อาคาร / สำนักงาน';
+            }
+            if (type === 'hospital' || type === 'clinic' || type === 'doctors' || type === 'pharmacy') {
+                return 'โรงพยาบาล / สาธารณสุข';
+            }
+            if (cls === 'highway' || type === 'road' || type === 'residential' || type === 'street') {
+                return 'ถนน / ซอย';
+            }
+            if (cls === 'shop' || type === 'mall' || type === 'supermarket' || type === 'department_store') {
+                return 'ห้างสรรพสินค้า / ร้านค้า';
+            }
+            if (cls === 'railway' || type === 'station' || type === 'subway_entrance' || type === 'bus_stop') {
+                return 'สถานีขนส่ง / รถไฟฟ้า';
+            }
+            if (cls === 'tourism' || type === 'attraction' || type === 'hotel' || type === 'museum') {
+                return 'สถานที่ท่องเที่ยว / โรงแรม';
+            }
+            if (cls === 'boundary' || type === 'administrative') {
+                return 'เขต / แขวง / พื้นที่';
+            }
+            return 'สถานที่ทั่วไป';
+        };
+
+        const escapeHtml = (str) => {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        };
+
+        const formatSubAddress = (item) => {
+            if (!item) return '';
+            if (item.address) {
+                const addr = item.address;
+                const parts = [];
+                if (addr.road) parts.push(addr.road);
+                const sub = addr.quarter || addr.suburb || addr.neighbourhood;
+                if (sub && !parts.includes(sub) && sub !== item.name) parts.push(sub);
+                const dist = addr.city_district || addr.district || (addr.suburb !== sub ? addr.suburb : '') || addr.county;
+                if (dist && !parts.includes(dist) && dist !== item.name) parts.push(dist);
+                const prov = addr.state || addr.province || addr.city;
+                if (prov && !parts.includes(prov) && prov !== item.name) parts.push(prov);
+                if (parts.length > 0) return parts.join(', ');
+            }
+            const tokens = (item.display_name || '').split(',').map(s => s.trim());
+            return tokens.slice(1, 4).join(', ') || item.display_name || '';
+        };
+
+        const getMainName = (item) => {
+            if (item.name) return item.name;
+            if (item.address) {
+                const addr = item.address;
+                const candidate = addr.amenity || addr.building || addr.office || addr.leisure || addr.tourism || addr.shop;
+                if (candidate) return candidate;
+            }
+            return (item.display_name || '').split(',')[0].trim() || 'สถานที่ที่เลือก';
+        };
+
+        const hideSearchResults = () => {
+            if (searchResultsEl) {
+                searchResultsEl.classList.add('hidden');
+                searchResultsEl.innerHTML = '';
+            }
+        };
+
+        const bindResultItemClicks = () => {
+            if (!searchResultsEl) return;
+            searchResultsEl.querySelectorAll('.sp-search-item').forEach(itemEl => {
+                itemEl.addEventListener('click', async () => {
+                    const lat = parseFloat(itemEl.dataset.lat);
+                    const lng = parseFloat(itemEl.dataset.lng);
+                    const name = itemEl.dataset.name || '';
+                    if (searchInput) {
+                        searchInput.value = name;
+                    }
+                    hideSearchResults();
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        await updateCustomPinAndLocation(lat, lng, true);
+                    }
+                });
+            });
+        };
+
+        const renderCoordsResult = (lat, lng) => {
+            if (!searchResultsEl) return;
+            const refLat = this.gpsData?.lat;
+            const refLng = this.gpsData?.lng;
+            const distStr = calculateDistance(refLat, refLng, lat, lng);
+            const distHtml = distStr ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] shrink-0">${escapeHtml(distStr)}</span>` : '';
+
+            searchResultsEl.innerHTML = `
+                <div class="sp-search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start gap-3 transition" data-lat="${lat}" data-lng="${lng}" data-name="พิกัด (${lat.toFixed(5)}, ${lng.toFixed(5)})">
+                    <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-1 text-sm shrink-0"></i>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">📌 ไปที่พิกัด ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
+                            ${distHtml}
+                        </div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">คลิกเพื่อปักหมุดและนำทางไปยังพิกัดนี้บนแผนที่</div>
+                        <div class="mt-1">
+                            <span class="inline-flex items-center px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 font-medium">พิกัด GPS</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            searchResultsEl.classList.remove('hidden');
+            bindResultItemClicks();
+        };
+
+        const renderPlaceResults = (items) => {
+            if (!searchResultsEl) return;
+            if (!items || items.length === 0) {
+                searchResultsEl.innerHTML = `
+                    <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 mb-1 block text-base"></i>
+                        <span>ไม่พบสถานที่ใกล้เคียง กรุณาระบุชื่อเพิ่มเติมหรือลากหมุดบนแผนที่</span>
+                    </div>
+                `;
+                searchResultsEl.classList.remove('hidden');
+                return;
+            }
+
+            const refLat = this.gpsData?.lat;
+            const refLng = this.gpsData?.lng;
+
+            const html = items.map(item => {
+                const itemLat = parseFloat(item.lat);
+                const itemLng = parseFloat(item.lon);
+                const mainName = getMainName(item);
+                const subAddr = formatSubAddress(item);
+                const category = getCategoryLabel(item);
+                const distStr = calculateDistance(refLat, refLng, itemLat, itemLng);
+                const distHtml = distStr ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] shrink-0">${escapeHtml(distStr)}</span>` : '';
+
+                return `
+                    <div class="sp-search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start gap-3 transition" data-lat="${itemLat}" data-lng="${itemLng}" data-name="${escapeHtml(mainName)}">
+                        <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-1 text-sm shrink-0"></i>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">${escapeHtml(mainName)}</span>
+                                ${distHtml}
+                            </div>
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">${escapeHtml(subAddr)}</div>
+                            <div class="mt-1">
+                                <span class="inline-flex items-center px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 font-medium">${escapeHtml(category)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            searchResultsEl.innerHTML = html;
+            searchResultsEl.classList.remove('hidden');
+            bindResultItemClicks();
+        };
+
+        let searchSeq = 0;
+        let debounceTimer = null;
+
         const performSearch = async () => {
             const query = (searchInput?.value || '').trim();
-            if (!query) return;
+            if (!query) {
+                hideSearchResults();
+                return;
+            }
 
             // 1. Check if coordinate format e.g. "13.7563, 100.5018"
             const coordRegex = /^(-?\d+(?:\.\d+)?)[,\s]+(-?\d+(?:\.\d+)?)$/;
@@ -1797,12 +2009,23 @@ export class CheckinController {
                 const lat = parseFloat(match[1]);
                 const lng = parseFloat(match[2]);
                 if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                    await updateCustomPinAndLocation(lat, lng, true);
+                    renderCoordsResult(lat, lng);
                     return;
                 }
             }
 
             // 2. Nominatim search
+            const currentSeq = ++searchSeq;
+            if (searchResultsEl) {
+                searchResultsEl.innerHTML = `
+                    <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin text-indigo-500"></i>
+                        <span>กำลังค้นหาสถานที่ใกล้เคียง...</span>
+                    </div>
+                `;
+                searchResultsEl.classList.remove('hidden');
+            }
+
             const origBtnText = btnSearch ? btnSearch.innerHTML : '';
             if (btnSearch) {
                 btnSearch.disabled = true;
@@ -1810,21 +2033,30 @@ export class CheckinController {
             }
 
             try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&accept-language=th`;
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=th&accept-language=th&addressdetails=1`;
                 const res = await fetch(url, {
                     headers: { 'User-Agent': 'CheckinApp-BMA/2.0' }
                 });
                 const data = await res.json();
-                if (data && data.length > 0) {
-                    const lat = parseFloat(data[0].lat);
-                    const lng = parseFloat(data[0].lon);
-                    await updateCustomPinAndLocation(lat, lng, true);
+                if (currentSeq !== searchSeq) return;
+
+                if (Array.isArray(data) && data.length > 0) {
+                    renderPlaceResults(data);
                 } else {
-                    UIHelpers.showToast('ไม่พบสถานที่ที่ค้นหา กรุณาระบุให้ชัดเจนขึ้น หรือลากหมุดบนแผนที่', 'warning', 3000);
+                    renderPlaceResults([]);
                 }
             } catch (err) {
+                if (currentSeq !== searchSeq) return;
                 console.warn('Search location error:', err);
-                UIHelpers.showToast('เกิดข้อผิดพลาดในการค้นหาสถานที่', 'error', 2500);
+                if (searchResultsEl) {
+                    searchResultsEl.innerHTML = `
+                        <div class="p-4 text-center text-xs text-rose-500 dark:text-rose-400">
+                            <i class="fa-solid fa-circle-exclamation mb-1 block text-base"></i>
+                            <span>เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ค้นหา</span>
+                        </div>
+                    `;
+                    searchResultsEl.classList.remove('hidden');
+                }
             } finally {
                 if (btnSearch) {
                     btnSearch.disabled = false;
@@ -1833,15 +2065,40 @@ export class CheckinController {
             }
         };
 
+        searchInput?.addEventListener('input', () => {
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+            const query = (searchInput?.value || '').trim();
+            if (!query || query.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 350);
+        });
+
         btnSearch?.addEventListener('click', (e) => {
             e.preventDefault();
+            if (debounceTimer) clearTimeout(debounceTimer);
             performSearch();
         });
 
         searchInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
+                if (debounceTimer) clearTimeout(debounceTimer);
                 performSearch();
+            } else if (e.key === 'Escape') {
+                hideSearchResults();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('spSearchWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                hideSearchResults();
             }
         });
     }
