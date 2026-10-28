@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แผนปรับปรุงระบบค้นหาสถานที่อัจฉริยะ (Debounce 2 วิ, ค้นหาแม่นยำ, อิงพิกัดจังหวัด และรองรับคำเว้นวรรค)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 sm:p-8">
+<div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 p-6 sm:p-8 text-white">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
+        <i class="fa-solid fa-magnifying-glass-location"></i>
+      </div>
+      <div>
+        <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-white/20 uppercase tracking-wider mb-1">Smart Search Proposal</span>
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">แผนปรับปรุงระบบค้นหาสถานที่อัจฉริยะ</h1>
+        <p class="text-emerald-100 text-xs sm:text-sm mt-0.5">Pipeline: PIPE-20261028-smart-place-search-2s-debounce | Branch: feature-lock-normal-hours</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-6 sm:p-8 space-y-6">
+
+    <!-- Objective Card -->
+    <div class="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-2">
+      <h3 class="text-base font-bold text-emerald-950 flex items-center gap-2">
+        <i class="fa-solid fa-bullseye text-emerald-600"></i> วัตถุประสงค์และการอัปเกรดความสามารถในการค้นหา
+      </h3>
+      <p class="text-xs sm:text-sm text-emerald-900 leading-relaxed">
+        ปรับปรุงช่องค้นหาสถานที่ในโมดอลคำขอลงเวลากรณีพิเศษ (<code class="bg-emerald-100 px-1.5 py-0.5 rounded text-emerald-800">#modalSpecialRequest</code>) ให้ตอบสนองการพิมพ์ภาษาไทยได้อย่างชาญฉลาด ค้นหาคำนำหน้าและคำเว้นวรรคได้แม่นยำ พร้อมเรียงลำดับสถานที่ในจังหวัดปัจจุบันของผู้ใช้ขึ้นก่อนเป็นอันดับแรก
+      </p>
+    </div>
+
+    <!-- 4 Key Features Breakdown -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+      
+      <!-- Feature 1 -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+        <div class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm shadow-xs">
+            <i class="fa-solid fa-stopwatch"></i>
+          </span>
+          <span>1. หน่วงเวลาค้นหา 2 วินาที (2s Debounce)</span>
+        </div>
+        <p class="text-slate-600 leading-relaxed text-xs">
+          ระบบจะเริ่มค้นหาก็ต่อเมื่อผู้ใช้หยุดพิมพ์ไปแล้ว <b>2 วินาที (2,000ms)</b> เพื่อให้พิมพ์คำภาษาไทยได้จบคำโดยไม่ถูกตัดจังหวะ หรือกดปุ่ม <b>Enter / ค้นหา</b> เพื่อค้นหาทันที 0ms ได้ตามต้องการ
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+        <div class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-xs">
+            <i class="fa-solid fa-spell-check"></i>
+          </span>
+          <span>2. แก้ไขค้นหาคำนำหน้า เช่น "สำนัก"</span>
+        </div>
+        <p class="text-slate-600 leading-relaxed text-xs">
+          ยกระดับด้วยเอนจิน <b>Photon (Elasticsearch OSM)</b> ที่รองรับการจับคู่คำย่อยภาษาไทย (Substrings & Prefix) ทำให้ค้นหาคำนำหน้าอย่าง <i>"สำนัก", "วัดภู", "เขต", "ศาลาว่าการ"</i> ได้ผลลัพธ์ทันที โดยไม่ว่างเปล่าเหมือน Nominatim เดิม
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+        <div class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm shadow-xs">
+            <i class="fa-solid fa-location-crosshairs"></i>
+          </span>
+          <span>3. แสดงสถานที่ในจังหวัดของผู้ใช้ขึ้นก่อน</span>
+        </div>
+        <p class="text-slate-600 leading-relaxed text-xs">
+          หากผู้ใช้เปิด GPS อยู่ ระบบจะส่งพิกัดละติจูดและลองจิจูดของผู้ใช้ไปเป็นค่า <b>Location Bias (&lat=&lon=)</b> ทำให้ผลการค้นหาสถานที่ในเขต/จังหวัดปัจจุบัน (เช่น กรุงเทพมหานคร) ถูกจัดอันดับขึ้นเป็นรายการแรกๆ เสมอ
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+        <div class="font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm shadow-xs">
+            <i class="fa-solid fa-layer-group"></i>
+          </span>
+          <span>4. รองรับคำเว้นวรรค เช่น "วัดภู กรุงเทพ"</span>
+        </div>
+        <p class="text-slate-600 leading-relaxed text-xs">
+          แยกคำค้นหาด้วยช่องว่าง (Whitespace Tokens) เพื่อค้นหาทั้งชื่อสถานที่ ซอย ถนน ตำบล อำเภอ แขวง เขต และจังหวัด เช่น <i>"วัดภู กรุงเทพ"</i> จะจับคู่สถานที่ที่มีชื่อคล้ายวัดภู และตั้งอยู่ในกรุงเทพฯ อย่างแม่นยำ
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Live Simulation Preview -->
+    <div class="border border-slate-200 rounded-2xl p-5 bg-slate-50 space-y-3">
+      <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-desktop text-emerald-600"></i> ตัวอย่างผลลัพธ์การค้นหาจริงหลังการอัปเกรด (Real Search Result Preview)
+      </h3>
+
+      <div class="max-w-md mx-auto bg-white p-4 rounded-2xl border border-slate-300 shadow-md text-xs space-y-3">
+        <!-- Input -->
+        <div class="relative">
+          <input type="text" value="สำนัก" class="w-full pl-8 pr-16 py-2.5 rounded-xl border border-emerald-500 font-semibold text-slate-800" readonly>
+          <span class="absolute left-2.5 top-3 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <span class="absolute right-2 top-2 px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-800">
+            หน่วง 2 วิ
+          </span>
+        </div>
+
+        <!-- Suggestions in Bangkok first -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-lg divide-y divide-slate-100 overflow-hidden">
+          <div class="p-2.5 hover:bg-slate-50 cursor-pointer flex items-start gap-2.5">
+            <i class="fa-solid fa-building-columns text-emerald-600 mt-0.5"></i>
+            <div class="min-w-0 flex-1">
+              <div class="font-bold text-slate-800 truncate">สำนักงานเขตพระนคร</div>
+              <div class="text-[11px] text-slate-500 truncate">ถนนสามเสน, แขวงวัดสามพระยา, เขตพระนคร, กรุงเทพมหานคร</div>
+              <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">• กรุงเทพมหานคร (ห่าง 1.2 กม.)</div>
+            </div>
+          </div>
+
+          <div class="p-2.5 hover:bg-slate-50 cursor-pointer flex items-start gap-2.5">
+            <i class="fa-solid fa-building-columns text-emerald-600 mt-0.5"></i>
+            <div class="min-w-0 flex-1">
+              <div class="font-bold text-slate-800 truncate">สำนักงานการตรวจเงินแผ่นดิน</div>
+              <div class="text-[11px] text-slate-500 truncate">ถนนพระรามที่ 6, แขวงพญาไท, เขตพญาไท, กรุงเทพมหานคร</div>
+              <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">• กรุงเทพมหานคร (ห่าง 3.5 กม.)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subagent Resource Allocation -->
+    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-900 space-y-2">
+      <div class="font-bold flex items-center gap-1.5 text-amber-950">
+        <i class="fa-solid fa-microchip"></i> การจัดสรรทรัพยากร SubAgents ตามคำสั่งผู้ใช้
+      </div>
+      <ul class="list-disc list-inside space-y-1">
+        <li><strong>SubAgent 1 (Implementation Specialist - Model: Flash 3.8 High):</strong> อ่านไฟล์และแก้ไขเฉพาะส่วนค้นหาใน <code class="font-mono">assets/js/controllers/CheckinController.js</code></li>
+        <li><strong>SubAgent 2 (QA Auditor - Model: Flash 3.8 High):</strong> ตรวจทานความถูกต้องของโค้ด ทดสอบการค้นหาคำว่า "สำนัก" และคำเว้นวรรค และเทียบความแตกต่างกับ Branch main</li>
+        <li><strong>Orchestrator:</strong> ควบคุมกระบวนการ, อัปเดต Second Brain, รัน AST Mapper (<code class="font-mono">vscode_ast_mapper.mjs</code>) และ Commit/Push ขึ้นสู่ Branch <code class="font-mono font-bold">feature-lock-normal-hours</code></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
+

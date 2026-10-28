@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-28T10:15:41.517Z",
-  "totalFilesScanned": 59,
-  "totalSymbolsIndexed": 439,
+  "generatedAt": "2026-10-28T10:53:31.373Z",
+  "totalFilesScanned": 60,
+  "totalSymbolsIndexed": 441,
   "files": [
     {
       "filePath": "approvals.html",
@@ -286,8 +286,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "405c70f4879276e9",
-      "totalLines": 2186,
+      "fileHash": "91d7109d754315fb",
+      "totalLines": 2295,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -304,9 +304,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 2104,
+          "endLine": 2213,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (2093 lines)"
+          "summary": "Class Definition (2202 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -581,92 +581,100 @@
           "summary": "Arrow Function L1731-L1766"
         },
         {
-          "name": "calculateDistance",
+          "name": "getDistanceInMeters",
           "kind": "arrow_fn",
           "startLine": 1791,
-          "endLine": 1816,
+          "endLine": 1810,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L1791-L1816"
+          "summary": "Arrow Function L1791-L1810"
+        },
+        {
+          "name": "calculateDistance",
+          "kind": "arrow_fn",
+          "startLine": 1812,
+          "endLine": 1821,
+          "signature": "(lat1, lon1, lat2, lon2) => inferred",
+          "summary": "Arrow Function L1812-L1821"
         },
         {
           "name": "getCategoryLabel",
           "kind": "arrow_fn",
-          "startLine": 1818,
-          "endLine": 1857,
+          "startLine": 1823,
+          "endLine": 1862,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1818-L1857"
+          "summary": "Arrow Function L1823-L1862"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 1859,
-          "endLine": 1867,
+          "startLine": 1864,
+          "endLine": 1872,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L1859-L1867"
+          "summary": "Arrow Function L1864-L1872"
         },
         {
           "name": "formatSubAddress",
           "kind": "arrow_fn",
-          "startLine": 1869,
-          "endLine": 1885,
+          "startLine": 1874,
+          "endLine": 1890,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1869-L1885"
+          "summary": "Arrow Function L1874-L1890"
         },
         {
           "name": "getMainName",
           "kind": "arrow_fn",
-          "startLine": 1887,
-          "endLine": 1895,
+          "startLine": 1892,
+          "endLine": 1900,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L1887-L1895"
+          "summary": "Arrow Function L1892-L1900"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 1897,
-          "endLine": 1902,
+          "startLine": 1902,
+          "endLine": 1907,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1897-L1902"
+          "summary": "Arrow Function L1902-L1907"
         },
         {
           "name": "bindResultItemClicks",
           "kind": "arrow_fn",
-          "startLine": 1904,
-          "endLine": 1920,
+          "startLine": 1909,
+          "endLine": 1925,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1904-L1920"
+          "summary": "Arrow Function L1909-L1925"
         },
         {
           "name": "renderCoordsResult",
           "kind": "arrow_fn",
-          "startLine": 1922,
-          "endLine": 1946,
+          "startLine": 1927,
+          "endLine": 1951,
           "signature": "(lat, lng) => inferred",
-          "summary": "Arrow Function L1922-L1946"
+          "summary": "Arrow Function L1927-L1951"
         },
         {
           "name": "renderPlaceResults",
           "kind": "arrow_fn",
-          "startLine": 1948,
-          "endLine": 1993,
+          "startLine": 1953,
+          "endLine": 1998,
           "signature": "(items) => inferred",
-          "summary": "Arrow Function L1948-L1993"
+          "summary": "Arrow Function L1953-L1998"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 1998,
-          "endLine": 2066,
+          "startLine": 2003,
+          "endLine": 2175,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1998-L2066"
+          "summary": "Arrow Function L2003-L2175"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 2106,
-          "endLine": 2181,
+          "startLine": 2215,
+          "endLine": 2290,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L2106-L2181 (76 lines)"
+          "summary": "private async method L2215-L2290 (76 lines)"
         }
       ]
     },
@@ -3779,6 +3787,25 @@
           "endLine": 23,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L23"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261028-smart-place-search-2s-debounce/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "57ac1cbb2c6a3d2f",
+      "totalLines": 155,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
         }
       ]
     },

@@ -1788,13 +1788,13 @@ export class CheckinController {
             }
         });
 
-        const calculateDistance = (lat1, lon1, lat2, lon2) => {
-            if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return '';
+        const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+            if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) return Infinity;
             const nLat1 = Number(lat1);
             const nLon1 = Number(lon1);
             const nLat2 = Number(lat2);
             const nLon2 = Number(lon2);
-            if (isNaN(nLat1) || isNaN(nLon1) || isNaN(nLat2) || isNaN(nLon2)) return '';
+            if (isNaN(nLat1) || isNaN(nLon1) || isNaN(nLat2) || isNaN(nLon2)) return Infinity;
 
             const R = 6371e3; // metres
             const φ1 = nLat1 * Math.PI / 180;
@@ -1806,7 +1806,12 @@ export class CheckinController {
                       Math.cos(φ1) * Math.cos(φ2) *
                       Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const dist = R * c;
+            return R * c;
+        };
+
+        const calculateDistance = (lat1, lon1, lat2, lon2) => {
+            const dist = getDistanceInMeters(lat1, lon1, lat2, lon2);
+            if (!isFinite(dist)) return '';
 
             if (dist < 1000) {
                 return `• ${Math.round(dist)} ม.`;
@@ -1963,11 +1968,11 @@ export class CheckinController {
 
             const html = items.map(item => {
                 const itemLat = parseFloat(item.lat);
-                const itemLng = parseFloat(item.lon);
-                const mainName = getMainName(item);
-                const subAddr = formatSubAddress(item);
-                const category = getCategoryLabel(item);
-                const distStr = calculateDistance(refLat, refLng, itemLat, itemLng);
+                const itemLng = parseFloat(item.lng ?? item.lon);
+                const mainName = item.mainName || getMainName(item);
+                const subAddr = item.subAddr !== undefined ? item.subAddr : formatSubAddress(item);
+                const category = item.category || getCategoryLabel(item);
+                const distStr = item.distStr || calculateDistance(refLat, refLng, itemLat, itemLng);
                 const distHtml = distStr ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] shrink-0">${escapeHtml(distStr)}</span>` : '';
 
                 return `
@@ -2014,7 +2019,7 @@ export class CheckinController {
                 }
             }
 
-            // 2. Nominatim search
+            // 2. Dual-Engine Search: Photon (Primary) + Nominatim (Fallback)
             const currentSeq = ++searchSeq;
             if (searchResultsEl) {
                 searchResultsEl.innerHTML = `
@@ -2032,19 +2037,123 @@ export class CheckinController {
                 btnSearch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             }
 
+            const refLat = this.gpsData?.lat;
+            const refLng = this.gpsData?.lng;
+
             try {
-                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=th&accept-language=th&addressdetails=1`;
-                const res = await fetch(url, {
-                    headers: { 'User-Agent': 'CheckinApp-BMA/2.0' }
-                });
-                const data = await res.json();
+                let items = [];
+                let photonSuccess = false;
+
+                // Primary Engine: Photon API
+                try {
+                    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8${refLat && refLng ? `&lat=${refLat}&lon=${refLng}` : ''}&lang=default`;
+                    const res = await fetch(photonUrl);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (currentSeq !== searchSeq) return;
+
+                        if (data && Array.isArray(data.features) && data.features.length > 0) {
+                            items = data.features.map(f => {
+                                const props = f.properties || {};
+                                const coords = f.geometry?.coordinates || [0, 0];
+                                const lng = coords[0];
+                                const lat = coords[1];
+                                const mainName = props.name || props.street || props.district || props.city || 'สถานที่ที่เลือก';
+
+                                // ที่อยู่ย่อย
+                                const addrParts = [];
+                                if (props.street && props.street !== mainName) addrParts.push(props.street);
+                                if (props.district && props.district !== mainName) addrParts.push(props.district);
+                                if (props.city && props.city !== mainName) addrParts.push(props.city);
+                                if (props.state && props.state !== mainName && props.state !== props.city) addrParts.push(props.state);
+                                const subAddr = addrParts.join(', ') || props.country || '';
+
+                                // หมวดหมู่
+                                const category = getCategoryLabel({
+                                    type: props.osm_value,
+                                    class: props.osm_key
+                                });
+
+                                return {
+                                    lat,
+                                    lng,
+                                    mainName,
+                                    subAddr,
+                                    category,
+                                    rawProps: props
+                                };
+                            });
+                            photonSuccess = items.length > 0;
+                        }
+                    }
+                } catch (photonErr) {
+                    console.warn('Photon search error, falling back to Nominatim:', photonErr);
+                }
+
                 if (currentSeq !== searchSeq) return;
 
-                if (Array.isArray(data) && data.length > 0) {
-                    renderPlaceResults(data);
-                } else {
-                    renderPlaceResults([]);
+                // Fallback Engine: Nominatim API (if Photon returns 0 results or throws error)
+                if (!photonSuccess) {
+                    try {
+                        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=6&countrycodes=th&accept-language=th&addressdetails=1`;
+                        const resNom = await fetch(nomUrl, {
+                            headers: { 'User-Agent': 'CheckinApp-BMA/2.0' }
+                        });
+                        if (resNom.ok) {
+                            const dataNom = await resNom.json();
+                            if (currentSeq !== searchSeq) return;
+
+                            if (Array.isArray(dataNom) && dataNom.length > 0) {
+                                items = dataNom.map(item => {
+                                    const lat = parseFloat(item.lat);
+                                    const lng = parseFloat(item.lon);
+                                    const mainName = getMainName(item);
+                                    const subAddr = formatSubAddress(item);
+                                    const category = getCategoryLabel(item);
+
+                                    return {
+                                        lat,
+                                        lng,
+                                        mainName,
+                                        subAddr,
+                                        category,
+                                        rawProps: item
+                                    };
+                                });
+                            }
+                        }
+                    } catch (nomErr) {
+                        console.warn('Nominatim search fallback error:', nomErr);
+                    }
                 }
+
+                if (currentSeq !== searchSeq) return;
+
+                // Sort results (Province & Proximity Bias) if GPS is available
+                if (refLat && refLng && items.length > 0) {
+                    let userProvince = '';
+                    if (this.gpsData?.locationName) {
+                        const pMatch = this.gpsData.locationName.match(/(?:จ\.|จังหวัด|กรุงเทพมหานคร|กรุงเทพฯ|กทม\.)([^\s,]+)?/i);
+                        if (pMatch) userProvince = pMatch[0].trim();
+                    }
+
+                    items.forEach(item => {
+                        item.distanceMeters = getDistanceInMeters(refLat, refLng, item.lat, item.lng);
+                        item.distStr = calculateDistance(refLat, refLng, item.lat, item.lng);
+                    });
+
+                    items.sort((a, b) => {
+                        if (userProvince) {
+                            const aProv = `${a.subAddr || ''} ${a.rawProps?.state || ''} ${a.rawProps?.city || ''}`.includes(userProvince);
+                            const bProv = `${b.subAddr || ''} ${b.rawProps?.state || ''} ${b.rawProps?.city || ''}`.includes(userProvince);
+                            if (aProv && !bProv) return -1;
+                            if (!aProv && bProv) return 1;
+                        }
+                        return (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity);
+                    });
+                }
+
+                renderPlaceResults(items);
             } catch (err) {
                 if (currentSeq !== searchSeq) return;
                 console.warn('Search location error:', err);
@@ -2076,7 +2185,7 @@ export class CheckinController {
             }
             debounceTimer = setTimeout(() => {
                 performSearch();
-            }, 350);
+            }, 2000);
         });
 
         btnSearch?.addEventListener('click', (e) => {
