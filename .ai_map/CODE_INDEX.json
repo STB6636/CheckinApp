@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T07:17:37.845Z",
+  "generatedAt": "2026-10-28T07:43:46.601Z",
   "totalFilesScanned": 54,
   "totalSymbolsIndexed": 417,
   "files": [
@@ -2866,7 +2866,7 @@
     {
       "filePath": "docs/manual/index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "570afba2c3b7fb34",
+      "fileHash": "465dd9229d368ebd",
       "totalLines": 669,
       "importsCount": 0,
       "importsPreview": [],
@@ -2893,8 +2893,8 @@
     {
       "filePath": "docs/manual/manual-admin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "30b45ff0e6acdaff",
-      "totalLines": 1121,
+      "fileHash": "ee285637a7c64dd5",
+      "totalLines": 1128,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2919,33 +2919,33 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 177,
-          "endLine": 897,
+          "endLine": 904,
           "signature": "<main>",
-          "summary": "HTML DOM Section L177-L897"
+          "summary": "HTML DOM Section L177-L904"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 906,
-          "endLine": 932,
+          "startLine": 913,
+          "endLine": 939,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L906-L932"
+          "summary": "HTML DOM Section L913-L939"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 908,
-          "endLine": 931,
+          "startLine": 915,
+          "endLine": 938,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L908-L931"
+          "summary": "HTML DOM Section L915-L938"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-superadmin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "69ee00108d7f705e",
-      "totalLines": 1174,
+      "fileHash": "295c42df02537928",
+      "totalLines": 1192,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -2970,33 +2970,33 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 170,
-          "endLine": 922,
+          "endLine": 940,
           "signature": "<main>",
-          "summary": "HTML DOM Section L170-L922"
+          "summary": "HTML DOM Section L170-L940"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 931,
-          "endLine": 957,
+          "startLine": 949,
+          "endLine": 975,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L931-L957"
+          "summary": "HTML DOM Section L949-L975"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 933,
-          "endLine": 956,
+          "startLine": 951,
+          "endLine": 974,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L933-L956"
+          "summary": "HTML DOM Section L951-L974"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-user.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d0b4a1027a99ae28",
-      "totalLines": 1280,
+      "fileHash": "c5e7fae3cfe64fb4",
+      "totalLines": 1310,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3021,25 +3021,25 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 170,
-          "endLine": 1040,
+          "endLine": 1070,
           "signature": "<main>",
-          "summary": "HTML DOM Section L170-L1040"
+          "summary": "HTML DOM Section L170-L1070"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 1049,
-          "endLine": 1075,
+          "startLine": 1079,
+          "endLine": 1105,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L1049-L1075"
+          "summary": "HTML DOM Section L1079-L1105"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 1051,
-          "endLine": 1074,
+          "startLine": 1081,
+          "endLine": 1104,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L1051-L1074"
+          "summary": "HTML DOM Section L1081-L1104"
         }
       ]
     },
