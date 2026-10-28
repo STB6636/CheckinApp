@@ -494,6 +494,26 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- In-Frame Floating Shutter & Line Fallback Enhancements -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+                            <div class="p-3.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1.5">
+                                <strong class="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5 text-xs">
+                                    <i class="fa-solid fa-circle-dot text-emerald-600"></i>ปุ่มชัตเตอร์ลอยบนกรอบกล้อง (In-Frame Shutter):
+                                </strong>
+                                <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    ขณะเปิดกล้อง จะมีปุ่มชัตเตอร์กลมสีขาว-ทองลอยอยู่บริเวณกึ่งกลางล่างของกรอบรูปภาพ ช่วยให้ท่านสามารถใช้นิ้วแตะถ่ายภาพได้โดยตรงบนหน้าจอกล้อง สะดวกต่อการถือสมาร์ตโฟนถ่ายรูปด้วยมือเดียว
+                                </p>
+                            </div>
+                            <div class="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-800/40 space-y-1.5">
+                                <strong class="font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5 text-xs">
+                                    <i class="fa-brands fa-line text-emerald-500 text-sm"></i>การเปิดผ่านแอป LINE หรือเครื่องไม่มีกล้อง (Smart Fallback):
+                                </strong>
+                                <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    หากเปิดระบบผ่านลิงก์ในแอป LINE (In-App Browser) หรือคอมพิวเตอร์ที่ไม่มีกล้องเว็บแคม ระบบจะตรวจจับอัตโนมัติและเปลี่ยนปุ่มถ่ายรูปให้เปิดเมนูเลือกรูปถ่ายจากเครื่องหรือถ่ายด้วยกล้องมือถือได้ทันที โดยใช้ปุ่มเดียว ไม่ต้องมีปุ่มแยกให้สับสน
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- GPS Location Features -->
@@ -646,6 +666,16 @@
                         </strong>
                         หลังกดยืนยัน ระบบจะอัปโหลดภาพถ่ายไปยัง Google Drive และบันทึกเวลาลงฐานข้อมูล จากนั้นการ์ด "เวลาเข้างาน" จะเปลี่ยนสถานะเป็น <b>"ตรงเวลา"</b> (สีเขียว) หรือ <b>"สาย"</b> (สีส้ม) ตามเกณฑ์เวลามาตรฐานของหน่วยงาน
                     </div>
+
+                    <!-- Normal Hours Checkin Lock Notice -->
+                    <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 space-y-1.5">
+                        <strong class="font-bold flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-300">
+                            <i class="fa-solid fa-lock text-amber-600"></i>เงื่อนไขการปิดรับการลงเวลาในช่วงเวลาราชการปกติ (08:30 - 16:30 น.):
+                        </strong>
+                        <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+                            กรณีที่หน่วยงานของท่านเปิดใช้งานฟังก์ชัน <i>"ปิดการลงเวลาในช่วงเวลาปกติ"</i> ในช่วงเวลาราชการปกติ (08:30 - 16:30 น.) ปุ่มบันทึกเวลาหลักจะไม่สามารถกดได้ (<code class="font-mono text-amber-700">disabled</code>) และจะมีป้ายเตือนปิดรับการลงเวลา โดยมีผลบังคับใช้ทั้งรูปแบบปกติและรูปแบบพิเศษ (ครั้งเดียว)
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -748,7 +778,7 @@
                                 <strong class="text-slate-800 dark:text-white">กรอกข้อมูล 4 รายการสำคัญ:</strong>
                                 <ul class="list-disc pl-5 mt-1 space-y-1 text-xs">
                                     <li><b>เลือกวันที่ปฏิบัติราชการ:</b> สามารถเลือกวันที่ย้อนหลังหรือวันที่เกิดเหตุได้</li>
-                                    <li><b>เลือกช่วงเวลาทำงาน:</b> เลือกกะมาตรฐานหรือระบุเวลาเข้า-เลิกงาน</li>
+                                    <li><b>เลือกช่วงเวลาทำงาน:</b> เลือกกะมาตรฐานหรือระบุเวลาเข้า-เลิกงาน <i>(ท่านสามารถเปิดและยื่นคำขอลงเวลากรณีพิเศษได้ตลอดเวลา 24 ชม. ทั้งนี้หากหน่วยงานเปิดฟังก์ชันปิดรับเวลาปกติ ตัวเลือก "เวลาราชการปกติ" จะถูกซ่อนออกเพื่อให้ยื่นขอได้เฉพาะปฏิบัติงานนอกเวลาหรือกะพิเศษเท่านั้น)</i></li>
                                     <li><b>เลือกหมายเหตุ / เหตุผล:</b> เช่น ไปราชการนอกสถานที่, ตรวจพื้นที่, อบรมสัมมนา, ระบบขัดข้อง</li>
                                     <li><b>แนบรูปภาพหรือเอกสาร (ถ้ามี):</b> เช่น หนังสือเชิญประชุม, ภาพถ่ายขณะปฏิบัติงานนอกสถานที่</li>
                                 </ul>

@@ -583,6 +583,16 @@
                             </p>
                         </div>
                     </div>
+
+                    <!-- New Setting: Lock Normal Hours Checkin -->
+                    <div class="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/40 space-y-2">
+                        <strong class="text-amber-900 dark:text-amber-200 block font-bold text-sm">
+                            <i class="fa-solid fa-clock-rotate-left text-amber-600 mr-1.5"></i>ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.) [disable_normal_hours_checkin]:
+                        </strong>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            เมื่อเปิดใช้งานสวิตช์นี้ ในช่วงเวลาราชการปกติ (ตามค่าเวลาเริ่มงานและเลิกงานมาตรฐาน) ปุ่มบันทึกการลงเวลาหน้าหลักจะไม่สามารถกดได้ ทั้งรูปแบบปกติและรูปแบบพิเศษ (ครั้งเดียว) และในหน้าต่างขอลงเวลากรณีพิเศษ ระบบจะซ่อนตัวเลือก "เวลาราชการปกติ" เพื่อให้ขอลงเวลาได้เฉพาะนอกเวลาเท่านั้น โดยยังคงสามารถยื่นคำขอพิเศษได้ตลอดเวลา 24 ชม.
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -612,6 +622,14 @@
                                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                     <b class="text-slate-800 dark:text-white block">บังคับพิกัด GPS (Require GPS):</b>
                                     <span class="text-slate-500">หากเปิด ผู้ใช้จะต้องอนุญาต Location และตรวจพิกัดให้อยู่ในรัศมีที่กำหนด</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <b class="text-slate-800 dark:text-white block">อนุญาตเลือกภาพจากแกลลอรี่ (Gallery Fallback):</b>
+                                    <span class="text-slate-500">เปิดให้ผู้ใช้ที่เปิดผ่านเบราว์เซอร์ของแอป LINE หรือเครื่องที่ไม่มีกล้อง สามารถเลือกรูปถ่ายจากเครื่องหรือถ่ายผ่านกล้องมือถือได้อัตโนมัติด้วยปุ่มเดียว</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <b class="text-slate-800 dark:text-white block">สุ่มระยะ GPS ขาออกงาน & รัศมีระยะสุ่ม (เมตร):</b>
+                                    <span class="text-slate-500">สำหรับการลงเวลารูปแบบพิเศษ (ครั้งเดียว) สามารถเปิดให้ระบบสุ่มระยะพิกัดขาออกงานเพื่อความสมจริง พร้อมกำหนดรัศมีการสุ่มได้ตั้งแต่ 5 ถึง 100 เมตร (ค่ามาตรฐาน 20 เมตร)</span>
                                 </div>
                             </div>
                         </div>
