@@ -517,13 +517,33 @@ export class UIHelpers {
     static async alert(title, text = '', icon = 'success') {
         const isDark = document.documentElement.classList.contains('dark');
         if (window.Swal) {
+            let gradientClass = 'from-[#00744B] to-emerald-500';
+            let iconBorderClass = 'border-emerald-500/20';
+            if (icon === 'error') {
+                gradientClass = 'from-rose-600 to-red-500';
+                iconBorderClass = 'border-rose-500/20';
+            } else if (icon === 'warning') {
+                gradientClass = 'from-amber-500 to-orange-400';
+                iconBorderClass = 'border-amber-500/20';
+            } else if (icon === 'info') {
+                gradientClass = 'from-[#0971CE] to-sky-400';
+                iconBorderClass = 'border-sky-500/20';
+            }
+
             return window.Swal.fire({
                 title,
                 text,
                 icon,
                 confirmButtonText: 'ตกลง',
-                confirmButtonColor: isDark ? '#34D399' : '#007B3E',
-                background: isDark ? '#183025' : '#FFFFFF',
+                buttonsStyling: false,
+                customClass: {
+                    popup: `rounded-3xl p-6 sm:p-7 shadow-2xl border ${iconBorderClass} bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md`,
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    htmlContainer: 'text-xs sm:text-sm text-slate-600 dark:text-slate-300 m-0 pt-1.5 leading-relaxed',
+                    confirmButton: `inline-block px-7 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-xl cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl ${gradientClass} hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white`,
+                    actions: 'flex justify-center mt-4'
+                },
+                background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                 color: isDark ? '#F1F5F9' : '#0F172A'
             });
         } else {

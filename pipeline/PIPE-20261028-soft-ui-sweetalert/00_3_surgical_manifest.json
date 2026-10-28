@@ -1,0 +1,26 @@
+{
+  "pipeline_id": "PIPE-20261028-soft-ui-sweetalert",
+  "flow_id": "FLOW_LAYOUT_01",
+  "task_description": "Upgrade UIHelpers.alert to Creative Tim Soft UI Dashboard SweetAlert theme with rounded-3xl modal, soft shadows, and gradient buttons",
+  "surgical_targets": [
+    {
+      "file": "assets/js/core/UIHelpers.js",
+      "target_symbols": ["UIHelpers.alert"],
+      "surgical_line_range": "517-532",
+      "action": "upgrade_alert_to_soft_ui_custom_class"
+    },
+    {
+      "file": "assets/css/bma-theme.css",
+      "target_symbols": [".swal2-popup.bma-swal-popup"],
+      "surgical_line_range": "1274-1304",
+      "action": "enhance_swal_success_icon_and_soft_ui_skinning"
+    }
+  ],
+  "verification": [
+    "Verify UIHelpers.alert syntax via node -c assets/js/core/UIHelpers.js",
+    "Confirm customClass includes Soft UI rounded-3xl popup, typography, and gradient confirmButton",
+    "Confirm icon supports success, warning, error, info with matching gradient palette",
+    "Verify git diff against branch main"
+  ]
+}
+

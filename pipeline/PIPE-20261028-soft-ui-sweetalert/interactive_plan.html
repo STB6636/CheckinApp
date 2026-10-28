@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แผนปรับปรุง: ปรับธีมแจ้งเตือน SweetAlert ให้เป็น Soft UI Dashboard สไตล์ Creative Tim</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #0f172a; color: #f8fafc; font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif; padding: 2rem 0; }
+    .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #f8fafc; margin-bottom: 1.5rem; }
+    .badge-bma { background-color: #10b981; color: #fff; }
+    .code-box { background-color: #0b1120; border-radius: 8px; padding: 1rem; font-family: Consolas, monospace; font-size: 0.9rem; color: #38bdf8; overflow-x: auto; }
+    .diff-del { color: #f87171; background-color: rgba(239, 68, 68, 0.1); }
+    .diff-add { color: #4ade80; background-color: rgba(74, 222, 128, 0.1); }
+  </style>
+</head>
+<body>
+<div class="container" style="max-width: 900px;">
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary pb-3">
+    <div>
+      <h3 class="fw-bold mb-1"><i class="fa-solid fa-bell text-warning me-2"></i>แผนปรับปรุง: ปรับธีมการแจ้งเตือน "ดำเนินการสำเร็จ" เป็น Soft UI Dashboard</h3>
+      <p class="text-secondary mb-0">Pipeline ID: <code>PIPE-20261028-soft-ui-sweetalert</code> | Reference: <code>Creative Tim Soft UI Dashboard</code></p>
+    </div>
+    <span class="badge badge-bma px-3 py-2 fs-6">Streamlined 2-SubAgent Mode</span>
+  </div>
+
+  <div class="card p-4">
+    <h5 class="fw-bold text-danger mb-3"><i class="fa-solid fa-circle-info me-2"></i>วิเคราะห์สาเหตุ (Current State vs Target)</h5>
+    <p>ในปัจจุบัน <code>UIHelpers.confirm()</code> ได้รับการตกแต่งปุ่มและกล่องข้อความแบบ Soft UI Dashboard แล้ว แต่ฟังก์ชัน <code>UIHelpers.alert()</code> ยังคงเป็นการเรียก <code>window.Swal.fire()</code> แบบพื้นฐาน (Default SweetAlert2) โดยไม่มี <code>customClass</code> หรือ <code>buttonsStyling: false</code> ทำให้เมื่อแจ้งเตือน <b>"ดำเนินการสำเร็จ"</b> (เช่น เมื่อกดอนุมัติเวลา, แก้ไขข้อมูล, บันทึกการตั้งค่า) จะแสดงผลเป็นกล่องเหลี่ยมพร้อมปุ่มสีเขียวเรียบแบบดั้งเดิม</p>
+  </div>
+
+  <div class="card p-4">
+    <h5 class="fw-bold text-info mb-3"><i class="fa-solid fa-wand-magic-sparkles me-2"></i>แนวทางแก้ไขระดับ Surgical (เฉพาะจุด)</h5>
+    
+    <div class="code-box">
+      <div class="text-secondary">// assets/js/core/UIHelpers.js -> UIHelpers.alert(title, text = '', icon = 'success')</div>
+      <div class="diff-del">- return window.Swal.fire({ title, text, icon, confirmButtonText: 'ตกลง', confirmButtonColor: ... });</div>
+      <div class="diff-add">+ return window.Swal.fire({</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;title, text, icon, confirmButtonText: 'ตกลง',</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;buttonsStyling: false,</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;customClass: {</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popup: 'rounded-3xl p-6 sm:p-7 shadow-2xl border border-emerald-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;htmlContainer: 'text-xs sm:text-sm text-slate-600 dark:text-slate-300 m-0 pt-1.5 leading-relaxed',</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;confirmButton: 'inline-block px-7 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-xl cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-[#00744B] to-emerald-500 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white',</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actions: 'flex justify-center mt-4'</div>
+      <div class="diff-add">+ &nbsp;&nbsp;&nbsp;&nbsp;}</div>
+      <div class="diff-add">+ });</div>
+    </div>
+    
+    <p class="mt-3 mb-0 text-success"><i class="fa-solid fa-check-circle me-2"></i>รองรับทั้งสถานะ <code>success</code>, <code>warning</code>, <code>error</code>, <code>info</code> พร้อมไล่สี Gradient สวยงามตามแบบฉบับ Creative Tim Soft UI Dashboard และรองรับ Dark Mode 100%</p>
+  </div>
+
+  <div class="card p-4">
+    <h5 class="fw-bold text-success mb-3"><i class="fa-solid fa-users-gear me-2"></i>การดำเนินงานของ SubAgents (ตามกฎ)</h5>
+    <ol class="mb-0 leading-relaxed">
+      <li class="mb-2"><strong>SubAgent 1 (Implementer - Model: Flash 3.8 High):</strong> อัปเกรด <code>UIHelpers.alert</code> ใน <code>assets/js/core/UIHelpers.js</code> และเสริม CSS ไอคอน Soft UI ใน <code>assets/css/bma-theme.css</code></li>
+      <li class="mb-2"><strong>SubAgent 2 (QA Auditor - Model: Flash 3.8 High):</strong> ตรวจทานไวยากรณ์ด้วย <code>node -c</code> และเปรียบเทียบ Git diff กับ <code>main</code></li>
+      <li><strong>Orchestrator:</strong> สรุปผล รัน AST Mapper อัปเดตแผนที่ซอร์สโค้ด และรายงานผลต่อผู้ใช้</li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>
+

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-28T07:59:28.804Z",
-  "totalFilesScanned": 55,
-  "totalSymbolsIndexed": 418,
+  "generatedAt": "2026-10-28T08:38:34.117Z",
+  "totalFilesScanned": 56,
+  "totalSymbolsIndexed": 419,
   "files": [
     {
       "filePath": "approvals.html",
@@ -1815,8 +1815,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "962ee9e12db7e785",
-      "totalLines": 1115,
+      "fileHash": "776821d73b020192",
+      "totalLines": 1135,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -1829,9 +1829,9 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1115,
+          "endLine": 1135,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1108 lines)"
+          "summary": "Class Definition (1128 lines)"
         },
         {
           "name": "UIHelpers.getRootBasePath",
@@ -1997,73 +1997,73 @@
           "name": "UIHelpers.alert",
           "kind": "static public async method",
           "startLine": 517,
-          "endLine": 532,
+          "endLine": 552,
           "signature": "(title, text = '', icon = 'success') => Promise<any>",
-          "summary": "static public async method L517-L532 (16 lines)"
+          "summary": "static public async method L517-L552 (36 lines)"
         },
         {
           "name": "UIHelpers.confirm",
           "kind": "static public async method",
-          "startLine": 534,
-          "endLine": 584,
+          "startLine": 554,
+          "endLine": 604,
           "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>",
-          "summary": "static public async method L534-L584 (51 lines)"
+          "summary": "static public async method L554-L604 (51 lines)"
         },
         {
           "name": "UIHelpers.validateThaiNationalId",
           "kind": "static public method",
-          "startLine": 586,
-          "endLine": 605,
+          "startLine": 606,
+          "endLine": 625,
           "signature": "(id, strictCheckDigit = false) => any",
-          "summary": "static public method L586-L605 (20 lines)"
+          "summary": "static public method L606-L625 (20 lines)"
         },
         {
           "name": "UIHelpers.getLast6DigitsFromNationalId",
           "kind": "static public method",
-          "startLine": 607,
-          "endLine": 611,
+          "startLine": 627,
+          "endLine": 631,
           "signature": "(nationalId) => any",
-          "summary": "static public method L607-L611 (5 lines)"
+          "summary": "static public method L627-L631 (5 lines)"
         },
         {
           "name": "UIHelpers.exportToExcelUTF8",
           "kind": "static public method",
-          "startLine": 613,
-          "endLine": 638,
+          "startLine": 633,
+          "endLine": 658,
           "signature": "(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any",
-          "summary": "static public method L613-L638 (26 lines)"
+          "summary": "static public method L633-L658 (26 lines)"
         },
         {
           "name": "UIHelpers.exportMultiSheetExcel",
           "kind": "static public method",
-          "startLine": 645,
-          "endLine": 665,
+          "startLine": 665,
+          "endLine": 685,
           "signature": "(sheets, fileName = 'export_data') => any",
-          "summary": "static public method L645-L665 (21 lines)"
+          "summary": "static public method L665-L685 (21 lines)"
         },
         {
           "name": "UIHelpers.exportTemplateWithValidationsExcel",
           "kind": "static public async method",
-          "startLine": 674,
-          "endLine": 937,
+          "startLine": 694,
+          "endLine": 957,
           "signature": "({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>",
-          "summary": "static public async method L674-L937 (264 lines)"
+          "summary": "static public async method L694-L957 (264 lines)"
         },
         {
           "name": "UIHelpers.parseExcelFileUTF8",
           "kind": "static public method",
-          "startLine": 939,
-          "endLine": 961,
+          "startLine": 959,
+          "endLine": 981,
           "signature": "(file) => any",
-          "summary": "static public method L939-L961 (23 lines)"
+          "summary": "static public method L959-L981 (23 lines)"
         },
         {
           "name": "UIHelpers.printReportInNewTab",
           "kind": "static public method",
-          "startLine": 963,
-          "endLine": 1114,
+          "startLine": 983,
+          "endLine": 1134,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L963-L1114 (152 lines)"
+          "summary": "static public method L983-L1134 (152 lines)"
         }
       ]
     },
@@ -3605,6 +3605,25 @@
           "endLine": 23,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L23"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261028-soft-ui-sweetalert/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "6493887502466f46",
+      "totalLines": 66,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 16,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L16"
         }
       ]
     },

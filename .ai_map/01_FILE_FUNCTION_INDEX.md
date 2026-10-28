@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T07:59:28.804Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `55` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `418`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T08:38:34.117Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `56` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `419`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -323,11 +323,11 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `962ee9e12db7e785` | **Total Lines:** `1115` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `776821d73b020192` | **Total Lines:** `1135` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1115** | `export class UIHelpers` | Class Definition (1108 lines) |
+| `UIHelpers` | `class` | **L8 - L1135** | `export class UIHelpers` | Class Definition (1128 lines) |
 | `UIHelpers.getRootBasePath` | `static public method` | **L27 - L36** | `() => any` | static public method L27-L36 (10 lines) |
 | `UIHelpers.maskUrlToRoot` | `static public method` | **L38 - L61** | `(explicitPageName = '') => any` | static public method L38-L61 (24 lines) |
 | `UIHelpers.initTheme` | `static public method` | **L63 - L80** | `() => any` | static public method L63-L80 (18 lines) |
@@ -348,15 +348,15 @@
 | `UIHelpers.#updateProgressDOM` | `static private method` | **L469 - L476** | `(percent) => any` | static private method L469-L476 (8 lines) |
 | `UIHelpers.hideLoading` | `static public method` | **L478 - L503** | `() => any` | static public method L478-L503 (26 lines) |
 | `UIHelpers.renderTableSkeleton` | `static public method` | **L505 - L515** | `(rows = 5, cols = 6) => any` | static public method L505-L515 (11 lines) |
-| `UIHelpers.alert` | `static public async method` | **L517 - L532** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L517-L532 (16 lines) |
-| `UIHelpers.confirm` | `static public async method` | **L534 - L584** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L534-L584 (51 lines) |
-| `UIHelpers.validateThaiNationalId` | `static public method` | **L586 - L605** | `(id, strictCheckDigit = false) => any` | static public method L586-L605 (20 lines) |
-| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L607 - L611** | `(nationalId) => any` | static public method L607-L611 (5 lines) |
-| `UIHelpers.exportToExcelUTF8` | `static public method` | **L613 - L638** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L613-L638 (26 lines) |
-| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L645 - L665** | `(sheets, fileName = 'export_data') => any` | static public method L645-L665 (21 lines) |
-| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L674 - L937** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L674-L937 (264 lines) |
-| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L939 - L961** | `(file) => any` | static public method L939-L961 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L963 - L1114** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L963-L1114 (152 lines) |
+| `UIHelpers.alert` | `static public async method` | **L517 - L552** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L517-L552 (36 lines) |
+| `UIHelpers.confirm` | `static public async method` | **L554 - L604** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L554-L604 (51 lines) |
+| `UIHelpers.validateThaiNationalId` | `static public method` | **L606 - L625** | `(id, strictCheckDigit = false) => any` | static public method L606-L625 (20 lines) |
+| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L627 - L631** | `(nationalId) => any` | static public method L627-L631 (5 lines) |
+| `UIHelpers.exportToExcelUTF8` | `static public method` | **L633 - L658** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L633-L658 (26 lines) |
+| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L665 - L685** | `(sheets, fileName = 'export_data') => any` | static public method L665-L685 (21 lines) |
+| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L694 - L957** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L694-L957 (264 lines) |
+| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L959 - L981** | `(file) => any` | static public method L959-L981 (23 lines) |
+| `UIHelpers.printReportInNewTab` | `static public method` | **L983 - L1134** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L983-L1134 (152 lines) |
 
 ---
 
@@ -800,6 +800,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L23** | `<head>` | HTML DOM Section L3-L23 |
+
+---
+
+## File: `pipeline/PIPE-20261028-soft-ui-sweetalert/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `6493887502466f46` | **Total Lines:** `66` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L16** | `<head>` | HTML DOM Section L3-L16 |
 
 ---
 
