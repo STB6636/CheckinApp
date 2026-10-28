@@ -1304,6 +1304,7 @@ export class AttendanceModel {
             .from('attendance_logs')
             .select(`
                 id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
+                check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location,
                 status, remark, row_color, is_overtime, is_special_request, approval_status, created_at,
                 personnel:personnel_id (
                     id, national_id, prefix, first_name, last_name,

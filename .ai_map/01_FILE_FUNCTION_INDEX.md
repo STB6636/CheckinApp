@@ -1,23 +1,23 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T09:50:10.869Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `58` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `438`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T10:15:41.517Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `59` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `439`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8a14cb01f0d9d539` | **Total Lines:** `123` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f748689cabbc814f` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L17** | `<head>` | HTML DOM Section L3-L17 |
 | `<div#bmaSidebarContainer>` | `html_dom_section` | **L21 - L21** | `id="bmaSidebarContainer"` | HTML DOM Section L21-L21 |
 | `<div#bmaTopbarContainer>` | `html_dom_section` | **L25 - L25** | `id="bmaTopbarContainer"` | HTML DOM Section L25-L25 |
-| `<main>` | `html_dom_section` | **L27 - L114** | `<main>` | HTML DOM Section L27-L114 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L116 - L116** | `id="bmaFooterContainer"` | HTML DOM Section L116-L116 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L121 - L121** | `<script>` | Bootstrap script L121-L121 |
+| `<main>` | `html_dom_section` | **L27 - L115** | `<main>` | HTML DOM Section L27-L115 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L117 - L117** | `id="bmaFooterContainer"` | HTML DOM Section L117-L117 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L122 - L122** | `<script>` | Bootstrap script L122-L122 |
 
 ---
 
@@ -46,19 +46,19 @@
 
 ## File: `assets/js/controllers/ApprovalsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `3a33be265e987154` | **Total Lines:** `279` | **Imports:** `3` | **Exports:** `ApprovalsController`
+- **Hash:** `a7990e4a28af3a98` | **Total Lines:** `302` | **Imports:** `3` | **Exports:** `ApprovalsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ApprovalsController` | `class` | **L10 - L275** | `export class ApprovalsController` | Class Definition (266 lines) |
+| `ApprovalsController` | `class` | **L10 - L298** | `export class ApprovalsController` | Class Definition (289 lines) |
 | `ApprovalsController.constructor` | `public constructor` | **L11 - L17** | `() => any` | public constructor L11-L17 (7 lines) |
 | `ApprovalsController.init` | `public async method` | **L19 - L31** | `() => Promise<any>` | public async method L19-L31 (13 lines) |
 | `ApprovalsController.loadRequests` | `public async method` | **L33 - L50** | `() => Promise<any>` | public async method L33-L50 (18 lines) |
 | `ApprovalsController.#updateBulkSelectionCount` | `private method` | **L52 - L62** | `() => any` | private method L52-L62 (11 lines) |
 | `ApprovalsController.#renderGroupedApprovalsTable` | `private method` | **L69 - L133** | `() => any` | - 'group': สำนักงาน/กอง > ส่วน/ฝ่าย > กลุ่มงาน |
-| `ApprovalsController.#buildRequestRowHtml` | `private method` | **L135 - L181** | `(req, indexNo) => any` | private method L135-L181 (47 lines) |
-| `ApprovalsController.#bindEvents` | `private method` | **L183 - L240** | `() => any` | private method L183-L240 (58 lines) |
-| `ApprovalsController.#processDecision` | `private async method` | **L242 - L274** | `(ids, decision) => Promise<any>` | private async method L242-L274 (33 lines) |
+| `ApprovalsController.#buildRequestRowHtml` | `private method` | **L135 - L204** | `(req, indexNo) => any` | private method L135-L204 (70 lines) |
+| `ApprovalsController.#bindEvents` | `private method` | **L206 - L263** | `() => any` | private method L206-L263 (58 lines) |
+| `ApprovalsController.#processDecision` | `private async method` | **L265 - L297** | `(ids, decision) => Promise<any>` | private async method L265-L297 (33 lines) |
 
 ---
 
@@ -377,11 +377,11 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `8d9ca11c4e673a17` | **Total Lines:** `1648` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `503e8493d7f9a46f` | **Total Lines:** `1649` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AttendanceModel` | `class` | **L12 - L1648** | `export class AttendanceModel` | Class Definition (1637 lines) |
+| `AttendanceModel` | `class` | **L12 - L1649** | `export class AttendanceModel` | Class Definition (1638 lines) |
 | `AttendanceModel.#calculateDistanceMeters` | `static private method` | **L16 - L27** | `(lat1, lon1, lat2, lon2) => any` | static private method L16-L27 (12 lines) |
 | `AttendanceModel.#minutesToTime24` | `static private method` | **L29 - L34** | `(totalMinutes) => any` | static private method L29-L34 (6 lines) |
 | `AttendanceModel.#isForbiddenLocationTerm` | `static private method` | **L44 - L74** | `(rawName, tags = {}) => any` | static private method L44-L74 (31 lines) |
@@ -402,15 +402,15 @@
 | `AttendanceModel.deletePendingSpecialRequestByUser` | `static public async method` | **L884 - L918** | `(logId, personnelId, userId) => Promise<any>` | static public async method L884-L918 (35 lines) |
 | `AttendanceModel.submitCheckinOrCheckout` | `static public async method` | **L920 - L1225** | `(payload) => Promise<any>` | static public async method L920-L1225 (306 lines) |
 | `AttendanceModel.submitSpecialRequest` | `static public async method` | **L1227 - L1299** | `(payload) => Promise<any>` | static public async method L1227-L1299 (73 lines) |
-| `AttendanceModel.getSpecialRequests` | `static public async method` | **L1301 - L1340** | `(currentUser, statusFilter = 'pending') => Promise<any>` | static public async method L1301-L1340 (40 lines) |
-| `AttendanceModel.processSpecialRequestsBulk` | `static public async method` | **L1342 - L1387** | `(logIds, decision, approverUserId) => Promise<any>` | static public async method L1342-L1387 (46 lines) |
-| `AttendanceModel.getDatesBetween` | `static public method` | **L1389 - L1406** | `(startDate, endDate) => any` | static public method L1389-L1406 (18 lines) |
-| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L1408 - L1467** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L1408-L1467 (60 lines) |
-| `AttendanceModel.#formatReportRow` | `static private method` | **L1469 - L1514** | `(person, log, workDate, evalStatus) => any` | static private method L1469-L1514 (46 lines) |
-| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1516 - L1518** | `(workDate, currentUser) => Promise<any>` | static public async method L1516-L1518 (3 lines) |
-| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1520 - L1569** | `(payload) => Promise<any>` | static public async method L1520-L1569 (50 lines) |
-| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1571 - L1582** | `(logId) => Promise<any>` | static public async method L1571-L1582 (12 lines) |
-| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1584 - L1647** | `(dailyRecords) => any` | static public method L1584-L1647 (64 lines) |
+| `AttendanceModel.getSpecialRequests` | `static public async method` | **L1301 - L1341** | `(currentUser, statusFilter = 'pending') => Promise<any>` | static public async method L1301-L1341 (41 lines) |
+| `AttendanceModel.processSpecialRequestsBulk` | `static public async method` | **L1343 - L1388** | `(logIds, decision, approverUserId) => Promise<any>` | static public async method L1343-L1388 (46 lines) |
+| `AttendanceModel.getDatesBetween` | `static public method` | **L1390 - L1407** | `(startDate, endDate) => any` | static public method L1390-L1407 (18 lines) |
+| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L1409 - L1468** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L1409-L1468 (60 lines) |
+| `AttendanceModel.#formatReportRow` | `static private method` | **L1470 - L1515** | `(person, log, workDate, evalStatus) => any` | static private method L1470-L1515 (46 lines) |
+| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L1517 - L1519** | `(workDate, currentUser) => Promise<any>` | static public async method L1517-L1519 (3 lines) |
+| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L1521 - L1570** | `(payload) => Promise<any>` | static public async method L1521-L1570 (50 lines) |
+| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L1572 - L1583** | `(logId) => Promise<any>` | static public async method L1572-L1583 (12 lines) |
+| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L1585 - L1648** | `(dailyRecords) => any` | static public method L1585-L1648 (64 lines) |
 
 ---
 
@@ -775,6 +775,16 @@
 - **Hash:** `a37ef6d93fece8a2` | **Total Lines:** `73` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
+## File: `pipeline/PIPE-20261028-approvals-gps-location-column/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `9abf8917dec71f6a` | **Total Lines:** `161` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
 
 ---
 

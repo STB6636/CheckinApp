@@ -1,0 +1,25 @@
+{
+  "pipeline_id": "PIPE-20261028-approvals-gps-location-column",
+  "branch": "feature-lock-normal-hours",
+  "surgical_files": [
+    {
+      "path": "assets/js/models/AttendanceModel.js",
+      "target_lines": "1300-1320",
+      "action": "ADD_GPS_COLUMNS_TO_SPECIAL_REQUESTS_QUERY",
+      "description": "Include check_in_lat, check_in_lng, check_in_location in getSpecialRequests query select clause"
+    },
+    {
+      "path": "approvals.html",
+      "target_lines": "95-106",
+      "action": "ADD_GPS_LOCATION_HEADER_COLUMN",
+      "description": "Add <th>พิกัดสถานที่</th> and balance width classes for symmetry"
+    },
+    {
+      "path": "assets/js/controllers/ApprovalsController.js",
+      "target_lines": "100-185",
+      "action": "RENDER_GPS_LOCATION_CELL_AND_UPDATE_COLSPAN",
+      "description": "Update colspan from 7 to 8 for group headers, and render location name, coordinates, and Google Maps link icon in each row"
+    }
+  ]
+}
+

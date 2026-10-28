@@ -71,7 +71,7 @@ export class ApprovalsController {
         if (!tbody) return;
 
         if (this.requestsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ไม่มีรายการคำขอลงเวลากรณีพิเศษในสถานะที่เลือก</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 bma-text-sub">ไม่มีรายการคำขอลงเวลากรณีพิเศษในสถานะที่เลือก</td></tr>`;
             return;
         }
 
@@ -102,7 +102,7 @@ export class ApprovalsController {
             for (const [divisionName, content] of Object.entries(divisionsObj)) {
                 html += `
                     <tr class="bg-indigo-500/10">
-                        <td colspan="7" class="font-bold text-sm py-2.5 px-4 text-indigo-600 dark:text-indigo-300" style="border-left: 4px solid #6366F1;">
+                        <td colspan="8" class="font-bold text-sm py-2.5 px-4 text-indigo-600 dark:text-indigo-300" style="border-left: 4px solid #6366F1;">
                             <i class="fa-solid fa-building-shield mr-1.5"></i>${bureauName} &gt; ${divisionName}
                         </td>
                     </tr>
@@ -112,7 +112,7 @@ export class ApprovalsController {
                     for (const [groupName, items] of Object.entries(content)) {
                         html += `
                             <tr class="bg-slate-100/80 dark:bg-slate-800/50">
-                                <td colspan="7" class="font-semibold text-xs py-2 pl-8 bma-text-main">
+                                <td colspan="8" class="font-semibold text-xs py-2 pl-8 bma-text-main">
                                     <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600"></i>กลุ่มงาน: ${groupName} (${items.length} รายการ)
                                 </td>
                             </tr>
@@ -141,6 +141,11 @@ export class ApprovalsController {
         const timeRange = `${req.check_in_time ? req.check_in_time.slice(0, 5) : '-'} - ${req.check_out_time ? req.check_out_time.slice(0, 5) : '-'} น.`;
         const isPending = req.approval_status === 'pending';
         const isChecked = this.selectedIds.has(req.id) ? 'checked' : '';
+
+        const locName = req.check_in_location || 'ขอลงเวลากรณีพิเศษ';
+        const hasCoords = req.check_in_lat != null && req.check_in_lng != null && !isNaN(Number(req.check_in_lat)) && !isNaN(Number(req.check_in_lng));
+        const latNum = hasCoords ? Number(req.check_in_lat).toFixed(5) : null;
+        const lngNum = hasCoords ? Number(req.check_in_lng).toFixed(5) : null;
 
         let commandColHtml = '';
         if (isPending) {
@@ -171,6 +176,24 @@ export class ApprovalsController {
                 <td>
                     <div class="font-semibold bma-text-main">${UIHelpers.formatThaiDate(req.work_date)}</div>
                     <div class="text-xs bma-text-sub">${req.shift_name} (${timeRange})</div>
+                </td>
+                <td class="text-xs">
+                    <div class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0"></i>
+                        <div class="min-w-0">
+                            <div class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug" title="${locName}">
+                                ${locName}
+                            </div>
+                            ${hasCoords ? `
+                                <div class="mt-0.5 flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                                    <span>${latNum}, ${lngNum}</span>
+                                    <a href="https://www.google.com/maps?q=${latNum},${lngNum}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 inline-flex items-center gap-0.5" title="เปิดแผนที่ Google Maps">
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <span class="bma-badge bma-badge-indigo">${req.remark || '-'}</span>
