@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "PIPE-20261028-rename-special-request-button",
+  "flow_id": "FLOW_CHECKIN_01",
+  "task_description": "Rename PC/Tablet special request button from 'ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)' to 'ส่งคำขอลงเวลากรณีพิเศษ' in checkin.html",
+  "surgical_targets": [
+    {
+      "file": "checkin.html",
+      "target_symbols": ["#btnOpenSpecialRequestModal"],
+      "surgical_line_range": "355-365",
+      "action": "rename_button_label"
+    }
+  ],
+  "verification": [
+    "Verify button text in checkin.html is exactly 'ส่งคำขอลงเวลากรณีพิเศษ'",
+    "Ensure ID #btnOpenSpecialRequestModal and Tailwind styling classes are preserved",
+    "Verify git diff against branch main"
+  ]
+}
+

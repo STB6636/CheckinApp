@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แผนปรับปรุง: เปลี่ยนชื่อปุ่มส่งคำขอลงเวลากรณีพิเศษบนมุมมองแท็บเล็ต/คอมพิวเตอร์ PC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #0f172a; color: #f8fafc; font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif; padding: 2rem 0; }
+    .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; color: #f8fafc; margin-bottom: 1.5rem; }
+    .badge-bma { background-color: #10b981; color: #fff; }
+    .code-box { background-color: #0b1120; border-radius: 8px; padding: 1rem; font-family: Consolas, monospace; font-size: 0.9rem; color: #38bdf8; overflow-x: auto; }
+    .diff-del { color: #f87171; background-color: rgba(239, 68, 68, 0.1); }
+    .diff-add { color: #4ade80; background-color: rgba(74, 222, 128, 0.1); }
+  </style>
+</head>
+<body>
+<div class="container" style="max-width: 900px;">
+  <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary pb-3">
+    <div>
+      <h3 class="fw-bold mb-1"><i class="fa-solid fa-pen-to-square text-warning me-2"></i>แผนปรับปรุง: เปลี่ยนชื่อปุ่มในมุมมองแท็บเล็ต/คอมพิวเตอร์ PC</h3>
+      <p class="text-secondary mb-0">Pipeline ID: <code>PIPE-20261028-rename-special-request-button</code> | File: <code>checkin.html</code></p>
+    </div>
+    <span class="badge badge-bma px-3 py-2 fs-6">Streamlined 2-SubAgent Mode</span>
+  </div>
+
+  <div class="card p-4">
+    <h5 class="fw-bold text-info mb-3"><i class="fa-solid fa-crosshairs me-2"></i>เป้าหมายการแก้ไข (Surgical Target)</h5>
+    <p>ในไฟล์ <code>checkin.html</code> (บรรทัด ~359) เปลี่ยนข้อความปุ่มเปิดโมดอลกรณีพิเศษสำหรับมุมมองแท็บเล็ตและคอมพิวเตอร์ PC (<code>#btnOpenSpecialRequestModal</code>):</p>
+    
+    <div class="code-box">
+      <div class="text-secondary">&lt;!-- Special Request Button (Desktop only on action card) --&gt;</div>
+      <div class="diff-del">- &lt;span&gt;ขอลงเวลากรณีพิเศษ (บันทึกเข้าและเลิกงานอัตโนมัติ)&lt;/span&gt;</div>
+      <div class="diff-add">+ &lt;span&gt;ส่งคำขอลงเวลากรณีพิเศษ&lt;/span&gt;</div>
+    </div>
+    <p class="mt-3 mb-0 text-success"><i class="fa-solid fa-circle-check me-2"></i>รักษา DOM ID <code>#btnOpenSpecialRequestModal</code>, ไอคอน และคลาส Tailwind CSS ทั้งหมดไว้คงเดิม 100% ไม่ส่งผลกระทบต่อ Event Listener หรือสไตล์ของปุ่ม</p>
+  </div>
+
+  <div class="card p-4">
+    <h5 class="fw-bold text-success mb-3"><i class="fa-solid fa-users-gear me-2"></i>การดำเนินงานของ SubAgents (ตามกฎ)</h5>
+    <ol class="mb-0 leading-relaxed">
+      <li class="mb-2"><strong>SubAgent 1 (Implementer - Model: Flash 3.8 High):</strong> ดำเนินการแก้ข้อความใน <code>checkin.html</code> บรรทัด 359</li>
+      <li class="mb-2"><strong>SubAgent 2 (QA Auditor - Model: Flash 3.8 High):</strong> ตรวจทานข้อความของปุ่ม และเปรียบเทียบ Git diff เทียบกับ Branch <code>main</code></li>
+      <li><strong>Orchestrator:</strong> สรุปผล รัน AST Mapper อัปเดตแผนที่ซอร์สโค้ด และรายงานผลต่อผู้ใช้</li>
+    </ol>
+  </div>
+</div>
+</body>
+</html>
+

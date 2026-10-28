@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-28T07:43:46.601Z",
-  "totalFilesScanned": 54,
-  "totalSymbolsIndexed": 417,
+  "generatedAt": "2026-10-28T07:59:28.804Z",
+  "totalFilesScanned": 55,
+  "totalSymbolsIndexed": 418,
   "files": [
     {
       "filePath": "approvals.html",
@@ -2636,7 +2636,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "dfff034a1594b178",
+      "fileHash": "ef8fb24a9f835e16",
       "totalLines": 683,
       "importsCount": 0,
       "importsPreview": [],
@@ -3567,6 +3567,25 @@
           "endLine": 129,
           "signature": "id=\"simRadiusContainer\"",
           "summary": "HTML DOM Section L118-L129"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261028-rename-special-request-button/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "d5004d93c2cf0448",
+      "totalLines": 51,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 16,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L16"
         }
       ]
     },
