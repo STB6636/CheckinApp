@@ -601,6 +601,57 @@ export class AttendanceModel {
         };
     }
 
+    /**
+     * สุ่มพิกัด GPS ขาออก และค้นหาชื่อสถานที่ใกล้เคียงจนกว่าจะได้ค่าที่ถูกต้องตามกฎ
+     * @param {number} baseLat 
+     * @param {number} baseLng 
+     * @param {number} radiusMeters 
+     * @param {number} maxAttempts 
+     * @returns {Promise<{lat: number, lng: number, locationName: string}>}
+     */
+    static async resolveJitteredCheckoutWithLocation(baseLat, baseLng, radiusMeters = 20, maxAttempts = 3) {
+        const numLat = Number(baseLat);
+        const numLng = Number(baseLng);
+        if (isNaN(numLat) || isNaN(numLng)) {
+            return { lat: null, lng: null, locationName: 'ไม่ระบุสถานที่' };
+        }
+
+        const radius = Math.max(5, Number(radiusMeters || 20));
+        let bestResult = null;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, radius);
+            if (jittered.lat === null || jittered.lng === null) continue;
+
+            try {
+                const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(jittered.lat, jittered.lng);
+                const locName = locMeta?.locationName || '';
+
+                if (locName && locName !== 'ไม่ระบุสถานที่' && !locName.includes('ไม่ระบุ')) {
+                    return {
+                        lat: jittered.lat,
+                        lng: jittered.lng,
+                        locationName: locName
+                    };
+                }
+
+                bestResult = {
+                    lat: jittered.lat,
+                    lng: jittered.lng,
+                    locationName: locName || `พิกัด (${jittered.lat.toFixed(5)}, ${jittered.lng.toFixed(5)})`
+                };
+            } catch (e) {
+                console.warn(`Attempt ${attempt} resolve jittered location error:`, e);
+            }
+        }
+
+        return bestResult || {
+            lat: numLat,
+            lng: numLng,
+            locationName: 'ขอลงเวลากรณีพิเศษ'
+        };
+    }
+
     static evaluateOfficialStatus(log, settings) {
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
@@ -989,18 +1040,11 @@ export class AttendanceModel {
                 const numLng = Number(payload.lng);
                 if (!isNaN(numLat) && !isNaN(numLng)) {
                     const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
-                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
-                    if (jittered.lat !== null && jittered.lng !== null) {
-                        outLat = jittered.lat;
-                        outLng = jittered.lng;
-                        try {
-                            const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
-                            if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
-                                outLocName = locMeta.locationName;
-                            }
-                        } catch (e) {
-                            console.warn('Resolve overtime jittered checkout location error:', e);
-                        }
+                    const jitterResult = await AttendanceModel.resolveJitteredCheckoutWithLocation(numLat, numLng, jitterRadius);
+                    if (jitterResult.lat !== null && jitterResult.lng !== null) {
+                        outLat = jitterResult.lat;
+                        outLng = jitterResult.lng;
+                        outLocName = jitterResult.locationName;
                     }
                 }
             }
@@ -1086,18 +1130,11 @@ export class AttendanceModel {
                 const numLng = Number(payload.lng);
                 if (!isNaN(numLat) && !isNaN(numLng)) {
                     const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
-                    const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
-                    if (jittered.lat !== null && jittered.lng !== null) {
-                        outLat = jittered.lat;
-                        outLng = jittered.lng;
-                        try {
-                            const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
-                            if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
-                                outLocName = locMeta.locationName;
-                            }
-                        } catch (e) {
-                            console.warn('Resolve single-click jittered checkout location error:', e);
-                        }
+                    const jitterResult = await AttendanceModel.resolveJitteredCheckoutWithLocation(numLat, numLng, jitterRadius);
+                    if (jitterResult.lat !== null && jitterResult.lng !== null) {
+                        outLat = jitterResult.lat;
+                        outLng = jitterResult.lng;
+                        outLocName = jitterResult.locationName;
                     }
                 }
             }
@@ -1211,18 +1248,11 @@ export class AttendanceModel {
             const numLng = Number(payload.lng);
             if (!isNaN(numLat) && !isNaN(numLng)) {
                 const jitterRadius = Math.max(5, Number(settings.randomize_gps_radius_meters || 20));
-                const jittered = AttendanceModel.calculateGpsJitter(numLat, numLng, jitterRadius);
-                if (jittered.lat !== null && jittered.lng !== null) {
-                    outLat = jittered.lat;
-                    outLng = jittered.lng;
-                    try {
-                        const locMeta = await AttendanceModel.resolveLocationWithZoomMeta(outLat, outLng);
-                        if (locMeta && locMeta.locationName && locMeta.locationName !== 'ไม่ระบุสถานที่') {
-                            outLocName = locMeta.locationName;
-                        }
-                    } catch (e) {
-                        console.warn('Resolve special request jittered checkout location error:', e);
-                    }
+                const jitterResult = await AttendanceModel.resolveJitteredCheckoutWithLocation(numLat, numLng, jitterRadius);
+                if (jitterResult.lat !== null && jitterResult.lng !== null) {
+                    outLat = jitterResult.lat;
+                    outLng = jitterResult.lng;
+                    outLocName = jitterResult.locationName;
                 }
             }
         }

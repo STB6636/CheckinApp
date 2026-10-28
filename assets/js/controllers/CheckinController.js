@@ -33,6 +33,14 @@ export class CheckinController {
         this.pastCurrentPage = 1;
         this.specialRequestsList = [];
         this.lastEvaluatedMinute = -1;
+        this.specialModalGps = {
+            mode: 'current',
+            customLat: null,
+            customLng: null,
+            customLocationName: ''
+        };
+        this.spLeafletMap = null;
+        this.spLeafletMarker = null;
         this.init();
     }
 
@@ -998,6 +1006,10 @@ export class CheckinController {
                     if (locNameEl) {
                         locNameEl.textContent = resMeta.locationName;
                     }
+                    const spCurrentLoc = document.getElementById('spCurrentLocNameText');
+                    if (spCurrentLoc && this.specialModalGps?.mode === 'current') {
+                        spCurrentLoc.textContent = resMeta.locationName;
+                    }
 
                     // หากระบบเปลี่ยนไปใช้ระยะ z = 20 (ประมาณ 10 เมตร) ให้ปรับซูมแผนที่ Google Map เป็น z = 20 ตามทันที
                     if (resMeta.zoomLevel === 20) {
@@ -1185,11 +1197,16 @@ export class CheckinController {
         const modalSpecial = document.getElementById('modalSpecialRequest');
         const closeSpecialModal = () => modalSpecial?.classList.add('hidden');
 
-        document.getElementById('btnOpenSpecialRequestModal')?.addEventListener('click', () => {
+        const openSpecialModal = () => {
+            this.#openSpecialRequestModal();
             modalSpecial?.classList.remove('hidden');
-        });
+        };
+
+        document.getElementById('btnOpenSpecialRequestModal')?.addEventListener('click', openSpecialModal);
         document.getElementById('btnCloseSpecialModal')?.addEventListener('click', closeSpecialModal);
         document.getElementById('btnCancelSpecialModal')?.addEventListener('click', closeSpecialModal);
+
+        this.#initSpecialModalGps();
 
         document.getElementById('spShiftSelect')?.addEventListener('change', (e) => {
             const idx = parseInt(e.target.value, 10);
@@ -1310,9 +1327,7 @@ export class CheckinController {
             }
         });
 
-        document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', () => {
-            modalSpecial?.classList.remove('hidden');
-        });
+        document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', openSpecialModal);
     }
 
     async #handleMainCheckin() {
@@ -1630,6 +1645,207 @@ export class CheckinController {
         }
     }
 
+    #openSpecialRequestModal() {
+        this.specialModalGps.mode = 'current';
+        const radioCurrent = document.getElementById('spGpsModeCurrent');
+        const radioCustom = document.getElementById('spGpsModeCustom');
+        if (radioCurrent) radioCurrent.checked = true;
+        if (radioCustom) radioCustom.checked = false;
+
+        const currentBox = document.getElementById('spCurrentGpsBox');
+        const customBox = document.getElementById('spCustomGpsBox');
+        currentBox?.classList.remove('hidden');
+        customBox?.classList.add('hidden');
+
+        const coordsText = document.getElementById('spCurrentCoordsText');
+        const locNameText = document.getElementById('spCurrentLocNameText');
+        if (coordsText) {
+            coordsText.textContent = (this.gpsData.lat != null && this.gpsData.lng != null)
+                ? `${Number(this.gpsData.lat).toFixed(6)}, ${Number(this.gpsData.lng).toFixed(6)}`
+                : 'ไม่สามารถระบุพิกัดได้ (กำลังดึง GPS หรือไม่ได้เปิดสิทธิ์)';
+        }
+        if (locNameText) {
+            locNameText.textContent = this.gpsData.locationName || (this.gpsData.lat != null ? 'กำลังตรวจสอบชื่อสถานที่...' : 'ไม่ระบุสถานที่');
+        }
+
+        if (this.gpsData.lat != null && (!this.gpsData.locationName || this.gpsData.locationName.includes('กำลังตรวจสอบ'))) {
+            AttendanceModel.resolveLocationName(this.gpsData.lat, this.gpsData.lng).then(locName => {
+                if (locNameText && this.specialModalGps.mode === 'current') {
+                    locNameText.textContent = locName;
+                }
+            }).catch(e => console.warn('Special modal resolve loc error:', e));
+        }
+    }
+
+    #initSpecialModalGps() {
+        const radioCurrent = document.getElementById('spGpsModeCurrent');
+        const radioCustom = document.getElementById('spGpsModeCustom');
+        const currentBox = document.getElementById('spCurrentGpsBox');
+        const customBox = document.getElementById('spCustomGpsBox');
+        const searchInput = document.getElementById('spMapSearchInput');
+        const btnSearch = document.getElementById('btnSpMapSearch');
+        const customCoordsDisp = document.getElementById('spCustomCoordsDisplay');
+        const customLocDisp = document.getElementById('spCustomLocNameDisplay');
+
+        const updateCustomPinAndLocation = async (lat, lng, flyTo = false) => {
+            const numLat = Number(lat);
+            const numLng = Number(lng);
+            if (isNaN(numLat) || isNaN(numLng)) return;
+
+            this.specialModalGps.customLat = numLat;
+            this.specialModalGps.customLng = numLng;
+
+            if (customCoordsDisp) {
+                customCoordsDisp.textContent = `${numLat.toFixed(6)}, ${numLng.toFixed(6)}`;
+            }
+
+            if (this.spLeafletMarker) {
+                this.spLeafletMarker.setLatLng([numLat, numLng]);
+            }
+            if (this.spLeafletMap && flyTo) {
+                this.spLeafletMap.flyTo([numLat, numLng], 16, { animate: true, duration: 1 });
+            }
+
+            if (customLocDisp) {
+                customLocDisp.textContent = 'กำลังตรวจสอบชื่อสถานที่...';
+            }
+
+            try {
+                const locName = await AttendanceModel.resolveLocationName(numLat, numLng);
+                this.specialModalGps.customLocationName = locName;
+                if (customLocDisp) {
+                    customLocDisp.textContent = locName || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
+                }
+            } catch (err) {
+                console.warn('Resolve custom location error:', err);
+                const fallbackName = `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
+                this.specialModalGps.customLocationName = fallbackName;
+                if (customLocDisp) {
+                    customLocDisp.textContent = fallbackName;
+                }
+            }
+        };
+
+        const setupMapIfAvailable = () => {
+            if (typeof L === 'undefined') {
+                console.warn('Leaflet is not loaded yet.');
+                return;
+            }
+
+            const initialLat = this.specialModalGps.customLat ?? this.gpsData.lat ?? 13.7563;
+            const initialLng = this.specialModalGps.customLng ?? this.gpsData.lng ?? 100.5018;
+
+            if (!this.spLeafletMap) {
+                const mapEl = document.getElementById('spLeafletMap');
+                if (!mapEl) return;
+
+                this.spLeafletMap = L.map('spLeafletMap', {
+                    zoomControl: true,
+                    attributionControl: false
+                }).setView([initialLat, initialLng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(this.spLeafletMap);
+
+                this.spLeafletMarker = L.marker([initialLat, initialLng], {
+                    draggable: true,
+                    autoPan: true
+                }).addTo(this.spLeafletMap);
+
+                this.spLeafletMarker.on('dragend', (e) => {
+                    const pos = e.target.getLatLng();
+                    updateCustomPinAndLocation(pos.lat, pos.lng, false);
+                });
+
+                this.spLeafletMap.on('click', (e) => {
+                    updateCustomPinAndLocation(e.latlng.lat, e.latlng.lng, false);
+                });
+            }
+
+            updateCustomPinAndLocation(initialLat, initialLng, true);
+            setTimeout(() => {
+                this.spLeafletMap?.invalidateSize();
+            }, 250);
+        };
+
+        radioCurrent?.addEventListener('change', () => {
+            if (radioCurrent.checked) {
+                this.specialModalGps.mode = 'current';
+                currentBox?.classList.remove('hidden');
+                customBox?.classList.add('hidden');
+            }
+        });
+
+        radioCustom?.addEventListener('change', () => {
+            if (radioCustom.checked) {
+                this.specialModalGps.mode = 'custom';
+                currentBox?.classList.add('hidden');
+                customBox?.classList.remove('hidden');
+                setupMapIfAvailable();
+            }
+        });
+
+        const performSearch = async () => {
+            const query = (searchInput?.value || '').trim();
+            if (!query) return;
+
+            // 1. Check if coordinate format e.g. "13.7563, 100.5018"
+            const coordRegex = /^(-?\d+(?:\.\d+)?)[,\s]+(-?\d+(?:\.\d+)?)$/;
+            const match = query.match(coordRegex);
+            if (match) {
+                const lat = parseFloat(match[1]);
+                const lng = parseFloat(match[2]);
+                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    await updateCustomPinAndLocation(lat, lng, true);
+                    return;
+                }
+            }
+
+            // 2. Nominatim search
+            const origBtnText = btnSearch ? btnSearch.innerHTML : '';
+            if (btnSearch) {
+                btnSearch.disabled = true;
+                btnSearch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            }
+
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&accept-language=th`;
+                const res = await fetch(url, {
+                    headers: { 'User-Agent': 'CheckinApp-BMA/2.0' }
+                });
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lng = parseFloat(data[0].lon);
+                    await updateCustomPinAndLocation(lat, lng, true);
+                } else {
+                    UIHelpers.showToast('ไม่พบสถานที่ที่ค้นหา กรุณาระบุให้ชัดเจนขึ้น หรือลากหมุดบนแผนที่', 'warning', 3000);
+                }
+            } catch (err) {
+                console.warn('Search location error:', err);
+                UIHelpers.showToast('เกิดข้อผิดพลาดในการค้นหาสถานที่', 'error', 2500);
+            } finally {
+                if (btnSearch) {
+                    btnSearch.disabled = false;
+                    btnSearch.innerHTML = origBtnText;
+                }
+            }
+        };
+
+        btnSearch?.addEventListener('click', (e) => {
+            e.preventDefault();
+            performSearch();
+        });
+
+        searchInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+    }
+
     async #handleSubmitSpecialRequest(closeModalCallback) {
         AuthService.getCurrentUser(true);
 
@@ -1663,6 +1879,20 @@ export class CheckinController {
                 );
             }
 
+            let finalLat = null;
+            let finalLng = null;
+            let finalLocName = 'ขอลงเวลากรณีพิเศษ';
+
+            if (this.specialModalGps?.mode === 'custom' && this.specialModalGps.customLat != null && this.specialModalGps.customLng != null) {
+                finalLat = this.specialModalGps.customLat;
+                finalLng = this.specialModalGps.customLng;
+                finalLocName = this.specialModalGps.customLocationName || 'พิกัดกำหนดเอง';
+            } else {
+                finalLat = this.settings.require_gps ? this.gpsData.lat : null;
+                finalLng = this.settings.require_gps ? this.gpsData.lng : null;
+                finalLocName = (this.settings.require_gps && this.gpsData.locationName) ? this.gpsData.locationName : 'ขอลงเวลากรณีพิเศษ';
+            }
+
             const res = await AttendanceModel.submitSpecialRequest({
                 personnel_id: this.currentUser.personnel_id,
                 user_id: this.currentUser.id,
@@ -1673,9 +1903,9 @@ export class CheckinController {
                 is_overtime: Boolean(shiftObj.is_overtime),
                 remark,
                 photo_url: finalPhotoUrl,
-                lat: this.settings.require_gps ? this.gpsData.lat : null,
-                lng: this.settings.require_gps ? this.gpsData.lng : null,
-                location_name: (this.settings.require_gps && this.gpsData.locationName) ? this.gpsData.locationName : 'ขอลงเวลากรณีพิเศษ'
+                lat: finalLat,
+                lng: finalLng,
+                location_name: finalLocName
             });
 
             UIHelpers.hideLoading();

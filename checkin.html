@@ -37,6 +37,9 @@
     <!-- Custom Theme & Checkin Styles -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Leaflet Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
         /* Smooth vertical civic ambient gradient using BMA 9-color palette without pattern/clutter */
@@ -609,7 +612,7 @@
 
     <!-- Modal ขอลงเวลากรณีพิเศษ -->
     <div id="modalSpecialRequest" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
+        <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center text-sm shadow-xs">
@@ -651,6 +654,72 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. เลือกหมายเหตุ / เหตุผล *</label>
                     <select id="spRemarkSelect" class="bma-select text-sm rounded-xl w-full" required></select>
+                </div>
+                <!-- 4. พิกัดและสถานที่ปฏิบัติราชการ -->
+                <div class="space-y-2.5 pt-1 border-t border-slate-200/80 dark:border-slate-700/80">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">4. พิกัดและสถานที่ปฏิบัติราชการ *</label>
+                    
+                    <!-- Radio GPS Mode Selection -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition">
+                            <input type="radio" name="spGpsMode" id="spGpsModeCurrent" value="current" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                            <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                <i class="fa-solid fa-location-crosshairs text-emerald-600 dark:text-emerald-400 mr-1"></i>พิกัดปัจจุบัน
+                            </span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition">
+                            <input type="radio" name="spGpsMode" id="spGpsModeCustom" value="custom" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                <i class="fa-solid fa-map-location-dot text-indigo-600 dark:text-indigo-400 mr-1"></i>ปักหมุดเอง
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Current GPS Info Box -->
+                    <div id="spCurrentGpsBox" class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 text-xs space-y-1">
+                        <div class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                            <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400"></i>
+                            <span class="font-medium">พิกัดปัจจุบัน:</span>
+                            <span id="spCurrentCoordsText" class="font-mono text-slate-800 dark:text-slate-200">-</span>
+                        </div>
+                        <div class="text-[11px] text-slate-600 dark:text-slate-300 pl-4" id="spCurrentLocNameText">
+                            กำลังตรวจสอบตำแหน่ง...
+                        </div>
+                    </div>
+
+                    <!-- Custom GPS Map & Search Box -->
+                    <div id="spCustomGpsBox" class="hidden space-y-2">
+                        <!-- Search Box / Direct Coordinate input -->
+                        <div class="flex gap-1.5">
+                            <div class="relative flex-1">
+                                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input type="text" id="spMapSearchInput" placeholder="พิมพ์ชื่อสถานที่ หรือ ละติจูด, ลองจิจูด..." class="bma-input pl-8 text-xs py-2 rounded-xl w-full">
+                            </div>
+                            <button type="button" id="btnSpMapSearch" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shrink-0 transition flex items-center gap-1">
+                                <span>ค้นหา</span>
+                            </button>
+                        </div>
+
+                        <!-- Leaflet map container -->
+                        <div class="relative rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-600 h-44 sm:h-52 w-full bg-slate-100 dark:bg-slate-900 shadow-inner">
+                            <div id="spLeafletMap" class="w-full h-full z-0"></div>
+                        </div>
+
+                        <!-- Selected Custom Coords & Location Display -->
+                        <div class="p-2.5 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/70 dark:border-indigo-800/50 text-xs space-y-1">
+                            <div class="flex items-center justify-between text-indigo-950 dark:text-indigo-200">
+                                <span class="font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-thumbtack text-rose-500"></i> หมุดที่เลือก:
+                                </span>
+                                <span id="spCustomCoordsDisplay" class="font-mono text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">-</span>
+                            </div>
+                            <div id="spCustomLocNameDisplay" class="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2">
+                                ลากหมุดสีฟ้าหรือคลิกบนแผนที่เพื่อเลือกตำแหน่ง
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">

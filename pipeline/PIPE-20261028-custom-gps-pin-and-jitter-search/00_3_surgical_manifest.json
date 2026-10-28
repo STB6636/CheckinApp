@@ -1,0 +1,34 @@
+{
+  "pipeline_id": "PIPE-20261028-custom-gps-pin-and-jitter-search",
+  "flow_id": "FLOW_GPS_01",
+  "task_description": "Enhance GPS jitter checkout to resolve location until valid name is obtained, and add custom GPS picker (search, direct coords, draggable Leaflet map pin like LINE) in special request modal",
+  "surgical_targets": [
+    {
+      "file": "checkin.html",
+      "target_symbols": ["head", "#modalSpecialRequest"],
+      "surgical_line_range": "35-45, 625-665",
+      "action": "include_leaflet_and_add_special_modal_gps_section"
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "target_symbols": ["AttendanceModel.resolveJitteredCheckoutWithLocation", "AttendanceModel.submitSpecialRequest", "AttendanceModel.submitCheckinOrCheckout"],
+      "surgical_line_range": "585-610, 990-1005, 1085-1105, 1210-1230",
+      "action": "implement_retry_jitter_location_resolution"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "target_symbols": ["CheckinController.#initSpecialModalGpsMap", "CheckinController.#handleSubmitSpecialRequest"],
+      "surgical_line_range": "1150-1175, 1630-1685",
+      "action": "bind_special_modal_map_and_pass_custom_gps"
+    }
+  ],
+  "verification": [
+    "Verify Leaflet loads and initializes without console errors",
+    "Test dragging pin and clicking map updates coords and resolves location name",
+    "Test searching location query updates map pin and coordinates",
+    "Test submitting special request uses selected custom GPS for check-in and jittered GPS for checkout",
+    "Verify node -c syntax on modified JS files",
+    "Verify git diff against branch main"
+  ]
+}
+
