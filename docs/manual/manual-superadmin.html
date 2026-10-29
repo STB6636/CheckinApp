@@ -182,7 +182,7 @@
                     คู่มือนี้ครอบคลุมการตั้งค่าระบบผ่านหน้าจอ <code class="font-mono text-purple-600 dark:text-purple-400 font-bold">settings.html</code> ทั้ง 5 แท็บ พร้อมหน้าจอจำลองที่สามารถคลิกสลับแท็บเพื่อทดสอบการทำงานได้จริง และแนวปฏิบัติด้านความปลอดภัยข้อมูล PDPA
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#480080] dark:text-purple-400"></i> ปรับปรุงล่าสุด: 27 ตุลาคม 2569</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#480080] dark:text-purple-400"></i> ปรับปรุงล่าสุด: 29 ตุลาคม 2569 (V2.7+)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-sliders text-[#480080] dark:text-purple-400"></i> ควบคุมการทำงาน 5 แท็บหลัก</span>
                 </div>
@@ -280,36 +280,112 @@
                 <!-- Simulation Tab Panels -->
                 <div class="bg-white dark:bg-slate-900/90 rounded-2xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-700/80 shadow-md">
 
-                    <!-- Panel 1: หน่วยงาน & โลโก้ -->
-                    <div id="sim-panel-1" class="settings-sim-panel space-y-4">
-                        <div class="flex items-center justify-between">
+                    <!-- Panel 1: หน่วยงาน & ระบบ (ข้อมูลหน่วยงานและสวิตช์ควบคุมระบบ) -->
+                    <div id="sim-panel-1" class="settings-sim-panel space-y-5">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
                             <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-2">
                                 <i class="fa-solid fa-building-columns text-[#480080]"></i>
-                                <span>แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ตราสัญลักษณ์ (Branding &amp; Identity)</span>
+                                <span>แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ (Organization &amp; System Controls)</span>
                             </h4>
                             <span class="text-[10px] text-slate-400 font-mono">settings.html &gt; tab 1</span>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                            <div class="space-y-1.5">
-                                <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อหน่วยงานหลัก:</label>
-                                <input type="text" value="กรุงเทพมหานคร" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อสำนักงาน / กอง:</label>
-                                <input type="text" value="สำนักเทศกิจ" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
-                            </div>
-                            <div class="sm:col-span-2 space-y-1.5">
-                                <label class="font-bold text-slate-700 dark:text-slate-300">URL โลโก้หน่วยงาน หรือ อัปโหลดภาพ:</label>
-                                <div class="flex gap-2">
-                                    <input type="text" value="https://example.bma.go.th/images/logo.png" readonly class="flex-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
-                                    <button type="button" class="mockup-btn px-3 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 cursor-pointer" data-title="ทดสอบลิงก์โลโก้" data-desc="ในการใช้งานจริง ปุ่มนี้จะทดสอบโหลดภาพจาก URL มาแสดงในกล่องพรีวิวทันที">
-                                        <i class="fa-solid fa-magnifying-glass mr-1"></i>ทดสอบลิงก์
-                                    </button>
+                        
+                        <!-- ฝั่งซ้าย: ข้อมูลหน่วยงานและอัตลักษณ์ -->
+                        <div class="space-y-3">
+                            <span class="font-extrabold text-xs text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-id-card"></i> 1. อัตลักษณ์หน่วยงานและตราสัญลักษณ์
+                            </span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                <div class="space-y-1.5">
+                                    <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อหน่วยงานหลัก:</label>
+                                    <input type="text" value="กรุงเทพมหานคร" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="font-bold text-slate-700 dark:text-slate-300">ชื่อสำนักงาน / กอง:</label>
+                                    <input type="text" value="สำนักเทศกิจ" readonly class="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium" />
+                                </div>
+                                <div class="sm:col-span-2 space-y-1.5">
+                                    <label class="font-bold text-slate-700 dark:text-slate-300">URL โลโก้หน่วยงาน หรือ อัปโหลดภาพ:</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" value="https://example.bma.go.th/images/logo.png" readonly class="flex-1 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                                        <button type="button" class="mockup-btn px-3 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 cursor-pointer" data-title="ทดสอบลิงก์โลโก้" data-desc="ในการใช้งานจริง ปุ่มนี้จะทดสอบโหลดภาพจาก URL มาแสดงในกล่องพรีวิวทันที">
+                                            <i class="fa-solid fa-magnifying-glass mr-1"></i>ทดสอบลิงก์
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ฝั่งขวา: การควบคุมฟังก์ชันลงเวลาระดับระบบ -->
+                        <div class="pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                            <span class="font-extrabold text-xs text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-sliders"></i> 2. การควบคุมฟังก์ชันลงเวลาระดับระบบ (Attendance Controls)
+                            </span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                <!-- สวิตช์สุ่ม GPS + รัศมีระยะสุ่ม -->
+                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <b class="text-slate-800 dark:text-white block">สุ่มระยะ GPS ขาออกงาน (โหมดพิเศษ)</b>
+                                            <span class="text-[11px] text-slate-500">สุ่มพิกัดขาออกรอบจุดเข้างานเพื่อความสมจริง</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">เปิดใช้งาน</span>
+                                    </div>
+                                    <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                                        <div>
+                                            <span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">รัศมีระยะสุ่มพิกัด (เมตร):</span>
+                                            <span class="text-[10px] text-slate-400">กำหนดรัศมีวงสุ่ม 5 - 100 เมตร</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 shrink-0">
+                                            <input type="number" id="setRandomizeGpsRadius" value="20" min="5" max="100" readonly class="w-16 p-1 text-center font-mono font-bold text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white" />
+                                            <span class="text-[10px] text-slate-500 font-bold">เมตร</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- สวิตช์ Real-time Filter + Early Shift Window -->
+                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <b class="text-slate-800 dark:text-white block">กรองช่วงเวลากะตามเวลาจริง (Real-time Filter)</b>
+                                            <span class="text-[11px] text-slate-500">แสดงเฉพาะกะที่ตรงกับเวลาปัจจุบัน</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">เปิดใช้งาน</span>
+                                    </div>
+                                    <div class="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                                        <div>
+                                            <span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา:</span>
+                                            <span class="text-[10px] text-slate-400">สำหรับกะที่เปิด "ทำงานก่อนเวลาเริ่มงานได้"</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 shrink-0">
+                                            <input type="number" id="setEarlyShiftWindowMinutes" value="30" min="0" max="360" readonly class="w-16 p-1 text-center font-mono font-bold text-xs rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white" />
+                                            <span class="text-[10px] text-slate-500 font-bold">นาที</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- สวิตช์ปิดการลงเวลาในช่วงเวลาปกติ -->
+                                <div class="p-3.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 flex items-center justify-between">
+                                    <div>
+                                        <b class="text-amber-900 dark:text-amber-200 block">ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)</b>
+                                        <span class="text-[11px] text-slate-500">ไม่อนุญาตให้กดบันทึกเวลาหน้าหลักในช่วงเวลาปกติ</span>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-[10px]">ปิดอยู่</span>
+                                </div>
+
+                                <!-- สวิตช์รูปแบบการบันทึกเวลาทำงาน -->
+                                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                    <div>
+                                        <b class="text-slate-800 dark:text-white block">รูปแบบการบันทึกเวลาทำงาน</b>
+                                        <span class="text-[11px] text-slate-500">1. รูปแบบปกติ (เข้า-ออก 2 ครั้ง) หรือ 2. พิเศษ (ครั้งเดียว)</span>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-[#00744B] font-bold text-[10px]">รูปแบบปกติ</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="pt-2 flex justify-end">
-                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกข้อมูลหน่วยงาน" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกชื่อหน่วยงานและตราสัญลักษณ์ลงในตาราง system_settings ของฐานข้อมูล">
+                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกแท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกทั้งชื่อหน่วยงาน ตราสัญลักษณ์ URL Google Drive และสวิตช์ควบคุมฟังก์ชันลงเวลาระดับระบบทั้งหมดพร้อมกัน">
                                 <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกแท็บที่ 1
                             </button>
                         </div>
@@ -431,11 +507,19 @@
                                 <div class="flex items-center gap-2">
                                     <span class="w-5 h-5 rounded-full bg-purple-100 text-[#480080] font-bold text-[11px] flex items-center justify-center">2</span>
                                     <div>
-                                        <b class="text-slate-800 dark:text-white">ปฏิบัติงานนอกเวลาราชการ (16:30 - 20:30 น.)</b>
-                                        <span class="text-[10px] text-purple-500 block">กะนอกเวลา (OT)</span>
+                                        <b class="text-slate-800 dark:text-white">ปฏิบัติงานนอกเวลาราชการ (17:00 - 01:00 น.)</b>
+                                        <span class="text-[10px] text-purple-500 block">กะนอกเวลาพิเศษ (ข้ามคืน)</span>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full bg-purple-100 text-[#480080] font-bold text-[10px]">OT</span>
+                                <div class="text-right space-y-1">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <span class="px-2 py-0.5 rounded-full bg-purple-100 text-[#480080] font-bold text-[10px]">OT</span>
+                                        <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold text-[10px]">ข้ามวัน</span>
+                                    </div>
+                                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> เข้าก่อนเวลาได้
+                                    </span>
+                                </div>
                             </div>
                             <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
@@ -483,41 +567,133 @@
                 </div>
             </section>
 
-            <!-- Topic 2: ข้อมูลหน่วยงาน & โลโก้ -->
+            <!-- Topic 2: ข้อมูลหน่วยงาน ตราสัญลักษณ์ และการควบคุมฟังก์ชันระบบ -->
             <section id="topic-2" class="page-break bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 dark:border-slate-700/60 space-y-6">
                 <div class="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-slate-700">
                     <span class="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center font-black text-lg shadow-xs shrink-0">2</span>
                     <div>
-                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">การตั้งค่าข้อมูลหน่วยงาน ตราสัญลักษณ์ (โลโก้) และข้อความระบบ</h3>
-                        <p class="text-xs text-slate-500">แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ (Organization Branding &amp; Identity)</p>
+                        <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">การตั้งค่าข้อมูลหน่วยงาน ตราสัญลักษณ์ (โลโก้) และการควบคุมฟังก์ชันลงเวลาระดับระบบ</h3>
+                        <p class="text-xs text-slate-500">แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ (Organization Branding, Identity &amp; System Controls)</p>
                     </div>
                 </div>
 
-                <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div class="space-y-6 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        เข้าไปที่เมนู <b>"ตั้งค่าระบบ" (<code class="font-mono">settings.html</code>) &rarr; แท็บที่ 1: "ข้อมูลหน่วยงาน &amp; ระบบ"</b> เพื่อกำหนดอัตลักษณ์ของหน่วยงาน:
+                        เข้าไปที่เมนู <b>"ตั้งค่าระบบ" (<code class="font-mono">settings.html</code>) &rarr; แท็บที่ 1: "ข้อมูลหน่วยงาน &amp; ระบบ"</b> ซึ่งแบ่งโครงสร้างออกเป็น 2 ส่วนหลัก ได้แก่ อัตลักษณ์หน่วยงานทางซ้าย และการควบคุมฟังก์ชันลงเวลาระดับระบบทางขวา:
                     </p>
 
+                    <!-- ส่วนที่ 1: ข้อมูลหน่วยงาน & อัตลักษณ์ -->
                     <div class="space-y-3">
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block text-sm">1. ชื่อหน่วยงานหลัก และชื่อสำนักงาน/กอง:</strong>
-                            <p class="text-slate-500 text-xs">
-                                กำหนด <b>ชื่อหน่วยงานหลัก</b> (เช่น <i>กรุงเทพมหานคร</i>) และ <b>ชื่อสังกัด [สำนักงาน/กอง]</b> (เช่น <i>สำนักเทศกิจ</i>) ข้อมูลนี้จะแสดงบนแถบ Header ของทุกหน้าจอและบนหัวรายงาน PDF รูปแบบทางการ
-                            </p>
+                        <h4 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-id-card text-purple-600"></i>
+                            <span>ส่วนที่ 1: ข้อมูลอัตลักษณ์หน่วยงาน และตราสัญลักษณ์ (Branding &amp; Identity)</span>
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                                <strong class="text-slate-800 dark:text-white block text-sm">1. ชื่อหน่วยงาน &amp; สังกัด:</strong>
+                                <p class="text-slate-500 text-xs">
+                                    กำหนด <b>ชื่อหน่วยงานหลัก</b> (เช่น <i>กรุงเทพมหานคร</i>) และ <b>ชื่อสำนักงาน/กอง</b> (เช่น <i>สำนักเทศกิจ</i>) จะแสดงบนแถบ Header ทุกหน้าจอและหัวเอกสารรายงาน PDF ทางการ
+                                </p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                                <strong class="text-slate-800 dark:text-white block text-sm">2. ข้อความ Login &amp; Footer:</strong>
+                                <p class="text-slate-500 text-xs">
+                                    กำหนดไตเติลระบบบนหน้าแรก (เช่น <i>BMA Time Attendance System</i>) และคำอธิบายความปลอดภัย/นโยบายหน่วยงานใน Footer บรรทัดที่ 2
+                                </p>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
+                                <strong class="text-slate-800 dark:text-white block text-sm">3. รูปโลโก้ &amp; Google Drive:</strong>
+                                <p class="text-slate-500 text-xs">
+                                    อัปโหลดไฟล์ภาพหรือระบุ URL พร้อมปุ่มทดสอบโหลดรูปภาพ และกำหนด Web App URL ของ Google Apps Script เพื่อจัดเก็บภาพถ่ายใบหน้าลง Google Drive
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนที่ 2: การควบคุมฟังก์ชันลงเวลาระดับระบบ (อัปเดตใหม่ V2.7+) -->
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
+                            <h4 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-[#00744B]"></i>
+                                <span>ส่วนที่ 2: การควบคุมฟังก์ชันลงเวลาระดับระบบ (System Attendance Controls)</span>
+                            </h4>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-[#480080] dark:bg-purple-950 dark:text-purple-300">สำคัญสำหรับ SuperAdmin</span>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block text-sm">2. ข้อความ Header หน้าเข้าสู่ระบบ และ Footer:</strong>
-                            <p class="text-slate-500 text-xs">
-                                กำหนดข้อความไตเติลระบบบนหน้า Login (เช่น <i>BMA Time Attendance System</i>) และคำอธิบายเชิงนโยบายใน Footer บรรทัดที่ 2
-                            </p>
+                        <!-- 3 กล่องควบคุมหลักตามฟีเจอร์ใหม่ -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- ฟังก์ชัน 1: Real-time Filter & Early Shift Window -->
+                            <div class="p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 space-y-2.5">
+                                <div class="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold text-sm">
+                                    <i class="fa-solid fa-filter"></i>
+                                    <span>กรองกะตามเวลาจริง (Real-time Filter)</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    เมื่อเปิดสวิตช์ <code class="font-mono text-emerald-700 font-bold">toggleFilterShiftsByRealtime</code> Dropdown ช่วงเวลาปฏิบัติงานจะแสดงเฉพาะกะที่ตรงกับเวลาขณะที่ผู้ใช้เปิดแอปเท่านั้น ไม่แสดงกะทั้ง 24 ชม. ป้องกันการเลือกลงเวลากะผิด
+                                </p>
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/60 space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <b class="text-emerald-900 dark:text-emerald-200 text-xs">เวลาเริ่มทำงานก่อนเวลา:</b>
+                                        <span class="font-mono font-bold text-emerald-600 text-xs">30 นาที (ค่าเริ่มต้น)</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-normal">
+                                        ช่อง <code class="font-mono text-purple-600">setEarlyShiftWindowMinutes</code> (0 - 360 นาที) กำหนดให้เริ่มเลือกกะได้ล่วงหน้าก่อนเวลาเริ่มงาน สำหรับกะที่เปิดสิทธิ์ <i>"ทำงานก่อนเวลาเริ่มงานได้"</i>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- ฟังก์ชัน 2: Randomize GPS Checkout & Radius -->
+                            <div class="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40 space-y-2.5">
+                                <div class="flex items-center gap-2 text-blue-800 dark:text-blue-300 font-bold text-sm">
+                                    <i class="fa-solid fa-location-crosshairs"></i>
+                                    <span>สุ่มระยะ GPS ขาออกงาน (โหมดพิเศษ)</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    สำหรับการลงเวลารูปแบบพิเศษ (บันทึกครั้งเดียว) เมื่อเปิด <code class="font-mono text-blue-700 font-bold">toggleRandomizeGpsCheckout</code> ระบบจะสุ่มกระจายพิกัดขาออกรอบพิกัดเข้างาน เพื่อความสมจริงในการลงพื้นที่
+                                </p>
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-blue-200 dark:border-blue-700/60 space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <b class="text-blue-900 dark:text-blue-200 text-xs">รัศมีระยะสุ่มพิกัด:</b>
+                                        <span class="font-mono font-bold text-blue-600 text-xs">20 เมตร (5 - 100 ม.)</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-normal">
+                                        ช่อง <code class="font-mono text-purple-600">setRandomizeGpsRadius</code> กำหนดรัศมีวงกลมการสุ่มพิกัด พร้อมระบบ Reverse Geocoding ค้นหาชื่อสถานที่ใกล้เคียงให้อัตโนมัติ
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- ฟังก์ชัน 3: Disable Normal Hours Checkin -->
+                            <div class="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 space-y-2.5">
+                                <div class="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-sm">
+                                    <i class="fa-solid fa-ban"></i>
+                                    <span>ปิดการลงเวลาในช่วงเวลาปกติ</span>
+                                </div>
+                                <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    เมื่อเปิดสวิตช์ <code class="font-mono text-amber-700 font-bold">toggleDisableNormalHoursCheckin</code> ในช่วงเวลา 08:30 - 16:30 น. ปุ่มบันทึกเวลาหน้าหลักจะถูกปิดการทำงาน (Disable) ทั้งรูปแบบปกติและรูปแบบพิเศษ
+                                </p>
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700/60 space-y-1">
+                                    <b class="text-amber-900 dark:text-amber-200 text-xs block">แนวทางปฏิบัติของผู้ใช้:</b>
+                                    <p class="text-[11px] text-slate-500 leading-normal">
+                                        ระบบจะแสดงข้อความเตือนสีส้ม แนะนำให้บุคลากรลงเวลาปฏิบัติงานตามกะ หรือยื่นคำขอลงเวลากรณีพิเศษแทน
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <strong class="text-slate-800 dark:text-white block text-sm">3. รูปโลโก้หน่วยงาน:</strong>
-                            <p class="text-slate-500 text-xs">
-                                สามารถกำหนดได้ 2 วิธี: อัปโหลดไฟล์ภาพจากเครื่อง หรือวางลิงก์ URL ของรูปภาพ จากนั้นกดปุ่ม <b>"ทดสอบลิงก์"</b> เพื่อทดสอบการโหลดภาพ หากต้องการยกเลิกให้กดปุ่ม <b>"ล้างโลโก้"</b>
-                            </p>
+                        <!-- Callout Tip สำหรับผู้ดูแลระบบ -->
+                        <div class="p-4 rounded-2xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200/70 dark:border-purple-800/50 flex items-start gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-[#480080] text-white flex items-center justify-center text-xs shrink-0 mt-0.5 shadow-sm">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </span>
+                            <div class="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                                <b class="text-[#480080] dark:text-purple-300 text-sm block">เคล็ดลับการตั้งค่าระบบ (SuperAdmin Pro-Tip):</b>
+                                <p>
+                                    การเปิดใช้งาน <b>"กรองช่วงเวลากะตามเวลาจริง"</b> ร่วมกับการกำหนด <b>"เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา = 30 นาที"</b> และเปิดใช้ <b>"ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้"</b> ในกะการทำงาน (แท็บที่ 3) จะช่วยให้เจ้าหน้าที่ที่ต้องเข้าเวรผลัด สามารถลงเวลาเตรียมความพร้อมก่อนเริ่มผลัดได้อย่างราบรื่น โดยไม่จำเป็นต้องเปิดแสดงทุกกะตลอด 24 ชั่วโมง
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -669,31 +845,68 @@
                         ที่ <b>แท็บที่ 3: "จัดการกะการทำงานมาตรฐาน"</b> SuperAdmin สามารถกำหนดกะที่เปิดให้บุคลากรเลือกได้ใน Dropdown:
                     </p>
 
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
                             <div>
                                 <strong class="text-slate-800 dark:text-white">กดปุ่ม "+ เพิ่มช่วงเวลาปฏิบัติงาน":</strong>
-                                <span> เปิด Modal สำหรับกำหนดชื่อช่วงเวลา เช่น <i>"เวรบ่าย (16:30 - 00:30 น.)"</i></span>
+                                <span> เปิด Modal สำหรับกำหนดชื่อช่วงเวลา เช่น <i>"ปฏิบัติงานนอกเวลา (17:00 - 01:00 น.)"</i></span>
                             </div>
                         </div>
+
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
-                            <div>
-                                <strong class="text-slate-800 dark:text-white">ระบุเวลาและเงื่อนไขกะ:</strong>
-                                <ul class="list-disc pl-5 mt-1 space-y-0.5 text-xs text-slate-500">
-                                    <li><b>เวลาเริ่มงาน และเวลาเลิกงาน:</b> ในรูปแบบ 24 ชั่วโมง (เช่น 08:30 และ 16:30)</li>
-                                    <li><b>กะนอกเวลา (Overtime):</b> ติ๊กเลือกเพื่อติดป้าย Tag สีม่วงให้แก่รายการนี้</li>
-                                    <li><b>กะข้ามคืน (Overnight):</b> ติ๊กเลือกหากเวลาเลิกงานข้ามไปยังวันถัดไป</li>
-                                    <li><b>กะกำหนดเอง (Custom Shift):</b> ติ๊กเลือกเพื่อให้ผู้ใช้กรอกเวลาเข้า-ออกเองได้</li>
+                            <div class="space-y-2 w-full">
+                                <strong class="text-slate-800 dark:text-white">ระบุเวลาและเงื่อนไขกะ (Modal Fields &amp; Options):</strong>
+                                <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+                                    <li><b>เวลาเริ่มงาน (Check-in) และเวลาเลิกงาน (Check-out):</b> รูปแบบ 24 ชั่วโมง (เช่น 08:30 และ 16:30 หรือ 17:00 และ 01:00)</li>
+                                    <li><b>เป็นการปฏิบัติงานนอกเวลาราชการ (Overtime):</b> ติ๊กเลือกเพื่อติดป้าย Tag สีม่วง <code class="font-mono text-purple-600 font-bold">[OT]</code> ให้แก่รายการนี้</li>
+                                    <li><b>เป็นเวลาเลิกงานข้ามวัน (Overnight Shift):</b> ติ๊กเลือกหากเวลาเลิกงานข้ามไปวันถัดไป ระบบจะต่อท้าย "(ข้ามวัน)" ให้อัตโนมัติ</li>
+                                    <li><b>เป็นตัวเลือก "อื่นๆ" (Custom Shift):</b> ติ๊กเลือกเพื่อให้ผู้ใช้กรอกเวลาเข้าและเลิกงานเองได้อย่างอิสระ</li>
+                                    <li class="pt-1 text-slate-800 dark:text-slate-200 font-bold">
+                                        <span class="text-blue-600 dark:text-blue-400"><i class="fa-solid fa-clock-rotate-left mr-1"></i>[x] ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้ (allow_early_checkin):</span>
+                                        <p class="font-normal text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                                            เมื่อเปิดใช้ตัวเลือกนี้ ร่วมกับฟังก์ชัน <b>กรองช่วงเวลากะตามเวลาจริง (Real-time Filter)</b> ในแท็บที่ 1 ระบบจะนำกะนี้มาแสดงใน Dropdown ก่อนเวลาเริ่มงานจริง ตามจำนวนนาทีที่กำหนดใน <i>"เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา"</i> (ค่าเริ่มต้น 30 นาที)
+                                        </p>
+                                    </li>
                                 </ul>
+
+                                <!-- กล่องสูตรและตัวอย่างคำนวณ -->
+                                <div class="mt-2 p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 space-y-2">
+                                    <div class="flex items-center gap-2 font-bold text-blue-900 dark:text-blue-200 text-xs">
+                                        <i class="fa-solid fa-calculator"></i>
+                                        <span>สูตรและกลไกการแสดงผลกะล่วงหน้า:</span>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-blue-200/80 dark:border-blue-700/60 font-mono text-xs text-blue-800 dark:text-blue-300">
+                                        เวลาเริ่มปรากฏใน Dropdown = เวลาเริ่มงาน (Start Time) - เวลาล่วงหน้า (Early Shift Window Minutes)
+                                    </div>
+                                    <div class="text-xs text-slate-600 dark:text-slate-300 space-y-1">
+                                        <b class="text-slate-800 dark:text-white block">ตัวอย่างกรณีใช้งานจริง:</b>
+                                        <p>
+                                            กะปฏิบัติงานนอกเวลา เริ่ม <b>17:00 น.</b> เลิก <b>01:00 น.</b> เปิดใช้ <code class="font-mono text-blue-600">[x] ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้</code> โดยระบบตั้งค่าเวลาเริ่มทำงานก่อนเวลาไว้ <b>30 นาที</b>
+                                            &rarr; กะนี้จะปรากฏใน Dropdown ให้เจ้าหน้าที่กดเลือกและลงเวลาเข้างานได้ตั้งแต่เวลา <b>16:30 น.</b> เป็นต้นไปจนถึงเวลาเลิกงาน (01:00 น.)
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
-                            <div>
-                                <strong class="text-slate-800 dark:text-white">จัดเรียงลำดับการแสดงผล:</strong>
-                                <span> ในตารางรายการกะ ท่านสามารถกดปุ่ม <b>ลูกศรขึ้น / ลูกศรลง</b> เพื่อจัดลำดับรายการที่จะแสดงใน Dropdown ของหน้าลงเวลาได้อย่างอิสระ</span>
+                            <div class="space-y-2">
+                                <strong class="text-slate-800 dark:text-white">การแสดง Badge และจัดเรียงลำดับในตาราง:</strong>
+                                <ul class="list-disc pl-5 space-y-1 text-xs text-slate-600 dark:text-slate-400">
+                                    <li>
+                                        <b>ป้ายสถานะ Badge:</b> สำหรับช่วงเวลาที่เปิดใช้สิทธิ์เข้าก่อนเวลา ในตารางจะแสดง Badge สีฟ้าพร้อมไอคอน:
+                                        <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2 py-0.5 rounded-md mx-1 border border-blue-200/60 dark:border-blue-800/40">
+                                            <i class="fa-solid fa-clock-rotate-left"></i> เข้าก่อนเวลาได้
+                                        </span>
+                                        กำกับอยู่ใต้ประเภทช่วงเวลา เพื่อให้ผู้ดูแลระบบมองเห็นสถานะการอนุญาตได้อย่างชัดเจนในทันที
+                                    </li>
+                                    <li>
+                                        <b>จัดเรียงลำดับการแสดงผล:</b> กดปุ่ม <b>ลูกศรขึ้น / ลูกศรลง</b> เพื่อจัดลำดับรายการที่จะแสดงใน Dropdown ของหน้าลงเวลาได้อย่างอิสระ
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -980,7 +1193,7 @@
             <i class="fa-solid fa-landmark text-[#480080]"></i>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร</span>
         </div>
-        <p>คู่มือการใช้งานสำหรับผู้ดูแลระบบสูงสุด (SuperAdmin Master Manual) • ฉบับ 27 ตุลาคม 2569</p>
+        <p>คู่มือการใช้งานสำหรับผู้ดูแลระบบสูงสุด (SuperAdmin Master Manual) • ฉบับ 29 ตุลาคม 2569 (V2.7+)</p>
     </footer>
 
     <!-- Interactive Scripts: Theme, Mobile TOC, Scrollspy, Back to Top, Settings Simulator Tabs, FAQ Accordion, Mockup Alerts -->

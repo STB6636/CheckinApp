@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-29T07:14:43.104Z",
-  "totalFilesScanned": 68,
-  "totalSymbolsIndexed": 484,
+  "generatedAt": "2026-10-29T08:36:04.444Z",
+  "totalFilesScanned": 69,
+  "totalSymbolsIndexed": 485,
   "files": [
     {
       "filePath": "approvals.html",
@@ -3114,8 +3114,8 @@
     {
       "filePath": "docs/manual/index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "465dd9229d368ebd",
-      "totalLines": 669,
+      "fileHash": "298bd407ca03cfc8",
+      "totalLines": 683,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3132,17 +3132,17 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 130,
-          "endLine": 607,
+          "endLine": 621,
           "signature": "<main>",
-          "summary": "HTML DOM Section L130-L607"
+          "summary": "HTML DOM Section L130-L621"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-admin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c1afe78930d9d6af",
-      "totalLines": 1128,
+      "fileHash": "6de39a1e9adb8bdf",
+      "totalLines": 1261,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3167,33 +3167,33 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 177,
-          "endLine": 904,
+          "endLine": 1037,
           "signature": "<main>",
-          "summary": "HTML DOM Section L177-L904"
+          "summary": "HTML DOM Section L177-L1037"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 913,
-          "endLine": 939,
+          "startLine": 1046,
+          "endLine": 1072,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L913-L939"
+          "summary": "HTML DOM Section L1046-L1072"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 915,
-          "endLine": 938,
+          "startLine": 1048,
+          "endLine": 1071,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L915-L938"
+          "summary": "HTML DOM Section L1048-L1071"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-superadmin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f14fe6505ec618f6",
-      "totalLines": 1192,
+      "fileHash": "eb2120488af9e1d5",
+      "totalLines": 1405,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3218,33 +3218,33 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 170,
-          "endLine": 940,
+          "endLine": 1153,
           "signature": "<main>",
-          "summary": "HTML DOM Section L170-L940"
+          "summary": "HTML DOM Section L170-L1153"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 949,
-          "endLine": 975,
+          "startLine": 1162,
+          "endLine": 1188,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L949-L975"
+          "summary": "HTML DOM Section L1162-L1188"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 951,
-          "endLine": 974,
+          "startLine": 1164,
+          "endLine": 1187,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L951-L974"
+          "summary": "HTML DOM Section L1164-L1187"
         }
       ]
     },
     {
       "filePath": "docs/manual/manual-user.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c8ec3533c171d719",
-      "totalLines": 1310,
+      "fileHash": "712da7e0184480fa",
+      "totalLines": 1352,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3269,25 +3269,25 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 170,
-          "endLine": 1070,
+          "endLine": 1112,
           "signature": "<main>",
-          "summary": "HTML DOM Section L170-L1070"
+          "summary": "HTML DOM Section L170-L1112"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 1079,
-          "endLine": 1105,
+          "startLine": 1121,
+          "endLine": 1147,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L1079-L1105"
+          "summary": "HTML DOM Section L1121-L1147"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 1081,
-          "endLine": 1104,
+          "startLine": 1123,
+          "endLine": 1146,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L1081-L1104"
+          "summary": "HTML DOM Section L1123-L1146"
         }
       ]
     },
@@ -4165,6 +4165,25 @@
           "endLine": 15,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L15"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-update-system-manuals-and-critic/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "507ab8c948ab1713",
+      "totalLines": 121,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
         }
       ]
     },

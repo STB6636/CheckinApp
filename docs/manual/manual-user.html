@@ -182,7 +182,7 @@
                     คู่มือนี้จัดทำขึ้นเพื่อแนะนำวิธีการใช้งานระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร ผ่านเว็บบราวเซอร์บนอุปกรณ์คอมพิวเตอร์และโทรศัพท์สมาร์ตโฟนอย่างละเอียดทีละขั้นตอน พร้อมภาพจำลองระบบที่มีปฏิสัมพันธ์ (Interactive Mockups) และแนวทางแก้ไขปัญหาเบื้องต้น
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#00744B]"></i> ปรับปรุงล่าสุด: 27 ตุลาคม 2569</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#00744B]"></i> ปรับปรุงล่าสุด: 29 ตุลาคม 2569 (V2.7+)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-[#00744B]"></i> ระบบรองรับมาตรฐาน PDPA</span>
                 </div>
@@ -667,14 +667,31 @@
                         หลังกดยืนยัน ระบบจะอัปโหลดภาพถ่ายไปยัง Google Drive และบันทึกเวลาลงฐานข้อมูล จากนั้นการ์ด "เวลาเข้างาน" จะเปลี่ยนสถานะเป็น <b>"ตรงเวลา"</b> (สีเขียว) หรือ <b>"สาย"</b> (สีส้ม) ตามเกณฑ์เวลามาตรฐานของหน่วยงาน
                     </div>
 
-                    <!-- Normal Hours Checkin Lock Notice -->
-                    <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 space-y-1.5">
-                        <strong class="font-bold flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-300">
-                            <i class="fa-solid fa-lock text-amber-600"></i>เงื่อนไขการปิดรับการลงเวลาในช่วงเวลาราชการปกติ (08:30 - 16:30 น.):
-                        </strong>
-                        <p class="leading-relaxed text-slate-600 dark:text-slate-400">
-                            กรณีที่หน่วยงานของท่านเปิดใช้งานฟังก์ชัน <i>"ปิดการลงเวลาในช่วงเวลาปกติ"</i> ในช่วงเวลาราชการปกติ (08:30 - 16:30 น.) ปุ่มบันทึกเวลาหลักจะไม่สามารถกดได้ (<code class="font-mono text-amber-700">disabled</code>) และจะมีป้ายเตือนปิดรับการลงเวลา โดยมีผลบังคับใช้ทั้งรูปแบบปกติและรูปแบบพิเศษ (ครั้งเดียว)
+                    <!-- Normal Hours Checkin Lock Notice with Explicit Guidance -->
+                    <div class="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-950 dark:text-amber-200 space-y-2.5 shadow-sm">
+                        <div class="flex items-center gap-2 font-bold text-sm text-amber-800 dark:text-amber-300">
+                            <i class="fa-solid fa-circle-exclamation text-amber-600"></i>
+                            <span>กรณีหน่วยงานเปิดใช้งาน: "ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)"</span>
+                        </div>
+                        <p class="leading-relaxed text-slate-600 dark:text-slate-300">
+                            หากหน่วยงานของท่านกำหนดนโยบายให้ลงเวลาปกติผ่านเครื่องสแกนหลัก และเปิดใช้ฟังก์ชันปิดรับการลงเวลาหน้าหลัก เมื่อท่านเข้าใช้งานในช่วงเวลา 08:30 - 16:30 น. จะพบพฤติกรรมของระบบดังนี้:
                         </p>
+                        <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-amber-200/80 dark:border-amber-800/50 space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[11px]">ข้อความปุ่มบันทึก:</span>
+                                <span class="font-bold text-slate-700 dark:text-slate-300 text-xs">ปิดรับการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.) [ปุ่มปิดการทำงาน/สีเทา]</span>
+                            </div>
+                            <div class="text-[11px] text-amber-700 dark:text-amber-300 font-medium">
+                                <i class="fa-solid fa-comment-dots mr-1"></i>ข้อความเตือนบนหน้าจอ: <i>"ขณะนี้อยู่ในช่วงเวลาราชการปกติ (08:30 - 16:30 น.) ระบบเปิดใช้งานฟังก์ชันปิดรับการลงเวลาในเวลาปกติ จึงไม่สามารถบันทึกลงเวลาได้"</i>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1 text-slate-700 dark:text-slate-300">
+                            <b class="text-[#00744B] dark:text-emerald-400 block font-bold">💡 คำแนะนำแนวทางปฏิบัติสำหรับบุคลากร:</b>
+                            <ul class="list-disc pl-4 space-y-1 text-[11px] text-slate-600 dark:text-slate-300">
+                                <li><b>หากปฏิบัติงานนอกเวลาหรือเวรผลัด:</b> ให้คลิกเลือกช่วงเวลาหรือกะการทำงานของท่านใน Dropdown เพื่อบันทึกเวลาตามกะที่ได้รับมอบหมาย</li>
+                                <li><b>หากมีภารกิจไปราชการหรือเหตุขัดข้อง:</b> ให้กดปุ่ม <b>"ขอลงเวลากรณีพิเศษ"</b> ด้านล่างการ์ด เพื่อกรอกแบบคำขอพร้อมแนบเหตุผลเสนอผู้บังคับบัญชาอนุมัติ โดยสามารถยื่นคำขอได้ตลอดเวลา 24 ชั่วโมง</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -736,14 +753,39 @@
                         </p>
                     </div>
 
-                    <!-- Real-time shift filter explanation -->
-                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
-                        <strong class="font-bold text-slate-800 dark:text-white block text-sm">
-                            <i class="fa-solid fa-filter text-[#0971CE] mr-1"></i>การกรองกะตามเวลาจริง (Real-time Shift Filter):
-                        </strong>
-                        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                            หาก SuperAdmin เปิดฟังก์ชันนี้ Dropdown จะแสดงเฉพาะกะที่ตรงกับเวลาที่ท่านเปิดหน้าจอเท่านั้น เช่น ในช่วง 08:00 น. จะแสดงเฉพาะกะเช้า ช่วยลดความผิดพลาดในการเลือกกะสลับกัน
-                        </p>
+                    <!-- Real-time shift filter & Early Shift Checkin Benefit -->
+                    <div class="space-y-3">
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 space-y-2">
+                            <strong class="font-bold text-slate-800 dark:text-white block text-sm">
+                                <i class="fa-solid fa-filter text-[#0971CE] mr-1"></i>การกรองกะตามเวลาจริง (Real-time Shift Filter):
+                            </strong>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                                หาก SuperAdmin เปิดฟังก์ชันนี้ ช่อง Dropdown จะแสดงเฉพาะกะที่ตรงกับเวลาขณะที่ท่านเปิดหน้าจอเท่านั้น ช่วยลดความผิดพลาดในการเผลอเลือกกะผิดเวลา
+                            </p>
+                        </div>
+
+                        <!-- สิทธิประโยชน์และการเลือกลงเวลาก่อนเวลาเริ่มงานจริง -->
+                        <div class="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800/50 space-y-2.5">
+                            <div class="flex items-center gap-2 font-bold text-sm text-blue-900 dark:text-blue-200">
+                                <i class="fa-solid fa-clock-rotate-left text-blue-600 dark:text-blue-400"></i>
+                                <span>สิทธิประโยชน์: การเลือกลงเวลาก่อนเริ่มงานจริง (สำหรับกะที่อนุญาตเข้าก่อนเวลาได้)</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                สำหรับช่วงเวลาปฏิบัติงานที่หน่วยงานเปิดตัวเลือก <b>"ทำงานก่อนเวลาเริ่มงานได้" (<code class="font-mono text-blue-700 dark:text-blue-300 font-bold">allow_early_checkin</code>)</b> บุคลากรที่ต้องมาเตรียมความพร้อม ประชุมชี้แจง หรือรับมอบเวรก่อนเริ่มผลัดจริง สามารถเปิดแอปและมองเห็นกะนี้ใน Dropdown ได้ก่อนเวลาเริ่มงานตามเกณฑ์ที่หน่วยงานกำหนด (ค่าเริ่มต้น 30 นาที):
+                            </p>
+                            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-700/60 space-y-1.5 text-xs">
+                                <b class="text-blue-800 dark:text-blue-300 block font-bold">ตัวอย่างการใช้งานจริง:</b>
+                                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                                    • กะปฏิบัติงานนอกเวลา (OT) มีเวลาทำงานจริงคือ <b>17:00 - 01:00 น.</b><br>
+                                    • หน่วยงานตั้งค่าเวลาเริ่มทำงานก่อนเวลาไว้ <b>30 นาที</b><br>
+                                    • <b>ผลลัพธ์:</b> ตั้งแต่เวลา <b>16:30 น.</b> เป็นต้นไป เมื่อเจ้าหน้าที่เปิดหน้าแอป จะพบชื่อกะนี้ปรากฏใน Dropdown ทันที สามารถกดเลือก ถ่ายภาพ และบันทึกเวลาเข้างานเพื่อเริ่มเตรียมผลัดได้ล่วงหน้าอย่างถูกต้อง โดยไม่ต้องรอให้ถึง 17:00 น.
+                                </p>
+                            </div>
+                            <div class="text-[11px] text-blue-800 dark:text-blue-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>หากเปิดหน้าแอปแล้วไม่พบกะที่ต้องการ ให้ตรวจสอบเวลาปัจจุบันว่าถึงช่วงเวลาที่เปิดให้เลือกล่วงหน้าแล้วหรือไม่</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานอัปเดตคู่มือระบบและการจัดตั้งหน่วยวิจารณ์คู่มือ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-[#480080] flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900">แผนงาน: อัปเดตคู่มือระบบให้เป็นปัจจุบันและวิจารณ์คู่มือ</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Git Branch: <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">TimeCheckin</span>
+                        &bull; Strategy: <span class="font-bold text-purple-700">Lean SubAgents (1 Writer + 1 Critic/Auditor)</span>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-spinner fa-spin"></i> รอยืนยันแผนงาน
+                </span>
+            </div>
+        </div>
+
+        <!-- Role & SubAgent Architecture -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-purple-600"></i>
+                <h2 class="text-base font-bold text-slate-900">1. การจัดสรร SubAgents แบบประหยัดโทเคน (Lean Architecture)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-purple-900 block text-sm">SubAgent 1: ผู้เขียนและอัปเดตคู่มือ</span>
+                        <span class="text-[10px] bg-purple-200 text-purple-800 font-bold px-2 py-0.5 rounded">Flash 3.8 High</span>
+                    </div>
+                    <p class="text-purple-800 leading-relaxed">
+                        เข้าอ่านและแก้ไขคู่มือทั้ง 4 ไฟล์ใน <code>docs/manual/</code> ให้ครบถ้วน ชัดเจน ละเอียด เข้าใจง่ายในครั้งเดียว เพิ่มขั้นตอนภาพจำลอง และข้อควรระวัง
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-amber-900 block text-sm">SubAgent 2: ผู้วิจารณ์คู่มือ & QA Auditor</span>
+                        <span class="text-[10px] bg-amber-200 text-amber-800 font-bold px-2 py-0.5 rounded">Flash 3.8 High</span>
+                    </div>
+                    <p class="text-amber-800 leading-relaxed">
+                        ทำหน้าที่วิจารณ์คู่มือในมุมมองผู้ใช้งาน (UX Perspective) ประเมินจุดแข็ง จุดที่อาจสับสน ตรวจทานกับแผนงาน เทียบความต่างกับ Branch <code>main</code> และจัดทำรายงานวิจารณ์เสนอ
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manual Update Scope -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-file-pen text-emerald-600"></i>
+                <h2 class="text-base font-bold text-slate-900">2. ขอบเขตเนื้อหาที่ต้องปรับปรุงให้เป็นปัจจุบัน (Updated Scope)</h2>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-purple-600"></i>
+                        <span>docs/manual/manual-superadmin.html (คู่มือ SuperAdmin)</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                        <li><strong>การตั้งค่าแท็บ 1:</strong> เพิ่มการอธิบายฟังก์ชัน Real-time Filter และช่อง <code>เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา (นาที)</code>, การสุ่มพิกัด GPS ขาออก 5-100 ม., และการปิดลงเวลาราชการปกติ</li>
+                        <li><strong>การตั้งค่าแท็บ 3 (กะเวลา):</strong> เพิ่มตัวเลือก <code>[x] ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้</code>, Badge แสดงสถานะในตาราง, และตัวอย่างการคำนวณเวลา (เช่น 17:00 น. ล่วงหน้า 30 นาที = เปิดให้เลือก 16:30 น.)</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-blue-600"></i>
+                        <span>docs/manual/manual-admin.html (คู่มือ Admin)</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                        <li><strong>หน้ารายงานการลงเวลา (หัวข้อ 5):</strong> อัปเดตตัวกรองโครงสร้างองค์กร 3 ระดับ ([สำนักงาน/กอง] > [ส่วน/ฝ่าย] > [กลุ่มงาน]) การกรองแบบตามลำดับชั้น และการรักษาตาราง Tag</li>
+                        <li><strong>หน้าจัดการบัญชีผู้ใช้งาน (หัวข้อ 8):</strong> อัปเดตตัวกรอง 3 ระดับ และการใช้งาน 2 มุมมองจัดกลุ่ม (Grouping Views) เหมือนหน้าบุคลากร</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-emerald-600"></i>
+                        <span>docs/manual/manual-user.html (คู่มือผู้ใช้งานทั่วไป)</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                        <li><strong>การลงเวลากะพิเศษ (หัวข้อ 6):</strong> อธิบายการเลือกลงเวลาก่อนเวลาเริ่มงานจริง เมื่อหน่วยงานเปิดสิทธิ์และตั้งเวลาล่วงหน้าไว้</li>
+                        <li><strong>การลงเวลาปกติ (หัวข้อ 5):</strong> อธิบายข้อความเตือนกรณีหน่วยงานเปิดการปิดลงเวลาในเวลาราชการปกติ</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-house text-slate-600"></i>
+                        <span>docs/manual/index.html (หน้ารวมศูนย์คู่มือ)</span>
+                    </div>
+                    <p class="mt-1 text-slate-600">อัปเดตวันที่เวอร์ชันล่าสุด บันทึกประวัติการปรับปรุง (Changelog) และสรุปความสามารถใหม่ของระบบ</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

@@ -189,7 +189,7 @@
                     ครอบคลุมการตรวจสอบภาพรวมสถิติรายวัน การพิจารณาอนุมัติคำขอพิเศษ (เดี่ยวและกลุ่ม) การออกรายงานราชการ PDF และ Excel การจัดการทะเบียนประวัติบุคลากร และการอนุมัติรีเซ็ตรหัสผ่านตามมาตรฐานความปลอดภัยข้อมูล
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 27 ตุลาคม 2569</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 29 ตุลาคม 2569 (V2.7+)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-[#0971CE]"></i> รองรับการแบ่งสิทธิ์ตามโครงสร้าง กทม.</span>
                 </div>
@@ -541,42 +541,120 @@
                     </p>
 
                     <!-- Features Checklist -->
-                    <div class="space-y-3">
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block text-sm">1. การเลือกช่วงวันที่ (Single vs Date Range):</strong>
-                            <p class="text-slate-500 text-xs">
-                                สามารถเลือกโหมด <b>"เลือกวันเดียว"</b> สำหรับรายงานประจำวัน หรือสลับเป็นโหมด <b>"เลือกเป็นช่วง"</b> (ตั้งแต่วันที่ - ถึงวันที่) เพื่อออกรายงานรายสัปดาห์หรือรายเดือน
-                            </p>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block text-sm">2. การกรองด้วยป้ายสถานะ (Tag Multi-Select Filter):</strong>
-                            <p class="text-slate-500 text-xs">
-                                คลิกเลือกป้าย Tag สถานะ (ปฏิบัติงานปกติ, มาสาย, กลับก่อน, รออนุมัติ, ขาด) ได้หลายค่าพร้อมกัน โดยระบบจะแยกตารางตาม Tag ที่เลือกให้อัตโนมัติ พร้อมปุ่มลัด <i>"ค่าเริ่มต้น (ปกติ + สาย)"</i> และ <i>"เลือกทั้งหมด"</i>
-                            </p>
-                        </div>
-
+                    <div class="space-y-4">
+                        <!-- 1. Date Range & Group By -->
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
-                            <strong class="text-slate-800 dark:text-white block text-sm">3. การคลิกดู Resume Profile (ภาพถ่าย 3:4 &amp; Google Maps):</strong>
-                            <p class="text-slate-500 text-xs">
-                                <b>เคล็ดลับสำคัญ:</b> คลิกที่แถวรายการใดๆ ในตาราง ระบบจะเปิดหน้าต่างป๊อปอัปแสดงประวัติบุคคล พร้อมภาพถ่ายใบหน้าขนาดใหญ่แนวตั้ง 3:4 และแผนที่พิกัด Google Maps เฉพาะแถวนั้น สามารถกดดูรูปขนาดเต็มได้ทันที
+                            <strong class="text-slate-800 dark:text-white block text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-days text-[#0971CE]"></i>
+                                <span>1. การเลือกช่วงวันที่ และการจัดกลุ่ม (Date Range &amp; Group By):</span>
+                            </strong>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-600 dark:text-slate-400">
+                                <div>
+                                    <b class="text-slate-700 dark:text-slate-300 block mb-0.5">• โหมดวันที่:</b>
+                                    เลือก <b>"เลือกวันเดียว"</b> เพื่อดูบันทึกประจำวัน หรือสลับเป็น <b>"เลือกเป็นช่วง"</b> (ตั้งแต่วันที่ - ถึงวันที่) สำหรับรายงานประจำสัปดาห์หรือประจำเดือน
+                                </div>
+                                <div>
+                                    <b class="text-slate-700 dark:text-slate-300 block mb-0.5">• การจัดกลุ่มแสดงผล (Group By):</b>
+                                    สามารถเลือกได้ 2 แบบคือ <b>มุมมองที่ 1:</b> สำนักงาน/กอง &gt; ส่วน/ฝ่าย หรือ <b>มุมมองที่ 2:</b> สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Hierarchical Org Filter (3 Levels) -->
+                        <div class="p-4 rounded-2xl bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-800/50 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <strong class="text-sky-950 dark:text-sky-200 block text-sm font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-sitemap text-[#0971CE]"></i>
+                                    <span>2. ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับ (Cascading Org Filter):</span>
+                                </strong>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-200/80 text-sky-900 dark:bg-sky-900 dark:text-sky-200">SuperAdmin &amp; Admin กอง</span>
+                            </div>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                ในหน้ารายงาน ผู้ดูแลสามารถกรองเจาะจงข้อมูลบุคลากรตามโครงสร้าง กทม. ได้ 3 ระดับต่อเนื่องกัน:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-700/60">
+                                    <b class="text-sky-700 dark:text-sky-300 block font-bold mb-0.5">ระดับที่ 1: สำนักงาน / กอง</b>
+                                    <span class="text-[11px] text-slate-500">เลือกกองที่ต้องการตรวจสอบ เช่น สำนักเทศกิจ</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-700/60">
+                                    <b class="text-sky-700 dark:text-sky-300 block font-bold mb-0.5">ระดับที่ 2: ส่วน / ฝ่าย</b>
+                                    <span class="text-[11px] text-slate-500">เลือกฝ่ายใต้สังกัด เช่น ฝ่ายตรวจและบังคับการ</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-sky-200 dark:border-sky-700/60">
+                                    <b class="text-sky-700 dark:text-sky-300 block font-bold mb-0.5">ระดับที่ 3: กลุ่มงาน</b>
+                                    <span class="text-[11px] text-slate-500">เลือกกลุ่มงานย่อย เช่น กลุ่มงานสายตรวจ 1</span>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-white/70 dark:bg-slate-900/60 border border-sky-300/40 text-[11px] text-sky-900 dark:text-sky-200">
+                                <b>กฎการเลือกตามลำดับชั้น (Cascading Rules):</b> ต้องเลือก <b>สำนักงาน/กอง</b> ก่อน จึงจะเปิดให้เลือก <b>ส่วน/ฝ่าย</b> และต้องเลือก <b>ส่วน/ฝ่าย</b> ก่อน จึงจะเปิดให้เลือก <b>กลุ่มงาน</b> ได้ตามลำดับ หากเปลี่ยนระดับบน ระดับล่างจะรีเซ็ตกลับเป็น "แสดงทั้งหมด" อัตโนมัติ
+                            </div>
+                        </div>
+
+                        <!-- 3. Status TAG Filter -->
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
+                            <strong class="text-slate-800 dark:text-white block text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-tags text-[#0971CE]"></i>
+                                <span>3. การกรองด้วยป้ายสถานะแยกตาราง (Status TAG Multi-Select Filter):</span>
+                            </strong>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
+                                คลิกเลือกป้าย TAG สถานะได้หลายค่าพร้อมกัน โดยระบบจะแยกแสดงเป็นตารางย่อยตามแต่ละ TAG ที่เลือกโดยอัตโนมัติ สะดวกต่อการตรวจสอบและลงนาม:
+                            </p>
+                            <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-[#00744B] font-bold border border-emerald-300/50">ปฏิบัติงานปกติ</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 font-bold border border-amber-300/50">มาสาย</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-purple-100 text-[#480080] font-bold border border-purple-300/50">ปฏิบัติราชการนอกเวลา/กรณีพิเศษ</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-[#0971CE] font-bold border border-sky-300/50">ลาป่วย / ลากิจ</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-700 font-bold border border-rose-300/50">ขาดราชการ</span>
+                            </div>
+                            <div class="text-[11px] text-slate-500 pt-1">
+                                💡 <b>ปุ่มลัดช่วยทำงาน:</b> กดปุ่ม <i>"ค่าเริ่มต้น (ปฏิบัติงานปกติ + มาสาย)"</i> เพื่อดูสถิติปฏิบัติงานทั่วไป หรือกด <i>"เลือกทั้งหมด (5 สถานะ)"</i> เมื่อต้องการตรวจประวัติครบถ้วน
+                            </div>
+                        </div>
+
+                        <!-- 4. GPS Columns -->
+                        <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-2">
+                            <strong class="text-emerald-950 dark:text-emerald-200 block text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-map-location-dot text-[#00744B]"></i>
+                                <span>4. ตารางรายงานแยก 2 คอลัมน์พิกัด GPS (พิกัดเข้างาน และ พิกัดออกงาน):</span>
+                            </strong>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
+                                เพื่อความโปร่งใสและถูกต้องตามข้อเท็จจริง ตารางรายงานจะแยกคอลัมน์พิกัด GPS ออกจากกันชัดเจนเป็น 2 คอลัมน์:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/60 space-y-1">
+                                    <b class="text-[#00744B] dark:text-emerald-300 block font-bold">คอลัมน์: พิกัด GPS เข้างาน</b>
+                                    <span class="text-slate-500 text-[11px] block">แสดงชื่อสถานที่จุดเช็กอินเข้างาน พร้อมพิกัดละติจูด ลองจิจูดจริง (เช่น 13.733790° N, 100.468261° E) และปุ่มกดเปิด Google Maps ทันที</span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/60 space-y-1">
+                                    <b class="text-[#0971CE] dark:text-sky-300 block font-bold">คอลัมน์: พิกัด GPS ออกงาน</b>
+                                    <span class="text-slate-500 text-[11px] block">แสดงชื่อสถานที่จุดเช็กอินออกงาน (ในโหมดลงเวลาพิเศษ ระบบจะแสดงพิกัดที่สุ่มรอบจุดเข้างานในรัศมีที่กำหนด เช่น 20 เมตร พร้อมสถานที่ใกล้เคียง)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Resume Profile Popup -->
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
+                            <strong class="text-slate-800 dark:text-white block text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-id-card-clip text-purple-600"></i>
+                                <span>5. การคลิกดู Resume Profile (ภาพถ่าย 3:4 &amp; Google Maps):</span>
+                            </strong>
+                            <p class="text-slate-500 text-xs leading-relaxed">
+                                <b>เคล็ดลับการตรวจสอบ:</b> ดับเบิลคลิกหรือคลิกที่แถวรายการใดๆ ในตาราง ระบบจะเปิดป๊อปอัป Resume Profile แสดงภาพถ่ายใบหน้าขนาดใหญ่ 3:4 พร้อมแผนที่ดาวเทียม Google Maps เฉพาะจุดของแถวนั้น
                             </p>
                             <button type="button" class="mockup-btn px-3 py-1.5 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-[#0971CE] font-bold text-xs hover:bg-sky-200 cursor-pointer" data-title="จำลอง: ป๊อปอัป Resume Profile" data-desc="ในการใช้งานจริง เมื่อคลิกแถวในรายงาน ระบบจะแสดงรูปถ่ายใบหน้า 3:4 เวลาเข้า-ออก ละติจูด ลองจิจูด และแผนที่ดาวเทียม">
                                 <i class="fa-solid fa-id-card mr-1"></i>ทดสอบดูตัวอย่าง Profile บุคลากร
                             </button>
                         </div>
 
+                        <!-- 6. Admin Override -->
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
-                            <strong class="text-slate-800 dark:text-white block text-sm">4. การเพิ่ม / แก้ไข / ลบบันทึกโดยผู้ดูแล (Admin Override):</strong>
+                            <strong class="text-slate-800 dark:text-white block text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                <span>6. การเพิ่ม / แก้ไข / ลบบันทึกโดยผู้ดูแล (Admin Override):</span>
+                            </strong>
                             <p class="text-slate-500 text-xs">
-                                ผู้ดูแลสามารถกดปุ่ม <b>"เพิ่มเวลาปฏิบัติราชการ"</b> เพื่อบันทึกเวลาแทนบุคลากรที่มีเหตุขัดข้อง หรือกดแก้ไขเวลาเข้า-ออก และลบบันทึกที่ซ้ำซ้อนได้โดยตรง
-                            </p>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1">
-                            <strong class="text-emerald-900 dark:text-emerald-200 block text-sm">5. ตารางรายงานแยก 2 คอลัมน์พิกัด GPS (เข้างาน และ ออกงาน):</strong>
-                            <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-                                ตารางรายงานการลงเวลาแสดงคอลัมน์ <b>"พิกัด GPS เข้างาน"</b> และ <b>"พิกัด GPS ออกงาน"</b> แยกกันอย่างชัดเจน พร้อมแสดงพิกัดละติจูด ลองจิจูด และปุ่มกดเปิดดู Google Maps เฉพาะจุด เพื่อความสะดวกและโปร่งใสในการตรวจสอบสถานที่จริงทั้งตอนเข้าและตอนออก
+                                ผู้ดูแลที่มีสิทธิ์จัดการบันทึก สามารถกดปุ่ม <b>"เพิ่มเวลาปฏิบัติราชการ"</b> เพื่อบันทึกแทนบุคลากรที่มีเหตุสุดวิสัย หรือกดปุ่มแก้ไขเวลาเข้า-ออก และลบรายการที่ผิดพลาดได้โดยตรง
                             </p>
                         </div>
                     </div>
@@ -706,11 +784,66 @@
                         เมนู <b>"จัดการบัญชีผู้ใช้งาน" (<code class="font-mono">users.html</code>)</b> จะแสดงผลบน Sidebar เฉพาะผู้ใช้ที่มีสิทธิ์ <b>SuperAdmin</b> หรือ <b>Admin ระดับกอง (<code class="font-mono">visibility_level = 'bureau'</code>)</b> เท่านั้น หากท่านเป็น Admin ระดับฝ่าย ระบบจะซ่อนเมนูนี้ไว้เพื่อรักษาความปลอดภัยของบัญชีผู้ใช้งาน
                     </div>
 
+                    <!-- 1. ตัวกรองโครงสร้างองค์กร 3 ระดับ และ 2 มุมมองจัดกลุ่ม -->
+                    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-4">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-700">
+                            <h4 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-users-gear text-[#0971CE]"></i>
+                                <span>1. ตัวกรองโครงสร้างองค์กร 3 ระดับ และ 2 มุมมองจัดกลุ่ม (Grouping Views):</span>
+                            </h4>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-[#0971CE] dark:bg-sky-950 dark:text-sky-300">อัปเดตใหม่</span>
+                        </div>
+
+                        <!-- ตัวกรอง 3 ระดับ -->
+                        <div class="space-y-2">
+                            <b class="text-xs font-bold text-slate-700 dark:text-slate-300 block">• ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับ:</b>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Admin กอง และ SuperAdmin สามารถค้นหาบัญชีผู้ใช้ได้รวดเร็วตามสายบังคับบัญชา 3 ระดับ:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">1. สำนักงาน / กอง:</span>
+                                    <span class="text-[10px] text-slate-400">กรองเฉพาะกองที่รับผิดชอบ</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">2. ส่วน / ฝ่าย:</span>
+                                    <span class="text-[10px] text-slate-400">เลือกฝ่ายใต้สังกัด (ปลดล็อกหลังเลือกกอง)</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300 block text-[11px]">3. กลุ่มงาน:</span>
+                                    <span class="text-[10px] text-slate-400">เลือกกลุ่มงานย่อย (ปลดล็อกหลังเลือกฝ่าย)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2 Grouping Views -->
+                        <div class="space-y-2 pt-2 border-t border-slate-200/80 dark:border-slate-700/80">
+                            <b class="text-xs font-bold text-slate-700 dark:text-slate-300 block">• การสลับ 2 มุมมองจัดกลุ่ม (Grouping Views):</b>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                ที่ช่อง Dropdown <b>"จัดกลุ่มแสดงผล"</b> ในหน้าจัดการบัญชีผู้ใช้งาน มี 2 มุมมองให้เลือกตามลักษณะงาน:
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
+                                    <b class="text-[#0971CE] block font-bold">มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</b>
+                                    <span class="text-[11px] text-slate-500 leading-normal block">
+                                        จัดกลุ่มบัญชีแยกตามส่วน/ฝ่าย เหมาะสำหรับการตรวจสอบยอดผู้ดูแลระบบและผู้ใช้ภาพรวมระดับฝ่าย
+                                    </span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
+                                    <b class="text-[#00744B] block font-bold">มุมมองที่ 2: ส่วน/ฝ่าย &gt; กลุ่มงาน</b>
+                                    <span class="text-[11px] text-slate-500 leading-normal block">
+                                        จัดกลุ่มบัญชีย่อยลงลึกถึงระดับกลุ่มงาน <i>(เหมือนในหน้าจัดการข้อมูลบุคลากร personnel.html)</i> เหมาะสำหรับการตรวจสอบผู้ใช้งานตามสายงานปฏิบัติการจริง
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Reset Approval Step by Step -->
                     <div class="space-y-3 pt-2">
                         <h4 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
                             <i class="fa-solid fa-key text-amber-600"></i>
-                            <span>ขั้นตอนการอนุมัติรีเซ็ตรหัสผ่านให้แก่บุคลากร:</span>
+                            <span>2. ขั้นตอนการอนุมัติรีเซ็ตรหัสผ่านให้แก่บุคลากร:</span>
                         </h4>
                         <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
                             <p>

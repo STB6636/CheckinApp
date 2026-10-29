@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T07:14:43.104Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `68` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `484`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T08:36:04.444Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `69` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `485`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -535,54 +535,54 @@
 
 ## File: `docs/manual/index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `465dd9229d368ebd` | **Total Lines:** `669` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `298bd407ca03cfc8` | **Total Lines:** `683` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L58** | `<head>` | HTML DOM Section L3-L58 |
-| `<main>` | `html_dom_section` | **L130 - L607** | `<main>` | HTML DOM Section L130-L607 |
+| `<main>` | `html_dom_section` | **L130 - L621** | `<main>` | HTML DOM Section L130-L621 |
 
 ---
 
 ## File: `docs/manual/manual-admin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c1afe78930d9d6af` | **Total Lines:** `1128` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6de39a1e9adb8bdf` | **Total Lines:** `1261` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L177 - L904** | `<main>` | HTML DOM Section L177-L904 |
-| `<div#mockupModal>` | `html_dom_section` | **L913 - L939** | `id="mockupModal"` | HTML DOM Section L913-L939 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L915 - L938** | `id="mockupModalPanel"` | HTML DOM Section L915-L938 |
+| `<main>` | `html_dom_section` | **L177 - L1037** | `<main>` | HTML DOM Section L177-L1037 |
+| `<div#mockupModal>` | `html_dom_section` | **L1046 - L1072** | `id="mockupModal"` | HTML DOM Section L1046-L1072 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1048 - L1071** | `id="mockupModalPanel"` | HTML DOM Section L1048-L1071 |
 
 ---
 
 ## File: `docs/manual/manual-superadmin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f14fe6505ec618f6` | **Total Lines:** `1192` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `eb2120488af9e1d5` | **Total Lines:** `1405` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L170 - L940** | `<main>` | HTML DOM Section L170-L940 |
-| `<div#mockupModal>` | `html_dom_section` | **L949 - L975** | `id="mockupModal"` | HTML DOM Section L949-L975 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L951 - L974** | `id="mockupModalPanel"` | HTML DOM Section L951-L974 |
+| `<main>` | `html_dom_section` | **L170 - L1153** | `<main>` | HTML DOM Section L170-L1153 |
+| `<div#mockupModal>` | `html_dom_section` | **L1162 - L1188** | `id="mockupModal"` | HTML DOM Section L1162-L1188 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1164 - L1187** | `id="mockupModalPanel"` | HTML DOM Section L1164-L1187 |
 
 ---
 
 ## File: `docs/manual/manual-user.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c8ec3533c171d719` | **Total Lines:** `1310` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `712da7e0184480fa` | **Total Lines:** `1352` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L170 - L1070** | `<main>` | HTML DOM Section L170-L1070 |
-| `<div#mockupModal>` | `html_dom_section` | **L1079 - L1105** | `id="mockupModal"` | HTML DOM Section L1079-L1105 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1081 - L1104** | `id="mockupModalPanel"` | HTML DOM Section L1081-L1104 |
+| `<main>` | `html_dom_section` | **L170 - L1112** | `<main>` | HTML DOM Section L170-L1112 |
+| `<div#mockupModal>` | `html_dom_section` | **L1121 - L1147** | `id="mockupModal"` | HTML DOM Section L1121-L1147 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1123 - L1146** | `id="mockupModalPanel"` | HTML DOM Section L1123-L1146 |
 
 ---
 
@@ -953,6 +953,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L15** | `<head>` | HTML DOM Section L3-L15 |
+
+---
+
+## File: `pipeline/PIPE-20261029-update-system-manuals-and-critic/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `507ab8c948ab1713` | **Total Lines:** `121` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
 
 ---
 

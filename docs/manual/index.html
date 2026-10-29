@@ -90,7 +90,7 @@
             <div class="space-y-3 max-w-2xl text-center md:text-left">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold text-emerald-200 shadow-xs">
                     <i class="fa-solid fa-book-bookmark"></i>
-                    <span>เอกสารแนะนำและคู่มือการใช้งานระบบ (ฉบับปรับปรุง 28 ตุลาคม 2569 - V2.7+)</span>
+                    <span>เอกสารแนะนำและคู่มือการใช้งานระบบ (ฉบับปรับปรุง 29 ตุลาคม 2569 - V2.7+)</span>
                 </div>
                 <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
                     ศูนย์รวมคู่มือการใช้งานระบบลงเวลาปฏิบัติราชการออนไลน์
@@ -238,11 +238,15 @@
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-sky-500 mt-0.5"></i>
-                                <span>รายงานแยก Tag สถานะ, พิมพ์ PDF &amp; ส่งออก Excel</span>
+                                <span>ตัวกรองโครงสร้างองค์กร 3 ระดับ &amp; 2 มุมมองจัดกลุ่ม</span>
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-sky-500 mt-0.5"></i>
-                                <span>บุคลากร นำเข้า Excel 3 แผ่น &amp; อนุมัติรหัสผ่าน</span>
+                                <span>รายงานแยก Tag สถานะ, แยก 2 คอลัมน์ GPS, PDF &amp; Excel</span>
+                            </div>
+                            <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
+                                <i class="fa-solid fa-check text-sky-500 mt-0.5"></i>
+                                <span>บุคลากร นำเข้า Excel 3 แผ่น &amp; อนุมัติรหัสผ่าน 6 หลัก</span>
                             </div>
                         </div>
                     </div>
@@ -289,11 +293,11 @@
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-purple-500 mt-0.5"></i>
-                                <span>เกณฑ์เวลา, ผ่อนผัน, บันทึกครั้งเดียว &amp; Real-time กะ</span>
+                                <span>Real-time Filter, กะเข้าก่อนเวลาได้ &amp; ปิดลงเวลาช่วงปกติ</span>
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-purple-500 mt-0.5"></i>
-                                <span>บังคับกล้อง/GPS &amp; เชื่อม Google Apps Script</span>
+                                <span>สุ่มระยะ GPS ขาออก (5-100 ม.) &amp; คลังรูป Google Drive</span>
                             </div>
                             <div class="flex items-start gap-2 text-slate-600 dark:text-slate-400">
                                 <i class="fa-solid fa-check text-purple-500 mt-0.5"></i>
@@ -426,6 +430,16 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
+                                    <div class="font-bold text-slate-800 dark:text-white">เลือกลงเวลาก่อนเวลาเริ่มงานจริง (กะที่อนุญาต)</div>
+                                    <div class="text-[11px] text-slate-500">กะที่เปิด "ทำงานก่อนเวลาเริ่มงานได้" จะแสดงก่อนเวลาตามที่กำหนด (ค่าเริ่มต้น 30 นาที)</div>
+                                </td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                                <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">ยื่นคำขอลงเวลากรณีพิเศษ / ย้อนหลัง</div>
                                     <div class="text-[11px] text-slate-500">ระบุวันที่ กะเวลา และเหตุผลความจำเป็น</div>
                                 </td>
@@ -494,7 +508,7 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">รายงานการลงเวลา (reports.html)</div>
-                                    <div class="text-[11px] text-slate-500">กรองป้าย Tag, ดูรูปถ่าย/GPS, พิมพ์ PDF, ส่งออก Excel</div>
+                                    <div class="text-[11px] text-slate-500">ตัวกรองโครงสร้าง 3 ระดับ, แยก 2 คอลัมน์ GPS เข้า-ออก, กรอง Tag, PDF &amp; Excel</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-emerald-600 font-bold"><i class="fa-solid fa-circle-check text-base"></i></td>
@@ -524,7 +538,7 @@
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
                                     <div class="font-bold text-slate-800 dark:text-white">จัดการบัญชีผู้ใช้ &amp; กำหนดสิทธิ์ (users.html)</div>
-                                    <div class="text-[11px] text-slate-500">เพิ่ม/แก้ไขบัญชีผู้ใช้ และกำหนดขอบเขตบทบาท Admin</div>
+                                    <div class="text-[11px] text-slate-500">ตัวกรองโครงสร้าง 3 ระดับ, 2 มุมมองจัดกลุ่ม (กอง&gt;ฝ่าย, ฝ่าย&gt;กลุ่มงาน) &amp; อนุมัติรหัสผ่าน 6 หลัก</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
@@ -540,8 +554,8 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าหน่วยงาน, โลโก้ และสีอัตลักษณ์ระบบ</div>
-                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าหน่วยงาน โลโก้ &amp; การควบคุมฟังก์ชันระบบ</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 1: Real-time Filter, สุ่ม GPS ขาออก (5-100 ม.) &amp; ปิดลงเวลาช่วงปกติ</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
@@ -550,8 +564,8 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าเกณฑ์เวลา, Grace Period &amp; Single-Click</div>
-                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 2: เกณฑ์เวลา &amp; สีรายงาน</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าเกณฑ์เวลามาตรฐาน, Grace Period &amp; สีรายงาน</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 2: เกณฑ์เวลา &amp; โหมดบันทึกครั้งเดียว (Single-Click)</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
@@ -560,8 +574,8 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">ตั้งค่าเชื่อมต่อกล้อง, GPS &amp; Google Drive</div>
-                                    <div class="text-[11px] text-slate-500">กำหนดรัศมีพิกัดเมตร และ Google Apps Script Web App</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">จัดการกะมาตรฐาน, กะ 24 ชม. &amp; สิทธิ์เข้าก่อนเวลาได้</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 3: กำหนดกะ, กะข้ามคืน และตัวเลือก "ทำงานก่อนเวลาเริ่มงานได้"</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
@@ -570,8 +584,8 @@
                             </tr>
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                 <td class="py-3 px-4 sm:px-6">
-                                    <div class="font-bold text-slate-800 dark:text-white">จัดการกะมาตรฐาน, กะ 24 ชม. &amp; กะข้ามคืน</div>
-                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 3: จัดการกะการทำงานมาตรฐาน</div>
+                                    <div class="font-bold text-slate-800 dark:text-white">คำนำหน้าชื่อ และตัวเลือกหมายเหตุ</div>
+                                    <div class="text-[11px] text-slate-500">settings.html &rarr; แท็บที่ 4: เพิ่ม/แก้ไข และจัดเรียงลำดับ Dropdown</div>
                                 </td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i></td>
                                 <td class="py-3 px-3 text-center text-rose-500"><i class="fa-solid fa-circle-xmark text-base"></i><div class="text-[10px] text-slate-400">ซ่อนเมนู</div></td>
@@ -617,7 +631,7 @@
             <i class="fa-solid fa-landmark text-[#00744B]"></i>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App)</span>
         </div>
-        <p>เอกสารคู่มือการใช้งานระบบ ฉบับ 27 ตุลาคม 2569 • เอกสารมาตรฐานหน่วยงาน</p>
+        <p>เอกสารคู่มือการใช้งานระบบ ฉบับ 29 ตุลาคม 2569 (V2.7+) • เอกสารมาตรฐานหน่วยงาน</p>
     </footer>
 
     <!-- Theme Toggle & Back to Top Script -->
