@@ -32,6 +32,8 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 
 - [[rule_early_shift_realtime_filter]] — Domain Rule: ระบบอนุญาตให้เริ่มเลือกทำงานก่อนเวลาเริ่มงานได้ (Early Shift Real-time Filter Window) พร้อมการตั้งค่านาทีล่วงหน้า (FLOW_SETTINGS_01, FLOW_CHECKIN_01)
 
+- [[rule_hide_recorded_shifts_and_disable_btn]] — Domain Rule: ซ่อนช่วงเวลาที่ลงเวลาแล้ว และปิดปุ่มบันทึกเมื่อไม่มีตัวเลือกช่วงเวลา (FLOW_CHECKIN_01, FLOW_SETTINGS_01)
+
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
 - [[fix_v22_checkin_loading_hang_92_percent]] — Post-mortem V22: แก้ไขหน้าลงเวลาค้างที่ 92% จาก CDN Scripts และ DOM IDs ตกหล่นใน `checkin.html` (Flow 4, 6)

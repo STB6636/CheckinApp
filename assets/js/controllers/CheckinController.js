@@ -188,6 +188,56 @@ export class CheckinController {
         setInterval(updateClock, 1000);
     }
 
+    #isShiftAlreadyRecordedToday(shift) {
+        if (!shift) return false;
+        const todayIso = UIHelpers.getTodayISO();
+        const historyList = Array.isArray(this.todayHistoryList) ? this.todayHistoryList : [];
+
+        const shiftFormattedName = SettingsModel.formatShiftDisplayText(shift).trim();
+        const cleanBaseName = String(shift.name || '')
+            .replace(/\s*\(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}.*?\)/g, '')
+            .replace(/\s*\(ข้ามวัน\)/g, '')
+            .trim();
+        const shiftIn24 = UIHelpers.formatTime24(shift.check_in);
+        const shiftOut24 = UIHelpers.formatTime24(shift.check_out);
+
+        // ถ้าเป็นเวลาราชการปกติ แล้วมีรายการ regularRecord วันนี้แล้ว
+        if (!shift.is_overtime && !shift.is_custom && cleanBaseName.includes('เวลาราชการปกติ')) {
+            if (this.activeRegularRecord && this.activeRegularRecord.work_date === todayIso && this.activeRegularRecord.check_in_time) {
+                return true;
+            }
+        }
+
+        return historyList.some(item => {
+            const itemShiftName = String(item.shift_name || '').trim();
+            const itemCleanBase = itemShiftName
+                .replace(/\s*\(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}.*?\)/g, '')
+                .replace(/\s*\(ข้ามวัน\)/g, '')
+                .trim();
+            const itemIn24 = UIHelpers.formatTime24(item.shift_check_in || item.check_in_time);
+            const itemOut24 = UIHelpers.formatTime24(item.shift_check_out || item.check_out_time);
+
+            // 1. ตรงตามชื่อ Format เต็ม
+            if (itemShiftName && itemShiftName === shiftFormattedName) {
+                return true;
+            }
+
+            // 2. ตรงตามชื่อ Clean base + เวลาเข้าออกตรงกัน
+            if (!shift.is_custom && cleanBaseName && itemCleanBase === cleanBaseName) {
+                if (itemIn24 === shiftIn24 && itemOut24 === shiftOut24) {
+                    return true;
+                }
+            }
+
+            // 3. กะปกติ
+            if (!shift.is_overtime && cleanBaseName.includes('เวลาราชการปกติ') && itemCleanBase.includes('เวลาราชการปกติ')) {
+                return true;
+            }
+
+            return false;
+        });
+    }
+
     #isShiftActiveAtCurrentTime(shift, nowMin, allowStartMin) {
         if (!this.settings?.filter_shifts_by_realtime) {
             return true;
@@ -270,6 +320,19 @@ export class CheckinController {
 
         let candidateShifts = allShifts.map((s, originalIdx) => ({ ...s, originalIdx }));
 
+        // 1) ซ่อนกะปกติเมื่อปิดรับเวลาปกติ
+        if (this.settings?.disable_normal_hours_checkin) {
+            candidateShifts = candidateShifts.filter(s => {
+                const isNormalShift = String(s.name || '').includes('เวลาราชการปกติ') ||
+                    (!s.is_overtime && !s.is_custom && s.check_in === stdInRef && s.check_out === stdOutRef);
+                return !isNormalShift;
+            });
+        }
+
+        // 2) ซ่อนกะที่ลงเวลาไปแล้วในวันนี้
+        candidateShifts = candidateShifts.filter(s => !this.#isShiftAlreadyRecordedToday(s));
+
+        // 3) ถ้าต้องใช้ OT Window
         if (mustUseOvertimeWindow) {
             const otOnly = candidateShifts.filter(s => s.is_overtime || s.is_custom);
             if (otOnly.length > 0) {
@@ -277,13 +340,10 @@ export class CheckinController {
             }
         }
 
+        // 4) กรองตามเวลาจริง
         let timeFilteredShifts = candidateShifts.filter(s =>
             this.#isShiftActiveAtCurrentTime(s, nowMin, allowStartMin)
         );
-
-        if (timeFilteredShifts.length === 0) {
-            timeFilteredShifts = candidateShifts;
-        }
 
         this.availableShiftsForCurrentWindow = timeFilteredShifts;
 
@@ -297,17 +357,23 @@ export class CheckinController {
             }
         }
 
-        const emptyOptionHtml = '<option value="">-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --</option>';
-        const shiftOptionsHtml = timeFilteredShifts.map(s => {
-            const displayText = SettingsModel.formatShiftDisplayText(s);
-            return `<option value="${s.originalIdx}">${displayText}</option>`;
-        }).join('');
-        selectEl.innerHTML = emptyOptionHtml + shiftOptionsHtml;
-
-        if (prevSelectedIdx && timeFilteredShifts.some(s => String(s.originalIdx) === String(prevSelectedIdx))) {
-            selectEl.value = prevSelectedIdx;
-        } else {
+        // 5) การเรนเดอร์ Dropdown (selectEl)
+        if (timeFilteredShifts.length === 0) {
+            selectEl.innerHTML = '<option value="">-- บันทึกลงเวลาครบทุกช่วงเวลาแล้ว / ไม่มีช่วงเวลาที่เปิดให้ลงเวลา --</option>';
             selectEl.value = '';
+        } else {
+            const emptyOptionHtml = '<option value="">-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --</option>';
+            const shiftOptionsHtml = timeFilteredShifts.map(s => {
+                const displayText = SettingsModel.formatShiftDisplayText(s);
+                return `<option value="${s.originalIdx}">${displayText}</option>`;
+            }).join('');
+            selectEl.innerHTML = emptyOptionHtml + shiftOptionsHtml;
+
+            if (prevSelectedIdx && timeFilteredShifts.some(s => String(s.originalIdx) === String(prevSelectedIdx))) {
+                selectEl.value = prevSelectedIdx;
+            } else {
+                selectEl.value = '';
+            }
         }
     }
 
@@ -512,6 +578,23 @@ export class CheckinController {
                 checkoutBadgeEl.textContent = isPastUnclosed ? 'ค้างลงเวลาเลิกงาน' : 'รอลงเวลาเลิกงาน';
                 checkoutBadgeEl.className = isPastUnclosed ? 'bma-badge bma-badge-danger' : 'bma-badge bma-badge-warning';
             }
+        }
+
+        if (!hasUnclosedRegular && (!this.availableShiftsForCurrentWindow || this.availableShiftsForCurrentWindow.length === 0)) {
+            if (btnSubmitMain) {
+                btnSubmitMain.disabled = true;
+                btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            }
+            if (btnSubmitLabel) {
+                btnSubmitLabel.textContent = 'ไม่มีช่วงเวลาปฏิบัติงานให้บันทึก';
+            }
+            noticeBox?.classList.remove('hidden');
+            if (noticeText) {
+                noticeText.textContent = 'ท่านได้บันทึกลงเวลาปฏิบัติงานในทุกช่วงเวลาที่เปิดให้ลงเวลาเรียบร้อยแล้ว หรือไม่มีช่วงเวลาปฏิบัติงานที่เปิดให้ลงเวลาในขณะนี้';
+            }
+            shiftSelectorContainer?.classList.remove('hidden');
+            mainCustomBox?.classList.add('hidden');
+            return;
         }
 
         if (this.settings?.disable_normal_hours_checkin && isWithinNormalHours) {
