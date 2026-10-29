@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T05:31:01.709Z",
+  "generatedAt": "2026-10-29T06:22:52.010Z",
   "totalFilesScanned": 67,
   "totalSymbolsIndexed": 482,
   "files": [
@@ -1136,7 +1136,7 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "5570c1c6439778df",
+      "fileHash": "0f3dae93f96cb242",
       "totalLines": 1218,
       "importsCount": 7,
       "importsPreview": [
@@ -2031,7 +2031,7 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "9016a51e76bb80d8",
+      "fileHash": "155d0689a18f9537",
       "totalLines": 1145,
       "importsCount": 1,
       "importsPreview": [
@@ -3965,7 +3965,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-fix-reports-hierarchical-filter-crash/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "673ccbafa953ecb7",
+      "fileHash": "2e9c5df238828f9f",
       "totalLines": 96,
       "importsCount": 0,
       "importsPreview": [],
@@ -3984,7 +3984,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "44761f3703852108",
+      "fileHash": "93b0fc6a16aefec8",
       "totalLines": 138,
       "importsCount": 0,
       "importsPreview": [],
@@ -4003,7 +4003,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/test_qa_assertions.mjs",
       "layer": "Application Module",
-      "fileHash": "063c9c10d29e6b55",
+      "fileHash": "3c26ef7b1265e530",
       "totalLines": 483,
       "importsCount": 6,
       "importsPreview": [
@@ -4125,7 +4125,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-reports-hierarchical-org-filter/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "6cd6741f507d8855",
+      "fileHash": "839c82bcb93ea6e0",
       "totalLines": 150,
       "importsCount": 0,
       "importsPreview": [],
@@ -4144,7 +4144,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "834a7569b8d07bfe",
+      "fileHash": "b9e8b167f13551cd",
       "totalLines": 143,
       "importsCount": 0,
       "importsPreview": [],
@@ -4163,7 +4163,7 @@
     {
       "filePath": "pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/test_qa_users_filter.mjs",
       "layer": "Application Module",
-      "fileHash": "869f920411c25cb0",
+      "fileHash": "4c7b9bd2149071f1",
       "totalLines": 397,
       "importsCount": 2,
       "importsPreview": [
