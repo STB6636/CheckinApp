@@ -37,3 +37,8 @@ created_at: "2026-10-29"
 5. **ความทนทานต่อฐานข้อมูล (Database Resilience & Backward Compatibility):**
    - ตาราง `system_settings` จัดเก็บ `early_shift_window_minutes INTEGER DEFAULT 30`
    - ใน `SettingsModel.js` มีระบบ Retry Fallback หากยังไม่ได้รันคำสั่ง SQL ใน Supabase โดยจะลบฟิลด์ออกจาก Payload อัตโนมัติ และสำรองค่าไว้ใน `localStorage` (`bma_early_shift_window_minutes`) ทำให้ระบบทำงานได้อย่างต่อเนื่องไม่มีการ Crash
+
+6. **การทำงานร่วมกับนโยบายปิดการลงเวลาในเวลาปกติ (`disable_normal_hours_checkin`):**
+   - เมื่อเปิดใช้งาน `disable_normal_hours_checkin` ควบคู่กับ Real-time Filter และเวลาปัจจุบันอยู่ในช่วง 08:30 - 16:30 น. (เช่น 16:02 น.)
+   - หากมีกะนอกเวลา (OT) ที่อนุญาตให้เริ่มเข้างานล่วงหน้าและ Active อยู่ (เช่น กะ 17:00 น. ล่วงหน้า 60 นาที เริ่ม 16:00 น.) ระบบจะไม่ซ่อนกล่องเลือกกะ แต่จะแสดง Dropdown ให้เลือกเฉพาะกะนอกเวลาที่ Active ในขณะนั้น
+   - การลงเวลาราชการปกติจะถูกปิดตามนโยบาย แต่ผู้ใช้สามารถกดบันทึกเวลาของกะนอกเวลาที่เลือกได้อย่างถูกต้อง และระบบจะบันทึกประเภทเป็น `is_overtime_shift` สมบูรณ์

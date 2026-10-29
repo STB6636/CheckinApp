@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานแก้ไข: เปิดให้เลือกช่วงเวลาปฏิบัติงานนอกเวลาล่วงหน้าช่วง 16:00-16:30 น.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-business-time"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900">แผนงานแก้ไข: ปลดล็อกตัวเลือกกะนอกเวลาช่วงเริ่มงานล่วงหน้า (Early OT Shift)</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Git Branch: <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">TimeCheckin</span>
+                        &bull; Target: <span class="font-bold text-slate-700">CheckinController.js (Surgical Fix)</span>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-spinner fa-spin"></i> รอยืนยันแผนงาน
+                </span>
+            </div>
+        </div>
+
+        <!-- Issue Analysis & Root Cause -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                <h2 class="text-base font-bold text-slate-900">1. สาเหตุของปัญหา (Root Cause Analysis)</h2>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs leading-relaxed text-slate-700">
+                <p>
+                    <strong>สถานการณ์:</strong> ตั้งค่าเวลาเริ่มทำงานก่อนเวลา 60 นาที, กะเริ่ม 17:00 น. (ช่วง Active คือ 16:00 - 01:00 น.) และเปิดใช้ <em>"ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)"</em>
+                </p>
+                <p>
+                    <strong>จุดที่บล็อกการทำงาน (ณ เวลา 16:02 น.):</strong>
+                </p>
+                <ol class="list-decimal list-inside space-y-1 text-slate-600">
+                    <li>เวลา 16:02 น. ยังอยู่ในช่วงเวลาราชการปกติ (&lt; 16:30 น.) ระบบตรวจพบว่า <code>disable_normal_hours_checkin</code> เปิดอยู่ จึงสั่งซ่อน Dropdown ตัวเลือกกะและ Disable ปุ่มบันทึกเวลาหน้าหลักทันที</li>
+                    <li>ตัวแปร <code>mustUseOvertimeWindow</code> ถูกผูกไว้เฉพาะหลัง 16:30 น. หรือก่อน 06:00 น. เท่านั้น ทำให้เวลา 16:02 น. ไม่ถูกจัดเป็นหน้าต่างเวลา OT</li>
+                    <li>เมื่อกดบันทึกเวลา ฟังก์ชัน <code>#handleMainCheckin</code> มีการตรวจดักช่วงเวลา 08:30 - 16:30 น. โดยไม่ได้ยกเว้นกรณีที่ผู้ใช้เลือกลงเวลาเป็นกะนอกเวลา (OT)</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Surgical Solution -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-wrench text-emerald-600"></i>
+                <h2 class="text-base font-bold text-slate-900">2. แนวทางการแก้ไขอย่างแม่นยำ (Surgical Fix)</h2>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">1. ตรวจจับกะนอกเวลาที่ Active ในขณะนั้น (hasActiveOtShifts)</span>
+                    <p class="text-slate-600 mt-1">
+                        ตรวจสอบว่ามีกะนอกเวลา (OT) ที่อนุญาตให้เริ่มเข้างานล่วงหน้าและ Active อยู่ในเวลาปัจจุบันหรือไม่ หากมี ให้เปิดให้แสดง Dropdown ตัวเลือกกะทันที
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">2. ปรับการทำงานของ disable_normal_hours_checkin</span>
+                    <p class="text-slate-600 mt-1">
+                        กรณีเปิดปิดลงเวลาปกติ: ให้ปิดเฉพาะการลงเวลาปกติ (ตัดตัวเลือกเวลาราชการปกติออก) แต่<strong>เปิดแสดง Dropdown กะนอกเวลา</strong> ให้เจ้าหน้าที่สามารถเลือกกะ 17:00 น. และกดบันทึกลงเวลาได้ตั้งแต่ 16:00 น.
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">3. ยกเว้นการบล็อกใน #handleMainCheckin สำหรับกะนอกเวลา</span>
+                    <p class="text-slate-600 mt-1">
+                        หากกะที่เลือกเป็น <code>is_overtime</code> ให้บันทึกเวลาเป็นปฏิบัติงานนอกเวลาได้ทันที ไม่ถูกบล็อกโดยกฎ 08:30 - 16:30 น.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SQL Note -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-2">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-database text-blue-600"></i>
+                <h2 class="text-base font-bold text-slate-900">3. คำสั่ง SQL ฐานข้อมูล</h2>
+            </div>
+            <p class="text-xs text-slate-600">
+                ปัญหาในเคสนี้เกิดจากตรรกะเงื่อนไขการควบคุมการแสดงผลใน <code>CheckinController.js</code> บนฝั่ง Client-Side ฐานข้อมูลมีฟิลด์ <code>early_shift_window_minutes</code> และ JSONB <code>work_shifts</code> พร้อมสมบูรณ์แล้ว จึงไม่กระทบโครงสร้างฐานข้อมูลเพิ่มเติม (แต่ได้เตรียมคำสั่ง SQL เดิมไว้ให้ตรวจสอบความสมบูรณ์เรียบร้อย)
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>
+

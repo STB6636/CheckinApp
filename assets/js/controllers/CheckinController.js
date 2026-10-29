@@ -234,7 +234,17 @@ export class CheckinController {
         const prevSelectedIdx = selectEl.value;
         const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
         const allowStartMin = UIHelpers.timeToMinutes(this.settings?.allow_checkin_start_time || '06:00');
-        const stdOutMin = UIHelpers.timeToMinutes(this.settings?.standard_check_out || '16:30');
+        const stdInRef = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
+        const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
+        const stdInMin = UIHelpers.timeToMinutes(stdInRef);
+        const stdOutMin = UIHelpers.timeToMinutes(stdOutRef);
+        const isWithinNormalHours = (stdInMin <= stdOutMin)
+            ? (nowMin >= stdInMin && nowMin < stdOutMin)
+            : (nowMin >= stdInMin || nowMin < stdOutMin);
+
+        const hasActiveOtShifts = allShifts.some(s =>
+            (s.is_overtime || s.is_custom) && this.#isShiftActiveAtCurrentTime(s, nowMin, allowStartMin)
+        );
 
         const hasUnclosedRegular = Boolean(
             this.activeRegularRecord &&
@@ -251,7 +261,12 @@ export class CheckinController {
         const isBeforeAllowStart = nowMin < allowStartMin;
         const isAfterStdOut = nowMin > stdOutMin;
         const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
-        const mustUseOvertimeWindow = !hasUnclosedRegular && (hasCompletedRegularToday || (isRealtimeFilterEnabled && (isBeforeAllowStart || isAfterStdOut)));
+        const isNormalHoursDisabledNow = Boolean(this.settings?.disable_normal_hours_checkin && isWithinNormalHours);
+        const mustUseOvertimeWindow = !hasUnclosedRegular && (
+            hasCompletedRegularToday ||
+            (isRealtimeFilterEnabled && (isBeforeAllowStart || isAfterStdOut)) ||
+            (isNormalHoursDisabledNow && hasActiveOtShifts)
+        );
 
         let candidateShifts = allShifts.map((s, originalIdx) => ({ ...s, originalIdx }));
 
@@ -444,6 +459,11 @@ export class CheckinController {
             : (nowMin >= stdInMin || nowMin < stdOutMin);
         btnSubmitMain?.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
 
+        const allShifts = this.settings?.work_shifts || [];
+        const hasActiveOtShifts = allShifts.some(s =>
+            (s.is_overtime || s.is_custom) && this.#isShiftActiveAtCurrentTime(s, nowMin, allowStartMin)
+        );
+
         const hasUnclosedRegular = Boolean(
             regularRecord &&
             regularRecord.check_in_time &&
@@ -495,26 +515,71 @@ export class CheckinController {
         }
 
         if (this.settings?.disable_normal_hours_checkin && isWithinNormalHours) {
-            shiftSelectorContainer?.classList.add('hidden');
-            mainCustomBox?.classList.add('hidden');
+            if (hasActiveOtShifts && !hasUnclosedRegular) {
+                shiftSelectorContainer?.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
+                if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
+                    mainCustomBox?.classList.remove('hidden');
+                } else {
+                    mainCustomBox?.classList.add('hidden');
+                }
 
-            if (modeTag) {
-                modeTag.textContent = isNormalModeSetting ? 'รูปแบบปกติ' : 'รูปแบบพิเศษ';
-                modeTag.className = isNormalModeSetting ? 'bma-badge bma-badge-success' : 'bma-badge bma-badge-indigo';
-            }
+                if (hasSelectedShift && (shiftObj.is_overtime || shiftObj.is_custom)) {
+                    if (modeTag) {
+                        modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
+                        modeTag.className = 'bma-badge-pastel-purple';
+                    }
+                    if (btnSubmitMain) {
+                        btnSubmitMain.disabled = false;
+                        btnSubmitMain.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                    }
+                    if (btnSubmitLabel) {
+                        btnSubmitLabel.textContent = 'บันทึกลงเวลาปฏิบัติงานนอกเวลา';
+                    }
+                    noticeBox?.classList.remove('hidden');
+                    if (noticeText) {
+                        noticeText.textContent = 'ระบบอยู่ในโหมด "ช่วงเวลาปฏิบัติงานนอกเวลา" เมื่อกดบันทึกจะลงทั้งเวลาเข้าและเวลาเลิกงานตามช่วงเวลาที่เลือกให้อัตโนมัติ';
+                    }
+                    return;
+                } else {
+                    if (modeTag) {
+                        modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
+                        modeTag.className = 'bma-badge-pastel-purple';
+                    }
+                    if (btnSubmitMain) {
+                        btnSubmitMain.disabled = false;
+                        btnSubmitMain.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                    }
+                    if (btnSubmitLabel) {
+                        btnSubmitLabel.textContent = 'กรุณาเลือกช่วงเวลาปฏิบัติงานนอกเวลา';
+                    }
+                    noticeBox?.classList.remove('hidden');
+                    if (noticeText) {
+                        noticeText.textContent = `ขณะนี้ระบบปิดรับการลงเวลาในเวลาปกติ (${stdInRef} - ${stdOutRef} น.) แต่ท่านสามารถเลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" ที่เปิดให้ลงเวลาในขณะนี้ได้`;
+                    }
+                    return;
+                }
+            } else {
+                shiftSelectorContainer?.classList.add('hidden');
+                mainCustomBox?.classList.add('hidden');
 
-            if (btnSubmitMain) {
-                btnSubmitMain.disabled = true;
-                btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                if (modeTag) {
+                    modeTag.textContent = isNormalModeSetting ? 'รูปแบบปกติ' : 'รูปแบบพิเศษ';
+                    modeTag.className = isNormalModeSetting ? 'bma-badge bma-badge-success' : 'bma-badge bma-badge-indigo';
+                }
+
+                if (btnSubmitMain) {
+                    btnSubmitMain.disabled = true;
+                    btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                }
+                if (btnSubmitLabel) {
+                    btnSubmitLabel.textContent = `ปิดรับการลงเวลาในช่วงเวลาปกติ (${stdInRef} - ${stdOutRef} น.)`;
+                }
+                noticeBox?.classList.remove('hidden');
+                if (noticeText) {
+                    noticeText.textContent = `ขณะนี้อยู่ในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) ระบบเปิดใช้งานฟังก์ชันปิดรับการลงเวลาในเวลาปกติ จึงไม่สามารถบันทึกลงเวลาได้`;
+                }
+                return;
             }
-            if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = `ปิดรับการลงเวลาในช่วงเวลาปกติ (${stdInRef} - ${stdOutRef} น.)`;
-            }
-            noticeBox?.classList.remove('hidden');
-            if (noticeText) {
-                noticeText.textContent = `ขณะนี้อยู่ในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) ระบบเปิดใช้งานฟังก์ชันปิดรับการลงเวลาในเวลาปกติ จึงไม่สามารถบันทึกลงเวลาได้`;
-            }
-            return;
         }
 
         if (isNormalModeSetting && hasUnclosedRegular) {
@@ -546,7 +611,7 @@ export class CheckinController {
         }
 
         const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
-        if (isNormalModeSetting && isRealtimeFilterEnabled && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut) {
+        if (isNormalModeSetting && isRealtimeFilterEnabled && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut && !(hasActiveOtShifts && !hasUnclosedRegular)) {
             shiftSelectorContainer?.classList.add('hidden');
             mainCustomBox?.classList.add('hidden');
 
@@ -1355,7 +1420,36 @@ export class CheckinController {
             const isWithinNormalHours = (stdInMin <= stdOutMin)
                 ? (nowMin >= stdInMin && nowMin < stdOutMin)
                 : (nowMin >= stdInMin || nowMin < stdOutMin);
-            if (isWithinNormalHours) {
+
+            const shiftSelectEl = document.getElementById('checkinShiftSelect');
+            const shiftContainer = document.getElementById('shiftSelectorContainer');
+            const isShiftSelectorActive = shiftContainer && !shiftContainer.classList.contains('hidden');
+            const shiftIdx = (shiftSelectEl && shiftSelectEl.value !== '') ? parseInt(shiftSelectEl.value, 10) : null;
+            const shiftObj = (shiftIdx !== null && !isNaN(shiftIdx))
+                ? ((this.settings?.work_shifts || [])[shiftIdx] || {})
+                : {};
+            const hasUnclosedRegular = Boolean(
+                this.activeRegularRecord &&
+                this.activeRegularRecord.check_in_time &&
+                !this.activeRegularRecord.check_out_time
+            );
+            const isOvertimeCheckin = !hasUnclosedRegular && Boolean(shiftObj.is_overtime || shiftObj.is_custom);
+
+            if (isWithinNormalHours && !isOvertimeCheckin) {
+                if (isShiftSelectorActive && shiftIdx === null) {
+                    await UIHelpers.alert(
+                        'กรุณาเลือกช่วงเวลาปฏิบัติงานนอกเวลา',
+                        `ขณะนี้ระบบปิดรับการลงเวลาในเวลาปกติ (${stdInRef} - ${stdOutRef} น.) กรุณาคลิกเลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" จากรายการก่อนทำการบันทึก`,
+                        'warning'
+                    );
+                    if (shiftSelectEl) {
+                        shiftSelectEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        shiftSelectEl.focus();
+                        shiftSelectEl.classList.add('ring-2', 'ring-rose-500', 'border-rose-500');
+                        setTimeout(() => shiftSelectEl.classList.remove('ring-2', 'ring-rose-500', 'border-rose-500'), 3000);
+                    }
+                    return;
+                }
                 await UIHelpers.alert('ไม่สามารถลงเวลาได้', `ระบบปิดรับการลงเวลาในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.)`, 'warning');
                 return;
             }
@@ -1468,7 +1562,7 @@ export class CheckinController {
         const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
         const isOvertimeByTimeWindow = !hasUnclosedRegular && (isRegularCompletedToday || (isRealtimeFilterEnabled && (nowMin < allowStartMin || nowMin > stdOutMin)));
         const effectiveOvertimeShift = !hasUnclosedRegular && Boolean(
-            ((!isNormalModeSetting || !isRealtimeFilterEnabled) && shiftObj.is_overtime) ||
+            shiftObj.is_overtime ||
             isOvertimeByTimeWindow
         );
 

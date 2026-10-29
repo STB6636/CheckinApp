@@ -1,0 +1,17 @@
+{
+  "pipeline_id": "PIPE-20261029-fix-early-shift-ot-selection",
+  "target_branch": "TimeCheckin",
+  "target_files": [
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "line_range": "228-280, 420-568, 1350-1365, 1468-1475",
+      "target_symbols": [
+        "CheckinController.#evaluateTimeWindowAndPopulateShifts",
+        "CheckinController.#updateStatusCardsAndMainButton",
+        "CheckinController.#handleMainCheckin"
+      ],
+      "action": "Allow active early OT shifts during normal hours even when disable_normal_hours_checkin is enabled"
+    }
+  ]
+}
+
