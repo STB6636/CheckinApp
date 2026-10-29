@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T09:31:57.366Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `70` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `486`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T10:09:02.400Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `71` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `487`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -535,7 +535,7 @@
 
 ## File: `docs/manual/index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `298bd407ca03cfc8` | **Total Lines:** `683` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3894bdb0fb23a1bb` | **Total Lines:** `683` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -546,43 +546,43 @@
 
 ## File: `docs/manual/manual-admin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6de39a1e9adb8bdf` | **Total Lines:** `1261` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `425a99d1903e85ec` | **Total Lines:** `1289` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L177 - L1037** | `<main>` | HTML DOM Section L177-L1037 |
-| `<div#mockupModal>` | `html_dom_section` | **L1046 - L1072** | `id="mockupModal"` | HTML DOM Section L1046-L1072 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1048 - L1071** | `id="mockupModalPanel"` | HTML DOM Section L1048-L1071 |
+| `<main>` | `html_dom_section` | **L177 - L1065** | `<main>` | HTML DOM Section L177-L1065 |
+| `<div#mockupModal>` | `html_dom_section` | **L1074 - L1100** | `id="mockupModal"` | HTML DOM Section L1074-L1100 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1076 - L1099** | `id="mockupModalPanel"` | HTML DOM Section L1076-L1099 |
 
 ---
 
 ## File: `docs/manual/manual-superadmin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `eb2120488af9e1d5` | **Total Lines:** `1405` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f079c2a2df23ea80` | **Total Lines:** `1478` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L170 - L1153** | `<main>` | HTML DOM Section L170-L1153 |
-| `<div#mockupModal>` | `html_dom_section` | **L1162 - L1188** | `id="mockupModal"` | HTML DOM Section L1162-L1188 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1164 - L1187** | `id="mockupModalPanel"` | HTML DOM Section L1164-L1187 |
+| `<main>` | `html_dom_section` | **L170 - L1226** | `<main>` | HTML DOM Section L170-L1226 |
+| `<div#mockupModal>` | `html_dom_section` | **L1235 - L1261** | `id="mockupModal"` | HTML DOM Section L1235-L1261 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1237 - L1260** | `id="mockupModalPanel"` | HTML DOM Section L1237-L1260 |
 
 ---
 
 ## File: `docs/manual/manual-user.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `712da7e0184480fa` | **Total Lines:** `1352` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `bde6d6d5d54045fb` | **Total Lines:** `1375` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L170 - L1112** | `<main>` | HTML DOM Section L170-L1112 |
-| `<div#mockupModal>` | `html_dom_section` | **L1121 - L1147** | `id="mockupModal"` | HTML DOM Section L1121-L1147 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1123 - L1146** | `id="mockupModalPanel"` | HTML DOM Section L1123-L1146 |
+| `<main>` | `html_dom_section` | **L170 - L1135** | `<main>` | HTML DOM Section L170-L1135 |
+| `<div#mockupModal>` | `html_dom_section` | **L1144 - L1170** | `id="mockupModal"` | HTML DOM Section L1144-L1170 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1146 - L1169** | `id="mockupModalPanel"` | HTML DOM Section L1146-L1169 |
 
 ---
 
@@ -963,6 +963,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L15** | `<head>` | HTML DOM Section L3-L15 |
+
+---
+
+## File: `pipeline/PIPE-20261029-update-manual-ot-early-window-coexistence/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `1a131d39330d61b4` | **Total Lines:** `87` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
 
 ---
 

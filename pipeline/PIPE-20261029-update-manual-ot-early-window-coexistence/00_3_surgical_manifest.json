@@ -1,0 +1,27 @@
+{
+  "pipeline_id": "PIPE-20261029-update-manual-ot-early-window-coexistence",
+  "target_branch": "TimeCheckin",
+  "target_files": [
+    {
+      "path": "docs/manual/manual-superadmin.html",
+      "target_sections": ["topic-2", "topic-5"],
+      "action": "Add detailed explanation of coexistence between disable_normal_hours_checkin and early OT shift window"
+    },
+    {
+      "path": "docs/manual/manual-admin.html",
+      "target_sections": ["topic-2", "topic-5"],
+      "action": "Add guidance for admin on how officers can check in for afternoon/evening OT early even when normal hours check-in is disabled"
+    },
+    {
+      "path": "docs/manual/manual-user.html",
+      "target_sections": ["topic-5", "topic-6"],
+      "action": "Add crystal-clear real-world example (e.g. at 16:02 for 17:00 OT shift) explaining that OT dropdown appears and normal duty is blocked"
+    },
+    {
+      "path": "docs/manual/index.html",
+      "target_sections": ["hero", "permissions-matrix"],
+      "action": "Update summary notes on OT early checkin during normal hours"
+    }
+  ]
+}
+

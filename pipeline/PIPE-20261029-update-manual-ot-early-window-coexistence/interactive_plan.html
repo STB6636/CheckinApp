@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานอัปเดตคู่มือเพิ่มเติม: การทำงานร่วมกันระหว่างปิดลงเวลาปกติและกะนอกเวลาล่วงหน้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-[#480080] flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900">แผนงาน: ปรับปรุงคู่มือเพิ่มเติมให้เป็นปัจจุบัน (ฉบับสมบูรณ์)</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Git Branch: <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">TimeCheckin</span>
+                        &bull; Target: <span class="font-bold text-slate-700">docs/manual/ ทั้ง 4 ไฟล์</span>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-spinner fa-spin"></i> รอยืนยันแผนงาน
+                </span>
+            </div>
+        </div>
+
+        <!-- Scope & Details -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-blue-600"></i>
+                <h2 class="text-base font-bold text-slate-900">1. ประเด็นสำคัญที่ต้องเพิ่มในคู่มือ (Core Focus)</h2>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs leading-relaxed text-slate-700">
+                <p>
+                    อธิบายการทำงานร่วมกันระหว่าง <strong>"การปิดลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)"</strong> และ <strong>"การเปิดให้เลือกช่วงเวลาปฏิบัติงานนอกเวลาล่วงหน้า (Early OT Shift Window)"</strong> เพื่อให้เจ้าหน้าที่และผู้บริหารเข้าใจตรงกัน:
+                </p>
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-emerald-900">
+                    <strong>ตัวอย่างสถานการณ์จริง (16:02 น.):</strong>
+                    <ul class="list-disc list-inside space-y-0.5 text-emerald-800">
+                        <li>หน่วยงานเปิดฟังก์ชัน <em>"ปิดการลงเวลาในเวลาปกติ (08:30 - 16:30 น.)"</em></li>
+                        <li>มีกะปฏิบัติงานนอกเวลา 17:00 - 01:00 น. ซึ่งตั้งเวลาเข้าล่วงหน้าไว้ 60 นาที (เปิดเริ่มเลือกตั้งแต่ 16:00 น.)</li>
+                        <li>เมื่อเจ้าหน้าที่เปิดแอปเวลา <strong>16:02 น.</strong>:
+                            <br>- ระบบจะ<strong>ปิดเฉพาะการลงเวลาราชการปกติ</strong> (ตัดตัวเลือกกะปกติออก)
+                            <br>- แต่จะ<strong>เปิด Dropdown แสดงกะนอกเวลา 17:00 น.</strong> ให้เลือกและกดบันทึกเวลาได้ทันที
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Action Plan -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-3 text-xs">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-600"></i>
+                <h2 class="text-base font-bold text-slate-900">2. รายละเอียดการแก้ไขในแต่ละไฟล์</h2>
+            </div>
+            <div class="space-y-2">
+                <div class="p-3 rounded-xl border border-slate-200">
+                    <strong>manual-superadmin.html:</strong> เพิ่มคำอธิบายการทำงานร่วมกันของ 2 ฟังก์ชันในหัวข้อแท็บ 1 และแท็บ 3
+                </div>
+                <div class="p-3 rounded-xl border border-slate-200">
+                    <strong>manual-admin.html:</strong> เพิ่มคำแนะนำสำหรับผู้ดูแลระบบ เพื่อตอบข้อซักถามของเจ้าหน้าที่เวรผลัด
+                </div>
+                <div class="p-3 rounded-xl border border-slate-200">
+                    <strong>manual-user.html:</strong> เพิ่มตัวอย่างภาพจำลองและขั้นตอนการใช้งานที่เข้าใจง่ายสำหรับเจ้าหน้าที่
+                </div>
+                <div class="p-3 rounded-xl border border-slate-200">
+                    <strong>index.html:</strong> อัปเดตตารางสรุปคุณสมบัติระบบ
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

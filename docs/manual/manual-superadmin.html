@@ -695,6 +695,43 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- กล่องคำอธิบาย: การทำงานร่วมกันระหว่าง 'ปิดการลงเวลาในเวลาปกติ' และ 'เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา' -->
+                        <div class="p-5 rounded-2xl bg-gradient-to-r from-amber-50/90 via-purple-50/70 to-emerald-50/90 dark:from-slate-900 dark:via-purple-950/20 dark:to-slate-900 border-2 border-purple-300/70 dark:border-purple-700/60 shadow-md space-y-3">
+                            <div class="flex items-center gap-2.5 text-slate-900 dark:text-white font-extrabold text-sm sm:text-base">
+                                <span class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-sm shadow-xs shrink-0">
+                                    <i class="fa-solid fa-code-merge"></i>
+                                </span>
+                                <span>การทำงานร่วมกันระหว่าง "ปิดการลงเวลาในเวลาปกติ" และ "เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา"</span>
+                            </div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                                เมื่อหน่วยงานเปิดใช้ทั้ง <b>"ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)"</b> และ <b>"กรองช่วงเวลากะตามเวลาจริง (Real-time Filter)"</b> ควบคู่กับการตั้งเวลาเริ่มทำงานล่วงหน้า (เช่น 60 นาที):
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                <div class="p-3.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-amber-200 dark:border-amber-700/60 space-y-1.5">
+                                    <div class="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-ban text-amber-600"></i>
+                                        <span>การปิดกั้นเวลาราชการปกติ (08:30 - 16:30 น.):</span>
+                                    </div>
+                                    <p class="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
+                                        ระบบจะปิดเฉพาะการลงเวลาราชการปกติ (08:30 - 16:30 น.) เท่านั้น ทั้งแบบ 2 ครั้งและแบบบันทึกครั้งเดียว เพื่อสนับสนุนนโยบายการลงเวลาปกติผ่านเครื่องสแกนหลักของหน่วยงาน
+                                    </p>
+                                </div>
+                                <div class="p-3.5 rounded-xl bg-white/90 dark:bg-slate-800/90 border border-emerald-200 dark:border-emerald-700/60 space-y-1.5">
+                                    <div class="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-unlock-keyhole text-emerald-600"></i>
+                                        <span>การปลดล็อกกะนอกเวลา (OT) ล่วงหน้าอย่างราบรื่น:</span>
+                                    </div>
+                                    <p class="text-slate-600 dark:text-slate-400 text-[11px] leading-relaxed">
+                                        หากมีกะนอกเวลา (OT) ที่อนุญาตให้เข้างานล่วงหน้าและเริ่ม Active ก่อน 16:30 น. (เช่น กะ 17:00 น. เริ่ม Active 16:00 น.) ระบบจะปลดล็อกกล่อง Dropdown และเปิดให้เจ้าหน้าที่เลือกกะนอกเวลาเพื่อบันทึกเวลาได้ตั้งแต่ 16:00 น. เป็นต้นไป โดยไม่ถูกบล็อก
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-purple-100/60 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800/60 text-[11px] text-purple-900 dark:text-purple-200 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-purple-600 dark:text-purple-400 shrink-0"></i>
+                                <span><b>บทสรุปความคุ้มครอง:</b> เจ้าหน้าที่เวรผลัดช่วงเย็น/ค่ำสามารถลงเวลาเตรียมพร้อมก่อนเริ่มงานได้ตามเกณฑ์ล่วงหน้าที่กำหนด โดยหน่วยงานยังคงรักษานโยบายปิดรับการลงเวลาปกติ 08:30 - 16:30 น. ได้อย่างสมบูรณ์</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -885,6 +922,42 @@
                                         <p>
                                             กะปฏิบัติงานนอกเวลา เริ่ม <b>17:00 น.</b> เลิก <b>01:00 น.</b> เปิดใช้ <code class="font-mono text-blue-600">[x] ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้</code> โดยระบบตั้งค่าเวลาเริ่มทำงานก่อนเวลาไว้ <b>30 นาที</b>
                                             &rarr; กะนี้จะปรากฏใน Dropdown ให้เจ้าหน้าที่กดเลือกและลงเวลาเข้างานได้ตั้งแต่เวลา <b>16:30 น.</b> เป็นต้นไปจนถึงเวลาเลิกงาน (01:00 น.)
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- ตัวอย่างหน้าจอจริง: เข้างานเวลา 16:02 น. แม้เวลาปกติปิดรับ แต่กะ 17:00 - 01:00 น. จะปรากฏให้เลือกทันที -->
+                                <div class="mt-3 p-4 rounded-xl bg-slate-900 text-white space-y-2.5 shadow-md border border-slate-700">
+                                    <div class="flex items-center justify-between border-b border-slate-700 pb-2">
+                                        <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-display"></i> ตัวอย่างหน้าจอจริง ณ เวลา 16:02 น. (ทดสอบการทำงานร่วมกัน)
+                                        </span>
+                                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active Window</span>
+                                    </div>
+                                    <div class="space-y-1.5 text-xs text-slate-300 leading-relaxed">
+                                        <p>
+                                            <b>สถานการณ์:</b> หน่วยงานตั้งค่าปิดการลงเวลาปกติ (08:30 - 16:30 น.) + เปิดกะ OT <b>17:00 - 01:00 น.</b> (อนุญาตล่วงหน้า 60 นาที คือเริ่มตั้งแต่ <b>16:00 น.</b>)
+                                        </p>
+                                        <div class="p-3 rounded-lg bg-slate-800/90 border border-slate-700 space-y-2">
+                                            <div class="flex items-center justify-between text-[11px]">
+                                                <span class="text-slate-400">เวลาขณะที่เจ้าหน้าที่เปิดหน้าจอ:</span>
+                                                <span class="font-mono font-bold text-amber-300 text-sm">16:02:15 น.</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-[11px]">
+                                                <span class="text-slate-400">สถานะการลงเวลาราชการปกติ:</span>
+                                                <span class="text-rose-400 font-semibold">ปิดรับลงเวลาปกติ (อยู่ในช่วง 08:30 - 16:30 น.)</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-700/60">
+                                                <span class="text-slate-400">รายการใน Dropdown ช่วงเวลา:</span>
+                                                <span class="font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-700/50">กะ 17:00 - 01:00 น. ปรากฏให้เลือกทันที</span>
+                                            </div>
+                                            <div class="flex items-center justify-between text-[11px]">
+                                                <span class="text-slate-400">ปุ่มบันทึกเวลาเมื่อเลือกกะนี้:</span>
+                                                <span class="font-bold text-purple-300 bg-purple-900/60 px-2 py-0.5 rounded border border-purple-600/40">ปลดล็อกเป็น "บันทึกลงเวลาปฏิบัติงานนอกเวลา"</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 pt-1">
+                                            👉 <b>คำชี้แจง:</b> เวลา 16:02 น. แม้เวลาปกติจะปิดรับ แต่กะ 17:00 - 01:00 น. จะปรากฏให้เลือกใน Dropdown ทันที เจ้าหน้าที่จึงสามารถกดบันทึกเวลาเพื่อเตรียมความพร้อมเข้าเวรผลัดได้โดยไม่ถูกบล็อก
                                         </p>
                                     </div>
                                 </div>
