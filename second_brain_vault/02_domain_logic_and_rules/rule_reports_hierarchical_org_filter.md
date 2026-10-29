@@ -48,3 +48,10 @@
    - คลิกแถวเพื่อเปิดประวัติบุคลากร (`#modalPersonnelResumeProfile`) ทำงานได้สมบูรณ์
 4. **การส่งออก Excel (Export):**
    - ปุ่ม `btnExportReportExcel` ดึงข้อมูลผ่าน `#getFilteredRecords()` และกรองตาม TAG สถานะที่เลือก จึงได้ข้อมูลที่แม่นยำตรงกับสิ่งที่แสดงบนหน้าจอ
+
+---
+
+## 5. มาตรฐานการ Render Dropdown และ Sanitization
+- การ Render ข้อความและ Value ภายใน `<option>` ต้องผ่าน `UIHelpers.escapeHtml(str)` เสมอเพื่อป้องกัน XSS
+- ฟังก์ชัน `UIHelpers.escapeHtml(str)` รองรับทั้ง `null`, `undefined` และแปลงอักขระพิเศษ HTML 5 ตัว (`&`, `<`, `>`, `"`, `'`) ได้อย่างปลอดภัย
+

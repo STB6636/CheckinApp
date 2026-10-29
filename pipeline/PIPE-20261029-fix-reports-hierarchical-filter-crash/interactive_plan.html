@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: Fix Hierarchical Filter & Data Population</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-emerald-700 to-teal-800 p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-white/20 text-xs rounded-full font-bold uppercase tracking-wider mb-2">Bug Fix & Recovery Plan</span>
+                    <h1 class="text-2xl font-black">แก้ไขข้อผิดพลาดระบบ Filter โครงสร้างองค์กรและกู้คืนการแสดงผลข้อมูล</h1>
+                    <p class="text-emerald-100 text-xs mt-1">PIPE-20261029-fix-reports-hierarchical-filter-crash • Branch: <span class="font-mono bg-white/20 px-2 py-0.5 rounded">Report-Fillter</span></p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-bug-slash"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <!-- Root Cause Highlight -->
+            <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1.5">
+                <div class="font-bold flex items-center gap-2 text-sm text-amber-800">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                    <span>สาเหตุที่แท้จริง (Root Cause):</span>
+                </div>
+                <p>ใน <code>ReportsController.js</code> มีการเรียกใช้งาน <code>UIHelpers.escapeHtml()</code> ในเมธอด <code>#populateHierarchicalOrgFilter()</code> และใน <code>catch (err)</code> แต่ในคลาส <code>UIHelpers.js</code> <strong>ยังไม่มีฟังก์ชัน <code>escapeHtml()</code></strong></p>
+                <p>ทำให้เกิดข้อผิดพลาด <code>TypeError: UIHelpers.escapeHtml is not a function</code> ส่งผลให้กระบวนการโหลดข้อมูลหยุดชะงัก ตัวเลือกใน Dropdown จึงไม่ถูกสร้าง และการคำนวณ TAG กับการเรนเดอร์ตารางไม่ถูกประมวลผลต่อ</p>
+            </div>
+
+            <!-- Steps -->
+            <div class="space-y-4">
+                <h2 class="text-sm font-extrabold text-slate-700 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-list-check text-emerald-600"></i>
+                    <span>ขั้นตอนการดำเนินงาน (Execution Steps):</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-xs text-slate-800">
+                            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px]">1</span>
+                            <span>Implementer SubAgent</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            เพิ่ม <code>static escapeHtml(str)</code> ใน <code>assets/js/core/UIHelpers.js</code> ให้รองรับการ sanitize อักขระ HTML ได้อย่างปลอดภัยและมีประสิทธิภาพ
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-xs text-slate-800">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]">2</span>
+                            <span>Verify Safeguards</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            ทดสอบการทำงานของ <code>#populateHierarchicalOrgFilter()</code>, ตรวจสอบการนับยอด Tag Badges และทดสอบการเรนเดอร์ตารางแยกสถานะ
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-xs text-slate-800">
+                            <span class="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-[11px]">3</span>
+                            <span>QA Auditor SubAgent</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            ตรวจสอบเปรียบเทียบ diff กับ <code>main</code> รัน Automated Assertions ยืนยันว่า Dropdown แสดงข้อมูลหน่วยงานจริงครบถ้วน
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safeguards -->
+            <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-900 space-y-1">
+                <span class="font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                    <span>ข้อควรระวังสำคัญ (Safeguards):</span>
+                </span>
+                <ul class="list-disc list-inside space-y-0.5 text-[11px] text-emerald-800">
+                    <li>แก้เฉพาะฟังก์ชันที่ขาดหาย ไม่แตะต้องตรรกะระบบอื่น</li>
+                    <li>ข้อมูลหน่วยงานภาษาไทยต้องเรียงลำดับพจนานุกรมอย่างถูกต้อง</li>
+                    <li>ตัวเลือกเริ่มต้นยังคงเป็น "แสดงทั้งหมด" (`all`)</li>
+                    <li>ปุ่ม TAG สถานะ และแถวตารางต้องเรนเดอร์ข้อมูลจริงอย่างถูกต้อง 100%</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

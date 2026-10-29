@@ -24,6 +24,16 @@ export class UIHelpers {
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
     ];
 
+    static escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     static getRootBasePath() {
         const pathname = window.location.pathname || '/';
         if (UIHelpers.KNOWN_PAGES_REGEX.test(pathname)) {

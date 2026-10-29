@@ -1,0 +1,17 @@
+{
+  "taskId": "PIPE-20261029-fix-reports-hierarchical-filter-crash",
+  "branch": "Report-Fillter",
+  "files": [
+    {
+      "path": "assets/js/core/UIHelpers.js",
+      "targetSymbol": "UIHelpers.escapeHtml",
+      "lines": "27-40"
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "targetSymbols": ["#populateHierarchicalOrgFilter", "loadReportData"],
+      "lines": "180-290"
+    }
+  ]
+}
+

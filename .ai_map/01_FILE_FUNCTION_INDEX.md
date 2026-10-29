@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T03:17:24.465Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `62` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `448`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T04:00:37.924Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `63` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `450`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -344,40 +344,41 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `776821d73b020192` | **Total Lines:** `1135` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `9016a51e76bb80d8` | **Total Lines:** `1145` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1135** | `export class UIHelpers` | Class Definition (1128 lines) |
-| `UIHelpers.getRootBasePath` | `static public method` | **L27 - L36** | `() => any` | static public method L27-L36 (10 lines) |
-| `UIHelpers.maskUrlToRoot` | `static public method` | **L38 - L61** | `(explicitPageName = '') => any` | static public method L38-L61 (24 lines) |
-| `UIHelpers.initTheme` | `static public method` | **L63 - L80** | `() => any` | static public method L63-L80 (18 lines) |
-| `UIHelpers.toggleTheme` | `static public method` | **L82 - L88** | `() => any` | static public method L82-L88 (7 lines) |
-| `UIHelpers.showToast` | `static public method` | **L90 - L122** | `(message, type = 'success', durationMs = 2600) => any` | static public method L90-L122 (33 lines) |
-| `UIHelpers.formatThaiShortDate` | `static public method` | **L124 - L140** | `(dateStr) => any` | static public method L124-L140 (17 lines) |
-| `UIHelpers.formatThaiFullDate` | `static public method` | **L142 - L157** | `(dateStr) => any` | static public method L142-L157 (16 lines) |
-| `UIHelpers.formatThaiDate` | `static public method` | **L159 - L161** | `(dateStr) => any` | static public method L159-L161 (3 lines) |
-| `UIHelpers.formatTime24` | `static public method` | **L163 - L171** | `(timeStr) => any` | static public method L163-L171 (9 lines) |
-| `UIHelpers.timeToMinutes` | `static public method` | **L173 - L179** | `(timeStr) => any` | static public method L173-L179 (7 lines) |
-| `UIHelpers.getTodayISO` | `static public method` | **L181 - L185** | `() => any` | static public method L181-L185 (5 lines) |
-| `UIHelpers.getCurrentTimeHHMM` | `static public method` | **L187 - L192** | `() => any` | static public method L187-L192 (6 lines) |
-| `UIHelpers.capturePortrait3x4FromVideo` | `static public method` | **L194 - L228** | `(videoEl, canvasEl) => any` | static public method L194-L228 (35 lines) |
-| `UIHelpers.verifyImageUrl` | `static public method` | **L230 - L288** | `(rawUrl) => any` | static public method L230-L288 (59 lines) |
-| `UIHelpers.verifyGoogleDriveLink` | `static public async method` | **L290 - L332** | `(scriptUrl, folderId = '') => Promise<any>` | static public async method L290-L332 (43 lines) |
-| `UIHelpers.uploadPhotoToGoogleDrive` | `static public async method` | **L334 - L398** | `(base64DataUrl, fileNamePrefix, settings) => Promise<any>` | static public async method L334-L398 (65 lines) |
-| `UIHelpers.showLoading` | `static public method` | **L405 - L467** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L405-L467 (63 lines) |
-| `UIHelpers.#updateProgressDOM` | `static private method` | **L469 - L476** | `(percent) => any` | static private method L469-L476 (8 lines) |
-| `UIHelpers.hideLoading` | `static public method` | **L478 - L503** | `() => any` | static public method L478-L503 (26 lines) |
-| `UIHelpers.renderTableSkeleton` | `static public method` | **L505 - L515** | `(rows = 5, cols = 6) => any` | static public method L505-L515 (11 lines) |
-| `UIHelpers.alert` | `static public async method` | **L517 - L552** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L517-L552 (36 lines) |
-| `UIHelpers.confirm` | `static public async method` | **L554 - L604** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L554-L604 (51 lines) |
-| `UIHelpers.validateThaiNationalId` | `static public method` | **L606 - L625** | `(id, strictCheckDigit = false) => any` | static public method L606-L625 (20 lines) |
-| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L627 - L631** | `(nationalId) => any` | static public method L627-L631 (5 lines) |
-| `UIHelpers.exportToExcelUTF8` | `static public method` | **L633 - L658** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L633-L658 (26 lines) |
-| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L665 - L685** | `(sheets, fileName = 'export_data') => any` | static public method L665-L685 (21 lines) |
-| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L694 - L957** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L694-L957 (264 lines) |
-| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L959 - L981** | `(file) => any` | static public method L959-L981 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L983 - L1134** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L983-L1134 (152 lines) |
+| `UIHelpers` | `class` | **L8 - L1145** | `export class UIHelpers` | Class Definition (1138 lines) |
+| `UIHelpers.escapeHtml` | `static public method` | **L27 - L35** | `(str) => any` | static public method L27-L35 (9 lines) |
+| `UIHelpers.getRootBasePath` | `static public method` | **L37 - L46** | `() => any` | static public method L37-L46 (10 lines) |
+| `UIHelpers.maskUrlToRoot` | `static public method` | **L48 - L71** | `(explicitPageName = '') => any` | static public method L48-L71 (24 lines) |
+| `UIHelpers.initTheme` | `static public method` | **L73 - L90** | `() => any` | static public method L73-L90 (18 lines) |
+| `UIHelpers.toggleTheme` | `static public method` | **L92 - L98** | `() => any` | static public method L92-L98 (7 lines) |
+| `UIHelpers.showToast` | `static public method` | **L100 - L132** | `(message, type = 'success', durationMs = 2600) => any` | static public method L100-L132 (33 lines) |
+| `UIHelpers.formatThaiShortDate` | `static public method` | **L134 - L150** | `(dateStr) => any` | static public method L134-L150 (17 lines) |
+| `UIHelpers.formatThaiFullDate` | `static public method` | **L152 - L167** | `(dateStr) => any` | static public method L152-L167 (16 lines) |
+| `UIHelpers.formatThaiDate` | `static public method` | **L169 - L171** | `(dateStr) => any` | static public method L169-L171 (3 lines) |
+| `UIHelpers.formatTime24` | `static public method` | **L173 - L181** | `(timeStr) => any` | static public method L173-L181 (9 lines) |
+| `UIHelpers.timeToMinutes` | `static public method` | **L183 - L189** | `(timeStr) => any` | static public method L183-L189 (7 lines) |
+| `UIHelpers.getTodayISO` | `static public method` | **L191 - L195** | `() => any` | static public method L191-L195 (5 lines) |
+| `UIHelpers.getCurrentTimeHHMM` | `static public method` | **L197 - L202** | `() => any` | static public method L197-L202 (6 lines) |
+| `UIHelpers.capturePortrait3x4FromVideo` | `static public method` | **L204 - L238** | `(videoEl, canvasEl) => any` | static public method L204-L238 (35 lines) |
+| `UIHelpers.verifyImageUrl` | `static public method` | **L240 - L298** | `(rawUrl) => any` | static public method L240-L298 (59 lines) |
+| `UIHelpers.verifyGoogleDriveLink` | `static public async method` | **L300 - L342** | `(scriptUrl, folderId = '') => Promise<any>` | static public async method L300-L342 (43 lines) |
+| `UIHelpers.uploadPhotoToGoogleDrive` | `static public async method` | **L344 - L408** | `(base64DataUrl, fileNamePrefix, settings) => Promise<any>` | static public async method L344-L408 (65 lines) |
+| `UIHelpers.showLoading` | `static public method` | **L415 - L477** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L415-L477 (63 lines) |
+| `UIHelpers.#updateProgressDOM` | `static private method` | **L479 - L486** | `(percent) => any` | static private method L479-L486 (8 lines) |
+| `UIHelpers.hideLoading` | `static public method` | **L488 - L513** | `() => any` | static public method L488-L513 (26 lines) |
+| `UIHelpers.renderTableSkeleton` | `static public method` | **L515 - L525** | `(rows = 5, cols = 6) => any` | static public method L515-L525 (11 lines) |
+| `UIHelpers.alert` | `static public async method` | **L527 - L562** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L527-L562 (36 lines) |
+| `UIHelpers.confirm` | `static public async method` | **L564 - L614** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L564-L614 (51 lines) |
+| `UIHelpers.validateThaiNationalId` | `static public method` | **L616 - L635** | `(id, strictCheckDigit = false) => any` | static public method L616-L635 (20 lines) |
+| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L637 - L641** | `(nationalId) => any` | static public method L637-L641 (5 lines) |
+| `UIHelpers.exportToExcelUTF8` | `static public method` | **L643 - L668** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L643-L668 (26 lines) |
+| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L675 - L695** | `(sheets, fileName = 'export_data') => any` | static public method L675-L695 (21 lines) |
+| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L704 - L967** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L704-L967 (264 lines) |
+| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L969 - L991** | `(file) => any` | static public method L969-L991 (23 lines) |
+| `UIHelpers.printReportInNewTab` | `static public method` | **L993 - L1144** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L993-L1144 (152 lines) |
 
 ---
 
@@ -883,6 +884,16 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
+
+---
+
+## File: `pipeline/PIPE-20261029-fix-reports-hierarchical-filter-crash/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `673ccbafa953ecb7` | **Total Lines:** `96` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L11** | `<head>` | HTML DOM Section L3-L11 |
 
 ---
 

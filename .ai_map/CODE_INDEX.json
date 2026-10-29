@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-29T03:17:24.465Z",
-  "totalFilesScanned": 62,
-  "totalSymbolsIndexed": 448,
+  "generatedAt": "2026-10-29T04:00:37.924Z",
+  "totalFilesScanned": 63,
+  "totalSymbolsIndexed": 450,
   "files": [
     {
       "filePath": "approvals.html",
@@ -1983,8 +1983,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "776821d73b020192",
-      "totalLines": 1135,
+      "fileHash": "9016a51e76bb80d8",
+      "totalLines": 1145,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -1997,241 +1997,249 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1135,
+          "endLine": 1145,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1128 lines)"
+          "summary": "Class Definition (1138 lines)"
+        },
+        {
+          "name": "UIHelpers.escapeHtml",
+          "kind": "static public method",
+          "startLine": 27,
+          "endLine": 35,
+          "signature": "(str) => any",
+          "summary": "static public method L27-L35 (9 lines)"
         },
         {
           "name": "UIHelpers.getRootBasePath",
           "kind": "static public method",
-          "startLine": 27,
-          "endLine": 36,
+          "startLine": 37,
+          "endLine": 46,
           "signature": "() => any",
-          "summary": "static public method L27-L36 (10 lines)"
+          "summary": "static public method L37-L46 (10 lines)"
         },
         {
           "name": "UIHelpers.maskUrlToRoot",
           "kind": "static public method",
-          "startLine": 38,
-          "endLine": 61,
+          "startLine": 48,
+          "endLine": 71,
           "signature": "(explicitPageName = '') => any",
-          "summary": "static public method L38-L61 (24 lines)"
+          "summary": "static public method L48-L71 (24 lines)"
         },
         {
           "name": "UIHelpers.initTheme",
           "kind": "static public method",
-          "startLine": 63,
-          "endLine": 80,
+          "startLine": 73,
+          "endLine": 90,
           "signature": "() => any",
-          "summary": "static public method L63-L80 (18 lines)"
+          "summary": "static public method L73-L90 (18 lines)"
         },
         {
           "name": "UIHelpers.toggleTheme",
           "kind": "static public method",
-          "startLine": 82,
-          "endLine": 88,
+          "startLine": 92,
+          "endLine": 98,
           "signature": "() => any",
-          "summary": "static public method L82-L88 (7 lines)"
+          "summary": "static public method L92-L98 (7 lines)"
         },
         {
           "name": "UIHelpers.showToast",
           "kind": "static public method",
-          "startLine": 90,
-          "endLine": 122,
+          "startLine": 100,
+          "endLine": 132,
           "signature": "(message, type = 'success', durationMs = 2600) => any",
-          "summary": "static public method L90-L122 (33 lines)"
+          "summary": "static public method L100-L132 (33 lines)"
         },
         {
           "name": "UIHelpers.formatThaiShortDate",
           "kind": "static public method",
-          "startLine": 124,
-          "endLine": 140,
+          "startLine": 134,
+          "endLine": 150,
           "signature": "(dateStr) => any",
-          "summary": "static public method L124-L140 (17 lines)"
+          "summary": "static public method L134-L150 (17 lines)"
         },
         {
           "name": "UIHelpers.formatThaiFullDate",
           "kind": "static public method",
-          "startLine": 142,
-          "endLine": 157,
+          "startLine": 152,
+          "endLine": 167,
           "signature": "(dateStr) => any",
-          "summary": "static public method L142-L157 (16 lines)"
+          "summary": "static public method L152-L167 (16 lines)"
         },
         {
           "name": "UIHelpers.formatThaiDate",
           "kind": "static public method",
-          "startLine": 159,
-          "endLine": 161,
+          "startLine": 169,
+          "endLine": 171,
           "signature": "(dateStr) => any",
-          "summary": "static public method L159-L161 (3 lines)"
+          "summary": "static public method L169-L171 (3 lines)"
         },
         {
           "name": "UIHelpers.formatTime24",
           "kind": "static public method",
-          "startLine": 163,
-          "endLine": 171,
+          "startLine": 173,
+          "endLine": 181,
           "signature": "(timeStr) => any",
-          "summary": "static public method L163-L171 (9 lines)"
+          "summary": "static public method L173-L181 (9 lines)"
         },
         {
           "name": "UIHelpers.timeToMinutes",
           "kind": "static public method",
-          "startLine": 173,
-          "endLine": 179,
+          "startLine": 183,
+          "endLine": 189,
           "signature": "(timeStr) => any",
-          "summary": "static public method L173-L179 (7 lines)"
+          "summary": "static public method L183-L189 (7 lines)"
         },
         {
           "name": "UIHelpers.getTodayISO",
           "kind": "static public method",
-          "startLine": 181,
-          "endLine": 185,
+          "startLine": 191,
+          "endLine": 195,
           "signature": "() => any",
-          "summary": "static public method L181-L185 (5 lines)"
+          "summary": "static public method L191-L195 (5 lines)"
         },
         {
           "name": "UIHelpers.getCurrentTimeHHMM",
           "kind": "static public method",
-          "startLine": 187,
-          "endLine": 192,
+          "startLine": 197,
+          "endLine": 202,
           "signature": "() => any",
-          "summary": "static public method L187-L192 (6 lines)"
+          "summary": "static public method L197-L202 (6 lines)"
         },
         {
           "name": "UIHelpers.capturePortrait3x4FromVideo",
           "kind": "static public method",
-          "startLine": 194,
-          "endLine": 228,
+          "startLine": 204,
+          "endLine": 238,
           "signature": "(videoEl, canvasEl) => any",
-          "summary": "static public method L194-L228 (35 lines)"
+          "summary": "static public method L204-L238 (35 lines)"
         },
         {
           "name": "UIHelpers.verifyImageUrl",
           "kind": "static public method",
-          "startLine": 230,
-          "endLine": 288,
+          "startLine": 240,
+          "endLine": 298,
           "signature": "(rawUrl) => any",
-          "summary": "static public method L230-L288 (59 lines)"
+          "summary": "static public method L240-L298 (59 lines)"
         },
         {
           "name": "UIHelpers.verifyGoogleDriveLink",
           "kind": "static public async method",
-          "startLine": 290,
-          "endLine": 332,
+          "startLine": 300,
+          "endLine": 342,
           "signature": "(scriptUrl, folderId = '') => Promise<any>",
-          "summary": "static public async method L290-L332 (43 lines)"
+          "summary": "static public async method L300-L342 (43 lines)"
         },
         {
           "name": "UIHelpers.uploadPhotoToGoogleDrive",
           "kind": "static public async method",
-          "startLine": 334,
-          "endLine": 398,
+          "startLine": 344,
+          "endLine": 408,
           "signature": "(base64DataUrl, fileNamePrefix, settings) => Promise<any>",
-          "summary": "static public async method L334-L398 (65 lines)"
+          "summary": "static public async method L344-L408 (65 lines)"
         },
         {
           "name": "UIHelpers.showLoading",
           "kind": "static public method",
-          "startLine": 405,
-          "endLine": 467,
+          "startLine": 415,
+          "endLine": 477,
           "signature": "(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any",
-          "summary": "static public method L405-L467 (63 lines)"
+          "summary": "static public method L415-L477 (63 lines)"
         },
         {
           "name": "UIHelpers.#updateProgressDOM",
           "kind": "static private method",
-          "startLine": 469,
-          "endLine": 476,
+          "startLine": 479,
+          "endLine": 486,
           "signature": "(percent) => any",
-          "summary": "static private method L469-L476 (8 lines)"
+          "summary": "static private method L479-L486 (8 lines)"
         },
         {
           "name": "UIHelpers.hideLoading",
           "kind": "static public method",
-          "startLine": 478,
-          "endLine": 503,
+          "startLine": 488,
+          "endLine": 513,
           "signature": "() => any",
-          "summary": "static public method L478-L503 (26 lines)"
+          "summary": "static public method L488-L513 (26 lines)"
         },
         {
           "name": "UIHelpers.renderTableSkeleton",
           "kind": "static public method",
-          "startLine": 505,
-          "endLine": 515,
+          "startLine": 515,
+          "endLine": 525,
           "signature": "(rows = 5, cols = 6) => any",
-          "summary": "static public method L505-L515 (11 lines)"
+          "summary": "static public method L515-L525 (11 lines)"
         },
         {
           "name": "UIHelpers.alert",
           "kind": "static public async method",
-          "startLine": 517,
-          "endLine": 552,
+          "startLine": 527,
+          "endLine": 562,
           "signature": "(title, text = '', icon = 'success') => Promise<any>",
-          "summary": "static public async method L517-L552 (36 lines)"
+          "summary": "static public async method L527-L562 (36 lines)"
         },
         {
           "name": "UIHelpers.confirm",
           "kind": "static public async method",
-          "startLine": 554,
-          "endLine": 604,
+          "startLine": 564,
+          "endLine": 614,
           "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>",
-          "summary": "static public async method L554-L604 (51 lines)"
+          "summary": "static public async method L564-L614 (51 lines)"
         },
         {
           "name": "UIHelpers.validateThaiNationalId",
           "kind": "static public method",
-          "startLine": 606,
-          "endLine": 625,
+          "startLine": 616,
+          "endLine": 635,
           "signature": "(id, strictCheckDigit = false) => any",
-          "summary": "static public method L606-L625 (20 lines)"
+          "summary": "static public method L616-L635 (20 lines)"
         },
         {
           "name": "UIHelpers.getLast6DigitsFromNationalId",
           "kind": "static public method",
-          "startLine": 627,
-          "endLine": 631,
+          "startLine": 637,
+          "endLine": 641,
           "signature": "(nationalId) => any",
-          "summary": "static public method L627-L631 (5 lines)"
+          "summary": "static public method L637-L641 (5 lines)"
         },
         {
           "name": "UIHelpers.exportToExcelUTF8",
           "kind": "static public method",
-          "startLine": 633,
-          "endLine": 658,
+          "startLine": 643,
+          "endLine": 668,
           "signature": "(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any",
-          "summary": "static public method L633-L658 (26 lines)"
+          "summary": "static public method L643-L668 (26 lines)"
         },
         {
           "name": "UIHelpers.exportMultiSheetExcel",
           "kind": "static public method",
-          "startLine": 665,
-          "endLine": 685,
+          "startLine": 675,
+          "endLine": 695,
           "signature": "(sheets, fileName = 'export_data') => any",
-          "summary": "static public method L665-L685 (21 lines)"
+          "summary": "static public method L675-L695 (21 lines)"
         },
         {
           "name": "UIHelpers.exportTemplateWithValidationsExcel",
           "kind": "static public async method",
-          "startLine": 694,
-          "endLine": 957,
+          "startLine": 704,
+          "endLine": 967,
           "signature": "({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>",
-          "summary": "static public async method L694-L957 (264 lines)"
+          "summary": "static public async method L704-L967 (264 lines)"
         },
         {
           "name": "UIHelpers.parseExcelFileUTF8",
           "kind": "static public method",
-          "startLine": 959,
-          "endLine": 981,
+          "startLine": 969,
+          "endLine": 991,
           "signature": "(file) => any",
-          "summary": "static public method L959-L981 (23 lines)"
+          "summary": "static public method L969-L991 (23 lines)"
         },
         {
           "name": "UIHelpers.printReportInNewTab",
           "kind": "static public method",
-          "startLine": 983,
-          "endLine": 1134,
+          "startLine": 993,
+          "endLine": 1144,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L983-L1134 (152 lines)"
+          "summary": "static public method L993-L1144 (152 lines)"
         }
       ]
     },
@@ -3903,6 +3911,25 @@
           "endLine": 13,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L13"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-fix-reports-hierarchical-filter-crash/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "673ccbafa953ecb7",
+      "totalLines": 96,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 11,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L11"
         }
       ]
     },
