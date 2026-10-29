@@ -78,8 +78,26 @@ export class SettingsController {
         document.getElementById('toggleRequireGps').checked = Boolean(this.settings.require_gps);
 
         const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
+        const earlyShiftWindowEl = document.getElementById('setEarlyShiftWindowMinutes');
+        if (earlyShiftWindowEl) {
+            earlyShiftWindowEl.value = this.settings.early_shift_window_minutes ?? 30;
+        }
         if (filterRealtimeEl) {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
+            const earlyWindowContainer = document.getElementById('containerEarlyShiftWindow');
+            const syncEarlyWindowVisibility = () => {
+                if (earlyWindowContainer) {
+                    if (filterRealtimeEl.checked) {
+                        earlyWindowContainer.classList.remove('opacity-40', 'pointer-events-none');
+                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = false;
+                    } else {
+                        earlyWindowContainer.classList.add('opacity-40', 'pointer-events-none');
+                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = true;
+                    }
+                }
+            };
+            syncEarlyWindowVisibility();
+            filterRealtimeEl.addEventListener('change', syncEarlyWindowVisibility);
         }
 
         const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
@@ -294,6 +312,10 @@ export class SettingsController {
                 typeBadgeHtml = `<span class="bma-badge bma-badge-success">ปฏิบัติงานปกติ</span>`;
             }
 
+            const earlyCheckinBadgeHtml = shift.allow_early_checkin
+                ? `<span class="inline-flex items-center justify-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 mt-1 block"><i class="fa-solid fa-clock-rotate-left"></i> เข้าก่อนเวลาได้</span>`
+                : '';
+
             return `
                 <tr>
                     <td class="text-center font-semibold">${idx + 1}</td>
@@ -305,7 +327,7 @@ export class SettingsController {
                     <td class="text-center font-mono font-bold">
                         ${shift.is_custom ? 'ระบุเอง' : `${checkOut24} น.${isOvernight ? ' (ข้ามวัน)' : ''}`}
                     </td>
-                    <td class="text-center">${typeBadgeHtml}</td>
+                    <td class="text-center">${typeBadgeHtml}${earlyCheckinBadgeHtml}</td>
                     <td class="text-center space-x-1 whitespace-nowrap">
                         <button type="button" data-action="edit-shift" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500">
                             <i class="fa-solid fa-pen"></i>
@@ -380,6 +402,10 @@ export class SettingsController {
         const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
         if (elFilterRealtime) {
             this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);
+        }
+        const elEarlyShiftWindow = document.getElementById('setEarlyShiftWindowMinutes');
+        if (elEarlyShiftWindow) {
+            this.settings.early_shift_window_minutes = Math.max(0, Math.min(1440, Number(elEarlyShiftWindow.value || 30)));
         }
         const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
         if (elDisableNormal) {
@@ -742,7 +768,7 @@ export class SettingsController {
     #openShiftModal(editIndex = null) {
         const item = editIndex !== null
             ? this.settings.work_shifts[editIndex]
-            : { name: '', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false };
+            : { name: '', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false };
 
         const cleanName = String(item.name || '')
             .replace(/\s*\(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}.*?\)/g, '')
@@ -786,6 +812,16 @@ export class SettingsController {
                     <input type="checkbox" id="mShiftCustom" class="w-4 h-4 accent-emerald-600 shrink-0" ${item.is_custom ? 'checked' : ''}>
                     <span>เป็นตัวเลือก "อื่นๆ" (ให้ผู้ใช้กรอกเวลาเข้างานและเวลาเลิกงานเองได้)</span>
                 </label>
+
+                <label class="flex items-start gap-2.5 pt-2 border-t bma-border text-xs font-bold bma-text-main cursor-pointer">
+                    <input type="checkbox" id="mShiftAllowEarlyCheckin" class="w-4 h-4 accent-blue-600 mt-0.5 shrink-0" ${item.allow_early_checkin ? 'checked' : ''}>
+                    <div>
+                        <span class="text-blue-700 dark:text-blue-300 font-extrabold block">ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้</span>
+                        <span class="bma-text-sub font-normal block mt-0.5">
+                            เมื่อเปิดใช้ Real-time Filter ช่วงเวลานี้จะแสดงให้เลือกก่อนเวลาเริ่มงานตามจำนวนนาทีที่กำหนดในระบบ
+                        </span>
+                    </div>
+                </label>
             </div>
         `, async () => {
             const checkIn = UIHelpers.formatTime24(document.getElementById('mShiftIn').value || '08:30');
@@ -798,7 +834,8 @@ export class SettingsController {
                 check_out: checkOut,
                 is_overtime: document.getElementById('mShiftOvertime').checked,
                 is_overnight: Boolean(document.getElementById('mShiftOvernight').checked || autoOvernight),
-                is_custom: document.getElementById('mShiftCustom').checked
+                is_custom: document.getElementById('mShiftCustom').checked,
+                allow_early_checkin: Boolean(document.getElementById('mShiftAllowEarlyCheckin')?.checked)
             };
 
             if (editIndex !== null) {

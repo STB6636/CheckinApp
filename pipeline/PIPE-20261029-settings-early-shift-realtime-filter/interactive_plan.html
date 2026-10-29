@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงานพัฒนาระบบ: เริ่มเลือกทำงานก่อนเวลาเริ่มงาน (TimeCheckin Branch)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+        .bma-primary { color: #00744B; }
+        .bg-bma-primary { background-color: #00744B; }
+        .border-bma-primary { border-color: #00744B; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#00744B] flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900">แผนงาน: ให้เริ่มเลือกทำงานก่อนเวลาเริ่มงานได้ (Real-time Filter)</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Git Branch: <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">TimeCheckin</span>
+                        &bull; Target Mode: <span class="font-bold text-slate-700">PLAN -> 2 SubAgents (Lean Execution)</span>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-spinner fa-spin"></i> รอยืนยันแผนงาน
+                </span>
+            </div>
+        </div>
+
+        <!-- SQL Database Migration Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-database text-blue-600"></i>
+                <h2 class="text-base font-bold text-slate-900">1. คำสั่ง SQL ปรับปรุงฐานข้อมูล (Supabase SQL Editor)</h2>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                เพิ่มคอลัมน์ <code class="bg-slate-100 text-rose-600 px-1 py-0.5 rounded">early_shift_window_minutes</code> ในตาราง <code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded">system_settings</code> สำหรับเก็บจำนวนนาทีก่อนเวลาเริ่มงาน (Default: 30 นาที) 
+                <br><em>(หมายเหตุ: อ็อบเจกต์ช่วงเวลาใน <code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded">work_shifts</code> เป็น JSONB อยู่แล้ว จึงเพิ่มฟิลด์ <code class="bg-slate-100 text-rose-600 px-1 py-0.5 rounded">allow_early_checkin: boolean</code> ได้โดยตรง)</em>
+            </p>
+            <div class="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-xs overflow-x-auto relative group">
+                <pre><code>-- เพิ่มคอลัมน์ early_shift_window_minutes ในตาราง system_settings (ค่าเริ่มต้น 30 นาที)
+ALTER TABLE public.system_settings 
+ADD COLUMN IF NOT EXISTS early_shift_window_minutes INTEGER DEFAULT 30;
+
+-- อัปเดตแถวที่มีอยู่ให้มีค่าเริ่มต้น 30 นาที
+UPDATE public.system_settings 
+SET early_shift_window_minutes = 30 
+WHERE early_shift_window_minutes IS NULL;</code></pre>
+            </div>
+        </div>
+
+        <!-- Architecture & Logic Flow -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-diagram-project text-purple-600"></i>
+                <h2 class="text-base font-bold text-slate-900">2. ตรรกะการคำนวณช่วงเวลา (Business Logic Flow)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <span class="font-bold text-slate-800 block text-sm">การตั้งค่าระบบ & กะทำงาน</span>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600">
+                        <li><strong>แท็บ 1:</strong> เพิ่มช่องกรอก <code>เวลาเริ่มทำงานก่อนเวลาของช่วงเวลา (นาที)</code> เช่น 30 นาที</li>
+                        <li><strong>แท็บ 3 (โมดอลกะ):</strong> เพิ่มเงื่อนไขติ๊กถูก <code>ให้เริ่มเลือก ทำงานก่อนเวลาเริ่มงานได้</code></li>
+                        <li>มีผลเฉพาะช่วงเวลาที่มีการติ๊กถูกเงื่อนไขนี้เท่านั้น</li>
+                    </ul>
+                </div>
+                <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                    <span class="font-bold text-emerald-900 block text-sm">การทำงานจริงที่หน้าลงเวลา (Checkin)</span>
+                    <ul class="list-disc list-inside space-y-1 text-emerald-800">
+                        <li>เปิดฟังก์ชัน Real-time Filter = ON</li>
+                        <li>ช่วงเวลา A เริ่มงาน 17:00 น. | ตั้งค่าล่วงหน้า 30 นาที</li>
+                        <li>เวลาเริ่มปรากฏใน Dropdown: <strong>[17:00 - 30 นาที] = 16:30 น.</strong></li>
+                        <li>รองรับกะข้ามวัน (Overnight) และช่วงเวลาที่คาบเกี่ยวเที่ยงคืนอย่างถูกต้อง</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Surgical File Execution Plan -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-600"></i>
+                <h2 class="text-base font-bold text-slate-900">3. รายละเอียดการแก้ไขแบบ Surgical (แก้ไขเฉพาะส่วนที่เกี่ยวข้อง)</h2>
+            </div>
+            
+            <div class="space-y-3">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-slate-800">1. assets/js/core/Config.js</span>
+                        <span class="text-[11px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold">Default Values</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">เพิ่ม <code>early_shift_window_minutes: 30</code> ใน <code>DEFAULT_SETTINGS</code> และ <code>allow_early_checkin: false</code> ใน <code>work_shifts</code> มาตรฐาน</p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-slate-800">2. assets/js/models/SettingsModel.js</span>
+                        <span class="text-[11px] bg-blue-100 px-2 py-0.5 rounded text-blue-700 font-bold">Data & Resilience</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">รองรับการโหลด/บันทึก <code>early_shift_window_minutes</code> และ <code>allow_early_checkin</code> พร้อมระบบ Fallback Retry และ <code>localStorage</code> กรณีคอลัมน์ยังไม่ถูกสร้างใน Supabase</p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-slate-800">3. settings.html</span>
+                        <span class="text-[11px] bg-purple-100 px-2 py-0.5 rounded text-purple-700 font-bold">UI Tab 1</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">เพิ่มช่องกรอกจำนวนนาที <code>setEarlyShiftWindowMinutes</code> ใต้สวิตช์ Real-time Filter ในแท็บ 1 สไตล์เดียวกับรัศมี GPS</p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-slate-800">4. assets/js/controllers/SettingsController.js</span>
+                        <span class="text-[11px] bg-amber-100 px-2 py-0.5 rounded text-amber-700 font-bold">Settings Controller</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">ผูกค่าช่องกรอกนาทีในแท็บ 1, เพิ่ม Checkbox <code>ทำงานก่อนเวลาเริ่มงานได้</code> ในโมดอลกะทำงาน, บันทึกและแสดงผลตารางเดิมอย่างสมบูรณ์แบบ</p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono text-xs font-bold text-slate-800">5. assets/js/controllers/CheckinController.js</span>
+                        <span class="text-[11px] bg-rose-100 px-2 py-0.5 rounded text-rose-700 font-bold">Checkin Controller</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">ปรับแต่ง <code>#isShiftActiveAtCurrentTime</code> ให้คำนวณเวลาเริ่มต้นของกะด้วย <code>[startMin - earlyWindow]</code> เมื่อกะนั้นเปิดใช้เงื่อนไข</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safeguards & QA Strategy -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                <h2 class="text-base font-bold text-slate-900">4. ข้อควรระวังและมาตรการป้องกันผลกระทบ (Safeguards)</h2>
+            </div>
+            <ul class="text-xs text-slate-700 space-y-2">
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                    <span><strong>ตารางกะและ Layout ไม่เปลี่ยนรูป:</strong> คอลัมน์ทุกคอลัมน์ของตารางช่วงเวลาในแท็บ 3 ยังคงแสดงผลและจัดเรียงได้ตามปกติ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                    <span><strong>SubAgent Lean Structure:</strong> ใช้ SubAgent 1 ตัวในการแก้ไขโค้ด (Flash 3.8 High) และ SubAgent 1 ตัวในการตรวจทานเทียบกับ Branch main (Flash 3.8 High) เพื่อประหยัดโทเคนสูงสุดตามคำสั่ง</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+                    <span><strong>การคำนวณเวลาข้ามวัน:</strong> ตรวจสอบกรณีที่คำนวณเวลาติดลบหรือข้ามคืน ให้เข้าเงื่อนไขอย่างถูกต้องแม่นยำ</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+</html>
+

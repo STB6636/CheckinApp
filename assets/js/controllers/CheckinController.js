@@ -200,14 +200,29 @@ export class CheckinController {
         const endMin = UIHelpers.timeToMinutes(shift.check_out || '16:30');
         if (startMin < 0 || endMin < 0) return true;
 
+        let shiftStartMin;
+        if (shift.allow_early_checkin) {
+            const earlyWindow = Math.max(0, Number(this.settings?.early_shift_window_minutes ?? 30));
+            shiftStartMin = startMin - earlyWindow;
+        } else {
+            shiftStartMin = shift.is_overtime ? startMin : Math.min(startMin, allowStartMin);
+        }
+
         const isOvernight = Boolean(shift.is_overnight || endMin < startMin);
 
         if (isOvernight) {
-            return (nowMin >= startMin) || (nowMin <= endMin);
+            if (shiftStartMin < 0) {
+                const normalizedShiftStart = shiftStartMin + 1440;
+                return (nowMin >= normalizedShiftStart) || (nowMin <= endMin);
+            }
+            return (nowMin >= shiftStartMin) || (nowMin <= endMin);
         }
 
-        const effectiveStartMin = shift.is_overtime ? startMin : Math.min(startMin, allowStartMin);
-        return nowMin >= effectiveStartMin && nowMin <= endMin;
+        if (shiftStartMin < 0) {
+            const normalizedShiftStart = shiftStartMin + 1440;
+            return (nowMin >= normalizedShiftStart) || (nowMin <= endMin);
+        }
+        return nowMin >= shiftStartMin && nowMin <= endMin;
     }
 
     #evaluateTimeWindowAndPopulateShifts() {

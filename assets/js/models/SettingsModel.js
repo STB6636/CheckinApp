@@ -82,7 +82,8 @@ export class SettingsModel {
                 check_out: checkOut,
                 is_custom: Boolean(s.is_custom),
                 is_overtime: Boolean(s.is_overtime),
-                is_overnight: isOvernight
+                is_overnight: isOvernight,
+                allow_early_checkin: Boolean(s.allow_early_checkin)
             };
         });
 
@@ -105,6 +106,11 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_filter_shifts_by_realtime') !== null
                     ? localStorage.getItem('bma_filter_shifts_by_realtime') !== 'false'
                     : Boolean(Config.DEFAULT_SETTINGS.filter_shifts_by_realtime)),
+            early_shift_window_minutes: typeof data.early_shift_window_minutes === 'number'
+                ? data.early_shift_window_minutes
+                : (localStorage.getItem('bma_early_shift_window_minutes') !== null
+                    ? Number(localStorage.getItem('bma_early_shift_window_minutes')) || 30
+                    : Number(Config.DEFAULT_SETTINGS.early_shift_window_minutes ?? 30)),
             disable_normal_hours_checkin: typeof data.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
                 : (localStorage.getItem('bma_disable_normal_hours_checkin') !== null
@@ -157,6 +163,7 @@ export class SettingsModel {
             late_threshold_minutes: Number(payload.late_threshold_minutes ?? 30),
             checkout_grace_minutes: Number(payload.checkout_grace_minutes ?? 30),
             filter_shifts_by_realtime: payload.filter_shifts_by_realtime !== false,
+            early_shift_window_minutes: Math.max(0, Math.min(1440, Number(payload.early_shift_window_minutes ?? 30))),
             disable_normal_hours_checkin: Boolean(payload.disable_normal_hours_checkin),
             google_drive_script_url: String(payload.google_drive_script_url || '').trim(),
             google_drive_folder_id: String(payload.google_drive_folder_id || '').trim(),
@@ -198,6 +205,10 @@ export class SettingsModel {
                 delete fallbackUpdateData.randomize_gps_checkout;
                 retryNeeded = true;
             }
+            if (String(error.message || '').includes('early_shift_window_minutes')) {
+                delete fallbackUpdateData.early_shift_window_minutes;
+                retryNeeded = true;
+            }
             if (retryNeeded) {
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
@@ -219,6 +230,8 @@ export class SettingsModel {
         try { localStorage.setItem('bma_randomize_gps_checkout', String(randomizeGpsVal)); } catch (e) {}
         const randomizeRadiusVal = Math.max(5, Math.min(100, Number(payload.randomize_gps_radius_meters || 20)));
         try { localStorage.setItem('bma_randomize_gps_radius_meters', String(randomizeRadiusVal)); } catch (e) {}
+        const earlyShiftWindowVal = Math.max(0, Math.min(1440, Number(payload.early_shift_window_minutes ?? 30)));
+        try { localStorage.setItem('bma_early_shift_window_minutes', String(earlyShiftWindowVal)); } catch (e) {}
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
@@ -228,6 +241,9 @@ export class SettingsModel {
             filter_shifts_by_realtime: typeof data?.filter_shifts_by_realtime === 'boolean'
                 ? data.filter_shifts_by_realtime
                 : filterRealtimeVal,
+            early_shift_window_minutes: typeof data?.early_shift_window_minutes === 'number'
+                ? data.early_shift_window_minutes
+                : earlyShiftWindowVal,
             randomize_gps_checkout: typeof data?.randomize_gps_checkout === 'boolean'
                 ? data.randomize_gps_checkout
                 : randomizeGpsVal,

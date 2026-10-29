@@ -1,0 +1,42 @@
+{
+  "pipeline_id": "PIPE-20261029-settings-early-shift-realtime-filter",
+  "target_branch": "TimeCheckin",
+  "target_files": [
+    {
+      "path": "assets/js/core/Config.js",
+      "line_range": "29-89",
+      "target_symbols": ["Config.DEFAULT_SETTINGS"],
+      "action": "Add early_shift_window_minutes and shift allow_early_checkin defaults"
+    },
+    {
+      "path": "assets/js/models/SettingsModel.js",
+      "line_range": "70-245",
+      "target_symbols": ["SettingsModel.getSettings", "SettingsModel.updateSettings"],
+      "action": "Handle early_shift_window_minutes in getSettings, updateSettings with retry fallback"
+    },
+    {
+      "path": "settings.html",
+      "line_range": "200-215",
+      "target_symbols": ["toggleFilterShiftsByRealtime", "containerEarlyShiftWindow"],
+      "action": "Add early_shift_window_minutes input container in Tab 1"
+    },
+    {
+      "path": "assets/js/controllers/SettingsController.js",
+      "line_range": "80-115, 380-410, 740-825",
+      "target_symbols": [
+        "SettingsController.#renderMainSettings",
+        "SettingsController.#collectMainAndColorFieldsIntoSettings",
+        "SettingsController.#openShiftModal",
+        "SettingsController.#renderShifts"
+      ],
+      "action": "Bind early_shift_window_minutes field, add allow_early_checkin checkbox in shift modal"
+    },
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "line_range": "190-212",
+      "target_symbols": ["CheckinController.#isShiftActiveAtCurrentTime"],
+      "action": "Calculate effective start time using early_shift_window_minutes when allow_early_checkin is true"
+    }
+  ]
+}
+

@@ -46,6 +46,7 @@ export class Config {
         late_threshold_minutes: 30,
         checkout_grace_minutes: 30,
         filter_shifts_by_realtime: true,
+        early_shift_window_minutes: 30,
         google_drive_script_url: '',
         google_drive_folder_id: '',
         prefixes: ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'],
@@ -70,13 +71,13 @@ export class Config {
             'โทรศัพท์/อุปกรณ์ขัดข้อง'
         ],
         work_shifts: [
-            { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ผลัดเช้า', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ผลัดบ่าย', check_in: '14:00', check_out: '22:00', is_custom: false, is_overtime: false, is_overnight: false },
-            { name: 'ปฏิบัติงานนอกเวลา ช่วงเช้า', check_in: '05:00', check_out: '14:00', is_custom: false, is_overtime: true, is_overnight: false },
-            { name: 'ปฏิบัติงานนอกเวลา ช่วงเย็น', check_in: '16:30', check_out: '20:30', is_custom: false, is_overtime: true, is_overnight: false },
-            { name: 'ปฏิบัติงานนอกเวลา ข้ามวัน', check_in: '22:00', check_out: '01:00', is_custom: false, is_overtime: true, is_overnight: true },
-            { name: 'อื่นๆ', check_in: '08:30', check_out: '16:30', is_custom: true, is_overtime: false, is_overnight: false }
+            { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },
+            { name: 'ผลัดเช้า', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },
+            { name: 'ผลัดบ่าย', check_in: '14:00', check_out: '22:00', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },
+            { name: 'ปฏิบัติงานนอกเวลา ช่วงเช้า', check_in: '05:00', check_out: '14:00', is_custom: false, is_overtime: true, is_overnight: false, allow_early_checkin: false },
+            { name: 'ปฏิบัติงานนอกเวลา ช่วงเย็น', check_in: '16:30', check_out: '20:30', is_custom: false, is_overtime: true, is_overnight: false, allow_early_checkin: false },
+            { name: 'ปฏิบัติงานนอกเวลา ข้ามวัน', check_in: '22:00', check_out: '01:00', is_custom: false, is_overtime: true, is_overnight: true, allow_early_checkin: false },
+            { name: 'อื่นๆ', check_in: '08:30', check_out: '16:30', is_custom: true, is_overtime: false, is_overnight: false, allow_early_checkin: false }
         ],
         category_colors: {
             normal: '#007B3E',
