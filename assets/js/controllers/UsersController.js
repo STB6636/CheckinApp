@@ -16,6 +16,15 @@ export class UsersController {
         this.usersList = [];
         this.personnelList = [];
         this.canEditOrDeleteUsers = false;
+
+        this.selectedBureauFilter = 'all';
+        this.selectedDivisionFilter = 'all';
+        this.selectedWorkGroupFilter = 'all';
+        this.groupViewMode = 'division';
+        this.isSuperAdmin = false;
+        this.isAdminBureau = false;
+        this.headerColor = '#6F42C1';
+
         this.init();
     }
 
@@ -35,10 +44,14 @@ export class UsersController {
             return;
         }
 
+        this.isSuperAdmin = this.currentUser.role === 'SuperAdmin';
+        this.isAdminBureau = this.currentUser.role === 'Admin' && this.currentUser.visibility_level !== 'division';
+
         // กฎ: บัญชีผู้ใช้ระดับ Admin ขอบเขตการมองเห็น "สำนักงาน" จะมองเห็นเมนูนี้ แต่มองไม่เห็นคอลัมน์ "จัดการ" (ไม่มีสิทธิ์แก้ไขหรือลบ)
-        this.canEditOrDeleteUsers = this.currentUser.role === 'SuperAdmin';
+        this.canEditOrDeleteUsers = this.isSuperAdmin;
 
         this.settings = layout.settings || await SettingsModel.getSettings(false);
+        this.headerColor = this.settings?.category_colors?.group_header || '#6F42C1';
 
         if (this.currentUser.role === 'Admin') {
             document.getElementById('optFilterSuperAdmin')?.remove();
@@ -48,9 +61,151 @@ export class UsersController {
         // ซ่อนหัวคอลัมน์ "จัดการ" ทันทีหากเป็น Admin ขอบเขต "สำนักงาน"
         this.#toggleManageColumnHeader();
 
+        this.#initHierarchicalOrgFilter();
         this.#populateScopeDropdowns();
         this.#bindEvents();
         await this.loadUsersAndPersonnel();
+    }
+
+    #initHierarchicalOrgFilter() {
+        const dock = document.getElementById('hierarchicalUserOrgFilterDock');
+        if (dock) {
+            const canUseOrgFilter = this.isSuperAdmin || this.isAdminBureau;
+            dock.classList.toggle('hidden', !canUseOrgFilter);
+        }
+
+        const bureauSelect = document.getElementById('selectUserFilterBureau');
+        const divisionSelect = document.getElementById('selectUserFilterDivision');
+        const workGroupSelect = document.getElementById('selectUserFilterWorkGroup');
+
+        bureauSelect?.addEventListener('change', (e) => {
+            this.selectedBureauFilter = e.target.value;
+            this.selectedDivisionFilter = 'all';
+            this.selectedWorkGroupFilter = 'all';
+            this.#updateDivisionOptions();
+            this.#renderUsersTable();
+        });
+
+        divisionSelect?.addEventListener('change', (e) => {
+            this.selectedDivisionFilter = e.target.value;
+            this.selectedWorkGroupFilter = 'all';
+            this.#updateWorkGroupOptions();
+            this.#renderUsersTable();
+        });
+
+        workGroupSelect?.addEventListener('change', (e) => {
+            this.selectedWorkGroupFilter = e.target.value;
+            this.#renderUsersTable();
+        });
+
+        this.#updateDivisionOptions();
+    }
+
+    #populateHierarchicalOrgFilter() {
+        const bureauSelect = document.getElementById('selectUserFilterBureau');
+        if (!bureauSelect) return;
+
+        const primaryBureaus = SettingsModel.getUniqueBureaus(this.settings);
+        const userBureaus = (this.usersList || []).map(u => (u.personnel?.bureau || u.scope_bureau || '').trim()).filter(Boolean);
+        const personnelBureaus = (this.personnelList || []).map(p => (p.bureau || '').trim()).filter(Boolean);
+
+        const bureaus = [...new Set([...primaryBureaus, ...userBureaus, ...personnelBureaus])]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedBureauFilter !== 'all' && !bureaus.includes(this.selectedBureauFilter)) {
+            this.selectedBureauFilter = 'all';
+        }
+
+        bureauSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            bureaus.map(b => `<option value="${UIHelpers.escapeHtml(b)}">${UIHelpers.escapeHtml(b)}</option>`).join('');
+        bureauSelect.value = this.selectedBureauFilter;
+
+        this.#updateDivisionOptions();
+    }
+
+    #updateDivisionOptions() {
+        const divisionSelect = document.getElementById('selectUserFilterDivision');
+        if (!divisionSelect) return;
+
+        if (this.selectedBureauFilter === 'all') {
+            divisionSelect.disabled = true;
+            divisionSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            divisionSelect.value = 'all';
+            this.selectedDivisionFilter = 'all';
+        } else {
+            divisionSelect.disabled = false;
+            divisionSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryDivisions = SettingsModel.getUniqueDivisions(this.settings, this.selectedBureauFilter);
+            const userDivisions = (this.usersList || [])
+                .filter(u => (u.personnel?.bureau || u.scope_bureau || '').trim() === this.selectedBureauFilter.trim())
+                .map(u => (u.personnel?.division || u.scope_division || '').trim())
+                .filter(Boolean);
+            const personnelDivisions = (this.personnelList || [])
+                .filter(p => (p.bureau || '').trim() === this.selectedBureauFilter.trim())
+                .map(p => (p.division || '').trim())
+                .filter(Boolean);
+
+            const divisions = [...new Set([...primaryDivisions, ...userDivisions, ...personnelDivisions])]
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedDivisionFilter !== 'all' && !divisions.includes(this.selectedDivisionFilter)) {
+                this.selectedDivisionFilter = 'all';
+            }
+
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
+            divisionSelect.value = this.selectedDivisionFilter;
+        }
+
+        this.#updateWorkGroupOptions();
+    }
+
+    #updateWorkGroupOptions() {
+        const workGroupSelect = document.getElementById('selectUserFilterWorkGroup');
+        if (!workGroupSelect) return;
+
+        if (this.selectedBureauFilter === 'all' || this.selectedDivisionFilter === 'all') {
+            workGroupSelect.disabled = true;
+            workGroupSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            workGroupSelect.value = 'all';
+            this.selectedWorkGroupFilter = 'all';
+        } else {
+            workGroupSelect.disabled = false;
+            workGroupSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryGroups = SettingsModel.getUniqueGroups(this.settings, this.selectedBureauFilter, this.selectedDivisionFilter);
+            const userGroups = (this.usersList || [])
+                .filter(u =>
+                    (u.personnel?.bureau || u.scope_bureau || '').trim() === this.selectedBureauFilter.trim() &&
+                    (u.personnel?.division || u.scope_division || '').trim() === this.selectedDivisionFilter.trim()
+                )
+                .map(u => (u.personnel?.work_group || '').trim())
+                .filter(Boolean);
+            const personnelGroups = (this.personnelList || [])
+                .filter(p =>
+                    (p.bureau || '').trim() === this.selectedBureauFilter.trim() &&
+                    (p.division || '').trim() === this.selectedDivisionFilter.trim()
+                )
+                .map(p => (p.work_group || '').trim())
+                .filter(Boolean);
+
+            const workGroups = [...new Set([...primaryGroups, ...userGroups, ...personnelGroups])]
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedWorkGroupFilter !== 'all' && !workGroups.includes(this.selectedWorkGroupFilter)) {
+                this.selectedWorkGroupFilter = 'all';
+            }
+
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
+            workGroupSelect.value = this.selectedWorkGroupFilter;
+        }
     }
 
     /**
@@ -114,6 +269,7 @@ export class UsersController {
             this.usersList = users;
             this.personnelList = personnel;
             this.#renderPersonnelSelectOptions('');
+            this.#populateHierarchicalOrgFilter();
             this.#renderUsersTable();
             await AppLayout.refreshNotificationBell(this.currentUser);
         } finally {
@@ -142,6 +298,84 @@ export class UsersController {
         selectEl.innerHTML = html;
     }
 
+    #getFilteredUsers() {
+        const keyword = (document.getElementById('searchUserInput')?.value || '').toLowerCase().trim();
+        const roleFilter = document.getElementById('filterUserRole')?.value || 'all';
+        const resetFilter = document.getElementById('filterResetRequest')?.value || 'all';
+
+        return (this.usersList || [])
+            .map(u => {
+                const bureau = (u.personnel?.bureau || u.scope_bureau || '').trim() || 'ไม่ระบุสำนักงาน/กอง';
+                const division = (u.personnel?.division || u.scope_division || '').trim() || 'ไม่ระบุส่วน/ฝ่าย';
+                const workGroup = (u.personnel?.work_group || '').trim() || 'ไม่ระบุกลุ่มงาน';
+                return {
+                    ...u,
+                    bureau,
+                    division,
+                    work_group: workGroup
+                };
+            })
+            .filter(u => {
+                if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+                if (resetFilter === 'pending' && !u.password_reset_requested) return false;
+
+                if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
+                    if ((u.bureau || '').trim() !== this.selectedBureauFilter.trim()) return false;
+                }
+                if (this.selectedDivisionFilter && this.selectedDivisionFilter !== 'all') {
+                    if ((u.division || '').trim() !== this.selectedDivisionFilter.trim()) return false;
+                }
+                if (this.selectedWorkGroupFilter && this.selectedWorkGroupFilter !== 'all') {
+                    if ((u.work_group || '').trim() !== this.selectedWorkGroupFilter.trim()) return false;
+                }
+
+                if (!keyword) return true;
+                const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.bureau || ''} ${u.division || ''} ${u.work_group || ''}`.toLowerCase();
+                return text.includes(keyword);
+            });
+    }
+
+    #buildUserRowHtml(u, indexNo) {
+        const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+
+        let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
+        if (u.role === 'SuperAdmin') {
+            scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
+        } else if (u.role === 'Admin') {
+            scopeDesc = u.visibility_level === 'bureau'
+                ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
+                : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+        }
+
+        // คอลัมน์ "จัดการ": แสดงเฉพาะผู้ที่มีสิทธิ์แก้ไขหรือลบ (SuperAdmin) เท่านั้น ส่วน Admin ขอบเขต "สำนักงาน" จะมองไม่เห็นคอลัมน์นี้
+        const manageColumnHtml = this.canEditOrDeleteUsers
+            ? `
+                <td class="text-center space-x-1 whitespace-nowrap">
+                    <button type="button" data-action="edit-user" data-id="${u.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" data-action="delete-user" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `
+            : '';
+
+        return `
+            <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
+                <td class="text-center font-semibold">${indexNo}</td>
+                <td class="font-mono font-bold bma-text-main">${u.username}</td>
+                <td>
+                    <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
+                    <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
+                </td>
+                <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
+                <td class="text-xs bma-text-sub">${scopeDesc}</td>
+                ${manageColumnHtml}
+            </tr>
+        `;
+    }
+
     #renderUsersTable() {
         this.#toggleManageColumnHeader();
         const tbody = document.getElementById('usersTableBody');
@@ -149,64 +383,50 @@ export class UsersController {
         const badgeResetCount = document.getElementById('pendingResetCountBadge');
         if (!tbody) return;
 
+        const colSpan = this.canEditOrDeleteUsers ? 6 : 5;
         const keyword = (document.getElementById('searchUserInput')?.value || '').toLowerCase().trim();
         const roleFilter = document.getElementById('filterUserRole')?.value || 'all';
-        const resetFilter = document.getElementById('filterResetRequest')?.value || 'all';
+        const filtered = this.#getFilteredUsers();
 
-        // 1. ตารางหลัก: บัญชีผู้ใช้งาน (Main Users Table - 6 คอลัมน์)
-        const filtered = this.usersList.filter(u => {
-            if (roleFilter !== 'all' && u.role !== roleFilter) return false;
-            if (resetFilter === 'pending' && !u.password_reset_requested) return false;
-            if (!keyword) return true;
-            const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.scope_bureau || ''} ${u.scope_division || ''}`.toLowerCase();
-            return text.includes(keyword);
-        });
-
-        const colSpan = this.canEditOrDeleteUsers ? 6 : 5;
-
+        // 1. ตารางหลัก: บัญชีผู้ใช้งาน (Main Users Table - 6 คอลัมน์ หรือ 5 คอลัมน์เมื่อซ่อนจัดการ)
         if (filtered.length === 0) {
             tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
         } else {
-            tbody.innerHTML = filtered.map((u, idx) => {
-                const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+            const grouped = PersonnelModel.groupPersonnel(filtered, this.groupViewMode);
+            let html = '';
+            let runningNo = 1;
 
-                let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
-                if (u.role === 'SuperAdmin') {
-                    scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
-                } else if (u.role === 'Admin') {
-                    scopeDesc = u.visibility_level === 'bureau'
-                        ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
-                        : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+            for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
+                for (const [divisionName, content] of Object.entries(divisionsObj)) {
+                    html += `
+                        <tr style="background-color: ${this.headerColor}18;">
+                            <td colspan="${colSpan}" class="font-bold text-sm py-2.5 px-4" style="color: ${this.headerColor}; border-left: 4px solid ${this.headerColor};">
+                                <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
+                            </td>
+                        </tr>
+                    `;
+
+                    if (this.groupViewMode === 'group') {
+                        for (const [groupName, members] of Object.entries(content)) {
+                            html += `
+                                <tr class="bg-slate-100/80 dark:bg-slate-800/50">
+                                    <td colspan="${colSpan}" class="font-semibold text-xs py-2 pl-8 bma-text-main">
+                                        <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600"></i>กลุ่มงาน: ${groupName} (${members.length} บัญชี)
+                                    </td>
+                                </tr>
+                            `;
+                            for (const user of members) {
+                                html += this.#buildUserRowHtml(user, runningNo++);
+                            }
+                        }
+                    } else {
+                        for (const user of content) {
+                            html += this.#buildUserRowHtml(user, runningNo++);
+                        }
+                    }
                 }
-
-                // คอลัมน์ "จัดการ": แสดงเฉพาะผู้ที่มีสิทธิ์แก้ไขหรือลบ (SuperAdmin) เท่านั้น ส่วน Admin ขอบเขต "สำนักงาน" จะมองไม่เห็นคอลัมน์นี้
-                const manageColumnHtml = this.canEditOrDeleteUsers
-                    ? `
-                        <td class="text-center space-x-1 whitespace-nowrap">
-                            <button type="button" data-action="edit-user" data-id="${u.id}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button type="button" data-action="delete-user" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    `
-                    : '';
-
-                return `
-                    <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
-                        <td class="text-center font-semibold">${idx + 1}</td>
-                        <td class="font-mono font-bold bma-text-main">${u.username}</td>
-                        <td>
-                            <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
-                            <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
-                        </td>
-                        <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
-                        <td class="text-xs bma-text-sub">${scopeDesc}</td>
-                        ${manageColumnHtml}
-                    </tr>
-                `;
-            }).join('');
+            }
+            tbody.innerHTML = html;
         }
 
         // 2. ตารางที่ 2: คำขอรีเซ็ตรหัสผ่าน (Password Reset Requests Table - 6 คอลัมน์)
@@ -348,6 +568,10 @@ export class UsersController {
         document.getElementById('searchUserInput')?.addEventListener('input', () => this.#renderUsersTable());
         document.getElementById('filterUserRole')?.addEventListener('change', () => this.#renderUsersTable());
         document.getElementById('filterResetRequest')?.addEventListener('change', () => this.#renderUsersTable());
+        document.getElementById('selectUserGroupBy')?.addEventListener('change', (e) => {
+            this.groupViewMode = e.target.value;
+            this.#renderUsersTable();
+        });
 
         document.getElementById('btnOpenAddUserModal')?.addEventListener('click', () => this.#openModal(null));
         document.getElementById('btnCloseUserModal')?.addEventListener('click', () => this.#closeModal());

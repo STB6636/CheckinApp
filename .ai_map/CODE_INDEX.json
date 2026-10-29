@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-29T04:51:00.563Z",
-  "totalFilesScanned": 65,
-  "totalSymbolsIndexed": 464,
+  "generatedAt": "2026-10-29T05:31:01.709Z",
+  "totalFilesScanned": 67,
+  "totalSymbolsIndexed": 482,
   "files": [
     {
       "filePath": "approvals.html",
@@ -1647,8 +1647,8 @@
     {
       "filePath": "assets/js/controllers/UsersController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "8e605ed3deb48a87",
-      "totalLines": 553,
+      "fileHash": "9bf0499185d72382",
+      "totalLines": 777,
       "importsCount": 5,
       "importsPreview": [
         "import { UIHelpers } from '../core/UIHelpers.js';",
@@ -1665,121 +1665,169 @@
           "name": "UsersController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 544,
+          "endLine": 768,
           "signature": "export class UsersController",
-          "summary": "Class Definition (533 lines)"
+          "summary": "Class Definition (757 lines)"
         },
         {
           "name": "UsersController.constructor",
           "kind": "public constructor",
           "startLine": 13,
-          "endLine": 20,
+          "endLine": 29,
           "signature": "() => any",
-          "summary": "public constructor L13-L20 (8 lines)"
+          "summary": "public constructor L13-L29 (17 lines)"
         },
         {
           "name": "UsersController.init",
           "kind": "public async method",
-          "startLine": 22,
-          "endLine": 54,
+          "startLine": 31,
+          "endLine": 68,
           "signature": "() => Promise<any>",
-          "summary": "public async method L22-L54 (33 lines)"
+          "summary": "public async method L31-L68 (38 lines)"
+        },
+        {
+          "name": "UsersController.#initHierarchicalOrgFilter",
+          "kind": "private method",
+          "startLine": 70,
+          "endLine": 102,
+          "signature": "() => any",
+          "summary": "private method L70-L102 (33 lines)"
+        },
+        {
+          "name": "UsersController.#populateHierarchicalOrgFilter",
+          "kind": "private method",
+          "startLine": 104,
+          "endLine": 125,
+          "signature": "() => any",
+          "summary": "private method L104-L125 (22 lines)"
+        },
+        {
+          "name": "UsersController.#updateDivisionOptions",
+          "kind": "private method",
+          "startLine": 127,
+          "endLine": 165,
+          "signature": "() => any",
+          "summary": "private method L127-L165 (39 lines)"
+        },
+        {
+          "name": "UsersController.#updateWorkGroupOptions",
+          "kind": "private method",
+          "startLine": 167,
+          "endLine": 209,
+          "signature": "() => any",
+          "summary": "private method L167-L209 (43 lines)"
         },
         {
           "name": "UsersController.#toggleManageColumnHeader",
           "kind": "private method",
-          "startLine": 59,
-          "endLine": 67,
+          "startLine": 214,
+          "endLine": 222,
           "signature": "() => any",
           "summary": "ซ่อนหรือแสดงหัวคอลัมน์ \"จัดการ\" ในตารางตามสิทธิ์ของผู้ใช้งาน (index 5)"
         },
         {
           "name": "UsersController.#populateScopeDropdowns",
           "kind": "private method",
-          "startLine": 69,
-          "endLine": 80,
+          "startLine": 224,
+          "endLine": 235,
           "signature": "() => any",
-          "summary": "private method L69-L80 (12 lines)"
+          "summary": "private method L224-L235 (12 lines)"
         },
         {
           "name": "UsersController.#updateScopeDivisionDropdown",
           "kind": "private method",
-          "startLine": 82,
-          "endLine": 95,
+          "startLine": 237,
+          "endLine": 250,
           "signature": "(selectedBureau, selectedDivision = '') => any",
-          "summary": "private method L82-L95 (14 lines)"
+          "summary": "private method L237-L250 (14 lines)"
         },
         {
           "name": "UsersController.loadUsersAndPersonnel",
           "kind": "public async method",
-          "startLine": 97,
-          "endLine": 122,
+          "startLine": 252,
+          "endLine": 278,
           "signature": "() => Promise<any>",
-          "summary": "public async method L97-L122 (26 lines)"
+          "summary": "public async method L252-L278 (27 lines)"
         },
         {
           "name": "UsersController.#renderPersonnelSelectOptions",
           "kind": "private method",
-          "startLine": 124,
-          "endLine": 143,
+          "startLine": 280,
+          "endLine": 299,
           "signature": "(filterText = '', selectedPersonnelId = '') => any",
-          "summary": "private method L124-L143 (20 lines)"
+          "summary": "private method L280-L299 (20 lines)"
+        },
+        {
+          "name": "UsersController.#getFilteredUsers",
+          "kind": "private method",
+          "startLine": 301,
+          "endLine": 336,
+          "signature": "() => any",
+          "summary": "private method L301-L336 (36 lines)"
+        },
+        {
+          "name": "UsersController.#buildUserRowHtml",
+          "kind": "private method",
+          "startLine": 338,
+          "endLine": 377,
+          "signature": "(u, indexNo) => any",
+          "summary": "private method L338-L377 (40 lines)"
         },
         {
           "name": "UsersController.#renderUsersTable",
           "kind": "private method",
-          "startLine": 145,
-          "endLine": 266,
+          "startLine": 379,
+          "endLine": 486,
           "signature": "() => any",
-          "summary": "private method L145-L266 (122 lines)"
+          "summary": "private method L379-L486 (108 lines)"
         },
         {
           "name": "UsersController.#toggleAdminScopeUI",
           "kind": "private method",
-          "startLine": 268,
-          "endLine": 284,
+          "startLine": 488,
+          "endLine": 504,
           "signature": "() => any",
-          "summary": "private method L268-L284 (17 lines)"
+          "summary": "private method L488-L504 (17 lines)"
         },
         {
           "name": "UsersController.#openModal",
           "kind": "private method",
-          "startLine": 286,
-          "endLine": 341,
+          "startLine": 506,
+          "endLine": 561,
           "signature": "(editUser = null) => any",
-          "summary": "private method L286-L341 (56 lines)"
+          "summary": "private method L506-L561 (56 lines)"
         },
         {
           "name": "UsersController.#closeModal",
           "kind": "private method",
-          "startLine": 343,
-          "endLine": 345,
+          "startLine": 563,
+          "endLine": 565,
           "signature": "() => any",
-          "summary": "private method L343-L345 (3 lines)"
+          "summary": "private method L563-L565 (3 lines)"
         },
         {
           "name": "UsersController.#bindEvents",
           "kind": "private method",
-          "startLine": 347,
-          "endLine": 499,
+          "startLine": 567,
+          "endLine": 723,
           "signature": "() => any",
-          "summary": "private method L347-L499 (153 lines)"
+          "summary": "private method L567-L723 (157 lines)"
         },
         {
           "name": "handleTableActionClick",
           "kind": "async_arrow_fn",
-          "startLine": 436,
-          "endLine": 495,
+          "startLine": 660,
+          "endLine": 719,
           "signature": "(e) => inferred",
-          "summary": "Arrow Function L436-L495"
+          "summary": "Arrow Function L660-L719"
         },
         {
           "name": "UsersController.#handleSaveUserAccount",
           "kind": "private async method",
-          "startLine": 501,
-          "endLine": 543,
+          "startLine": 725,
+          "endLine": 767,
           "signature": "() => Promise<any>",
-          "summary": "private async method L501-L543 (43 lines)"
+          "summary": "private async method L725-L767 (43 lines)"
         }
       ]
     },
@@ -4094,6 +4142,127 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "834a7569b8d07bfe",
+      "totalLines": 143,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 11,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L11"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/test_qa_users_filter.mjs",
+      "layer": "Application Module",
+      "fileHash": "869f920411c25cb0",
+      "totalLines": 397,
+      "importsCount": 2,
+      "importsPreview": [
+        "import assert from 'node:assert';",
+        "import fs from 'node:fs';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "MockElement",
+          "kind": "class",
+          "startLine": 78,
+          "endLine": 121,
+          "signature": "class MockElement",
+          "summary": "Class Definition (44 lines)"
+        },
+        {
+          "name": "MockElement.constructor",
+          "kind": "public constructor",
+          "startLine": 79,
+          "endLine": 102,
+          "signature": "(id, tagName = 'div') => any",
+          "summary": "public constructor L79-L102 (24 lines)"
+        },
+        {
+          "name": "MockElement.addEventListener",
+          "kind": "public method",
+          "startLine": 103,
+          "endLine": 106,
+          "signature": "(event, fn) => any",
+          "summary": "public method L103-L106 (4 lines)"
+        },
+        {
+          "name": "MockElement.dispatchEvent",
+          "kind": "public method",
+          "startLine": 107,
+          "endLine": 112,
+          "signature": "(event, payload = {}) => any",
+          "summary": "public method L107-L112 (6 lines)"
+        },
+        {
+          "name": "MockElement.closest",
+          "kind": "public method",
+          "startLine": 113,
+          "endLine": 115,
+          "signature": "(selector) => any",
+          "summary": "public method L113-L115 (3 lines)"
+        },
+        {
+          "name": "MockElement.remove",
+          "kind": "public method",
+          "startLine": 116,
+          "endLine": 120,
+          "signature": "() => any",
+          "summary": "public method L116-L120 (5 lines)"
+        },
+        {
+          "name": "MockDocument",
+          "kind": "class",
+          "startLine": 123,
+          "endLine": 159,
+          "signature": "class MockDocument",
+          "summary": "Class Definition (37 lines)"
+        },
+        {
+          "name": "MockDocument.constructor",
+          "kind": "public constructor",
+          "startLine": 124,
+          "endLine": 142,
+          "signature": "() => any",
+          "summary": "public constructor L124-L142 (19 lines)"
+        },
+        {
+          "name": "MockDocument.getElementById",
+          "kind": "public method",
+          "startLine": 143,
+          "endLine": 148,
+          "signature": "(id) => any",
+          "summary": "public method L143-L148 (6 lines)"
+        },
+        {
+          "name": "MockDocument.querySelectorAll",
+          "kind": "public method",
+          "startLine": 149,
+          "endLine": 157,
+          "signature": "(selector) => any",
+          "summary": "public method L149-L157 (9 lines)"
+        },
+        {
+          "name": "MockDocument.addEventListener",
+          "kind": "public method",
+          "startLine": 158,
+          "endLine": 158,
+          "signature": "() => any",
+          "summary": "public method L158-L158 (1 lines)"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
       "fileHash": "40a5b70622973aec",
@@ -4482,8 +4651,8 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ca7bf3c023f74372",
-      "totalLines": 293,
+      "fileHash": "9b881b8d60224f72",
+      "totalLines": 334,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -4516,33 +4685,33 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 28,
-          "endLine": 156,
+          "endLine": 197,
           "signature": "<main>",
-          "summary": "HTML DOM Section L28-L156"
+          "summary": "HTML DOM Section L28-L197"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 158,
-          "endLine": 158,
+          "startLine": 199,
+          "endLine": 199,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L158-L158"
+          "summary": "HTML DOM Section L199-L199"
         },
         {
           "name": "<div#modalUserAccountForm>",
           "kind": "html_dom_section",
-          "startLine": 164,
-          "endLine": 289,
+          "startLine": 205,
+          "endLine": 330,
           "signature": "id=\"modalUserAccountForm\"",
-          "summary": "HTML DOM Section L164-L289"
+          "summary": "HTML DOM Section L205-L330"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 291,
-          "endLine": 291,
+          "startLine": 332,
+          "endLine": 332,
           "signature": "<script>",
-          "summary": "Bootstrap script L291-L291"
+          "summary": "Bootstrap script L332-L332"
         }
       ]
     }

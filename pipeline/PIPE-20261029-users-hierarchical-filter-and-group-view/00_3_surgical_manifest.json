@@ -1,0 +1,31 @@
+{
+  "taskId": "PIPE-20261029-users-hierarchical-filter-and-group-view",
+  "branch": "User-Fillter",
+  "files": [
+    {
+      "path": "users.html",
+      "targetSymbols": [
+        "selectUserGroupBy",
+        "hierarchicalUserOrgFilterDock",
+        "selectUserFilterBureau",
+        "selectUserFilterDivision",
+        "selectUserFilterWorkGroup"
+      ],
+      "lines": "70-115"
+    },
+    {
+      "path": "assets/js/controllers/UsersController.js",
+      "targetSymbols": [
+        "init",
+        "#initHierarchicalOrgFilter",
+        "#populateHierarchicalOrgFilter",
+        "#updateDivisionOptions",
+        "#updateWorkGroupOptions",
+        "#renderUsersTable",
+        "#buildUserRowHtml"
+      ],
+      "lines": "20-220"
+    }
+  ]
+}
+

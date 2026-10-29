@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: Users Hierarchical Filter & 2 Grouping Views</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        
+        <!-- Header: Purple Gradient Theme for Users Page -->
+        <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-900 p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-white/20 text-xs rounded-full font-bold uppercase tracking-wider mb-2">Enhancement Architecture Plan</span>
+                    <h1 class="text-2xl font-black">ระบบตัวกรองโครงสร้างองค์กรลำดับชั้น และมุมมองจัดกลุ่ม 2 ระดับ (หน้าจัดการบัญชีผู้ใช้งาน)</h1>
+                    <p class="text-purple-100 text-xs mt-1">PIPE-20261029-users-hierarchical-filter-and-group-view • Proposed Branch: <span class="font-mono bg-white/20 px-2 py-0.5 rounded">User-Fillter</span></p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-6">
+
+            <!-- Core Requirements Card -->
+            <div class="p-5 bg-gradient-to-br from-purple-50 to-indigo-50/50 rounded-2xl border border-purple-200/80 space-y-3">
+                <div class="flex items-center gap-2 text-sm font-extrabold text-purple-900">
+                    <i class="fa-solid fa-circle-check text-purple-600"></i>
+                    <span>วัตถุประสงค์และข้อกำหนดสำคัญ (User Mandates):</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-700">
+                    <div class="p-3 bg-white rounded-xl border border-purple-100 shadow-xs space-y-1">
+                        <span class="font-bold text-purple-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-sitemap text-purple-600"></i>
+                            <span>1. อ้างอิงตั้งค่าระบบ</span>
+                        </span>
+                        <p class="text-slate-600">
+                            ดึงข้อมูลผังองค์กรจาก <code>SettingsModel.getUniqueBureaus()</code>, <code>getUniqueDivisions()</code>, <code>getUniqueGroups()</code>
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-xl border border-purple-100 shadow-xs space-y-1">
+                        <span class="font-bold text-indigo-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-down-short-wide text-indigo-600"></i>
+                            <span>2. เลือกไล่ลำดับชั้นเสมอ</span>
+                        </span>
+                        <p class="text-slate-600">
+                            เริ่มต้น [ส่วน/ฝ่าย] และ [กลุ่มงาน] จะถูก <strong>Disabled</strong> และปลดล็อกเมื่อเลือกระดับบนตามลำดับ
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-xl border border-purple-100 shadow-xs space-y-1">
+                        <span class="font-bold text-fuchsia-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-layer-group text-fuchsia-600"></i>
+                            <span>3. มุมมองจัดกลุ่ม 2 รูปแบบ</span>
+                        </span>
+                        <p class="text-slate-600">
+                            • มุมมองที่ 1: กอง &gt; ฝ่าย<br>
+                            • มุมมองที่ 2: กอง &gt; ฝ่าย &gt; กลุ่มงาน (เหมือนหน้าบุคลากร)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI & Architecture Blueprint -->
+            <div class="space-y-3">
+                <h2 class="text-sm font-extrabold text-slate-700 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-compass-drafting text-purple-600"></i>
+                    <span>โครงสร้าง UI และการทำงานใหม่ (UI Blueprint):</span>
+                </h2>
+
+                <div class="space-y-3 text-xs">
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div class="font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px]">A</span>
+                            <span>แถวควบคุมการค้นหา (Row 1): Search + Role Filter + มุมมองจัดกลุ่ม (Group By)</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px]">
+                            เพิ่ม Dropdown <code>#selectUserGroupBy</code> มี 2 ตัวเลือก: "มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย" และ "มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน"
+                        </p>
+                    </div>
+
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div class="font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">B</span>
+                            <span>Dock ตัวกรองโครงสร้างองค์กรลำดับชั้น (Row 1.5): เฉพาะ SuperAdmin และ Admin กอง</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px]">
+                            เพิ่ม <code>#hierarchicalUserOrgFilterDock</code> พร้อม 3 Dropdowns (กอง, ฝ่าย, กลุ่มงาน) ปิด/เปิดตามลำดับชั้น และซ่อนอัตโนมัติสำหรับ Admin ระดับฝ่าย
+                        </p>
+                    </div>
+
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div class="font-bold text-slate-800 flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]">C</span>
+                            <span>ตารางแสดงผลแบบจัดกลุ่มหัวเรื่อง (Grouped Table Rendering)</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px]">
+                            ใช้ <code>PersonnelModel.groupPersonnel()</code> จัดกลุ่มบัญชีผู้ใช้ตามสังกัดของบุคลากรที่ผูกอยู่ แสดงแถวหัวข้อ กอง &gt; ฝ่าย และ กลุ่มงาน อย่างสวยงาม
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safeguards Checklist -->
+            <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-2">
+                <span class="font-bold flex items-center gap-2 text-sm text-amber-800">
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                    <span>ข้อควรระวังสำคัญ (Safeguards):</span>
+                </span>
+                <ul class="list-disc list-inside space-y-1 text-[11px] text-amber-800">
+                    <li><strong>ตารางหลัก & คอลัมน์:</strong> แสดงผล 6 คอลัมน์ครบถ้วน (ลำดับ, Username, ชื่อ-นามสกุล, Role, ขอบเขตการมองเห็น, จัดการ)</li>
+                    <li><strong>ตารางที่ 2 (อนุมัติเปลี่ยนรหัสผ่าน):</strong> ยังคงแสดงผลและทำงานได้ปกติ 100% ไม่ถูกรบกวน</li>
+                    <li><strong>ปุ่มคำสั่ง (Actions):</strong> ปุ่มแก้ไข, ลบ, รีเซ็ตรหัสผ่าน, นำเข้า Excel และส่งออก Excel ทำงานได้สมบูรณ์</li>
+                    <li><strong>RBAC Guard:</strong> Admin ฝ่ายจะไม่สามารถเห็น Dock กรองนี้</li>
+                </ul>
+            </div>
+
+            <!-- SubAgent Delegation -->
+            <div class="p-4 bg-slate-100 rounded-xl text-xs space-y-2">
+                <span class="font-bold text-slate-700">การส่ง SubAgents ตามคำสั่งผู้ใช้งาน:</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-600">
+                    <div class="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <strong>SubAgent 1 (Implementer, Flash 3.8 High):</strong> ดำเนินการแก้ไข <code>users.html</code> และ <code>UsersController.js</code>
+                    </div>
+                    <div class="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <strong>SubAgent 2 (QA Auditor, Flash 3.8 High):</strong> ตรวจสอบเปรียบเทียบ diff กับ <code>main</code> และทดสอบการทำงานของทั้ง 2 ตาราง
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T04:51:00.563Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `65` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `464`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T05:31:01.709Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `67` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `482`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -274,25 +274,31 @@
 
 ## File: `assets/js/controllers/UsersController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `8e605ed3deb48a87` | **Total Lines:** `553` | **Imports:** `5` | **Exports:** `UsersController`
+- **Hash:** `9bf0499185d72382` | **Total Lines:** `777` | **Imports:** `5` | **Exports:** `UsersController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UsersController` | `class` | **L12 - L544** | `export class UsersController` | Class Definition (533 lines) |
-| `UsersController.constructor` | `public constructor` | **L13 - L20** | `() => any` | public constructor L13-L20 (8 lines) |
-| `UsersController.init` | `public async method` | **L22 - L54** | `() => Promise<any>` | public async method L22-L54 (33 lines) |
-| `UsersController.#toggleManageColumnHeader` | `private method` | **L59 - L67** | `() => any` | ซ่อนหรือแสดงหัวคอลัมน์ "จัดการ" ในตารางตามสิทธิ์ของผู้ใช้งาน (index 5) |
-| `UsersController.#populateScopeDropdowns` | `private method` | **L69 - L80** | `() => any` | private method L69-L80 (12 lines) |
-| `UsersController.#updateScopeDivisionDropdown` | `private method` | **L82 - L95** | `(selectedBureau, selectedDivision = '') => any` | private method L82-L95 (14 lines) |
-| `UsersController.loadUsersAndPersonnel` | `public async method` | **L97 - L122** | `() => Promise<any>` | public async method L97-L122 (26 lines) |
-| `UsersController.#renderPersonnelSelectOptions` | `private method` | **L124 - L143** | `(filterText = '', selectedPersonnelId = '') => any` | private method L124-L143 (20 lines) |
-| `UsersController.#renderUsersTable` | `private method` | **L145 - L266** | `() => any` | private method L145-L266 (122 lines) |
-| `UsersController.#toggleAdminScopeUI` | `private method` | **L268 - L284** | `() => any` | private method L268-L284 (17 lines) |
-| `UsersController.#openModal` | `private method` | **L286 - L341** | `(editUser = null) => any` | private method L286-L341 (56 lines) |
-| `UsersController.#closeModal` | `private method` | **L343 - L345** | `() => any` | private method L343-L345 (3 lines) |
-| `UsersController.#bindEvents` | `private method` | **L347 - L499** | `() => any` | private method L347-L499 (153 lines) |
-| `handleTableActionClick` | `async_arrow_fn` | **L436 - L495** | `(e) => inferred` | Arrow Function L436-L495 |
-| `UsersController.#handleSaveUserAccount` | `private async method` | **L501 - L543** | `() => Promise<any>` | private async method L501-L543 (43 lines) |
+| `UsersController` | `class` | **L12 - L768** | `export class UsersController` | Class Definition (757 lines) |
+| `UsersController.constructor` | `public constructor` | **L13 - L29** | `() => any` | public constructor L13-L29 (17 lines) |
+| `UsersController.init` | `public async method` | **L31 - L68** | `() => Promise<any>` | public async method L31-L68 (38 lines) |
+| `UsersController.#initHierarchicalOrgFilter` | `private method` | **L70 - L102** | `() => any` | private method L70-L102 (33 lines) |
+| `UsersController.#populateHierarchicalOrgFilter` | `private method` | **L104 - L125** | `() => any` | private method L104-L125 (22 lines) |
+| `UsersController.#updateDivisionOptions` | `private method` | **L127 - L165** | `() => any` | private method L127-L165 (39 lines) |
+| `UsersController.#updateWorkGroupOptions` | `private method` | **L167 - L209** | `() => any` | private method L167-L209 (43 lines) |
+| `UsersController.#toggleManageColumnHeader` | `private method` | **L214 - L222** | `() => any` | ซ่อนหรือแสดงหัวคอลัมน์ "จัดการ" ในตารางตามสิทธิ์ของผู้ใช้งาน (index 5) |
+| `UsersController.#populateScopeDropdowns` | `private method` | **L224 - L235** | `() => any` | private method L224-L235 (12 lines) |
+| `UsersController.#updateScopeDivisionDropdown` | `private method` | **L237 - L250** | `(selectedBureau, selectedDivision = '') => any` | private method L237-L250 (14 lines) |
+| `UsersController.loadUsersAndPersonnel` | `public async method` | **L252 - L278** | `() => Promise<any>` | public async method L252-L278 (27 lines) |
+| `UsersController.#renderPersonnelSelectOptions` | `private method` | **L280 - L299** | `(filterText = '', selectedPersonnelId = '') => any` | private method L280-L299 (20 lines) |
+| `UsersController.#getFilteredUsers` | `private method` | **L301 - L336** | `() => any` | private method L301-L336 (36 lines) |
+| `UsersController.#buildUserRowHtml` | `private method` | **L338 - L377** | `(u, indexNo) => any` | private method L338-L377 (40 lines) |
+| `UsersController.#renderUsersTable` | `private method` | **L379 - L486** | `() => any` | private method L379-L486 (108 lines) |
+| `UsersController.#toggleAdminScopeUI` | `private method` | **L488 - L504** | `() => any` | private method L488-L504 (17 lines) |
+| `UsersController.#openModal` | `private method` | **L506 - L561** | `(editUser = null) => any` | private method L506-L561 (56 lines) |
+| `UsersController.#closeModal` | `private method` | **L563 - L565** | `() => any` | private method L563-L565 (3 lines) |
+| `UsersController.#bindEvents` | `private method` | **L567 - L723** | `() => any` | private method L567-L723 (157 lines) |
+| `handleTableActionClick` | `async_arrow_fn` | **L660 - L719** | `(e) => inferred` | Arrow Function L660-L719 |
+| `UsersController.#handleSaveUserAccount` | `private async method` | **L725 - L767** | `() => Promise<any>` | private async method L725-L767 (43 lines) |
 
 ---
 
@@ -939,6 +945,36 @@
 
 ---
 
+## File: `pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `834a7569b8d07bfe` | **Total Lines:** `143` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L11** | `<head>` | HTML DOM Section L3-L11 |
+
+---
+
+## File: `pipeline/PIPE-20261029-users-hierarchical-filter-and-group-view/test_qa_users_filter.mjs`
+- **Layer:** Application Module
+- **Hash:** `869f920411c25cb0` | **Total Lines:** `397` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `MockElement` | `class` | **L78 - L121** | `class MockElement` | Class Definition (44 lines) |
+| `MockElement.constructor` | `public constructor` | **L79 - L102** | `(id, tagName = 'div') => any` | public constructor L79-L102 (24 lines) |
+| `MockElement.addEventListener` | `public method` | **L103 - L106** | `(event, fn) => any` | public method L103-L106 (4 lines) |
+| `MockElement.dispatchEvent` | `public method` | **L107 - L112** | `(event, payload = {}) => any` | public method L107-L112 (6 lines) |
+| `MockElement.closest` | `public method` | **L113 - L115** | `(selector) => any` | public method L113-L115 (3 lines) |
+| `MockElement.remove` | `public method` | **L116 - L120** | `() => any` | public method L116-L120 (5 lines) |
+| `MockDocument` | `class` | **L123 - L159** | `class MockDocument` | Class Definition (37 lines) |
+| `MockDocument.constructor` | `public constructor` | **L124 - L142** | `() => any` | public constructor L124-L142 (19 lines) |
+| `MockDocument.getElementById` | `public method` | **L143 - L148** | `(id) => any` | public method L143-L148 (6 lines) |
+| `MockDocument.querySelectorAll` | `public method` | **L149 - L157** | `(selector) => any` | public method L149-L157 (9 lines) |
+| `MockDocument.addEventListener` | `public method` | **L158 - L158** | `() => any` | public method L158-L158 (1 lines) |
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
 - **Hash:** `40a5b70622973aec` | **Total Lines:** `439` | **Imports:** `0` | **Exports:** `None`
@@ -1035,17 +1071,17 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ca7bf3c023f74372` | **Total Lines:** `293` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9b881b8d60224f72` | **Total Lines:** `334` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L18** | `<head>` | HTML DOM Section L3-L18 |
 | `<div#bmaSidebarContainer>` | `html_dom_section` | **L22 - L22** | `id="bmaSidebarContainer"` | HTML DOM Section L22-L22 |
 | `<div#bmaTopbarContainer>` | `html_dom_section` | **L26 - L26** | `id="bmaTopbarContainer"` | HTML DOM Section L26-L26 |
-| `<main>` | `html_dom_section` | **L28 - L156** | `<main>` | HTML DOM Section L28-L156 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L158 - L158** | `id="bmaFooterContainer"` | HTML DOM Section L158-L158 |
-| `<div#modalUserAccountForm>` | `html_dom_section` | **L164 - L289** | `id="modalUserAccountForm"` | HTML DOM Section L164-L289 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L291 - L291** | `<script>` | Bootstrap script L291-L291 |
+| `<main>` | `html_dom_section` | **L28 - L197** | `<main>` | HTML DOM Section L28-L197 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L199 - L199** | `id="bmaFooterContainer"` | HTML DOM Section L199-L199 |
+| `<div#modalUserAccountForm>` | `html_dom_section` | **L205 - L330** | `id="modalUserAccountForm"` | HTML DOM Section L205-L330 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L332 - L332** | `<script>` | Bootstrap script L332-L332 |
 
 ---
 
