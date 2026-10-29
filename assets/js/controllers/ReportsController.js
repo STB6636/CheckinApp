@@ -17,6 +17,9 @@ export class ReportsController {
         this.settings = null;
         this.allPersonnel = [];
         this.records = [];
+        this.selectedBureauFilter = 'all';
+        this.selectedDivisionFilter = 'all';
+        this.selectedWorkGroupFilter = 'all';
         this.dateMode = 'single';
         this.groupViewMode = 'division';
         this.selectedStatusKeys = new Set(['normal', 'late']);
@@ -62,9 +65,45 @@ export class ReportsController {
         if (startInput) startInput.value = todayIso;
         if (endInput) endInput.value = todayIso;
 
+        this.#initHierarchicalOrgFilter();
         this.#renderStatusTagFilterChips();
         this.#bindEvents();
         await this.loadReportData();
+    }
+
+    #initHierarchicalOrgFilter() {
+        const dock = document.getElementById('hierarchicalOrgFilterDock');
+        if (dock) {
+            const canUseOrgFilter = this.isSuperAdmin || this.isAdminBureau;
+            dock.classList.toggle('hidden', !canUseOrgFilter);
+        }
+
+        const bureauSelect = document.getElementById('selectFilterBureau');
+        const divisionSelect = document.getElementById('selectFilterDivision');
+        const workGroupSelect = document.getElementById('selectFilterWorkGroup');
+
+        bureauSelect?.addEventListener('change', (e) => {
+            this.selectedBureauFilter = e.target.value;
+            this.selectedDivisionFilter = 'all';
+            this.selectedWorkGroupFilter = 'all';
+            this.#updateDivisionOptions();
+            this.#renderStatusTagFilterChips();
+            this.#renderSeparateTablesBySelectedTags(false);
+        });
+
+        divisionSelect?.addEventListener('change', (e) => {
+            this.selectedDivisionFilter = e.target.value;
+            this.selectedWorkGroupFilter = 'all';
+            this.#updateWorkGroupOptions();
+            this.#renderStatusTagFilterChips();
+            this.#renderSeparateTablesBySelectedTags(false);
+        });
+
+        workGroupSelect?.addEventListener('change', (e) => {
+            this.selectedWorkGroupFilter = e.target.value;
+            this.#renderStatusTagFilterChips();
+            this.#renderSeparateTablesBySelectedTags(false);
+        });
     }
 
     #getStatusColor(statusKey) {
@@ -79,10 +118,11 @@ export class ReportsController {
         const container = document.getElementById('statusTagsFilterContainer');
         if (!container) return;
 
+        const baseRecords = this.#getFilteredRecords();
         container.innerHTML = Config.OFFICIAL_STATUSES.map(st => {
             const isSelected = this.selectedStatusKeys.has(st.key);
             const color = this.#getStatusColor(st.key);
-            const countInStatus = this.records.filter(r => r.status_category === st.key).length;
+            const countInStatus = baseRecords.filter(r => r.status_category === st.key).length;
 
             return `
                 <button type="button"
@@ -140,6 +180,7 @@ export class ReportsController {
             this.records = records;
             this.allPersonnel = personnel;
             this.#populatePersonnelDropdown();
+            this.#populateHierarchicalOrgFilter();
             this.#renderStatusTagFilterChips();
             this.#renderSeparateTablesBySelectedTags(false);
         } catch (err) {
@@ -167,6 +208,97 @@ export class ReportsController {
         selectEl.innerHTML = allowedPersonnel.map(p =>
             `<option value="${p.id}">${p.prefix}${p.first_name} ${p.last_name} (${p.division})</option>`
         ).join('');
+    }
+
+    #populateHierarchicalOrgFilter() {
+        const bureauSelect = document.getElementById('selectFilterBureau');
+        if (!bureauSelect) return;
+
+        const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
+        const bureaus = [...new Set(
+            combinedSources
+                .map(item => (item.bureau || '').trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedBureauFilter !== 'all' && !bureaus.includes(this.selectedBureauFilter)) {
+            this.selectedBureauFilter = 'all';
+        }
+
+        bureauSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            bureaus.map(b => `<option value="${UIHelpers.escapeHtml(b)}">${UIHelpers.escapeHtml(b)}</option>`).join('');
+        bureauSelect.value = this.selectedBureauFilter;
+
+        this.#updateDivisionOptions();
+    }
+
+    #updateDivisionOptions() {
+        const divisionSelect = document.getElementById('selectFilterDivision');
+        if (!divisionSelect) return;
+
+        const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
+        let sources = combinedSources;
+        if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
+            sources = sources.filter(item => (item.bureau || '').trim() === this.selectedBureauFilter.trim());
+        }
+
+        const divisions = [...new Set(
+            sources
+                .map(item => (item.division || '').trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedDivisionFilter !== 'all' && !divisions.includes(this.selectedDivisionFilter)) {
+            this.selectedDivisionFilter = 'all';
+        }
+
+        divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
+        divisionSelect.value = this.selectedDivisionFilter;
+
+        this.#updateWorkGroupOptions();
+    }
+
+    #updateWorkGroupOptions() {
+        const workGroupSelect = document.getElementById('selectFilterWorkGroup');
+        if (!workGroupSelect) return;
+
+        const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
+        let sources = combinedSources;
+        if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
+            sources = sources.filter(item => (item.bureau || '').trim() === this.selectedBureauFilter.trim());
+        }
+        if (this.selectedDivisionFilter && this.selectedDivisionFilter !== 'all') {
+            sources = sources.filter(item => (item.division || '').trim() === this.selectedDivisionFilter.trim());
+        }
+
+        const workGroups = [...new Set(
+            sources
+                .map(item => (item.work_group || '').trim())
+                .filter(Boolean)
+        )].sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedWorkGroupFilter !== 'all' && !workGroups.includes(this.selectedWorkGroupFilter)) {
+            this.selectedWorkGroupFilter = 'all';
+        }
+
+        workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
+        workGroupSelect.value = this.selectedWorkGroupFilter;
+    }
+
+    #getFilteredRecords() {
+        let list = this.records || [];
+        if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
+            list = list.filter(r => (r.bureau || '').trim() === this.selectedBureauFilter.trim());
+        }
+        if (this.selectedDivisionFilter && this.selectedDivisionFilter !== 'all') {
+            list = list.filter(r => (r.division || '').trim() === this.selectedDivisionFilter.trim());
+        }
+        if (this.selectedWorkGroupFilter && this.selectedWorkGroupFilter !== 'all') {
+            list = list.filter(r => (r.work_group || '').trim() === this.selectedWorkGroupFilter.trim());
+        }
+        return list;
     }
 
     #formatGpsCoordinates(lat, lng) {
@@ -197,11 +329,12 @@ export class ReportsController {
 
         const groupHeaderColor = this.settings?.category_colors?.group_header || '#007B3E';
         let combinedHtml = '';
+        const activeRecords = this.#getFilteredRecords();
 
         if (this.dateMode === 'range') {
-            const uniqueDates = [...new Set(this.records.map(r => r.work_date))].filter(Boolean).sort();
+            const uniqueDates = [...new Set(activeRecords.map(r => r.work_date))].filter(Boolean).sort();
             for (const dayDate of uniqueDates) {
-                const dayRecords = this.records.filter(r => r.work_date === dayDate);
+                const dayRecords = activeRecords.filter(r => r.work_date === dayDate);
                 const dayThaiFull = UIHelpers.formatThaiFullDate(dayDate);
 
                 if (forPrintPdf) {
@@ -237,7 +370,7 @@ export class ReportsController {
             const dayThaiFull = UIHelpers.formatThaiFullDate(singleDate);
             for (const statusMeta of activeStatuses) {
                 const statusColor = this.#getStatusColor(statusMeta.key);
-                const tagRecords = this.records.filter(r => r.status_category === statusMeta.key);
+                const tagRecords = activeRecords.filter(r => r.status_category === statusMeta.key);
                 combinedHtml += this.#renderSingleStatusTableHtml(statusMeta, statusColor, tagRecords, dayThaiFull, groupHeaderColor, forPrintPdf);
             }
         }
@@ -881,7 +1014,8 @@ ${this.canManageRecords ? `
         });
 
         document.getElementById('btnExportReportExcel')?.addEventListener('click', () => {
-            const filtered = this.records.filter(r => this.selectedStatusKeys.has(r.status_category));
+            const baseRecords = this.#getFilteredRecords();
+            const filtered = baseRecords.filter(r => this.selectedStatusKeys.has(r.status_category));
             if (filtered.length === 0) {
                 UIHelpers.alert('ไม่มีข้อมูลส่งออก', 'ไม่พบรายการใน TAG สถานะที่เลือก', 'warning');
                 return;

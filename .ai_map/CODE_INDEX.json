@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-28T11:07:07.830Z",
-  "totalFilesScanned": 61,
-  "totalSymbolsIndexed": 442,
+  "generatedAt": "2026-10-29T03:17:24.465Z",
+  "totalFilesScanned": 62,
+  "totalSymbolsIndexed": 448,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f748689cabbc814f",
+      "fileHash": "8522d5e94fd54f77",
       "totalLines": 124,
       "importsCount": 0,
       "importsPreview": [],
@@ -197,7 +197,7 @@
     {
       "filePath": "assets/js/controllers/ApprovalsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "a7990e4a28af3a98",
+      "fileHash": "5469352515eabb9e",
       "totalLines": 302,
       "importsCount": 3,
       "importsPreview": [
@@ -1136,8 +1136,8 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "c2abaa61e608accf",
-      "totalLines": 1059,
+      "fileHash": "7763f66500671e4f",
+      "totalLines": 1193,
       "importsCount": 7,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -1156,176 +1156,216 @@
           "name": "ReportsController",
           "kind": "class",
           "startLine": 14,
-          "endLine": 1050,
+          "endLine": 1184,
           "signature": "export class ReportsController",
-          "summary": "Class Definition (1037 lines)"
+          "summary": "Class Definition (1171 lines)"
         },
         {
           "name": "ReportsController.constructor",
           "kind": "public constructor",
           "startLine": 15,
-          "endLine": 26,
+          "endLine": 29,
           "signature": "() => any",
-          "summary": "public constructor L15-L26 (12 lines)"
+          "summary": "public constructor L15-L29 (15 lines)"
         },
         {
           "name": "ReportsController.init",
           "kind": "public async method",
-          "startLine": 28,
-          "endLine": 68,
+          "startLine": 31,
+          "endLine": 72,
           "signature": "() => Promise<any>",
-          "summary": "public async method L28-L68 (41 lines)"
+          "summary": "public async method L31-L72 (42 lines)"
+        },
+        {
+          "name": "ReportsController.#initHierarchicalOrgFilter",
+          "kind": "private method",
+          "startLine": 74,
+          "endLine": 107,
+          "signature": "() => any",
+          "summary": "private method L74-L107 (34 lines)"
         },
         {
           "name": "ReportsController.#getStatusColor",
           "kind": "private method",
-          "startLine": 70,
-          "endLine": 76,
+          "startLine": 109,
+          "endLine": 115,
           "signature": "(statusKey) => any",
-          "summary": "private method L70-L76 (7 lines)"
+          "summary": "private method L109-L115 (7 lines)"
         },
         {
           "name": "ReportsController.#renderStatusTagFilterChips",
           "kind": "private method",
-          "startLine": 78,
-          "endLine": 100,
+          "startLine": 117,
+          "endLine": 140,
           "signature": "() => any",
-          "summary": "private method L78-L100 (23 lines)"
+          "summary": "private method L117-L140 (24 lines)"
         },
         {
           "name": "ReportsController.#getFormattedReportDateSubtitle",
           "kind": "private method",
-          "startLine": 102,
-          "endLine": 111,
+          "startLine": 142,
+          "endLine": 151,
           "signature": "() => any",
-          "summary": "private method L102-L111 (10 lines)"
+          "summary": "private method L142-L151 (10 lines)"
         },
         {
           "name": "ReportsController.loadReportData",
           "kind": "public async method",
-          "startLine": 113,
-          "endLine": 159,
+          "startLine": 153,
+          "endLine": 200,
           "signature": "() => Promise<any>",
-          "summary": "public async method L113-L159 (47 lines)"
+          "summary": "public async method L153-L200 (48 lines)"
         },
         {
           "name": "ReportsController.#populatePersonnelDropdown",
           "kind": "private method",
-          "startLine": 161,
-          "endLine": 170,
+          "startLine": 202,
+          "endLine": 211,
           "signature": "() => any",
-          "summary": "private method L161-L170 (10 lines)"
+          "summary": "private method L202-L211 (10 lines)"
+        },
+        {
+          "name": "ReportsController.#populateHierarchicalOrgFilter",
+          "kind": "private method",
+          "startLine": 213,
+          "endLine": 233,
+          "signature": "() => any",
+          "summary": "private method L213-L233 (21 lines)"
+        },
+        {
+          "name": "ReportsController.#updateDivisionOptions",
+          "kind": "private method",
+          "startLine": 235,
+          "endLine": 260,
+          "signature": "() => any",
+          "summary": "private method L235-L260 (26 lines)"
+        },
+        {
+          "name": "ReportsController.#updateWorkGroupOptions",
+          "kind": "private method",
+          "startLine": 262,
+          "endLine": 288,
+          "signature": "() => any",
+          "summary": "private method L262-L288 (27 lines)"
+        },
+        {
+          "name": "ReportsController.#getFilteredRecords",
+          "kind": "private method",
+          "startLine": 290,
+          "endLine": 302,
+          "signature": "() => any",
+          "summary": "private method L290-L302 (13 lines)"
         },
         {
           "name": "ReportsController.#formatGpsCoordinates",
           "kind": "private method",
-          "startLine": 172,
-          "endLine": 180,
+          "startLine": 304,
+          "endLine": 312,
           "signature": "(lat, lng) => any",
-          "summary": "private method L172-L180 (9 lines)"
+          "summary": "private method L304-L312 (9 lines)"
         },
         {
           "name": "ReportsController.#renderSeparateTablesBySelectedTags",
           "kind": "private method",
-          "startLine": 182,
-          "endLine": 249,
+          "startLine": 314,
+          "endLine": 382,
           "signature": "(forPrintPdf = false) => any",
-          "summary": "private method L182-L249 (68 lines)"
+          "summary": "private method L314-L382 (69 lines)"
         },
         {
           "name": "ReportsController.#renderSingleStatusTableHtml",
           "kind": "private method",
-          "startLine": 251,
-          "endLine": 379,
+          "startLine": 384,
+          "endLine": 512,
           "signature": "(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L251-L379 (129 lines)"
+          "summary": "private method L384-L512 (129 lines)"
         },
         {
           "name": "ReportsController.#buildGroupedRowsForTag",
           "kind": "private method",
-          "startLine": 381,
-          "endLine": 433,
+          "startLine": 514,
+          "endLine": 566,
           "signature": "(tagRecords, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L381-L433 (53 lines)"
+          "summary": "private method L514-L566 (53 lines)"
         },
         {
           "name": "ReportsController.#buildSingleRowHtml",
           "kind": "private method",
-          "startLine": 435,
-          "endLine": 534,
+          "startLine": 568,
+          "endLine": 667,
           "signature": "(rec, indexNo, forPrintPdf) => any",
-          "summary": "private method L435-L534 (100 lines)"
+          "summary": "private method L568-L667 (100 lines)"
         },
         {
           "name": "ReportsController.#openResumeProfileForSpecificRow",
           "kind": "private method",
-          "startLine": 543,
-          "endLine": 746,
+          "startLine": 676,
+          "endLine": 879,
           "signature": "(rowUid) => any",
-          "summary": "private method L543-L746 (204 lines)"
+          "summary": "private method L676-L879 (204 lines)"
         },
         {
           "name": "setupPhotoBox",
           "kind": "arrow_fn",
-          "startLine": 611,
-          "endLine": 654,
+          "startLine": 744,
+          "endLine": 787,
           "signature": "(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred",
-          "summary": "Arrow Function L611-L654"
+          "summary": "Arrow Function L744-L787"
         },
         {
           "name": "setupGpsAndMap",
           "kind": "arrow_fn",
-          "startLine": 693,
-          "endLine": 723,
+          "startLine": 826,
+          "endLine": 856,
           "signature": "(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred",
-          "summary": "Arrow Function L693-L723"
+          "summary": "Arrow Function L826-L856"
         },
         {
           "name": "ReportsController.#closeResumeModal",
           "kind": "private method",
-          "startLine": 748,
-          "endLine": 758,
+          "startLine": 881,
+          "endLine": 891,
           "signature": "() => any",
-          "summary": "private method L748-L758 (11 lines)"
+          "summary": "private method L881-L891 (11 lines)"
         },
         {
           "name": "ReportsController.#openModal",
           "kind": "private method",
-          "startLine": 760,
-          "endLine": 792,
+          "startLine": 893,
+          "endLine": 925,
           "signature": "(rec = null) => any",
-          "summary": "private method L760-L792 (33 lines)"
+          "summary": "private method L893-L925 (33 lines)"
         },
         {
           "name": "ReportsController.#closeModal",
           "kind": "private method",
-          "startLine": 794,
-          "endLine": 796,
+          "startLine": 927,
+          "endLine": 929,
           "signature": "() => any",
-          "summary": "private method L794-L796 (3 lines)"
+          "summary": "private method L927-L929 (3 lines)"
         },
         {
           "name": "ReportsController.#bindEvents",
           "kind": "private method",
-          "startLine": 798,
-          "endLine": 1009,
+          "startLine": 931,
+          "endLine": 1143,
           "signature": "() => any",
-          "summary": "private method L798-L1009 (212 lines)"
+          "summary": "private method L931-L1143 (213 lines)"
         },
         {
           "name": "ReportsController.#handleSaveReportRecord",
           "kind": "private async method",
-          "startLine": 1011,
-          "endLine": 1049,
+          "startLine": 1145,
+          "endLine": 1183,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1011-L1049 (39 lines)"
+          "summary": "private async method L1145-L1183 (39 lines)"
         }
       ]
     },
     {
       "filePath": "assets/js/controllers/SettingsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "ddfd3aaf261e8ae2",
+      "fileHash": "0bcad371715caad4",
       "totalLines": 1218,
       "importsCount": 4,
       "importsPreview": [
@@ -1867,7 +1907,7 @@
     {
       "filePath": "assets/js/core/Config.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "7dc0d48ec1b6b745",
+      "fileHash": "74577120253dbdad",
       "totalLines": 90,
       "importsCount": 0,
       "importsPreview": [],
@@ -2562,7 +2602,7 @@
     {
       "filePath": "assets/js/models/SettingsModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "3de0abcc70a000d4",
+      "fileHash": "8fca8f4f7488a830",
       "totalLines": 334,
       "importsCount": 3,
       "importsPreview": [
@@ -2772,7 +2812,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "27deb3909bfb8f53",
+      "fileHash": "fadab753ac33f4e2",
       "totalLines": 753,
       "importsCount": 0,
       "importsPreview": [],
@@ -3037,7 +3077,7 @@
     {
       "filePath": "docs/manual/manual-admin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ee285637a7c64dd5",
+      "fileHash": "c1afe78930d9d6af",
       "totalLines": 1128,
       "importsCount": 0,
       "importsPreview": [],
@@ -3088,7 +3128,7 @@
     {
       "filePath": "docs/manual/manual-superadmin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "295c42df02537928",
+      "fileHash": "f14fe6505ec618f6",
       "totalLines": 1192,
       "importsCount": 0,
       "importsPreview": [],
@@ -3139,7 +3179,7 @@
     {
       "filePath": "docs/manual/manual-user.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c5e7fae3cfe64fb4",
+      "fileHash": "c8ec3533c171d719",
       "totalLines": 1310,
       "importsCount": 0,
       "importsPreview": [],
@@ -3663,7 +3703,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-approvals-gps-location-column/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9abf8917dec71f6a",
+      "fileHash": "913c3951f520ab88",
       "totalLines": 161,
       "importsCount": 0,
       "importsPreview": [],
@@ -3682,7 +3722,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-block-normal-hours-checkin/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "225dbb5d784dcfbc",
+      "fileHash": "6e8a18ea5680078c",
       "totalLines": 75,
       "importsCount": 0,
       "importsPreview": [],
@@ -3701,7 +3741,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-custom-gps-pin-and-jitter-search/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "910236c4df878727",
+      "fileHash": "810e5f874e8ffe60",
       "totalLines": 88,
       "importsCount": 0,
       "importsPreview": [],
@@ -3720,7 +3760,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-direct-place-name-without-proximity-prefix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "55c6fb60cfeff297",
+      "fileHash": "ca3dd536d14355d1",
       "totalLines": 105,
       "importsCount": 0,
       "importsPreview": [],
@@ -3774,7 +3814,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-rename-special-request-button/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d5004d93c2cf0448",
+      "fileHash": "fff085d68ac093ef",
       "totalLines": 51,
       "importsCount": 0,
       "importsPreview": [],
@@ -3812,7 +3852,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-smart-place-search-2s-debounce/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "57ac1cbb2c6a3d2f",
+      "fileHash": "c3fcf10e27d40aee",
       "totalLines": 155,
       "importsCount": 0,
       "importsPreview": [],
@@ -3831,7 +3871,7 @@
     {
       "filePath": "pipeline/PIPE-20261028-soft-ui-sweetalert/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "6493887502466f46",
+      "fileHash": "a6aa87e487ecbae1",
       "totalLines": 66,
       "importsCount": 0,
       "importsPreview": [],
@@ -3850,8 +3890,27 @@
     {
       "filePath": "pipeline/PIPE-20261028-special-modal-place-autocomplete/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bd37c507e5cee2d3",
+      "fileHash": "eac6a91bea2a8923",
       "totalLines": 227,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 13,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L13"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-reports-hierarchical-org-filter/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "6cd6741f507d8855",
+      "totalLines": 150,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3869,8 +3928,8 @@
     {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1e8b2c012c6750c4",
-      "totalLines": 405,
+      "fileHash": "40a5b70622973aec",
+      "totalLines": 439,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3903,9 +3962,9 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 28,
-          "endLine": 151,
+          "endLine": 185,
           "signature": "<main>",
-          "summary": "HTML DOM Section L28-L151"
+          "summary": "HTML DOM Section L28-L185"
         },
         {
           "name": "<div#reportMobileShortcutContainer>",
@@ -3918,41 +3977,41 @@
         {
           "name": "<div#statusTagsFilterContainer>",
           "kind": "html_dom_section",
-          "startLine": 142,
-          "endLine": 142,
+          "startLine": 176,
+          "endLine": 176,
           "signature": "id=\"statusTagsFilterContainer\"",
-          "summary": "HTML DOM Section L142-L142"
+          "summary": "HTML DOM Section L176-L176"
         },
         {
           "name": "<div#reportTablesMasterContainer>",
           "kind": "html_dom_section",
-          "startLine": 149,
-          "endLine": 149,
+          "startLine": 183,
+          "endLine": 183,
           "signature": "id=\"reportTablesMasterContainer\"",
-          "summary": "HTML DOM Section L149-L149"
+          "summary": "HTML DOM Section L183-L183"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 153,
-          "endLine": 153,
+          "startLine": 187,
+          "endLine": 187,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L153-L153"
+          "summary": "HTML DOM Section L187-L187"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 403,
-          "endLine": 403,
+          "startLine": 437,
+          "endLine": 437,
           "signature": "<script>",
-          "summary": "Bootstrap script L403-L403"
+          "summary": "Bootstrap script L437-L437"
         }
       ]
     },
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "316c92ec23c8af3e",
+      "fileHash": "eb1b36e7c51f3f20",
       "totalLines": 634,
       "importsCount": 0,
       "importsPreview": [],

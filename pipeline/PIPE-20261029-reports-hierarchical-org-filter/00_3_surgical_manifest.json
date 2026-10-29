@@ -1,0 +1,19 @@
+{
+  "pipeline_id": "PIPE-20261029-reports-hierarchical-org-filter",
+  "branch": "feature-reports-hierarchical-filter",
+  "surgical_files": [
+    {
+      "path": "reports.html",
+      "target_lines": "120-125",
+      "action": "ADD_HIERARCHICAL_ORG_FILTER_DOCK",
+      "description": "Add #hierarchicalOrgFilterDock with 3 responsive cascading dropdowns (Bureau, Division, Work Group) defaulting to 'แสดงทั้งหมด'"
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "target_lines": "20-50, 140-150, 230-250, 880-900",
+      "action": "IMPLEMENT_HIERARCHICAL_ORG_FILTER_LOGIC",
+      "description": "Manage filter state, role-based visibility (SuperAdmin and Admin Bureau), cascade dropdown options, apply #getFilteredRecords() to table render, print and Excel export"
+    }
+  ]
+}
+

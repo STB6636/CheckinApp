@@ -27,6 +27,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[rule_lock_normal_hours_checkin]] — Domain Rule: ปิดการลงเวลาหน้าหลักในเวลาราชการปกติ (08:30-16:30), ปิดปุ่มทั้งปกติและพิเศษครั้งเดียว และซ่อนตัวเลือกเวลาราชการปกติในโมดอลพิเศษ (`FLOW_CHECKIN_01`, `FLOW-020`)
 - [[rule_soft_ui_dashboard_sweetalerts]] — Domain Rule: มาตรฐานการแจ้งเตือน SweetAlert2 สไตล์ Soft UI Dashboard (Creative Tim Tailwind) สำหรับ alert และ confirm (`FLOW_LAYOUT_01`)
 - [[rule_special_request_custom_gps_and_jitter]] — Domain Rule: ระบบสุ่มระยะ GPS ขาออกงานแบบค้นหาจนกว่าจะได้ค่า และการปักหมุดแผนที่ในคำขอลงเวลากรณีพิเศษ (`FLOW_GPS_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`)
+- [[rule_reports_hierarchical_org_filter]] — Domain Rule: ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับ ([สำนักงาน/กอง] > [ส่วน/ฝ่าย] > [กลุ่มงาน]) ในหน้ารายงานการลงเวลา (`FLOW_REPORTS_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

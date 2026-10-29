@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-28T11:07:07.830Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `61` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `442`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T03:17:24.465Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `62` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `448`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f748689cabbc814f` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8522d5e94fd54f77` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -46,7 +46,7 @@
 
 ## File: `assets/js/controllers/ApprovalsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `a7990e4a28af3a98` | **Total Lines:** `302` | **Imports:** `3` | **Exports:** `ApprovalsController`
+- **Hash:** `5469352515eabb9e` | **Total Lines:** `302` | **Imports:** `3` | **Exports:** `ApprovalsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -197,37 +197,42 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `c2abaa61e608accf` | **Total Lines:** `1059` | **Imports:** `7` | **Exports:** `ReportsController`
+- **Hash:** `7763f66500671e4f` | **Total Lines:** `1193` | **Imports:** `7` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L14 - L1050** | `export class ReportsController` | Class Definition (1037 lines) |
-| `ReportsController.constructor` | `public constructor` | **L15 - L26** | `() => any` | public constructor L15-L26 (12 lines) |
-| `ReportsController.init` | `public async method` | **L28 - L68** | `() => Promise<any>` | public async method L28-L68 (41 lines) |
-| `ReportsController.#getStatusColor` | `private method` | **L70 - L76** | `(statusKey) => any` | private method L70-L76 (7 lines) |
-| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L78 - L100** | `() => any` | private method L78-L100 (23 lines) |
-| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L102 - L111** | `() => any` | private method L102-L111 (10 lines) |
-| `ReportsController.loadReportData` | `public async method` | **L113 - L159** | `() => Promise<any>` | public async method L113-L159 (47 lines) |
-| `ReportsController.#populatePersonnelDropdown` | `private method` | **L161 - L170** | `() => any` | private method L161-L170 (10 lines) |
-| `ReportsController.#formatGpsCoordinates` | `private method` | **L172 - L180** | `(lat, lng) => any` | private method L172-L180 (9 lines) |
-| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L182 - L249** | `(forPrintPdf = false) => any` | private method L182-L249 (68 lines) |
-| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L251 - L379** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L251-L379 (129 lines) |
-| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L381 - L433** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L381-L433 (53 lines) |
-| `ReportsController.#buildSingleRowHtml` | `private method` | **L435 - L534** | `(rec, indexNo, forPrintPdf) => any` | private method L435-L534 (100 lines) |
-| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L543 - L746** | `(rowUid) => any` | private method L543-L746 (204 lines) |
-| `setupPhotoBox` | `arrow_fn` | **L611 - L654** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L611-L654 |
-| `setupGpsAndMap` | `arrow_fn` | **L693 - L723** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L693-L723 |
-| `ReportsController.#closeResumeModal` | `private method` | **L748 - L758** | `() => any` | private method L748-L758 (11 lines) |
-| `ReportsController.#openModal` | `private method` | **L760 - L792** | `(rec = null) => any` | private method L760-L792 (33 lines) |
-| `ReportsController.#closeModal` | `private method` | **L794 - L796** | `() => any` | private method L794-L796 (3 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L798 - L1009** | `() => any` | private method L798-L1009 (212 lines) |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1011 - L1049** | `() => Promise<any>` | private async method L1011-L1049 (39 lines) |
+| `ReportsController` | `class` | **L14 - L1184** | `export class ReportsController` | Class Definition (1171 lines) |
+| `ReportsController.constructor` | `public constructor` | **L15 - L29** | `() => any` | public constructor L15-L29 (15 lines) |
+| `ReportsController.init` | `public async method` | **L31 - L72** | `() => Promise<any>` | public async method L31-L72 (42 lines) |
+| `ReportsController.#initHierarchicalOrgFilter` | `private method` | **L74 - L107** | `() => any` | private method L74-L107 (34 lines) |
+| `ReportsController.#getStatusColor` | `private method` | **L109 - L115** | `(statusKey) => any` | private method L109-L115 (7 lines) |
+| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L117 - L140** | `() => any` | private method L117-L140 (24 lines) |
+| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L142 - L151** | `() => any` | private method L142-L151 (10 lines) |
+| `ReportsController.loadReportData` | `public async method` | **L153 - L200** | `() => Promise<any>` | public async method L153-L200 (48 lines) |
+| `ReportsController.#populatePersonnelDropdown` | `private method` | **L202 - L211** | `() => any` | private method L202-L211 (10 lines) |
+| `ReportsController.#populateHierarchicalOrgFilter` | `private method` | **L213 - L233** | `() => any` | private method L213-L233 (21 lines) |
+| `ReportsController.#updateDivisionOptions` | `private method` | **L235 - L260** | `() => any` | private method L235-L260 (26 lines) |
+| `ReportsController.#updateWorkGroupOptions` | `private method` | **L262 - L288** | `() => any` | private method L262-L288 (27 lines) |
+| `ReportsController.#getFilteredRecords` | `private method` | **L290 - L302** | `() => any` | private method L290-L302 (13 lines) |
+| `ReportsController.#formatGpsCoordinates` | `private method` | **L304 - L312** | `(lat, lng) => any` | private method L304-L312 (9 lines) |
+| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L314 - L382** | `(forPrintPdf = false) => any` | private method L314-L382 (69 lines) |
+| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L384 - L512** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L384-L512 (129 lines) |
+| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L514 - L566** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L514-L566 (53 lines) |
+| `ReportsController.#buildSingleRowHtml` | `private method` | **L568 - L667** | `(rec, indexNo, forPrintPdf) => any` | private method L568-L667 (100 lines) |
+| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L676 - L879** | `(rowUid) => any` | private method L676-L879 (204 lines) |
+| `setupPhotoBox` | `arrow_fn` | **L744 - L787** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L744-L787 |
+| `setupGpsAndMap` | `arrow_fn` | **L826 - L856** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L826-L856 |
+| `ReportsController.#closeResumeModal` | `private method` | **L881 - L891** | `() => any` | private method L881-L891 (11 lines) |
+| `ReportsController.#openModal` | `private method` | **L893 - L925** | `(rec = null) => any` | private method L893-L925 (33 lines) |
+| `ReportsController.#closeModal` | `private method` | **L927 - L929** | `() => any` | private method L927-L929 (3 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L931 - L1143** | `() => any` | private method L931-L1143 (213 lines) |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1145 - L1183** | `() => Promise<any>` | private async method L1145-L1183 (39 lines) |
 
 ---
 
 ## File: `assets/js/controllers/SettingsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `ddfd3aaf261e8ae2` | **Total Lines:** `1218` | **Imports:** `4` | **Exports:** `SettingsController`
+- **Hash:** `0bcad371715caad4` | **Total Lines:** `1218` | **Imports:** `4` | **Exports:** `SettingsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -315,7 +320,7 @@
 
 ## File: `assets/js/core/Config.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `7dc0d48ec1b6b745` | **Total Lines:** `90` | **Imports:** `0` | **Exports:** `Config`
+- **Hash:** `74577120253dbdad` | **Total Lines:** `90` | **Imports:** `0` | **Exports:** `Config`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -437,7 +442,7 @@
 
 ## File: `assets/js/models/SettingsModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `3de0abcc70a000d4` | **Total Lines:** `334` | **Imports:** `3` | **Exports:** `SettingsModel`
+- **Hash:** `8fca8f4f7488a830` | **Total Lines:** `334` | **Imports:** `3` | **Exports:** `SettingsModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -477,7 +482,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `27deb3909bfb8f53` | **Total Lines:** `753` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fadab753ac33f4e2` | **Total Lines:** `753` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -533,7 +538,7 @@
 
 ## File: `docs/manual/manual-admin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ee285637a7c64dd5` | **Total Lines:** `1128` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c1afe78930d9d6af` | **Total Lines:** `1128` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -547,7 +552,7 @@
 
 ## File: `docs/manual/manual-superadmin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `295c42df02537928` | **Total Lines:** `1192` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f14fe6505ec618f6` | **Total Lines:** `1192` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -561,7 +566,7 @@
 
 ## File: `docs/manual/manual-user.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c5e7fae3cfe64fb4` | **Total Lines:** `1310` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c8ec3533c171d719` | **Total Lines:** `1310` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -781,7 +786,7 @@
 
 ## File: `pipeline/PIPE-20261028-approvals-gps-location-column/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9abf8917dec71f6a` | **Total Lines:** `161` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `913c3951f520ab88` | **Total Lines:** `161` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -791,7 +796,7 @@
 
 ## File: `pipeline/PIPE-20261028-block-normal-hours-checkin/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `225dbb5d784dcfbc` | **Total Lines:** `75` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6e8a18ea5680078c` | **Total Lines:** `75` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -801,7 +806,7 @@
 
 ## File: `pipeline/PIPE-20261028-custom-gps-pin-and-jitter-search/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `910236c4df878727` | **Total Lines:** `88` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `810e5f874e8ffe60` | **Total Lines:** `88` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -811,7 +816,7 @@
 
 ## File: `pipeline/PIPE-20261028-direct-place-name-without-proximity-prefix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `55c6fb60cfeff297` | **Total Lines:** `105` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ca3dd536d14355d1` | **Total Lines:** `105` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -833,7 +838,7 @@
 
 ## File: `pipeline/PIPE-20261028-rename-special-request-button/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d5004d93c2cf0448` | **Total Lines:** `51` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fff085d68ac093ef` | **Total Lines:** `51` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -853,7 +858,7 @@
 
 ## File: `pipeline/PIPE-20261028-smart-place-search-2s-debounce/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `57ac1cbb2c6a3d2f` | **Total Lines:** `155` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c3fcf10e27d40aee` | **Total Lines:** `155` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -863,7 +868,7 @@
 
 ## File: `pipeline/PIPE-20261028-soft-ui-sweetalert/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6493887502466f46` | **Total Lines:** `66` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a6aa87e487ecbae1` | **Total Lines:** `66` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -873,7 +878,17 @@
 
 ## File: `pipeline/PIPE-20261028-special-modal-place-autocomplete/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bd37c507e5cee2d3` | **Total Lines:** `227` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `eac6a91bea2a8923` | **Total Lines:** `227` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
+
+---
+
+## File: `pipeline/PIPE-20261029-reports-hierarchical-org-filter/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `6cd6741f507d8855` | **Total Lines:** `150` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -883,25 +898,25 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `1e8b2c012c6750c4` | **Total Lines:** `405` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `40a5b70622973aec` | **Total Lines:** `439` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L18** | `<head>` | HTML DOM Section L3-L18 |
 | `<div#bmaSidebarContainer>` | `html_dom_section` | **L22 - L22** | `id="bmaSidebarContainer"` | HTML DOM Section L22-L22 |
 | `<div#bmaTopbarContainer>` | `html_dom_section` | **L26 - L26** | `id="bmaTopbarContainer"` | HTML DOM Section L26-L26 |
-| `<main>` | `html_dom_section` | **L28 - L151** | `<main>` | HTML DOM Section L28-L151 |
+| `<main>` | `html_dom_section` | **L28 - L185** | `<main>` | HTML DOM Section L28-L185 |
 | `<div#reportMobileShortcutContainer>` | `html_dom_section` | **L30 - L30** | `id="reportMobileShortcutContainer"` | HTML DOM Section L30-L30 |
-| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L142 - L142** | `id="statusTagsFilterContainer"` | HTML DOM Section L142-L142 |
-| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L149 - L149** | `id="reportTablesMasterContainer"` | HTML DOM Section L149-L149 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L153 - L153** | `id="bmaFooterContainer"` | HTML DOM Section L153-L153 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L403 - L403** | `<script>` | Bootstrap script L403-L403 |
+| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L176 - L176** | `id="statusTagsFilterContainer"` | HTML DOM Section L176-L176 |
+| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L183 - L183** | `id="reportTablesMasterContainer"` | HTML DOM Section L183-L183 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L187 - L187** | `id="bmaFooterContainer"` | HTML DOM Section L187-L187 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L437 - L437** | `<script>` | Bootstrap script L437-L437 |
 
 ---
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `316c92ec23c8af3e` | **Total Lines:** `634` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `eb1b36e7c51f3f20` | **Total Lines:** `634` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
