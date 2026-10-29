@@ -1,0 +1,17 @@
+{
+  "pipeline_id": "PIPE-20261029-hide-recorded-shifts",
+  "target_branch": "TimeSelect",
+  "target_files": [
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "line_range": "220-310, 430-685",
+      "target_symbols": [
+        "CheckinController.#isShiftAlreadyRecordedToday",
+        "CheckinController.#evaluateTimeWindowAndPopulateShifts",
+        "CheckinController.#updateStatusCardsAndMainButton"
+      ],
+      "action": "Hide recorded shifts from dropdown and disable checkin button when no shifts remain"
+    }
+  ]
+}
+

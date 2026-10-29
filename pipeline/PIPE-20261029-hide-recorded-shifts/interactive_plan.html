@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนงาน: ซ่อนช่วงเวลาที่ลงเวลาแล้ว &amp; ซ่อนช่วงเวลาราชการปกติเมื่อเปิดฟังก์ชันปิดรับเวลาปกติ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#00744B] flex items-center justify-center text-2xl font-bold shadow-inner">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900">แผนงาน: ซ่อนช่วงเวลาที่บันทึกแล้ว &amp; ซ่อนกะปกติเมื่อปิดรับเวลาปกติ</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Git Branch: <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">TimeSelect</span>
+                        &bull; Target: <span class="font-bold text-slate-700">CheckinController.js</span>
+                    </p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <i class="fa-solid fa-spinner fa-spin"></i> รอยืนยันแผนงาน (อัปเดตตามคำแนะนำ)
+                </span>
+            </div>
+        </div>
+
+        <!-- Logic & Business Rules -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-diagram-project text-purple-600"></i>
+                <h2 class="text-base font-bold text-slate-900">1. กฎการทำงาน (Business Logic &amp; Rules)</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                    <span class="font-bold text-emerald-900 block text-sm">กฎข้อที่ 1: กะที่บันทึกแล้วจะหายไป</span>
+                    <p class="text-emerald-800 leading-relaxed">
+                        เมื่อผู้ใช้เลือกลงเวลากะ A (เช่น เวลาราชการปกติ หรือ กะนอกเวลา) และบันทึกเวลาสำเร็จแล้ว กะ A จะหายไปจากตัวเลือก Dropdown ทันที ไม่ให้เลือกซ้ำในวันเดียวกัน
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
+                    <span class="font-bold text-purple-900 block text-sm">กฎข้อที่ 2: ปิดรับเวลาปกติ -> กะปกติหายไป</span>
+                    <p class="text-purple-800 leading-relaxed">
+                        <strong>(เพิ่มเติมตามที่ระบุ)</strong> หากเปิดฟังก์ชัน <em>"ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)"</em> ตัวเลือก <code>เวลาราชการปกติ (08:30 - 16:30)</code> จะหายไปจาก Dropdown ด้วยเช่นกัน
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2">
+                    <span class="font-bold text-amber-900 block text-sm">กฎข้อที่ 3: ปิดปุ่มเมื่อไม่มีกะเหลือ</span>
+                    <p class="text-amber-800 leading-relaxed">
+                        หากไม่มีช่วงเวลาที่สามารถลงเวลาได้เหลืออยู่เลย Dropdown จะแสดง <code>-- บันทึกลงเวลาครบทุกช่วงเวลาแล้ว --</code> และ<strong>ปิดปุ่มบันทึกลงเวลา (Disabled)</strong> ทันที
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Surgical Action Plan -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-code text-blue-600"></i>
+                <h2 class="text-base font-bold text-slate-900">2. รายละเอียดการแก้ไขใน CheckinController.js</h2>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">1. เมธอด <code>#isShiftAlreadyRecordedToday(shift)</code></span>
+                    <p class="text-slate-600 mt-1">
+                        เปรียบเทียบชื่อกะและเวลาเริ่ม-เลิกงานกับรายการใน <code>todayHistoryList</code> ของวันปัจจุบัน
+                    </p>
+                </div>
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">2. เมธอด <code>#evaluateTimeWindowAndPopulateShifts()</code></span>
+                    <ul class="list-disc list-inside text-slate-600 mt-1 space-y-1">
+                        <li>กรองกะที่ <code>#isShiftAlreadyRecordedToday(shift) === true</code> ออกจาก Dropdown</li>
+                        <li>หากเปิด <code>disable_normal_hours_checkin</code> ให้กรองกะ <code>เวลาราชการปกติ</code> ออกจาก Dropdown ด้วย</li>
+                        <li>หากไม่เหลือกะที่เลือกได้ ให้ตั้งค่า Dropdown เป็นว่าง และระบุว่าไม่มีกะเหลือ</li>
+                    </ul>
+                </div>
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-white">
+                    <span class="font-bold text-slate-800 block text-sm">3. เมธอด <code>#updateStatusCardsAndMainButton()</code></span>
+                    <p class="text-slate-600 mt-1">
+                        หากไม่มีกะที่สามารถลงเวลาได้เหลืออยู่ (และไม่ได้ค้างลงเวลาออกปกติ) ให้ Disable ปุ่มบันทึกเวลาหน้าหลัก พร้อมแสดง Notice แจ้งเตือนอย่างชัดเจน
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
