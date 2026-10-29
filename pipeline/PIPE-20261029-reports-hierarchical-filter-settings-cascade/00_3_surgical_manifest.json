@@ -1,0 +1,18 @@
+{
+  "taskId": "PIPE-20261029-reports-hierarchical-filter-settings-cascade",
+  "branch": "Report-Fillter",
+  "files": [
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "targetSymbols": [
+        "#initHierarchicalOrgFilter",
+        "#populateHierarchicalOrgFilter",
+        "#updateDivisionOptions",
+        "#updateWorkGroupOptions",
+        "#getFilteredRecords"
+      ],
+      "lines": "210-310"
+    }
+  ]
+}
+

@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T04:00:37.924Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `63` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `450`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-10-29T04:51:00.563Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `65` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `464`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -197,36 +197,36 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `7763f66500671e4f` | **Total Lines:** `1193` | **Imports:** `7` | **Exports:** `ReportsController`
+- **Hash:** `5570c1c6439778df` | **Total Lines:** `1218` | **Imports:** `7` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L14 - L1184** | `export class ReportsController` | Class Definition (1171 lines) |
+| `ReportsController` | `class` | **L14 - L1209** | `export class ReportsController` | Class Definition (1196 lines) |
 | `ReportsController.constructor` | `public constructor` | **L15 - L29** | `() => any` | public constructor L15-L29 (15 lines) |
 | `ReportsController.init` | `public async method` | **L31 - L72** | `() => Promise<any>` | public async method L31-L72 (42 lines) |
-| `ReportsController.#initHierarchicalOrgFilter` | `private method` | **L74 - L107** | `() => any` | private method L74-L107 (34 lines) |
-| `ReportsController.#getStatusColor` | `private method` | **L109 - L115** | `(statusKey) => any` | private method L109-L115 (7 lines) |
-| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L117 - L140** | `() => any` | private method L117-L140 (24 lines) |
-| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L142 - L151** | `() => any` | private method L142-L151 (10 lines) |
-| `ReportsController.loadReportData` | `public async method` | **L153 - L200** | `() => Promise<any>` | public async method L153-L200 (48 lines) |
-| `ReportsController.#populatePersonnelDropdown` | `private method` | **L202 - L211** | `() => any` | private method L202-L211 (10 lines) |
-| `ReportsController.#populateHierarchicalOrgFilter` | `private method` | **L213 - L233** | `() => any` | private method L213-L233 (21 lines) |
-| `ReportsController.#updateDivisionOptions` | `private method` | **L235 - L260** | `() => any` | private method L235-L260 (26 lines) |
-| `ReportsController.#updateWorkGroupOptions` | `private method` | **L262 - L288** | `() => any` | private method L262-L288 (27 lines) |
-| `ReportsController.#getFilteredRecords` | `private method` | **L290 - L302** | `() => any` | private method L290-L302 (13 lines) |
-| `ReportsController.#formatGpsCoordinates` | `private method` | **L304 - L312** | `(lat, lng) => any` | private method L304-L312 (9 lines) |
-| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L314 - L382** | `(forPrintPdf = false) => any` | private method L314-L382 (69 lines) |
-| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L384 - L512** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L384-L512 (129 lines) |
-| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L514 - L566** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L514-L566 (53 lines) |
-| `ReportsController.#buildSingleRowHtml` | `private method` | **L568 - L667** | `(rec, indexNo, forPrintPdf) => any` | private method L568-L667 (100 lines) |
-| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L676 - L879** | `(rowUid) => any` | private method L676-L879 (204 lines) |
-| `setupPhotoBox` | `arrow_fn` | **L744 - L787** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L744-L787 |
-| `setupGpsAndMap` | `arrow_fn` | **L826 - L856** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L826-L856 |
-| `ReportsController.#closeResumeModal` | `private method` | **L881 - L891** | `() => any` | private method L881-L891 (11 lines) |
-| `ReportsController.#openModal` | `private method` | **L893 - L925** | `(rec = null) => any` | private method L893-L925 (33 lines) |
-| `ReportsController.#closeModal` | `private method` | **L927 - L929** | `() => any` | private method L927-L929 (3 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L931 - L1143** | `() => any` | private method L931-L1143 (213 lines) |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1145 - L1183** | `() => Promise<any>` | private async method L1145-L1183 (39 lines) |
+| `ReportsController.#initHierarchicalOrgFilter` | `private method` | **L74 - L109** | `() => any` | private method L74-L109 (36 lines) |
+| `ReportsController.#getStatusColor` | `private method` | **L111 - L117** | `(statusKey) => any` | private method L111-L117 (7 lines) |
+| `ReportsController.#renderStatusTagFilterChips` | `private method` | **L119 - L142** | `() => any` | private method L119-L142 (24 lines) |
+| `ReportsController.#getFormattedReportDateSubtitle` | `private method` | **L144 - L153** | `() => any` | private method L144-L153 (10 lines) |
+| `ReportsController.loadReportData` | `public async method` | **L155 - L202** | `() => Promise<any>` | public async method L155-L202 (48 lines) |
+| `ReportsController.#populatePersonnelDropdown` | `private method` | **L204 - L213** | `() => any` | private method L204-L213 (10 lines) |
+| `ReportsController.#populateHierarchicalOrgFilter` | `private method` | **L215 - L238** | `() => any` | private method L215-L238 (24 lines) |
+| `ReportsController.#updateDivisionOptions` | `private method` | **L240 - L275** | `() => any` | private method L240-L275 (36 lines) |
+| `ReportsController.#updateWorkGroupOptions` | `private method` | **L277 - L313** | `() => any` | private method L277-L313 (37 lines) |
+| `ReportsController.#getFilteredRecords` | `private method` | **L315 - L327** | `() => any` | private method L315-L327 (13 lines) |
+| `ReportsController.#formatGpsCoordinates` | `private method` | **L329 - L337** | `(lat, lng) => any` | private method L329-L337 (9 lines) |
+| `ReportsController.#renderSeparateTablesBySelectedTags` | `private method` | **L339 - L407** | `(forPrintPdf = false) => any` | private method L339-L407 (69 lines) |
+| `ReportsController.#renderSingleStatusTableHtml` | `private method` | **L409 - L537** | `(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any` | private method L409-L537 (129 lines) |
+| `ReportsController.#buildGroupedRowsForTag` | `private method` | **L539 - L591** | `(tagRecords, groupHeaderColor, forPrintPdf) => any` | private method L539-L591 (53 lines) |
+| `ReportsController.#buildSingleRowHtml` | `private method` | **L593 - L692** | `(rec, indexNo, forPrintPdf) => any` | private method L593-L692 (100 lines) |
+| `ReportsController.#openResumeProfileForSpecificRow` | `private method` | **L701 - L904** | `(rowUid) => any` | private method L701-L904 (204 lines) |
+| `setupPhotoBox` | `arrow_fn` | **L769 - L812** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L769-L812 |
+| `setupGpsAndMap` | `arrow_fn` | **L851 - L881** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L851-L881 |
+| `ReportsController.#closeResumeModal` | `private method` | **L906 - L916** | `() => any` | private method L906-L916 (11 lines) |
+| `ReportsController.#openModal` | `private method` | **L918 - L950** | `(rec = null) => any` | private method L918-L950 (33 lines) |
+| `ReportsController.#closeModal` | `private method` | **L952 - L954** | `() => any` | private method L952-L954 (3 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L956 - L1168** | `() => any` | private method L956-L1168 (213 lines) |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1170 - L1208** | `() => Promise<any>` | private async method L1170-L1208 (39 lines) |
 
 ---
 
@@ -894,6 +894,38 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L11** | `<head>` | HTML DOM Section L3-L11 |
+
+---
+
+## File: `pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `44761f3703852108` | **Total Lines:** `138` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L11** | `<head>` | HTML DOM Section L3-L11 |
+
+---
+
+## File: `pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/test_qa_assertions.mjs`
+- **Layer:** Application Module
+- **Hash:** `063c9c10d29e6b55` | **Total Lines:** `483` | **Imports:** `6` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `MockElement` | `class` | **L80 - L102** | `class MockElement` | Class Definition (23 lines) |
+| `MockElement.constructor` | `public constructor` | **L81 - L88** | `(id) => any` | public constructor L81-L88 (8 lines) |
+| `MockElement.addEventListener` | `public method` | **L90 - L93** | `(event, fn) => any` | public method L90-L93 (4 lines) |
+| `MockElement.trigger` | `public method` | **L95 - L101** | `(event, eventObj = {}) => any` | public method L95-L101 (7 lines) |
+| `ReportsControllerSimulation` | `class` | **L114 - L276** | `class ReportsControllerSimulation` | Mock controller logic matching ReportsController implementation |
+| `ReportsControllerSimulation.constructor` | `public constructor` | **L115 - L128** | `(settings, personnel, records, role = 'SuperAdmin') => any` | public constructor L115-L128 (14 lines) |
+| `ReportsControllerSimulation.initHierarchicalOrgFilter` | `public method` | **L130 - L159** | `() => any` | public method L130-L159 (30 lines) |
+| `ReportsControllerSimulation.populateHierarchicalOrgFilter` | `public method` | **L161 - L182** | `() => any` | public method L161-L182 (22 lines) |
+| `ReportsControllerSimulation.updateDivisionOptions` | `public method` | **L184 - L215** | `() => any` | public method L184-L215 (32 lines) |
+| `ReportsControllerSimulation.updateWorkGroupOptions` | `public method` | **L217 - L249** | `() => any` | public method L217-L249 (33 lines) |
+| `ReportsControllerSimulation.getFilteredRecords` | `public method` | **L251 - L263** | `() => any` | public method L251-L263 (13 lines) |
+| `ReportsControllerSimulation.renderStatusTagFilterChips` | `public method` | **L265 - L271** | `() => any` | public method L265-L271 (7 lines) |
+| `ReportsControllerSimulation.renderTables` | `public method` | **L273 - L275** | `() => any` | public method L273-L275 (3 lines) |
 
 ---
 

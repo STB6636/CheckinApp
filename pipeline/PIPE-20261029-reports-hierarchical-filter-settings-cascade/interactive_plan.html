@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: Hierarchical Org Filter from Settings with Sequential Step-by-Step Selection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-700 p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-white/20 text-xs rounded-full font-bold uppercase tracking-wider mb-2">Enhancement & Architecture Plan</span>
+                    <h1 class="text-2xl font-black">ปรับปรุงระบบ Filter ลำดับชั้น อ้างอิงโครงสร้างจากตั้งค่าระบบ & เลือกไล่ลำดับชั้น</h1>
+                    <p class="text-blue-100 text-xs mt-1">PIPE-20261029-reports-hierarchical-filter-settings-cascade • Branch: <span class="font-mono bg-white/20 px-2 py-0.5 rounded">Report-Fillter</span></p>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-2xl">
+                    <i class="fa-solid fa-sitemap"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 space-y-6">
+
+            <!-- Core Requirements Card -->
+            <div class="p-5 bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-2xl border border-blue-200/80 space-y-3">
+                <div class="flex items-center gap-2 text-sm font-extrabold text-blue-900">
+                    <i class="fa-solid fa-circle-check text-blue-600"></i>
+                    <span>วัตถุประสงค์และข้อกำหนดสำคัญ (User Mandates):</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-700">
+                    <div class="p-3 bg-white rounded-xl border border-blue-100 shadow-xs space-y-1">
+                        <span class="font-bold text-blue-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-sliders text-[#0971CE]"></i>
+                            <span>1. อ้างอิงจากโครงสร้างในตั้งค่าระบบ (SettingsModel)</span>
+                        </span>
+                        <p class="text-slate-600">
+                            ดึงรายชื่อหน่วยงานจาก <code>this.settings.affiliations</code> โดยใช้ <code>SettingsModel.getUniqueBureaus()</code>, <code>SettingsModel.getUniqueDivisions()</code>, <code>SettingsModel.getUniqueGroups()</code> เพื่อให้ตรงตามผังโครงสร้างของระบบ 100%
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-xl border border-blue-100 shadow-xs space-y-1">
+                        <span class="font-bold text-indigo-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-arrow-down-short-wide text-indigo-600"></i>
+                            <span>2. เลือกไล่ลำดับชั้นเสมอ (Sequential Enforcement)</span>
+                        </span>
+                        <p class="text-slate-600">
+                            เริ่มต้น [ส่วน/ฝ่าย] และ [กลุ่มงาน] จะถูก <strong>Disabled (ปิดการเลือก)</strong> และมีค่าเป็น "แสดงทั้งหมด" จนกว่าจะเลือก [สำนักงาน/กอง] และ [ส่วน/ฝ่าย] ตามลำดับ
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Visualizer -->
+            <div class="space-y-3">
+                <h2 class="text-sm font-extrabold text-slate-700 flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-diagram-project text-[#0971CE]"></i>
+                    <span>ลำดับการทำงานของ Dropdown (Sequential Cascade Flow):</span>
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="p-4 rounded-xl border-2 border-emerald-500/50 bg-emerald-50/50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-emerald-800">ขั้นที่ 1: สำนักงาน/กอง</span>
+                            <span class="px-2 py-0.5 bg-emerald-600 text-white text-[10px] rounded-full font-bold">Enabled เสมอ</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            • ค่าเริ่มต้น: "แสดงทั้งหมด"<br>
+                            • ดึงข้อมูลจาก <code>SettingsModel.getUniqueBureaus()</code><br>
+                            • หากเลือก "แสดงทั้งหมด" -> ส่วน/ฝ่าย และ กลุ่มงาน จะเป็น Disabled
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border-2 border-blue-500/50 bg-blue-50/50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-blue-800">ขั้นที่ 2: ส่วน/ฝ่าย</span>
+                            <span class="px-2 py-0.5 bg-blue-600 text-white text-[10px] rounded-full font-bold">เปิดเมื่อเลือกกอง</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            • ปลดล็อกเมื่อเลือก สำนักงาน/กอง เจาะจง<br>
+                            • ดึงข้อมูลจาก <code>SettingsModel.getUniqueDivisions(settings, bureau)</code><br>
+                            • หากเลือก "แสดงทั้งหมด" -> กลุ่มงาน จะเป็น Disabled
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-xl border-2 border-purple-500/50 bg-purple-50/50 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-purple-800">ขั้นที่ 3: กลุ่มงาน</span>
+                            <span class="px-2 py-0.5 bg-purple-600 text-white text-[10px] rounded-full font-bold">เปิดเมื่อเลือกฝ่าย</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">
+                            • ปลดล็อกเมื่อเลือก ส่วน/ฝ่าย เจาะจง<br>
+                            • ดึงข้อมูลจาก <code>SettingsModel.getUniqueGroups(settings, bureau, division)</code><br>
+                            • กรองข้อมูลลงลึกถึงระดับกลุ่มงาน
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safeguards Checklist -->
+            <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-2">
+                <span class="font-bold flex items-center gap-2 text-sm text-amber-800">
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                    <span>ข้อควรระวังสำคัญ (Safeguards):</span>
+                </span>
+                <ul class="list-disc list-inside space-y-1 text-[11px] text-amber-800">
+                    <li><strong>ตารางแสดงผล & Layout:</strong> คอลัมน์พิกัด GPS แยก 2 ช่อง, การจัดกลุ่ม (Group By), Colspan และโครงสร้างตารางแสดงผลปกติ 100%</li>
+                    <li><strong>ปุ่ม TAG กรองสถานะ:</strong> กดเปิด/ปิดตารางได้ปกติ และตัวเลข Badge สะท้อนยอดตามขอบเขต Org ที่เลือก</li>
+                    <li><strong>คลิกแถวเปิดโปรไฟล์:</strong> <code>#modalPersonnelResumeProfile</code> ยังคงทำงานได้สมบูรณ์</li>
+                    <li><strong>Export Excel:</strong> ส่งออกตรงตามข้อมูลที่กรอง</li>
+                </ul>
+            </div>
+
+            <!-- SubAgent Delegation -->
+            <div class="p-4 bg-slate-100 rounded-xl text-xs space-y-2">
+                <span class="font-bold text-slate-700">การส่ง SubAgents ตามคำสั่งผู้ใช้งาน:</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-600">
+                    <div class="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <strong>SubAgent 1 (Implementer, Flash 3.8 High):</strong> ดำเนินการปรับปรุง <code>ReportsController.js</code> เชื่อมต่อ <code>SettingsModel</code> และระบบ Sequential Dropdown Locking
+                    </div>
+                    <div class="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <strong>SubAgent 2 (QA Auditor, Flash 3.8 High):</strong> ตรวจสอบเปรียบเทียบ diff กับ <code>main</code>, ตรวจสอบการ Disable/Enable ตามลำดับ และรัน Assertion Test
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+

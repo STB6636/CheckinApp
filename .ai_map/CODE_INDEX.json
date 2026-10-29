@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-29T04:00:37.924Z",
-  "totalFilesScanned": 63,
-  "totalSymbolsIndexed": 450,
+  "generatedAt": "2026-10-29T04:51:00.563Z",
+  "totalFilesScanned": 65,
+  "totalSymbolsIndexed": 464,
   "files": [
     {
       "filePath": "approvals.html",
@@ -1136,8 +1136,8 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "7763f66500671e4f",
-      "totalLines": 1193,
+      "fileHash": "5570c1c6439778df",
+      "totalLines": 1218,
       "importsCount": 7,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -1156,9 +1156,9 @@
           "name": "ReportsController",
           "kind": "class",
           "startLine": 14,
-          "endLine": 1184,
+          "endLine": 1209,
           "signature": "export class ReportsController",
-          "summary": "Class Definition (1171 lines)"
+          "summary": "Class Definition (1196 lines)"
         },
         {
           "name": "ReportsController.constructor",
@@ -1180,185 +1180,185 @@
           "name": "ReportsController.#initHierarchicalOrgFilter",
           "kind": "private method",
           "startLine": 74,
-          "endLine": 107,
+          "endLine": 109,
           "signature": "() => any",
-          "summary": "private method L74-L107 (34 lines)"
+          "summary": "private method L74-L109 (36 lines)"
         },
         {
           "name": "ReportsController.#getStatusColor",
           "kind": "private method",
-          "startLine": 109,
-          "endLine": 115,
+          "startLine": 111,
+          "endLine": 117,
           "signature": "(statusKey) => any",
-          "summary": "private method L109-L115 (7 lines)"
+          "summary": "private method L111-L117 (7 lines)"
         },
         {
           "name": "ReportsController.#renderStatusTagFilterChips",
           "kind": "private method",
-          "startLine": 117,
-          "endLine": 140,
+          "startLine": 119,
+          "endLine": 142,
           "signature": "() => any",
-          "summary": "private method L117-L140 (24 lines)"
+          "summary": "private method L119-L142 (24 lines)"
         },
         {
           "name": "ReportsController.#getFormattedReportDateSubtitle",
           "kind": "private method",
-          "startLine": 142,
-          "endLine": 151,
+          "startLine": 144,
+          "endLine": 153,
           "signature": "() => any",
-          "summary": "private method L142-L151 (10 lines)"
+          "summary": "private method L144-L153 (10 lines)"
         },
         {
           "name": "ReportsController.loadReportData",
           "kind": "public async method",
-          "startLine": 153,
-          "endLine": 200,
+          "startLine": 155,
+          "endLine": 202,
           "signature": "() => Promise<any>",
-          "summary": "public async method L153-L200 (48 lines)"
+          "summary": "public async method L155-L202 (48 lines)"
         },
         {
           "name": "ReportsController.#populatePersonnelDropdown",
           "kind": "private method",
-          "startLine": 202,
-          "endLine": 211,
+          "startLine": 204,
+          "endLine": 213,
           "signature": "() => any",
-          "summary": "private method L202-L211 (10 lines)"
+          "summary": "private method L204-L213 (10 lines)"
         },
         {
           "name": "ReportsController.#populateHierarchicalOrgFilter",
           "kind": "private method",
-          "startLine": 213,
-          "endLine": 233,
+          "startLine": 215,
+          "endLine": 238,
           "signature": "() => any",
-          "summary": "private method L213-L233 (21 lines)"
+          "summary": "private method L215-L238 (24 lines)"
         },
         {
           "name": "ReportsController.#updateDivisionOptions",
           "kind": "private method",
-          "startLine": 235,
-          "endLine": 260,
+          "startLine": 240,
+          "endLine": 275,
           "signature": "() => any",
-          "summary": "private method L235-L260 (26 lines)"
+          "summary": "private method L240-L275 (36 lines)"
         },
         {
           "name": "ReportsController.#updateWorkGroupOptions",
           "kind": "private method",
-          "startLine": 262,
-          "endLine": 288,
+          "startLine": 277,
+          "endLine": 313,
           "signature": "() => any",
-          "summary": "private method L262-L288 (27 lines)"
+          "summary": "private method L277-L313 (37 lines)"
         },
         {
           "name": "ReportsController.#getFilteredRecords",
           "kind": "private method",
-          "startLine": 290,
-          "endLine": 302,
+          "startLine": 315,
+          "endLine": 327,
           "signature": "() => any",
-          "summary": "private method L290-L302 (13 lines)"
+          "summary": "private method L315-L327 (13 lines)"
         },
         {
           "name": "ReportsController.#formatGpsCoordinates",
           "kind": "private method",
-          "startLine": 304,
-          "endLine": 312,
+          "startLine": 329,
+          "endLine": 337,
           "signature": "(lat, lng) => any",
-          "summary": "private method L304-L312 (9 lines)"
+          "summary": "private method L329-L337 (9 lines)"
         },
         {
           "name": "ReportsController.#renderSeparateTablesBySelectedTags",
           "kind": "private method",
-          "startLine": 314,
-          "endLine": 382,
+          "startLine": 339,
+          "endLine": 407,
           "signature": "(forPrintPdf = false) => any",
-          "summary": "private method L314-L382 (69 lines)"
+          "summary": "private method L339-L407 (69 lines)"
         },
         {
           "name": "ReportsController.#renderSingleStatusTableHtml",
           "kind": "private method",
-          "startLine": 384,
-          "endLine": 512,
+          "startLine": 409,
+          "endLine": 537,
           "signature": "(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L384-L512 (129 lines)"
+          "summary": "private method L409-L537 (129 lines)"
         },
         {
           "name": "ReportsController.#buildGroupedRowsForTag",
           "kind": "private method",
-          "startLine": 514,
-          "endLine": 566,
+          "startLine": 539,
+          "endLine": 591,
           "signature": "(tagRecords, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L514-L566 (53 lines)"
+          "summary": "private method L539-L591 (53 lines)"
         },
         {
           "name": "ReportsController.#buildSingleRowHtml",
           "kind": "private method",
-          "startLine": 568,
-          "endLine": 667,
+          "startLine": 593,
+          "endLine": 692,
           "signature": "(rec, indexNo, forPrintPdf) => any",
-          "summary": "private method L568-L667 (100 lines)"
+          "summary": "private method L593-L692 (100 lines)"
         },
         {
           "name": "ReportsController.#openResumeProfileForSpecificRow",
           "kind": "private method",
-          "startLine": 676,
-          "endLine": 879,
+          "startLine": 701,
+          "endLine": 904,
           "signature": "(rowUid) => any",
-          "summary": "private method L676-L879 (204 lines)"
+          "summary": "private method L701-L904 (204 lines)"
         },
         {
           "name": "setupPhotoBox",
           "kind": "arrow_fn",
-          "startLine": 744,
-          "endLine": 787,
+          "startLine": 769,
+          "endLine": 812,
           "signature": "(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred",
-          "summary": "Arrow Function L744-L787"
+          "summary": "Arrow Function L769-L812"
         },
         {
           "name": "setupGpsAndMap",
           "kind": "arrow_fn",
-          "startLine": 826,
-          "endLine": 856,
+          "startLine": 851,
+          "endLine": 881,
           "signature": "(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred",
-          "summary": "Arrow Function L826-L856"
+          "summary": "Arrow Function L851-L881"
         },
         {
           "name": "ReportsController.#closeResumeModal",
           "kind": "private method",
-          "startLine": 881,
-          "endLine": 891,
+          "startLine": 906,
+          "endLine": 916,
           "signature": "() => any",
-          "summary": "private method L881-L891 (11 lines)"
+          "summary": "private method L906-L916 (11 lines)"
         },
         {
           "name": "ReportsController.#openModal",
           "kind": "private method",
-          "startLine": 893,
-          "endLine": 925,
+          "startLine": 918,
+          "endLine": 950,
           "signature": "(rec = null) => any",
-          "summary": "private method L893-L925 (33 lines)"
+          "summary": "private method L918-L950 (33 lines)"
         },
         {
           "name": "ReportsController.#closeModal",
           "kind": "private method",
-          "startLine": 927,
-          "endLine": 929,
+          "startLine": 952,
+          "endLine": 954,
           "signature": "() => any",
-          "summary": "private method L927-L929 (3 lines)"
+          "summary": "private method L952-L954 (3 lines)"
         },
         {
           "name": "ReportsController.#bindEvents",
           "kind": "private method",
-          "startLine": 931,
-          "endLine": 1143,
+          "startLine": 956,
+          "endLine": 1168,
           "signature": "() => any",
-          "summary": "private method L931-L1143 (213 lines)"
+          "summary": "private method L956-L1168 (213 lines)"
         },
         {
           "name": "ReportsController.#handleSaveReportRecord",
           "kind": "private async method",
-          "startLine": 1145,
-          "endLine": 1183,
+          "startLine": 1170,
+          "endLine": 1208,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1145-L1183 (39 lines)"
+          "summary": "private async method L1170-L1208 (39 lines)"
         }
       ]
     },
@@ -3930,6 +3930,147 @@
           "endLine": 11,
           "signature": "<head>",
           "summary": "HTML DOM Section L3-L11"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "44761f3703852108",
+      "totalLines": 138,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 11,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L11"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261029-reports-hierarchical-filter-settings-cascade/test_qa_assertions.mjs",
+      "layer": "Application Module",
+      "fileHash": "063c9c10d29e6b55",
+      "totalLines": 483,
+      "importsCount": 6,
+      "importsPreview": [
+        "import assert from 'node:assert';",
+        "import fs from 'node:fs';",
+        "import path from 'node:path';",
+        "import { Config } from '../../assets/js/core/Config.js';",
+        "import { UIHelpers } from '../../assets/js/core/UIHelpers.js';",
+        "import { SettingsModel } from '../../assets/js/models/SettingsModel.js';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "MockElement",
+          "kind": "class",
+          "startLine": 80,
+          "endLine": 102,
+          "signature": "class MockElement",
+          "summary": "Class Definition (23 lines)"
+        },
+        {
+          "name": "MockElement.constructor",
+          "kind": "public constructor",
+          "startLine": 81,
+          "endLine": 88,
+          "signature": "(id) => any",
+          "summary": "public constructor L81-L88 (8 lines)"
+        },
+        {
+          "name": "MockElement.addEventListener",
+          "kind": "public method",
+          "startLine": 90,
+          "endLine": 93,
+          "signature": "(event, fn) => any",
+          "summary": "public method L90-L93 (4 lines)"
+        },
+        {
+          "name": "MockElement.trigger",
+          "kind": "public method",
+          "startLine": 95,
+          "endLine": 101,
+          "signature": "(event, eventObj = {}) => any",
+          "summary": "public method L95-L101 (7 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation",
+          "kind": "class",
+          "startLine": 114,
+          "endLine": 276,
+          "signature": "class ReportsControllerSimulation",
+          "summary": "Mock controller logic matching ReportsController implementation"
+        },
+        {
+          "name": "ReportsControllerSimulation.constructor",
+          "kind": "public constructor",
+          "startLine": 115,
+          "endLine": 128,
+          "signature": "(settings, personnel, records, role = 'SuperAdmin') => any",
+          "summary": "public constructor L115-L128 (14 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.initHierarchicalOrgFilter",
+          "kind": "public method",
+          "startLine": 130,
+          "endLine": 159,
+          "signature": "() => any",
+          "summary": "public method L130-L159 (30 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.populateHierarchicalOrgFilter",
+          "kind": "public method",
+          "startLine": 161,
+          "endLine": 182,
+          "signature": "() => any",
+          "summary": "public method L161-L182 (22 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.updateDivisionOptions",
+          "kind": "public method",
+          "startLine": 184,
+          "endLine": 215,
+          "signature": "() => any",
+          "summary": "public method L184-L215 (32 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.updateWorkGroupOptions",
+          "kind": "public method",
+          "startLine": 217,
+          "endLine": 249,
+          "signature": "() => any",
+          "summary": "public method L217-L249 (33 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.getFilteredRecords",
+          "kind": "public method",
+          "startLine": 251,
+          "endLine": 263,
+          "signature": "() => any",
+          "summary": "public method L251-L263 (13 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.renderStatusTagFilterChips",
+          "kind": "public method",
+          "startLine": 265,
+          "endLine": 271,
+          "signature": "() => any",
+          "summary": "public method L265-L271 (7 lines)"
+        },
+        {
+          "name": "ReportsControllerSimulation.renderTables",
+          "kind": "public method",
+          "startLine": 273,
+          "endLine": 275,
+          "signature": "() => any",
+          "summary": "public method L273-L275 (3 lines)"
         }
       ]
     },

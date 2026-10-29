@@ -104,6 +104,8 @@ export class ReportsController {
             this.#renderStatusTagFilterChips();
             this.#renderSeparateTablesBySelectedTags(false);
         });
+
+        this.#updateDivisionOptions();
     }
 
     #getStatusColor(statusKey) {
@@ -214,12 +216,15 @@ export class ReportsController {
         const bureauSelect = document.getElementById('selectFilterBureau');
         if (!bureauSelect) return;
 
+        const primaryBureaus = SettingsModel.getUniqueBureaus(this.settings);
         const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
-        const bureaus = [...new Set(
-            combinedSources
-                .map(item => (item.bureau || '').trim())
-                .filter(Boolean)
-        )].sort((a, b) => a.localeCompare(b, 'th'));
+        const legacyBureaus = combinedSources
+            .map(item => (item.bureau || '').trim())
+            .filter(Boolean);
+
+        const bureaus = [...new Set([...primaryBureaus, ...legacyBureaus])]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b, 'th'));
 
         if (this.selectedBureauFilter !== 'all' && !bureaus.includes(this.selectedBureauFilter)) {
             this.selectedBureauFilter = 'all';
@@ -236,25 +241,35 @@ export class ReportsController {
         const divisionSelect = document.getElementById('selectFilterDivision');
         if (!divisionSelect) return;
 
-        const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
-        let sources = combinedSources;
-        if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
-            sources = sources.filter(item => (item.bureau || '').trim() === this.selectedBureauFilter.trim());
-        }
-
-        const divisions = [...new Set(
-            sources
-                .map(item => (item.division || '').trim())
-                .filter(Boolean)
-        )].sort((a, b) => a.localeCompare(b, 'th'));
-
-        if (this.selectedDivisionFilter !== 'all' && !divisions.includes(this.selectedDivisionFilter)) {
+        if (this.selectedBureauFilter === 'all') {
+            divisionSelect.disabled = true;
+            divisionSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            divisionSelect.value = 'all';
             this.selectedDivisionFilter = 'all';
-        }
+        } else {
+            divisionSelect.disabled = false;
+            divisionSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
 
-        divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
-            divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
-        divisionSelect.value = this.selectedDivisionFilter;
+            const primaryDivisions = SettingsModel.getUniqueDivisions(this.settings, this.selectedBureauFilter);
+            const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
+            const matchingSources = combinedSources.filter(item => (item.bureau || '').trim() === this.selectedBureauFilter.trim());
+            const legacyDivisions = matchingSources
+                .map(item => (item.division || '').trim())
+                .filter(Boolean);
+
+            const divisions = [...new Set([...primaryDivisions, ...legacyDivisions])]
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedDivisionFilter !== 'all' && !divisions.includes(this.selectedDivisionFilter)) {
+                this.selectedDivisionFilter = 'all';
+            }
+
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
+            divisionSelect.value = this.selectedDivisionFilter;
+        }
 
         this.#updateWorkGroupOptions();
     }
@@ -263,28 +278,38 @@ export class ReportsController {
         const workGroupSelect = document.getElementById('selectFilterWorkGroup');
         if (!workGroupSelect) return;
 
-        const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
-        let sources = combinedSources;
-        if (this.selectedBureauFilter && this.selectedBureauFilter !== 'all') {
-            sources = sources.filter(item => (item.bureau || '').trim() === this.selectedBureauFilter.trim());
-        }
-        if (this.selectedDivisionFilter && this.selectedDivisionFilter !== 'all') {
-            sources = sources.filter(item => (item.division || '').trim() === this.selectedDivisionFilter.trim());
-        }
-
-        const workGroups = [...new Set(
-            sources
-                .map(item => (item.work_group || '').trim())
-                .filter(Boolean)
-        )].sort((a, b) => a.localeCompare(b, 'th'));
-
-        if (this.selectedWorkGroupFilter !== 'all' && !workGroups.includes(this.selectedWorkGroupFilter)) {
+        if (this.selectedBureauFilter === 'all' || this.selectedDivisionFilter === 'all') {
+            workGroupSelect.disabled = true;
+            workGroupSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            workGroupSelect.value = 'all';
             this.selectedWorkGroupFilter = 'all';
-        }
+        } else {
+            workGroupSelect.disabled = false;
+            workGroupSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
 
-        workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
-            workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
-        workGroupSelect.value = this.selectedWorkGroupFilter;
+            const primaryGroups = SettingsModel.getUniqueGroups(this.settings, this.selectedBureauFilter, this.selectedDivisionFilter);
+            const combinedSources = [...(this.allPersonnel || []), ...(this.records || [])];
+            const matchingSources = combinedSources.filter(item =>
+                (item.bureau || '').trim() === this.selectedBureauFilter.trim() &&
+                (item.division || '').trim() === this.selectedDivisionFilter.trim()
+            );
+            const legacyGroups = matchingSources
+                .map(item => (item.work_group || item.group || '').trim())
+                .filter(Boolean);
+
+            const workGroups = [...new Set([...primaryGroups, ...legacyGroups])]
+                .filter(Boolean)
+                .sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedWorkGroupFilter !== 'all' && !workGroups.includes(this.selectedWorkGroupFilter)) {
+                this.selectedWorkGroupFilter = 'all';
+            }
+
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
+            workGroupSelect.value = this.selectedWorkGroupFilter;
+        }
     }
 
     #getFilteredRecords() {
