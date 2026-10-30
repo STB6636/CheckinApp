@@ -255,9 +255,7 @@ export class DashboardController {
         tbody.innerHTML = pagedRecords.map((rec, idx) => {
             const color = colors[rec.status_category] || rec.row_color || '#007B3E';
             const runningNo = startIndex + idx + 1;
-            const cleanTitle = (rec.position_title || '').trim();
-            const cleanLevel = (rec.position_level || '').replace(/^ระดับ\s*/, '').trim();
-            const mergedPosition = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || (rec.position_full || '').replace(/\s*ระดับ\s*/g, '').trim() || '-');
+            const mergedPosition = UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type, rec.position_full);
 
             return `
                 <tr>

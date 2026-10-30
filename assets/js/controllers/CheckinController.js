@@ -425,7 +425,8 @@ export class CheckinController {
         setElText('userRoleBadge', this.currentUser.role);
 
         if (p) {
-            setElText('userPositionText', `${p.position_title} ${p.position_level ? 'ระดับ' + p.position_level : ''} (${p.position_type || '-'})`);
+            const formattedPos = UIHelpers.formatPosition(p.position_title, p.position_level, p.position_type);
+            setElText('userPositionText', `${formattedPos} (${p.position_type || '-'})`);
             setElText('userAffiliationText', `${p.organization} • ${p.bureau} • ${p.division} ${p.work_group ? '• ' + p.work_group : ''}`);
         } else {
             setElText('userPositionText', `รหัสผู้ใช้งาน: ${this.currentUser.username}`);

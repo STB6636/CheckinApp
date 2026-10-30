@@ -1481,11 +1481,7 @@ export class AttendanceModel {
             position_type: person.position_type,
             position_title: person.position_title,
             position_level: person.position_level,
-            position_full: (() => {
-                const cleanTitle = (person.position_title || '').trim();
-                const cleanLevel = (person.position_level || '').replace(/^ระดับ\s*/, '').trim();
-                return cleanTitle ? `${cleanTitle}${cleanLevel}` : '-';
-            })(),
+            position_full: UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type),
             organization: person.organization,
             bureau: person.bureau,
             division: person.division,

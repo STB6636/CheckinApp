@@ -201,6 +201,56 @@ export class UIHelpers {
         return `${hh}:${mm}`;
     }
 
+    /**
+     * จัดรูปแบบการแสดงผลชื่อตำแหน่งตามกฎ BMA
+     * 1. หากระดับเป็น "ไม่มี", "ระดับไม่มี", "-", หรือว่างเปล่า => ไม่แสดงระดับ
+     * 2. หากประเภทตำแหน่งเป็น "ประเภทผู้บริหาร" (มีคำว่า "ผู้บริหาร") => ไม่แสดงระดับ
+     * 3. หากประเภทตำแหน่งเป็น "ลูกจ้างประจำ" หรือระดับกลุ่ม [ส 1-4, บ 1-4, ตัวเลข] => เว้นวรรค 1 ช่อง
+     * 4. หากเป็นข้าราชการสามัญมีระดับปกติ => แสดงติดกัน
+     * @param {string} title - ตำแหน่งในสายงาน
+     * @param {string} level - ระดับตำแหน่ง
+     * @param {string} positionType - ประเภทตำแหน่ง
+     * @param {string} fullFallback - ข้อความ fallback สำรอง
+     * @returns {string}
+     */
+    static formatPosition(title = '', level = '', positionType = '', fullFallback = '') {
+        const cleanTitle = String(title || '').trim();
+        const rawLevel = String(level || '').replace(/^ระดับ\s*/, '').trim();
+        const cleanType = String(positionType || '').trim();
+
+        const isNoneLevel = !rawLevel || rawLevel === 'ไม่มี' || rawLevel === 'ระดับไม่มี' || rawLevel === '-';
+        const isExecutive = cleanType.includes('ผู้บริหาร') ||
+            cleanType.includes('อำนวยการ') ||
+            /^ผู้อำนวยการ/i.test(cleanTitle) ||
+            /^หัวหน้ากลุ่มงาน/i.test(cleanTitle) ||
+            /^หัวหน้าฝ่าย/i.test(cleanTitle);
+        if (isNoneLevel || isExecutive) {
+            if (cleanTitle) return cleanTitle;
+            if (fullFallback) {
+                let clean = String(fullFallback).trim();
+                clean = clean.replace(/\s*ระดับ\s*ไม่มี$/i, '').replace(/ไม่มี$/i, '').replace(/\s*ระดับ\s*/g, '').trim();
+                return clean || '-';
+            }
+            return '-';
+        }
+
+        const isPermanentEmployee = cleanType.includes('ลูกจ้างประจำ') || cleanType.includes('ลูกจ้าง');
+        const isEmployeeLevelPattern = /^[สบ]\s*\.?\s*\d/i.test(rawLevel) || /^\d/.test(rawLevel);
+        const needsSpace = isPermanentEmployee || isEmployeeLevelPattern;
+
+        if (cleanTitle && rawLevel) {
+            return `${cleanTitle}${needsSpace ? ' ' : ''}${rawLevel}`;
+        }
+        if (cleanTitle) return cleanTitle;
+        if (rawLevel) return rawLevel;
+        if (fullFallback) {
+            let clean = String(fullFallback).trim();
+            clean = clean.replace(/\s*ระดับ\s*ไม่มี$/i, '').replace(/ไม่มี$/i, '').replace(/\s*ระดับ\s*/g, '').trim();
+            return clean || '-';
+        }
+        return '-';
+    }
+
     static capturePortrait3x4FromVideo(videoEl, canvasEl) {
         const targetWidth = 480;
         const targetHeight = 640;

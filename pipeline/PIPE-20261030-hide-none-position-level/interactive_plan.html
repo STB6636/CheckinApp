@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนการปรับปรุงการแสดงผลตำแหน่งและระดับ (Branch: nonLevel v3.0)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-950 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+                <i class="fa-solid fa-id-card-clip"></i>
+            </div>
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm mb-3">
+                        <i class="fa-solid fa-code"></i> Pipeline: PIPE-20261030-hide-none-position-level
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black">แผนการปรับปรุงการแสดงผลคอลัมน์ตำแหน่ง และหัวฟอร์มโปรไฟล์ (v3.0)</h1>
+                    <p class="text-xs sm:text-sm text-emerald-100 mt-1 max-w-2xl leading-relaxed">
+                        1) ซ่อนระดับเมื่อเป็น <b>"ไม่มี"</b> หรือ <b>"ประเภทผู้บริหาร"</b><br>
+                        2) เว้นวรรค 1 ช่องสำหรับ <b>"ลูกจ้างประจำ"</b> หรือระดับกลุ่ม <b>[ส 1-4, บ 1-4, ตัวเลข]</b> เช่น <i>"พนักงานเทศกิจ ส 2"</i><br>
+                        3) แสดงติดกันสำหรับข้าราชการสามัญที่มีระดับปกติ เช่น <i>"นักจัดการงานทั่วไปปฏิบัติการ"</i>
+                    </p>
+                </div>
+                <div class="flex flex-col sm:items-end gap-1.5 shrink-0">
+                    <span class="bg-emerald-500/25 px-3 py-1.5 rounded-lg border border-emerald-400/50 text-xs font-mono text-emerald-200 font-bold shadow-sm">
+                        <i class="fa-solid fa-code-branch mr-1 text-emerald-300"></i> Branch: nonLevel
+                    </span>
+                    <span class="text-[11px] text-emerald-200/80">ตรวจทานเทียบการทำงานกับ Branch main</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Live Interactive Simulation Playground -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="font-extrabold text-base text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-flask-vial text-emerald-600"></i>
+                        <span>แบบจำลองการจัดรูปแบบตำแหน่ง (Live Formatting Simulation v3.0)</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">ทดสอบการจัดรูปแบบตำแหน่งตามกฎ BMA ผ่านฟังก์ชันส่วนกลาง <code>UIHelpers.formatPosition(title, level, type)</code></p>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="loadPreset('emp_s2')" class="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold border border-amber-200 transition">
+                        ลูกจ้างประจำ: พนักงานเทศกิจ (ส 2)
+                    </button>
+                    <button type="button" onclick="loadPreset('emp_b1')" class="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold border border-amber-200 transition">
+                        ลูกจ้างประจำ: พนักงานขับรถยนต์ (บ 1)
+                    </button>
+                    <button type="button" onclick="loadPreset('exec_director')" class="text-[11px] px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold border border-purple-200 transition">
+                        ผู้บริหาร: ผอ.ส่วน (อำนวยการสูง)
+                    </button>
+                    <button type="button" onclick="loadPreset('driver_none')" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold border border-emerald-200 transition">
+                        ไม่มีระดับ: พนักงานขับรถยนต์ (ไม่มี)
+                    </button>
+                    <button type="button" onclick="loadPreset('officer_op')" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold border border-slate-300 transition">
+                        ข้าราชการสามัญ: นักจัดการงานทั่วไป (ปฏิบัติการ)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Inputs & Output -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ประเภทตำแหน่ง (position_type)</label>
+                    <input type="text" id="simType" value="ลูกจ้างประจำ" oninput="runSim()" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ตำแหน่งในสายงาน (position_title)</label>
+                    <input type="text" id="simTitle" value="พนักงานเทศกิจ" oninput="runSim()" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">ระดับตำแหน่ง (position_level)</label>
+                    <input type="text" id="simLevel" value="ส 2" oninput="runSim()" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium">
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">ผลลัพธ์การแสดงผล (Output Result)</span>
+                    <div id="simOutput" class="text-base font-extrabold text-emerald-700 mt-1">
+                        พนักงานเทศกิจ ส 2
+                    </div>
+                    <span id="simBadge" class="text-[10px] text-amber-700 mt-1 font-semibold">
+                        <i class="fa-solid fa-arrows-left-right"></i> เว้นวรรค 1 ช่อง (ลูกจ้างประจำ / กลุ่ม ส, บ, ตัวเลข)
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rule Matrix Overview -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-table-list text-emerald-600"></i>
+                <span>ตารางสรุปกฎการแสดงผลตำแหน่ง 3 รูปแบบ (Rule Matrix)</span>
+            </h3>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 font-bold">
+                            <th class="py-2.5 px-3">รูปแบบ</th>
+                            <th class="py-2.5 px-3">เงื่อนไขการตรวจจับ</th>
+                            <th class="py-2.5 px-3">ตัวอย่างข้อมูลนำเข้า</th>
+                            <th class="py-2.5 px-3">ผลลัพธ์ที่แสดงผล</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-600">
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-bold text-rose-600">1. ซ่อนระดับ (ไม่มีระดับ)</td>
+                            <td class="py-2.5 px-3">ระดับ = "ไม่มี" หรือ ว่างเปล่า</td>
+                            <td class="py-2.5 px-3 font-mono">ตำแหน่ง: พนักงานขับรถยนต์, ระดับ: ไม่มี</td>
+                            <td class="py-2.5 px-3 font-bold text-slate-800">พนักงานขับรถยนต์</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-bold text-purple-600">2. ซ่อนระดับ (ผู้บริหาร)</td>
+                            <td class="py-2.5 px-3">ประเภทตำแหน่ง = "ประเภทผู้บริหาร"</td>
+                            <td class="py-2.5 px-3 font-mono">ผอ.ส่วน, ระดับ: อำนวยการระดับสูง</td>
+                            <td class="py-2.5 px-3 font-bold text-slate-800">ผู้อำนวยการส่วน</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 bg-amber-50/40">
+                            <td class="py-2.5 px-3 font-bold text-amber-700">3. เว้นวรรค 1 ช่อง</td>
+                            <td class="py-2.5 px-3">ประเภท "ลูกจ้างประจำ" หรือระดับกลุ่ม ส 1-4, บ 1-4, หรือตัวเลข</td>
+                            <td class="py-2.5 px-3 font-mono">ลูกจ้างประจำ, พนักงานเทศกิจ, ระดับ: ส 2</td>
+                            <td class="py-2.5 px-3 font-bold text-emerald-700">พนักงานเทศกิจ ส 2</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2.5 px-3 font-bold text-blue-600">4. ติดกัน ไม่เว้นวรรค</td>
+                            <td class="py-2.5 px-3">ข้าราชการสามัญมีระดับปกติ (ปฏิบัติการ, ชำนาญการ ฯลฯ)</td>
+                            <td class="py-2.5 px-3 font-mono">นักจัดการงานทั่วไป, ระดับ: ปฏิบัติการ</td>
+                            <td class="py-2.5 px-3 font-bold text-slate-800">นักจัดการงานทั่วไปปฏิบัติการ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scope & Target Views Matrix -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-emerald-600"></i>
+                <span>จุดที่ได้รับการปรับปรุงแก้ไข (All 5 Target Points + Audit)</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                
+                <!-- Target 1: Dashboard -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-pie text-emerald-600"></i> 1. หน้าภาพรวม (Dashboard Overview)
+                        </span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">DashboardController.js:260</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-[11px]">
+                        ตาราง <i>"รายการสถานะการลงเวลาปฏิบัติราชการรายบุคคล"</i> ในคอลัมน์ <b>"ตำแหน่ง"</b> เรียกใช้ <code>UIHelpers.formatPosition</code> แสดงผลตรงตามกฎทั้ง 3 รูปแบบ
+                    </p>
+                </div>
+
+                <!-- Target 2: Reports -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-invoice text-emerald-600"></i> 2. หน้ารายงานการลงเวลา (Reports)
+                        </span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">AttendanceModel:1486 &amp; ReportsController</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-[11px]">
+                        ตารางรายงานการลงเวลา, รายงานส่งออก PDF, และรายงาน Excel คอลัมน์ <b>"ตำแหน่ง"</b> (รวมถึง <code>position_full</code>) ได้รับการจัดรูปแบบอย่างสมบูรณ์
+                    </p>
+                </div>
+
+                <!-- Target 3: Approvals -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-stamp text-emerald-600"></i> 3. หน้าอนุมัติลงเวลากรณีพิเศษ (Approvals)
+                        </span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">ApprovalsController.js:140</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-[11px]">
+                        ตารางคำขออนุมัติลงเวลากรณีพิเศษ คอลัมน์ <b>"ตำแหน่ง"</b> แสดงชื่อตำแหน่งถูกต้องตามคำขอ
+                    </p>
+                </div>
+
+                <!-- Target 4: Personnel -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-users text-emerald-600"></i> 4. หน้าจัดการข้อมูลบุคลากร (Personnel)
+                        </span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">PersonnelController.js:199</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-[11px]">
+                        ตารางทะเบียนข้อมูลบุคลากรในสังกัด คอลัมน์ <b>"ตำแหน่ง"</b> แสดงผลชื่อตำแหน่งเรียบร้อย ไม่ผูก "ไม่มี" และเว้นวรรคกลุ่ม ส 1-4, บ 1-4 อย่างถูกต้อง
+                    </p>
+                </div>
+
+                <!-- Target 5: Profile Form Modal Headlines -->
+                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2 md:col-span-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-id-badge text-emerald-600"></i> 5. ฟอร์มโปรไฟล์ (Profile Resume Modals ในหน้าบุคลากร และหน้ารายงาน)
+                        </span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono">perResumePositionHeadline &amp; resumePositionHeadline</span>
+                    </div>
+                    <p class="text-slate-600 leading-relaxed text-[11px]">
+                        หัวฟอร์มโปรไฟล์ทั้งใน Modal ประวัติบุคลากร และ Modal ประวัติการลงเวลา ส่วนที่แสดงชื่อตำแหน่งจะจัดรูปแบบตามกฎ BMA อย่างสมบูรณ์
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lean SubAgent Execution Plan -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-slate-600"></i>
+                <span>โครงสร้าง SubAgents ตามคำสั่ง (Lean Architecture - ประหยัด Token สูงสุด)</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                
+                <!-- SubAgent 1 -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <b class="text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-file-pen text-emerald-600"></i> SubAgent 1: Surgical Implementer
+                        </b>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">Flash 3.8 High</span>
+                    </div>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">
+                        เข้าอ่านและแก้ไขเฉพาะไฟล์ตาม Line Range:
+                    </p>
+                    <ul class="list-disc list-inside text-[11px] text-slate-500 space-y-1">
+                        <li>เพิ่ม <code>UIHelpers.formatPosition(title, level, positionType, fullFallback)</code> ใน <code>UIHelpers.js</code></li>
+                        <li>ปรับปรุงจุดแสดงผลตำแหน่งในทั้ง 4 หน้า + ฟอร์มโปรไฟล์</li>
+                        <li>รัน <code>node ./.ai_map/vscode_ast_mapper.mjs</code> อัปเดตแผนที่ AST</li>
+                    </ul>
+                </div>
+
+                <!-- SubAgent 2 -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <b class="text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-blue-600"></i> SubAgent 2: QA Auditor &amp; Branch Diff
+                        </b>
+                        <span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-bold">Flash 3.8 High</span>
+                    </div>
+                    <p class="text-slate-600 text-[11px] leading-relaxed">
+                        ตรวจทานงานกับแผนและเปรียบเทียบการทำงานกับ Branch main:
+                    </p>
+                    <ul class="list-disc list-inside text-[11px] text-slate-500 space-y-1">
+                        <li>รันชุดทดสอบ Node.js ตรวจสอบการฟอร์แมตตำแหน่งครอบคลุมทุกเคส (ส 1-4, บ 1-4, ผู้บริหาร, ไม่มีระดับ, ข้าราชการมีระดับ)</li>
+                        <li>ตรวจสอบ <code>git diff main</code> ป้องกันการแก้ไขนอกขอบเขต</li>
+                        <li>จัดทำรายงานข้อสรุปความสมบูรณ์ส่งกลับให้ Orchestrator</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval Callout -->
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-emerald-900">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-xl shrink-0"></i>
+                <div>
+                    <b>แผนงานฉบับปรับปรุง (v3.0) พร้อมแล้ว:</b> เมื่อท่านตรวจสอบแผนงานเรียบร้อยแล้ว กรุณากดปุ่ม <b>Proceed</b> เพื่อส่ง SubAgents เข้าดำเนินการตามแผนทันทีครับ
+                </div>
+            </div>
+            <span class="font-bold text-emerald-800 bg-white px-3.5 py-1.5 rounded-lg border border-emerald-200 text-center shrink-0">
+                พร้อมเริ่มงานทันที
+            </span>
+        </div>
+
+    </div>
+
+    <script>
+        function runSim() {
+            const title = (document.getElementById('simTitle').value || '').trim();
+            const level = (document.getElementById('simLevel').value || '').replace(/^ระดับ\s*/, '').trim();
+            const type = (document.getElementById('simType').value || '').trim();
+            const outputEl = document.getElementById('simOutput');
+            const badgeEl = document.getElementById('simBadge');
+
+            const isNoneLevel = !level || level === 'ไม่มี' || level === 'ระดับไม่มี' || level === '-';
+            const isExecutive = type.includes('ผู้บริหาร');
+            const isPermanentEmployee = type.includes('ลูกจ้างประจำ') || type.includes('ลูกจ้าง');
+            const isEmployeeLevelPattern = /^[สบ]\s*\.?\s*\d/i.test(level) || /^\d/.test(level);
+            const needsSpace = isPermanentEmployee || isEmployeeLevelPattern;
+
+            let res = '';
+
+            if (isNoneLevel || isExecutive) {
+                res = title || '-';
+            } else if (title && level) {
+                res = `${title}${needsSpace ? ' ' : ''}${level}`;
+            } else if (title) {
+                res = title;
+            } else if (level) {
+                res = level;
+            } else {
+                res = '-';
+            }
+
+            outputEl.textContent = res;
+            if (isExecutive) {
+                badgeEl.className = 'text-[10px] text-purple-600 mt-1 font-semibold';
+                badgeEl.innerHTML = '<i class="fa-solid fa-crown"></i> ซ่อนระดับเพราะเป็น "ประเภทผู้บริหาร"';
+            } else if (isNoneLevel && title) {
+                badgeEl.className = 'text-[10px] text-emerald-600 mt-1 font-semibold';
+                badgeEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> ซ่อนระดับ "ไม่มี" สำเร็จ';
+            } else if (needsSpace) {
+                badgeEl.className = 'text-[10px] text-amber-700 mt-1 font-semibold';
+                badgeEl.innerHTML = '<i class="fa-solid fa-arrows-left-right"></i> เว้นวรรค 1 ช่อง (ลูกจ้างประจำ / กลุ่ม ส, บ, ตัวเลข)';
+            } else {
+                badgeEl.className = 'text-[10px] text-blue-600 mt-1 font-semibold';
+                badgeEl.innerHTML = '<i class="fa-solid fa-circle-info"></i> แสดงผลติดกันสำหรับข้าราชการสามัญมีระดับ';
+            }
+        }
+
+        function loadPreset(key) {
+            if (key === 'emp_s2') {
+                document.getElementById('simType').value = 'ลูกจ้างประจำ';
+                document.getElementById('simTitle').value = 'พนักงานเทศกิจ';
+                document.getElementById('simLevel').value = 'ส 2';
+            } else if (key === 'emp_b1') {
+                document.getElementById('simType').value = 'ลูกจ้างประจำ';
+                document.getElementById('simTitle').value = 'พนักงานขับรถยนต์';
+                document.getElementById('simLevel').value = 'บ 1';
+            } else if (key === 'exec_director') {
+                document.getElementById('simType').value = 'ประเภทผู้บริหาร';
+                document.getElementById('simTitle').value = 'ผู้อำนวยการส่วน';
+                document.getElementById('simLevel').value = 'อำนวยการระดับสูง';
+            } else if (key === 'driver_none') {
+                document.getElementById('simType').value = 'ลูกจ้างชั่วคราว';
+                document.getElementById('simTitle').value = 'พนักงานขับรถยนต์';
+                document.getElementById('simLevel').value = 'ไม่มี';
+            } else if (key === 'officer_op') {
+                document.getElementById('simType').value = 'ข้าราชการกรุงเทพมหานครสามัญ';
+                document.getElementById('simTitle').value = 'นักจัดการงานทั่วไป';
+                document.getElementById('simLevel').value = 'ปฏิบัติการ';
+            }
+            runSim();
+        }
+
+        // Run initial simulation
+        runSim();
+    </script>
+</body>
+</html>
