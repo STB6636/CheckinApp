@@ -135,9 +135,7 @@ export class ApprovalsController {
     #buildRequestRowHtml(req, indexNo) {
         const p = req.personnel || {};
         const fullName = p.first_name ? `${p.prefix}${p.first_name} ${p.last_name}` : 'ไม่ระบุชื่อบุคลากร';
-        const cleanTitle = (p.position_title || '').trim();
-        const cleanLevel = (p.position_level || '').replace(/^ระดับ\s*/, '').trim();
-        const posFull = (cleanTitle && cleanLevel) ? `${cleanTitle}${cleanLevel}` : (cleanTitle || cleanLevel || (p.position_full || '').replace(/\s*ระดับ\s*/g, '').trim() || '-');
+        const posFull = UIHelpers.formatPosition(p.position_title, p.position_level, p.position_type, p.position_full);
         const timeRange = `${req.check_in_time ? req.check_in_time.slice(0, 5) : '-'} - ${req.check_out_time ? req.check_out_time.slice(0, 5) : '-'} น.`;
         const isPending = req.approval_status === 'pending';
         const isChecked = this.selectedIds.has(req.id) ? 'checked' : '';

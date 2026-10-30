@@ -196,7 +196,7 @@ export class PersonnelController {
 
     #buildPersonRowHtml(person, indexNo) {
         const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
-        const posFull = `${person.position_title || ''}${person.position_level || ''}`;
+        const posFull = UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type);
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
 
         // แสดง '-' หากกลุ่มงานเป็น 'ไม่มี' หรือว่างเปล่า
@@ -564,7 +564,7 @@ export class PersonnelController {
         if (!modal || !person) return;
 
         const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
-        const posFull = `${person.position_title || ''}${person.position_level || ''}`;
+        const posFull = UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type);
         const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
 
         const elFullName = document.getElementById('perResumeFullName');

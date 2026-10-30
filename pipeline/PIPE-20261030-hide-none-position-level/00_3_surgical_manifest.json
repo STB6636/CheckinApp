@@ -1,0 +1,65 @@
+{
+  "pipeline_id": "PIPE-20261030-hide-none-position-level",
+  "target_branch": "nonLevel",
+  "base_branch": "TimeSelect",
+  "target_files": [
+    {
+      "path": "assets/js/core/UIHelpers.js",
+      "line_range": "180-215",
+      "target_symbols": [
+        "UIHelpers.formatPosition"
+      ],
+      "action": "Add central static formatPosition method handling 'ไม่มี', 'ประเภทผู้บริหาร' (omit level), and numeric levels"
+    },
+    {
+      "path": "assets/js/controllers/DashboardController.js",
+      "line_range": "255-265",
+      "target_symbols": [
+        "DashboardController.#renderTable"
+      ],
+      "action": "Use UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type, rec.position_full)"
+    },
+    {
+      "path": "assets/js/models/AttendanceModel.js",
+      "line_range": "1480-1490",
+      "target_symbols": [
+        "AttendanceModel.#formatReportRow"
+      ],
+      "action": "Use UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type) for position_full in attendance records"
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "line_range": "595-605, 715-735, 820-826",
+      "target_symbols": [
+        "ReportsController.#buildSingleRowHtml",
+        "ReportsController.#openResumeProfileForSpecificRow"
+      ],
+      "action": "Ensure position display and profile modal headlines use UIHelpers.formatPosition with positionType"
+    },
+    {
+      "path": "assets/js/controllers/ApprovalsController.js",
+      "line_range": "135-145",
+      "target_symbols": [
+        "ApprovalsController.#buildRequestRowHtml"
+      ],
+      "action": "Use UIHelpers.formatPosition(p.position_title, p.position_level, p.position_type, p.position_full)"
+    },
+    {
+      "path": "assets/js/controllers/PersonnelController.js",
+      "line_range": "195-205, 565-585",
+      "target_symbols": [
+        "PersonnelController.#buildPersonRowHtml",
+        "PersonnelController.#openPersonnelResumeModal"
+      ],
+      "action": "Use UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type) for table and modal profile headline"
+    },
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "line_range": "425-432",
+      "target_symbols": [
+        "CheckinController.#renderUserAndSettingsInfo"
+      ],
+      "action": "Format userPositionText cleanly without showing 'ระดับไม่มี' or 'ระดับ' for executive roles"
+    }
+  ]
+}

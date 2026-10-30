@@ -594,7 +594,7 @@ export class ReportsController {
         if (!rec) return '';
 
         const showGps = Boolean(this.settings?.require_gps);
-        const posDisplay = rec.position_full || '-';
+        const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
         const remarkDisplay = rec.remark || '-';
         const fullName = rec.full_name || '-';
         const rowUid = rec.row_uid || '';
@@ -713,11 +713,12 @@ ${this.canManageRecords ? `
             roleBadge.className = 'hidden';
         }
 
-        const cleanTitle = (person.position_title || rec.position_title || '').trim();
-        const cleanLevel = (person.position_level || rec.position_level || '').replace(/^ระดับ\s*/, '').trim();
-        const mergedPosition = (cleanTitle && cleanLevel)
-            ? `${cleanTitle}${cleanLevel}`
-            : (cleanTitle || cleanLevel || rec.position_full || '-');
+        const mergedPosition = UIHelpers.formatPosition(
+            person.position_title || rec.position_title,
+            person.position_level || rec.position_level,
+            person.position_type || rec.position_type,
+            rec.position_full
+        );
 
         const division = (rec.division || person.division || '').trim();
         const workGroup = (rec.work_group || person.work_group || '').trim();
