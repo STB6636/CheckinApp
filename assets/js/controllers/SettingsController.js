@@ -162,6 +162,7 @@ export class SettingsController {
         this.#renderShifts();
         this.#renderPositions();
         this.#renderAffiliations();
+        this.#renderOfficialLocations();
     }
 
     #updateColorPreviewBadges() {
@@ -386,6 +387,221 @@ export class SettingsController {
                 </td>
             </tr>
         `).join('');
+    }
+
+    #renderOfficialLocations() {
+        const tbody = document.getElementById('officialLocationsTableBody');
+        if (!tbody) return;
+        const locations = this.settings.official_locations || [];
+
+        if (locations.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-8 text-slate-400 dark:text-slate-500">
+                        <i class="fa-solid fa-map-location-dot text-2xl mb-2 block"></i>
+                        ยังไม่มีรายการสถานที่ราชการ กรุณากดปุ่ม "+ เพิ่มสถานที่ราชการ" เพื่อเริ่มต้น
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = locations.map((loc, idx) => {
+            const lat = Number(loc.latitude).toFixed(6);
+            const lng = Number(loc.longitude).toFixed(6);
+            const radius = Number(loc.radius_meters || 150);
+            const isActive = loc.is_active !== false;
+            const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+            return `
+                <tr>
+                    <td class="text-center font-semibold">${idx + 1}</td>
+                    <td class="text-center">${this.#buildSortButtonsHtml('official_locations', idx, locations.length)}</td>
+                    <td>
+                        <div class="font-bold bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-building text-[#00744B]"></i>
+                            <span>${UIHelpers.escapeHtml(loc.name || '-')}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2 font-mono text-xs">
+                            <span class="text-slate-700 dark:text-slate-300">${lat}, ${lng}</span>
+                            <a href="${mapLink}" target="_blank" rel="noopener" class="text-sky-600 hover:text-sky-700 text-[11px] inline-flex items-center gap-1" title="ดูบน Google Maps">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-300 border border-emerald-300/40">
+                            ${radius.toLocaleString()} ม.
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        ${isActive
+                            ? '<span class="bma-badge bma-badge-success text-[11px] font-bold">เปิดใช้งาน</span>'
+                            : '<span class="bma-badge bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400 text-[11px] font-bold">ปิดใช้งาน</span>'
+                        }
+                    </td>
+                    <td class="text-center space-x-1 whitespace-nowrap">
+                        <button type="button" data-action="edit-official-location" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button type="button" data-action="delete-official-location" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    #openOfficialLocationModal(editIndex = null) {
+        const isEdit = editIndex !== null;
+        const locations = this.settings.official_locations || [];
+        const currentLoc = isEdit ? locations[editIndex] : null;
+
+        const title = isEdit ? 'แก้ไขสถานที่ราชการ' : '+ เพิ่มสถานที่ราชการ';
+        const defaultName = currentLoc?.name || '';
+        const defaultLat = currentLoc?.latitude ?? 13.756331;
+        const defaultLng = currentLoc?.longitude ?? 100.501765;
+        const defaultRadius = currentLoc?.radius_meters ?? 150;
+        const defaultActive = currentLoc?.is_active !== false;
+
+        const bodyHtml = `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">ชื่อสถานที่ราชการ *</label>
+                    <input type="text" id="modalLocName" class="bma-input" placeholder="เช่น สำนักเทศกิจ หรือ สำนักงานตรวจและบังคับการ" value="${UIHelpers.escapeHtml(defaultName)}" required>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">พิกัดละติจูด (Latitude) *</label>
+                        <input type="number" step="any" id="modalLocLat" class="bma-input font-mono" placeholder="13.756331" value="${defaultLat}" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">พิกัดลองจิจูด (Longitude) *</label>
+                        <input type="number" step="any" id="modalLocLng" class="bma-input font-mono" placeholder="100.501765" value="${defaultLng}" required>
+                    </div>
+                </div>
+
+                <!-- ปุ่มช่วยเหลือดึงพิกัด GPS -->
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <button type="button" id="btnModalLocGetGps" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition border border-sky-300/40 cursor-pointer">
+                        <i class="fa-solid fa-location-crosshairs text-sky-600"></i>
+                        <span>ดึงพิกัด GPS ปัจจุบัน</span>
+                    </button>
+                    <a id="btnModalLocViewMap" href="https://www.google.com/maps?q=${defaultLat},${defaultLng}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition border border-slate-300/40 no-underline cursor-pointer">
+                        <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
+                        <span>ดูตำแหน่งบน Google Maps</span>
+                    </a>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">รัศมีที่อนุญาตให้ลงเวลาได้ (เมตร) *</label>
+                    <div class="flex items-center gap-3">
+                        <input type="number" min="10" max="5000" id="modalLocRadius" class="bma-input font-mono w-40" value="${defaultRadius}" required>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">เมตร (ค่าแนะนำ: 100 - 200 เมตร)</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold bma-text-main">สถานะเปิดใช้งานสถานที่นี้</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400">หากปิดใช้งาน ผู้ใช้จะไม่สามารถใช้สถานที่นี้ในการตรวจเช็ค Geofence ได้</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="modalLocIsActive" class="sr-only peer" ${defaultActive ? 'checked' : ''}>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                    </label>
+                </div>
+            </div>
+        `;
+
+        this.#openModal(title, bodyHtml, async () => {
+            const name = document.getElementById('modalLocName')?.value.trim();
+            const lat = parseFloat(document.getElementById('modalLocLat')?.value);
+            const lng = parseFloat(document.getElementById('modalLocLng')?.value);
+            const radius = parseInt(document.getElementById('modalLocRadius')?.value, 10);
+            const isActive = document.getElementById('modalLocIsActive')?.checked;
+
+            if (!name) {
+                await UIHelpers.alert('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อสถานที่ราชการ', 'warning');
+                return;
+            }
+            if (isNaN(lat) || isNaN(lng)) {
+                await UIHelpers.alert('พิกัดไม่ถูกต้อง', 'กรุณาระบุพิกัดละติจูดและลองจิจูดให้ถูกต้อง', 'warning');
+                return;
+            }
+
+            const locationItem = {
+                id: currentLoc?.id || ('LOC-' + String(Date.now()).slice(-6)),
+                name,
+                latitude: lat,
+                longitude: lng,
+                radius_meters: isNaN(radius) ? 150 : radius,
+                is_active: Boolean(isActive),
+                updated_at: new Date().toISOString()
+            };
+
+            if (!Array.isArray(this.settings.official_locations)) {
+                this.settings.official_locations = [];
+            }
+
+            if (isEdit) {
+                this.settings.official_locations[editIndex] = locationItem;
+            } else {
+                this.settings.official_locations.push(locationItem);
+            }
+
+            await this.#persistSettings(true);
+        });
+
+        // Event: ดึงพิกัด GPS ปัจจุบัน
+        const btnGetGps = document.getElementById('btnModalLocGetGps');
+        if (btnGetGps) {
+            btnGetGps.addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    UIHelpers.alert('ไม่รองรับ GPS', 'เบราว์เซอร์ไม่รองรับ Geolocation', 'warning');
+                    return;
+                }
+                btnGetGps.disabled = true;
+                btnGetGps.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังดึงพิกัด...';
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const curLat = pos.coords.latitude;
+                        const curLng = pos.coords.longitude;
+                        const latInput = document.getElementById('modalLocLat');
+                        const lngInput = document.getElementById('modalLocLng');
+                        if (latInput) latInput.value = curLat.toFixed(6);
+                        if (lngInput) lngInput.value = curLng.toFixed(6);
+                        const mapLink = document.getElementById('btnModalLocViewMap');
+                        if (mapLink) mapLink.href = `https://www.google.com/maps?q=${curLat},${curLng}`;
+                        btnGetGps.disabled = false;
+                        btnGetGps.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> ดึงพิกัดสำเร็จ';
+                    },
+                    (err) => {
+                        console.error('Geolocation error:', err);
+                        btnGetGps.disabled = false;
+                        btnGetGps.innerHTML = '<i class="fa-solid fa-location-crosshairs text-sky-600"></i> ดึงพิกัด GPS ปัจจุบัน';
+                        UIHelpers.alert('ไม่สามารถดึงพิกัดได้', err.message || 'กรุณาอนุญาตการเข้าถึงตำแหน่งที่ตั้ง', 'warning');
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            });
+        }
+
+        // Live update Google Maps link when inputs change
+        const latInput = document.getElementById('modalLocLat');
+        const lngInput = document.getElementById('modalLocLng');
+        const updateMapLink = () => {
+            const mapLink = document.getElementById('btnModalLocViewMap');
+            if (mapLink && latInput && lngInput) {
+                mapLink.href = `https://www.google.com/maps?q=${latInput.value},${lngInput.value}`;
+            }
+        };
+        if (latInput) latInput.addEventListener('input', updateMapLink);
+        if (lngInput) lngInput.addEventListener('input', updateMapLink);
     }
 
     #collectMainAndColorFieldsIntoSettings() {
@@ -681,6 +897,10 @@ export class SettingsController {
             this.#openShiftModal();
         });
 
+        document.getElementById('btnAddOfficialLocation')?.addEventListener('click', () => {
+            this.#openOfficialLocationModal();
+        });
+
         document.getElementById('btnAddPosStep1Type')?.addEventListener('click', () => this.#openAddPositionStep1Modal());
         document.getElementById('btnAddPosStep2Title')?.addEventListener('click', () => this.#openAddPositionStep2Modal());
         document.getElementById('btnAddPosStep3Level')?.addEventListener('click', () => this.#openAddPositionStep3Modal());
@@ -759,6 +979,14 @@ export class SettingsController {
                 const aff = this.settings.affiliations[idx];
                 if (await UIHelpers.confirm('ยืนยันการลบรายการสังกัด', `ต้องการลบ "${aff.bureau || aff.organization} > ${aff.division || '-'} > ${aff.group || '-'}" ใช่หรือไม่?`, 'ลบรายการ')) {
                     this.settings.affiliations.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
+            } else if (action === 'edit-official-location') {
+                this.#openOfficialLocationModal(idx);
+            } else if (action === 'delete-official-location') {
+                const loc = (this.settings.official_locations || [])[idx];
+                if (await UIHelpers.confirm('ยืนยันการลบสถานที่ราชการ', `ต้องการลบ "${loc?.name || 'สถานที่ราชการ'}" ใช่หรือไม่?\n(หากลบ บุคลากรจะไม่สามารถใช้สถานที่นี้ในการตรวจสอบ Geofence ได้)`, 'ลบรายการ')) {
+                    this.settings.official_locations.splice(idx, 1);
                     await this.#persistSettings(true);
                 }
             }

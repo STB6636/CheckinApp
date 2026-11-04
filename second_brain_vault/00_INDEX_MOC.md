@@ -2,12 +2,12 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
+last_updated_phase: "PIPE-20261104-loca-v2-onsite-offsite-nextstep"
 ---
 
-# 🧠 Second Brain — Map of Content (v3.0)
+# 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
 
-> อ่านไฟล์นี้เป็นอันดับแรกเสมอ (`agent_07_second_brain` / `RETRIEVE`) แล้วติดตาม `[[Wiki-links]]` ไปยังโน้ตที่เกี่ยวข้อง
+> อ่านไฟล์นี้เป็นอันดับแรกเสมอ (`Orchestrator` / `RETRIEVE`) แล้วติดตาม `[[Wiki-links]]` ไปยังโน้ตที่เกี่ยวข้อง
 > ทุกครั้งที่สร้าง/อัปเดตโน้ต (`INGEST_AND_LINK`) ต้องเพิ่มลิงก์ในหมวดที่ถูกต้องด้านล่าง และเชื่อมโยงกับ `Flow ID` ใน `.ai_map/00_PROCESS_FLOW_MAP.md`
 
 ## 01 — Architecture Decisions (ADR)
@@ -15,6 +15,7 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[adr_002_mobile_checkin_sticky_drawer]] — ADR-002: สถาปัตยกรรมหน้าลงเวลามือถือแบบ Zero-Scroll ด้วย Sticky Bottom Bar, Two-Tier Banner และ Hamburger History Drawer (Flow 1, 2, 4)
 - [[adr_003_double_layer_rbac_hierarchy]] — ADR-003: สถาปัตยกรรม Double-Layer RBAC 3 ระดับ (SuperAdmin, Admin กอง, Admin ฝ่าย) ใน AuthService.js และ ReportsController.js (`FLOW_AUTH_01`, `FLOW_REPORTS_01`, `FLOW_USERS_01`)
 - [[adr_004_checkin_viewport_lock_and_drawer]] — ADR-004: สถาปัตยกรรม Off-canvas Slide Drawer และ Zero-Scroll Viewport Lock บน checkin.html พร้อมการรักษา DOM IDs 98 จุด (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
+- [[adr_005_lean_2_subagent_ai_workflow]] — ADR-005: สถาปัตยกรรม Lean 2-SubAgent + 1-Orchestrator AI Workflow (v3.5) เพื่อลดขั้นตอนและประหยัดโทเคน (`subagent_01_implementer` + `subagent_02_qa_auditor`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
@@ -29,11 +30,10 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[rule_special_request_custom_gps_and_jitter]] — Domain Rule: ระบบสุ่มระยะ GPS ขาออกงานแบบค้นหาจนกว่าจะได้ค่า และการปักหมุดแผนที่ในคำขอลงเวลากรณีพิเศษ (`FLOW_GPS_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`)
 - [[rule_reports_hierarchical_org_filter]] — Domain Rule: ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับ ([สำนักงาน/กอง] > [ส่วน/ฝ่าย] > [กลุ่มงาน]) ในหน้ารายงานการลงเวลา (`FLOW_REPORTS_01`)
 - [[rule_users_hierarchical_org_filter_and_grouping]] — Domain Rule: ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับและมุมมองจัดกลุ่ม 2 รูปแบบในหน้าจัดการบัญชีผู้ใช้งาน (`FLOW_USERS_01`, `FLOW_SETTINGS_01`)
-
 - [[rule_early_shift_realtime_filter]] — Domain Rule: ระบบอนุญาตให้เริ่มเลือกทำงานก่อนเวลาเริ่มงานได้ (Early Shift Real-time Filter Window) พร้อมการตั้งค่านาทีล่วงหน้า (FLOW_SETTINGS_01, FLOW_CHECKIN_01)
-
 - [[rule_hide_recorded_shifts_and_disable_btn]] — Domain Rule: ซ่อนช่วงเวลาที่ลงเวลาแล้ว และปิดปุ่มบันทึกเมื่อไม่มีตัวเลือกช่วงเวลา (FLOW_CHECKIN_01, FLOW_SETTINGS_01)
 - [[rule_format_position_and_hide_non_level]] — Domain Rule: การจัดรูปแบบแสดงผลตำแหน่งและระดับ (ซ่อน 'ไม่มี', ซ่อนระดับผู้บริหาร, และเว้นวรรค 1 ช่องลูกจ้างประจำ) (`FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_USERS_01`, `FLOW_CHECKIN_01`)
+- [[rule_loca_v2_onsite_offsite_nextstep_and_staging_schema]] — Domain Rule: ระบบลงเวลา [ในสถานที่/นอกสถานที่] รัศมีหลายสถานที่, UI รูปแบบ Next Step 2 ขั้นตอน, ตัวกรองสังกัดหน้าบุคลากร และการแยก Schema `staging` (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
@@ -46,13 +46,13 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 
 ## Codebase Map (`.ai_map/`)
 - สารบัญกระบวนการทำงานและ Call Chain: `.ai_map/00_PROCESS_FLOW_MAP.md`
-- สารบัญไฟล์และฟังก์ชันพร้อมเลขบรรทัด (30 ไฟล์ / 367 สัญลักษณ์): `.ai_map/01_FILE_FUNCTION_INDEX.md`
+- สารบัญไฟล์และฟังก์ชันพร้อมเลขบรรทัด (77 ไฟล์ / 554 สัญลักษณ์): `.ai_map/01_FILE_FUNCTION_INDEX.md`
 - ดัชนีโครงสร้างโค้ด JSON: `.ai_map/CODE_INDEX.json`
 - สคริปต์สแกนอัตโนมัติ (0 AI Tokens): `.ai_map/vscode_ast_mapper.mjs`
 
 ## Skill Registry (`ai_skills_registry/`)
 - ดัชนีสกิล: `ai_skills_registry/SKILL_CATALOG.json`
-- [[vscode_surgical_codebase_mapping]] — VS Code Surgical Context & Automated AST Codebase Mapping (`v3.0.0`)
+- [[vscode_surgical_codebase_mapping]] — VS Code Surgical Context & Automated AST Codebase Mapping (`v3.5.0`)
 - [[client_side_hierarchical_rbac]] — Client-Side 3-Tier Granular Permission Gate Pattern (`v1.0.0`)
 - [[offcanvas_drawer_race_free_tab_mounting]] — Zero-Scroll Viewport-Locked & Race-Free Mobile Slide Drawer Pattern (`v1.0.0`)
 - [[civil_servant_position_level_formatter]] — Civil Service Position & Level String Normalizer Pattern (`v1.0.0`)

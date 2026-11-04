@@ -6,6 +6,7 @@
 export class Config {
     static SUPABASE_URL = 'https://yicatrqogmcncfpqdyra.supabase.co';
     static SUPABASE_ANON_KEY = 'sb_publishable_eF5hCLSrg74gre5UXNtVgw_UsPRbPZl';
+    static SUPABASE_SCHEMA = 'staging';
     static PROJECT_REF = 'yicatrqogmcncfpqdyra';
     static GITHUB_REPO = 'https://github.com/STB6636/CheckinApp.git';
 
@@ -14,6 +15,7 @@ export class Config {
         THEME_MODE: 'bma_checkin_theme_mode_v2_7',
         CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_7',
         WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7',
+        OFFICIAL_LOCATIONS: 'bma_official_locations_v2',
         REMEMBER_ME: 'bma_remember_me',
         REMEMBER_USERNAME: 'bma_remember_username'
     };
@@ -63,12 +65,18 @@ export class Config {
             { organization: 'กรุงเทพมหานคร', bureau: 'สำนักเทศกิจ', division: 'กองตรวจและปฏิบัติการพื้นที่ 1', group: 'กลุ่มงานตรวจและปฏิบัติการ 1' },
             { organization: 'กรุงเทพมหานคร', bureau: 'สำนักเทศกิจ', division: 'กองตรวจและปฏิบัติการพื้นที่ 2', group: 'กลุ่มงานตรวจและปฏิบัติการ 2' }
         ],
+        official_locations: [
+            { id: 'LOC-001', name: 'สำนักเทศกิจ', latitude: 13.756331, longitude: 100.501765, radius_meters: 150, is_active: true }
+        ],
         remarks: [
-            'ปฏิบัติราชการนอกสถานที่',
-            'อบรม/สัมมนา/ประชุมราชการ',
+            'ปฏิบัติงานนอกสถานที่',
+            'อบรม',
+            'ประชุม',
+            'ปฏิบัติงานที่บ้าน (WFH)',
             'ปฏิบัติงานเวรประจำวัน',
             'ลืมลงเวลาปฏิบัติราชการ',
-            'โทรศัพท์/อุปกรณ์ขัดข้อง'
+            'โทรศัพท์/อุปกรณ์ขัดข้อง',
+            'อื่นๆ'
         ],
         work_shifts: [
             { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },

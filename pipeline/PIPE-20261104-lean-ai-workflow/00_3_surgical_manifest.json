@@ -1,0 +1,105 @@
+{
+  "pipeline_id": "PIPE-20261104-lean-ai-workflow",
+  "mode": "PLAN",
+  "branch": "main",
+  "surgical_policy": "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+  "targets": [
+    {
+      "file": "AGENTS.md",
+      "lines": "1-35",
+      "purpose": "Update project-level mandatory rules to enforce the Lean 2-SubAgent + 1-Orchestrator workflow and strict surgical-only scope."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/SKILL.md",
+      "lines": "1-121",
+      "purpose": "Replace 9-subagent / 12-phase pipeline with the Lean 2-SubAgent (Flash 3.8 High Implementer + Flash 3.8 High QA & Branch-Main Diff Auditor) + Orchestrator pipeline."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/closed_loop_state_machine_v3.md",
+      "lines": "1-22",
+      "purpose": "Condense state machine to 4 lean stages (Orchestrator Plan -> SubAgent 1 Implement -> SubAgent 2 QA & Main Diff Audit -> Orchestrator Knowledge Sync & Report)."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/closed_loop_state_machine.md",
+      "lines": "1-20",
+      "purpose": "Sync base state machine table with the Lean 4-Stage workflow."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/model_routing.yaml",
+      "lines": "1-65",
+      "purpose": "Update model routing to 1 Orchestrator + 1 Implementer SubAgent (Flash 3.8 High) + 1 QA/Diff Auditor SubAgent (Flash 3.8 High)."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/extended_config_v2.yaml",
+      "lines": "1-39",
+      "purpose": "Update execution policy to Lean 2-SubAgent architecture and strict surgical scope."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/references/agents/agent_00_orchestrator_v2.md",
+      "lines": "1-41",
+      "purpose": "Update Orchestrator v2 instructions to manage exactly 2 SubAgents (Implementer + QA/Main-Diff Auditor) and compile plans/reports."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/references/agents/agent_00_orchestrator.md",
+      "lines": "1-35",
+      "purpose": "Sync base Orchestrator reference with the Lean 2-SubAgent architecture."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/user_trigger_prompt_template_v3.md",
+      "lines": "1-27",
+      "purpose": "Update v3 trigger prompt template to specify the Lean 2-SubAgent workflow."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/user_trigger_prompt_template_v2.md",
+      "lines": "1-30",
+      "purpose": "Sync v2 trigger prompt template with the Lean 2-SubAgent workflow."
+    },
+    {
+      "file": ".agents/skills/ai-software-pipeline/resources/user_trigger_prompt_template.md",
+      "lines": "1-25",
+      "purpose": "Sync base trigger prompt template with the Lean 2-SubAgent workflow."
+    },
+    {
+      "file": "AI Work Flow/Orchestrator Agent.md",
+      "lines": "1-31",
+      "purpose": "Update master Orchestrator Agent documentation in AI Work Flow/."
+    },
+    {
+      "file": "AI Work Flow/System Configuration & Model Routing.yaml",
+      "lines": "1-65",
+      "purpose": "Update master System Configuration & Model Routing in AI Work Flow/."
+    },
+    {
+      "file": "AI Work Flow/User Trigger Prompt Template.md",
+      "lines": "1-25",
+      "purpose": "Update master User Trigger Prompt Template in AI Work Flow/."
+    },
+    {
+      "file": "AI Work Flow/Second Brain + LLM-Wiki/ตารางลำดับการทำงานแบบวงจรปิด.md",
+      "lines": "1-25",
+      "purpose": "Update closed-loop table in Second Brain + LLM-Wiki docs."
+    },
+    {
+      "file": "AI Work Flow/Second Brain + LLM-Wiki/คู่มือการตั้งค่าและใช้งานในโปรเจกต์จริงบน VS Code.md",
+      "lines": "1-120",
+      "purpose": "Update VS Code setup guide to reflect the Lean 2-SubAgent workflow."
+    },
+    {
+      "file": "AI Work Flow/VS Code Surgical Context & Codebase Mapping Pipeline/ตารางลำดับการทำงานแบบวงจรปิดสำหรับ VS Code.md",
+      "lines": "1-22",
+      "purpose": "Update VS Code closed-loop state machine table to the Lean 4-Stage workflow."
+    },
+    {
+      "file": "AI Work Flow/VS Code Surgical Context & Codebase Mapping Pipeline/เทมเพลตคำสั่งเริ่มงานสำหรับผู้ใช้.md",
+      "lines": "1-27",
+      "purpose": "Update VS Code user trigger prompt template to the Lean 2-SubAgent workflow."
+    }
+  ],
+  "excluded_files": [
+    "index.html",
+    "admin.html",
+    "guide.html",
+    "assets/**"
+  ]
+}
+

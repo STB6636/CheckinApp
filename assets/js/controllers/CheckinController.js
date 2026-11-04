@@ -41,6 +41,19 @@ export class CheckinController {
         };
         this.spLeafletMap = null;
         this.spLeafletMarker = null;
+        this.currentStep = 1;
+        this.locationMode = 'ONSITE';
+        this.geofenceResult = null;
+        this.selectedOffsiteRemark = 'ปฏิบัติงานนอกสถานที่';
+        this.offsiteCustomGps = {
+            mode: 'current',
+            lat: null,
+            lng: null,
+            locationName: ''
+        };
+        this.offsiteLeafletMap = null;
+        this.offsiteMarker = null;
+        this.tempOffsiteLocation = null;
         this.init();
     }
 
@@ -60,6 +73,9 @@ export class CheckinController {
         try {
             this.settings = await SettingsModel.getSettings(false);
             this.#renderUserAndSettingsInfo();
+            this.#initLocaV2ModeAndChips();
+            this.#initOffsiteModalGps();
+            this.#renderGeofenceStatusUI();
             this.#applyDynamicWorkspaceLayout();
             await this.#refreshAllAttendanceData();
         } catch (err) {
@@ -376,6 +392,540 @@ export class CheckinController {
             }
         }
     }
+
+    /**
+     * คำนวณระยะทางแบบ Haversine (หน่วย: เมตร)
+     */
+    #calculateHaversineMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
+        const p1 = (lat1 * Math.PI) / 180;
+        const p2 = (lat2 * Math.PI) / 180;
+        const dp = ((lat2 - lat1) * Math.PI) / 180;
+        const dl = ((lon2 - lon1) * Math.PI) / 180;
+
+        const a = Math.sin(dp / 2) * Math.sin(dp / 2) +
+                  Math.cos(p1) * Math.cos(p2) *
+                  Math.sin(dl / 2) * Math.sin(dl / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+    }
+
+    /**
+     * ประเมินพิกัดว่าอยู่ในรัศมีสถานที่ทำงานทางการแห่งใดแห่งหนึ่งหรือไม่ (พร้อม Buffer 25 เมตร)
+     * @param {number} currentLat
+     * @param {number} currentLng
+     * @returns {{matched: boolean, location: Object|null, distanceMeters: number, allowedRadius: number, message: string}}
+     */
+    evaluateOnsiteGeofence(currentLat, currentLng) {
+        const officialLocations = (this.settings?.official_locations && Array.isArray(this.settings.official_locations) && this.settings.official_locations.length > 0)
+            ? this.settings.official_locations.filter(loc => loc.is_active !== false)
+            : (Config.DEFAULT_OFFICIAL_LOCATIONS || []).filter(loc => loc.is_active !== false);
+
+        if (!currentLat || !currentLng || isNaN(currentLat) || isNaN(currentLng)) {
+            return {
+                matched: false,
+                location: null,
+                distanceMeters: 0,
+                allowedRadius: 0,
+                message: 'ยังไม่สามารถระบุพิกัด GPS ได้'
+            };
+        }
+
+        if (officialLocations.length === 0) {
+            return {
+                matched: true,
+                location: { name: 'สถานที่ทำงาน (ไม่จำกัดรัศมี)' },
+                distanceMeters: 0,
+                allowedRadius: 999999,
+                message: 'อยู่ในสถานที่ปฏิบัติงาน'
+            };
+        }
+
+        const accuracyBuffer = 25;
+        let closestLocation = null;
+        let minDistance = Infinity;
+        let matchedLocation = null;
+
+        for (const loc of officialLocations) {
+            const locLat = Number(loc.latitude);
+            const locLng = Number(loc.longitude);
+            if (isNaN(locLat) || isNaN(locLng)) continue;
+
+            const dist = this.#calculateHaversineMeters(currentLat, currentLng, locLat, locLng);
+            const effectiveRadius = (Number(loc.radius_meters) || 150) + accuracyBuffer;
+
+            if (dist < minDistance) {
+                minDistance = dist;
+                closestLocation = loc;
+            }
+
+            if (dist <= effectiveRadius) {
+                matchedLocation = loc;
+                minDistance = dist;
+                break;
+            }
+        }
+
+        if (matchedLocation) {
+            return {
+                matched: true,
+                location: matchedLocation,
+                distanceMeters: minDistance,
+                allowedRadius: Number(matchedLocation.radius_meters) || 150,
+                message: `อยู่ในสถานที่ปฏิบัติงาน "${matchedLocation.name}" (ห่าง ${minDistance} ม. / รัศมี ${matchedLocation.radius_meters} ม.)`
+            };
+        }
+
+        const closestName = closestLocation ? closestLocation.name : 'สถานที่ทำงาน';
+        const closestRadius = closestLocation ? (closestLocation.radius_meters || 150) : 150;
+        return {
+            matched: false,
+            location: closestLocation,
+            distanceMeters: minDistance,
+            allowedRadius: closestRadius,
+            message: `พิกัดตำแหน่งอยู่นอกสถานที่ทำงาน (ห่างจาก "${closestName}" ประมาณ ${minDistance} ม. เกินรัศมีที่อนุญาต ${closestRadius} ม.)`
+        };
+    }
+
+    #renderGeofenceStatusUI() {
+        const statusCard = document.getElementById('onsiteGeofenceStatusCard');
+        const badgeEl = document.getElementById('onsiteGeofenceBadge');
+        const iconEl = document.getElementById('onsiteGeofenceIcon');
+        const textEl = document.getElementById('onsiteGeofenceDetailText');
+
+        if (!statusCard || !badgeEl || !textEl) return;
+
+        if (this.locationMode === 'OFFSITE') {
+            statusCard.classList.add('hidden');
+            return;
+        }
+
+        statusCard.classList.remove('hidden');
+
+        if (!this.settings?.require_gps) {
+            badgeEl.className = 'bma-badge bma-badge-emerald text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'ไม่จำกัดพิกัด';
+            textEl.textContent = 'ระบบไม่ได้เปิดบังคับตรวจสอบรัศมีสถานที่ทำงาน';
+            return;
+        }
+
+        if (!this.gpsData.ready || this.gpsData.lat == null) {
+            badgeEl.className = 'bma-badge bma-badge-warning text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'กำลังรอพิกัด GPS...';
+            textEl.textContent = 'กำลังรอสัญญาณ GPS เพื่อประเมินรัศมีสถานที่ทำงาน...';
+            if (iconEl) iconEl.className = 'fa-solid fa-spinner fa-spin text-amber-500';
+            return;
+        }
+
+        const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
+        this.geofenceResult = evalRes;
+
+        if (evalRes.matched) {
+            statusCard.className = 'p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5';
+            badgeEl.className = 'bma-badge bma-badge-emerald text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'อยู่ในสถานที่';
+            if (iconEl) iconEl.className = 'fa-solid fa-circle-check text-[#00744B] dark:text-emerald-400';
+            textEl.className = 'text-[11px] font-semibold text-[#00744B] dark:text-emerald-300 leading-relaxed';
+            textEl.textContent = evalRes.message;
+        } else {
+            statusCard.className = 'p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-xs space-y-1.5';
+            badgeEl.className = 'bma-badge bma-badge-danger text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'อยู่นอกสถานที่';
+            if (iconEl) iconEl.className = 'fa-solid fa-triangle-exclamation text-rose-600 dark:text-rose-400';
+            textEl.className = 'text-[11px] font-semibold text-rose-700 dark:text-rose-300 leading-relaxed';
+            textEl.textContent = `${evalRes.message} กรุณาตรวจสอบตำแหน่ง GPS หรือเลือกโหมด "นอกสถานที่"`;
+        }
+
+        this.#updateStep1Validation();
+    }
+
+    #initLocaV2ModeAndChips() {
+        const btnOnsite = document.getElementById('btnModeOnsite');
+        const btnOffsite = document.getElementById('btnModeOffsite');
+        const offsiteSection = document.getElementById('offsiteLocationSection');
+
+        btnOnsite?.addEventListener('click', () => {
+            this.locationMode = 'ONSITE';
+            btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30';
+            btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+            offsiteSection?.classList.add('hidden');
+            this.#renderGeofenceStatusUI();
+            this.#updateStep1Validation();
+        });
+
+        btnOffsite?.addEventListener('click', () => {
+            this.locationMode = 'OFFSITE';
+            btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 border border-sky-500/30';
+            btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+            offsiteSection?.classList.remove('hidden');
+            this.#renderGeofenceStatusUI();
+            this.#updateStep1Validation();
+        });
+
+        const chipsContainer = document.getElementById('offsiteRemarkChipsContainer');
+        const customRemarkBox = document.getElementById('offsiteCustomRemarkBox');
+        const customRemarkInput = document.getElementById('offsiteCustomRemarkInput');
+
+        const chipOptions = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
+            ? this.settings.remarks
+            : ['ปฏิบัติงานนอกสถานที่', 'อบรม', 'ประชุม', 'ปฏิบัติงานที่บ้าน (WFH)', 'อื่นๆ'];
+
+        if (chipsContainer) {
+            chipsContainer.innerHTML = chipOptions.map((opt, i) => {
+                const isSelected = (opt === this.selectedOffsiteRemark) || (i === 0 && !this.selectedOffsiteRemark);
+                const activeClass = isSelected
+                    ? 'bg-[#00744B] text-white border-[#00744B] shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200';
+                return `<button type="button" class="offsite-remark-chip px-3 py-1.5 rounded-full text-xs font-bold border transition ${activeClass}" data-remark="${opt}">${opt}</button>`;
+            }).join('');
+
+            chipsContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.offsite-remark-chip');
+                if (!btn) return;
+                const chosen = btn.getAttribute('data-remark');
+                this.selectedOffsiteRemark = chosen;
+
+                chipsContainer.querySelectorAll('.offsite-remark-chip').forEach(c => {
+                    const active = c.getAttribute('data-remark') === chosen;
+                    c.className = `offsite-remark-chip px-3 py-1.5 rounded-full text-xs font-bold border transition ${active ? 'bg-[#00744B] text-white border-[#00744B] shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'}`;
+                });
+
+                if (chosen === 'อื่นๆ') {
+                    customRemarkBox?.classList.remove('hidden');
+                    customRemarkInput?.focus();
+                } else {
+                    customRemarkBox?.classList.add('hidden');
+                }
+                this.#updateStep1Validation();
+            });
+        }
+
+        customRemarkInput?.addEventListener('input', () => {
+            this.#updateStep1Validation();
+        });
+
+        const radioCurrent = document.getElementById('radioOffsiteGpsCurrent');
+        const radioMap = document.getElementById('radioOffsiteGpsMap');
+        const customLocBox = document.getElementById('offsiteCustomLocationSummaryBox');
+
+        radioCurrent?.addEventListener('change', () => {
+            if (radioCurrent.checked) {
+                this.offsiteCustomGps.mode = 'current';
+                customLocBox?.classList.add('hidden');
+                this.#updateStep1Validation();
+            }
+        });
+
+        radioMap?.addEventListener('change', () => {
+            if (radioMap.checked) {
+                this.offsiteCustomGps.mode = 'map';
+                customLocBox?.classList.remove('hidden');
+                if (!this.offsiteCustomGps.lat) {
+                    this.#openOffsiteMapModal();
+                }
+                this.#updateStep1Validation();
+            }
+        });
+
+        document.getElementById('btnOpenOffsiteMapModal')?.addEventListener('click', () => {
+            this.#openOffsiteMapModal();
+        });
+    }
+
+    #goToStep(step) {
+        const step1Container = document.getElementById('checkinStep1Container');
+        const step2Container = document.getElementById('checkinStep2Container');
+        const step2Badge = document.getElementById('step2SummaryText');
+
+        if (step === 2) {
+            if (this.locationMode === 'ONSITE') {
+                if (this.settings?.require_gps) {
+                    const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
+                    if (!evalRes.matched) {
+                        UIHelpers.alert(
+                            'พิกัดอยู่นอกสถานที่ทำงาน',
+                            `${evalRes.message}\n\nกรุณาตรวจสอบสัญญาณ GPS หรือเลือกโหมด "นอกสถานที่"`,
+                            'warning'
+                        );
+                        return;
+                    }
+                }
+            } else if (this.locationMode === 'OFFSITE') {
+                const finalRemark = (this.selectedOffsiteRemark === 'อื่นๆ')
+                    ? document.getElementById('offsiteCustomRemarkInput')?.value?.trim()
+                    : this.selectedOffsiteRemark;
+                if (!finalRemark) {
+                    UIHelpers.alert('กรุณาระบุหมายเหตุ', 'กรุณาระบุลักษณะงานนอกสถานที่ให้ครบถ้วนก่อนดำเนินการต่อ', 'warning');
+                    return;
+                }
+                if (this.offsiteCustomGps.mode === 'map' && !this.offsiteCustomGps.lat) {
+                    UIHelpers.alert('กรุณาระบุตำแหน่งในแผนที่', 'กรุณากดปุ่ม "เลือกหมุด" เพื่อเลือกตำแหน่งในแผนที่', 'warning');
+                    return;
+                }
+            }
+
+            const shiftSelectEl = document.getElementById('checkinShiftSelect');
+            const shiftIdx = (shiftSelectEl && shiftSelectEl.value !== '') ? parseInt(shiftSelectEl.value, 10) : 0;
+            const shiftObj = (this.settings?.work_shifts || [])[shiftIdx] || { name: 'เวลาราชการปกติ' };
+            const shiftName = SettingsModel.formatShiftDisplayText(shiftObj);
+
+            if (step2Badge) {
+                if (this.locationMode === 'ONSITE') {
+                    const locName = this.geofenceResult?.location?.name || 'สถานที่ทำงาน';
+                    step2Badge.textContent = `ในสถานที่ (${locName}) • ${shiftName}`;
+                } else {
+                    const remarkLabel = (this.selectedOffsiteRemark === 'อื่นๆ')
+                        ? (document.getElementById('offsiteCustomRemarkInput')?.value?.trim() || 'อื่นๆ')
+                        : this.selectedOffsiteRemark;
+                    step2Badge.textContent = `นอกสถานที่ (${remarkLabel}) • ${shiftName}`;
+                }
+            }
+
+            this.currentStep = 2;
+            step1Container?.classList.add('hidden');
+            step2Container?.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (this.settings?.require_photo && !this.capturedPhotoDataUrl && !this.isCameraRunning) {
+                this.#openCameraOnDemand();
+            }
+        } else {
+            this.currentStep = 1;
+            step2Container?.classList.add('hidden');
+            step1Container?.classList.remove('hidden');
+            this.#stopCameraHardwareStream();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.#updateStep1Validation();
+        }
+    }
+
+    #updateStep1Validation() {
+        const btnNext = document.getElementById('btnNextStepCheckin');
+        if (!btnNext) return;
+
+        let isValid = true;
+
+        if (this.locationMode === 'ONSITE') {
+            if (this.settings?.require_gps) {
+                if (!this.gpsData.ready || this.gpsData.lat == null) {
+                    isValid = false;
+                } else {
+                    const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
+                    if (!evalRes.matched) {
+                        isValid = false;
+                    }
+                }
+            }
+        } else if (this.locationMode === 'OFFSITE') {
+            const finalRemark = (this.selectedOffsiteRemark === 'อื่นๆ')
+                ? document.getElementById('offsiteCustomRemarkInput')?.value?.trim()
+                : this.selectedOffsiteRemark;
+            if (!finalRemark) {
+                isValid = false;
+            }
+            if (this.offsiteCustomGps.mode === 'map' && !this.offsiteCustomGps.lat) {
+                isValid = false;
+            }
+        }
+
+        btnNext.disabled = !isValid;
+        if (!isValid) {
+            btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            btnNext.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    #openOffsiteMapModal() {
+        const modal = document.getElementById('modalOffsiteMapSearch');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+
+        const initialLat = this.offsiteCustomGps.lat ?? this.gpsData.lat ?? 13.7563;
+        const initialLng = this.offsiteCustomGps.lng ?? this.gpsData.lng ?? 100.5018;
+
+        const coordsDisp = document.getElementById('offsiteCustomCoordsDisplay');
+        const locNameDisp = document.getElementById('offsiteCustomLocNameDisplay');
+
+        if (coordsDisp) {
+            coordsDisp.textContent = `${Number(initialLat).toFixed(6)}, ${Number(initialLng).toFixed(6)}`;
+        }
+
+        setTimeout(() => {
+            if (typeof L === 'undefined') {
+                console.warn('Leaflet is not loaded');
+                return;
+            }
+
+            if (!this.offsiteLeafletMap) {
+                const mapEl = document.getElementById('offsiteLeafletMap');
+                if (!mapEl) return;
+
+                this.offsiteLeafletMap = L.map('offsiteLeafletMap', {
+                    zoomControl: true,
+                    attributionControl: false
+                }).setView([initialLat, initialLng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(this.offsiteLeafletMap);
+
+                const customIcon = L.divIcon({
+                    html: '<div style="background-color: #00744B; width: 28px; height: 28px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white;"><i class="fa-solid fa-map-pin text-sm"></i></div>',
+                    className: 'offsite-custom-marker-icon',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 28]
+                });
+
+                this.offsiteMarker = L.marker([initialLat, initialLng], {
+                    draggable: true,
+                    icon: customIcon
+                }).addTo(this.offsiteLeafletMap);
+
+                this.offsiteMarker.on('dragend', async (e) => {
+                    const pos = e.target.getLatLng();
+                    this.#updateOffsiteModalMarker(pos.lat, pos.lng);
+                });
+
+                this.offsiteLeafletMap.on('click', async (e) => {
+                    this.#updateOffsiteModalMarker(e.latlng.lat, e.latlng.lng);
+                });
+            } else {
+                this.offsiteLeafletMap.invalidateSize();
+                this.offsiteLeafletMap.setView([initialLat, initialLng], 16);
+                if (this.offsiteMarker) {
+                    this.offsiteMarker.setLatLng([initialLat, initialLng]);
+                }
+            }
+        }, 150);
+    }
+
+    async #updateOffsiteModalMarker(lat, lng, explicitName = null) {
+        const numLat = Number(lat);
+        const numLng = Number(lng);
+        if (isNaN(numLat) || isNaN(numLng)) return;
+
+        if (this.offsiteMarker) {
+            this.offsiteMarker.setLatLng([numLat, numLng]);
+        }
+        if (this.offsiteLeafletMap) {
+            this.offsiteLeafletMap.panTo([numLat, numLng]);
+        }
+
+        const coordsDisp = document.getElementById('offsiteCustomCoordsDisplay');
+        const locNameDisp = document.getElementById('offsiteCustomLocNameDisplay');
+
+        if (coordsDisp) {
+            coordsDisp.textContent = `${numLat.toFixed(6)}, ${numLng.toFixed(6)}`;
+        }
+
+        if (explicitName) {
+            if (locNameDisp) locNameDisp.textContent = explicitName;
+            this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: explicitName };
+            return;
+        }
+
+        if (locNameDisp) locNameDisp.textContent = 'กำลังตรวจสอบชื่อสถานที่...';
+        try {
+            const locName = await AttendanceModel.resolveLocationName(numLat, numLng);
+            const cleanName = (locName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim() || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
+            if (locNameDisp) locNameDisp.textContent = cleanName;
+            this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: cleanName };
+        } catch (e) {
+            const fallback = `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
+            if (locNameDisp) locNameDisp.textContent = fallback;
+            this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: fallback };
+        }
+    }
+
+    #initOffsiteModalGps() {
+        const modal = document.getElementById('modalOffsiteMapSearch');
+        const searchInput = document.getElementById('offsiteMapSearchInput');
+        const btnSearch = document.getElementById('btnOffsiteMapSearch');
+        const searchResultsEl = document.getElementById('offsiteMapSearchResults');
+        const btnClose = document.getElementById('btnCloseOffsiteMapModal');
+        const btnCancel = document.getElementById('btnCancelOffsiteMapModal');
+        const btnConfirm = document.getElementById('btnConfirmOffsiteCustomLocation');
+
+        const closeModal = () => {
+            modal?.classList.add('hidden');
+            if (searchResultsEl) {
+                searchResultsEl.classList.add('hidden');
+                searchResultsEl.innerHTML = '';
+            }
+        };
+
+        btnClose?.addEventListener('click', closeModal);
+        btnCancel?.addEventListener('click', closeModal);
+
+        btnConfirm?.addEventListener('click', () => {
+            if (this.tempOffsiteLocation) {
+                this.offsiteCustomGps.lat = this.tempOffsiteLocation.lat;
+                this.offsiteCustomGps.lng = this.tempOffsiteLocation.lng;
+                this.offsiteCustomGps.locationName = this.tempOffsiteLocation.name;
+
+                const nameEl = document.getElementById('offsiteSelectedLocationName');
+                const coordsEl = document.getElementById('offsiteSelectedLocationCoords');
+                if (nameEl) nameEl.textContent = this.tempOffsiteLocation.name;
+                if (coordsEl) coordsEl.textContent = `${this.tempOffsiteLocation.lat.toFixed(6)}, ${this.tempOffsiteLocation.lng.toFixed(6)}`;
+            }
+            closeModal();
+            this.#updateStep1Validation();
+        });
+
+        const performSearch = async () => {
+            const query = searchInput?.value?.trim();
+            if (!query) return;
+
+            const coordMatch = query.match(/^\s*([+-]?\d+(?:\.\d+)?)\s*[,\s]\s*([+-]?\d+(?:\.\d+)?)\s*$/);
+            if (coordMatch) {
+                const cLat = parseFloat(coordMatch[1]);
+                const cLng = parseFloat(coordMatch[2]);
+                if (!isNaN(cLat) && !isNaN(cLng)) {
+                    await this.#updateOffsiteModalMarker(cLat, cLng, `พิกัด (${cLat.toFixed(5)}, ${cLng.toFixed(5)})`);
+                    return;
+                }
+            }
+
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=th&limit=5`, {
+                    headers: { 'Accept-Language': 'th,en' }
+                });
+                const items = await res.json();
+                if (items && items.length > 0 && searchResultsEl) {
+                    searchResultsEl.innerHTML = items.map(it => `
+                        <div class="offsite-search-item p-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer text-xs" data-lat="${it.lat}" data-lng="${it.lon}" data-name="${it.display_name.split(',')[0]}">
+                            <div class="font-bold text-slate-800 dark:text-slate-100">${it.display_name.split(',')[0]}</div>
+                            <div class="text-[11px] text-slate-500 truncate">${it.display_name}</div>
+                        </div>
+                    `).join('');
+                    searchResultsEl.classList.remove('hidden');
+
+                    searchResultsEl.querySelectorAll('.offsite-search-item').forEach(el => {
+                        el.addEventListener('click', async () => {
+                            const lat = parseFloat(el.dataset.lat);
+                            const lng = parseFloat(el.dataset.lng);
+                            const name = el.dataset.name;
+                            searchResultsEl.classList.add('hidden');
+                            await this.#updateOffsiteModalMarker(lat, lng, name);
+                        });
+                    });
+                }
+            } catch (err) {
+                console.warn('Offsite map search error:', err);
+            }
+        };
+
+        btnSearch?.addEventListener('click', performSearch);
+        searchInput?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+    }
+
+
 
     #renderUserAndSettingsInfo() {
         const org = this.settings?.organization_name || 'กรุงเทพมหานคร';
@@ -1185,14 +1735,20 @@ export class CheckinController {
                         }
                     }
 
+                    this.#renderGeofenceStatusUI();
+                    this.#updateStep1Validation();
                     return resMeta.locationName;
                 });
+                this.#renderGeofenceStatusUI();
+                this.#updateStep1Validation();
             },
             async (err) => {
                 console.warn('Geolocation error:', err);
                 this.gpsData.ready = false;
                 coordsEl.textContent = 'ไม่ได้เปิดการใช้งาน GPS';
                 locNameEl.textContent = 'กรุณาเปิดบริการตำแหน่งที่ตั้ง (Location Services)';
+                this.#renderGeofenceStatusUI();
+                this.#updateStep1Validation();
 
                 if (this.settings.require_gps) {
                     await UIHelpers.alert(
@@ -1276,7 +1832,12 @@ export class CheckinController {
             if (file) this.#handleFallbackFileSelected(file);
         });
 
-        document.getElementById('btnRefreshGps')?.addEventListener('click', () => this.#initGpsLocation());
+        document.getElementById('btnRefreshGps')?.addEventListener('click', () => {
+            this.#initGpsLocation();
+            this.#renderGeofenceStatusUI();
+        });
+        document.getElementById('btnNextStepCheckin')?.addEventListener('click', () => this.#goToStep(2));
+        document.getElementById('btnPrevStepCheckin')?.addEventListener('click', () => this.#goToStep(1));
 
         document.getElementById('checkinShiftSelect')?.addEventListener('change', () => {
             this.#updateStatusCardsAndMainButton();
@@ -1798,6 +2359,22 @@ export class CheckinController {
                 );
             }
 
+            const finalLat = (this.locationMode === 'OFFSITE' && this.offsiteCustomGps.mode === 'map' && this.offsiteCustomGps.lat)
+                ? this.offsiteCustomGps.lat
+                : (this.settings.require_gps ? this.gpsData.lat : null);
+            const finalLng = (this.locationMode === 'OFFSITE' && this.offsiteCustomGps.mode === 'map' && this.offsiteCustomGps.lng)
+                ? this.offsiteCustomGps.lng
+                : (this.settings.require_gps ? this.gpsData.lng : null);
+            const finalLocName = (this.locationMode === 'OFFSITE' && this.offsiteCustomGps.mode === 'map' && this.offsiteCustomGps.locationName)
+                ? this.offsiteCustomGps.locationName
+                : (this.settings.require_gps ? this.gpsData.locationName : '');
+            const finalRemark = (this.locationMode === 'OFFSITE')
+                ? (this.selectedOffsiteRemark === 'อื่นๆ' ? (document.getElementById('offsiteCustomRemarkInput')?.value?.trim() || 'อื่นๆ') : this.selectedOffsiteRemark)
+                : 'ในสถานที่';
+            const finalDistanceMeters = (this.locationMode === 'ONSITE' && this.geofenceResult?.distanceMeters !== undefined)
+                ? this.geofenceResult.distanceMeters
+                : null;
+
             const res = await AttendanceModel.submitCheckinOrCheckout({
                 personnel_id: this.currentUser.personnel_id,
                 user_id: this.currentUser.id,
@@ -1817,9 +2394,12 @@ export class CheckinController {
                 is_overnight: Boolean(shiftObj.is_overnight),
                 single_click_checkin: Boolean(this.settings.single_click_checkin || effectiveOvertimeShift),
                 photo_url: finalPhotoUrl,
-                lat: this.settings.require_gps ? this.gpsData.lat : null,
-                lng: this.settings.require_gps ? this.gpsData.lng : null,
-                location_name: this.settings.require_gps ? this.gpsData.locationName : ''
+                lat: finalLat,
+                lng: finalLng,
+                location_name: finalLocName,
+                location_mode: this.locationMode,
+                remark: finalRemark,
+                distance_from_official_meters: finalDistanceMeters
             });
 
             UIHelpers.hideLoading();
@@ -1829,8 +2409,10 @@ export class CheckinController {
                 return;
             }
 
+            this.capturedPhotoDataUrl = '';
+            this.#goToStep(1);
             await this.#resetPageAfterSave();
-            await UIHelpers.showToast(res.message, 'success', 3000);
+            await UIHelpers.alert('ลงเวลาปฏิบัติงานเรียบร้อยแล้ว', res.message, 'success');
         } catch (err) {
             UIHelpers.hideLoading();
             this.#updateStatusCardsAndMainButton();

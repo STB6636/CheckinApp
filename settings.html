@@ -48,6 +48,10 @@
                     <i class="fa-solid fa-briefcase"></i>
                     <span>5. ตำแหน่ง &amp; สังกัด</span>
                 </button>
+                <button type="button" class="settings-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700" data-tab-target="tab-panel-locations">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>6. สถานที่และรัศมี</span>
+                </button>
             </div>
 
             <!-- Tab Pane 1: ข้อมูลหน่วยงาน, ข้อความ Header/Footer, โลโก้, Google Drive และการควบคุมฟังก์ชันลงเวลา -->
@@ -551,6 +555,44 @@
                                     </tr>
                                 </thead>
                                 <tbody id="affiliationsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Pane 6: สถานที่และรัศมี (Loca-V2: จัดการสถานที่ราชการและรัศมีที่อนุญาต) -->
+            <div id="tab-panel-locations" class="settings-tab-pane hidden space-y-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 overflow-hidden">
+                    <div class="p-6 bg-gradient-to-r from-[#00744B] to-[#005B3A] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg shadow-sm">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-extrabold tracking-wide text-white">จัดการสถานที่ราชการและรัศมี (Official Locations &amp; Radius)</h3>
+                                <p class="text-xs text-emerald-100/90 font-medium mt-0.5">กำหนดพิกัดละติจูด ลองจิจูด และรัศมีที่อนุญาตให้ลงเวลาปฏิบัติราชการ (เมตร) รองรับหลายสถานที่</p>
+                            </div>
+                        </div>
+                        <button type="button" id="btnAddOfficialLocation" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-white text-[#00744B] hover:bg-emerald-50 transition shadow-md cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> + เพิ่มสถานที่ราชการ
+                        </button>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                            <table class="bma-table text-sm w-full text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                        <th class="w-28 text-center py-3.5 px-3">เรียงลำดับ</th>
+                                        <th class="py-3.5 px-3">ชื่อสถานที่ราชการ</th>
+                                        <th class="py-3.5 px-3">พิกัด (ละติจูด, ลองจิจูด)</th>
+                                        <th class="w-36 text-center py-3.5 px-3">รัศมีอนุญาต (เมตร)</th>
+                                        <th class="w-28 text-center py-3.5 px-3">สถานะ</th>
+                                        <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="officialLocationsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
                             </table>
                         </div>
                     </div>

@@ -48,12 +48,21 @@ export class SettingsModel {
             }
         }
 
-        const db = DatabaseService.getInstance().client;
+        const dbService = DatabaseService.getInstance();
+        let db = dbService.client;
         let { data, error } = await db
             .from('system_settings')
             .select('*')
             .eq('id', 1)
             .maybeSingle();
+
+        if (error && String(error.message || '').includes('The schema must be one of the following: public')) {
+            console.warn('[SettingsModel] Staging schema not exposed yet, falling back to public schema');
+            db = dbService.publicClient;
+            const res = await db.from('system_settings').select('*').eq('id', 1).maybeSingle();
+            data = res.data;
+            error = res.error;
+        }
 
         if (error || !data) {
             console.warn('Using fallback default settings:', error);
@@ -134,6 +143,11 @@ export class SettingsModel {
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
             remarks: Array.isArray(data.remarks) ? data.remarks : Config.DEFAULT_SETTINGS.remarks,
+            official_locations: Array.isArray(data.official_locations) && data.official_locations.length > 0
+                ? data.official_locations
+                : (localStorage.getItem('bma_official_locations_v2') !== null
+                    ? JSON.parse(localStorage.getItem('bma_official_locations_v2') || '[]')
+                    : Config.DEFAULT_SETTINGS.official_locations),
             work_shifts: normalizedShifts,
             category_colors: mergedColors
         };
@@ -171,6 +185,7 @@ export class SettingsModel {
             positions: payload.positions || [],
             affiliations: payload.affiliations || [],
             remarks: payload.remarks || [],
+            official_locations: Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations,
             work_shifts: payload.work_shifts || [],
             category_colors: payload.category_colors || Config.DEFAULT_SETTINGS.category_colors,
             updated_at: new Date().toISOString()
@@ -209,6 +224,10 @@ export class SettingsModel {
                 delete fallbackUpdateData.early_shift_window_minutes;
                 retryNeeded = true;
             }
+            if (String(error.message || '').includes('official_locations')) {
+                delete fallbackUpdateData.official_locations;
+                retryNeeded = true;
+            }
             if (retryNeeded) {
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
@@ -232,6 +251,8 @@ export class SettingsModel {
         try { localStorage.setItem('bma_randomize_gps_radius_meters', String(randomizeRadiusVal)); } catch (e) {}
         const earlyShiftWindowVal = Math.max(0, Math.min(1440, Number(payload.early_shift_window_minutes ?? 30)));
         try { localStorage.setItem('bma_early_shift_window_minutes', String(earlyShiftWindowVal)); } catch (e) {}
+        const officialLocationsVal = Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations;
+        try { localStorage.setItem('bma_official_locations_v2', JSON.stringify(officialLocationsVal)); } catch (e) {}
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
@@ -252,7 +273,10 @@ export class SettingsModel {
                 : randomizeRadiusVal,
             disable_normal_hours_checkin: typeof data?.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
-                : disableNormalVal
+                : disableNormalVal,
+            official_locations: Array.isArray(data?.official_locations)
+                ? data.official_locations
+                : officialLocationsVal
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));

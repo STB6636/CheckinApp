@@ -983,13 +983,31 @@ export class AttendanceModel {
                 row_color: evalOut.row_color,
                 updated_at: new Date().toISOString()
             };
+            if (payload.remark) updateOut.remark = payload.remark;
+            if (payload.location_mode) updateOut.location_mode = payload.location_mode;
+            if (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) {
+                updateOut.distance_from_official_meters = Number(payload.distance_from_official_meters);
+            }
 
-            const { data, error } = await db
+            let { data, error } = await db
                 .from('attendance_logs')
                 .update(updateOut)
                 .eq('id', activeRegularRecord.id)
                 .select()
                 .single();
+
+            if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+                delete updateOut.location_mode;
+                delete updateOut.distance_from_official_meters;
+                const retry = await db
+                    .from('attendance_logs')
+                    .update(updateOut)
+                    .eq('id', activeRegularRecord.id)
+                    .select()
+                    .single();
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) {
                 return { success: false, message: 'ไม่สามารถบันทึกลงเวลาเลิกงานได้: ' + error.message };
@@ -1066,17 +1084,31 @@ export class AttendanceModel {
                 check_out_location: outLocName,
                 status: 'ปฏิบัติงานนอกเวลา',
                 remark: payload.remark || (payload.is_overnight ? 'ปฏิบัติงานนอกเวลา (ข้ามวัน)' : 'ปฏิบัติงานนอกเวลา'),
+                location_mode: payload.location_mode || 'ONSITE',
+                distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
                 row_color: colors.overtime || '#2563EB',
                 is_overtime: true,
                 is_special_request: false,
                 approval_status: 'approved'
             };
 
-            const { data: createdOt, error: otError } = await db
+            let { data: createdOt, error: otError } = await db
                 .from('attendance_logs')
                 .insert(insertOtData)
                 .select()
                 .single();
+
+            if (otError && (otError.message?.includes('column') || otError.code === '42703' || otError.message?.includes('does not exist'))) {
+                delete insertOtData.location_mode;
+                delete insertOtData.distance_from_official_meters;
+                const retry = await db
+                    .from('attendance_logs')
+                    .insert(insertOtData)
+                    .select()
+                    .single();
+                createdOt = retry.data;
+                otError = retry.error;
+            }
 
             if (otError) {
                 return { success: false, message: 'ไม่สามารถบันทึกลงเวลาปฏิบัติงานนอกเวลาได้: ' + otError.message };
@@ -1156,17 +1188,31 @@ export class AttendanceModel {
                 check_out_location: outLocName,
                 status: evalResult.status_label,
                 remark: payload.remark || '',
+                location_mode: payload.location_mode || 'ONSITE',
+                distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
                 row_color: evalResult.row_color,
                 is_overtime: false,
                 is_special_request: false,
                 approval_status: 'approved'
             };
 
-            const { data, error } = await db
+            let { data, error } = await db
                 .from('attendance_logs')
                 .insert(insertBoth)
                 .select()
                 .single();
+
+            if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+                delete insertBoth.location_mode;
+                delete insertBoth.distance_from_official_meters;
+                const retry = await db
+                    .from('attendance_logs')
+                    .insert(insertBoth)
+                    .select()
+                    .single();
+                data = retry.data;
+                error = retry.error;
+            }
 
             if (error) {
                 return { success: false, message: 'ไม่สามารถบันทึกลงเวลาได้: ' + error.message };
@@ -1201,17 +1247,31 @@ export class AttendanceModel {
             check_in_location: payload.location_name || '',
             status: evalIn.status_label,
             remark: payload.remark || '',
+            location_mode: payload.location_mode || 'ONSITE',
+            distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
             row_color: evalIn.row_color,
             is_overtime: false,
             is_special_request: false,
             approval_status: 'approved'
         };
 
-        const { data, error } = await db
+        let { data, error } = await db
             .from('attendance_logs')
             .insert(insertIn)
             .select()
             .single();
+
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+            delete insertIn.location_mode;
+            delete insertIn.distance_from_official_meters;
+            const retry = await db
+                .from('attendance_logs')
+                .insert(insertIn)
+                .select()
+                .single();
+            data = retry.data;
+            error = retry.error;
+        }
 
         if (error) {
             return { success: false, message: 'ไม่สามารถบันทึกลงเวลาเข้าปฏิบัติงานได้: ' + error.message };
@@ -1275,17 +1335,31 @@ export class AttendanceModel {
             check_out_location: outLocName,
             status: targetStatus,
             remark: payload.remark,
+            location_mode: payload.location_mode || 'OFFSITE',
+            distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
             row_color: targetColor,
             is_overtime: isOvertimeShift,
             is_special_request: true,
             approval_status: 'pending'
         };
 
-        const { data, error } = await db
+        let { data, error } = await db
             .from('attendance_logs')
             .insert(insertData)
             .select()
             .single();
+
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+            delete insertData.location_mode;
+            delete insertData.distance_from_official_meters;
+            const retry = await db
+                .from('attendance_logs')
+                .insert(insertData)
+                .select()
+                .single();
+            data = retry.data;
+            error = retry.error;
+        }
 
         if (error) {
             return { success: false, message: 'ไม่สามารถส่งคำขอลงเวลากรณีพิเศษได้: ' + error.message };

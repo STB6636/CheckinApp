@@ -2,19 +2,14 @@
   "skills": [
     {
       "skill_id": "vscode_surgical_codebase_mapping",
-      "name": "VS Code Surgical Context & Automated AST Codebase Mapping",
-      "version": "3.0.0",
+      "name": "VS Code Surgical Context & Automated AST Codebase Mapping (Lean 2-SubAgent Edition)",
+      "version": "3.5.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_02_architect",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security",
-        "agent_06_devops",
-        "agent_09_code_mapper"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
-      "trigger_conditions": "บังคับโหลดทุกครั้งที่มีการค้นหา อ่าน แก้ไข ปรับปรุง หรือเพิ่มฟีเจอร์ในโปรเจกต์เพื่อบังคับใช้โหมด MAP_FIRST_SURGICAL_LINE_RANGE_ONLY และการซิงค์สารบัญ .ai_map/",
+      "trigger_conditions": "บังคับโหลดทุกครั้งที่มีการค้นหา อ่าน แก้ไข ปรับปรุง หรือเพิ่มฟีเจอร์ในโปรเจกต์เพื่อบังคับใช้โหมด MAP_FIRST_SURGICAL_LINE_RANGE_ONLY, STRICT_SURGICAL_SCOPE_ONLY และการซิงค์สารบัญ .ai_map/",
       "skill_file_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/SKILL.md",
       "templates_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/templates/"
     },
@@ -24,11 +19,8 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_02_architect",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องออกแบบหรือพัฒนาการควบคุมสิทธิ์การเข้าถึงข้อมูล (RBAC) ทั้งในระดับ UI และ Logic ภายในแอปพลิเคชันที่มีลำดับชั้น เช่น SuperAdmin, Admin ระดับสำนัก/กอง (bureau), และ Admin ระดับกลุ่ม/ส่วน/ฝ่าย (division)",
       "skill_file_path": "./ai_skills_registry/skills/client_side_hierarchical_rbac/SKILL.md"
@@ -39,9 +31,8 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_02_architect",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องการทำ Mobile Drawer หรือ Responsive Navigation ที่ต้องย้าย Component หรือ DOM Node ที่มีความซับซ้อน (เช่น ตารางข้อมูล, ฟอร์ม, แท็บประวัติ) สลับระหว่างมุมมอง Desktop และ Mobile Drawer โดยไม่ให้เกิด Race Condition, DOM ID ซ้ำซ้อน, หรือสูญเสีย Event Listeners",
       "skill_file_path": "./ai_skills_registry/skills/offcanvas_drawer_race_free_tab_mounting/SKILL.md"
@@ -52,10 +43,8 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องแสดงผล ค้นหา จัดกลุ่ม หรือส่งออกข้อมูลตำแหน่งและระดับของข้าราชการ/บุคลากรภาครัฐ (กทม./ก.พ.) ให้เป็นไปตามมาตรฐานภาษาไทยที่ถูกต้อง โดยตัดคำซ้ำซ้อน จัดการวรรคตอน และมี Fallback ที่ปลอดภัย",
       "skill_file_path": "./ai_skills_registry/skills/civil_servant_position_level_formatter/SKILL.md"

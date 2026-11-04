@@ -19,6 +19,11 @@ export class PersonnelController {
         this.canDeletePersonnel = false;
         this.bulkImportRows = [];
         this.isProcessingBulkImport = false;
+        this.selectedFilterBureau = 'all';
+        this.selectedFilterDivision = 'all';
+        this.selectedFilterWorkGroup = 'all';
+        this.isSuperAdmin = false;
+        this.isAdminBureau = false;
         this.init();
     }
 
@@ -35,14 +40,133 @@ export class PersonnelController {
 
         // กฎ: บัญชีผู้ใช้งานระดับ Admin ขอบเขตการมองเห็น "ส่วน/ฝ่าย" และ "สำนักงาน" จะไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้
         this.canDeletePersonnel = this.currentUser.role === 'SuperAdmin';
+        this.isSuperAdmin = this.currentUser.role === 'SuperAdmin';
+        this.isAdminBureau = this.currentUser.role === 'Admin' && this.currentUser.visibility_level === 'bureau';
 
         if (this.settings?.category_colors?.group_header) {
             this.headerColor = this.settings.category_colors.group_header;
         }
 
         this.#populateDropdownsFromSettings();
+        this.#initHierarchicalOrgFilter();
         this.#bindEvents();
         await this.loadPersonnelData();
+    }
+
+    #initHierarchicalOrgFilter() {
+        const filterDock = document.getElementById('hierarchicalPersonnelOrgFilterDock');
+        if (filterDock && (this.isSuperAdmin || this.isAdminBureau)) {
+            filterDock.classList.remove('hidden');
+        }
+
+        const bureauSelect = document.getElementById('selectPersonnelFilterBureau');
+        const divisionSelect = document.getElementById('selectPersonnelFilterDivision');
+        const workGroupSelect = document.getElementById('selectPersonnelFilterWorkGroup');
+
+        bureauSelect?.addEventListener('change', (e) => {
+            this.selectedFilterBureau = e.target.value;
+            this.selectedFilterDivision = 'all';
+            this.selectedFilterWorkGroup = 'all';
+            this.#updateFilterDivisionOptions();
+            this.#renderGroupedTable();
+        });
+
+        divisionSelect?.addEventListener('change', (e) => {
+            this.selectedFilterDivision = e.target.value;
+            this.selectedFilterWorkGroup = 'all';
+            this.#updateFilterWorkGroupOptions();
+            this.#renderGroupedTable();
+        });
+
+        workGroupSelect?.addEventListener('change', (e) => {
+            this.selectedFilterWorkGroup = e.target.value;
+            this.#renderGroupedTable();
+        });
+    }
+
+    #populateHierarchicalOrgFilter() {
+        const bureauSelect = document.getElementById('selectPersonnelFilterBureau');
+        if (!bureauSelect) return;
+
+        const primaryBureaus = SettingsModel.getUniqueBureaus(this.settings);
+        const listBureaus = (this.personnelList || []).map(p => (p.bureau || '').trim()).filter(Boolean);
+        const bureaus = [...new Set([...primaryBureaus, ...listBureaus])].sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedFilterBureau !== 'all' && !bureaus.includes(this.selectedFilterBureau)) {
+            this.selectedFilterBureau = 'all';
+        }
+
+        bureauSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            bureaus.map(b => `<option value="${UIHelpers.escapeHtml(b)}">${UIHelpers.escapeHtml(b)}</option>`).join('');
+        bureauSelect.value = this.selectedFilterBureau;
+
+        this.#updateFilterDivisionOptions();
+    }
+
+    #updateFilterDivisionOptions() {
+        const divisionSelect = document.getElementById('selectPersonnelFilterDivision');
+        if (!divisionSelect) return;
+
+        if (this.selectedFilterBureau === 'all') {
+            divisionSelect.disabled = true;
+            divisionSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            divisionSelect.value = 'all';
+            this.selectedFilterDivision = 'all';
+        } else {
+            divisionSelect.disabled = false;
+            divisionSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryDivisions = SettingsModel.getUniqueDivisions(this.settings, this.selectedFilterBureau);
+            const listDivisions = (this.personnelList || [])
+                .filter(p => (p.bureau || '').trim() === this.selectedFilterBureau.trim())
+                .map(p => (p.division || '').trim())
+                .filter(Boolean);
+
+            const divisions = [...new Set([...primaryDivisions, ...listDivisions])].sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedFilterDivision !== 'all' && !divisions.includes(this.selectedFilterDivision)) {
+                this.selectedFilterDivision = 'all';
+            }
+
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
+            divisionSelect.value = this.selectedFilterDivision;
+        }
+
+        this.#updateFilterWorkGroupOptions();
+    }
+
+    #updateFilterWorkGroupOptions() {
+        const workGroupSelect = document.getElementById('selectPersonnelFilterWorkGroup');
+        if (!workGroupSelect) return;
+
+        if (this.selectedFilterBureau === 'all' || this.selectedFilterDivision === 'all') {
+            workGroupSelect.disabled = true;
+            workGroupSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            workGroupSelect.value = 'all';
+            this.selectedFilterWorkGroup = 'all';
+        } else {
+            workGroupSelect.disabled = false;
+            workGroupSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryGroups = SettingsModel.getUniqueGroups(this.settings, this.selectedFilterBureau, this.selectedFilterDivision);
+            const listGroups = (this.personnelList || [])
+                .filter(p => (p.bureau || '').trim() === this.selectedFilterBureau.trim() && (p.division || '').trim() === this.selectedFilterDivision.trim())
+                .map(p => (p.work_group || '').trim())
+                .filter(Boolean);
+
+            const workGroups = [...new Set([...primaryGroups, ...listGroups])].sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedFilterWorkGroup !== 'all' && !workGroups.includes(this.selectedFilterWorkGroup)) {
+                this.selectedFilterWorkGroup = 'all';
+            }
+
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
+            workGroupSelect.value = this.selectedFilterWorkGroup;
+        }
     }
 
     #populateDropdownsFromSettings() {
@@ -131,6 +255,7 @@ export class PersonnelController {
         UIHelpers.showLoading('กำลังโหลดข้อมูลบุคลากร...');
         try {
             this.personnelList = await PersonnelModel.getAll(this.currentUser);
+            this.#populateHierarchicalOrgFilter();
             this.#renderGroupedTable();
         } finally {
             UIHelpers.hideLoading();
@@ -144,6 +269,15 @@ export class PersonnelController {
 
         const keyword = this.searchKeyword.toLowerCase().trim();
         const filtered = this.personnelList.filter(p => {
+            if (this.selectedFilterBureau !== 'all' && (p.bureau || '').trim() !== this.selectedFilterBureau.trim()) {
+                return false;
+            }
+            if (this.selectedFilterDivision !== 'all' && (p.division || '').trim() !== this.selectedFilterDivision.trim()) {
+                return false;
+            }
+            if (this.selectedFilterWorkGroup !== 'all' && (p.work_group || '').trim() !== this.selectedFilterWorkGroup.trim()) {
+                return false;
+            }
             if (!keyword) return true;
             const fullText = `${p.prefix}${p.first_name} ${p.last_name} ${p.national_id || ''} ${p.position_title} ${p.position_level} ${p.bureau} ${p.division} ${p.work_group} ${p.account_role || ''}`.toLowerCase();
             return fullText.includes(keyword);
@@ -364,7 +498,23 @@ export class PersonnelController {
         });
 
         document.getElementById('btnExportPersonnelExcel')?.addEventListener('click', () => {
-            const rows = this.personnelList.map((p, idx) => ({
+            const keyword = this.searchKeyword.toLowerCase().trim();
+            const filtered = this.personnelList.filter(p => {
+                if (this.selectedFilterBureau !== 'all' && (p.bureau || '').trim() !== this.selectedFilterBureau.trim()) {
+                    return false;
+                }
+                if (this.selectedFilterDivision !== 'all' && (p.division || '').trim() !== this.selectedFilterDivision.trim()) {
+                    return false;
+                }
+                if (this.selectedFilterWorkGroup !== 'all' && (p.work_group || '').trim() !== this.selectedFilterWorkGroup.trim()) {
+                    return false;
+                }
+                if (!keyword) return true;
+                const fullText = `${p.prefix}${p.first_name} ${p.last_name} ${p.national_id || ''} ${p.position_title} ${p.position_level} ${p.bureau} ${p.division} ${p.work_group} ${p.account_role || ''}`.toLowerCase();
+                return fullText.includes(keyword);
+            });
+
+            const rows = filtered.map((p, idx) => ({
                 'ลำดับ': idx + 1,
                 'เลขบัตรประชาชน': p.national_id || '',
                 'คำนำหน้า': p.prefix,

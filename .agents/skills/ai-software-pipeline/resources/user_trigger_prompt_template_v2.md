@@ -1,24 +1,22 @@
-[SYSTEM DIRECTIVE: INITIALIZE SELF-EVOLVING MULTI-AGENT WORKFLOW v2.0]
-- บังคับใช้โมเดลขั้นต่ำ: Flash 3.8 High สำหรับ Orchestrator และทุก Subagent (agent_01 ถึง agent_08)
-- โหมดการส่งผลลัพธ์: FULL_UNABRIDGED_OUTPUT (ห้ามย่อ ห้ามสรุป ห้ามละโค้ดหรือเนื้อหาในสกิล/สมองที่สองด้วยคอมเมนต์ใดๆ ทั้งสิ้น หากเนื้อหายาวเกินขีดจำกัดของ 1 ข้อความ ให้ตัดจบที่ขอบเขตไฟล์ล่าสุดแล้วพิมพ์คำว่า "ส่งต่อ" เพื่อให้ฉันสั่งให้คุณเขียนต่อเนื่องไปจนครบทุกขั้นตอน และเมื่อจบการทำงานครบสมบูรณ์ถึงขั้นตอนที่ 6 แล้ว ให้พิมพ์คำว่า "จบแล้ว")
+[SYSTEM DIRECTIVE: INITIALIZE LEAN MULTI-AGENT WORKFLOW (Lean 2-SubAgent Architecture)]
+- บังคับใช้โมเดลขั้นต่ำ: Flash 3.8 High สำหรับ Orchestrator และ SubAgents ทั้ง 2 ตัว (ห้ามใช้ flash_lite เด็ดขาด)
+- สถาปัตยกรรมประหยัดโทเคน: Orchestrator + SubAgent 1 (Implementer, 1 ตัว) + SubAgent 2 (QA & Main Diff Auditor, 1 ตัว)
+- กฎเหล็กการแก้ไข: STRICT_SURGICAL_SCOPE_ONLY ("แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง")
+- นโยบายความปลอดภัย Git: ห้ามรัน git push ขึ้น GitHub เด็ดขาด เว้นแต่ผู้ใช้มีคำสั่งชัดเจนให้ push
 
 # ข้อมูลคลังสมองที่สองและสกิลเริ่มต้นที่มีอยู่ในระบบ (ถ้ามี):
-- โน้ตในสมองที่สองปัจจุบัน (Existing Second Brain Notes): [วางเนื้อหาโน้ตเดิมที่มี หรือระบุว่า "ยังไม่มี ให้สร้างคลังใหม่ตั้งแต่เริ่มต้น"]
-- สกิลที่มีอยู่ในคลังปัจจุบัน (Existing Skills): [วาง SKILL.md ที่ต้องการให้ AI ใช้ หรือระบุว่า "ยังไม่มี ให้เริ่มสกัดสกิลชุดแรกจากโปรเจกต์นี้"]
+- โน้ตในสมองที่สองปัจจุบัน: [ระบุหัวข้อหรือปล่อยว่างให้อ่านจาก second_brain_vault/00_INDEX_MOC.md]
+- สกิลที่มีอยู่ในคลังปัจจุบัน: [ระบุสกิลหรือปล่อยว่างให้อ่านจาก ai_skills_registry/SKILL_CATALOG.json]
 
 # รายละเอียดโปรเจกต์/งานที่ต้องการให้พัฒนา:
-- ชื่อโปรเจกต์: [ระบุชื่อโปรเจกต์]
-- เทคโนโลยีที่ต้องการ (Tech Stack): [ระบุภาษา, Framework, Database]
-- รายละเอียดฟีเจอร์และโจทย์ความต้องการ:
-  1. [ระบุฟีเจอร์ที่ 1]
-  2. [ระบุฟีเจอร์ที่ 2]
-  3. [ระบุฟีเจอร์ที่ 3]
+- รายละเอียดงานและฟีเจอร์ที่ต้องการ:
+  1. [ระบุรายละเอียดฟีเจอร์หรือจุดที่ต้องการแก้ไข]
+  2. [ระบุเงื่อนไขเพิ่มเติม]
 
-# ลำดับการรันที่ต้องแสดงผลออกมาให้ครบทุกขั้นตอนแบบไม่ย่อ:
-1. **Phase 0 (Pre-Flight)**: รัน `agent_07_second_brain` (ดึงบริบทสมองที่สอง) และ `agent_08_skill_smith` (จับคู่และโหลดสกิลที่ต้องใช้)
-2. **Phase 1 ถึง 5 (Execution with Skills)**: รัน `agent_01_ba_sa` -> `agent_02_architect` -> `agent_03_backend` -> `agent_04_frontend` -> `agent_05_qa_security` -> `agent_06_devops` โดยทุกตัวต้องแสดง `Skill Execution Audit Log` ปฏิบัติตามสกิลที่โหลดมา และปักหมุด `[SKILL_CANDIDATE]` ในจุดที่เหมาะสม
-3. **Phase 6 (Post-Flight Extraction & Ingestion)**:
-   - รัน `agent_08_skill_smith` เพื่อสกัดแพตเทิร์นโค้ดจากโปรเจกต์นี้ออกมาเป็นไฟล์ `SKILL.md` และอัปเดต `SKILL_CATALOG.json` ฉบับเต็ม
-   - รัน `agent_07_second_brain` เพื่อสรุปสถาปัตยกรรม กฎโดเมน และวิธีแก้บั๊กทั้งหมดลงในไฟล์ Markdown ของ Second Brain Vault พร้อมลิงก์ `[[Wiki-links]]` และอัปเดตไฟล์สารบัญ `00_INDEX_MOC.md` ฉบับเต็ม
+# ลำดับการรัน 4 ขั้นตอน:
+1. **Stage 1 (Pre-Flight & Dual Plan)**: Orchestrator ค้นหาความรู้จาก Second Brain, จับคู่สกิล, ชี้เป้าช่วงบรรทัดจาก .ai_map/, สร้างแผนคู่ขนาน และรอการอนุมัติ
+2. **Stage 2 (Surgical Implementation)**: SubAgent 1 อ่านเฉพาะช่วงบรรทัดเป้าหมาย แก้ไขโค้ดตามแผนเท่านั้น และซิงค์แผนที่โค้ดผ่าน `node ./.ai_map/vscode_ast_mapper.mjs`
+3. **Stage 3 (QA & Branch Main Diff Audit)**: SubAgent 2 ตรวจสอบความถูกต้องตามแผน และตรวจทาน `git diff main` ยืนยันความเข้ากันได้
+4. **Stage 4 (Knowledge Ingestion & Report)**: Orchestrator สกัดสกิลใหม่ บันทึกลง Second Brain และส่งมอบงาน ปิดท้ายด้วยคำว่า "จบแล้ว"
 
-เริ่มปฏิบัติการตั้งแต่ Phase 0 ทันที
+เริ่มปฏิบัติการตั้งแต่ Stage 1 ทันที

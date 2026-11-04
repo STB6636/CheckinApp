@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Plan — Lean AI Workflow v3.5 (PIPE-20261104-lean-ai-workflow)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6">
+  <div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-emerald-900/60 via-teal-900/50 to-slate-900 border border-emerald-500/30 rounded-2xl p-6 shadow-xl">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            PIPE-20261104-lean-ai-workflow • โหมด PLAN
+          </span>
+          <h1 class="text-2xl font-bold mt-2 text-white">
+            แผนปรับปรุงกฎและกระบวนการทำงาน AI Workflow (Lean 2-SubAgent Architecture)
+          </h1>
+          <p class="text-slate-300 text-sm mt-1">
+            ลดขั้นตอนและประหยัดโทเคน: ใช้ Orchestrator ควบคุม + SubAgent 1 (Flash 3.8 High) แก้ไขเฉพาะจุด + SubAgent 2 (Flash 3.8 High) ตรวจทานแผนและเทียบ Branch <code>main</code>
+          </p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-400">การประหยัดโทเคนโดยประมาณ</div>
+          <div class="text-3xl font-extrabold text-emerald-400">~75% ลดลง</div>
+          <div class="text-xs text-emerald-300">จาก 9 SubAgents (12 ขั้นตอน) ➔ 2 SubAgents (4 ขั้นตอน)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Grid: Before vs After -->
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Before -->
+      <div class="bg-slate-900/90 border border-rose-500/30 rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold text-rose-400">❌ รูปแบบเดิม (AI Workflow v3.0 — เปลืองโทเคน)</h2>
+          <span class="text-xs px-2.5 py-1 rounded bg-rose-500/20 text-rose-300">9 SubAgents / 12 Phases</span>
+        </div>
+        <ul class="space-y-2 text-sm text-slate-300">
+          <li class="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <strong>Phase 0.1–0.3:</strong> เรียก SubAgents แยก (`agent_07`, `agent_08`, `agent_09`) เพื่อค้นข้อมูลเบื้องต้น
+          </li>
+          <li class="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <strong>Phase 1–2:</strong> เรียก `agent_01_ba_sa` และ `agent_02_architect` ส่งต่อเอกสารหลายชั้น
+          </li>
+          <li class="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <strong>Phase 3–3.5:</strong> แยก `agent_03_backend`, `agent_04_frontend`, `agent_09_code_mapper`
+          </li>
+          <li class="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/60">
+            <strong>Phase 4–6:</strong> แยก `agent_05_qa`, `agent_06_devops`, `agent_07_second_brain`, `agent_08_skill_smith`
+          </li>
+        </ul>
+      </div>
+
+      <!-- After -->
+      <div class="bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-lg font-bold text-emerald-400">✅ รูปแบบใหม่ (Lean AI Workflow — ประหยัดโทเคนสูงสุด)</h2>
+          <span class="text-xs px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300">Orchestrator + 2 SubAgents</span>
+        </div>
+        <div class="space-y-2.5 text-sm">
+          <div class="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/30">
+            <div class="font-bold text-emerald-300">1. คุณ (Main Agent / Orchestrator)</div>
+            <p class="text-slate-300 text-xs mt-1">
+              ค้น `.ai_map/` + Second Brain, สร้างแผนคู่ขนาน (<code>implementation_plan.md</code> + <code>interactive_plan.html</code>), รวบรวมและควบคุม SubAgents, อัปเดตความรู้ และทำรายงานสรุปเสนอผู้ใช้
+            </p>
+          </div>
+          <div class="p-3 rounded-xl bg-sky-950/40 border border-sky-500/30">
+            <div class="font-bold text-sky-300">2. SubAgent ตัวที่ 1 — Surgical Implementer (โมเดล Flash 3.8 High • 1 ตัว)</div>
+            <p class="text-slate-300 text-xs mt-1">
+              อ่านเฉพาะบรรทัดเป้าหมาย (<code>StartLine–EndLine</code>) และแก้ไขโค้ดตามแผนที่อนุมัติเท่านั้น <strong>(ห้ามแตะส่วนที่ไม่เกี่ยวข้องเด็ดขาด)</strong> พร้อมซิงค์ <code>node ./.ai_map/vscode_ast_mapper.mjs</code>
+            </p>
+          </div>
+          <div class="p-3 rounded-xl bg-amber-950/40 border border-amber-500/30">
+            <div class="font-bold text-amber-300">3. SubAgent ตัวที่ 2 — QA & Branch Main Auditor (โมเดล Flash 3.8 High • 1 ตัว)</div>
+            <p class="text-slate-300 text-xs mt-1">
+              ตรวจทานงานที่แก้ไขเทียบกับแผนที่กำหนด รันทดสอบความถูกต้อง และเปรียบเทียบกับ Branch <code>main</code> (<code>git diff main</code>) เพื่อยืนยันว่าไม่กระทบส่วนอื่น
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target Files Table -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-lg font-bold text-white mb-4">📂 รายการไฟล์กฎและกระบวนการทำงานที่จะปรับปรุงทั้งหมด (18 ไฟล์)</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400">
+              <th class="py-2.5 px-3">#</th>
+              <th class="py-2.5 px-3">หมวดหมู่</th>
+              <th class="py-2.5 px-3">ไฟล์เป้าหมาย</th>
+              <th class="py-2.5 px-3">รายละเอียดการปรับปรุง</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-200">
+            <tr>
+              <td class="py-2.5 px-3">1</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-xs">Project Rule</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">AGENTS.md</td>
+              <td class="py-2.5 px-3">กำหนดกฎเหล็ก Lean 2-SubAgent (Implementer Flash 3.8 High 1 ตัว + QA/Main Diff Auditor 1 ตัว), Orchestrator ทำแผน/ควบคุม/รายงาน และห้ามแก้ส่วนที่ไม่เกี่ยวข้อง</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3">2</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-xs">Core Skill</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">.agents/skills/ai-software-pipeline/SKILL.md</td>
+              <td class="py-2.5 px-3">ปรับโครงสร้าง Pipeline จาก 9 SubAgents / 12 Phases เหลือ 4 ขั้นตอนกระชับ (Orchestrator + 2 SubAgents)</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3">3–4</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-xs">State Machine</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">
+                .agents/skills/ai-software-pipeline/resources/closed_loop_state_machine_v3.md<br/>
+                .agents/skills/ai-software-pipeline/resources/closed_loop_state_machine.md
+              </td>
+              <td class="py-2.5 px-3">อัปเดตตารางลำดับการทำงานแบบวงจรปิดเป็น 4 ขั้นตอน (Stage 1: Plan, Stage 2: SubAgent 1 Edit, Stage 3: SubAgent 2 Audit & Compare main, Stage 4: Report & Sync)</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3">5–6</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-xs">Model Routing</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">
+                .agents/skills/ai-software-pipeline/resources/model_routing.yaml<br/>
+                .agents/skills/ai-software-pipeline/resources/extended_config_v2.yaml
+              </td>
+              <td class="py-2.5 px-3">ตั้งค่า Model Routing ให้ใช้ Orchestrator + SubAgent 1 (Flash 3.8 High) + SubAgent 2 (Flash 3.8 High) และบังคับ Surgical Scope Only</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3">7–11</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-xs">Prompts & Refs</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">
+                .agents/skills/ai-software-pipeline/references/agents/agent_00_orchestrator_v2.md<br/>
+                .agents/skills/ai-software-pipeline/references/agents/agent_00_orchestrator.md<br/>
+                .agents/skills/ai-software-pipeline/resources/user_trigger_prompt_template_v3.md (+ v2, v1)
+              </td>
+              <td class="py-2.5 px-3">ปรับปรุงคำสั่ง Orchestrator และเทมเพลตคำสั่งเริ่มงานให้ตรงกับโครงสร้าง SubAgent 2 ตัว</td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3">12–18</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-xs">Master Docs</span></td>
+              <td class="py-2.5 px-3 font-mono text-xs">
+                AI Work Flow/Orchestrator Agent.md<br/>
+                AI Work Flow/System Configuration & Model Routing.yaml<br/>
+                AI Work Flow/User Trigger Prompt Template.md<br/>
+                AI Work Flow/Second Brain + LLM-Wiki/*.md (2 ไฟล์)<br/>
+                AI Work Flow/VS Code Surgical Context & Codebase Mapping Pipeline/*.md (2 ไฟล์)
+              </td>
+              <td class="py-2.5 px-3">ซิงค์เอกสารต้นฉบับในโฟลเดอร์ <code>AI Work Flow/</code> ทั้งหมดให้ตรงกับกฎใหม่ 100%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
