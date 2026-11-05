@@ -595,12 +595,30 @@ export class CheckinController {
             });
         }
 
-        document.getElementById('btnOffsiteGpsCurrent')?.addEventListener('click', async () => {
+        const btnCurrent = document.getElementById('btnOffsiteGpsCurrent');
+        const btnMap = document.getElementById('btnOpenOffsiteMapModal');
+
+        const setActiveOffsiteGps = (source) => {
+            if (!btnCurrent || !btnMap) return;
+            if (source === 'current') {
+                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                btnMap.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+            } else {
+                btnMap.className = 'py-2 px-2.5 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+            }
+        };
+
+        setActiveOffsiteGps('current');
+
+        btnCurrent?.addEventListener('click', async () => {
+            setActiveOffsiteGps('current');
             await this.#initGpsLocation();
             UIHelpers.showToast('อัปเดตพิกัดปัจจุบันสำหรับการปฏิบัติงานนอกสถานที่แล้ว', 'success');
         });
 
-        document.getElementById('btnOpenOffsiteMapModal')?.addEventListener('click', () => {
+        btnMap?.addEventListener('click', () => {
+            setActiveOffsiteGps('map');
             this.#openOffsiteMapModal();
         });
 
@@ -916,8 +934,15 @@ export class CheckinController {
 
                 const mainGpsCoords = document.getElementById('gpsCoordsText');
                 const mainGpsName = document.getElementById('gpsLocationNameText');
-                if (mainGpsCoords) mainGpsCoords.textContent = `พิกัด: ${this.gpsData.lat.toFixed(6)}, ${this.gpsData.lng.toFixed(6)}`;
+                if (mainGpsCoords) mainGpsCoords.textContent = `${this.gpsData.lat.toFixed(6)}, ${this.gpsData.lng.toFixed(6)}`;
                 if (mainGpsName) mainGpsName.textContent = this.gpsData.locationName;
+
+                const btnCurrent = document.getElementById('btnOffsiteGpsCurrent');
+                const btnMap = document.getElementById('btnOpenOffsiteMapModal');
+                if (btnMap && btnCurrent) {
+                    btnMap.className = 'py-2 px-2.5 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                    btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                }
 
                 this.#renderGeofenceStatusUI();
                 this.#updateStatusCardsAndMainButton();
@@ -1454,7 +1479,7 @@ export class CheckinController {
                 btnStartBottom?.classList.add('hidden');
                 btnCapture?.classList.add('hidden');
                 btnStop?.classList.add('hidden');
-                btnRetake?.classList.remove('hidden');
+                btnRetake?.classList.add('hidden');
 
                 const fileInput = document.getElementById('cameraFallbackFileInput');
                 if (fileInput) fileInput.value = '';
@@ -1607,7 +1632,7 @@ export class CheckinController {
         btnStartBottom?.classList.add('hidden');
         btnCapture?.classList.add('hidden');
         btnStop?.classList.add('hidden');
-        btnRetake?.classList.remove('hidden');
+        btnRetake?.classList.add('hidden');
     }
 
     async #resetPageAfterSave() {
@@ -1617,6 +1642,8 @@ export class CheckinController {
         const placeholder = document.getElementById('photoPlaceholder');
         const centerIcon = document.getElementById('centerPhotoIcon');
         const statusText = document.getElementById('photoStatusBadgeText');
+        const btnRetake = document.getElementById('btnRetakePhoto');
+        btnRetake?.classList.add('hidden');
         if (preview) { preview.src = ''; preview.classList.add('hidden'); }
         placeholder?.classList.remove('hidden');
         if (centerIcon) centerIcon.className = 'fa-solid fa-camera text-base text-amber-300';

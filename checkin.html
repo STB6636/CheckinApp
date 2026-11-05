@@ -75,27 +75,42 @@
 </head>
 <body class="checkin-civic-gradient min-h-screen flex flex-col justify-between text-slate-800 dark:text-slate-100 antialiased checkin-viewport-lock">
 
-    <!-- Sleek Topbar Header -->
-    <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 lg:px-8 py-2.5 lg:py-2 sticky top-0 z-30 shadow-xs">
+    <!-- Sleek Topbar Header (Unified Single-Tier on Mobile) -->
+    <header class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-3.5 sm:px-4 lg:px-8 py-2 sticky top-0 z-30 shadow-xs">
         <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
             <div class="flex items-center gap-3 min-w-0">
-                <div id="checkinLogoBox" class="w-10 h-10 rounded-xl flex items-center justify-center text-[#00744B] font-extrabold shadow-sm bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-500/20 shrink-0">
+                <!-- Desktop Logo & System Name (Desktop Only: hidden lg:flex) -->
+                <div id="checkinLogoBox" class="hidden lg:flex w-10 h-10 rounded-xl items-center justify-center text-[#00744B] font-extrabold shadow-sm bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-500/20 shrink-0">
                     <i class="fa-solid fa-landmark text-lg"></i>
                 </div>
-                <div class="min-w-0">
+                <div class="hidden lg:block min-w-0">
                     <h1 class="text-sm sm:text-base font-extrabold truncate text-slate-800 dark:text-white header-title-text">ระบบลงเวลาปฏิบัติราชการ</h1>
                     <p class="text-xs truncate text-slate-500 dark:text-slate-400 font-semibold header-sub-text">
                         <span id="checkinOrgName">กรุงเทพมหานคร</span> • <span id="checkinBureauName" class="text-[#00744B] dark:text-emerald-400 font-bold">สำนักเทศกิจ</span>
                     </p>
                 </div>
+
+                <!-- Single-Tier User Info (Mobile: Main header display on left; Desktop: divider & profile badge) -->
+                <div class="flex items-center gap-2.5 min-w-0 lg:ml-4 lg:pl-4 lg:border-l lg:border-slate-200 dark:lg:border-slate-700">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-[#00744B] dark:text-emerald-400 shrink-0 shadow-xs">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <span id="userFullNameText" class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white truncate block">กำลังโหลด...</span>
+                    </div>
+                    <span id="userRoleBadge" class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-[#00744B] dark:bg-emerald-950 dark:text-emerald-300">User</span>
+                    <!-- Hidden metadata elements to preserve full CheckinController backward compatibility -->
+                    <span id="userPositionText" class="hidden"></span>
+                    <span id="userAffiliationText" class="hidden"></span>
+                </div>
             </div>
 
             <div class="flex items-center gap-2 shrink-0">
-                <!-- Mobile Manual Button (Mobile Only: inline-flex lg:hidden) -->
-                <a id="btnMobileManual" href="docs/manual/index.html" target="_blank" class="inline-flex lg:hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition shadow-xs no-underline" title="คู่มือการใช้งาน"><i class="fa-solid fa-book-open"></i><span>คู่มือ</span></a>
+                <!-- Mobile Manual Button (Hidden on Mobile per single-tier requirement) -->
+                <a id="btnMobileManual" href="docs/manual/index.html" target="_blank" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition shadow-xs no-underline" title="คู่มือการใช้งาน"><i class="fa-solid fa-book-open"></i><span>คู่มือ</span></a>
 
-                <!-- Mobile Hamburger Button (Mobile Only: 38px / w-9 h-9 compact with fa-bars-staggered) -->
-                <button id="btnMobileHistoryMenu" type="button" class="inline-flex lg:hidden w-11 h-11 rounded-xl items-center justify-center bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-300 border-2 border-emerald-500/50 dark:border-emerald-500/40 shadow-md hover:bg-emerald-50 dark:hover:bg-slate-700 active:scale-95 transition cursor-pointer shrink-0" title="เปิดเมนู">
+                <!-- Mobile Hamburger Button (Mobile Only: 42x42px / w-11 h-11 with prominent civic green border) -->
+                <button id="btnMobileHistoryMenu" type="button" class="inline-flex lg:hidden w-11 h-11 rounded-xl items-center justify-center bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-300 border-2 border-[#00744B] dark:border-emerald-500 shadow-md hover:bg-emerald-50 dark:hover:bg-slate-700 active:scale-95 transition cursor-pointer shrink-0" title="เปิดเมนู">
                     <i class="fa-solid fa-bars-staggered text-base"></i>
                 </button>
 
@@ -143,20 +158,6 @@
         <!-- 1. Check-in Workspace View -->
         <div id="checkinWorkspaceWrapper" class="space-y-2 lg:space-y-2.5">
 
-            <!-- Slim Top Banner (User Name only on mobile, role badge on desktop) -->
-            <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] text-white rounded-xl px-3 py-1 shadow-sm flex items-center justify-between text-xs min-h-[28px]">
-                <div class="flex items-center gap-2 min-w-0">
-                    <i class="fa-solid fa-user-circle text-emerald-300 shrink-0 text-sm"></i>
-                    <span id="userFullNameText" class="font-bold truncate text-slate-100">กำลังโหลด...</span>
-                </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <span id="userRoleBadge" class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white">User</span>
-                    <!-- Hidden metadata elements to preserve full CheckinController backward compatibility -->
-                    <span id="userPositionText" class="hidden"></span>
-                    <span id="userAffiliationText" class="hidden"></span>
-                </div>
-            </div>
-
             <!-- Unified Status Banner (เปลี่ยนสีไดนามิก: เขียว=เข้างาน, แดง=ออกงาน) -->
             <div id="unifiedStatusBanner" class="bg-gradient-to-r from-[#00351B] to-[#00744B] text-white rounded-2xl p-3 sm:p-3.5 shadow-md flex items-center justify-between transition-colors duration-300">
                 <div class="min-w-0 pr-2">
@@ -194,40 +195,78 @@
                 </div>
             </div>
 
-            <!-- Compact Photo Box (~85px / h-24 with Centered Overlay Button) -->
-            <div id="photoPreviewCard" class="relative w-full h-24 rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
-                <div id="photoPlaceholder" class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500">
-                    <i class="fa-solid fa-user text-4xl text-slate-600"></i>
+            <!-- Cockpit Split 2-Column Grid (~145px / h-36 sm:h-40) -->
+            <div class="grid grid-cols-2 gap-2.5 items-stretch h-36 sm:h-40">
+
+                <!-- Left Column: Compact Photo Box (3:4 Object Cover with Centered Overlay Button) -->
+                <div id="photoPreviewCard" class="relative w-full h-full rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
+                    <div id="photoPlaceholder" class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-500">
+                        <i class="fa-solid fa-user text-3xl sm:text-4xl text-slate-600 mb-0.5"></i>
+                    </div>
+                    <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="Captured Portrait">
+                    <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
+
+                    <!-- Centered Floating Overlay Button -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <button type="button" id="btnCenterPhotoOverlay" class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white backdrop-blur-sm border-2 border-white/70 shadow-lg flex items-center justify-center transition transform group-hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer" title="แตะเพื่อเปิดกล้อง">
+                            <i id="centerPhotoIcon" class="fa-solid fa-camera text-base text-amber-300"></i>
+                        </button>
+                    </div>
+
+                    <!-- Status Badge on Bottom -->
+                    <div class="absolute bottom-1.5 inset-x-1.5 text-center pointer-events-none">
+                        <span id="photoStatusBadgeText" class="inline-block px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[9px] sm:text-[10px] text-white font-medium truncate max-w-full">แตะเพื่อถ่ายรูป</span>
+                    </div>
+
+                    <!-- Fallback File Input for LINE / No Camera -->
+                    <input type="file" id="cameraFallbackFileInput" accept="image/*" class="hidden">
                 </div>
-                <img id="capturedPhotoPreview" class="hidden w-full h-full object-cover" alt="Captured Portrait">
-                <canvas id="cameraCaptureCanvas" class="hidden"></canvas>
 
-                <!-- Centered Floating Overlay Button -->
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <button type="button" id="btnCenterPhotoOverlay" class="w-12 h-12 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white backdrop-blur-sm border-2 border-white/60 shadow-lg flex items-center justify-center transition transform group-hover:scale-105 active:scale-95 pointer-events-auto" title="แตะเพื่อเปิดกล้อง">
-                        <i id="centerPhotoIcon" class="fa-solid fa-camera text-base text-amber-300"></i>
-                    </button>
+                <!-- Right Column: GPS & Location Card -->
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-2 sm:p-2.5 flex flex-col justify-between h-full overflow-hidden">
+                    <!-- Header: Icon, Title & Badge -->
+                    <div class="flex items-center justify-between gap-1 shrink-0">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <span class="w-5 h-5 rounded-md bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] flex items-center justify-center text-[10px] shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+                            <span class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-white truncate">พิกัด (GPS)</span>
+                        </div>
+                        <span id="gpsRequirementBadge" class="bma-badge bma-badge-sky text-[9px] font-bold px-1.5 py-0.5 shrink-0">บันทึกพิกัดจริง</span>
+                    </div>
+
+                    <!-- Location & Coordinates Info -->
+                    <div class="my-auto py-1 px-1.5 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 text-[10px] leading-tight space-y-0.5">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-slate-400 dark:text-slate-500 font-medium shrink-0">พิกัด:</span>
+                            <span id="gpsCoordsText" class="font-mono font-bold text-slate-700 dark:text-slate-300 truncate text-[10px]">กำลังระบุตำแหน่ง...</span>
+                        </div>
+                        <div class="flex items-start justify-between gap-1">
+                            <span class="text-slate-400 dark:text-slate-500 font-medium shrink-0">สถานที่:</span>
+                            <span id="gpsLocationNameText" class="font-bold text-[#00744B] dark:text-emerald-400 text-right line-clamp-2 text-[10px]">กำลังค้นหาชื่อสถานที่...</span>
+                            <span id="gpsLocationName" class="hidden"></span>
+                        </div>
+                    </div>
+
+                    <!-- Paired Action Buttons: Refresh GPS & View Leaflet Map Modal -->
+                    <div class="grid grid-cols-2 gap-1.5 shrink-0 pt-0.5">
+                        <button type="button" id="btnRefreshGps" class="py-1.5 px-1 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10px] font-bold flex items-center justify-center gap-1 transition cursor-pointer" title="ตรวจสอบ GPS">
+                            <i class="fa-solid fa-location-arrow text-[#00744B] dark:text-emerald-400 text-[10px]"></i>
+                            <span class="truncate">ตรวจสอบ GPS</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="py-1.5 px-1 rounded-lg bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0971CE] dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 text-[10px] font-bold flex items-center justify-center gap-1 transition shadow-xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
+                            <i class="fa-solid fa-map-location-dot text-[10px]"></i>
+                            <span class="truncate">ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <!-- Hidden legacy embedded map for zero-break compatibility -->
+                    <div id="googleMapEmbedWrapper" class="hidden">
+                        <div id="googleMapPlaceholder" class="hidden"></div>
+                        <iframe id="googleMapRealtimeIframe" class="hidden"></iframe>
+                    </div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
                 </div>
-
-                <!-- Status Badge on Bottom Left -->
-                <div class="absolute bottom-1.5 left-2 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] text-white font-medium flex items-center gap-1">
-                    <span id="photoStatusBadgeText">แตะเพื่อถ่ายรูป</span>
-                </div>
-
-                <!-- Fallback File Input for LINE / No Camera -->
-                <input type="file" id="cameraFallbackFileInput" accept="image/*" class="hidden">
-
-                <!-- Hidden legacy elements to preserve backward compatibility -->
-                <div id="cameraSectionCard" class="hidden"></div>
-                <span id="photoRequirementBadge" class="hidden"></span>
-                <button type="button" id="btnStartCameraBottom" class="hidden"></button>
-                <button type="button" id="btnStartCameraOverlay" class="hidden"></button>
-                <button type="button" id="btnCapturePhoto" class="hidden"></button>
-                <button type="button" id="btnRetakePhoto" class="hidden"></button>
-                <button type="button" id="btnStopCamera" class="hidden"></button>
-                <button type="button" id="btnInFrameShutter" class="hidden"></button>
-                <div id="cameraStandbyOverlay" class="hidden"></div>
-                <div id="cameraStatusMessage" class="hidden"></div>
             </div>
 
             <!-- Work Mode Segmented Switcher & Dynamic Remarks (สลับได้ทั้งตอนเข้าและออกงาน) -->
@@ -268,7 +307,7 @@
                 <div id="offsiteLocationSection" class="hidden space-y-2.5 pt-1.5 border-t border-slate-200/80 dark:border-slate-700/80">
                     <div>
                         <label for="offsiteRemarkSelect" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                            ลักษณะงานนอกสถานที่ (ดึงจาก settings.remarks) *
+                            ลักษณะงานนอกสถานที่ *
                         </label>
                         <select id="offsiteRemarkSelect" class="bma-select text-xs font-semibold rounded-xl w-full">
                             <!-- Populated dynamically in CheckinController.#initModeSwitcher -->
@@ -285,11 +324,11 @@
                     <div class="space-y-1">
                         <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">เลือกแหล่งพิกัด:</span>
                         <div class="grid grid-cols-2 gap-2">
-                            <button type="button" id="btnOffsiteGpsCurrent" class="py-2 px-2.5 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                            <button type="button" id="btnOffsiteGpsCurrent" class="py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-location-crosshairs"></i>
                                 <span>GPS ปัจจุบัน</span>
                             </button>
-                            <button type="button" id="btnOpenOffsiteMapModal" class="py-2 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs">
+                            <button type="button" id="btnOpenOffsiteMapModal" class="py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-map-pin"></i>
                                 <span>ค้นหาพิกัดเอง</span>
                             </button>
@@ -302,50 +341,6 @@
                     <input type="radio" name="offsiteGpsChoice" id="radioOffsiteGpsMap" value="map" class="hidden">
                     <div id="offsiteCustomLocationSummaryBox" class="hidden"><span id="offsiteSelectedLocationName"></span><span id="offsiteSelectedLocationCoords"></span></div>
                 </div>
-            </div>
-
-            <!-- GPS Section Card (No Embedded Google Map, Paired Action Buttons) -->
-            <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-3 sm:p-3.5 space-y-2.5">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-extrabold text-xs text-slate-800 dark:text-white flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] flex items-center justify-center text-xs shadow-xs">
-                            <i class="fa-solid fa-location-dot"></i>
-                        </span>
-                        <span>ข้อมูลพิกัดและสถานที่ (GPS)</span>
-                    </h3>
-                    <span id="gpsRequirementBadge" class="bma-badge bma-badge-sky text-[10px] font-bold px-2 py-0.5 rounded-full">บันทึกพิกัดจริง</span>
-                </div>
-
-                <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1 text-xs">
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-slate-500 dark:text-slate-400 font-semibold shrink-0">พิกัดละติจูด, ลองจิจูด:</span>
-                        <span id="gpsCoordsText" class="font-mono font-bold text-slate-700 dark:text-slate-200 text-right truncate">กำลังระบุตำแหน่ง...</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="text-slate-500 dark:text-slate-400 font-semibold shrink-0">สถานที่ใกล้เคียง:</span>
-                        <span id="gpsLocationNameText" class="font-extrabold text-[#00744B] dark:text-emerald-400 text-right truncate">กำลังค้นหาชื่อสถานที่...</span>
-                        <span id="gpsLocationName" class="hidden"></span>
-                    </div>
-                </div>
-
-                <!-- Paired Action Buttons: Refresh GPS & View Leaflet Map Modal -->
-                <div class="grid grid-cols-2 gap-2 pt-0.5">
-                    <button type="button" id="btnRefreshGps" class="py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer">
-                        <i class="fa-solid fa-location-arrow text-[#00744B] dark:text-emerald-400"></i>
-                        <span>ตรวจสอบ GPS</span>
-                    </button>
-                    <button type="button" id="btnViewGpsMapModal" class="py-2 px-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0971CE] dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer">
-                        <i class="fa-solid fa-map-location-dot"></i>
-                        <span>ดูแผนที่ตามพิกัด</span>
-                    </button>
-                </div>
-
-                <!-- Hidden legacy embedded map for zero-break compatibility -->
-                <div id="googleMapEmbedWrapper" class="hidden">
-                    <div id="googleMapPlaceholder" class="hidden"></div>
-                    <iframe id="googleMapRealtimeIframe" class="hidden"></iframe>
-                </div>
-                <a id="linkViewGoogleMap" href="#" class="hidden"></a>
             </div>
 
             <!-- Shift Selection Card -->
@@ -404,6 +399,20 @@
             <div id="checkinStep1Container" class="hidden"><button type="button" id="btnNextStepCheckin" class="hidden"><span id="btnNextStepLabel"></span></button></div>
             <div id="checkinStep2Container" class="hidden"><button type="button" id="btnPrevStepCheckin" class="hidden"></button><div id="step2SummaryBadge"><span id="step2SummaryText"></span></div></div>
             <div id="rightColumnWrapper" class="hidden"></div>
+
+            <!-- Hidden Legacy Elements Container (Moved completely out of photoPreviewCard to prevent white artifacts) -->
+            <div id="legacyHiddenCameraElements" class="hidden" style="display: none !important;">
+                <div id="cameraSectionCard" class="hidden" style="display: none !important;"></div>
+                <span id="photoRequirementBadge" class="hidden" style="display: none !important;"></span>
+                <button type="button" id="btnStartCameraBottom" class="hidden" style="display: none !important;"></button>
+                <button type="button" id="btnStartCameraOverlay" class="hidden" style="display: none !important;"></button>
+                <button type="button" id="btnCapturePhoto" class="hidden" style="display: none !important;"></button>
+                <button type="button" id="btnRetakePhoto" class="hidden" style="display: none !important;"></button>
+                <button type="button" id="btnStopCamera" class="hidden" style="display: none !important;"></button>
+                <button type="button" id="btnInFrameShutter" class="hidden" style="display: none !important;"></button>
+                <div id="cameraStandbyOverlay" class="hidden" style="display: none !important;"></div>
+                <div id="cameraStatusMessage" class="hidden" style="display: none !important;"></div>
+            </div>
 
         </div>
 

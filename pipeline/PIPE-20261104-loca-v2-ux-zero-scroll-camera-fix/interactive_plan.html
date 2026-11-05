@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แผนปฏิบัติการละเอียด: ปรับเปลี่ยนแผนที่เป็นปุ่มเด้งโมดอล & แบบจำลองมือถือ (CheckinApp Loca-V2)</title>
+    <title>แผนปฏิบัติการละเอียด: Cockpit Split Layout & แบบจำลองมือถือ (CheckinApp Loca-V2)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -38,11 +38,11 @@
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <div>
                     <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-200 text-xs font-bold rounded-full mb-2 border border-emerald-400/30">
-                        <i class="fa-solid fa-map-location-dot mr-1"></i> MODAL MAP BUTTON UPGRADE
+                        <i class="fa-solid fa-table-columns mr-1"></i> COCKPIT SPLIT 2-COLUMN SPECIFICATION
                     </span>
-                    <h1 class="text-xl md:text-3xl font-extrabold">แผนปฏิบัติการละเอียด: เปลี่ยนแผนที่เป็นปุ่มเด้งโมดอล</h1>
+                    <h1 class="text-xl md:text-3xl font-extrabold">แผนปฏิบัติการละเอียด: Cockpit Split Layout (ซ้ายกล้อง ขวา GPS)</h1>
                     <p class="text-emerald-100 text-xs md:text-sm mt-1">
-                        Task ID: <code class="bg-[#002211]/80 px-2 py-0.5 rounded font-mono">PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix</code> | Branch: <span class="text-amber-300 font-bold">Loca-V2</span>
+                        Task ID: <code class="bg-[#002211]/80 px-2 py-0.5 rounded font-mono">PIPE-20261105-loca-v2-cockpit-split-layout</code> | Branch: <span class="text-amber-300 font-bold">Loca-V2</span>
                     </p>
                 </div>
                 <div class="text-right">
@@ -53,19 +53,33 @@
             </div>
         </div>
 
-        <!-- Highlight Card: ข้อดีของการตัด Map หน้าหลักเป็นปุ่มเด้งโมดอล -->
-        <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50 p-4 rounded-2xl border border-emerald-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
-            <div class="space-y-1">
-                <span class="font-extrabold text-[#00351B] text-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-bolt text-amber-500"></i> ยกระดับ Ultra Zero-Scroll 100dvh (ความสูงหน้าจอเหลือเพียง ~345px)
+        <!-- 3 Specific Adjustments Callout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-[#00744B] shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-window-minimize text-[#00744B]"></i> จุดที่ 1: Top Bar ชั้นเดียว
                 </span>
                 <p class="text-slate-600 leading-relaxed">
-                    การตัดกล่องแผนที่ที่ฝังค้างบนหน้าหลักออก แล้วเปลี่ยนเป็นปุ่ม <strong>[ 🗺️ ดูแผนที่ตามพิกัด ]</strong> ที่เด้งโมดอล Leaflet แบบ On-Demand ช่วยประหยัดความสูงแนวตั้งได้ถึง <strong>~70px</strong> ทำให้หน้าจอหลักกระชับอย่างสมบูรณ์แบบบนมือถือทุกรุ่น
+                    รวมแถบด้านบนที่เคยซ้อนกัน 3 ชั้นให้เหลือเพียงแถบเดียว แสดงชื่อผู้ใช้ <span class="font-bold text-slate-800">[👤 นายวิศรุต โต๊ะพาน]</span> ทางซ้าย และปุ่มแฮมเบอร์เกอร์ 42x42px ทางขวา แล้วตามด้วย Banner ทันที ประหยัดพื้นที่ได้ ~55px
                 </p>
             </div>
-            <div class="px-4 py-2 bg-white rounded-xl border border-emerald-300 font-bold text-emerald-800 text-center shrink-0 shadow-xs">
-                <div class="text-[10px] text-slate-400 uppercase">ความสูงหน้าจอใหม่</div>
-                <div class="text-lg font-mono font-extrabold text-[#00744B]">~345 px</div>
+
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-teal-500 shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-table-columns text-teal-600"></i> จุดที่ 2: แบ่งครึ่งจอซ้ายกล้อง ขวา GPS (20dvh)
+                </span>
+                <p class="text-slate-600 leading-relaxed">
+                    รวบการ์ดกล้องถ่ายรูปและข้อมูลพิกัด GPS มาอยู่เคียงข้างกันในแถวเดียว ความสูง ~20dvh (~145px) พอดีกับรูปถ่ายบุคคล 3:4 และไม่มีขอบขาวส่วนเกินกวนสายตา
+                </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-indigo-500 shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-sliders text-indigo-600"></i> จุดที่ 3: ปุ่มเลือกพิกัดเด่นชัด & ตัดข้อความ
+                </span>
+                <p class="text-slate-600 leading-relaxed">
+                    ตัดคำว่า "(ดึงจาก settings.remarks)" ออก, รายการใน Dropdown เรียงตามตั้งค่าระบบเป๊ะ, และปุ่มเลือกแหล่งพิกัดมีสถานะ Active สีเขียว/ม่วงครามเด่นชัด มองเห็นง่าย
+                </p>
             </div>
         </div>
 
@@ -96,7 +110,7 @@
                                 <span>SubAgent 1: Implementer (Flash 3.8 High — 1 ตัว)</span>
                                 <span class="text-[10px] text-slate-500 font-mono">Map-First Surgical</span>
                             </div>
-                            <p class="text-slate-600">อ่านเฉพาะบรรทัดเป้าหมาย (StartLine–EndLine ±10) ห้ามอ่านเกิน 80 บรรทัด, แก้ไขเฉพาะ 2 ไฟล์เป้าหมาย (<code class="font-mono">checkin.html</code> และ <code class="font-mono">CheckinController.js</code>), ตัดกล่องแผนที่หน้าหลักออก, วางปุ่มดูแผนที่โมดอล Leaflet, ปรับจูนปุ่มแฮมเบอร์เกอร์ 42px, ซิงค์สี Banner เขียว/แดง, และรัน Sync AST Map</p>
+                            <p class="text-slate-600">อ่านเฉพาะบรรทัดเป้าหมาย (StartLine–EndLine ±10) ห้ามอ่านเกิน 80 บรรทัด, แก้ไขเฉพาะ 2 ไฟล์เป้าหมาย (<code class="font-mono">checkin.html</code> และ <code class="font-mono">CheckinController.js</code>), รวม Top Bar ชั้นเดียว, แบ่งครึ่งจอซ้ายกล้องขวา GPS (20dvh), ย้ายปุ่ม Legacy ไม่ให้เกิดแถบขาว, ปรับจูนปุ่มเลือกพิกัดเด่นชัด, และรัน Sync AST Map</p>
                         </div>
 
                         <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200">
@@ -104,7 +118,7 @@
                                 <span>SubAgent 2: QA Auditor & Diff Specialist (Flash 3.8 High — 1 ตัว)</span>
                                 <span class="text-[10px] text-slate-500 font-mono">Audit & Diff</span>
                             </div>
-                            <p class="text-slate-600">ตรวจสอบ Zero-Scroll 100dvh (~345px), ตรวจสอบการเปิดโมดอลแผนที่ Leaflet เมื่อกดปุ่มดูแผนที่, ตรวจสอบการเลือกนอกสถานที่ตอนออกงาน, ตรวจสอบ Settings 12 ฟังก์ชัน, รัน <code class="font-mono">node --check</code> และตรวจ <code class="font-mono text-rose-700 font-bold">git diff main</code> ป้องกันโค้ดหลุดขอบเขต</p>
+                            <p class="text-slate-600">ตรวจสอบความสูงรวม (~315px Zero-Scroll), ตรวจสอบความสูงของการ์ดซ้าย-ขวา 20dvh, ตรวจสอบสี Active ของปุ่มแหล่งพิกัด, ตรวจสอบความถูกต้องของ Dropdown, รัน <code class="font-mono">node --check</code> และตรวจ <code class="font-mono text-rose-700 font-bold">git diff main</code> ป้องกันโค้ดหลุดขอบเขต</p>
                         </div>
                     </div>
                 </div>
@@ -135,21 +149,21 @@
 
             </div>
 
-            <!-- Right Column: แบบจำลองโทรศัพท์มือถือที่เปลี่ยนแผนที่เป็นปุ่มเด้งโมดอล (5 cols) -->
+            <!-- Right Column: แบบจำลองโทรศัพท์มือถือ Cockpit Layout (5 cols) -->
             <div class="lg:col-span-5 flex flex-col items-center">
                 <div class="text-center mb-2">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
                         <i class="fa-solid fa-mobile-screen-button text-[#00744B] mr-1"></i> Interactive Mobile Simulator
                     </span>
-                    <p class="text-[11px] text-slate-400">ทดลองกดปุ่ม [ดูแผนที่ตามพิกัด] ในการ์ด GPS เพื่อเปิดโมดอล Leaflet</p>
+                    <p class="text-[11px] text-slate-400">แบบจำลอง Cockpit Layout: ซ้ายกล้อง ขวา GPS ความสูง ~20dvh</p>
                 </div>
 
                 <div class="device-frame shadow-2xl">
                     
-                    <!-- Mobile Viewport Container (ความสูงรวม ~345px Ultra Zero-Scroll) -->
+                    <!-- Mobile Viewport Container -->
                     <div class="flex-1 overflow-y-auto p-3 space-y-2.5 pb-20 relative">
                         
-                        <!-- [1] Top Bar (ชื่อผู้ใช้ + แฮมเบอร์เกอร์ใหญ่ 42px) -->
+                        <!-- [1] Top Bar บนมือถือ (เหลือชั้นเดียว: ชื่อผู้ใช้ + แฮมเบอร์เกอร์ 42px) -->
                         <div class="flex items-center justify-between text-xs py-1 px-1">
                             <div class="flex items-center gap-2 min-w-0">
                                 <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#00744B] flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
@@ -169,31 +183,63 @@
                                 <span id="simBannerSubText" class="text-[10px] text-emerald-100 font-medium">เวลาราชการปกติ</span>
                             </div>
                             <div class="text-right">
-                                <span id="simRealtimeClock" class="font-mono text-xl font-extrabold text-white">08:07:25</span>
+                                <span id="simRealtimeClock" class="font-mono text-xl font-extrabold text-white">11:56:45</span>
                                 <span class="text-[9px] text-white/80 block font-medium">เวลาปัจจุบัน</span>
                             </div>
                         </div>
 
-                        <!-- [3] Compact Photo Box with Centered Overlay Button -->
-                        <div id="simPhotoBox" onclick="openSimCameraModal()" class="relative w-full h-24 rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
-                            <div id="simPhotoPlaceholder" class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500">
-                                <i class="fa-solid fa-user text-4xl text-slate-600"></i>
-                            </div>
-                            <img id="simPhotoImg" class="hidden w-full h-full object-cover" src="" alt="Thumbnail">
+                        <!-- [3] Cockpit Split Grid (แบ่งครึ่งจอ 2 คอลัมน์: ซ้ายกล้อง ขวา GPS ~20dvh) -->
+                        <div class="grid grid-cols-2 gap-2 items-stretch h-36">
+                            
+                            <!-- ฝั่งซ้าย: กล้องถ่ายภาพ (~20dvh) ไร้ขอบขาวซ้อนทับ -->
+                            <div id="simPhotoBox" onclick="openSimCameraModal()" class="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group h-full">
+                                <div id="simPhotoPlaceholder" class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-400">
+                                    <i class="fa-solid fa-user text-3xl text-slate-500 mb-1"></i>
+                                    <span class="text-[9px] text-slate-400 font-medium">กล้องยืนยันตัวตน</span>
+                                </div>
+                                <img id="simPhotoImg" class="hidden w-full h-full object-cover" src="" alt="Thumbnail">
 
-                            <!-- Centered Floating Overlay Button -->
-                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div id="simCenterButton" class="w-12 h-12 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white backdrop-blur-sm border-2 border-white/60 shadow-lg flex items-center justify-center transition transform group-hover:scale-105 active:scale-95 pointer-events-auto">
-                                    <i id="simCenterIcon" class="fa-solid fa-camera text-base text-amber-300"></i>
+                                <!-- Centered Floating Overlay Button -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div id="simCenterButton" class="w-11 h-11 rounded-full bg-slate-900/75 hover:bg-slate-900/90 text-white backdrop-blur-sm border-2 border-white/60 shadow-lg flex items-center justify-center transition transform group-hover:scale-105 active:scale-95 pointer-events-auto">
+                                        <i id="simCenterIcon" class="fa-solid fa-camera text-sm text-amber-300"></i>
+                                    </div>
+                                </div>
+
+                                <div class="absolute bottom-1.5 left-1.5 right-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[8px] text-white font-medium text-center truncate">
+                                    <span id="simPhotoStatusText">แตะเพื่อถ่ายรูป</span>
                                 </div>
                             </div>
 
-                            <div class="absolute bottom-1.5 left-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[9px] text-white font-medium">
-                                <span id="simPhotoStatusText">แตะเพื่อถ่ายรูป</span>
+                            <!-- ฝั่งขวา: ข้อมูลพิกัดและสถานที่ (GPS) (~20dvh) -->
+                            <div class="bg-white rounded-2xl p-2.5 shadow-xs border border-slate-200 flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-bold text-[11px] text-slate-800 flex items-center gap-1">
+                                            <i class="fa-solid fa-location-dot text-[#00744B]"></i> พิกัด (GPS)
+                                        </span>
+                                        <span id="simGpsBadge" class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-sky-100 text-sky-800">บันทึกพิกัดจริง</span>
+                                    </div>
+                                    <div class="text-[10px] font-mono text-slate-600 font-semibold truncate" id="simGpsCoords">13.738112, 100.495479</div>
+                                    <div class="text-[10px] font-extrabold text-[#00744B] line-clamp-2 mt-0.5 leading-tight" id="simGpsLocationName">ใกล้เคียง ซอยขุมทรัพย์</div>
+                                </div>
+
+                                <!-- ปุ่มแอ็กชันคู่ฝั่งขวา -->
+                                <div class="grid grid-cols-2 gap-1 pt-1 border-t border-slate-100">
+                                    <button type="button" onclick="refreshSimGps()" class="py-1 px-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-bold flex items-center justify-center gap-0.5 transition">
+                                        <i class="fa-solid fa-location-arrow text-[#00744B] text-[8px]"></i>
+                                        <span>รีเฟรช</span>
+                                    </button>
+                                    <button type="button" onclick="openSimViewMapModal()" class="py-1 px-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0971CE] border border-sky-200 text-[9px] font-bold flex items-center justify-center gap-0.5 transition">
+                                        <i class="fa-solid fa-map text-[8px]"></i>
+                                        <span>แผนที่</span>
+                                    </button>
+                                </div>
                             </div>
+
                         </div>
 
-                        <!-- [4] Work Mode Segmented Switcher & Dynamic Remarks (เลือกได้ทั้งเข้าและออกงาน) -->
+                        <!-- [4] การ์ดรูปแบบการปฏิบัติงาน (Segmented Switcher & Dynamic Remarks) -->
                         <div class="bg-white rounded-xl p-2.5 shadow-xs border border-slate-200 space-y-2">
                             <div class="flex items-center justify-between text-[11px] mb-0.5">
                                 <span class="font-bold text-slate-700">รูปแบบการปฏิบัติงาน *</span>
@@ -214,14 +260,14 @@
                                 <div class="font-bold flex items-center gap-1">
                                     <i class="fa-solid fa-circle-check text-emerald-600"></i> อยู่ในรัศมีสถานที่ทำงาน
                                 </div>
-                                <div class="text-slate-600 text-[10px]">สำนักเทศกิจ (ห่าง 38 ม. / รัศมี 700 ม.)</div>
+                                <div class="text-slate-600 text-[10px]">สำนักเทศกิจ (ห่าง 68 ม. / รัศมี 700 ม.)</div>
                             </div>
 
-                            <!-- Offsite Options (เลือกได้ทั้งตอนเข้าและออกงาน) -->
+                            <!-- Offsite Options (ตัดคำว่าดึงจาก settings ออก, เรียงลำดับตามระบบ, ปุ่มมีสี Active ชัดเจน) -->
                             <div id="simOffsiteContent" class="hidden space-y-2 pt-1 border-t border-slate-100">
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-700 mb-1">
-                                        ลักษณะงานนอกสถานที่ (ดึงจาก settings.remarks) *
+                                        ลักษณะงานนอกสถานที่ *
                                     </label>
                                     <select id="simOffsiteSelect" onchange="handleSimRemarkChange()" class="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-white">
                                         <option value="WFH">ปฏิบัติงานที่บ้าน (WFH)</option>
@@ -238,50 +284,24 @@
                                 </div>
 
                                 <div class="space-y-1">
-                                    <span class="text-[10px] font-bold text-slate-700 block">เลือกแหล่งพิกัด:</span>
+                                    <span class="text-[10px] font-bold text-slate-700 block">เลือกแหล่งพิกัด (Active State ชัดเจน):</span>
                                     <div class="grid grid-cols-2 gap-1.5">
-                                        <button type="button" id="simBtnGpsCurrent" onclick="setSimGpsChoice('current')" class="p-1.5 rounded-lg border border-emerald-500 bg-emerald-50 text-[#00744B] text-[10px] font-bold">
-                                            <i class="fa-solid fa-location-crosshairs mr-1"></i>GPS ปัจจุบัน
+                                        <button type="button" id="simBtnGpsCurrent" onclick="setSimGpsChoice('current')" class="py-2 px-2 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-[10px] font-extrabold flex items-center justify-center gap-1 transition">
+                                            <i class="fa-solid fa-circle-check text-xs"></i>
+                                            <span>GPS ปัจจุบัน</span>
                                         </button>
-                                        <button type="button" id="simBtnGpsSearch" onclick="openSimMapModal()" class="p-1.5 rounded-lg border border-slate-200 bg-white text-indigo-700 hover:bg-indigo-50 text-[10px] font-bold">
-                                            <i class="fa-solid fa-map-pin mr-1"></i>ค้นหาพิกัดเอง
+                                        <button type="button" id="simBtnGpsSearch" onclick="setSimGpsChoice('map')" class="py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition">
+                                            <i class="fa-solid fa-map-pin text-xs"></i>
+                                            <span>ค้นหาพิกัดเอง</span>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- [5] GPS Card แบบใหม่: แสดงข้อมูลพิกัดตามระบบเดิม + ปุ่มคู่แอ็กชัน (ไม่มีแผนที่ฝังหน้าหลัก) -->
-                        <div class="bg-white rounded-xl p-2.5 shadow-xs border border-slate-200 space-y-2">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-slate-700 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-location-dot text-sky-600"></i>
-                                    <span>ข้อมูลพิกัดและสถานที่ (GPS)</span>
-                                </span>
-                                <span id="simGpsBadge" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-sky-100 text-sky-800">บันทึกพิกัดจริง</span>
-                            </div>
-                            
-                            <div class="p-2 rounded-lg bg-slate-50 border border-slate-100 space-y-0.5 text-xs">
-                                <div class="text-[11px] font-mono text-slate-700 font-semibold" id="simGpsCoords">13.738395, 100.495433</div>
-                                <div class="text-[11px] font-extrabold text-[#00744B] truncate" id="simGpsLocationName">บริเวณ สำนักเทศกิจ</div>
-                            </div>
-
-                            <!-- ปุ่มคู่แอ็กชัน: รีเฟรชพิกัด และ ดูแผนที่โมดอล Leaflet -->
-                            <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-                                <button type="button" onclick="refreshSimGps()" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold flex items-center justify-center gap-1 transition">
-                                    <i class="fa-solid fa-location-arrow text-[#00744B]"></i>
-                                    <span>ตรวจสอบ GPS</span>
-                                </button>
-                                <button type="button" onclick="openSimViewMapModal()" class="py-1.5 px-2 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0971CE] border border-sky-200 text-[10px] font-bold flex items-center justify-center gap-1 transition shadow-xs">
-                                    <i class="fa-solid fa-map-location-dot"></i>
-                                    <span>ดูแผนที่ตามพิกัด</span>
-                                </button>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <!-- [6] High-Visibility Sticky Action Button -->
+                    <!-- [5] High-Visibility Sticky Action Button -->
                     <div class="absolute bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-xs border-t border-slate-200">
                         <button type="button" id="simStickyButton" class="w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white shadow-lg bma-theme-green flex items-center justify-center gap-2">
                             <i id="simStickyIcon" class="fa-solid fa-fingerprint text-lg text-[#F6DE51]"></i>
@@ -289,7 +309,7 @@
                         </button>
                     </div>
 
-                    <!-- โมดอลดูแผนที่ตามพิกัด Leaflet (เด้งขึ้นมาเมื่อกดปุ่ม "ดูแผนที่ตามพิกัด") -->
+                    <!-- โมดอลดูแผนที่ตามพิกัด Leaflet -->
                     <div id="simViewMapModal" class="hidden absolute inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
                         <div class="w-full bg-white rounded-3xl p-4 space-y-3 shadow-2xl max-h-[85%] flex flex-col">
                             <div class="flex items-center justify-between border-b pb-2">
@@ -300,25 +320,17 @@
                                     <i class="fa-solid fa-xmark text-sm"></i>
                                 </button>
                             </div>
-
-                            <!-- แผนที่จำลองขนาดใหญ่ โต้ตอบได้ -->
                             <div class="rounded-2xl overflow-hidden border border-slate-200 h-60 bg-emerald-50 relative flex items-center justify-center">
                                 <div class="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400">
                                     <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center animate-pulse mb-1">
                                         <i class="fa-solid fa-location-dot text-2xl text-rose-500"></i>
                                     </div>
                                     <span class="text-[10px] text-slate-600 font-bold bg-white/90 px-3 py-1 rounded-full shadow-xs">
-                                        หมุดพิกัด: <span id="simModalPinCoords" class="font-mono text-[#00744B]">13.738395, 100.495433</span>
+                                        หมุดพิกัด: <span id="simModalPinCoords" class="font-mono text-[#00744B]">13.738112, 100.495479</span>
                                     </span>
                                 </div>
                             </div>
-
-                            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] space-y-1">
-                                <div class="font-bold text-slate-800" id="simModalLocTitle">สำนักเทศกิจ กรุงเทพมหานคร</div>
-                                <div class="text-[10px] text-slate-500">รัศมีปฏิบัติการ: 700 เมตร (ท่านอยู่ในรัศมี ห่าง 38 ม.)</div>
-                            </div>
-
-                            <button type="button" onclick="closeSimViewMapModal()" class="w-full py-2.5 rounded-xl bg-[#00744B] hover:bg-[#005B3A] text-white font-bold text-xs shadow-md">
+                            <button type="button" onclick="closeSimViewMapModal()" class="w-full py-2.5 rounded-xl bg-[#00744B] text-white font-bold text-xs shadow-md">
                                 ปิดหน้าต่างแผนที่
                             </button>
                         </div>
@@ -366,9 +378,6 @@
                                 <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
                                     <i class="fa-solid fa-file-signature"></i> คำขอลงเวลากรณีพิเศษ
                                 </div>
-                                <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
-                                    <i class="fa-solid fa-book-open"></i> คู่มือการใช้งาน
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -404,10 +413,10 @@
                 <!-- Simulation Control Buttons -->
                 <div class="mt-3 flex items-center gap-2">
                     <button type="button" onclick="toggleSimCheckinState('checkin')" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                        🟢 สถานะเข้างาน (Banner เขียว)
+                        🟢 สถานะเข้างาน
                     </button>
                     <button type="button" onclick="toggleSimCheckinState('checkout')" class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
-                        🔴 สถานะออกงาน (Banner แดง)
+                        🔴 สถานะออกงาน
                     </button>
                     <button type="button" onclick="toggleSimCheckinState('locked')" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 border border-slate-300">
                         ⚪ ล็อกปุ่ม (สีเทา)
@@ -421,10 +430,10 @@
         <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-5 text-center space-y-2">
             <div class="text-sm font-bold text-amber-950 flex items-center justify-center gap-2">
                 <i class="fa-solid fa-clipboard-check text-amber-600"></i>
-                แผนได้รับการปรับปรุงเปลี่ยนแผนที่เป็นปุ่มเด้งโมดอลเรียบร้อยแล้ว — ยังไม่มีการแก้ไขโค้ดใดๆ
+                แผนปฏิบัติการวิเคราะห์ละเอียดฉบับ Cockpit Layout เสร็จสมบูรณ์แล้ว — ยังไม่มีการแก้ไขโค้ดใดๆ
             </div>
             <p class="text-xs text-amber-800 max-w-xl mx-auto leading-relaxed">
-                หากท่านตรวจสอบความถูกต้องของแบบจำลองและข้อกำหนดทางเทคนิคแล้วเห็นชอบ สามารถกดปุ่ม <strong>"Proceed"</strong> เพื่อเริ่มต้นดำเนินการได้ทันทีครับ
+                หากท่านตรวจสอบรายละเอียดและแบบจำลองตอบสนองจริงแล้วเห็นชอบ สามารถกดปุ่ม <strong>"Proceed"</strong> เพื่อเริ่มต้นดำเนินการได้ทันทีครับ
             </p>
         </div>
 
@@ -454,7 +463,6 @@
             const coords = document.getElementById('simGpsCoords').textContent;
             const locName = document.getElementById('simGpsLocationName').textContent;
             document.getElementById('simModalPinCoords').textContent = coords;
-            document.getElementById('simModalLocTitle').textContent = locName;
             document.getElementById('simViewMapModal').classList.remove('hidden');
         }
         function closeSimViewMapModal() {
@@ -462,7 +470,7 @@
         }
 
         function refreshSimGps() {
-            alert('ตรวจสอบพิกัด GPS เรียบร้อย: 13.738395, 100.495433 (ความแม่นยำสูง)');
+            alert('ตรวจสอบพิกัด GPS สำเร็จ: 13.738112, 100.495479 (ความแม่นยำสูง)');
         }
 
         // Mode Switching
@@ -507,11 +515,11 @@
             closeSimCameraModal();
             document.getElementById('simPhotoPlaceholder').classList.add('hidden');
             const img = document.getElementById('simPhotoImg');
-            img.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=120&fit=crop&crop=faces';
+            img.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces';
             img.classList.remove('hidden');
             
             const icon = document.getElementById('simCenterIcon');
-            icon.className = 'fa-solid fa-rotate-right text-base text-white';
+            icon.className = 'fa-solid fa-rotate-right text-xs text-white';
             document.getElementById('simPhotoStatusText').textContent = 'ถ่ายภาพแล้ว (แตะเพื่อถ่ายใหม่)';
         }
 
@@ -525,20 +533,35 @@
         function confirmSimMapSearch() {
             closeSimMapModal();
             document.getElementById('simGpsBadge').textContent = 'พิกัดที่ค้นหาเอง';
-            document.getElementById('simGpsBadge').className = 'px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-800';
+            document.getElementById('simGpsBadge').className = 'px-1.5 py-0.5 rounded text-[8px] font-bold bg-indigo-100 text-indigo-800';
             document.getElementById('simGpsCoords').textContent = '13.753682, 100.501754';
-            document.getElementById('simGpsLocationName').textContent = 'ศาลาว่าการกรุงเทพมหานคร 1 (เสาชิงช้า)';
-            document.getElementById('simBtnGpsSearch').className = 'p-1.5 rounded-lg border border-indigo-500 bg-indigo-50 text-indigo-800 text-[10px] font-bold';
-            document.getElementById('simBtnGpsCurrent').className = 'p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-[10px] font-bold';
+            document.getElementById('simGpsLocationName').textContent = 'ศาลาว่าการกรุงเทพมหานคร 1';
         }
+
+        // Prominent GPS Choice Toggle
         function setSimGpsChoice(choice) {
+            const btnCurrent = document.getElementById('simBtnGpsCurrent');
+            const btnSearch = document.getElementById('simBtnGpsSearch');
+
             if (choice === 'current') {
+                btnCurrent.className = 'py-2 px-2 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnCurrent.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>GPS ปัจจุบัน</span>';
+
+                btnSearch.className = 'py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnSearch.innerHTML = '<i class="fa-solid fa-map-pin text-xs"></i><span>ค้นหาพิกัดเอง</span>';
+
                 document.getElementById('simGpsBadge').textContent = 'บันทึกพิกัดจริง';
-                document.getElementById('simGpsBadge').className = 'px-2 py-0.5 rounded-full text-[9px] font-bold bg-sky-100 text-sky-800';
-                document.getElementById('simGpsCoords').textContent = '13.738395, 100.495433';
-                document.getElementById('simGpsLocationName').textContent = 'บริเวณ สำนักเทศกิจ';
-                document.getElementById('simBtnGpsCurrent').className = 'p-1.5 rounded-lg border border-emerald-500 bg-emerald-50 text-[#00744B] text-[10px] font-bold';
-                document.getElementById('simBtnGpsSearch').className = 'p-1.5 rounded-lg border border-slate-200 bg-white text-indigo-700 text-[10px] font-bold';
+                document.getElementById('simGpsBadge').className = 'px-1.5 py-0.5 rounded text-[8px] font-bold bg-sky-100 text-sky-800';
+                document.getElementById('simGpsCoords').textContent = '13.738112, 100.495479';
+                document.getElementById('simGpsLocationName').textContent = 'ใกล้เคียง ซอยขุมทรัพย์';
+            } else if (choice === 'map') {
+                btnSearch.className = 'py-2 px-2 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnSearch.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>ค้นหาพิกัดเอง</span>';
+
+                btnCurrent.className = 'py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnCurrent.innerHTML = '<i class="fa-solid fa-location-crosshairs text-xs"></i><span>GPS ปัจจุบัน</span>';
+
+                openSimMapModal();
             }
         }
 

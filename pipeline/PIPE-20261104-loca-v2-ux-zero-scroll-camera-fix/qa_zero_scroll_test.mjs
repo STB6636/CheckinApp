@@ -73,8 +73,8 @@ assert(
 console.log('\n▶️ Group 3: Compact Photo Box (~85px / h-24)');
 
 assert(
-    'Photo Box: #photoPreviewCard exists with h-24 height and centered button overlay',
-    checkinHtml.includes('id="photoPreviewCard" class="relative w-full h-24') &&
+    'Photo Box: #photoPreviewCard exists with compact height and centered button overlay',
+    (checkinHtml.includes('id="photoPreviewCard" class="relative w-full h-24') || checkinHtml.includes('id="photoPreviewCard" class="relative w-full h-full')) &&
     checkinHtml.includes('id="btnCenterPhotoOverlay"') &&
     checkinHtml.includes('id="centerPhotoIcon"') &&
     checkinHtml.includes('id="photoStatusBadgeText"')

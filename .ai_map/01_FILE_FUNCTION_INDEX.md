@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T04:46:45.759Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `85` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `624`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T06:14:22.175Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `86` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `626`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -64,11 +64,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `8ce41f53339bcab6` | **Total Lines:** `3049` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `7e05c8f972b5fcf5` | **Total Lines:** `3076` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L12 - L673** | `export class CheckinController` | Class Definition (662 lines) |
+| `CheckinController` | `class` | **L12 - L691** | `export class CheckinController` | Class Definition (680 lines) |
 | `CheckinController.constructor` | `public constructor` | **L13 - L60** | `() => any` | public constructor L13-L60 (48 lines) |
 | `CheckinController.init` | `public async method` | **L62 - L107** | `() => Promise<any>` | public async method L62-L107 (46 lines) |
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L109 - L149** | `() => any` | private method L109-L149 (41 lines) |
@@ -83,56 +83,57 @@
 | `CheckinController.evaluateOnsiteGeofence` | `public method` | **L422 - L491** | `(currentLat, currentLng) => any` | public method L422-L491 (70 lines) |
 | `CheckinController.#renderGeofenceStatusUI` | `private method` | **L493 - L543** | `() => any` | private method L493-L543 (51 lines) |
 | `CheckinController.#initLocaV2ModeAndChips` | `private method` | **L545 - L547** | `() => any` | private method L545-L547 (3 lines) |
-| `CheckinController.#initModeSwitcher` | `private method` | **L549 - L615** | `() => any` | private method L549-L615 (67 lines) |
-| `CheckinController.#initViewGpsMapModal` | `private method` | **L617 - L624** | `() => any` | private method L617-L624 (8 lines) |
-| `CheckinController.#openViewGpsMapModal` | `private method` | **L626 - L672** | `() => any` | private method L626-L672 (47 lines) |
-| `#goToStep` | `private method` | **L675 - L740** | `(step) => any` | private method L675-L740 (66 lines) |
-| `#updateStep1Validation` | `private method` | **L742 - L777** | `() => any` | private method L742-L777 (36 lines) |
-| `#openOffsiteMapModal` | `private method` | **L779 - L840** | `() => any` | private method L779-L840 (62 lines) |
-| `#updateOffsiteModalMarker` | `private async method` | **L843 - L879** | `(lat, lng, explicitName = null) => Promise<any>` | private async method L843-L879 (37 lines) |
-| `#initOffsiteModalGps` | `private method` | **L881 - L971** | `() => any` | private method L881-L971 (91 lines) |
-| `closeModal` | `arrow_fn` | **L890 - L896** | `() => inferred` | Arrow Function L890-L896 |
-| `performSearch` | `async_arrow_fn` | **L930 - L970** | `() => inferred` | Arrow Function L930-L970 |
-| `#renderUserAndSettingsInfo` | `private method` | **L984 - L1073** | `() => any` | private method L984-L1073 (90 lines) |
-| `setElText` | `arrow_fn` | **L989 - L992** | `(id, text) => inferred` | Arrow Function L989-L992 |
-| `#refreshAllAttendanceData` | `private async method` | **L1075 - L1092** | `() => Promise<any>` | private async method L1075-L1092 (18 lines) |
-| `#updateStatusCardsAndMainButton` | `private method` | **L1094 - L1187** | `() => any` | private method L1094-L1187 (94 lines) |
-| `#renderPersonalAttendanceTabs` | `private method` | **L1189 - L1232** | `() => any` | private method L1189-L1232 (44 lines) |
-| `#buildHistoryRowHtml` | `private method` | **L1234 - L1253** | `(item, rowNumber) => any` | private method L1234-L1253 (20 lines) |
-| `#renderSpecialRequestsHistoryTable` | `private method` | **L1255 - L1297** | `() => any` | private method L1255-L1297 (43 lines) |
-| `#openFullscreenCamera` | `private async method` | **L1299 - L1345** | `() => Promise<any>` | private async method L1299-L1345 (47 lines) |
-| `#captureAndCloseCamera` | `private method` | **L1347 - L1378** | `() => any` | private method L1347-L1378 (32 lines) |
-| `#closeFullscreenCamera` | `private method` | **L1380 - L1383** | `() => any` | private method L1380-L1383 (4 lines) |
-| `#checkCameraHardware` | `private async method` | **L1385 - L1399** | `() => Promise<any>` | private async method L1385-L1399 (15 lines) |
-| `#handleFallbackFileSelected` | `private method` | **L1401 - L1465** | `(file) => any` | private method L1401-L1465 (65 lines) |
-| `#stopCameraHardwareStream` | `private method` | **L1467 - L1478** | `() => any` | private method L1467-L1478 (12 lines) |
-| `#stopCameraAndShowStandby` | `private method` | **L1480 - L1506** | `() => any` | private method L1480-L1506 (27 lines) |
-| `#openCameraOnDemand` | `private async method` | **L1508 - L1577** | `() => Promise<any>` | private async method L1508-L1577 (70 lines) |
-| `#capturePhotoAndStopStream` | `private method` | **L1579 - L1611** | `() => any` | private method L1579-L1611 (33 lines) |
-| `#resetPageAfterSave` | `private async method` | **L1613 - L1626** | `() => Promise<any>` | private async method L1613-L1626 (14 lines) |
-| `#initGpsLocation` | `private async method` | **L1634 - L1728** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `#bindEvents` | `private method` | **L1730 - L2024** | `() => any` | private method L1730-L2024 (295 lines) |
-| `openSpecialModal` | `arrow_fn` | **L1893 - L1896** | `() => inferred` | Arrow Function L1893-L1896 |
-| `setDesktopActiveTab` | `arrow_fn` | **L1931 - L1950** | `(activeName) => inferred` | Arrow Function L1931-L1950 |
-| `openMobileDrawer` | `arrow_fn` | **L1961 - L1978** | `() => inferred` | Arrow Function L1961-L1978 |
-| `closeMobileDrawer` | `arrow_fn` | **L1980 - L2005** | `(targetTab = null) => inferred` | Arrow Function L1980-L2005 |
-| `#handleMainCheckin` | `private async method` | **L2026 - L2389** | `() => Promise<any>` | private async method L2026-L2389 (364 lines) |
-| `#openSpecialRequestModal` | `private method` | **L2391 - L2421** | `() => any` | private method L2391-L2421 (31 lines) |
-| `#initSpecialModalGps` | `private method` | **L2423 - L2526** | `() => any` | private method L2423-L2526 (104 lines) |
-| `updateCustomPinAndLocation` | `async_arrow_fn` | **L2435 - L2483** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L2435-L2483 |
-| `setupMapIfAvailable` | `arrow_fn` | **L2485 - L2520** | `() => inferred` | Arrow Function L2485-L2520 |
-| `getDistanceInMeters` | `arrow_fn` | **L2545 - L2564** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2545-L2564 |
-| `calculateDistance` | `arrow_fn` | **L2566 - L2575** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2566-L2575 |
-| `getCategoryLabel` | `arrow_fn` | **L2577 - L2616** | `(item) => inferred` | Arrow Function L2577-L2616 |
-| `escapeHtml` | `arrow_fn` | **L2618 - L2626** | `(str) => inferred` | Arrow Function L2618-L2626 |
-| `formatSubAddress` | `arrow_fn` | **L2628 - L2644** | `(item) => inferred` | Arrow Function L2628-L2644 |
-| `getMainName` | `arrow_fn` | **L2646 - L2654** | `(item) => inferred` | Arrow Function L2646-L2654 |
-| `hideSearchResults` | `arrow_fn` | **L2656 - L2661** | `() => inferred` | Arrow Function L2656-L2661 |
-| `bindResultItemClicks` | `arrow_fn` | **L2663 - L2679** | `() => inferred` | Arrow Function L2663-L2679 |
-| `renderCoordsResult` | `arrow_fn` | **L2681 - L2705** | `(lat, lng) => inferred` | Arrow Function L2681-L2705 |
-| `renderPlaceResults` | `arrow_fn` | **L2707 - L2752** | `(items) => inferred` | Arrow Function L2707-L2752 |
-| `performSearch` | `async_arrow_fn` | **L2757 - L2929** | `() => inferred` | Arrow Function L2757-L2929 |
-| `#handleSubmitSpecialRequest` | `private async method` | **L2969 - L3044** | `(closeModalCallback) => Promise<any>` | private async method L2969-L3044 (76 lines) |
+| `CheckinController.#initModeSwitcher` | `private method` | **L549 - L633** | `() => any` | private method L549-L633 (85 lines) |
+| `setActiveOffsiteGps` | `arrow_fn` | **L601 - L610** | `(source) => inferred` | Arrow Function L601-L610 |
+| `CheckinController.#initViewGpsMapModal` | `private method` | **L635 - L642** | `() => any` | private method L635-L642 (8 lines) |
+| `CheckinController.#openViewGpsMapModal` | `private method` | **L644 - L690** | `() => any` | private method L644-L690 (47 lines) |
+| `#goToStep` | `private method` | **L693 - L758** | `(step) => any` | private method L693-L758 (66 lines) |
+| `#updateStep1Validation` | `private method` | **L760 - L795** | `() => any` | private method L760-L795 (36 lines) |
+| `#openOffsiteMapModal` | `private method` | **L797 - L858** | `() => any` | private method L797-L858 (62 lines) |
+| `#updateOffsiteModalMarker` | `private async method` | **L861 - L897** | `(lat, lng, explicitName = null) => Promise<any>` | private async method L861-L897 (37 lines) |
+| `#initOffsiteModalGps` | `private method` | **L899 - L996** | `() => any` | private method L899-L996 (98 lines) |
+| `closeModal` | `arrow_fn` | **L908 - L914** | `() => inferred` | Arrow Function L908-L914 |
+| `performSearch` | `async_arrow_fn` | **L955 - L995** | `() => inferred` | Arrow Function L955-L995 |
+| `#renderUserAndSettingsInfo` | `private method` | **L1009 - L1098** | `() => any` | private method L1009-L1098 (90 lines) |
+| `setElText` | `arrow_fn` | **L1014 - L1017** | `(id, text) => inferred` | Arrow Function L1014-L1017 |
+| `#refreshAllAttendanceData` | `private async method` | **L1100 - L1117** | `() => Promise<any>` | private async method L1100-L1117 (18 lines) |
+| `#updateStatusCardsAndMainButton` | `private method` | **L1119 - L1212** | `() => any` | private method L1119-L1212 (94 lines) |
+| `#renderPersonalAttendanceTabs` | `private method` | **L1214 - L1257** | `() => any` | private method L1214-L1257 (44 lines) |
+| `#buildHistoryRowHtml` | `private method` | **L1259 - L1278** | `(item, rowNumber) => any` | private method L1259-L1278 (20 lines) |
+| `#renderSpecialRequestsHistoryTable` | `private method` | **L1280 - L1322** | `() => any` | private method L1280-L1322 (43 lines) |
+| `#openFullscreenCamera` | `private async method` | **L1324 - L1370** | `() => Promise<any>` | private async method L1324-L1370 (47 lines) |
+| `#captureAndCloseCamera` | `private method` | **L1372 - L1403** | `() => any` | private method L1372-L1403 (32 lines) |
+| `#closeFullscreenCamera` | `private method` | **L1405 - L1408** | `() => any` | private method L1405-L1408 (4 lines) |
+| `#checkCameraHardware` | `private async method` | **L1410 - L1424** | `() => Promise<any>` | private async method L1410-L1424 (15 lines) |
+| `#handleFallbackFileSelected` | `private method` | **L1426 - L1490** | `(file) => any` | private method L1426-L1490 (65 lines) |
+| `#stopCameraHardwareStream` | `private method` | **L1492 - L1503** | `() => any` | private method L1492-L1503 (12 lines) |
+| `#stopCameraAndShowStandby` | `private method` | **L1505 - L1531** | `() => any` | private method L1505-L1531 (27 lines) |
+| `#openCameraOnDemand` | `private async method` | **L1533 - L1602** | `() => Promise<any>` | private async method L1533-L1602 (70 lines) |
+| `#capturePhotoAndStopStream` | `private method` | **L1604 - L1636** | `() => any` | private method L1604-L1636 (33 lines) |
+| `#resetPageAfterSave` | `private async method` | **L1638 - L1653** | `() => Promise<any>` | private async method L1638-L1653 (16 lines) |
+| `#initGpsLocation` | `private async method` | **L1661 - L1755** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
+| `#bindEvents` | `private method` | **L1757 - L2051** | `() => any` | private method L1757-L2051 (295 lines) |
+| `openSpecialModal` | `arrow_fn` | **L1920 - L1923** | `() => inferred` | Arrow Function L1920-L1923 |
+| `setDesktopActiveTab` | `arrow_fn` | **L1958 - L1977** | `(activeName) => inferred` | Arrow Function L1958-L1977 |
+| `openMobileDrawer` | `arrow_fn` | **L1988 - L2005** | `() => inferred` | Arrow Function L1988-L2005 |
+| `closeMobileDrawer` | `arrow_fn` | **L2007 - L2032** | `(targetTab = null) => inferred` | Arrow Function L2007-L2032 |
+| `#handleMainCheckin` | `private async method` | **L2053 - L2416** | `() => Promise<any>` | private async method L2053-L2416 (364 lines) |
+| `#openSpecialRequestModal` | `private method` | **L2418 - L2448** | `() => any` | private method L2418-L2448 (31 lines) |
+| `#initSpecialModalGps` | `private method` | **L2450 - L2553** | `() => any` | private method L2450-L2553 (104 lines) |
+| `updateCustomPinAndLocation` | `async_arrow_fn` | **L2462 - L2510** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L2462-L2510 |
+| `setupMapIfAvailable` | `arrow_fn` | **L2512 - L2547** | `() => inferred` | Arrow Function L2512-L2547 |
+| `getDistanceInMeters` | `arrow_fn` | **L2572 - L2591** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2572-L2591 |
+| `calculateDistance` | `arrow_fn` | **L2593 - L2602** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2593-L2602 |
+| `getCategoryLabel` | `arrow_fn` | **L2604 - L2643** | `(item) => inferred` | Arrow Function L2604-L2643 |
+| `escapeHtml` | `arrow_fn` | **L2645 - L2653** | `(str) => inferred` | Arrow Function L2645-L2653 |
+| `formatSubAddress` | `arrow_fn` | **L2655 - L2671** | `(item) => inferred` | Arrow Function L2655-L2671 |
+| `getMainName` | `arrow_fn` | **L2673 - L2681** | `(item) => inferred` | Arrow Function L2673-L2681 |
+| `hideSearchResults` | `arrow_fn` | **L2683 - L2688** | `() => inferred` | Arrow Function L2683-L2688 |
+| `bindResultItemClicks` | `arrow_fn` | **L2690 - L2706** | `() => inferred` | Arrow Function L2690-L2706 |
+| `renderCoordsResult` | `arrow_fn` | **L2708 - L2732** | `(lat, lng) => inferred` | Arrow Function L2708-L2732 |
+| `renderPlaceResults` | `arrow_fn` | **L2734 - L2779** | `(items) => inferred` | Arrow Function L2734-L2779 |
+| `performSearch` | `async_arrow_fn` | **L2784 - L2956** | `() => inferred` | Arrow Function L2784-L2956 |
+| `#handleSubmitSpecialRequest` | `private async method` | **L2996 - L3071** | `(closeModalCallback) => Promise<any>` | private async method L2996-L3071 (76 lines) |
 
 ---
 
@@ -516,36 +517,36 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `5d490a710cfbe98b` | **Total Lines:** `919` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `0dfe7c64567d3bd0` | **Total Lines:** `928` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L75** | `<head>` | HTML DOM Section L3-L75 |
-| `<main>` | `html_dom_section` | **L141 - L550** | `<main>` | HTML DOM Section L141-L550 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L144 - L408** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L144-L408 |
-| `<div#photoPreviewCard>` | `html_dom_section` | **L198 - L231** | `id="photoPreviewCard"` | HTML DOM Section L198-L231 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L221 - L221** | `id="cameraSectionCard"` | HTML DOM Section L221-L221 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L229 - L229** | `id="cameraStandbyOverlay"` | HTML DOM Section L229-L229 |
-| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L254 - L265** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L254-L265 |
-| `<div#offsiteLocationSection>` | `html_dom_section` | **L268 - L304** | `id="offsiteLocationSection"` | HTML DOM Section L268-L304 |
-| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L300 - L300** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L300-L300 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L308 - L349** | `id="gpsSectionCard"` | HTML DOM Section L308-L349 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L344 - L347** | `id="googleMapEmbedWrapper"` | HTML DOM Section L344-L347 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L352 - L392** | `id="checkinActionCard"` | HTML DOM Section L352-L392 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L362 - L367** | `id="shiftSelectorContainer"` | HTML DOM Section L362-L367 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L369 - L378** | `id="mainCustomTimeContainer"` | HTML DOM Section L369-L378 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L404 - L404** | `id="checkinStep1Container"` | HTML DOM Section L404-L404 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L405 - L405** | `id="checkinStep2Container"` | HTML DOM Section L405-L405 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L406 - L406** | `id="rightColumnWrapper"` | HTML DOM Section L406-L406 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L411 - L548** | `id="desktopPanesContainer"` | HTML DOM Section L411-L548 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L414 - L503** | `id="desktopHistoryWrapper"` | HTML DOM Section L414-L503 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L440 - L457** | `id="todayHistoryTabPanel"` | HTML DOM Section L440-L457 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L460 - L500** | `id="pastHistoryTabPanel"` | HTML DOM Section L460-L500 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L506 - L546** | `id="desktopSpecialWrapper"` | HTML DOM Section L506-L546 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L558 - L648** | `id="mobileDrawerPanel"` | HTML DOM Section L558-L648 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L681 - L690** | `id="spCustomTimeContainer"` | HTML DOM Section L681-L690 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L732 - L738** | `id="spSearchWrapper"` | HTML DOM Section L732-L738 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L788 - L788** | `<script>` | Bootstrap script L788-L788 |
+| `<main>` | `html_dom_section` | **L156 - L559** | `<main>` | HTML DOM Section L156-L559 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L159 - L417** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L159-L417 |
+| `<div#photoPreviewCard>` | `html_dom_section` | **L202 - L223** | `id="photoPreviewCard"` | HTML DOM Section L202-L223 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L226 - L269** | `id="gpsSectionCard"` | HTML DOM Section L226-L269 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L264 - L267** | `id="googleMapEmbedWrapper"` | HTML DOM Section L264-L267 |
+| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L293 - L304** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L293-L304 |
+| `<div#offsiteLocationSection>` | `html_dom_section` | **L307 - L343** | `id="offsiteLocationSection"` | HTML DOM Section L307-L343 |
+| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L339 - L339** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L339-L339 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L347 - L387** | `id="checkinActionCard"` | HTML DOM Section L347-L387 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L357 - L362** | `id="shiftSelectorContainer"` | HTML DOM Section L357-L362 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L364 - L373** | `id="mainCustomTimeContainer"` | HTML DOM Section L364-L373 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L399 - L399** | `id="checkinStep1Container"` | HTML DOM Section L399-L399 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L400 - L400** | `id="checkinStep2Container"` | HTML DOM Section L400-L400 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L401 - L401** | `id="rightColumnWrapper"` | HTML DOM Section L401-L401 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L405 - L405** | `id="cameraSectionCard"` | HTML DOM Section L405-L405 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L413 - L413** | `id="cameraStandbyOverlay"` | HTML DOM Section L413-L413 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L420 - L557** | `id="desktopPanesContainer"` | HTML DOM Section L420-L557 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L423 - L512** | `id="desktopHistoryWrapper"` | HTML DOM Section L423-L512 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L449 - L466** | `id="todayHistoryTabPanel"` | HTML DOM Section L449-L466 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L469 - L509** | `id="pastHistoryTabPanel"` | HTML DOM Section L469-L509 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L515 - L555** | `id="desktopSpecialWrapper"` | HTML DOM Section L515-L555 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L567 - L657** | `id="mobileDrawerPanel"` | HTML DOM Section L567-L657 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L690 - L699** | `id="spCustomTimeContainer"` | HTML DOM Section L690-L699 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L741 - L747** | `id="spSearchWrapper"` | HTML DOM Section L741-L747 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L797 - L797** | `<script>` | Bootstrap script L797-L797 |
 
 ---
 
@@ -1203,24 +1204,34 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fb04e5476de42c55` | **Total Lines:** `587` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ef35adbb2d2d1565` | **Total Lines:** `609` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L32** | `<head>` | HTML DOM Section L3-L32 |
-| `<div#simViewMapModal>` | `html_dom_section` | **L293 - L325** | `id="simViewMapModal"` | HTML DOM Section L293-L325 |
-| `<div#simCameraModal>` | `html_dom_section` | **L328 - L348** | `id="simCameraModal"` | HTML DOM Section L328-L348 |
-| `<div#simMapModal>` | `html_dom_section` | **L377 - L400** | `id="simMapModal"` | HTML DOM Section L377-L400 |
+| `<div#simViewMapModal>` | `html_dom_section` | **L313 - L337** | `id="simViewMapModal"` | HTML DOM Section L313-L337 |
+| `<div#simCameraModal>` | `html_dom_section` | **L340 - L360** | `id="simCameraModal"` | HTML DOM Section L340-L360 |
+| `<div#simMapModal>` | `html_dom_section` | **L386 - L409** | `id="simMapModal"` | HTML DOM Section L386-L409 |
 
 ---
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/qa_zero_scroll_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `b15c077f04d50d5e` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `ba0df63fd43f1d5b` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `assert` | `function` | **L13 - L23** | `(description, isConditionMet, extraInfo = '') => inferred` | Function L13-L23 |
+
+---
+
+## File: `pipeline/PIPE-20261105-loca-v2-cockpit-split-layout/qa_cockpit_split_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `ed864983a4037a3c` | **Total Lines:** `327` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `assert` | `function` | **L20 - L29** | `(description, condition, extraInfo = '') => inferred` | Function L20-L29 |
 
 ---
 
