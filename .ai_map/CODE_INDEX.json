@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-05T09:17:12.469Z",
-  "totalFilesScanned": 88,
-  "totalSymbolsIndexed": 629,
+  "generatedAt": "2026-11-05T10:13:38.760Z",
+  "totalFilesScanned": 91,
+  "totalSymbolsIndexed": 644,
   "files": [
     {
       "filePath": "approvals.html",
@@ -3100,8 +3100,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "93f183c5aaeb96ee",
-      "totalLines": 952,
+      "fileHash": "1fda3f541b69ef8d",
+      "totalLines": 959,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3118,17 +3118,17 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 185,
-          "endLine": 583,
+          "endLine": 590,
           "signature": "<main>",
-          "summary": "HTML DOM Section L185-L583"
+          "summary": "HTML DOM Section L185-L590"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
           "startLine": 188,
-          "endLine": 441,
+          "endLine": 448,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L188-L441"
+          "summary": "HTML DOM Section L188-L448"
         },
         {
           "name": "<div#photoPreviewCard>",
@@ -3142,177 +3142,177 @@
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
           "startLine": 255,
-          "endLine": 296,
+          "endLine": 303,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L255-L296"
+          "summary": "HTML DOM Section L255-L303"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 291,
-          "endLine": 294,
+          "startLine": 298,
+          "endLine": 301,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L291-L294"
+          "summary": "HTML DOM Section L298-L301"
         },
         {
           "name": "<div#onsiteGeofenceStatusCard>",
           "kind": "html_dom_section",
-          "startLine": 317,
-          "endLine": 328,
+          "startLine": 324,
+          "endLine": 335,
           "signature": "id=\"onsiteGeofenceStatusCard\"",
-          "summary": "HTML DOM Section L317-L328"
+          "summary": "HTML DOM Section L324-L335"
         },
         {
           "name": "<div#offsiteLocationSection>",
           "kind": "html_dom_section",
-          "startLine": 331,
-          "endLine": 367,
+          "startLine": 338,
+          "endLine": 374,
           "signature": "id=\"offsiteLocationSection\"",
-          "summary": "HTML DOM Section L331-L367"
+          "summary": "HTML DOM Section L338-L374"
         },
         {
           "name": "<div#offsiteRemarkChipsContainer>",
           "kind": "html_dom_section",
-          "startLine": 363,
-          "endLine": 363,
+          "startLine": 370,
+          "endLine": 370,
           "signature": "id=\"offsiteRemarkChipsContainer\"",
-          "summary": "HTML DOM Section L363-L363"
+          "summary": "HTML DOM Section L370-L370"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 371,
-          "endLine": 411,
+          "startLine": 378,
+          "endLine": 418,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L371-L411"
+          "summary": "HTML DOM Section L378-L418"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 381,
-          "endLine": 386,
+          "startLine": 388,
+          "endLine": 393,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L381-L386"
+          "summary": "HTML DOM Section L388-L393"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 388,
-          "endLine": 397,
+          "startLine": 395,
+          "endLine": 404,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L388-L397"
+          "summary": "HTML DOM Section L395-L404"
         },
         {
           "name": "<div#checkinStep1Container>",
           "kind": "html_dom_section",
-          "startLine": 423,
-          "endLine": 423,
+          "startLine": 430,
+          "endLine": 430,
           "signature": "id=\"checkinStep1Container\"",
-          "summary": "HTML DOM Section L423-L423"
+          "summary": "HTML DOM Section L430-L430"
         },
         {
           "name": "<div#checkinStep2Container>",
           "kind": "html_dom_section",
-          "startLine": 424,
-          "endLine": 424,
+          "startLine": 431,
+          "endLine": 431,
           "signature": "id=\"checkinStep2Container\"",
-          "summary": "HTML DOM Section L424-L424"
+          "summary": "HTML DOM Section L431-L431"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 425,
-          "endLine": 425,
+          "startLine": 432,
+          "endLine": 432,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L425-L425"
+          "summary": "HTML DOM Section L432-L432"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 429,
-          "endLine": 429,
+          "startLine": 436,
+          "endLine": 436,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L429-L429"
+          "summary": "HTML DOM Section L436-L436"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 437,
-          "endLine": 437,
+          "startLine": 444,
+          "endLine": 444,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L437-L437"
+          "summary": "HTML DOM Section L444-L444"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 444,
-          "endLine": 581,
+          "startLine": 451,
+          "endLine": 588,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L444-L581"
+          "summary": "HTML DOM Section L451-L588"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 447,
-          "endLine": 536,
+          "startLine": 454,
+          "endLine": 543,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L447-L536"
+          "summary": "HTML DOM Section L454-L543"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 473,
-          "endLine": 490,
+          "startLine": 480,
+          "endLine": 497,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L473-L490"
+          "summary": "HTML DOM Section L480-L497"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 493,
-          "endLine": 533,
+          "startLine": 500,
+          "endLine": 540,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L493-L533"
+          "summary": "HTML DOM Section L500-L540"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 539,
-          "endLine": 579,
+          "startLine": 546,
+          "endLine": 586,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L539-L579"
+          "summary": "HTML DOM Section L546-L586"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 591,
-          "endLine": 681,
+          "startLine": 598,
+          "endLine": 688,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L591-L681"
+          "summary": "HTML DOM Section L598-L688"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 714,
-          "endLine": 723,
+          "startLine": 721,
+          "endLine": 730,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L714-L723"
+          "summary": "HTML DOM Section L721-L730"
         },
         {
           "name": "<div#spSearchWrapper>",
           "kind": "html_dom_section",
-          "startLine": 765,
-          "endLine": 771,
+          "startLine": 772,
+          "endLine": 778,
           "signature": "id=\"spSearchWrapper\"",
-          "summary": "HTML DOM Section L765-L771"
+          "summary": "HTML DOM Section L772-L778"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 821,
-          "endLine": 821,
+          "startLine": 828,
+          "endLine": 828,
           "signature": "<script>",
-          "summary": "Bootstrap script L821-L821"
+          "summary": "Bootstrap script L828-L828"
         }
       ]
     },
@@ -5421,6 +5421,165 @@
           "endLine": 29,
           "signature": "(description, condition, extraInfo = '') => inferred",
           "summary": "Function L20-L29"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs",
+      "layer": "Application Module",
+      "fileHash": "c6df485d154a960c",
+      "totalLines": 140,
+      "importsCount": 2,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "test",
+          "kind": "function",
+          "startLine": 15,
+          "endLine": 29,
+          "signature": "(description, fn) => inferred",
+          "summary": "Function L15-L29"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "87418c6c3d0fa5a8",
+      "totalLines": 697,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 56,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L56"
+        },
+        {
+          "name": "<main>",
+          "kind": "html_dom_section",
+          "startLine": 89,
+          "endLine": 358,
+          "signature": "<main>",
+          "summary": "HTML DOM Section L89-L358"
+        },
+        {
+          "name": "<div#cardPreviewContainer>",
+          "kind": "html_dom_section",
+          "startLine": 212,
+          "endLine": 214,
+          "signature": "id=\"cardPreviewContainer\"",
+          "summary": "HTML DOM Section L212-L214"
+        },
+        {
+          "name": "<div#gpsSectionCard>",
+          "kind": "html_dom_section",
+          "startLine": 375,
+          "endLine": 421,
+          "signature": "id=\"gpsSectionCard\"",
+          "summary": "HTML DOM Section L375-L421"
+        },
+        {
+          "name": "<div#googleMapEmbedWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 419,
+          "endLine": 419,
+          "signature": "id=\"googleMapEmbedWrapper\"",
+          "summary": "HTML DOM Section L419-L419"
+        },
+        {
+          "name": "<div#gpsSectionCard>",
+          "kind": "html_dom_section",
+          "startLine": 436,
+          "endLine": 481,
+          "signature": "id=\"gpsSectionCard\"",
+          "summary": "HTML DOM Section L436-L481"
+        },
+        {
+          "name": "<div#googleMapEmbedWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 479,
+          "endLine": 479,
+          "signature": "id=\"googleMapEmbedWrapper\"",
+          "summary": "HTML DOM Section L479-L479"
+        },
+        {
+          "name": "<div#gpsSectionCard>",
+          "kind": "html_dom_section",
+          "startLine": 496,
+          "endLine": 538,
+          "signature": "id=\"gpsSectionCard\"",
+          "summary": "HTML DOM Section L496-L538"
+        },
+        {
+          "name": "<div#googleMapEmbedWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 536,
+          "endLine": 536,
+          "signature": "id=\"googleMapEmbedWrapper\"",
+          "summary": "HTML DOM Section L536-L536"
+        },
+        {
+          "name": "<div#gpsSectionCard>",
+          "kind": "html_dom_section",
+          "startLine": 553,
+          "endLine": 591,
+          "signature": "id=\"gpsSectionCard\"",
+          "summary": "HTML DOM Section L553-L591"
+        },
+        {
+          "name": "<div#googleMapEmbedWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 589,
+          "endLine": 589,
+          "signature": "id=\"googleMapEmbedWrapper\"",
+          "summary": "HTML DOM Section L589-L589"
+        },
+        {
+          "name": "<div#gpsSectionCard>",
+          "kind": "html_dom_section",
+          "startLine": 606,
+          "endLine": 648,
+          "signature": "id=\"gpsSectionCard\"",
+          "summary": "HTML DOM Section L606-L648"
+        },
+        {
+          "name": "<div#googleMapEmbedWrapper>",
+          "kind": "html_dom_section",
+          "startLine": 646,
+          "endLine": 646,
+          "signature": "id=\"googleMapEmbedWrapper\"",
+          "summary": "HTML DOM Section L646-L646"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "841b5ace65f0238a",
+      "totalLines": 151,
+      "importsCount": 2,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "assert",
+          "kind": "function",
+          "startLine": 17,
+          "endLine": 26,
+          "signature": "(description, condition, extraInfo = '') => inferred",
+          "summary": "Function L17-L26"
         }
       ]
     },

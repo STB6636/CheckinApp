@@ -1,0 +1,29 @@
+{
+  "task_id": "PIPE-20261105-loca-v2-material-tailwind-cards",
+  "mode": "PLAN",
+  "target_branch": "Loca-V2",
+  "files_to_modify": [
+    {
+      "path": "checkin.html",
+      "start_line": 254,
+      "end_line": 296,
+      "symbol": "#gpsSectionCard",
+      "required_dom_ids": [
+        "gpsSectionCard",
+        "gpsRequirementBadge",
+        "gpsLocationNameText",
+        "gpsLocationName",
+        "gpsCoordsText",
+        "btnRefreshGps",
+        "btnViewGpsMapModal",
+        "googleMapEmbedWrapper",
+        "linkViewGoogleMap"
+      ]
+    }
+  ],
+  "verification": {
+    "ast_check": "node ./.ai_map/vscode_ast_mapper.mjs",
+    "html_check": "node --check"
+  }
+}
+

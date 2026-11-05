@@ -1,7 +1,7 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T09:17:12.469Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `88` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `629`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T10:13:38.760Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `91` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `644`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
@@ -518,36 +518,36 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `93f183c5aaeb96ee` | **Total Lines:** `952` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1fda3f541b69ef8d` | **Total Lines:** `959` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L104** | `<head>` | HTML DOM Section L3-L104 |
-| `<main>` | `html_dom_section` | **L185 - L583** | `<main>` | HTML DOM Section L185-L583 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L188 - L441** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L188-L441 |
+| `<main>` | `html_dom_section` | **L185 - L590** | `<main>` | HTML DOM Section L185-L590 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L188 - L448** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L188-L448 |
 | `<div#photoPreviewCard>` | `html_dom_section` | **L231 - L252** | `id="photoPreviewCard"` | HTML DOM Section L231-L252 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L255 - L296** | `id="gpsSectionCard"` | HTML DOM Section L255-L296 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L291 - L294** | `id="googleMapEmbedWrapper"` | HTML DOM Section L291-L294 |
-| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L317 - L328** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L317-L328 |
-| `<div#offsiteLocationSection>` | `html_dom_section` | **L331 - L367** | `id="offsiteLocationSection"` | HTML DOM Section L331-L367 |
-| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L363 - L363** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L363-L363 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L371 - L411** | `id="checkinActionCard"` | HTML DOM Section L371-L411 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L381 - L386** | `id="shiftSelectorContainer"` | HTML DOM Section L381-L386 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L388 - L397** | `id="mainCustomTimeContainer"` | HTML DOM Section L388-L397 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L423 - L423** | `id="checkinStep1Container"` | HTML DOM Section L423-L423 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L424 - L424** | `id="checkinStep2Container"` | HTML DOM Section L424-L424 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L425 - L425** | `id="rightColumnWrapper"` | HTML DOM Section L425-L425 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L429 - L429** | `id="cameraSectionCard"` | HTML DOM Section L429-L429 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L437 - L437** | `id="cameraStandbyOverlay"` | HTML DOM Section L437-L437 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L444 - L581** | `id="desktopPanesContainer"` | HTML DOM Section L444-L581 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L447 - L536** | `id="desktopHistoryWrapper"` | HTML DOM Section L447-L536 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L473 - L490** | `id="todayHistoryTabPanel"` | HTML DOM Section L473-L490 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L493 - L533** | `id="pastHistoryTabPanel"` | HTML DOM Section L493-L533 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L539 - L579** | `id="desktopSpecialWrapper"` | HTML DOM Section L539-L579 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L591 - L681** | `id="mobileDrawerPanel"` | HTML DOM Section L591-L681 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L714 - L723** | `id="spCustomTimeContainer"` | HTML DOM Section L714-L723 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L765 - L771** | `id="spSearchWrapper"` | HTML DOM Section L765-L771 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L821 - L821** | `<script>` | Bootstrap script L821-L821 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L255 - L303** | `id="gpsSectionCard"` | HTML DOM Section L255-L303 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L298 - L301** | `id="googleMapEmbedWrapper"` | HTML DOM Section L298-L301 |
+| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L324 - L335** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L324-L335 |
+| `<div#offsiteLocationSection>` | `html_dom_section` | **L338 - L374** | `id="offsiteLocationSection"` | HTML DOM Section L338-L374 |
+| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L370 - L370** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L370-L370 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L378 - L418** | `id="checkinActionCard"` | HTML DOM Section L378-L418 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L388 - L393** | `id="shiftSelectorContainer"` | HTML DOM Section L388-L393 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L395 - L404** | `id="mainCustomTimeContainer"` | HTML DOM Section L395-L404 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L430 - L430** | `id="checkinStep1Container"` | HTML DOM Section L430-L430 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L431 - L431** | `id="checkinStep2Container"` | HTML DOM Section L431-L431 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L432 - L432** | `id="rightColumnWrapper"` | HTML DOM Section L432-L432 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L436 - L436** | `id="cameraSectionCard"` | HTML DOM Section L436-L436 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L444 - L444** | `id="cameraStandbyOverlay"` | HTML DOM Section L444-L444 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L451 - L588** | `id="desktopPanesContainer"` | HTML DOM Section L451-L588 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L454 - L543** | `id="desktopHistoryWrapper"` | HTML DOM Section L454-L543 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L480 - L497** | `id="todayHistoryTabPanel"` | HTML DOM Section L480-L497 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L500 - L540** | `id="pastHistoryTabPanel"` | HTML DOM Section L500-L540 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L546 - L586** | `id="desktopSpecialWrapper"` | HTML DOM Section L546-L586 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L598 - L688** | `id="mobileDrawerPanel"` | HTML DOM Section L598-L688 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L721 - L730** | `id="spCustomTimeContainer"` | HTML DOM Section L721-L730 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L772 - L778** | `id="spSearchWrapper"` | HTML DOM Section L772-L778 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L828 - L828** | `<script>` | Bootstrap script L828-L828 |
 
 ---
 
@@ -1243,6 +1243,48 @@
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `assert` | `function` | **L20 - L29** | `(description, condition, extraInfo = '') => inferred` | Function L20-L29 |
+
+---
+
+## File: `pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs`
+- **Layer:** Application Module
+- **Hash:** `c6df485d154a960c` | **Total Lines:** `140` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `test` | `function` | **L15 - L29** | `(description, fn) => inferred` | Function L15-L29 |
+
+---
+
+## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `87418c6c3d0fa5a8` | **Total Lines:** `697` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L56** | `<head>` | HTML DOM Section L3-L56 |
+| `<main>` | `html_dom_section` | **L89 - L358** | `<main>` | HTML DOM Section L89-L358 |
+| `<div#cardPreviewContainer>` | `html_dom_section` | **L212 - L214** | `id="cardPreviewContainer"` | HTML DOM Section L212-L214 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L375 - L421** | `id="gpsSectionCard"` | HTML DOM Section L375-L421 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L419 - L419** | `id="googleMapEmbedWrapper"` | HTML DOM Section L419-L419 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L436 - L481** | `id="gpsSectionCard"` | HTML DOM Section L436-L481 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L479 - L479** | `id="googleMapEmbedWrapper"` | HTML DOM Section L479-L479 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L496 - L538** | `id="gpsSectionCard"` | HTML DOM Section L496-L538 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L536 - L536** | `id="googleMapEmbedWrapper"` | HTML DOM Section L536-L536 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L553 - L591** | `id="gpsSectionCard"` | HTML DOM Section L553-L591 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L589 - L589** | `id="googleMapEmbedWrapper"` | HTML DOM Section L589-L589 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L606 - L648** | `id="gpsSectionCard"` | HTML DOM Section L606-L648 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L646 - L646** | `id="googleMapEmbedWrapper"` | HTML DOM Section L646-L646 |
+
+---
+
+## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `841b5ace65f0238a` | **Total Lines:** `151` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `assert` | `function` | **L17 - L26** | `(description, condition, extraInfo = '') => inferred` | Function L17-L26 |
 
 ---
 

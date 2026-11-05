@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261105-loca-v2-gps-card-refine"
+last_updated_phase: "PIPE-20261105-loca-v2-material-tailwind-cards"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -36,6 +36,7 @@ last_updated_phase: "PIPE-20261105-loca-v2-gps-card-refine"
 - [[rule_loca_v2_onsite_offsite_nextstep_and_staging_schema]] — Domain Rule: ระบบลงเวลา [ในสถานที่/นอกสถานที่] รัศมีหลายสถานที่, UI รูปแบบ Next Step 2 ขั้นตอน, ตัวกรองสังกัดหน้าบุคลากร และการแยก Schema `staging` (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`)
 - [[rule_loca_v2_ultra_zero_scroll_fullscreen_camera_and_modal_map]] — Domain Rule: สถาปัตยกรรมหน้าลงเวลามือถือ Ultra Zero-Scroll (~345px) พร้อมกล้องเต็มจอสด และโมดอลแผนที่ Leaflet On-Demand (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`)
 - [[rule_multi_admin_realtime_sync_and_cache_defense]] — Domain Rule: ระบบ Realtime Concurrency Sync ป้องกันคำขอชนกันของผู้ดูแลระบบ และสถาปัตยกรรมป้องกันแคช 4 ชั้น (`FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_DASHBOARD_01`)
+- [[rule_material_tailwind_gps_card_elevation]] — Domain Rule: มาตรฐานการ์ดพิกัด GPS สไตล์ Material Tailwind Inset Header และปุ่มล็อกขอบล่าง 100% (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_LAYOUT_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนปรับปรุงการ์ดพิกัด GPS (Material Tailwind Card) — CheckinApp</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bma: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            700: '#00744B',
+                            800: '#005b3a',
+                            900: '#00351B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .notch-curve {
+            position: relative;
+        }
+        .notch-curve::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 9px;
+            background: inherit;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-12">
+
+    <!-- Top Navigation / Header -->
+    <header class="glass-header sticky top-0 z-50 border-b border-slate-200/80 px-4 py-3 shadow-xs">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00744B] to-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20">
+                    <i class="fa-solid fa-layer-group text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 tracking-wider">Mode: PLAN</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">Branch: Loca-V2</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        ออกแบบการ์ดพิกัด (GPS) สไตล์ Material Tailwind Card (5 รูปแบบ)
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Action Prompt -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500 hidden sm:inline">เลือกแบบที่ชอบแล้วกด <strong>Proceed</strong> ใน Artifact</span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow-sm">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>พร้อมปรับใช้เมื่ออนุมัติ</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6">
+
+        <!-- Context & Problem Summary -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 mb-6">
+            <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-circle-info text-emerald-600"></i>
+                <span>วิเคราะห์ปัญหาเดิม & จุดที่ต้องแก้ไขตามความต้องการ</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900">
+                    <div class="font-bold flex items-center gap-1 mb-1">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                        <span>ปัญหา 1: ปุ่มไม่อยู่ชิดขอบล่าง</span>
+                    </div>
+                    <p class="text-rose-700 leading-relaxed">
+                        เดิมใช้ <code>justify-between</code> และมี padding รอบการ์ด ทำให้เมื่อคอนเทนต์ตรงกลางสั้น ปุ่มจะลอยอยู่ตรงกลางและเหลือขอบล่างว่าง
+                    </p>
+                </div>
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900">
+                    <div class="font-bold flex items-center gap-1 mb-1">
+                        <i class="fa-solid fa-eye-slash text-amber-600"></i>
+                        <span>ปัญหา 2: บริเวณ White Space ไม่สวยงาม</span>
+                    </div>
+                    <p class="text-amber-700 leading-relaxed">
+                        พื้นที่ระหว่างพิกัดและปุ่มว่างเกินไป ต้องปรับสัดส่วน Layout ให้กระชับ สวยงาม สมดุลกับกล้อง 3:4 ทางฝั่งซ้าย
+                    </p>
+                </div>
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                    <div class="font-bold flex items-center gap-1 mb-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i>
+                        <span>แนวทาง: Material Tailwind Card</span>
+                    </div>
+                    <p class="text-emerald-700 leading-relaxed">
+                        ใช้โครงสร้าง Inset Floating Header มีเงา + Body จัดกึ่งกลางพอดี + Footer <code>mt-auto</code> แนบชิดขอบล่าง 100%
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Design Selector -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-6">
+            <button onclick="switchTab(1)" id="btnTab1" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all shadow-sm bg-[#00744B] text-white flex items-center gap-2 cursor-pointer">
+                <span>แบบที่ 1: BMA Emerald Inset</span>
+                <span class="px-1.5 py-0.2 rounded bg-white/20 text-[10px]">แนะนำ</span>
+            </button>
+            <button onclick="switchTab(2)" id="btnTab2" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <span>แบบที่ 2: Deep Amber Gold</span>
+                <span class="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[10px]">ตามภาพ 2</span>
+            </button>
+            <button onclick="switchTab(3)" id="btnTab3" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <span>แบบที่ 3: Slate-800 Exact</span>
+                <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-800 text-[10px]">ถอดโค้ดตัวอย่าง</span>
+            </button>
+            <button onclick="switchTab(4)" id="btnTab4" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <span>แบบที่ 4: Neumorphic Two-Tone Notch</span>
+                <span class="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 text-[10px]">ตามภาพ GIF</span>
+            </button>
+            <button onclick="switchTab(5)" id="btnTab5" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2 cursor-pointer">
+                <span>แบบที่ 5: Modern Gradient Pill</span>
+                <span class="px-1.5 py-0.2 rounded bg-teal-100 text-teal-800 text-[10px]">โมเดิร์น</span>
+            </button>
+        </div>
+
+        <!-- Live Preview Stage (Split Mobile View & Details) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left: Simulated Mobile Device Viewport -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="w-full max-w-[390px] bg-slate-900 p-3 rounded-[36px] shadow-2xl border-4 border-slate-800">
+                    <!-- Phone Screen Content -->
+                    <div class="bg-gradient-to-b from-emerald-50/40 via-white to-slate-50 rounded-[28px] overflow-hidden min-h-[560px] flex flex-col border border-slate-700/50">
+                        
+                        <!-- Mini Phone Status Bar -->
+                        <div class="px-5 pt-2 pb-1 flex justify-between items-center text-[11px] font-bold text-slate-600 bg-white/70">
+                            <span>09:41</span>
+                            <div class="flex items-center gap-1.5 text-xs">
+                                <i class="fa-solid fa-signal"></i>
+                                <i class="fa-solid fa-wifi"></i>
+                                <i class="fa-solid fa-battery-full"></i>
+                            </div>
+                        </div>
+
+                        <!-- Mini User Top Bar -->
+                        <div class="px-3 py-2 bg-white flex items-center justify-between border-b border-slate-100 shadow-2xs">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-800 truncate">นายวิศรุต โต๊ะพาน</span>
+                            </div>
+                            <div class="w-7 h-7 rounded-lg bg-emerald-800 text-white flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-bars"></i>
+                            </div>
+                        </div>
+
+                        <!-- Mini Checkin Banner -->
+                        <div class="m-2.5 p-2 rounded-xl bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex justify-between items-center shadow-xs">
+                            <div>
+                                <div class="text-[10px] text-emerald-200 font-medium">ลงเวลาเข้างาน</div>
+                                <div class="text-[9px] text-white/80">พร้อมบันทึกเวลาวันนี้</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs font-mono font-bold">16:03:36 น.</div>
+                                <div class="text-[8px] text-emerald-200">เวลาปัจจุบัน</div>
+                            </div>
+                        </div>
+
+                        <!-- COCKPIT SECTION: Camera (Left) + GPS Card (Right) -->
+                        <div class="px-2.5">
+                            <div class="grid grid-cols-2 gap-2 items-stretch">
+
+                                <!-- Camera Mock (Left Column, Aspect 3/4) -->
+                                <div class="w-full aspect-[3/4] bg-slate-900 rounded-2xl flex flex-col items-center justify-center relative shadow-sm border border-slate-800 p-2 text-center text-white">
+                                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center mb-1">
+                                        <i class="fa-solid fa-camera text-amber-400 text-sm"></i>
+                                    </div>
+                                    <span class="text-[8.5px] text-slate-300 font-medium">แตะเพื่อถ่ายรูป</span>
+                                    <div class="absolute bottom-1.5 inset-x-1.5 text-center">
+                                        <span class="inline-block px-1.5 py-0.5 rounded-full bg-black/60 text-[8px] text-white">แตะเพื่อถ่ายรูป</span>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic GPS Card Container (Right Column, Aspect 3/4) -->
+                                <div id="cardPreviewContainer" class="w-full aspect-[3/4]">
+                                    <!-- Dynamic Card Content will be rendered by JS -->
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Mini Work Mode Buttons Below Cockpit -->
+                        <div class="m-2.5 mt-2 bg-white rounded-xl p-1.5 shadow-2xs border border-slate-200/70">
+                            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-0.5 rounded-lg text-[10px] font-bold text-center">
+                                <div class="bg-emerald-700 text-white py-1 rounded-md shadow-2xs">
+                                    <i class="fa-solid fa-building-circle-check"></i> ในสถานที่
+                                </div>
+                                <div class="text-slate-600 py-1">
+                                    <i class="fa-solid fa-map-location-dot"></i> นอกสถานที่
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Radius Status Box -->
+                        <div class="mx-2.5 p-2 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[9px] text-emerald-950 flex justify-between items-center">
+                            <div>
+                                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                <span class="font-bold">สถานะรัศมีสถานที่ทำงาน:</span>
+                                <div class="text-emerald-800 font-medium text-[8px] mt-0.5">สำนักเทศกิจ (ห่าง 74 ม. / รัศมี 700 ม.)</div>
+                            </div>
+                            <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">อยู่ในสถานที่</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Design Explanation, Highlights & Code Snippet -->
+            <div class="lg:col-span-7 space-y-5">
+
+                <!-- Variation Details Card -->
+                <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                        <div>
+                            <span id="detailBadge" class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 tracking-wider">
+                                Variation 1
+                            </span>
+                            <h3 id="detailTitle" class="text-base sm:text-lg font-black text-slate-900 mt-1">
+                                Material Tailwind — BMA Civic Emerald Inset
+                            </h3>
+                        </div>
+                        <div id="detailTag" class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            กลมกลืนกับระบบหลัก กทม.
+                        </div>
+                    </div>
+
+                    <!-- Highlight Features -->
+                    <div class="space-y-3 mb-5">
+                        <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider">จุดเด่นสำคัญ & การแก้ปัญหา</h4>
+                        <ul id="detailPoints" class="space-y-2 text-xs text-slate-700 leading-relaxed">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Layout Mechanics (How buttons dock to bottom) -->
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 mb-5">
+                        <div class="text-xs font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-ruler-combined text-emerald-600"></i>
+                            <span>กลไกการยึดปุ่มชิดขอบล่าง 100% (Zero Floating Dead Space):</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            1. การ์ดหลักเอา <code>p-2.5</code> ออก เปลี่ยนเป็น <code>p-0 overflow-hidden flex flex-col</code><br>
+                            2. ย้าย Padding ไปอยู่ในการ์ดย่อยแต่ละส่วน: Header ใช้ <code>mx-2.5 mt-2.5</code>, Body ใช้ <code>px-2.5 py-1.5</code><br>
+                            3. Footer ใช้ <code>mt-auto px-2.5 pb-2.5 pt-0</code> ซึ่ง <code>mt-auto</code> จะดันคอนเทนเนอร์ปุ่มลงมาแนบชิดกับขอบล่างของการ์ดอย่างแม่นยำ ไม่เหลือพื้นที่ว่างด้านล่างอีกต่อไป!
+                        </p>
+                    </div>
+
+                    <!-- Code Snippet Accordion -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-extrabold text-slate-800">Tailwind HTML Template:</span>
+                            <span class="text-[10px] text-slate-400">รักษา DOM IDs ครบ 100% ไม่กระทบ Controller</span>
+                        </div>
+                        <pre id="codePreview" class="p-3 bg-slate-900 text-emerald-400 rounded-xl text-[10px] font-mono overflow-x-auto max-h-56 leading-relaxed select-all"></pre>
+                    </div>
+
+                </div>
+
+                <!-- Comparison Table of all 5 designs -->
+                <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80">
+                    <h3 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-emerald-600"></i>
+                        <span>ตารางเปรียบเทียบจุดเด่น 5 รูปแบบ</span>
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-2.5">รูปแบบ</th>
+                                    <th class="p-2.5">สไตล์หัวการ์ด</th>
+                                    <th class="p-2.5">โทนสีหลัก</th>
+                                    <th class="p-2.5">การยึดขอบล่าง</th>
+                                    <th class="p-2.5">ความเหมาะสม</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr class="hover:bg-slate-50/80">
+                                    <td class="p-2.5 font-bold text-emerald-800">1. Civic Emerald</td>
+                                    <td class="p-2.5">Inset Floating Shadow</td>
+                                    <td class="p-2.5">เขียวมรกต กทม.</td>
+                                    <td class="p-2.5 text-emerald-600 font-bold">100% mt-auto</td>
+                                    <td class="p-2.5">กลมกลืนกับ Topbar และแบรนด์ กทม. ที่สุด</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/80">
+                                    <td class="p-2.5 font-bold text-amber-800">2. Deep Amber Gold</td>
+                                    <td class="p-2.5">Inset Gold Gradient</td>
+                                    <td class="p-2.5">ทองอำพันเข้ม</td>
+                                    <td class="p-2.5 text-emerald-600 font-bold">100% mt-auto</td>
+                                    <td class="p-2.5">ตรงตามภาพตัวอย่างสีเหลืองที่ผู้ใช้ระบุ</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/80">
+                                    <td class="p-2.5 font-bold text-slate-800">3. Slate-800 Exact</td>
+                                    <td class="p-2.5">Inset Slate Elevation</td>
+                                    <td class="p-2.5">Slate-800 ดำหม่น</td>
+                                    <td class="p-2.5 text-emerald-600 font-bold">100% mt-auto</td>
+                                    <td class="p-2.5">ถอดแบบ Material Tailwind Login Card เป๊ะๆ</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/80">
+                                    <td class="p-2.5 font-bold text-rose-800">4. Neumorphic Notch</td>
+                                    <td class="p-2.5">Hero Block มี Notch โค้ง</td>
+                                    <td class="p-2.5">Emerald หรือ Amber</td>
+                                    <td class="p-2.5 text-emerald-600 font-bold">100% mt-auto</td>
+                                    <td class="p-2.5">นูนสองส่วน สไตล์แอปสมัยใหม่ตามรูปภาพ GIF</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/80">
+                                    <td class="p-2.5 font-bold text-teal-800">5. Modern Gradient Pill</td>
+                                    <td class="p-2.5">Gradient Inset Compact</td>
+                                    <td class="p-2.5">Teal + Gold Accent</td>
+                                    <td class="p-2.5 text-emerald-600 font-bold">100% mt-auto</td>
+                                    <td class="p-2.5">กระชับ ตัวหนังสือใหญ่ อ่านง่าย ชัดเจน</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- JavaScript for Live Card Swapping -->
+    <script>
+        const cardDesigns = {
+            1: {
+                title: "Material Tailwind — BMA Civic Emerald Inset",
+                badge: "Variation 1 (แนะนำ)",
+                badgeClass: "bg-emerald-100 text-emerald-800",
+                tag: "กลมกลืนกับระบบหลัก กทม.",
+                tagClass: "bg-emerald-50 text-emerald-800 border-emerald-200",
+                points: [
+                    "<strong>หัวการ์ดลอย Inset Floating Shadow:</strong> ขอบมนนูนสวยงามด้วย Gradient <code>from-[#00351B] to-[#00744B]</code> พร้อมเงา <code>shadow-md shadow-emerald-950/20</code> ไอคอนหมุดพิกัดสีขาวคมชัด",
+                    "<strong>บอดี้แสดงสถานที่แบบ Smooth Card:</strong> อยู่กึ่งกลางความสูงพอดี ไม่เหลือ White space ที่ว่างเปล่า พร้อมชื่อสถานที่สีเข้มชัดเจน <code>text-slate-900 font-black</code> และพิกัด <code>font-mono font-bold</code>",
+                    "<strong>ปุ่มล็อกติดขอบล่าง 100%:</strong> ใช้ <code>mt-auto px-2.5 pb-2.5 pt-0</code> แนบชิดขอบล่าง ไร้ Dead space: ปุ่มค้นหาพิกัดใหม่สีเขียว กทม. + ปุ่มดูแผนที่สีเขียวมิ้นต์ Outline นุ่มนวล"
+                ],
+                renderHtml: `
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full h-full overflow-hidden">
+                    
+                    <!-- 1. Material Tailwind Elevated Inset Header -->
+                    <div class="relative mx-2.5 mt-2.5 py-2 px-3 rounded-xl bg-gradient-to-r from-[#00351B] to-[#00744B] text-white shadow-md shadow-emerald-950/20 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-white/15 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-location-dot text-[11px] text-white"></i>
+                            </div>
+                            <span class="font-extrabold text-xs text-white tracking-wide truncate">พิกัด (GPS)</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[9px] text-emerald-200 font-bold bg-white/10 px-1.5 py-0.5 rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span>พร้อม</span>
+                        </div>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
+
+                    <!-- 2. Card Body: Location & Coordinates (Centered, Zero Awkward White Space) -->
+                    <div class="flex-1 flex flex-col justify-center px-2.5 py-1 text-center my-auto">
+                        <div class="p-2 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1">
+                            <div id="gpsLocationNameText" class="font-black text-xs text-slate-900 dark:text-emerald-100 line-clamp-2 leading-tight">
+                                สำนักเทศกิจ กรุงเทพมหานคร
+                            </div>
+                            <span id="gpsLocationName" class="hidden"></span>
+                            <div class="flex items-center justify-center gap-1 text-[9.5px] font-mono font-bold text-emerald-800 dark:text-emerald-300">
+                                <i class="fa-solid fa-crosshairs text-[8.5px] text-emerald-600"></i>
+                                <span id="gpsCoordsText" class="truncate">13.738065, 100.495481</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Docked Footer: 100% Flush to Bottom Edge via mt-auto -->
+                    <div class="mt-auto px-2.5 pb-2.5 pt-0 space-y-1.5 shrink-0 w-full">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-[#00744B] hover:bg-[#005b3a] active:scale-[0.99] text-white text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-emerald-50/80 hover:bg-emerald-100 text-[#00744B] border border-emerald-300/80 text-[10px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot text-[11px]"></i>
+                            <span>ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <!-- Legacy Compatibility Hidden Divs -->
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                </div>
+                `
+            },
+            2: {
+                title: "Material Tailwind — Deep Amber Gold Inset",
+                badge: "Variation 2 (ตามภาพตัวอย่างสีเหลืองเข้ม)",
+                badgeClass: "bg-amber-100 text-amber-900",
+                tag: "โทนสีเหลืองอำพันเข้ม ตัวหนังสืออ่านง่าย",
+                tagClass: "bg-amber-50 text-amber-900 border-amber-200",
+                points: [
+                    "<strong>หัวการ์ด Inset สีเหลืองทองอำพันเข้ม:</strong> ใช้ <code>bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600</code> พร้อมเงา <code>shadow-md shadow-amber-600/25</code> ตัวหนังสือสีขาวคมชัด",
+                    "<strong>ช่องแสดงสถานที่และพิกัดสีครีมทอง:</strong> ล้อมกรอบ <code>border-amber-300/90</code> ข้อความสีน้ำตาลเข้ม <code>text-amber-950 font-black</code> ตัดกับพื้นหลังอ่านสบายตา",
+                    "<strong>ปุ่มยึดขอบล่างสีทองอำพัน:</strong> ปุ่มหลักสีทองส้ม <code>bg-amber-500 hover:bg-amber-600</code> + ปุ่มรองสีครีมทองขอบทอง <code>bg-amber-50 border-amber-300</code> ชิดติดก้นการ์ดพอดี"
+                ],
+                renderHtml: `
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full h-full overflow-hidden">
+                    
+                    <!-- 1. Material Tailwind Elevated Amber Inset Header -->
+                    <div class="relative mx-2.5 mt-2.5 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white shadow-md shadow-amber-600/25 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-white/20 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-location-dot text-[11px] text-white"></i>
+                            </div>
+                            <span class="font-extrabold text-xs text-white tracking-wide truncate">พิกัด (GPS)</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[9px] text-amber-100 font-bold bg-white/15 px-1.5 py-0.5 rounded-full">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                            <span>GPS Active</span>
+                        </div>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
+
+                    <!-- 2. Card Body: Location & Coordinates (Centered Amber Box) -->
+                    <div class="flex-1 flex flex-col justify-center px-2.5 py-1 text-center my-auto">
+                        <div class="p-2 rounded-xl bg-amber-50/70 dark:bg-amber-950/25 border border-amber-300/80 dark:border-amber-700/60 space-y-1">
+                            <div id="gpsLocationNameText" class="font-black text-xs text-amber-950 dark:text-amber-100 line-clamp-2 leading-tight">
+                                สำนักเทศกิจ กรุงเทพมหานคร
+                            </div>
+                            <span id="gpsLocationName" class="hidden"></span>
+                            <div class="flex items-center justify-center gap-1 text-[9.5px] font-mono font-bold text-amber-800 dark:text-amber-300">
+                                <i class="fa-solid fa-crosshairs text-[8.5px] text-amber-600"></i>
+                                <span id="gpsCoordsText" class="truncate">13.738065, 100.495481</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Docked Footer: 100% Flush to Bottom Edge -->
+                    <div class="mt-auto px-2.5 pb-2.5 pt-0 space-y-1.5 shrink-0 w-full">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-white text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300/90 text-[10px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot text-[11px] text-amber-700"></i>
+                            <span>ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                </div>
+                `
+            },
+            3: {
+                title: "Material Tailwind — Slate-800 Exact Code",
+                badge: "Variation 3 (ถอดแบบโค้ด Material Tailwind)",
+                badgeClass: "bg-slate-200 text-slate-800",
+                tag: "ตรงตาม Login Card ตัวอย่าง 100%",
+                tagClass: "bg-slate-100 text-slate-800 border-slate-300",
+                points: [
+                    "<strong>หัวการ์ดสี Slate-800:</strong> ถอดแบบคลาส <code>relative m-2.5 ... bg-slate-800 text-white rounded-xl shadow-md</code> จากโค้ดตัวอย่าง Material Tailwind เป๊ะๆ",
+                    "<strong>บอดี้เรียบหรูสไตล์ Material Minimal:</strong> พื้นสีขาวสะอาด ขอบสี <code>slate-200</code> พร้อมชื่อสถานที่สี Slate-900 คมชัด สบายตา ไม่เกะกะ",
+                    "<strong>ปุ่มก้นการ์ดสี Slate-800 และ Slate-100:</strong> ปุ่มหลักสีเทาเข้มหรูหรา <code>bg-slate-800</code> + ปุ่มรองสีขาวขอบเทา <code>border-slate-300</code> แนบชิดขอบล่างพอดี"
+                ],
+                renderHtml: `
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full h-full overflow-hidden">
+                    
+                    <!-- 1. Material Tailwind Original Slate-800 Header -->
+                    <div class="relative mx-2.5 mt-2.5 py-2 px-3 rounded-xl bg-slate-800 text-white shadow-md shadow-slate-900/25 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-location-dot text-[11px] text-emerald-400"></i>
+                            </div>
+                            <span class="font-extrabold text-xs text-white tracking-wide truncate">พิกัด (GPS)</span>
+                        </div>
+                        <span class="text-[9px] text-slate-300 font-mono">LIVE</span>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
+
+                    <!-- 2. Card Body: Location & Coordinates (Clean Slate Box) -->
+                    <div class="flex-1 flex flex-col justify-center px-2.5 py-1 text-center my-auto">
+                        <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                            <div id="gpsLocationNameText" class="font-black text-xs text-slate-800 dark:text-slate-100 line-clamp-2 leading-tight">
+                                สำนักเทศกิจ กรุงเทพมหานคร
+                            </div>
+                            <span id="gpsLocationName" class="hidden"></span>
+                            <div class="flex items-center justify-center gap-1 text-[9.5px] font-mono font-bold text-slate-600 dark:text-slate-400">
+                                <i class="fa-solid fa-crosshairs text-[8.5px] text-slate-500"></i>
+                                <span id="gpsCoordsText" class="truncate">13.738065, 100.495481</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Docked Footer: 100% Flush to Bottom Edge -->
+                    <div class="mt-auto px-2.5 pb-2.5 pt-0 space-y-1.5 shrink-0 w-full">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-900 active:scale-[0.99] text-white text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-[10px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot text-[11px] text-slate-600"></i>
+                            <span>ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                </div>
+                `
+            },
+            4: {
+                title: "Neumorphic Two-Tone Floating Card (ตามแบบภาพ GIF อ้างอิง)",
+                badge: "Variation 4 (สไตล์ภาพ GIF)",
+                badgeClass: "bg-rose-100 text-rose-800",
+                tag: "บล็อกสีส่วนบน + Notch โค้งมน",
+                tagClass: "bg-rose-50 text-rose-800 border-rose-200",
+                points: [
+                    "<strong>ถอดแบบลูกเล่นจากภาพ GIF:</strong> ส่วนบนเป็น Solid Hero Block มนต์บน มีหยด Notch โค้งมนชี้ลงมายังส่วนล่าง ให้ความรู้สึกเป็นแก็ดเจ็ตโมเดิร์น",
+                    "<strong>ครึ่งบนเข้ม ครึ่งล่างขาว:</strong> ครึ่งบนแสดงชื่อ 'พิกัด (GPS)' และไอคอนเรดาห์เรืองแสง ครึ่งล่างแสดงชื่อสถานที่และพิกัดพร้อมเส้น Indicator เล็กๆ",
+                    "<strong>ปุ่มแบนติดขอบล่างแน่นหนา:</strong> ไร้ White Space ไร้ช่องว่างหลุดเฟรม ปุ่มคู่กระชับ สวยงาม ทันสมัย"
+                ],
+                renderHtml: `
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full h-full overflow-hidden">
+                    
+                    <!-- 1. Two-Tone Hero Block with Center Notch (Inspired by Image 2 Clock Card) -->
+                    <div class="relative bg-gradient-to-br from-emerald-800 to-[#00744B] text-white pt-2.5 pb-2 px-3 text-center notch-curve shadow-xs">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-location-crosshairs text-emerald-300 text-xs"></i>
+                            <span class="font-black text-xs tracking-wider">พิกัด (GPS)</span>
+                        </div>
+                        <div class="text-[9px] text-emerald-100/90 font-mono mt-0.5">LOCATION SENSOR</div>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
+
+                    <!-- 2. Bottom Section: Location & Coordinates -->
+                    <div class="flex-1 flex flex-col justify-center px-3 pt-3 pb-1 text-center my-auto">
+                        <div id="gpsLocationNameText" class="font-black text-xs text-slate-800 dark:text-white line-clamp-2 leading-tight">
+                            สำนักเทศกิจ กรุงเทพมหานคร
+                        </div>
+                        <span id="gpsLocationName" class="hidden"></span>
+                        <div class="flex items-center justify-center gap-1 text-[9.5px] font-mono font-bold text-emerald-700 dark:text-emerald-300 mt-1">
+                            <i class="fa-solid fa-circle-dot text-[7px] text-emerald-500 animate-pulse"></i>
+                            <span id="gpsCoordsText" class="truncate">13.738065, 100.495481</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Docked Footer: 100% Flush to Bottom Edge -->
+                    <div class="mt-auto px-2.5 pb-2.5 pt-0 space-y-1.5 shrink-0 w-full">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-[#00744B] hover:bg-[#005b3a] active:scale-[0.99] text-white text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-[10px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot text-[11px] text-emerald-700"></i>
+                            <span>ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                </div>
+                `
+            },
+            5: {
+                title: "Material Tailwind — Modern Gradient Pill Accent",
+                badge: "Variation 5 (โมเดิร์น กระชับ)",
+                badgeClass: "bg-teal-100 text-teal-800",
+                tag: "หรูหราทันสมัย ตัวอักษรเด่นชัด",
+                tagClass: "bg-teal-50 text-teal-800 border-teal-200",
+                points: [
+                    "<strong>หัวการ์ดเขียวอมฟ้า Teal Gradient:</strong> ผสมสีเขียวมรกต กทม. กับ Teal <code>from-[#005B3A] to-teal-700</code> เสริมความโมเดิร์นแบบ Dashboard สากล",
+                    "<strong>กล่องสถานที่กึ่ง Pill Capsule:</strong> ออกแบบให้มีมุมโค้งมนขนาดใหญ่ (Pill Capsule) ป้องกันความรู้สึกเป็นกล่องสี่เหลี่ยมแข็งทื่อ",
+                    "<strong>ปุ่มสลับสีไฮคอนทราสต์:</strong> ปุ่มค้นหาพิกัดสีเขียวสดใส + ปุ่มดูแผนที่สไตล์ Soft Glassmorphism ติดแน่นที่ขอบล่าง"
+                ],
+                renderHtml: `
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full h-full overflow-hidden">
+                    
+                    <!-- 1. Modern Teal-Emerald Inset Header -->
+                    <div class="relative mx-2 mt-2 py-2 px-2.5 rounded-xl bg-gradient-to-r from-[#005B3A] to-teal-700 text-white shadow-md shadow-teal-900/20 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-1.5 min-w-0">
+                            <div class="w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-satellite text-[10px] text-teal-200"></i>
+                            </div>
+                            <span class="font-extrabold text-xs text-white tracking-wide truncate">พิกัด (GPS)</span>
+                        </div>
+                        <span class="text-[9px] px-1.5 py-0.2 rounded-md bg-teal-400/20 text-teal-200 font-mono font-bold">ACCURATE</span>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
+
+                    <!-- 2. Card Body: Rounded Capsule Info Box -->
+                    <div class="flex-1 flex flex-col justify-center px-2 py-1 text-center my-auto">
+                        <div class="p-2 rounded-2xl bg-teal-50/50 dark:bg-teal-950/20 border border-teal-200/70 dark:border-teal-800/40 space-y-1">
+                            <div id="gpsLocationNameText" class="font-black text-xs text-teal-950 dark:text-teal-100 line-clamp-2 leading-tight">
+                                สำนักเทศกิจ กรุงเทพมหานคร
+                            </div>
+                            <span id="gpsLocationName" class="hidden"></span>
+                            <div class="flex items-center justify-center gap-1 text-[9.5px] font-mono font-bold text-teal-700 dark:text-teal-300">
+                                <i class="fa-solid fa-compass text-[8.5px] text-teal-600"></i>
+                                <span id="gpsCoordsText" class="truncate">13.738065, 100.495481</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Docked Footer: 100% Flush to Bottom Edge -->
+                    <div class="mt-auto px-2 pb-2 pt-0 space-y-1.5 shrink-0 w-full">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-teal-700 hover:bg-teal-800 active:scale-[0.99] text-white text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
+                        </button>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-300 text-[10px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot text-[11px] text-teal-700"></i>
+                            <span>ดูแผนที่</span>
+                        </button>
+                    </div>
+
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                    <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                </div>
+                `
+            }
+        };
+
+        function switchTab(num) {
+            // Update Tab button active styles
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById('btnTab' + i);
+                if (i === num) {
+                    btn.className = "tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all shadow-sm bg-[#00744B] text-white flex items-center gap-2 cursor-pointer";
+                } else {
+                    btn.className = "tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 flex items-center gap-2 cursor-pointer";
+                }
+            }
+
+            const data = cardDesigns[num];
+            // Render Live Mobile Frame
+            document.getElementById('cardPreviewContainer').innerHTML = data.renderHtml;
+
+            // Update Details
+            document.getElementById('detailTitle').textContent = data.title;
+            const badge = document.getElementById('detailBadge');
+            badge.textContent = data.badge;
+            badge.className = "px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider " + data.badgeClass;
+
+            const tag = document.getElementById('detailTag');
+            tag.textContent = data.tag;
+            tag.className = "text-xs font-bold px-3 py-1 rounded-full border " + data.tagClass;
+
+            const pointsContainer = document.getElementById('detailPoints');
+            pointsContainer.innerHTML = data.points.map(p => `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-600 mt-1 shrink-0 text-xs"></i>
+                    <span>${p}</span>
+                </li>
+            `).join('');
+
+            // Clean code snippet for preview
+            const cleanCode = data.renderHtml.trim().replace(/^\s{16}/gm, '');
+            document.getElementById('codePreview').textContent = cleanCode;
+        }
+
+        // Initialize with Variation 1
+        switchTab(1);
+    </script>
+</body>
+</html>
+
