@@ -54,6 +54,8 @@ export class CheckinController {
         this.offsiteLeafletMap = null;
         this.offsiteMarker = null;
         this.tempOffsiteLocation = null;
+        this.viewGpsLeafletMap = null;
+        this.viewGpsLeafletMarker = null;
         this.init();
     }
 
@@ -73,8 +75,9 @@ export class CheckinController {
         try {
             this.settings = await SettingsModel.getSettings(false);
             this.#renderUserAndSettingsInfo();
-            this.#initLocaV2ModeAndChips();
+            this.#initModeSwitcher();
             this.#initOffsiteModalGps();
+            this.#initViewGpsMapModal();
             this.#renderGeofenceStatusUI();
             this.#applyDynamicWorkspaceLayout();
             await this.#refreshAllAttendanceData();
@@ -185,7 +188,7 @@ export class CheckinController {
             const clockEl = document.getElementById('liveClockDisplay');
             const dateEl = document.getElementById('liveDateDisplay');
             if (clockEl) {
-                clockEl.textContent = `${hh}:${mm} น.`;
+                clockEl.textContent = `${hh}:${mm}:${ss} น.`;
             }
             if (dateEl) {
                 dateEl.textContent = UIHelpers.formatThaiShortDate(UIHelpers.getTodayISO());
@@ -540,96 +543,133 @@ export class CheckinController {
     }
 
     #initLocaV2ModeAndChips() {
+        this.#initModeSwitcher();
+    }
+
+    #initModeSwitcher() {
         const btnOnsite = document.getElementById('btnModeOnsite');
         const btnOffsite = document.getElementById('btnModeOffsite');
         const offsiteSection = document.getElementById('offsiteLocationSection');
 
         btnOnsite?.addEventListener('click', () => {
             this.locationMode = 'ONSITE';
-            btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30';
+            btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-[#00744B] text-white shadow-xs';
             btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
             offsiteSection?.classList.add('hidden');
             this.#renderGeofenceStatusUI();
-            this.#updateStep1Validation();
+            this.#updateStatusCardsAndMainButton();
         });
 
         btnOffsite?.addEventListener('click', () => {
             this.locationMode = 'OFFSITE';
-            btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 border border-sky-500/30';
+            btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-sky-600 text-white shadow-xs';
             btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
             offsiteSection?.classList.remove('hidden');
             this.#renderGeofenceStatusUI();
-            this.#updateStep1Validation();
+            this.#updateStatusCardsAndMainButton();
         });
 
-        const chipsContainer = document.getElementById('offsiteRemarkChipsContainer');
+        const selectEl = document.getElementById('offsiteRemarkSelect');
         const customRemarkBox = document.getElementById('offsiteCustomRemarkBox');
         const customRemarkInput = document.getElementById('offsiteCustomRemarkInput');
 
-        const chipOptions = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
+        const remarks = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
             ? this.settings.remarks
-            : ['ปฏิบัติงานนอกสถานที่', 'อบรม', 'ประชุม', 'ปฏิบัติงานที่บ้าน (WFH)', 'อื่นๆ'];
+            : ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
 
-        if (chipsContainer) {
-            chipsContainer.innerHTML = chipOptions.map((opt, i) => {
-                const isSelected = (opt === this.selectedOffsiteRemark) || (i === 0 && !this.selectedOffsiteRemark);
-                const activeClass = isSelected
-                    ? 'bg-[#00744B] text-white border-[#00744B] shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200';
-                return `<button type="button" class="offsite-remark-chip px-3 py-1.5 rounded-full text-xs font-bold border transition ${activeClass}" data-remark="${opt}">${opt}</button>`;
-            }).join('');
+        if (selectEl) {
+            selectEl.innerHTML = remarks.map(r => `<option value="${r}">${r}</option>`).join('');
+            if (!remarks.includes('อื่นๆ')) {
+                selectEl.innerHTML += `<option value="อื่นๆ">อื่นๆ (ระบุหมายเหตุเพิ่มเติม)</option>`;
+            }
+            this.selectedOffsiteRemark = selectEl.value;
 
-            chipsContainer.addEventListener('click', (e) => {
-                const btn = e.target.closest('.offsite-remark-chip');
-                if (!btn) return;
-                const chosen = btn.getAttribute('data-remark');
-                this.selectedOffsiteRemark = chosen;
-
-                chipsContainer.querySelectorAll('.offsite-remark-chip').forEach(c => {
-                    const active = c.getAttribute('data-remark') === chosen;
-                    c.className = `offsite-remark-chip px-3 py-1.5 rounded-full text-xs font-bold border transition ${active ? 'bg-[#00744B] text-white border-[#00744B] shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'}`;
-                });
-
-                if (chosen === 'อื่นๆ') {
+            selectEl.addEventListener('change', () => {
+                this.selectedOffsiteRemark = selectEl.value;
+                if (selectEl.value === 'อื่นๆ') {
                     customRemarkBox?.classList.remove('hidden');
                     customRemarkInput?.focus();
                 } else {
                     customRemarkBox?.classList.add('hidden');
                 }
-                this.#updateStep1Validation();
             });
         }
 
-        customRemarkInput?.addEventListener('input', () => {
-            this.#updateStep1Validation();
-        });
-
-        const radioCurrent = document.getElementById('radioOffsiteGpsCurrent');
-        const radioMap = document.getElementById('radioOffsiteGpsMap');
-        const customLocBox = document.getElementById('offsiteCustomLocationSummaryBox');
-
-        radioCurrent?.addEventListener('change', () => {
-            if (radioCurrent.checked) {
-                this.offsiteCustomGps.mode = 'current';
-                customLocBox?.classList.add('hidden');
-                this.#updateStep1Validation();
-            }
-        });
-
-        radioMap?.addEventListener('change', () => {
-            if (radioMap.checked) {
-                this.offsiteCustomGps.mode = 'map';
-                customLocBox?.classList.remove('hidden');
-                if (!this.offsiteCustomGps.lat) {
-                    this.#openOffsiteMapModal();
-                }
-                this.#updateStep1Validation();
-            }
+        document.getElementById('btnOffsiteGpsCurrent')?.addEventListener('click', async () => {
+            await this.#initGpsLocation();
+            UIHelpers.showToast('อัปเดตพิกัดปัจจุบันสำหรับการปฏิบัติงานนอกสถานที่แล้ว', 'success');
         });
 
         document.getElementById('btnOpenOffsiteMapModal')?.addEventListener('click', () => {
             this.#openOffsiteMapModal();
         });
+
+        document.getElementById('btnRefreshGps')?.addEventListener('click', async () => {
+            await this.#initGpsLocation();
+            UIHelpers.showToast('ตรวจสอบตำแหน่ง GPS ปัจจุบันสำเร็จ', 'success');
+        });
+
+        document.getElementById('btnViewGpsMapModal')?.addEventListener('click', () => {
+            this.#openViewGpsMapModal();
+        });
+    }
+
+    #initViewGpsMapModal() {
+        document.getElementById('btnCloseViewGpsMapModal')?.addEventListener('click', () => {
+            document.getElementById('modalViewGpsMap')?.classList.add('hidden');
+        });
+        document.getElementById('btnConfirmCloseViewGpsMap')?.addEventListener('click', () => {
+            document.getElementById('modalViewGpsMap')?.classList.add('hidden');
+        });
+    }
+
+    #openViewGpsMapModal() {
+        const modal = document.getElementById('modalViewGpsMap');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+
+        const lat = this.gpsData?.lat || 13.7563;
+        const lng = this.gpsData?.lng || 100.5018;
+        const locTitle = this.gpsData?.locationName || 'พิกัดปัจจุบัน';
+
+        const titleEl = document.getElementById('viewGpsModalLocTitle');
+        const coordsEl = document.getElementById('viewGpsModalPinCoords');
+        const distEl = document.getElementById('viewGpsModalDistanceInfo');
+
+        if (titleEl) titleEl.textContent = locTitle;
+        if (coordsEl) coordsEl.textContent = `พิกัด: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+        if (this.geofenceResult && this.geofenceResult.distanceMeters !== undefined) {
+            if (distEl) distEl.textContent = `ระยะห่างจากจุดเช็คอินหลัก: ${this.geofenceResult.distanceMeters.toLocaleString()} ม. (${this.geofenceResult.isInside ? 'อยู่ในรัศมีที่อนุญาต' : 'อยู่นอกรัศมี'})`;
+        } else if (distEl) {
+            distEl.textContent = 'โหมดปฏิบัติงานนอกสถานที่';
+        }
+
+        setTimeout(() => {
+            const mapContainer = document.getElementById('viewGpsLeafletMap');
+            if (!mapContainer || typeof L === 'undefined') return;
+
+            if (!this.viewGpsLeafletMap) {
+                this.viewGpsLeafletMap = L.map(mapContainer, {
+                    zoomControl: true,
+                    attributionControl: false
+                }).setView([lat, lng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(this.viewGpsLeafletMap);
+
+                this.viewGpsLeafletMarker = L.marker([lat, lng]).addTo(this.viewGpsLeafletMap);
+            } else {
+                this.viewGpsLeafletMap.invalidateSize();
+                this.viewGpsLeafletMap.setView([lat, lng], 16);
+                if (this.viewGpsLeafletMarker) {
+                    this.viewGpsLeafletMarker.setLatLng([lat, lng]);
+                } else {
+                    this.viewGpsLeafletMarker = L.marker([lat, lng]).addTo(this.viewGpsLeafletMap);
+                }
+            }
+        }, 200);
     }
 
     #goToStep(step) {
@@ -864,10 +904,24 @@ export class CheckinController {
                 this.offsiteCustomGps.lng = this.tempOffsiteLocation.lng;
                 this.offsiteCustomGps.locationName = this.tempOffsiteLocation.name;
 
+                this.gpsData.lat = this.tempOffsiteLocation.lat;
+                this.gpsData.lng = this.tempOffsiteLocation.lng;
+                this.gpsData.locationName = this.tempOffsiteLocation.name;
+                this.gpsData.ready = true;
+
                 const nameEl = document.getElementById('offsiteSelectedLocationName');
                 const coordsEl = document.getElementById('offsiteSelectedLocationCoords');
                 if (nameEl) nameEl.textContent = this.tempOffsiteLocation.name;
                 if (coordsEl) coordsEl.textContent = `${this.tempOffsiteLocation.lat.toFixed(6)}, ${this.tempOffsiteLocation.lng.toFixed(6)}`;
+
+                const mainGpsCoords = document.getElementById('gpsCoordsText');
+                const mainGpsName = document.getElementById('gpsLocationNameText');
+                if (mainGpsCoords) mainGpsCoords.textContent = `พิกัด: ${this.gpsData.lat.toFixed(6)}, ${this.gpsData.lng.toFixed(6)}`;
+                if (mainGpsName) mainGpsName.textContent = this.gpsData.locationName;
+
+                this.#renderGeofenceStatusUI();
+                this.#updateStatusCardsAndMainButton();
+                UIHelpers.showToast(`เลือกสถานที่: ${this.offsiteCustomGps.locationName}`, 'success');
             }
             closeModal();
             this.#updateStep1Validation();
@@ -1038,103 +1092,86 @@ export class CheckinController {
     }
 
     #updateStatusCardsAndMainButton() {
-        const regularRecord = this.activeRegularRecord;
-        const todayIso = UIHelpers.getTodayISO();
+        const checkInTime = this.activeRegularRecord?.check_in_time || this.activeRegularRecord?.checkin_time;
+        const checkOutTime = this.activeRegularRecord?.check_out_time || this.activeRegularRecord?.checkout_time;
+        const canCheckIn = !checkInTime;
+        const canCheckOut = Boolean(checkInTime && !checkOutTime);
+        const isDone = Boolean(checkInTime && checkOutTime);
 
-        const checkinCardTitleEl = document.getElementById('todayCheckinCardTitle');
-        const checkoutCardTitleEl = document.getElementById('todayCheckoutCardTitle');
-        const checkinTimeEl = document.getElementById('todayCheckinTime');
-        const checkinBadgeEl = document.getElementById('todayCheckinBadge');
-        const checkoutTimeEl = document.getElementById('todayCheckoutTime');
-        const checkoutBadgeEl = document.getElementById('todayCheckoutBadge');
-        const btnSubmitMain = document.getElementById('btnSubmitCheckinMain');
+        const banner = document.getElementById('unifiedStatusBanner');
+        const bannerStatusText = document.getElementById('bannerStatusText');
+        const bannerSubText = document.getElementById('bannerSubText');
+        const modeContextBadge = document.getElementById('modeContextBadge');
+
+        const btnSubmit = document.getElementById('btnSubmitCheckinMain');
+        const btnSubmitIcon = document.getElementById('btnSubmitCheckinIcon');
         const btnSubmitLabel = document.getElementById('btnSubmitCheckinLabel');
-        const modeTag = document.getElementById('checkinRecordingModeTag');
-        const mainCustomBox = document.getElementById('mainCustomTimeContainer');
-        const noticeBox = document.getElementById('regularCompletedNoticeBox');
-        const noticeText = document.getElementById('regularCompletedNoticeText');
-        const shiftSelectorContainer = document.getElementById('shiftSelectorContainer');
 
-        const isNormalModeSetting = !Boolean(this.settings?.single_click_checkin);
-        const shiftSelectVal = document.getElementById('checkinShiftSelect')?.value;
-        const hasSelectedShift = shiftSelectVal !== '' && shiftSelectVal !== null && shiftSelectVal !== undefined;
-        const shiftIdx = hasSelectedShift ? parseInt(shiftSelectVal, 10) : null;
-        const shiftObj = (shiftIdx !== null && !isNaN(shiftIdx))
-            ? ((this.settings?.work_shifts || [])[shiftIdx] || {})
-            : {};
-
-        const nowMin = UIHelpers.timeToMinutes(UIHelpers.getCurrentTimeHHMM());
-        const allowStartRef = UIHelpers.formatTime24(this.settings?.allow_checkin_start_time || '06:00');
-        const allowStartMin = UIHelpers.timeToMinutes(allowStartRef);
-        const stdInRef = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
-        const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
-        const stdOutMin = UIHelpers.timeToMinutes(stdOutRef);
-        const graceMin = Number(this.settings?.checkout_grace_minutes ?? 30);
-        const stdInMin = UIHelpers.timeToMinutes(stdInRef);
-        const isWithinNormalHours = (stdInMin <= stdOutMin)
-            ? (nowMin >= stdInMin && nowMin < stdOutMin)
-            : (nowMin >= stdInMin || nowMin < stdOutMin);
-        btnSubmitMain?.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-
-        const allShifts = this.settings?.work_shifts || [];
-        const hasActiveOtShifts = allShifts.some(s =>
-            (s.is_overtime || s.is_custom) && this.#isShiftActiveAtCurrentTime(s, nowMin, allowStartMin)
-        );
-
-        const hasUnclosedRegular = Boolean(
-            regularRecord &&
-            regularRecord.check_in_time &&
-            !regularRecord.check_out_time
-        );
-
-        const isRegularCompletedToday = Boolean(
-            regularRecord &&
-            regularRecord.check_in_time &&
-            regularRecord.check_out_time &&
-            regularRecord.work_date === todayIso
-        );
-
-        const isBeforeAllowStart = nowMin < allowStartMin;
-        const isAfterStdOut = nowMin > stdOutMin;
-
-        if (!regularRecord) {
-            if (checkinCardTitleEl) checkinCardTitleEl.textContent = 'เวลาเข้างานปกติวันนี้ (24 ชม.)';
-            if (checkoutCardTitleEl) checkoutCardTitleEl.textContent = 'เวลาออกงานปกติวันนี้ (24 ชม.)';
-            checkinTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
-            checkinBadgeEl.textContent = 'รอลงเวลาเข้า';
-            checkinBadgeEl.className = 'bma-badge bma-badge-warning';
-            checkinBadgeEl.style.backgroundColor = '';
-
-            checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลา';
-            checkoutBadgeEl.textContent = 'รอลงเวลาออก';
-            checkoutBadgeEl.className = 'bma-badge bma-badge-sky';
-        } else {
-            const isPastUnclosed = regularRecord.work_date !== todayIso && !regularRecord.check_out_time;
-            const dateSuffix = isPastUnclosed ? ` (${UIHelpers.formatThaiShortDate(regularRecord.work_date)})` : 'วันนี้ (24 ชม.)';
-            if (checkinCardTitleEl) checkinCardTitleEl.textContent = `เวลาเข้างานปกติ${dateSuffix}`;
-            if (checkoutCardTitleEl) checkoutCardTitleEl.textContent = `เวลาเลิกงานปกติ${dateSuffix}`;
-
-            const evalStatus = AttendanceModel.evaluateOfficialStatus(regularRecord, this.settings);
-            checkinTimeEl.textContent = regularRecord.check_in_time ? `${UIHelpers.formatTime24(regularRecord.check_in_time)} น.` : '-';
-            checkinBadgeEl.textContent = evalStatus.status_label;
-            checkinBadgeEl.className = 'bma-badge text-white';
-            checkinBadgeEl.style.backgroundColor = evalStatus.row_color;
-
-            if (regularRecord.check_out_time) {
-                checkoutTimeEl.textContent = `${UIHelpers.formatTime24(regularRecord.check_out_time)} น.`;
-                checkoutBadgeEl.textContent = 'ลงเวลาเลิกงานแล้ว';
-                checkoutBadgeEl.className = 'bma-badge bma-badge-success';
-            } else {
-                checkoutTimeEl.textContent = 'ยังไม่ได้ลงเวลาเลิกงาน';
-                checkoutBadgeEl.textContent = isPastUnclosed ? 'ค้างลงเวลาเลิกงาน' : 'รอลงเวลาเลิกงาน';
-                checkoutBadgeEl.className = isPastUnclosed ? 'bma-badge bma-badge-danger' : 'bma-badge bma-badge-warning';
-            }
+        const modeBadge = document.getElementById('modeBadge');
+        if (modeBadge) {
+            modeBadge.textContent = this.locationMode === 'OFFSITE' ? 'นอกสถานที่' : 'ในสถานที่';
+            modeBadge.className = this.locationMode === 'OFFSITE'
+                ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
+                : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
         }
 
-        if (!hasUnclosedRegular && (!this.availableShiftsForCurrentWindow || this.availableShiftsForCurrentWindow.length === 0)) {
-            if (btnSubmitMain) {
-                btnSubmitMain.disabled = true;
-                btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+        const isOffsite = (this.locationMode === 'OFFSITE');
+        if (modeContextBadge) {
+            modeContextBadge.textContent = isOffsite ? 'โหมดปฏิบัติงานนอกสถานที่' : 'โหมดในสถานที่ (พิกัดตามจุดเช็คอิน)';
+            modeContextBadge.className = isOffsite
+                ? 'text-[11px] font-bold px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950/70 dark:text-sky-300 border border-sky-300 dark:border-sky-800'
+                : 'text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800';
+        }
+
+        if (canCheckIn) {
+            if (banner) {
+                banner.className = 'w-full mb-3 rounded-2xl p-3.5 text-white shadow-md flex items-center justify-between transition-all bg-gradient-to-r from-[#00351B] to-[#00744B]';
+            }
+            if (bannerStatusText) bannerStatusText.textContent = 'ลงเวลาเข้างาน';
+            if (bannerSubText) bannerSubText.textContent = 'พร้อมบันทึกเวลาเข้างานวันนี้';
+
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.className = 'w-full py-3.5 px-4 rounded-xl text-white font-extrabold text-base shadow-lg active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer bg-[#00744B] hover:bg-[#005e3c]';
+            }
+            if (btnSubmitIcon) btnSubmitIcon.className = 'fa-solid fa-arrow-right-to-bracket text-lg';
+            if (btnSubmitLabel) btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
+        } else if (canCheckOut) {
+            if (banner) {
+                banner.className = 'w-full mb-3 rounded-2xl p-3.5 text-white shadow-md flex items-center justify-between transition-all bg-gradient-to-r from-[#7F1D1D] to-[#DC2626]';
+            }
+            if (bannerStatusText) bannerStatusText.textContent = 'ลงเวลาออกงาน';
+            if (bannerSubText) bannerSubText.textContent = `เข้างานเมื่อ: ${UIHelpers.formatTime24(checkInTime)}`;
+
+            if (btnSubmit) {
+                btnSubmit.disabled = false;
+                btnSubmit.className = 'w-full py-3.5 px-4 rounded-xl text-white font-extrabold text-base shadow-lg active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer bg-[#991B1B] hover:bg-[#7F1D1D]';
+            }
+            if (btnSubmitIcon) btnSubmitIcon.className = 'fa-solid fa-arrow-right-from-bracket text-lg';
+            if (btnSubmitLabel) btnSubmitLabel.textContent = 'บันทึกลงเวลาเลิกงาน';
+        } else {
+            if (banner) {
+                banner.className = 'w-full mb-3 rounded-2xl p-3.5 text-white shadow-md flex items-center justify-between transition-all bg-gradient-to-r from-slate-700 to-slate-800';
+            }
+            if (bannerStatusText) bannerStatusText.textContent = 'บันทึกเวลาครบแล้ว';
+            if (bannerSubText) bannerSubText.textContent = `เข้า: ${UIHelpers.formatTime24(checkInTime)} • ออก: ${UIHelpers.formatTime24(checkOutTime)}`;
+
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.className = 'w-full py-3.5 px-4 rounded-xl text-white font-extrabold text-base shadow-none transition-all flex items-center justify-center gap-2 cursor-not-allowed bg-slate-400 dark:bg-slate-700';
+            }
+            if (btnSubmitIcon) btnSubmitIcon.className = 'fa-solid fa-check-double text-lg';
+            if (btnSubmitLabel) btnSubmitLabel.textContent = 'บันทึกเวลาครบแล้ววันนี้';
+        }
+
+        const noticeBox = document.getElementById('regularCompletedNoticeBox');
+        const noticeText = document.getElementById('regularCompletedNoticeText');
+
+        if (!canCheckOut && (!this.availableShiftsForCurrentWindow || this.availableShiftsForCurrentWindow.length === 0)) {
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                btnSubmit.className = 'w-full py-3.5 px-4 rounded-xl text-white font-extrabold text-base shadow-none transition-all flex items-center justify-center gap-2 cursor-not-allowed bg-slate-400 dark:bg-slate-700 opacity-50 pointer-events-none';
             }
             if (btnSubmitLabel) {
                 btnSubmitLabel.textContent = 'ไม่มีช่วงเวลาปฏิบัติงานให้บันทึก';
@@ -1143,183 +1180,9 @@ export class CheckinController {
             if (noticeText) {
                 noticeText.textContent = 'ท่านได้บันทึกลงเวลาปฏิบัติงานในทุกช่วงเวลาที่เปิดให้ลงเวลาเรียบร้อยแล้ว หรือไม่มีช่วงเวลาปฏิบัติงานที่เปิดให้ลงเวลาในขณะนี้';
             }
-            shiftSelectorContainer?.classList.remove('hidden');
-            mainCustomBox?.classList.add('hidden');
-            return;
-        }
-
-        if (this.settings?.disable_normal_hours_checkin && isWithinNormalHours) {
-            if (hasActiveOtShifts && !hasUnclosedRegular) {
-                shiftSelectorContainer?.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
-                if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
-                    mainCustomBox?.classList.remove('hidden');
-                } else {
-                    mainCustomBox?.classList.add('hidden');
-                }
-
-                if (hasSelectedShift && (shiftObj.is_overtime || shiftObj.is_custom)) {
-                    if (modeTag) {
-                        modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
-                        modeTag.className = 'bma-badge-pastel-purple';
-                    }
-                    if (btnSubmitMain) {
-                        btnSubmitMain.disabled = false;
-                        btnSubmitMain.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-                    }
-                    if (btnSubmitLabel) {
-                        btnSubmitLabel.textContent = 'บันทึกลงเวลาปฏิบัติงานนอกเวลา';
-                    }
-                    noticeBox?.classList.remove('hidden');
-                    if (noticeText) {
-                        noticeText.textContent = 'ระบบอยู่ในโหมด "ช่วงเวลาปฏิบัติงานนอกเวลา" เมื่อกดบันทึกจะลงทั้งเวลาเข้าและเวลาเลิกงานตามช่วงเวลาที่เลือกให้อัตโนมัติ';
-                    }
-                    return;
-                } else {
-                    if (modeTag) {
-                        modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
-                        modeTag.className = 'bma-badge-pastel-purple';
-                    }
-                    if (btnSubmitMain) {
-                        btnSubmitMain.disabled = false;
-                        btnSubmitMain.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-                    }
-                    if (btnSubmitLabel) {
-                        btnSubmitLabel.textContent = 'กรุณาเลือกช่วงเวลาปฏิบัติงานนอกเวลา';
-                    }
-                    noticeBox?.classList.remove('hidden');
-                    if (noticeText) {
-                        noticeText.textContent = `ขณะนี้ระบบปิดรับการลงเวลาในเวลาปกติ (${stdInRef} - ${stdOutRef} น.) แต่ท่านสามารถเลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" ที่เปิดให้ลงเวลาในขณะนี้ได้`;
-                    }
-                    return;
-                }
-            } else {
-                shiftSelectorContainer?.classList.add('hidden');
-                mainCustomBox?.classList.add('hidden');
-
-                if (modeTag) {
-                    modeTag.textContent = isNormalModeSetting ? 'รูปแบบปกติ' : 'รูปแบบพิเศษ';
-                    modeTag.className = isNormalModeSetting ? 'bma-badge bma-badge-success' : 'bma-badge bma-badge-indigo';
-                }
-
-                if (btnSubmitMain) {
-                    btnSubmitMain.disabled = true;
-                    btnSubmitMain.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-                }
-                if (btnSubmitLabel) {
-                    btnSubmitLabel.textContent = `ปิดรับการลงเวลาในช่วงเวลาปกติ (${stdInRef} - ${stdOutRef} น.)`;
-                }
-                noticeBox?.classList.remove('hidden');
-                if (noticeText) {
-                    noticeText.textContent = `ขณะนี้อยู่ในช่วงเวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) ระบบเปิดใช้งานฟังก์ชันปิดรับการลงเวลาในเวลาปกติ จึงไม่สามารถบันทึกลงเวลาได้`;
-                }
-                return;
-            }
-        }
-
-        if (isNormalModeSetting && hasUnclosedRegular) {
-            shiftSelectorContainer?.classList.add('hidden');
-            mainCustomBox?.classList.add('hidden');
-
-            if (modeTag) {
-                modeTag.textContent = 'รูปแบบปกติ';
-                modeTag.className = 'bma-badge bma-badge-success';
-            }
-
-            noticeBox?.classList.remove('hidden');
-            const isPastDate = regularRecord.work_date !== todayIso;
-            if (noticeText) {
-                if (isPastDate) {
-                    noticeText.textContent = `ท่านมีรายการลงเวลาเข้าปฏิบัติงานค้างอยู่เมื่อวันที่ ${UIHelpers.formatThaiShortDate(regularRecord.work_date)} เวลา ${UIHelpers.formatTime24(regularRecord.check_in_time)} น. กรุณากดบันทึกเวลาเลิกงานครั้งล่าสุดให้เสร็จสิ้นก่อน จึงจะสามารถลงเวลาทำงานในรอบถัดไปได้`;
-                } else {
-                    noticeText.textContent = `ท่านได้ลงเวลาเข้าปฏิบัติงานไว้เมื่อเวลา ${UIHelpers.formatTime24(regularRecord.check_in_time)} น. กรุณากดบันทึกลงเวลาเลิกงาน (เลิกงานก่อน ${stdOutRef} น. = ขาดราชการ | ตั้งแต่ ${stdOutRef} น. ไม่เกิน ${graceMin} นาที = บันทึกตามจริง | เกิน ${graceMin} นาที = บันทึกเวลาเลิกงาน+${graceMin} นาที)`;
-                }
-            }
-
-            if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = isPastDate
-                    ? `บันทึกลงเวลาเลิกงาน (${UIHelpers.formatThaiShortDate(regularRecord.work_date)})`
-                    : 'บันทึกลงเวลาเลิกงาน';
-            }
-            return;
-        }
-
-        const isRealtimeFilterEnabled = this.settings?.filter_shifts_by_realtime !== false;
-        if (isNormalModeSetting && isRealtimeFilterEnabled && !isRegularCompletedToday && !isBeforeAllowStart && !isAfterStdOut && !(hasActiveOtShifts && !hasUnclosedRegular)) {
-            shiftSelectorContainer?.classList.add('hidden');
-            mainCustomBox?.classList.add('hidden');
-
-            if (modeTag) {
-                modeTag.textContent = 'รูปแบบปกติ';
-                modeTag.className = 'bma-badge bma-badge-success';
-            }
-
-            noticeBox?.classList.remove('hidden');
-            if (noticeText) {
-                noticeText.textContent = `เวลาราชการปกติ (${stdInRef} - ${stdOutRef} น.) เปิดให้เริ่มบันทึกเวลาเข้าปฏิบัติงานตั้งแต่เวลา ${allowStartRef} น.`;
-            }
-
-            if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
-            }
-            return;
-        }
-
-        shiftSelectorContainer?.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
-
-        if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
-            mainCustomBox?.classList.remove('hidden');
         } else {
-            mainCustomBox?.classList.add('hidden');
-        }
-
-        const isOvertimeContext = Boolean(
-            shiftObj.is_overtime ||
-            (isRealtimeFilterEnabled && isBeforeAllowStart) ||
-            (isRealtimeFilterEnabled && isAfterStdOut) ||
-            isRegularCompletedToday
-        );
-
-        if (modeTag) {
-            if (isOvertimeContext) {
-                modeTag.textContent = 'ปฏิบัติงานนอกเวลา';
-                modeTag.className = 'bma-badge-pastel-purple';
-            } else {
-                modeTag.textContent = 'รูปแบบพิเศษ';
-                modeTag.className = 'bma-badge bma-badge-indigo';
-            }
-        }
-
-        if (isOvertimeContext) {
-            noticeBox?.classList.remove('hidden');
-            if (noticeText) {
-                if (isBeforeAllowStart) {
-                    noticeText.textContent = `ขณะนี้อยู่ก่อนเวลาเริ่มบันทึกเข้าปฏิบัติงานปกติ (${allowStartRef} น.) ระบบสลับให้เลือก "ช่วงเวลาปฏิบัติงานนอกเวลา" และบันทึกเวลารูปแบบพิเศษอัตโนมัติ`;
-                } else {
-                    noticeText.textContent = `ระบบอยู่ในโหมด "ช่วงเวลาปฏิบัติงานนอกเวลา" เมื่อกดบันทึกจะลงทั้งเวลาเข้าและเวลาเลิกงานตามช่วงเวลาที่เลือกให้อัตโนมัติ`;
-                }
-            }
-            if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = 'บันทึกลงเวลาปฏิบัติงานนอกเวลา';
-            }
-            return;
-        }
-
-        if (isRegularCompletedToday) {
-            noticeBox?.classList.remove('hidden');
-            if (noticeText) {
-                noticeText.textContent = `วันนี้ท่านได้ลงเวลาเข้าและเลิกงานในเวลาทำการปกติครบแล้ว สามารถเลือกช่วงเวลา "ปฏิบัติงานนอกเวลา" หากต้องการลงเวลานอกเวลา`;
-            }
-            if (btnSubmitMain) btnSubmitMain.disabled = true;
-            if (btnSubmitLabel) btnSubmitLabel.textContent = 'ลงเวลาทำการปกติของวันนี้ครบแล้ว';
-        } else {
+            btnSubmit?.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
             noticeBox?.classList.add('hidden');
-            if (btnSubmitMain) btnSubmitMain.disabled = false;
-            if (btnSubmitLabel) {
-                btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
-            }
         }
     }
 
@@ -1433,6 +1296,92 @@ export class CheckinController {
         }).join('');
     }
 
+    async #openFullscreenCamera() {
+        const modal = document.getElementById('modalFullscreenCamera');
+        const video = document.getElementById('cameraVideoStream');
+
+        const allowFallback = Boolean(this.settings?.allow_gallery_fallback !== false);
+        const isLineBrowser = /Line\//i.test(navigator.userAgent);
+        const hasCamera = await this.#checkCameraHardware();
+
+        if (allowFallback && (isLineBrowser || !hasCamera)) {
+            const fallbackInput = document.getElementById('cameraFallbackFileInput');
+            if (fallbackInput) {
+                fallbackInput.click();
+                return;
+            }
+        }
+
+        try {
+            this.#stopCameraHardwareStream();
+            this.mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
+                audio: false
+            });
+
+            this.isCameraRunning = true;
+            if (video) {
+                video.srcObject = this.mediaStream;
+                video.classList.remove('hidden');
+            }
+
+            modal?.classList.remove('hidden');
+        } catch (err) {
+            console.warn('Fullscreen camera access error:', err);
+            this.#stopCameraHardwareStream();
+            if (allowFallback) {
+                const fallbackInput = document.getElementById('cameraFallbackFileInput');
+                if (fallbackInput) {
+                    fallbackInput.click();
+                    return;
+                }
+            }
+            await UIHelpers.alert(
+                'ไม่สามารถเข้าถึงกล้องถ่ายรูปได้',
+                'กรุณาอนุญาตการเข้าถึงกล้องบนเบราว์เซอร์เพื่อถ่ายภาพยืนยันตัวตน',
+                'warning'
+            );
+        }
+    }
+
+    #captureAndCloseCamera() {
+        const video = document.getElementById('cameraVideoStream');
+        const canvas = document.getElementById('cameraCaptureCanvas');
+        const preview = document.getElementById('capturedPhotoPreview');
+        const placeholder = document.getElementById('photoPlaceholder');
+        const centerIcon = document.getElementById('centerPhotoIcon');
+        const statusText = document.getElementById('photoStatusBadgeText');
+        const modal = document.getElementById('modalFullscreenCamera');
+
+        if (!video || !video.srcObject) {
+            UIHelpers.alert('กล้องยังไม่พร้อมใช้งาน', 'กรุณารอสักครู่แล้วลองใหม่อีกครั้ง', 'warning');
+            return;
+        }
+
+        this.capturedPhotoDataUrl = UIHelpers.capturePortrait3x4FromVideo(video, canvas);
+        this.#stopCameraHardwareStream();
+
+        if (preview) {
+            preview.src = this.capturedPhotoDataUrl;
+            preview.classList.remove('hidden');
+        }
+        placeholder?.classList.add('hidden');
+
+        if (centerIcon) {
+            centerIcon.className = 'fa-solid fa-rotate-right text-base text-amber-300';
+        }
+        if (statusText) {
+            statusText.textContent = 'ถ่ายภาพแล้ว (แตะเพื่อถ่ายใหม่)';
+        }
+
+        modal?.classList.add('hidden');
+    }
+
+    #closeFullscreenCamera() {
+        this.#stopCameraHardwareStream();
+        document.getElementById('modalFullscreenCamera')?.classList.add('hidden');
+    }
+
     async #checkCameraHardware() {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -1483,6 +1432,13 @@ export class CheckinController {
                     preview.src = this.capturedPhotoDataUrl;
                     preview.classList.remove('hidden');
                 }
+                const placeholder = document.getElementById('photoPlaceholder');
+                const centerIcon = document.getElementById('centerPhotoIcon');
+                const statusText = document.getElementById('photoStatusBadgeText');
+                placeholder?.classList.add('hidden');
+                if (centerIcon) centerIcon.className = 'fa-solid fa-rotate-right text-base text-amber-300';
+                if (statusText) statusText.textContent = 'เลือกภาพแล้ว (แตะเพื่อเปลี่ยนภาพ)';
+                document.getElementById('modalFullscreenCamera')?.classList.add('hidden');
 
                 const video = document.getElementById('cameraVideoStream');
                 const standbyOverlay = document.getElementById('cameraStandbyOverlay');
@@ -1655,11 +1611,16 @@ export class CheckinController {
     }
 
     async #resetPageAfterSave() {
-        if (this.settings?.require_photo) {
-            this.#stopCameraAndShowStandby();
-        } else {
-            this.#stopCameraHardwareStream();
-        }
+        this.#stopCameraHardwareStream();
+        this.capturedPhotoDataUrl = '';
+        const preview = document.getElementById('capturedPhotoPreview');
+        const placeholder = document.getElementById('photoPlaceholder');
+        const centerIcon = document.getElementById('centerPhotoIcon');
+        const statusText = document.getElementById('photoStatusBadgeText');
+        if (preview) { preview.src = ''; preview.classList.add('hidden'); }
+        placeholder?.classList.remove('hidden');
+        if (centerIcon) centerIcon.className = 'fa-solid fa-camera text-base text-amber-300';
+        if (statusText) statusText.textContent = 'แตะเพื่อถ่ายรูป';
         await this.#refreshAllAttendanceData();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1821,12 +1782,19 @@ export class CheckinController {
             }
         });
 
-        document.getElementById('btnStartCameraOverlay')?.addEventListener('click', () => this.#openCameraOnDemand());
-        document.getElementById('btnStartCameraBottom')?.addEventListener('click', () => this.#openCameraOnDemand());
-        document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
-        document.getElementById('btnInFrameShutter')?.addEventListener('click', () => this.#capturePhotoAndStopStream());
-        document.getElementById('btnStopCamera')?.addEventListener('click', () => this.#stopCameraAndShowStandby());
-        document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#openCameraOnDemand());
+        document.getElementById('photoPreviewCard')?.addEventListener('click', () => this.#openFullscreenCamera());
+        document.getElementById('btnCenterPhotoOverlay')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.#openFullscreenCamera();
+        });
+        document.getElementById('btnCloseFullscreenCamera')?.addEventListener('click', () => this.#closeFullscreenCamera());
+        document.getElementById('btnFullscreenShutter')?.addEventListener('click', () => this.#captureAndCloseCamera());
+        document.getElementById('btnStartCameraOverlay')?.addEventListener('click', () => this.#openFullscreenCamera());
+        document.getElementById('btnStartCameraBottom')?.addEventListener('click', () => this.#openFullscreenCamera());
+        document.getElementById('btnCapturePhoto')?.addEventListener('click', () => this.#captureAndCloseCamera());
+        document.getElementById('btnInFrameShutter')?.addEventListener('click', () => this.#captureAndCloseCamera());
+        document.getElementById('btnStopCamera')?.addEventListener('click', () => this.#closeFullscreenCamera());
+        document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#openFullscreenCamera());
         document.getElementById('cameraFallbackFileInput')?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             if (file) this.#handleFallbackFileSelected(file);
@@ -2104,7 +2072,7 @@ export class CheckinController {
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {
             await UIHelpers.alert(
                 'กรุณาเปิดกล้องและถ่ายภาพก่อนลงเวลา',
-                'ระบบเปิดใช้งานการบังคับถ่ายภาพ กรุณากดปุ่ม "เปิดกล้องเพื่อถ่ายรูป" แล้วกด "ถ่ายภาพ" ก่อนบันทึกลงเวลา',
+                'ระบบเปิดใช้งานการบังคับถ่ายภาพ กรุณาแตะที่กล่องรูปถ่ายเพื่อเปิดกล้องแล้วถ่ายภาพก่อนบันทึกลงเวลา',
                 'warning'
             );
             return;
@@ -2252,7 +2220,7 @@ export class CheckinController {
             ]);
         }
 
-        const locName = (this.gpsData?.locationName || document.getElementById('gpsLocationName')?.textContent || 'ไม่ได้ระบุตำแหน่ง').trim();
+        const locName = (this.gpsData?.locationName || document.getElementById('gpsLocationNameText')?.textContent || document.getElementById('gpsLocationName')?.textContent || 'ไม่ได้ระบุตำแหน่ง').trim();
         const coordsStr = (this.gpsData?.lat && this.gpsData?.lng)
             ? `${Number(this.gpsData.lat).toFixed(6)}, ${Number(this.gpsData.lng).toFixed(6)}`
             : (document.getElementById('gpsCoordsText')?.textContent || '-').trim();

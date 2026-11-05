@@ -34,6 +34,7 @@ last_updated_phase: "PIPE-20261104-loca-v2-onsite-offsite-nextstep"
 - [[rule_hide_recorded_shifts_and_disable_btn]] — Domain Rule: ซ่อนช่วงเวลาที่ลงเวลาแล้ว และปิดปุ่มบันทึกเมื่อไม่มีตัวเลือกช่วงเวลา (FLOW_CHECKIN_01, FLOW_SETTINGS_01)
 - [[rule_format_position_and_hide_non_level]] — Domain Rule: การจัดรูปแบบแสดงผลตำแหน่งและระดับ (ซ่อน 'ไม่มี', ซ่อนระดับผู้บริหาร, และเว้นวรรค 1 ช่องลูกจ้างประจำ) (`FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_USERS_01`, `FLOW_CHECKIN_01`)
 - [[rule_loca_v2_onsite_offsite_nextstep_and_staging_schema]] — Domain Rule: ระบบลงเวลา [ในสถานที่/นอกสถานที่] รัศมีหลายสถานที่, UI รูปแบบ Next Step 2 ขั้นตอน, ตัวกรองสังกัดหน้าบุคลากร และการแยก Schema `staging` (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`)
+- [[rule_loca_v2_ultra_zero_scroll_fullscreen_camera_and_modal_map]] — Domain Rule: สถาปัตยกรรมหน้าลงเวลามือถือ Ultra Zero-Scroll (~345px) พร้อมกล้องเต็มจอสด และโมดอลแผนที่ Leaflet On-Demand (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)

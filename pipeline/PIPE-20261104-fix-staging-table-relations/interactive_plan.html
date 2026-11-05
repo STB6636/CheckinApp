@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนแก้ปัญหาตารางไม่แสดงผล (Staging Schema Foreign Key & Resilient Fallback)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-emerald-800 to-teal-700 rounded-2xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-emerald-500/30 text-emerald-200 text-xs font-semibold rounded-full mb-2">
+                        <i class="fa-solid fa-microchip mr-1"></i> LEAN 2-SUBAGENT WORKFLOW (MODE: PLAN)
+                    </span>
+                    <h1 class="text-2xl md:text-3xl font-bold">แผนแก้ไขตารางข้อมูลไม่แสดงผลใน Schema Staging</h1>
+                    <p class="text-emerald-100 text-sm mt-1">
+                        Task ID: <code class="bg-emerald-900/50 px-2 py-0.5 rounded">PIPE-20261104-fix-staging-table-relations</code> | วันที่: 4 พ.ย. 2569
+                    </p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-400 text-amber-950">
+                        <i class="fa-solid fa-clock mr-1.5"></i> รออนุมัติ (Pending Approval)
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. ผลการตรวจพิสูจน์ทางเทคนิค (Diagnostic Proof) -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-stethoscope text-emerald-600"></i>
+                1. ผลการตรวจพิสูจน์การเชื่อมต่อฐานข้อมูล Schema: Staging (Technical Diagnosis)
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <div class="font-bold text-emerald-900 flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        การเชื่อมต่อ Schema Staging: ผ่าน 100%
+                    </div>
+                    <ul class="space-y-1.5 text-slate-600">
+                        <li>• <code class="text-xs bg-white px-1.5 py-0.5 rounded border border-emerald-300">Config.SUPABASE_SCHEMA = 'staging'</code> ชี้ไปที่ staging ถูกต้อง</li>
+                        <li>• Supabase อนุญาตการเรียก PostgREST สู่ Schema staging สำเร็จ</li>
+                        <li>• ตารางเดี่ยวตอบกลับ <strong>HTTP 200 OK</strong> มีข้อมูลครบ:
+                            <div class="text-xs text-slate-500 mt-1 font-mono">
+                                - system_settings: 200 OK<br>
+                                - personnel (simple): 200 OK (พบรายชื่อบุคลากร)<br>
+                                - user_accounts (simple): 200 OK (พบบัญชีผู้ใช้)<br>
+                                - attendance_logs (simple): 200 OK (พบประวัติลงเวลา)
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                    <div class="font-bold text-rose-900 flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-circle-xmark text-rose-600"></i>
+                        จุดที่เป็นปัญหา: ข้อจำกัดของ PostgreSQL LIKE
+                    </div>
+                    <ul class="space-y-1.5 text-slate-600">
+                        <li>• คำสั่ง <code class="text-xs bg-white px-1 py-0.5 rounded border">CREATE TABLE (LIKE ... INCLUDING ALL)</code> ใน PostgreSQL <strong>ไม่คัดลอก Foreign Key Constraints ข้ามตาราง</strong></li>
+                        <li>• ทำให้ Schema <code class="text-xs font-bold">staging</code> ขาด Foreign Key เชื่อมระหว่าง:
+                            <span class="block text-xs text-rose-700 font-mono mt-1">
+                                personnel ↔ user_accounts<br>
+                                attendance_logs ↔ personnel
+                            </span>
+                        </li>
+                        <li>• เมื่อโค้ดเรียก Query แบบ Join ข้ามตาราง PostgREST จะส่งกลับ <strong>HTTP 400 (PGRST200: Could not find relationship)</strong> ส่งผลให้ฟังก์ชันคืนค่า <code class="text-xs bg-white px-1">[]</code> หน้าจอจึงแสดง 0 คน</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. กลยุทธ์การแก้ไขแบบ 2 ชั้น (Double-Layer Solution) -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-teal-600"></i>
+                2. กลยุทธ์การแก้ไขแบบสมบูรณ์ 2 ชั้น (Double-Layer Bulletproof Fix)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <!-- Layer 1: Database Foreign Key Patch -->
+                <div class="border border-slate-200 rounded-xl p-4 hover:border-teal-500 transition-colors">
+                    <div class="flex items-center gap-2 font-bold text-slate-900 mb-2">
+                        <span class="w-6 h-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold">1</span>
+                        ชั้นฐานข้อมูล (Database Schema Patch)
+                    </div>
+                    <p class="text-slate-600 text-xs mb-3">
+                        สร้างสคริปต์ SQL <code class="text-teal-700 font-mono font-semibold">sql/fix_staging_foreign_keys.sql</code> สำหรับรันใน Supabase SQL Editor:
+                    </p>
+                    <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+                        <li>เพิ่ม Foreign Key: <code class="bg-slate-100 px-1 py-0.5 rounded">staging.user_accounts(personnel_id) → staging.personnel(id)</code></li>
+                        <li>เพิ่ม Foreign Key: <code class="bg-slate-100 px-1 py-0.5 rounded">staging.attendance_logs(personnel_id) → staging.personnel(id)</code></li>
+                        <li>เพิ่ม Foreign Key: <code class="bg-slate-100 px-1 py-0.5 rounded">staging.attendance_logs(user_id) → staging.user_accounts(id)</code></li>
+                        <li>รันคำสั่ง <code class="bg-slate-100 px-1 py-0.5 rounded text-indigo-700">NOTIFY pgrst, 'reload schema';</code> เพื่อสั่ง PostgREST อัปเดต Cache ความสัมพันธ์ทันที</li>
+                    </ul>
+                </div>
+
+                <!-- Layer 2: Client-side In-Memory Fallback -->
+                <div class="border border-slate-200 rounded-xl p-4 hover:border-teal-500 transition-colors">
+                    <div class="flex items-center gap-2 font-bold text-slate-900 mb-2">
+                        <span class="w-6 h-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold">2</span>
+                        ชั้นโค้ดแอปพลิเคชัน (Client-side In-Memory Fallback)
+                    </div>
+                    <p class="text-slate-600 text-xs mb-3">
+                        ปรับปรุงโค้ดให้มีความทนทาน (Fault-Tolerant) ไม่ว่าฐานข้อมูลจะมีหรือไม่มี Foreign Key หน้าเว็บก็<strong>ไม่มีวันแสดงตารางว่างเปล่า</strong>:
+                    </p>
+                    <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+                        <li><strong>PersonnelModel.getAll</strong>: หาก nested join ล้มเหลว จะสลับไปดึง <code>personnel</code> + <code>user_accounts</code> แยกกัน แล้วนำมาจับคู่ในหน่วยความจำ (In-Memory Stitching) ทันที</li>
+                        <li><strong>UserModel.getAll</strong>: หาก nested join ล้มเหลว จะดึง <code>user_accounts</code> + <code>personnel</code> แยกกัน แล้วจับคู่ client-side</li>
+                        <li><strong>AuthService.login / verify</strong>: เสริม fallback ดึงข้อมูลบุคลากรแยก หากความสัมพันธ์ PostgREST ขัดข้อง</li>
+                        <li><strong>AttendanceModel.getSpecialRequests</strong>: เสริม fallback ดึงข้อมูลคำขอพิเศษ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. แผนการดำเนินงานและควบคุม SubAgents (Workflow Execution Plan) -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-indigo-600"></i>
+                3. แผนการทำงาน Lean 2-SubAgent Architecture (ประหยัดโทเคน ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง)
+            </h2>
+
+            <div class="space-y-3">
+                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl text-sm">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold flex-shrink-0">
+                        O
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800">Orchestrator (Main Agent) — Phase 0 สำเร็จแล้ว</div>
+                        <div class="text-xs text-slate-500 mt-0.5">
+                            ทำการตรวจพิสูจน์สาเหตุผ่าน HTTP API จริง, ดึง Second Brain, สแกน Codebase Map และจัดทำเอกสารแผนการทำงาน Dual Plan โดยไม่ใช้โทเคนฟุ่มเฟือย
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl text-sm">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold flex-shrink-0">
+                        S1
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800">SubAgent 1 (`subagent_01_implementer` — Flash 3.8 High, 1 ตัว)</div>
+                        <div class="text-xs text-slate-500 mt-0.5">
+                            ส่งเข้าไปอ่านไฟล์ตามช่วงบรรทัดเจาะจง (Map-First Surgical Line-Range Access) และเขียนโค้ดตามแผนเท่านั้น:
+                            <span class="block font-mono text-[11px] text-slate-600 mt-1">
+                                1. สร้าง sql/fix_staging_foreign_keys.sql และอัปเดต sql/create_staging_schema.sql<br>
+                                2. แก้ไข PersonnelModel.js (L52-L95) เพิ่ม Resilient Fallback<br>
+                                3. แก้ไข UserModel.js (L17-L55) เพิ่ม Resilient Fallback<br>
+                                4. แก้ไข AuthService.js (L78-L185) เพิ่ม Fallback<br>
+                                5. แก้ไข AttendanceModel.js (L1375-L1415) เพิ่ม Fallback<br>
+                                6. รัน `node ./.ai_map/vscode_ast_mapper.mjs` อัปเดต Map
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl text-sm">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold flex-shrink-0">
+                        S2
+                    </div>
+                    <div>
+                        <div class="font-bold text-slate-800">SubAgent 2 (`subagent_02_qa_auditor` — Flash 3.8 High, 1 ตัว)</div>
+                        <div class="text-xs text-slate-500 mt-0.5">
+                            ตรวจทานงานกับแผน, รันชุดทดสอบความถูกต้องทางฟังก์ชัน, ตรวจสอบไวยากรณ์ (`node --check`), และเปรียบเทียบ Diff กับ Branch `main` เพื่อยืนยันว่าไม่มีการแก้ไขกระทบส่วนที่ไม่เกี่ยวข้องแม้แต่บรรทัดเดียว
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ขั้นตอนการอนุมัติ (Approval Callout) -->
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 text-center space-y-3">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 text-amber-600 text-xl mb-1">
+                <i class="fa-solid fa-hand-pointer"></i>
+            </div>
+            <h3 class="text-lg font-bold text-amber-950">พร้อมดำเนินการตามแผน</h3>
+            <p class="text-sm text-amber-800 max-w-xl mx-auto">
+                หากท่านเห็นชอบกับแผนการแก้ไขทั้ง 2 ชั้น (SQL Patch + Fallback Code ในโมเดล Flash 3.8 High 1 ตัว และ SubAgent ตรวจทาน 1 ตัว) กรุณากดปุ่ม <strong>"Proceed"</strong> เพื่อเริ่มต้นการแก้ไขได้ทันทีครับ
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>
+
