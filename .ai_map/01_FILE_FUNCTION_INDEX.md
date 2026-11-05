@@ -1,6 +1,6 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T08:53:23.378Z`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-05T09:17:12.469Z`
 - **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `88` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `629`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
@@ -518,36 +518,36 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `1859da753e4aa3af` | **Total Lines:** `954` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `93f183c5aaeb96ee` | **Total Lines:** `952` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L104** | `<head>` | HTML DOM Section L3-L104 |
-| `<main>` | `html_dom_section` | **L185 - L585** | `<main>` | HTML DOM Section L185-L585 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L188 - L443** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L188-L443 |
+| `<main>` | `html_dom_section` | **L185 - L583** | `<main>` | HTML DOM Section L185-L583 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L188 - L441** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L188-L441 |
 | `<div#photoPreviewCard>` | `html_dom_section` | **L231 - L252** | `id="photoPreviewCard"` | HTML DOM Section L231-L252 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L255 - L298** | `id="gpsSectionCard"` | HTML DOM Section L255-L298 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L293 - L296** | `id="googleMapEmbedWrapper"` | HTML DOM Section L293-L296 |
-| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L319 - L330** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L319-L330 |
-| `<div#offsiteLocationSection>` | `html_dom_section` | **L333 - L369** | `id="offsiteLocationSection"` | HTML DOM Section L333-L369 |
-| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L365 - L365** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L365-L365 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L373 - L413** | `id="checkinActionCard"` | HTML DOM Section L373-L413 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L383 - L388** | `id="shiftSelectorContainer"` | HTML DOM Section L383-L388 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L390 - L399** | `id="mainCustomTimeContainer"` | HTML DOM Section L390-L399 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L425 - L425** | `id="checkinStep1Container"` | HTML DOM Section L425-L425 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L426 - L426** | `id="checkinStep2Container"` | HTML DOM Section L426-L426 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L427 - L427** | `id="rightColumnWrapper"` | HTML DOM Section L427-L427 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L431 - L431** | `id="cameraSectionCard"` | HTML DOM Section L431-L431 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L439 - L439** | `id="cameraStandbyOverlay"` | HTML DOM Section L439-L439 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L446 - L583** | `id="desktopPanesContainer"` | HTML DOM Section L446-L583 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L449 - L538** | `id="desktopHistoryWrapper"` | HTML DOM Section L449-L538 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L475 - L492** | `id="todayHistoryTabPanel"` | HTML DOM Section L475-L492 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L495 - L535** | `id="pastHistoryTabPanel"` | HTML DOM Section L495-L535 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L541 - L581** | `id="desktopSpecialWrapper"` | HTML DOM Section L541-L581 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L593 - L683** | `id="mobileDrawerPanel"` | HTML DOM Section L593-L683 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L716 - L725** | `id="spCustomTimeContainer"` | HTML DOM Section L716-L725 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L767 - L773** | `id="spSearchWrapper"` | HTML DOM Section L767-L773 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L823 - L823** | `<script>` | Bootstrap script L823-L823 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L255 - L296** | `id="gpsSectionCard"` | HTML DOM Section L255-L296 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L291 - L294** | `id="googleMapEmbedWrapper"` | HTML DOM Section L291-L294 |
+| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L317 - L328** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L317-L328 |
+| `<div#offsiteLocationSection>` | `html_dom_section` | **L331 - L367** | `id="offsiteLocationSection"` | HTML DOM Section L331-L367 |
+| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L363 - L363** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L363-L363 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L371 - L411** | `id="checkinActionCard"` | HTML DOM Section L371-L411 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L381 - L386** | `id="shiftSelectorContainer"` | HTML DOM Section L381-L386 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L388 - L397** | `id="mainCustomTimeContainer"` | HTML DOM Section L388-L397 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L423 - L423** | `id="checkinStep1Container"` | HTML DOM Section L423-L423 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L424 - L424** | `id="checkinStep2Container"` | HTML DOM Section L424-L424 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L425 - L425** | `id="rightColumnWrapper"` | HTML DOM Section L425-L425 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L429 - L429** | `id="cameraSectionCard"` | HTML DOM Section L429-L429 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L437 - L437** | `id="cameraStandbyOverlay"` | HTML DOM Section L437-L437 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L444 - L581** | `id="desktopPanesContainer"` | HTML DOM Section L444-L581 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L447 - L536** | `id="desktopHistoryWrapper"` | HTML DOM Section L447-L536 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L473 - L490** | `id="todayHistoryTabPanel"` | HTML DOM Section L473-L490 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L493 - L533** | `id="pastHistoryTabPanel"` | HTML DOM Section L493-L533 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L539 - L579** | `id="desktopSpecialWrapper"` | HTML DOM Section L539-L579 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L591 - L681** | `id="mobileDrawerPanel"` | HTML DOM Section L591-L681 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L714 - L723** | `id="spCustomTimeContainer"` | HTML DOM Section L714-L723 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L765 - L771** | `id="spSearchWrapper"` | HTML DOM Section L765-L771 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L821 - L821** | `<script>` | Bootstrap script L821-L821 |
 
 ---
 

@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261105-loca-v2-gps-gold-realtime"
+last_updated_phase: "PIPE-20261105-loca-v2-gps-card-refine"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)

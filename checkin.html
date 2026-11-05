@@ -252,39 +252,37 @@
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
-                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
-                    <!-- Top Half: Deep Golden Amber Background (สีเหลืองเข้ม สไตล์รูปที่ 2) -->
-                    <div class="p-2.5 sm:p-3 bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-600 text-white flex flex-col justify-between shrink-0 shadow-xs space-y-1">
-                        <div class="flex items-center justify-between gap-1">
-                            <div class="flex items-center gap-1.5 min-w-0">
-                                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-black/20 text-white flex items-center justify-center text-[9px] sm:text-[10px] shrink-0">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                </span>
-                                <span class="font-extrabold text-[11px] sm:text-xs text-white truncate tracking-wide">พิกัด (GPS)</span>
-                            </div>
-                            <span id="gpsRequirementBadge" class="hidden"></span>
-                        </div>
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-2.5 flex flex-col justify-between w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
+                    
+                    <!-- 1. Header: Style like 'เงื่อนไขการบันทึกเวลา:' (No Badge) -->
+                    <div class="p-2 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 flex items-center justify-between text-xs shrink-0">
+                        <span class="font-extrabold text-amber-950 dark:text-amber-200 flex items-center gap-1.5 min-w-0">
+                            <i class="fa-solid fa-location-dot text-amber-600 dark:text-amber-400 text-xs shrink-0"></i>
+                            <span class="truncate">พิกัด (GPS)</span>
+                        </span>
+                        <span id="gpsRequirementBadge" class="hidden"></span>
+                    </div>
 
-                        <div class="text-center space-y-0.5 pt-0.5">
-                            <div id="gpsLocationNameText" class="font-extrabold text-xs sm:text-[13px] text-white line-clamp-2 leading-tight drop-shadow-xs">
-                                กำลังค้นหาชื่อสถานที่...
-                            </div>
-                            <span id="gpsLocationName" class="hidden"></span>
-                            <div class="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-mono text-amber-100">
-                                <i class="fa-solid fa-crosshairs text-[8px] text-amber-200"></i>
-                                <span id="gpsCoordsText" class="font-medium truncate">กำลังระบุพิกัด...</span>
-                            </div>
+                    <!-- 2. Location & Coords Box: Style like 'สถานะรัศมีสถานที่ทำงาน:' (โทนเหลืองเข้ม ตัวอักษรอ่านง่าย คมชัด) -->
+                    <div class="my-auto p-2.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-300/80 dark:border-amber-700/60 space-y-1 text-center">
+                        <div id="gpsLocationNameText" class="font-extrabold text-xs sm:text-[13px] text-amber-950 dark:text-amber-100 line-clamp-2 leading-tight">
+                            กำลังค้นหาชื่อสถานที่...
+                        </div>
+                        <span id="gpsLocationName" class="hidden"></span>
+                        <div class="flex items-center justify-center gap-1 text-[9.5px] sm:text-[10px] font-mono font-bold text-amber-800 dark:text-amber-300">
+                            <i class="fa-solid fa-crosshairs text-[8.5px] text-amber-600 dark:text-amber-400"></i>
+                            <span id="gpsCoordsText" class="truncate">กำลังระบุพิกัด...</span>
                         </div>
                     </div>
 
-                    <!-- Bottom Half: Buttons Docked at Bottom Edge (mt-auto, ติดขอบล่างพอดี) -->
-                    <div class="mt-auto p-2 sm:p-2.5 space-y-1.5 shrink-0 bg-white dark:bg-slate-800">
-                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer" title="ค้นหาพิกัดใหม่">
-                            <i class="fa-solid fa-arrows-rotate text-amber-600 dark:text-amber-400 text-xs"></i>
+                    <!-- 3. Action Buttons Docked at Bottom (mt-auto) -->
+                    <div class="mt-auto space-y-1.5 shrink-0 pt-1">
+                        <button type="button" id="btnRefreshGps" class="w-full py-2 px-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-white text-[11px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer" title="ค้นหาพิกัดใหม่">
+                            <i class="fa-solid fa-arrows-rotate text-xs"></i>
                             <span>ค้นหาพิกัดใหม่</span>
                         </button>
-                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1.5 px-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/50 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
-                            <i class="fa-solid fa-map-location-dot text-xs"></i>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1.5 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
+                            <i class="fa-solid fa-map-location-dot text-xs text-amber-700 dark:text-amber-400"></i>
                             <span>ดูแผนที่</span>
                         </button>
                     </div>
