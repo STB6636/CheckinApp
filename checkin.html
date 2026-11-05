@@ -2,7 +2,7 @@
 <html lang="th" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ระบบลงเวลาปฏิบัติราชการ (Smart Check-in) - กรุงเทพมหานคร</title>
     
     <!-- Google Fonts: Sarabun & Inter -->
@@ -42,6 +42,12 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="assets/css/bma-theme.css">
     <style>
+        html, body {
+            -webkit-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+            -moz-text-size-adjust: 100% !important;
+            touch-action: pan-y;
+        }
         /* Smooth vertical civic ambient gradient using BMA 9-color palette without pattern/clutter */
         body.checkin-civic-gradient,
         .checkin-civic-gradient {
@@ -109,9 +115,9 @@
                 <!-- Mobile Manual Button (Hidden on Mobile per single-tier requirement) -->
                 <a id="btnMobileManual" href="docs/manual/index.html" target="_blank" class="hidden items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition shadow-xs no-underline" title="คู่มือการใช้งาน"><i class="fa-solid fa-book-open"></i><span>คู่มือ</span></a>
 
-                <!-- Mobile Hamburger Button (Mobile Only: 42x42px / w-11 h-11 with prominent civic green border) -->
-                <button id="btnMobileHistoryMenu" type="button" class="inline-flex lg:hidden w-11 h-11 rounded-xl items-center justify-center bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-300 border-2 border-[#00744B] dark:border-emerald-500 shadow-md hover:bg-emerald-50 dark:hover:bg-slate-700 active:scale-95 transition cursor-pointer shrink-0" title="เปิดเมนู">
-                    <i class="fa-solid fa-bars-staggered text-base"></i>
+                <!-- Mobile Hamburger Button (Solid BMA Civic Emerald with white icon) -->
+                <button id="btnMobileHistoryMenu" type="button" class="inline-flex lg:hidden w-11 h-11 rounded-xl items-center justify-center bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md shadow-emerald-900/25 border border-emerald-600/40 active:scale-95 transition cursor-pointer shrink-0" title="เปิดเมนู">
+                    <i class="fa-solid fa-bars text-lg text-white"></i>
                 </button>
 
                 <!-- Desktop Only Buttons (Hidden on Mobile) -->
@@ -223,20 +229,20 @@
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
-                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-2.5 flex flex-col justify-between w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
-                    <!-- Header: Icon, Title & Badge -->
-                    <div class="flex items-center justify-between gap-1 shrink-0">
+                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
+                    <!-- Header: Dedicated Gradient Banner across the top -->
+                    <div class="px-3 py-1.5 bg-gradient-to-r from-sky-600 to-[#0971CE] dark:from-sky-800 dark:to-sky-950 text-white flex items-center justify-between gap-1 shrink-0">
                         <div class="flex items-center gap-1.5 min-w-0">
-                            <span class="w-5 h-5 rounded-md bg-sky-50 dark:bg-sky-950/40 text-[#0971CE] flex items-center justify-center text-[10px] shrink-0">
+                            <span class="w-5 h-5 rounded-md bg-white/20 text-white flex items-center justify-center text-[10px] shrink-0">
                                 <i class="fa-solid fa-location-dot"></i>
                             </span>
-                            <span class="font-extrabold text-[11px] sm:text-xs text-slate-800 dark:text-white truncate">พิกัด (GPS)</span>
+                            <span class="font-extrabold text-[11px] sm:text-xs text-white truncate tracking-wide">พิกัด (GPS)</span>
                         </div>
                         <span id="gpsRequirementBadge" class="hidden"></span>
                     </div>
 
                     <!-- Location & Coordinates Info -->
-                    <div class="my-auto p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-center space-y-1.5 text-center">
+                    <div class="my-auto mx-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-center space-y-1.5 text-center">
                         <div id="gpsLocationNameText" class="font-extrabold text-xs sm:text-[13px] text-[#00744B] dark:text-emerald-400 line-clamp-3 leading-snug break-words">กำลังค้นหาชื่อสถานที่...</div>
                         <span id="gpsLocationName" class="hidden"></span>
                         <div class="w-6 h-0.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto"></div>
@@ -246,15 +252,15 @@
                         </div>
                     </div>
 
-                    <!-- Paired Action Buttons: Refresh GPS & View Leaflet Map Modal -->
-                    <div class="grid grid-cols-2 gap-1.5 shrink-0 pt-0.5">
-                        <button type="button" id="btnRefreshGps" class="py-1.5 px-1 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10px] font-bold flex items-center justify-center gap-1 transition cursor-pointer" title="ตรวจสอบ GPS">
-                            <i class="fa-solid fa-location-arrow text-[#00744B] dark:text-emerald-400 text-[10px]"></i>
-                            <span class="truncate">ตรวจสอบ GPS</span>
+                    <!-- Action buttons: Stack in 2 separate rows with full width -->
+                    <div class="space-y-1.5 shrink-0 pt-1 px-2.5 pb-2.5">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer" title="ค้นหาพิกัดใหม่">
+                            <i class="fa-solid fa-arrows-rotate text-[#00744B] dark:text-emerald-400 text-xs"></i>
+                            <span>ค้นหาพิกัดใหม่</span>
                         </button>
-                        <button type="button" id="btnViewGpsMapModal" class="py-1.5 px-1 rounded-lg bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0971CE] dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 text-[10px] font-bold flex items-center justify-center gap-1 transition shadow-xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
-                            <i class="fa-solid fa-map-location-dot text-[10px]"></i>
-                            <span class="truncate">ดูแผนที่</span>
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1.5 px-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0971CE] dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
+                            <i class="fa-solid fa-map-location-dot text-xs"></i>
+                            <span>ดูแผนที่</span>
                         </button>
                     </div>
 
@@ -276,11 +282,11 @@
                 <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
                     <button type="button" id="btnModeOnsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30">
                         <i class="fa-solid fa-building-circle-check"></i>
-                        <span>ในสถานที่ (Onsite)</span>
+                        <span>ในสถานที่</span>
                     </button>
                     <button type="button" id="btnModeOffsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
                         <i class="fa-solid fa-map-location-dot"></i>
-                        <span>นอกสถานที่ (Offsite)</span>
+                        <span>นอกสถานที่</span>
                     </button>
                 </div>
 
