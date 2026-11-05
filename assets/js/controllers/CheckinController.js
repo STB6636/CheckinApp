@@ -337,6 +337,15 @@ export class CheckinController {
             (isNormalHoursDisabledNow && hasActiveOtShifts)
         );
 
+        const actionCard = document.getElementById('checkinActionCard');
+        if (actionCard) {
+            if (hasActiveOtShifts && (mustUseOvertimeWindow || isNormalHoursDisabledNow || hasCompletedRegularToday)) {
+                actionCard.classList.remove('hidden');
+            } else {
+                actionCard.classList.add('hidden');
+            }
+        }
+
         let candidateShifts = allShifts.map((s, originalIdx) => ({ ...s, originalIdx }));
 
         // 1) ซ่อนกะปกติเมื่อปิดรับเวลาปกติ

@@ -28,25 +28,33 @@ last_updated: "2026-11-05"
 - 🔴 **ออกงาน**: ไล่เฉดแดงทับทิม `from-[#7F1D1D] to-[#DC2626]` ข้อความ `"ลงเวลาออกงาน • [วันที่]"`
 - นาฬิกาดิจิทัลวินาทีเรียลไทม์ 24 ชม. ฝั่งขวา
 
-### 2.3 Cockpit Split 2-Column Grid (ความสูง ~20dvh / ~145px)
-- รวบหัวใจสำคัญของการลงเวลา (ใบหน้า + พิกัด) มาไว้เคียงข้างกันในแถวเดียว `grid grid-cols-2 gap-2.5 items-stretch h-36 sm:h-40`:
-  * **ฝั่งซ้าย (Photo Card)**: รูปถ่ายบุคคล 3:4 สวยงามเต็มกรอบ ไร้ขอบซ้อนทับ พร้อมปุ่มวงกลมตรงกลาง (#btnCenterPhotoOverlay) สลับไอคอนกล้องและถ่ายใหม่ `fa-rotate-right`
+### 2.3 Cockpit Split 2-Column Grid (อัตราส่วนแนวตั้ง 3:4 สมมาตรคู่, aspect-[3/4] max-h-[30dvh])
+- รวบหัวใจสำคัญของการลงเวลา (ใบหน้า + พิกัด) มาไว้เคียงข้างกันในแถวเดียว `grid grid-cols-2 gap-2.5 items-stretch w-full`:
+  * **ฝั่งซ้าย (Photo Card)**: สัดส่วน `aspect-[3/4] max-h-[30dvh]` รูปถ่ายบุคคล 3:4 พอดีกับเซนเซอร์กล้อง 720x960 ไร้ขอบดำและไม่ครอปใบหน้า พร้อมปุ่มวงกลมตรงกลาง (#btnCenterPhotoOverlay)
   * **ขจัดบั๊กแถบขาวถาวร**: ย้ายปุ่ม Legacy ทั้งหมดออกจาก Photo Card ไปไว้ใน `#legacyHiddenCameraElements` (display: none !important) ที่ท้ายฟอร์ม
-  * **ฝั่งขวา (GPS Card)**: แสดงไอคอน, ป้ายพิกัดจริง, พิกัดละติจูด/ลองจิจูด, ชื่อสถานที่ใกล้เคียง (line-clamp-2) พร้อมปุ่มคู่ `[ 🔄 ตรวจสอบ GPS ]` และ `[ 🗺️ ดูแผนที่ ]`
+  * **ฝั่งขวา (GPS Card)**: สัดส่วน `aspect-[3/4] max-h-[30dvh]` เท่ากันสมมาตร จัดวางชื่อสถานที่ขนาดใหญ่ตัวหนาโดดเด่นด้านบน (#gpsLocationNameText line-clamp-3), เส้นคั่นกลาง, และพิกัดละติจูด/ลองจิจูดขนาดเล็กแบบ Mono (#gpsCoordsText) ตัดคำว่า "สถานที่:" และ "พิกัด:" ออกเพื่อความคลีน พร้อมลบ Tag "บันทึกพิกัดจริง"
+  * **ปุ่มคู่ด้านล่าง**: `[ 🔄 ตรวจสอบ ]` และ `[ 🗺️ ดูแผนที่ ]`
 
-### 2.4 การ์ดรูปแบบการปฏิบัติงาน (Active State เด่นชัด & เรียงตามระบบ)
-- ปรับ Label เป็น `"ลักษณะงานนอกสถานที่ *"` (ตัดคำว่า "(ดึงจาก settings.remarks)" ออก)
+### 2.4 การ์ดรูปแบบการปฏิบัติงาน (Clean Segmented Mode Switcher)
+- ลบ Label หัวข้อ `"รูปแบบการปฏิบัติงาน *"` และแท็กโหมดซ้ำซ้อนออก เพื่อประหยัดพื้นที่แนวตั้ง ~25px
+- คงแท็ก `<span id="modeContextBadge" class="hidden"></span>` และ `<span id="modeBadge" class="hidden"></span>` ไว้ใน DOM เพื่อความเข้ากันได้ของ JS
+- ปุ่มสลับโหมด `[ 🏢 ในสถานที่ (Onsite) ]` และ `[ 📍 นอกสถานที่ (Offsite) ]` เป็นองค์ประกอบแรกของการ์ด
 - Dropdown ตัวเลือกนอกสถานที่ เรียงลำดับตาม Array ใน `this.settings.remarks` (ตั้งค่าระบบ แท็บ 2) 100%
 - ปุ่มเลือกแหล่งพิกัดมี Active State เด่นชัดมาก:
   * เมื่อเลือก **GPS ปัจจุบัน**: สีเขียวเทศกิจเด่นชัด `bg-[#00744B] text-white shadow-md border-2 border-[#005B2E]`
   * เมื่อเลือก **ค้นหาพิกัดเอง**: สีม่วงครามเด่นชัด `bg-indigo-600 text-white shadow-md border-2 border-indigo-700`
 
-### 2.5 Modals & Fallback System
+### 2.5 การ์ดเลือกช่วงเวลาทำงาน (#checkinActionCard) แบบแสดงผลตามเงื่อนไข (Zero-Scroll Enabler)
+- **ในเวลาราชการปกติ (08:30–16:30 น.)**: ซ่อนการ์ด `#checkinActionCard` ออกจากหน้าหลัก (`actionCard.classList.add('hidden')`) ประหยัดพื้นที่แนวตั้ง ~190px ช่วยให้หน้าจอพอดี 100dvh Zero-Scroll บนทุกอุปกรณ์
+- **นอกเวลาราชการ (OT) หรือช่วง Early Shift Window ก่อนเริ่ม OT**: แสดงการ์ดอัตโนมัติเมื่อมีกะ OT ที่เปิดให้ลงเวลา (`hasActiveOtShifts && (mustUseOvertimeWindow || isNormalHoursDisabledNow || hasCompletedRegularToday)`)
+- บุคลากรสามารถส่งคำขอลงเวลากรณีพิเศษในเวลาปกติได้ตลอดเวลาผ่านปุ่มแฮมเบอร์เกอร์ -> คำขอพิเศษ ในแถบด้านข้าง (Mobile Drawer)
+
+### 2.6 Modals & Fallback System
 - **Fullscreen Camera Modal (`#modalFullscreenCamera`)**: กล้องสดแนวตั้ง 3:4 พร้อมปุ่มชัตเตอร์ (ไม่มีปุ่มคลังภาพ)
 - **LINE Browser & No-Camera Fallback**: หากเปิดใน LINE หรืออุปกรณ์ไม่มีกล้อง + `allow_gallery_fallback: true` ระบบจะเปิดตัวเลือกไฟล์ภาพให้อัตโนมัติ
 - **Leaflet Map Modal (`#modalViewGpsMap`)**: เปิดแผนที่ขนาดใหญ่ดูหมุดพิกัดและระยะ Geofence แบบ On-Demand
 
-### 2.6 High-Visibility Sticky Action Button
+### 2.7 High-Visibility Sticky Action Button
 - ยึดติดขอบล่างหน้าจอมือถือ (Docked)
 - สีเขียวเทศกิจ `#00744B` (เข้างาน), สีแดงทับทิม `#991B1B` (ออกงาน), สีเทา `#94A3B8` (ล็อกปุ่ม)
 - รองรับการตั้งค่าระบบเดิมทั้ง 12 ฟังก์ชันครบ 100%

@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261104-loca-v2-onsite-offsite-nextstep"
+last_updated_phase: "PIPE-20261105-loca-v2-3to4-zero-scroll"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
