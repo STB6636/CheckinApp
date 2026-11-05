@@ -13,6 +13,7 @@ import { UserModel } from '../models/UserModel.js';
 export class AppLayout {
     static #isLayoutMounted = false;
     static #isGlobalEventsBound = false;
+    static #isRealtimeSyncInitialized = false;
     static #currentUser = null;
     static #settings = null;
 
@@ -119,6 +120,8 @@ export class AppLayout {
         setTimeout(() => {
             AppLayout.refreshNotificationBell(currentUser);
         }, 50);
+
+        AppLayout.initAdminRealtimeSync(currentUser);
 
         return { currentUser, settings: AppLayout.#settings };
     }
@@ -685,6 +688,35 @@ export class AppLayout {
         } catch (err) {
             console.warn('Notification bell refresh error:', err);
         }
+    }
+
+    static initAdminRealtimeSync(currentUser) {
+        if (!currentUser || AppLayout.#isRealtimeSyncInitialized) return;
+        AppLayout.#isRealtimeSyncInitialized = true;
+
+        if (window.supabaseClient) {
+            try {
+                window.supabaseClient.channel('bma_admin_realtime')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'attendance_logs' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
+                    })
+                    .subscribe();
+            } catch (err) {
+                console.warn('Realtime subscription error:', err);
+            }
+        }
+
+        setInterval(() => {
+            AppLayout.refreshNotificationBell(currentUser);
+        }, 15000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                AppLayout.refreshNotificationBell(currentUser);
+                window.dispatchEvent(new CustomEvent('bma:realtime-sync'));
+            }
+        });
     }
 
     static #bindGlobalDelegatedEvents() {

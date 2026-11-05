@@ -3,7 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>ระบบลงเวลาปฏิบัติราชการ (Smart Check-in) - กรุงเทพมหานคร</title>
+    
+    <script>
+        (function() {
+            const CURRENT_APP_BUILD = '20261105_1545';
+            try {
+                const savedBuild = localStorage.getItem('bma_app_build');
+                if (savedBuild && savedBuild !== CURRENT_APP_BUILD) {
+                    localStorage.setItem('bma_app_build', CURRENT_APP_BUILD);
+                    if ('caches' in window) {
+                        caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))));
+                    }
+                    window.location.reload(true);
+                } else {
+                    localStorage.setItem('bma_app_build', CURRENT_APP_BUILD);
+                }
+            } catch (e) {
+                console.warn('Version check error:', e);
+            }
+        })();
+    </script>
     
     <!-- Google Fonts: Sarabun & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +63,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261105_1545">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -159,7 +182,7 @@
     </nav>
 
     <!-- Main Check-in Workspace Container (with extra bottom padding for mobile sticky bar) -->
-    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-2.5 lg:py-1.5 pb-24 lg:pb-1.5">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-2.5 lg:py-1.5 pb-16 sm:pb-20 lg:pb-1.5">
 
         <!-- 1. Check-in Workspace View -->
         <div id="checkinWorkspaceWrapper" class="space-y-2 lg:space-y-2.5">
@@ -230,35 +253,37 @@
 
                 <!-- Right Column: GPS & Location Card -->
                 <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 flex flex-col justify-between w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
-                    <!-- Header: Dedicated Gradient Banner across the top -->
-                    <div class="px-3 py-1.5 bg-gradient-to-r from-sky-600 to-[#0971CE] dark:from-sky-800 dark:to-sky-950 text-white flex items-center justify-between gap-1 shrink-0">
-                        <div class="flex items-center gap-1.5 min-w-0">
-                            <span class="w-5 h-5 rounded-md bg-white/20 text-white flex items-center justify-center text-[10px] shrink-0">
-                                <i class="fa-solid fa-location-dot"></i>
-                            </span>
-                            <span class="font-extrabold text-[11px] sm:text-xs text-white truncate tracking-wide">พิกัด (GPS)</span>
+                    <!-- Top Half: Deep Golden Amber Background (สีเหลืองเข้ม สไตล์รูปที่ 2) -->
+                    <div class="p-2.5 sm:p-3 bg-gradient-to-br from-amber-500 via-amber-600 to-yellow-600 text-white flex flex-col justify-between shrink-0 shadow-xs space-y-1">
+                        <div class="flex items-center justify-between gap-1">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-black/20 text-white flex items-center justify-center text-[9px] sm:text-[10px] shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </span>
+                                <span class="font-extrabold text-[11px] sm:text-xs text-white truncate tracking-wide">พิกัด (GPS)</span>
+                            </div>
+                            <span id="gpsRequirementBadge" class="hidden"></span>
                         </div>
-                        <span id="gpsRequirementBadge" class="hidden"></span>
+
+                        <div class="text-center space-y-0.5 pt-0.5">
+                            <div id="gpsLocationNameText" class="font-extrabold text-xs sm:text-[13px] text-white line-clamp-2 leading-tight drop-shadow-xs">
+                                กำลังค้นหาชื่อสถานที่...
+                            </div>
+                            <span id="gpsLocationName" class="hidden"></span>
+                            <div class="flex items-center justify-center gap-1 text-[9px] sm:text-[10px] font-mono text-amber-100">
+                                <i class="fa-solid fa-crosshairs text-[8px] text-amber-200"></i>
+                                <span id="gpsCoordsText" class="font-medium truncate">กำลังระบุพิกัด...</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Location & Coordinates Info -->
-                    <div class="my-auto mx-2.5 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex flex-col justify-center space-y-1.5 text-center">
-                        <div id="gpsLocationNameText" class="font-extrabold text-xs sm:text-[13px] text-[#00744B] dark:text-emerald-400 line-clamp-3 leading-snug break-words">กำลังค้นหาชื่อสถานที่...</div>
-                        <span id="gpsLocationName" class="hidden"></span>
-                        <div class="w-6 h-0.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto"></div>
-                        <div class="flex items-center justify-center gap-1 text-[10px] sm:text-[10.5px] font-mono text-slate-500 dark:text-slate-400">
-                            <i class="fa-solid fa-crosshairs text-[9px] text-slate-400"></i>
-                            <span id="gpsCoordsText" class="font-medium truncate">กำลังระบุพิกัด...</span>
-                        </div>
-                    </div>
-
-                    <!-- Action buttons: Stack in 2 separate rows with full width -->
-                    <div class="space-y-1.5 shrink-0 pt-1 px-2.5 pb-2.5">
-                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-slate-100 dark:bg-slate-700/80 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer" title="ค้นหาพิกัดใหม่">
-                            <i class="fa-solid fa-arrows-rotate text-[#00744B] dark:text-emerald-400 text-xs"></i>
+                    <!-- Bottom Half: Buttons Docked at Bottom Edge (mt-auto, ติดขอบล่างพอดี) -->
+                    <div class="mt-auto p-2 sm:p-2.5 space-y-1.5 shrink-0 bg-white dark:bg-slate-800">
+                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition cursor-pointer" title="ค้นหาพิกัดใหม่">
+                            <i class="fa-solid fa-arrows-rotate text-amber-600 dark:text-amber-400 text-xs"></i>
                             <span>ค้นหาพิกัดใหม่</span>
                         </button>
-                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1.5 px-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 text-[#0971CE] dark:text-sky-300 border border-sky-200 dark:border-sky-800/50 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
+                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1.5 px-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800/50 text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
                             <i class="fa-solid fa-map-location-dot text-xs"></i>
                             <span>ดูแผนที่</span>
                         </button>
@@ -795,7 +820,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261105_1545"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">

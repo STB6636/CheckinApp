@@ -48,6 +48,9 @@ export class DashboardController {
     }
 
     #bindEvents() {
+        window.addEventListener('bma:realtime-sync', () => {
+            this.loadDashboardData();
+        });
         document.getElementById('dashboardDateFilter')?.addEventListener('change', (e) => {
             const thaiBadge = document.getElementById('dashboardThaiDateBadge');
             if (thaiBadge) thaiBadge.textContent = UIHelpers.formatThaiShortDate(e.target.value);

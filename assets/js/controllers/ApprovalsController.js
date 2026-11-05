@@ -202,6 +202,9 @@ export class ApprovalsController {
     }
 
     #bindEvents() {
+        window.addEventListener('bma:realtime-sync', () => {
+            this.loadRequests();
+        });
         document.getElementById('selectApprovalStatusFilter')?.addEventListener('change', () => this.loadRequests());
         document.getElementById('selectApprovalGroupBy')?.addEventListener('change', (e) => {
             this.groupViewMode = e.target.value;

@@ -1420,13 +1420,29 @@ export class AttendanceModel {
         }
 
         const db = DatabaseService.getInstance().client;
+
+        // Concurrency Guard: Check if requests are still pending
+        const { data: currentLogs, error: checkError } = await db
+            .from('attendance_logs')
+            .select('id, approval_status')
+            .in('id', logIds);
+
+        if (checkError) {
+            return { success: false, message: 'ไม่สามารถตรวจสอบสถานะคำขอได้: ' + checkError.message };
+        }
+
+        const stillPendingIds = (currentLogs || []).filter(l => l.approval_status === 'pending').map(l => l.id);
+        if (stillPendingIds.length === 0) {
+            return { success: false, conflict: true, message: 'คำขอนี้ได้รับการดำเนินการโดยผู้ดูแลระบบท่านอื่นแล้ว' };
+        }
+
         const settings = await SettingsModel.getSettings(false);
         const colors = settings.category_colors || Config.DEFAULT_SETTINGS.category_colors;
 
         const { data: targetLogs } = await db
             .from('attendance_logs')
             .select('id, is_overtime, status')
-            .in('id', logIds);
+            .in('id', stillPendingIds);
 
         let updatedCount = 0;
         for (const item of (targetLogs || [])) {
