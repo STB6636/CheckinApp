@@ -3,30 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- Force Browser Revalidation & Auto Cache-Busting (Remote version.json + Hard Cache Purge) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>ระบบลงเวลาปฏิบัติราชการ (Smart Check-in) - กรุงเทพมหานคร</title>
-    
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261105_1545';
+            const CURRENT_APP_BUILD = '20261109_0c02c509';
+            const BUILD_STORAGE_KEY = 'bma_app_build';
+            const RELOAD_GUARD_KEY = 'bma_reloaded_build';
+            const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
+
+            // Clean up temporary cache-busting query param (?_cb=...) after forced reload
             try {
-                const savedBuild = localStorage.getItem('bma_app_build');
-                if (savedBuild && savedBuild !== CURRENT_APP_BUILD) {
-                    localStorage.setItem('bma_app_build', CURRENT_APP_BUILD);
-                    if ('caches' in window) {
-                        caches.keys().then(names => Promise.all(names.map(name => caches.delete(name))));
-                    }
-                    window.location.reload(true);
-                } else {
-                    localStorage.setItem('bma_app_build', CURRENT_APP_BUILD);
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('_cb')) {
+                    url.searchParams.delete('_cb');
+                    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
                 }
-            } catch (e) {
-                console.warn('Version check error:', e);
+            } catch (_) {}
+
+            async function performHardCachePurge(targetBuild) {
+                try {
+                    if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                    sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
+
+                    Object.keys(localStorage).forEach((key) => {
+                        if (!PRESERVE_KEYS.includes(key)) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                    if ('caches' in window) {
+                        const names = await window.caches.keys();
+                        await Promise.all(names.map((n) => window.caches.delete(n)));
+                    }
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map((r) => r.unregister()));
+                    }
+                    try {
+                        await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                    } catch (_) {}
+
+                    const nextUrl = new URL(window.location.href);
+                    nextUrl.searchParams.set('_cb', targetBuild);
+                    window.location.replace(nextUrl.toString());
+                } catch (err) {
+                    console.warn('[CacheBuster] Hard purge error:', err);
+                }
             }
+
+            try {
+                const prevBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+                if (prevBuild && prevBuild !== CURRENT_APP_BUILD) {
+                    performHardCachePurge(CURRENT_APP_BUILD);
+                    return;
+                }
+                if (!prevBuild) {
+                    localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_APP_BUILD);
+                }
+            } catch (_) {}
+
+            async function checkRemoteVersion() {
+                try {
+                    const res = await fetch('./version.json?_t=' + Date.now(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const remoteBuild = data && data.buildId ? String(data.buildId).trim() : '';
+                    if (!remoteBuild) return;
+                    const localBuild = localStorage.getItem(BUILD_STORAGE_KEY) || CURRENT_APP_BUILD;
+                    if (remoteBuild !== localBuild || remoteBuild !== CURRENT_APP_BUILD) {
+                        await performHardCachePurge(remoteBuild);
+                    }
+                } catch (_) {}
+            }
+
+            checkRemoteVersion();
+            window.addEventListener('pageshow', (e) => { if (e.persisted) checkRemoteVersion(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkRemoteVersion();
+            });
         })();
     </script>
+    <title>ระบบลงเวลาปฏิบัติราชการ (Smart Check-in) - กรุงเทพมหานคร</title>
     
     <!-- Google Fonts: Sarabun & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +130,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261105_1545">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261109_0c02c509">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -252,7 +319,7 @@
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
-                <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
+                <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden" style="isolation: isolate; z-index: 0;">
                     
                     <!-- 1. Header Bar: Light Gray #F1F3F5 (ตรงตามภาพตัวอย่างเป๊ะ ไม่ดำ 100%) -->
                     <div class="bg-[#F1F3F5] px-2.5 py-1.5 border-b border-slate-200/80 flex items-center justify-between shrink-0">
@@ -263,9 +330,7 @@
                                     <span>พื้นที่ใกล้เคียง</span>
                                     <i class="fa-solid fa-circle-info text-[7.5px] text-slate-400"></i>
                                 </div>
-                                <div id="gpsLocationNameText" class="text-[10px] sm:text-[11px] font-bold text-slate-800 truncate leading-tight">
-                                    กำลังค้นหาสถานที่...
-                                </div>
+                                <div id="gpsLocationNameText" class="text-[10px] sm:text-[11px] font-bold text-slate-800 truncate leading-tight">กำลังค้นหาสถานที่...</div>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-up text-slate-400 text-[10px] shrink-0"></i>
@@ -275,12 +340,12 @@
                     </div>
 
                     <!-- 2. Integrated Map Container -->
-                    <div class="relative flex-1 w-full h-full min-h-0 bg-slate-100">
+                    <div class="relative flex-1 w-full h-full min-h-0 bg-slate-100 overflow-hidden rounded-b-2xl">
                         <div id="inlineGpsLeafletMap" class="w-full h-full"></div>
 
                         <!-- 3. Shutter-Style Floating Refresh Button (Overlay Bottom Center) -->
-                        <div class="absolute bottom-2.5 inset-x-0 flex items-center justify-center pointer-events-none z-[400]">
-                            <button type="button" id="btnRefreshGps" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-emerald-700 shadow-lg border-2 border-white flex items-center justify-center pointer-events-auto cursor-pointer hover:bg-emerald-50 active:scale-90 transition shutter-glow" title="กดเพื่อระบุตำแหน่งใหม่">
+                        <div class="absolute bottom-2.5 inset-x-0 flex items-center justify-center pointer-events-none z-[10]">
+                            <button type="button" id="btnRefreshGps" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-emerald-700 shadow-md border-2 border-white flex items-center justify-center pointer-events-auto cursor-pointer hover:bg-emerald-50 active:scale-90 transition shutter-glow" title="กดเพื่อระบุตำแหน่งใหม่">
                                 <i id="gpsRefreshSpinnerIcon" class="fa-solid fa-arrows-rotate text-xs sm:text-sm"></i>
                             </button>
                         </div>
@@ -580,12 +645,12 @@
     </main>
 
     <!-- Mobile Hamburger History Drawer (Off-Canvas) -->
-    <div id="mobileHistoryDrawer" class="fixed inset-0 z-50 hidden">
+    <div id="mobileHistoryDrawer" class="fixed inset-0 z-[9999] hidden">
         <!-- Backdrop -->
         <div id="btnMobileHistoryDrawerBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 opacity-0 cursor-pointer"></div>
 
         <!-- Off-canvas Drawer Panel -->
-        <div id="mobileDrawerPanel" class="absolute inset-y-0 right-0 max-w-full w-full sm:w-[580px] bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col z-10 overflow-hidden transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div id="mobileDrawerPanel" class="absolute inset-y-0 right-0 max-w-full w-full sm:w-[580px] bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col z-20 overflow-hidden transform translate-x-full transition-transform duration-300 ease-in-out">
             <!-- Brand Header -->
             <div class="p-4 bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex items-center justify-between shrink-0 shadow-md">
                 <div class="flex items-center gap-2.5 min-w-0">
@@ -679,7 +744,7 @@
     </div>
 
     <!-- Modal ขอลงเวลากรณีพิเศษ -->
-    <div id="modalSpecialRequest" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div id="modalSpecialRequest" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -815,9 +880,9 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261105_1545"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261109_0c02c509"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
-    <div id="modalOffsiteMapSearch" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -878,7 +943,7 @@
 
 
     <!-- Modal กล้องถ่ายภาพเต็มจอ (Fullscreen Camera Modal) -->
-    <div id="modalFullscreenCamera" class="fixed inset-0 z-50 hidden bg-black flex flex-col justify-between p-4 text-white">
+    <div id="modalFullscreenCamera" class="fixed inset-0 z-[9999] hidden bg-black flex flex-col justify-between p-4 text-white">
         <div class="flex items-center justify-between pt-2 px-2">
             <span class="text-xs sm:text-sm font-bold text-emerald-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-camera"></i>
@@ -913,7 +978,7 @@
 
 
     <!-- Modal ดูแผนที่ตามพิกัด Leaflet -->
-    <div id="modalViewGpsMap" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
+    <div id="modalViewGpsMap" class="fixed inset-0 z-[9999] hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-2xl max-h-[90%] flex flex-col border border-slate-200 dark:border-slate-700">
             <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2.5">
                 <span class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-1.5">

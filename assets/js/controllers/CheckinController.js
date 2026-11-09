@@ -2085,6 +2085,7 @@ export class CheckinController {
                 paneSpecial.classList.remove('hidden');
             }
             drawer?.classList.remove('hidden');
+            document.getElementById('inlineGpsLeafletMap')?.classList.add('invisible');
             requestAnimationFrame(() => {
                 drawerBackdrop?.classList.remove('opacity-0');
                 drawerBackdrop?.classList.add('opacity-100');
@@ -2106,6 +2107,8 @@ export class CheckinController {
 
             setTimeout(() => {
                 drawer?.classList.add('hidden');
+                document.getElementById('inlineGpsLeafletMap')?.classList.remove('invisible');
+                this.inlineGpsMap?.invalidateSize();
                 if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {
                     desktopPanes.appendChild(paneHistory);
                     desktopPanes.appendChild(paneSpecial);

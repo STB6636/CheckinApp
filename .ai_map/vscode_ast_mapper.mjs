@@ -441,10 +441,135 @@ function analyzeSourceFile(filePath) {
   };
 }
 
+const ROOT_HTML_ENTRIES = [
+  'index.html',
+  'checkin.html',
+  'dashboard.html',
+  'approvals.html',
+  'reports.html',
+  'personnel.html',
+  'settings.html',
+  'users.html'
+];
+const VERSION_FILE = path.join(WORKSPACE_ROOT, 'version.json');
+
+/**
+ * ค้นหาไฟล์ .css และ .js ใต้ไดเรกทอรีที่กำหนดแบบ Recursive
+ */
+function walkFrontendAssets(dirPath, assetList = []) {
+  if (!fs.existsSync(dirPath)) return assetList;
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      walkFrontendAssets(fullPath, assetList);
+    } else if (entry.isFile()) {
+      const ext = path.extname(entry.name).toLowerCase();
+      if (ext === '.css' || ext === '.js') {
+        const rel = path.relative(WORKSPACE_ROOT, fullPath).replace(/\\/g, '/');
+        assetList.push(rel);
+      }
+    }
+  }
+  return assetList;
+}
+
+/**
+ * สร้าง buildId และ Stamp แคชเวอร์ชัน (?v=...) ลงใน HTML 8 หน้าหลัก และ version.json
+ * รับประกัน 100% Idempotency ด้วยการ Normalization ค่า buildId ออกก่อน Hash
+ */
+function syncFrontendCacheVersion() {
+  const assetFiles = [
+    ...walkFrontendAssets(path.join(WORKSPACE_ROOT, 'assets/css')),
+    ...walkFrontendAssets(path.join(WORKSPACE_ROOT, 'assets/js'))
+  ];
+
+  const allTargetFiles = [
+    ...ROOT_HTML_ENTRIES.filter(f => fs.existsSync(path.join(WORKSPACE_ROOT, f))),
+    ...assetFiles
+  ].sort((a, b) => a.localeCompare(b));
+
+  const hasher = crypto.createHash('sha256');
+
+  for (const relPath of allTargetFiles) {
+    const absPath = path.join(WORKSPACE_ROOT, relPath);
+    if (!fs.existsSync(absPath)) continue;
+    let raw = fs.readFileSync(absPath, 'utf8');
+
+    // Normalization ก่อนคำนวณ Hash เพื่อให้ Idempotent 100%
+    const normalized = raw
+      .replace(/\r\n/g, '\n')
+      .replace(/CURRENT_APP_BUILD\s*=\s*['"][^'"]*['"]/g, "CURRENT_APP_BUILD = '__BUILD_ID__'")
+      .replace(/\?v=[0-9A-Za-z_.-]+/g, '?v=__BUILD_ID__');
+
+    hasher.update(`${relPath}\n${normalized}\n`, 'utf8');
+  }
+
+  const contentHash = hasher.digest('hex');
+
+  let existingVersion = null;
+  if (fs.existsSync(VERSION_FILE)) {
+    try {
+      existingVersion = JSON.parse(fs.readFileSync(VERSION_FILE, 'utf8'));
+    } catch (_) {
+      existingVersion = null;
+    }
+  }
+
+  let buildId = '';
+  let updatedAt = '';
+
+  if (existingVersion && existingVersion.contentHash === contentHash && existingVersion.buildId) {
+    buildId = existingVersion.buildId;
+    updatedAt = existingVersion.updatedAt || new Date().toISOString();
+  } else {
+    const bangkokDateStr = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Bangkok',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date()).replace(/-/g, '');
+
+    buildId = `${bangkokDateStr}_${contentHash.slice(0, 8)}`;
+    updatedAt = new Date().toISOString();
+
+    const versionPayload = {
+      buildId,
+      contentHash,
+      updatedAt
+    };
+    fs.writeFileSync(VERSION_FILE, JSON.stringify(versionPayload, null, 2) + '\n', 'utf8');
+  }
+
+  // Stamp ทั้ง 8 Root HTML entry files
+  for (const htmlFile of ROOT_HTML_ENTRIES) {
+    const htmlPath = path.join(WORKSPACE_ROOT, htmlFile);
+    if (!fs.existsSync(htmlPath)) continue;
+
+    const raw = fs.readFileSync(htmlPath, 'utf8');
+    let stamped = raw.replace(/CURRENT_APP_BUILD\s*=\s*['"][^'"]*['"]/g, `CURRENT_APP_BUILD = '${buildId}'`);
+
+    // แทนที่ ?v= ใน <link ... href="assets/..."> และ <script ... src="assets/...">
+    stamped = stamped.replace(
+      /((?:href|src)\s*=\s*["'])(assets\/(?:css|js)\/[^"'\s?]+)(?:\?v=[0-9A-Za-z_.-]+)?(["'])/g,
+      `$1$2?v=${buildId}$3`
+    );
+
+    if (stamped !== raw) {
+      fs.writeFileSync(htmlPath, stamped, 'utf8');
+    }
+  }
+
+  return { buildId, contentHash, updatedAt };
+}
+
 /**
  * สร้างไฟล์ JSON Index และ Markdown Table สำหรับให้ AI Subagents ใช้งาน
  */
 function buildCodebaseMap() {
+  const syncResult = syncFrontendCacheVersion();
+  console.log(`   ├── Synced version.json & 8 HTML cache stamps (buildId: ${syncResult.buildId})`);
+
   if (!fs.existsSync(MAP_DIR)) {
     fs.mkdirSync(MAP_DIR, { recursive: true });
   }

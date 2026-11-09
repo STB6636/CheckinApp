@@ -1,6 +1,6 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-09T03:39:04.722Z`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-09T05:11:18.973Z`
 - **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `93` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `651`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
@@ -8,16 +8,16 @@
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8522d5e94fd54f77` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5936e7b21aae5309` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L17** | `<head>` | HTML DOM Section L3-L17 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L21 - L21** | `id="bmaSidebarContainer"` | HTML DOM Section L21-L21 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L25 - L25** | `id="bmaTopbarContainer"` | HTML DOM Section L25-L25 |
-| `<main>` | `html_dom_section` | **L27 - L115** | `<main>` | HTML DOM Section L27-L115 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L117 - L117** | `id="bmaFooterContainer"` | HTML DOM Section L117-L117 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L122 - L122** | `<script>` | Bootstrap script L122-L122 |
+| `<head>` | `html_dom_section` | **L3 - L107** | `<head>` | HTML DOM Section L3-L107 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L111 - L111** | `id="bmaSidebarContainer"` | HTML DOM Section L111-L111 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L115 - L115** | `id="bmaTopbarContainer"` | HTML DOM Section L115-L115 |
+| `<main>` | `html_dom_section` | **L117 - L205** | `<main>` | HTML DOM Section L117-L205 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L207 - L207** | `id="bmaFooterContainer"` | HTML DOM Section L207-L207 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L212 - L212** | `<script>` | Bootstrap script L212-L212 |
 
 ---
 
@@ -65,7 +65,7 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `ced7a3f0ce7bfe06` | **Total Lines:** `3167` | **Imports:** `5` | **Exports:** `CheckinController`
+- **Hash:** `92f1613a6d58d51e` | **Total Lines:** `3170` | **Imports:** `5` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -114,28 +114,28 @@
 | `#resetPageAfterSave` | `private async method` | **L1657 - L1672** | `() => Promise<any>` | private async method L1657-L1672 (16 lines) |
 | `#initGpsLocation` | `private async method` | **L1680 - L1777** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
 | `#renderInlineGpsMap` | `private method` | **L1779 - L1845** | `(lat, lng) => any` | private method L1779-L1845 (67 lines) |
-| `#bindEvents` | `private method` | **L1848 - L2142** | `() => any` | private method L1848-L2142 (295 lines) |
+| `#bindEvents` | `private method` | **L1848 - L2145** | `() => any` | private method L1848-L2145 (298 lines) |
 | `openSpecialModal` | `arrow_fn` | **L2011 - L2014** | `() => inferred` | Arrow Function L2011-L2014 |
 | `setDesktopActiveTab` | `arrow_fn` | **L2049 - L2068** | `(activeName) => inferred` | Arrow Function L2049-L2068 |
-| `openMobileDrawer` | `arrow_fn` | **L2079 - L2096** | `() => inferred` | Arrow Function L2079-L2096 |
-| `closeMobileDrawer` | `arrow_fn` | **L2098 - L2123** | `(targetTab = null) => inferred` | Arrow Function L2098-L2123 |
-| `#handleMainCheckin` | `private async method` | **L2144 - L2507** | `() => Promise<any>` | private async method L2144-L2507 (364 lines) |
-| `#openSpecialRequestModal` | `private method` | **L2509 - L2539** | `() => any` | private method L2509-L2539 (31 lines) |
-| `#initSpecialModalGps` | `private method` | **L2541 - L2644** | `() => any` | private method L2541-L2644 (104 lines) |
-| `updateCustomPinAndLocation` | `async_arrow_fn` | **L2553 - L2601** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L2553-L2601 |
-| `setupMapIfAvailable` | `arrow_fn` | **L2603 - L2638** | `() => inferred` | Arrow Function L2603-L2638 |
-| `getDistanceInMeters` | `arrow_fn` | **L2663 - L2682** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2663-L2682 |
-| `calculateDistance` | `arrow_fn` | **L2684 - L2693** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2684-L2693 |
-| `getCategoryLabel` | `arrow_fn` | **L2695 - L2734** | `(item) => inferred` | Arrow Function L2695-L2734 |
-| `escapeHtml` | `arrow_fn` | **L2736 - L2744** | `(str) => inferred` | Arrow Function L2736-L2744 |
-| `formatSubAddress` | `arrow_fn` | **L2746 - L2762** | `(item) => inferred` | Arrow Function L2746-L2762 |
-| `getMainName` | `arrow_fn` | **L2764 - L2772** | `(item) => inferred` | Arrow Function L2764-L2772 |
-| `hideSearchResults` | `arrow_fn` | **L2774 - L2779** | `() => inferred` | Arrow Function L2774-L2779 |
-| `bindResultItemClicks` | `arrow_fn` | **L2781 - L2797** | `() => inferred` | Arrow Function L2781-L2797 |
-| `renderCoordsResult` | `arrow_fn` | **L2799 - L2823** | `(lat, lng) => inferred` | Arrow Function L2799-L2823 |
-| `renderPlaceResults` | `arrow_fn` | **L2825 - L2870** | `(items) => inferred` | Arrow Function L2825-L2870 |
-| `performSearch` | `async_arrow_fn` | **L2875 - L3047** | `() => inferred` | Arrow Function L2875-L3047 |
-| `#handleSubmitSpecialRequest` | `private async method` | **L3087 - L3162** | `(closeModalCallback) => Promise<any>` | private async method L3087-L3162 (76 lines) |
+| `openMobileDrawer` | `arrow_fn` | **L2079 - L2097** | `() => inferred` | Arrow Function L2079-L2097 |
+| `closeMobileDrawer` | `arrow_fn` | **L2099 - L2126** | `(targetTab = null) => inferred` | Arrow Function L2099-L2126 |
+| `#handleMainCheckin` | `private async method` | **L2147 - L2510** | `() => Promise<any>` | private async method L2147-L2510 (364 lines) |
+| `#openSpecialRequestModal` | `private method` | **L2512 - L2542** | `() => any` | private method L2512-L2542 (31 lines) |
+| `#initSpecialModalGps` | `private method` | **L2544 - L2647** | `() => any` | private method L2544-L2647 (104 lines) |
+| `updateCustomPinAndLocation` | `async_arrow_fn` | **L2556 - L2604** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L2556-L2604 |
+| `setupMapIfAvailable` | `arrow_fn` | **L2606 - L2641** | `() => inferred` | Arrow Function L2606-L2641 |
+| `getDistanceInMeters` | `arrow_fn` | **L2666 - L2685** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2666-L2685 |
+| `calculateDistance` | `arrow_fn` | **L2687 - L2696** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L2687-L2696 |
+| `getCategoryLabel` | `arrow_fn` | **L2698 - L2737** | `(item) => inferred` | Arrow Function L2698-L2737 |
+| `escapeHtml` | `arrow_fn` | **L2739 - L2747** | `(str) => inferred` | Arrow Function L2739-L2747 |
+| `formatSubAddress` | `arrow_fn` | **L2749 - L2765** | `(item) => inferred` | Arrow Function L2749-L2765 |
+| `getMainName` | `arrow_fn` | **L2767 - L2775** | `(item) => inferred` | Arrow Function L2767-L2775 |
+| `hideSearchResults` | `arrow_fn` | **L2777 - L2782** | `() => inferred` | Arrow Function L2777-L2782 |
+| `bindResultItemClicks` | `arrow_fn` | **L2784 - L2800** | `() => inferred` | Arrow Function L2784-L2800 |
+| `renderCoordsResult` | `arrow_fn` | **L2802 - L2826** | `(lat, lng) => inferred` | Arrow Function L2802-L2826 |
+| `renderPlaceResults` | `arrow_fn` | **L2828 - L2873** | `(items) => inferred` | Arrow Function L2828-L2873 |
+| `performSearch` | `async_arrow_fn` | **L2878 - L3050** | `() => inferred` | Arrow Function L2878-L3050 |
+| `#handleSubmitSpecialRequest` | `private async method` | **L3090 - L3165** | `(closeModalCallback) => Promise<any>` | private async method L3090-L3165 (76 lines) |
 
 ---
 
@@ -519,52 +519,52 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8c2bd8a12726923c` | **Total Lines:** `949` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `55c199f3f3131960` | **Total Lines:** `1014` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L104** | `<head>` | HTML DOM Section L3-L104 |
-| `<main>` | `html_dom_section` | **L185 - L580** | `<main>` | HTML DOM Section L185-L580 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L188 - L438** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L188-L438 |
-| `<div#photoPreviewCard>` | `html_dom_section` | **L231 - L252** | `id="photoPreviewCard"` | HTML DOM Section L231-L252 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L255 - L293** | `id="gpsSectionCard"` | HTML DOM Section L255-L293 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L290 - L290** | `id="googleMapEmbedWrapper"` | HTML DOM Section L290-L290 |
-| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L314 - L325** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L314-L325 |
-| `<div#offsiteLocationSection>` | `html_dom_section` | **L328 - L364** | `id="offsiteLocationSection"` | HTML DOM Section L328-L364 |
-| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L360 - L360** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L360-L360 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L368 - L408** | `id="checkinActionCard"` | HTML DOM Section L368-L408 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L378 - L383** | `id="shiftSelectorContainer"` | HTML DOM Section L378-L383 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L385 - L394** | `id="mainCustomTimeContainer"` | HTML DOM Section L385-L394 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L420 - L420** | `id="checkinStep1Container"` | HTML DOM Section L420-L420 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L421 - L421** | `id="checkinStep2Container"` | HTML DOM Section L421-L421 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L422 - L422** | `id="rightColumnWrapper"` | HTML DOM Section L422-L422 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L426 - L426** | `id="cameraSectionCard"` | HTML DOM Section L426-L426 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L434 - L434** | `id="cameraStandbyOverlay"` | HTML DOM Section L434-L434 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L441 - L578** | `id="desktopPanesContainer"` | HTML DOM Section L441-L578 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L444 - L533** | `id="desktopHistoryWrapper"` | HTML DOM Section L444-L533 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L470 - L487** | `id="todayHistoryTabPanel"` | HTML DOM Section L470-L487 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L490 - L530** | `id="pastHistoryTabPanel"` | HTML DOM Section L490-L530 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L536 - L576** | `id="desktopSpecialWrapper"` | HTML DOM Section L536-L576 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L588 - L678** | `id="mobileDrawerPanel"` | HTML DOM Section L588-L678 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L711 - L720** | `id="spCustomTimeContainer"` | HTML DOM Section L711-L720 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L762 - L768** | `id="spSearchWrapper"` | HTML DOM Section L762-L768 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L818 - L818** | `<script>` | Bootstrap script L818-L818 |
+| `<head>` | `html_dom_section` | **L3 - L171** | `<head>` | HTML DOM Section L3-L171 |
+| `<main>` | `html_dom_section` | **L252 - L645** | `<main>` | HTML DOM Section L252-L645 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L255 - L503** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L255-L503 |
+| `<div#photoPreviewCard>` | `html_dom_section` | **L298 - L319** | `id="photoPreviewCard"` | HTML DOM Section L298-L319 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L322 - L358** | `id="gpsSectionCard"` | HTML DOM Section L322-L358 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L355 - L355** | `id="googleMapEmbedWrapper"` | HTML DOM Section L355-L355 |
+| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L379 - L390** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L379-L390 |
+| `<div#offsiteLocationSection>` | `html_dom_section` | **L393 - L429** | `id="offsiteLocationSection"` | HTML DOM Section L393-L429 |
+| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L425 - L425** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L425-L425 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L433 - L473** | `id="checkinActionCard"` | HTML DOM Section L433-L473 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L443 - L448** | `id="shiftSelectorContainer"` | HTML DOM Section L443-L448 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L450 - L459** | `id="mainCustomTimeContainer"` | HTML DOM Section L450-L459 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L485 - L485** | `id="checkinStep1Container"` | HTML DOM Section L485-L485 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L486 - L486** | `id="checkinStep2Container"` | HTML DOM Section L486-L486 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L487 - L487** | `id="rightColumnWrapper"` | HTML DOM Section L487-L487 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L491 - L491** | `id="cameraSectionCard"` | HTML DOM Section L491-L491 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L499 - L499** | `id="cameraStandbyOverlay"` | HTML DOM Section L499-L499 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L506 - L643** | `id="desktopPanesContainer"` | HTML DOM Section L506-L643 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L509 - L598** | `id="desktopHistoryWrapper"` | HTML DOM Section L509-L598 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L535 - L552** | `id="todayHistoryTabPanel"` | HTML DOM Section L535-L552 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L555 - L595** | `id="pastHistoryTabPanel"` | HTML DOM Section L555-L595 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L601 - L641** | `id="desktopSpecialWrapper"` | HTML DOM Section L601-L641 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L653 - L743** | `id="mobileDrawerPanel"` | HTML DOM Section L653-L743 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L776 - L785** | `id="spCustomTimeContainer"` | HTML DOM Section L776-L785 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L827 - L833** | `id="spSearchWrapper"` | HTML DOM Section L827-L833 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L883 - L883** | `<script>` | Bootstrap script L883-L883 |
 
 ---
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `cd1320ed523ea373` | **Total Lines:** `181` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `85361ae71d0ce40e` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L18** | `<head>` | HTML DOM Section L3-L18 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L22 - L22** | `id="bmaSidebarContainer"` | HTML DOM Section L22-L22 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L28 - L28** | `id="bmaTopbarContainer"` | HTML DOM Section L28-L28 |
-| `<main>` | `html_dom_section` | **L31 - L170** | `<main>` | HTML DOM Section L31-L170 |
-| `<div#mobileShortcutContainer>` | `html_dom_section` | **L34 - L34** | `id="mobileShortcutContainer"` | HTML DOM Section L34-L34 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L173 - L173** | `id="bmaFooterContainer"` | HTML DOM Section L173-L173 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L179 - L179** | `<script>` | Bootstrap script L179-L179 |
+| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L118 - L118** | `id="bmaTopbarContainer"` | HTML DOM Section L118-L118 |
+| `<main>` | `html_dom_section` | **L121 - L260** | `<main>` | HTML DOM Section L121-L260 |
+| `<div#mobileShortcutContainer>` | `html_dom_section` | **L124 - L124** | `id="mobileShortcutContainer"` | HTML DOM Section L124-L124 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L263 - L263** | `id="bmaFooterContainer"` | HTML DOM Section L263-L263 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L269 - L269** | `<script>` | Bootstrap script L269-L269 |
 
 ---
 
@@ -638,34 +638,34 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `28f91152b5e46064` | **Total Lines:** `288` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `264ae4b1d80a2250` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L50** | `<head>` | HTML DOM Section L3-L50 |
-| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L75 - L75** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L75-L75 |
-| `<main>` | `html_dom_section` | **L82 - L193** | `<main>` | HTML DOM Section L82-L193 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L88 - L90** | `id="orgLogoWrapper"` | HTML DOM Section L88-L90 |
-| `<form#loginForm>` | `html_dom_section` | **L102 - L190** | `id="loginForm"` | HTML DOM Section L102-L190 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L286 - L286** | `<script>` | Bootstrap script L286-L286 |
+| `<head>` | `html_dom_section` | **L3 - L140** | `<head>` | HTML DOM Section L3-L140 |
+| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L165 - L165** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L165-L165 |
+| `<main>` | `html_dom_section` | **L172 - L283** | `<main>` | HTML DOM Section L172-L283 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L178 - L180** | `id="orgLogoWrapper"` | HTML DOM Section L178-L180 |
+| `<form#loginForm>` | `html_dom_section` | **L192 - L280** | `id="loginForm"` | HTML DOM Section L192-L280 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L376 - L376** | `<script>` | Bootstrap script L376-L376 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `508361203348b019` | **Total Lines:** `585` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `31e039e2827071f3` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L19** | `<head>` | HTML DOM Section L3-L19 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L23 - L23** | `id="bmaSidebarContainer"` | HTML DOM Section L23-L23 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L27 - L27** | `id="bmaTopbarContainer"` | HTML DOM Section L27-L27 |
-| `<main>` | `html_dom_section` | **L29 - L161** | `<main>` | HTML DOM Section L29-L161 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L163 - L163** | `id="bmaFooterContainer"` | HTML DOM Section L163-L163 |
-| `<div#modalPersonnelForm>` | `html_dom_section` | **L169 - L280** | `id="modalPersonnelForm"` | HTML DOM Section L169-L280 |
-| `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L496 - L537** | `id="bulkImportPreviewContainer"` | HTML DOM Section L496-L537 |
-| `<div#bulkImportProgressContainer>` | `html_dom_section` | **L557 - L565** | `id="bulkImportProgressContainer"` | HTML DOM Section L557-L565 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L583 - L583** | `<script>` | Bootstrap script L583-L583 |
+| `<head>` | `html_dom_section` | **L3 - L109** | `<head>` | HTML DOM Section L3-L109 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L113 - L113** | `id="bmaSidebarContainer"` | HTML DOM Section L113-L113 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L117 - L117** | `id="bmaTopbarContainer"` | HTML DOM Section L117-L117 |
+| `<main>` | `html_dom_section` | **L119 - L251** | `<main>` | HTML DOM Section L119-L251 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L253 - L253** | `id="bmaFooterContainer"` | HTML DOM Section L253-L253 |
+| `<div#modalPersonnelForm>` | `html_dom_section` | **L259 - L370** | `id="modalPersonnelForm"` | HTML DOM Section L259-L370 |
+| `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L586 - L627** | `id="bulkImportPreviewContainer"` | HTML DOM Section L586-L627 |
+| `<div#bulkImportProgressContainer>` | `html_dom_section` | **L647 - L655** | `id="bulkImportProgressContainer"` | HTML DOM Section L647-L655 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L673 - L673** | `<script>` | Bootstrap script L673-L673 |
 
 ---
 
@@ -1325,36 +1325,36 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `40a5b70622973aec` | **Total Lines:** `439` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `cef83452f620fbe3` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L18** | `<head>` | HTML DOM Section L3-L18 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L22 - L22** | `id="bmaSidebarContainer"` | HTML DOM Section L22-L22 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L26 - L26** | `id="bmaTopbarContainer"` | HTML DOM Section L26-L26 |
-| `<main>` | `html_dom_section` | **L28 - L185** | `<main>` | HTML DOM Section L28-L185 |
-| `<div#reportMobileShortcutContainer>` | `html_dom_section` | **L30 - L30** | `id="reportMobileShortcutContainer"` | HTML DOM Section L30-L30 |
-| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L176 - L176** | `id="statusTagsFilterContainer"` | HTML DOM Section L176-L176 |
-| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L183 - L183** | `id="reportTablesMasterContainer"` | HTML DOM Section L183-L183 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L187 - L187** | `id="bmaFooterContainer"` | HTML DOM Section L187-L187 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L437 - L437** | `<script>` | Bootstrap script L437-L437 |
+| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L116 - L116** | `id="bmaTopbarContainer"` | HTML DOM Section L116-L116 |
+| `<main>` | `html_dom_section` | **L118 - L275** | `<main>` | HTML DOM Section L118-L275 |
+| `<div#reportMobileShortcutContainer>` | `html_dom_section` | **L120 - L120** | `id="reportMobileShortcutContainer"` | HTML DOM Section L120-L120 |
+| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L266 - L266** | `id="statusTagsFilterContainer"` | HTML DOM Section L266-L266 |
+| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L273 - L273** | `id="reportTablesMasterContainer"` | HTML DOM Section L273-L273 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L277 - L277** | `id="bmaFooterContainer"` | HTML DOM Section L277-L277 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L527 - L527** | `<script>` | Bootstrap script L527-L527 |
 
 ---
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bb65a58168734e72` | **Total Lines:** `688` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ceea0d2905c8d7d9` | **Total Lines:** `778` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L17** | `<head>` | HTML DOM Section L3-L17 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L21 - L21** | `id="bmaSidebarContainer"` | HTML DOM Section L21-L21 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L25 - L25** | `id="bmaTopbarContainer"` | HTML DOM Section L25-L25 |
-| `<main>` | `html_dom_section` | **L27 - L602** | `<main>` | HTML DOM Section L27-L602 |
-| `<div#prefixListContainer>` | `html_dom_section` | **L448 - L448** | `id="prefixListContainer"` | HTML DOM Section L448-L448 |
-| `<div#remarkListContainer>` | `html_dom_section` | **L465 - L465** | `id="remarkListContainer"` | HTML DOM Section L465-L465 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L604 - L604** | `id="bmaFooterContainer"` | HTML DOM Section L604-L604 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L631 - L631** | `<script>` | Bootstrap script L631-L631 |
+| `<head>` | `html_dom_section` | **L3 - L107** | `<head>` | HTML DOM Section L3-L107 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L111 - L111** | `id="bmaSidebarContainer"` | HTML DOM Section L111-L111 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L115 - L115** | `id="bmaTopbarContainer"` | HTML DOM Section L115-L115 |
+| `<main>` | `html_dom_section` | **L117 - L692** | `<main>` | HTML DOM Section L117-L692 |
+| `<div#prefixListContainer>` | `html_dom_section` | **L538 - L538** | `id="prefixListContainer"` | HTML DOM Section L538-L538 |
+| `<div#remarkListContainer>` | `html_dom_section` | **L555 - L555** | `id="remarkListContainer"` | HTML DOM Section L555-L555 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L694 - L694** | `id="bmaFooterContainer"` | HTML DOM Section L694-L694 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L721 - L721** | `<script>` | Bootstrap script L721-L721 |
 
 ---
 
@@ -1474,17 +1474,17 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9b881b8d60224f72` | **Total Lines:** `334` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3a9774d3ac5a8d38` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L18** | `<head>` | HTML DOM Section L3-L18 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L22 - L22** | `id="bmaSidebarContainer"` | HTML DOM Section L22-L22 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L26 - L26** | `id="bmaTopbarContainer"` | HTML DOM Section L26-L26 |
-| `<main>` | `html_dom_section` | **L28 - L197** | `<main>` | HTML DOM Section L28-L197 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L199 - L199** | `id="bmaFooterContainer"` | HTML DOM Section L199-L199 |
-| `<div#modalUserAccountForm>` | `html_dom_section` | **L205 - L330** | `id="modalUserAccountForm"` | HTML DOM Section L205-L330 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L332 - L332** | `<script>` | Bootstrap script L332-L332 |
+| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L116 - L116** | `id="bmaTopbarContainer"` | HTML DOM Section L116-L116 |
+| `<main>` | `html_dom_section` | **L118 - L287** | `<main>` | HTML DOM Section L118-L287 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L289 - L289** | `id="bmaFooterContainer"` | HTML DOM Section L289-L289 |
+| `<div#modalUserAccountForm>` | `html_dom_section` | **L295 - L420** | `id="modalUserAccountForm"` | HTML DOM Section L295-L420 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L422 - L422** | `<script>` | Bootstrap script L422-L422 |
 
 ---
 

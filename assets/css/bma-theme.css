@@ -1690,3 +1690,21 @@ html.dark .bma-sticky-checkin-bar {
 .w-8\.5 { width: 2.125rem; }
 .h-8\.5 { height: 2.125rem; }
 
+/* --- GPS Card Isolation & Leaflet Pane Stacking Defense --- */
+#gpsSectionCard {
+    isolation: isolate;
+    z-index: 0;
+}
+#inlineGpsLeafletMap .leaflet-pane {
+    z-index: 10 !important;
+}
+#inlineGpsLeafletMap .leaflet-tile-pane {
+    z-index: 5 !important;
+}
+#inlineGpsLeafletMap .leaflet-marker-pane {
+    z-index: 20 !important;
+}
+#inlineGpsLeafletMap .leaflet-control-container {
+    z-index: 30 !important;
+}
+

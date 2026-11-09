@@ -24,15 +24,23 @@ Behaviour:
      * Never blind-read an entire source file (>80 lines) before checking `.ai_map/00_PROCESS_FLOW_MAP.md` and `.ai_map/01_FILE_FUNCTION_INDEX.md`.
      * Read only the target symbol's line range (`StartLine`–`EndLine` ± 10 lines).
    - **กฎเหล็ก**: "แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง" (`STRICT_SURGICAL_SCOPE_ONLY`).
+   - **Mandatory Cache Version Sync**: Whenever any file in `*.html`, `assets/css/**`, or `assets/js/**` is modified, MUST run `node ./.ai_map/vscode_ast_mapper.mjs` to auto-stamp a fresh `buildId` in `version.json` and sync `CURRENT_APP_BUILD` and `?v=<buildId>` across all 8 root HTML files.
    - After code edits, sync `.ai_map/` by running `node ./.ai_map/vscode_ast_mapper.mjs`.
 4. **SubAgent 2 (`subagent_02_qa_auditor` — Flash 3.8 High / flash, 1 ตัว)**:
    - Audit the implementation against all requirements in the approved plan.
    - Run syntax and functional checks (`node --check`, verification tests).
+   - **Audit Cache Version Sync**: Verify that `version.json` exists and that `CURRENT_APP_BUILD` and asset `?v=<buildId>` query params across all 8 HTML files match `version.json` exactly before issuing `PASS`.
    - Compare differences against branch `main` (`git diff main`) to verify compatibility and confirm zero unintended changes to unrelated code.
 5. **Git Policy**: ห้ามรัน `git push` ขึ้น GitHub เด็ดขาด เว้นแต่ผู้ใช้มีคำสั่งชัดเจนให้ push
 
 Do NOT trigger for: pure questions/explanations, reading or searching code, git operations (clone, commit,
 branch), or when the user explicitly says not to use the workflow (e.g. "ไม่ต้องใช้ workflow", "แก้ตรงๆ เลย").
+
+## Mandatory Cache Version Synchronization (ข้อกำหนดเหล็กการบังคับเคลียร์แคช)
+1. ทุกครั้งที่มีการแก้ไขไฟล์ส่วน Frontend (`*.html`, `assets/css/**`, `assets/js/**`):
+   - `subagent_01_implementer` **ต้อง** รันคำสั่ง `node ./.ai_map/vscode_ast_mapper.mjs` ทุกครั้ง
+   - สคริปต์จะคำนวณ Content SHA-256 Hash แบบ Idempotent, สร้าง `buildId` ใหม่ใน `version.json`, และ Stamp `CURRENT_APP_BUILD = '<buildId>'` รวมทั้ง `?v=<buildId>` ให้กับ `<link href="assets/...">` และ `<script src="assets/...">` ในไฟล์ HTML ทั้ง 8 หน้าหลัก (`index.html`, `checkin.html`, `dashboard.html`, `approvals.html`, `reports.html`, `personnel.html`, `settings.html`, `users.html`)
+2. `subagent_02_qa_auditor` **ต้อง** ตรวจสอบว่าค่า `buildId` ใน `version.json` ตรงกับค่า `CURRENT_APP_BUILD` และ Query Parameter `?v=` ในไฟล์ HTML ทั้ง 8 หน้า 100% จึงจะอนุมัติให้ `PASS`
 
 ## Knowledge stores & Codebase Map
 - **VS Code Surgical Codebase Map**: `.ai_map/`

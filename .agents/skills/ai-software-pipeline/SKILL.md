@@ -79,7 +79,7 @@ Rule: Announce the chosen mode and reason in one line. Do not trigger for pure q
 1. Orchestrator invokes `subagent_01_implementer` (Flash 3.8 High, 1 instance) with target file paths and line ranges.
 2. Implementer reads strictly within `recommended_read_window` (`[startLine - 10, endLine + 10]`).
 3. Implementer modifies code strictly adhering to **`STRICT_SURGICAL_SCOPE_ONLY`** ("แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง").
-4. Implementer runs `node ./.ai_map/vscode_ast_mapper.mjs` to recalculate line ranges and update `.ai_map/`.
+4. **Mandatory Cache Version Sync & Codebase AST Update**: Implementer runs `node ./.ai_map/vscode_ast_mapper.mjs`. This script automatically creates/updates `version.json` with a deterministic content SHA-256 `buildId`, stamps `CURRENT_APP_BUILD` and `?v=<buildId>` across all 8 root HTML entry files, and recalculates line ranges for `.ai_map/`.
 5. Implementer reports results back via `send_message`.
 
 ## Step D — Stage 3: QA & Branch Main Diff Audit (`subagent_02_qa_auditor`)
@@ -88,7 +88,8 @@ Rule: Announce the chosen mode and reason in one line. Do not trigger for pure q
 2. QA Auditor checks every item in the approved implementation plan.
 3. QA Auditor performs syntax checks (`node --check`) and executes verification tests.
 4. QA Auditor inspects `git diff main` to verify branch compatibility and confirm zero unintended alterations outside the approved scope.
-5. QA Auditor reports audit findings back via `send_message`. If defects are found, Orchestrator routes back to `subagent_01_implementer` for surgical fixes.
+5. **Mandatory Cache Version Sync Audit**: QA Auditor verifies that `version.json` exists and that `CURRENT_APP_BUILD` and asset `?v=<buildId>` query params across all 8 root HTML files match `version.json` exactly before issuing `PASS`.
+6. QA Auditor reports audit findings back via `send_message`. If defects are found, Orchestrator routes back to `subagent_01_implementer` for surgical fixes.
 
 ## Step E — Stage 4: Knowledge Ingest & Final Report (Orchestrator)
 
