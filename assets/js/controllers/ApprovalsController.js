@@ -6,6 +6,7 @@
 import { UIHelpers } from '../core/UIHelpers.js';
 import { AppLayout } from '../components/AppLayout.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class ApprovalsController {
     constructor() {
@@ -164,11 +165,11 @@ export class ApprovalsController {
         }
 
         return `
-            <tr>
+            <tr data-row-id="${req.id}">
                 <td class="text-center">
                     ${isPending ? `<input type="checkbox" class="chk-approval-row w-4 h-4 accent-emerald-600 cursor-pointer" data-id="${req.id}" ${isChecked}>` : '-'}
                 </td>
-                <td class="text-center font-semibold">${indexNo}</td>
+                <td class="text-center font-semibold seq-num">${indexNo}</td>
                 <td class="font-semibold bma-text-main">${fullName}</td>
                 <td>${posFull}</td>
                 <td>
@@ -201,9 +202,75 @@ export class ApprovalsController {
         `;
     }
 
+    async syncRequestsSilent(deltaDetail = null) {
+        const statusFilter = document.getElementById('selectApprovalStatusFilter')?.value || 'pending';
+        const tbody = document.getElementById('approvalsTableBody');
+        if (!tbody) return;
+
+        // หากมีผู้ดูแลระบบท่านอื่นดำเนินการรายการนี้ไปแล้ว
+        if (deltaDetail?.actor && this.currentUser && deltaDetail.actor !== this.currentUser.full_name && deltaDetail.record?.id) {
+            const targetId = String(deltaDetail.record.id);
+            const rowEl = tbody.querySelector(`tr[data-row-id="${targetId}"]`);
+            if (rowEl) {
+                this.selectedIds.delete(targetId);
+                const actionText = deltaDetail.action === 'approved' ? 'อนุมัติแล้ว' : (deltaDetail.action === 'rejected' ? 'ไม่อนุมัติ' : 'ดำเนินการแล้ว');
+                DOMDiffHelper.lockRowForConcurrentAdmin(rowEl, deltaDetail.actor, actionText);
+                this.#updateBulkSelectionCount();
+                DOMDiffHelper.removeRowWithFade(rowEl, 2500, () => {
+                    DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+                });
+                this.requestsList = this.requestsList.filter(r => String(r.id) !== targetId);
+                await AppLayout.refreshNotificationBell(this.currentUser);
+                return;
+            }
+        }
+
+        // Silent delta reconciliation โดยไม่ทำลาย DOM
+        try {
+            const freshList = await AttendanceModel.getSpecialRequests(this.currentUser, statusFilter);
+            const freshMap = new Map(freshList.map(r => [String(r.id), r]));
+            const existingRows = Array.from(tbody.querySelectorAll('tr[data-row-id]'));
+            const existingIds = new Set(existingRows.map(r => r.getAttribute('data-row-id')));
+
+            // 1. นำแถวที่ไม่มีในรายการใหม่ออกอย่างนุ่มนวล
+            for (const row of existingRows) {
+                const id = row.getAttribute('data-row-id');
+                if (!freshMap.has(id)) {
+                    this.selectedIds.delete(id);
+                    DOMDiffHelper.removeRowWithFade(row, 600, () => {
+                        DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+                    });
+                }
+            }
+
+            // 2. แทรกรายการใหม่ด้านบนสุดพร้อม Animation
+            for (const req of freshList) {
+                const reqId = String(req.id);
+                if (!existingIds.has(reqId)) {
+                    const emptyTd = tbody.querySelector('td[colspan="8"]');
+                    if (emptyTd) {
+                        tbody.innerHTML = '';
+                    }
+                    const rowHtml = this.#buildRequestRowHtml(req, 1);
+                    DOMDiffHelper.prependRowWithAnimation(tbody, rowHtml);
+                }
+            }
+
+            this.requestsList = freshList;
+            this.#updateBulkSelectionCount();
+            DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+            await AppLayout.refreshNotificationBell(this.currentUser);
+        } catch (err) {
+            console.warn('[ApprovalsController] syncRequestsSilent error:', err);
+        }
+    }
+
     #bindEvents() {
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            this.syncRequestsSilent(e.detail);
+        });
         window.addEventListener('bma:realtime-sync', () => {
-            this.loadRequests();
+            this.syncRequestsSilent();
         });
         document.getElementById('selectApprovalStatusFilter')?.addEventListener('change', () => this.loadRequests());
         document.getElementById('selectApprovalGroupBy')?.addEventListener('change', (e) => {

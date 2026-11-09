@@ -8,6 +8,7 @@ import { AppLayout } from '../components/AppLayout.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
 import { UserModel } from '../models/UserModel.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class UsersController {
     constructor() {
@@ -362,8 +363,8 @@ export class UsersController {
             : '';
 
         return `
-            <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}">
-                <td class="text-center font-semibold">${indexNo}</td>
+            <tr class="${u.password_reset_requested ? 'bg-amber-500/5' : ''}" data-row-id="${u.id}">
+                <td class="text-center font-semibold seq-num">${indexNo}</td>
                 <td class="font-mono font-bold bma-text-main">${u.username}</td>
                 <td>
                     <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
@@ -459,8 +460,8 @@ export class UsersController {
                     }
 
                     return `
-                        <tr class="bg-amber-50/20 dark:bg-amber-950/10">
-                            <td class="text-center font-semibold">${idx + 1}</td>
+                        <tr class="bg-amber-50/20 dark:bg-amber-950/10" data-row-id="${u.id}">
+                            <td class="text-center font-semibold seq-num">${idx + 1}</td>
                             <td class="font-mono font-bold bma-text-main">${u.username}</td>
                             <td>
                                 <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
@@ -564,7 +565,70 @@ export class UsersController {
         document.getElementById('modalUserAccountForm')?.classList.add('hidden');
     }
 
+    async syncUsersSilent(deltaDetail = null) {
+        // Multi-admin concurrency guard สำหรับคำขอรีเซ็ตรหัสผ่าน
+        if (deltaDetail?.actor && this.currentUser && deltaDetail.actor !== this.currentUser.full_name && deltaDetail.record?.id) {
+            const targetId = String(deltaDetail.record.id || deltaDetail.record.user_id || '');
+            const resetTbody = document.getElementById('passwordResetTableBody');
+            if (resetTbody) {
+                const rowEl = resetTbody.querySelector(`tr[data-row-id="${targetId}"]`);
+                if (rowEl) {
+                    const actionText = deltaDetail.action === 'approved' ? 'รีเซ็ตรหัสแล้ว' : (deltaDetail.action === 'rejected' ? 'ไม่อนุมัติ' : 'ดำเนินการแล้ว');
+                    DOMDiffHelper.lockRowForConcurrentAdmin(rowEl, deltaDetail.actor, actionText);
+                    DOMDiffHelper.removeRowWithFade(rowEl, 2500, () => {
+                        DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
+                        if (resetTbody.children.length === 0) {
+                            resetTbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>';
+                        }
+                    });
+                }
+            }
+        }
+
+        // Silent delta refresh
+        try {
+            const [users, personnel] = await Promise.all([
+                UserModel.getAll(this.currentUser),
+                PersonnelModel.getAll(this.currentUser)
+            ]);
+            this.usersList = users;
+            this.personnelList = personnel;
+
+            // Diff ตาราง passwordResetTableBody
+            const resetTbody = document.getElementById('passwordResetTableBody');
+            if (resetTbody) {
+                const resetMap = new Map(users.filter(u => u.password_reset_requested).map(u => [String(u.id), u]));
+                const existingResetRows = Array.from(resetTbody.querySelectorAll('tr[data-row-id]'));
+                for (const row of existingResetRows) {
+                    const id = row.getAttribute('data-row-id');
+                    if (!resetMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(row, 600, () => {
+                            DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
+            }
+
+            // Diff ตาราง usersTableBody
+            const usersTbody = document.getElementById('usersTableBody');
+            if (usersTbody) {
+                DOMDiffHelper.reindexTableSequence(usersTbody, '.seq-num');
+            }
+
+            await AppLayout.refreshNotificationBell(this.currentUser);
+        } catch (err) {
+            console.warn('[UsersController] syncUsersSilent error:', err);
+        }
+    }
+
     #bindEvents() {
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            this.syncUsersSilent(e.detail);
+        });
+        window.addEventListener('bma:realtime-sync', () => {
+            this.syncUsersSilent();
+        });
         document.getElementById('searchUserInput')?.addEventListener('input', () => this.#renderUsersTable());
         document.getElementById('filterUserRole')?.addEventListener('change', () => this.#renderUsersTable());
         document.getElementById('filterResetRequest')?.addEventListener('change', () => this.#renderUsersTable());

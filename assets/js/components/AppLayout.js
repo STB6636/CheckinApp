@@ -16,6 +16,8 @@ export class AppLayout {
     static #isRealtimeSyncInitialized = false;
     static #currentUser = null;
     static #settings = null;
+    static #lastPendingSpecialCount = null;
+    static #lastPendingResetCount = null;
 
     static PAGE_ROUTES = {
         'dashboard.html': {
@@ -603,6 +605,35 @@ export class AppLayout {
 
             const totalCount = pendingSpecial.length + pendingResets.length;
 
+            if (AppLayout.#lastPendingSpecialCount !== null && AppLayout.#lastPendingSpecialCount !== pendingSpecial.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'attendance_logs',
+                        record: null,
+                        action: 'pending_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingSpecialCount,
+                        newCount: pendingSpecial.length
+                    }
+                }));
+            }
+            if (AppLayout.#lastPendingResetCount !== null && AppLayout.#lastPendingResetCount !== pendingResets.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'password_reset_requests',
+                        record: null,
+                        action: 'reset_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingResetCount,
+                        newCount: pendingResets.length
+                    }
+                }));
+            }
+            AppLayout.#lastPendingSpecialCount = pendingSpecial.length;
+            AppLayout.#lastPendingResetCount = pendingResets.length;
+
             const topBellBadge = document.getElementById('topBellBadgeCount');
             const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
             const sidebarResetBadge = document.getElementById('sidebarResetBadge');
@@ -699,6 +730,53 @@ export class AppLayout {
                 window.supabaseClient.channel('bma_admin_realtime')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'attendance_logs' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = record?.approved_by || record?.updated_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'attendance_logs',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'password_reset_requests' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = record?.approved_by || record?.reviewed_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'password_reset_requests',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'personnel' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = record?.updated_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'personnel',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
                         window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
                     .subscribe();

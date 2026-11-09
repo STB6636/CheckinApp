@@ -7,6 +7,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { AppLayout } from '../components/AppLayout.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class PersonnelController {
     constructor() {
@@ -23,6 +24,7 @@ export class PersonnelController {
         this.selectedFilterDivision = 'all';
         this.selectedFilterWorkGroup = 'all';
         this.isSuperAdmin = false;
+        this.currentEditingPersonnelId = null;
         this.isAdminBureau = false;
         this.init();
     }
@@ -360,8 +362,8 @@ export class PersonnelController {
             : '';
 
         return `
-            <tr class="cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-700/50 transition-colors" data-person-id="${person.id}">
-                <td class="text-center font-semibold">${indexNo}</td>
+            <tr class="cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-700/50 transition-colors" data-person-id="${person.id}" data-row-id="${person.id}">
+                <td class="text-center font-semibold seq-num">${indexNo}</td>
                 <td>
                     <div class="flex items-center gap-2.5 whitespace-nowrap">
                         <span class="w-3 h-3 rounded-full shrink-0 ${dotClass}"></span>
@@ -387,6 +389,8 @@ export class PersonnelController {
     }
 
     #openModal(editPerson = null) {
+        this.currentEditingPersonnelId = editPerson ? editPerson.id : null;
+        document.getElementById('personnelCollisionAlert')?.remove();
         const modal = document.getElementById('modalPersonnelForm');
         const titleEl = document.getElementById('modalPersonnelTitle');
         const autoBox = document.getElementById('autoCreateAccountBox');
@@ -428,10 +432,60 @@ export class PersonnelController {
     }
 
     #closeModal() {
+        this.currentEditingPersonnelId = null;
+        document.getElementById('personnelCollisionAlert')?.remove();
         document.getElementById('modalPersonnelForm')?.classList.add('hidden');
     }
 
+    async syncPersonnelSilent(deltaDetail = null) {
+        // Dirty-Form Collision Guard: ตรวจสอบว่าแอดมินกำลังเปิดแก้ไขคนเดียวกับที่ถูกอัปเดตหรือไม่
+        if (this.currentEditingPersonnelId && deltaDetail?.record) {
+            const deltaId = String(deltaDetail.record.id || deltaDetail.record.personnel_id || '');
+            if (deltaId === String(this.currentEditingPersonnelId)) {
+                const modal = document.getElementById('modalPersonnelForm');
+                if (modal && !modal.classList.contains('hidden') && !document.getElementById('personnelCollisionAlert')) {
+                    const banner = document.createElement('div');
+                    banner.id = 'personnelCollisionAlert';
+                    banner.className = 'mb-4 p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-center gap-2';
+                    banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
+                        <span>คำเตือน: ข้อมูลบุคลากรนี้เพิ่งได้รับการแก้ไขโดยผู้ดูแลระบบท่านอื่น (${deltaDetail.actor || 'Admin'}) โปรดตรวจสอบก่อนบันทึกทับ</span>`;
+                    const form = modal.querySelector('form');
+                    if (form) form.prepend(banner);
+                }
+            }
+        }
+
+        // Silent delta sync สำหรับตารางบุคลากร
+        try {
+            const freshList = await PersonnelModel.getAll(this.currentUser);
+            this.personnelList = freshList;
+
+            const tbody = document.getElementById('personnelTableBody');
+            if (tbody) {
+                const freshMap = new Map(freshList.map(p => [String(p.id), p]));
+                const existingRows = Array.from(tbody.querySelectorAll('tr[data-person-id]'));
+                for (const row of existingRows) {
+                    const id = row.getAttribute('data-person-id');
+                    if (!freshMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(row, 600, () => {
+                            DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+            }
+        } catch (err) {
+            console.warn('[PersonnelController] syncPersonnelSilent error:', err);
+        }
+    }
+
     #bindEvents() {
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            this.syncPersonnelSilent(e.detail);
+        });
+        window.addEventListener('bma:realtime-sync', () => {
+            this.syncPersonnelSilent();
+        });
         document.getElementById('searchPersonnelInput')?.addEventListener('input', (e) => {
             this.searchKeyword = e.target.value;
             this.#renderGroupedTable();

@@ -60,6 +60,18 @@
       ],
       "trigger_conditions": "บังคับใช้ทุกครั้งที่มีการแก้ไขไฟล์ Frontend (*.html, assets/css/**, assets/js/**) เพื่อ Auto-stamp version.json และ ?v=<buildId> ครบทั้ง 8 หน้าหลักผ่าน node ./.ai_map/vscode_ast_mapper.mjs และบังคับเคลียร์แคชฝั่งผู้ใช้โดยอัตโนมัติ",
       "skill_file_path": "./ai_skills_registry/skills/remote_version_hard_cache_purge/SKILL.md"
+    },
+    {
+      "skill_id": "realtime_differential_dom_diffing_and_concurrency",
+      "name": "Realtime Differential DOM Diffing & Multi-Admin Concurrency Engine Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องอัปเดตตารางข้อมูลหรือการ์ดสถิติแบบ Realtime โดยไม่ให้หน้าจอกระพริบ (ไร้ Full Reload / Skeleton) แทรกแถวใหม่ ลบแถวที่จัดการแล้ว รันเลขลำดับอัตโนมัติ และป้องกัน Race Condition หรือแก้ไขชนกันเมื่อมี Admin มากกว่า 2 คนเปิดหน้าจอเดียวกัน",
+      "skill_file_path": "./ai_skills_registry/skills/realtime_differential_dom_diffing_and_concurrency/SKILL.md"
     }
   ]
 }

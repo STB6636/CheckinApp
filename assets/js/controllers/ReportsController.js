@@ -10,6 +10,7 @@ import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { AuthService } from '../core/AuthService.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class ReportsController {
     constructor() {
@@ -658,8 +659,8 @@ export class ReportsController {
         ` : '';
 
         return `
-            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rowUid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
-                <td class="w-14 text-center font-semibold">${indexNo}</td>
+            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rowUid}" data-row-id="${rec.log_id || rowUid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
+                <td class="w-14 text-center font-semibold seq-num">${indexNo}</td>
                 <td class="${showGps ? 'min-w-[170px]' : 'min-w-[200px]'}">
                     <div class="font-bold bma-text-main flex items-center gap-1.5">
                         <span>${fullName}</span>
@@ -954,7 +955,64 @@ ${this.canManageRecords ? `
         document.getElementById('modalReportAttendance')?.classList.add('hidden');
     }
 
+    async syncReportsSilent(deltaDetail = null) {
+        let startDate = UIHelpers.getTodayISO();
+        let endDate = startDate;
+        if (this.dateMode === 'single') {
+            startDate = document.getElementById('reportSingleDateInput')?.value || startDate;
+            endDate = startDate;
+        } else {
+            startDate = document.getElementById('reportStartDateInput')?.value || startDate;
+            endDate = document.getElementById('reportEndDateInput')?.value || startDate;
+        }
+
+        try {
+            const freshRecords = await AttendanceModel.getReportRecordsByDateRange(startDate, endDate, this.currentUser);
+            this.records = freshRecords;
+
+            // ปรับปรุงจำนวนบน Status Tag Chips โดยไม่ทำลาย DOM
+            this.#renderStatusTagFilterChips();
+
+            // Diff ข้อมูลแถวที่แสดงอยู่เพื่ออัปเดตเวลาออกหรือพิกัดแบบ In-place
+            const masterContainer = document.getElementById('reportTablesMasterContainer');
+            if (masterContainer) {
+                const freshMap = new Map();
+                for (const r of freshRecords) {
+                    const rowUid = `${r.personnel_id}_${r.work_date}_${r.shift_id || 'default'}`;
+                    freshMap.set(rowUid, r);
+                    if (r.log_id) freshMap.set(String(r.log_id), r);
+                }
+
+                const visibleRows = masterContainer.querySelectorAll('tr.report-person-row');
+                for (const row of visibleRows) {
+                    const uid = row.getAttribute('data-row-uid');
+                    const logId = row.getAttribute('data-row-id');
+                    const updated = freshMap.get(uid) || freshMap.get(logId);
+                    if (updated) {
+                        const cells = row.querySelectorAll('td');
+                        // cell 3: เวลาเข้า, cell 4: เวลาออก
+                        if (cells[4]) {
+                            const newOut = updated.check_out_time ? updated.check_out_time + ' น.' : '-';
+                            if (cells[4].textContent.trim() !== newOut) {
+                                cells[4].textContent = newOut;
+                                DOMDiffHelper.highlightRowUpdate(row);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('[ReportsController] syncReportsSilent error:', err);
+        }
+    }
+
     #bindEvents() {
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            this.syncReportsSilent(e.detail);
+        });
+        window.addEventListener('bma:realtime-sync', () => {
+            this.syncReportsSilent();
+        });
         const btnSingle = document.getElementById('btnModeSingleDate');
         const btnRange = document.getElementById('btnModeRangeDate');
         const singleBox = document.getElementById('singleDatePickerBox');

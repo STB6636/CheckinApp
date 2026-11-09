@@ -39,6 +39,7 @@ last_updated_phase: "PIPE-20261109-gps-replica-and-drawer-zindex"
 - [[rule_material_tailwind_gps_card_elevation]] — Domain Rule: มาตรฐานการ์ดพิกัด GPS สไตล์ Material Tailwind Inset Header และปุ่มล็อกขอบล่าง 100% (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_LAYOUT_01`)
 - [[rule_gps_map_card_replica_and_shutter_overlay]] — Domain Rule: การ์ดพิกัด GPS แผนที่จริงในตัวการ์ด (Embedded Leaflet) หัวการ์ดสีเทานวล และปุ่มชัตเตอร์รีเฟรชลอยตรงกลางด้านล่าง (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_LAYOUT_01`)
 - [[rule_remote_version_hard_cache_purge_autostamp]] — Domain Rule: ระบบบังคับเคลียร์แคชอัตโนมัติ (Remote version.json + Hard Cache Purge + Auto-Stamp) และข้อกำหนดเหล็กของโปรเจกต์ (`FLOW-01` – `FLOW-08`)
+- [[rule_realtime_differential_dom_diffing_and_multi_admin_concurrency]] — Domain Rule: ระบบ Realtime DOM Diffing & Multi-Admin Concurrency Engine ครอบคลุม 5 หน้าจอหลักแอดมิน (`FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
