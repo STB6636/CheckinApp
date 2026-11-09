@@ -56,6 +56,10 @@ export class CheckinController {
         this.tempOffsiteLocation = null;
         this.viewGpsLeafletMap = null;
         this.viewGpsLeafletMarker = null;
+        this.inlineGpsMap = null;
+        this.inlineUserMarker = null;
+        this.inlineOfficeMarker = null;
+        this.inlineRadiusCircle = null;
         this.init();
     }
 
@@ -632,8 +636,14 @@ export class CheckinController {
         });
 
         document.getElementById('btnRefreshGps')?.addEventListener('click', async () => {
-            await this.#initGpsLocation();
-            UIHelpers.showToast('ตรวจสอบตำแหน่ง GPS ปัจจุบันสำเร็จ', 'success');
+            const spinner = document.getElementById('gpsRefreshSpinnerIcon');
+            spinner?.classList.add('fa-spin');
+            try {
+                await this.#initGpsLocation();
+                UIHelpers.showToast('ตรวจสอบตำแหน่ง GPS ปัจจุบันสำเร็จ', 'success');
+            } finally {
+                setTimeout(() => spinner?.classList.remove('fa-spin'), 600);
+            }
         });
 
         document.getElementById('btnViewGpsMapModal')?.addEventListener('click', () => {
@@ -1697,6 +1707,9 @@ export class CheckinController {
 
                 coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
+                // Render inline Leaflet map
+                this.#renderInlineGpsMap(lat, lng);
+
                 // เริ่มต้นแสดงแผนที่ที่ระยะซูม z = 19 (ประมาณ 20 เมตร) ก่อน
                 if (mapIframe) {
                     mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=19&output=embed`;
@@ -1763,11 +1776,84 @@ export class CheckinController {
         );
     }
 
+    #renderInlineGpsMap(lat, lng) {
+        const container = document.getElementById('inlineGpsLeafletMap');
+        if (!container || typeof L === 'undefined') return;
+
+        const targetLat = Number(lat) || 13.7563;
+        const targetLng = Number(lng) || 100.5018;
+
+        // Determine office / workplace target coordinates
+        const firstLoc = this.settings?.official_locations?.[0];
+        const officeLat = Number(this.settings?.workplace_lat) || Number(firstLoc?.latitude) || 13.7387;
+        const officeLng = Number(this.settings?.workplace_lng) || Number(firstLoc?.longitude) || 100.4958;
+
+        try {
+            if (!this.inlineGpsMap) {
+                this.inlineGpsMap = L.map(container, {
+                    zoomControl: false,
+                    attributionControl: false,
+                    dragging: true,
+                    touchZoom: true,
+                    scrollWheelZoom: false
+                }).setView([targetLat, targetLng], 16);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(this.inlineGpsMap);
+
+                // Red Marker: User GPS Location
+                const redIcon = L.divIcon({
+                    className: 'custom-pin-red',
+                    html: '<div style="color: #dc2626; font-size: 18px; filter: drop-shadow(0 2px 4px rgba(220,38,38,0.5));"><i class="fa-solid fa-location-dot"></i></div>',
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 18]
+                });
+                this.inlineUserMarker = L.marker([targetLat, targetLng], { icon: redIcon }).addTo(this.inlineGpsMap);
+
+                // Blue Marker: Workplace Location
+                const blueIcon = L.divIcon({
+                    className: 'custom-pin-blue',
+                    html: '<div style="color: #2563eb; font-size: 18px; filter: drop-shadow(0 2px 4px rgba(37,99,235,0.5));"><i class="fa-solid fa-location-dot"></i></div>',
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 18]
+                });
+                this.inlineOfficeMarker = L.marker([officeLat, officeLng], { icon: blueIcon }).addTo(this.inlineGpsMap);
+
+                // Workplace Radius Circle
+                const radiusMeters = Number(this.settings?.geofence_radius) || Number(firstLoc?.radius_meters) || 700;
+                this.inlineRadiusCircle = L.circle([officeLat, officeLng], {
+                    radius: radiusMeters,
+                    color: '#10b981',
+                    fillColor: '#10b981',
+                    fillOpacity: 0.12,
+                    weight: 1.5
+                }).addTo(this.inlineGpsMap);
+
+                setTimeout(() => {
+                    this.inlineGpsMap?.invalidateSize();
+                }, 250);
+            } else {
+                this.inlineGpsMap.invalidateSize();
+                this.inlineGpsMap.setView([targetLat, targetLng], 16);
+                if (this.inlineUserMarker) {
+                    this.inlineUserMarker.setLatLng([targetLat, targetLng]);
+                }
+            }
+        } catch (e) {
+            console.warn('[CheckinController] Inline GPS map initialization warning:', e);
+        }
+    }
+
     #bindEvents() {
         window.addEventListener('storage', (e) => {
             if (e.key === Config.STORAGE_KEYS.SESSION_USER && !e.newValue) {
                 window.location.replace(UIHelpers.getRootBasePath());
             }
+        });
+
+        window.addEventListener('resize', () => {
+            this.inlineGpsMap?.invalidateSize();
         });
 
         document.getElementById('btnCheckinTheme')?.addEventListener('click', () => {
@@ -1836,10 +1922,6 @@ export class CheckinController {
             if (file) this.#handleFallbackFileSelected(file);
         });
 
-        document.getElementById('btnRefreshGps')?.addEventListener('click', () => {
-            this.#initGpsLocation();
-            this.#renderGeofenceStatusUI();
-        });
         document.getElementById('btnNextStepCheckin')?.addEventListener('click', () => this.#goToStep(2));
         document.getElementById('btnPrevStepCheckin')?.addEventListener('click', () => this.#goToStep(1));
 

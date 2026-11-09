@@ -228,7 +228,7 @@
             <div class="grid grid-cols-2 gap-2.5 items-stretch w-full">
 
                 <!-- Left Column: Compact Photo Box (3:4 Object Cover with Centered Overlay Button) -->
-                <div id="photoPreviewCard" class="relative w-full aspect-[3/4] max-h-[30dvh] rounded-2xl overflow-hidden border-2 border-slate-200 dark:border-slate-700 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
+                <div id="photoPreviewCard" class="relative w-full aspect-[3/4] max-h-[30dvh] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
                     <div id="photoPlaceholder" class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-500">
                         <i class="fa-solid fa-user text-3xl sm:text-4xl text-slate-600 mb-0.5"></i>
                     </div>
@@ -252,54 +252,44 @@
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
-                <div id="gpsSectionCard" class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/60 p-0 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
-                    <!-- Elevated Inset Header in Civic Emerald -->
-                    <div class="relative mx-2.5 mt-2.5 py-2 px-3 rounded-xl bg-gradient-to-r from-[#00351B] to-[#00744B] text-white shadow-md shadow-emerald-950/20 flex items-center justify-between shrink-0">
+                <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
+                    
+                    <!-- 1. Header Bar: Light Gray #F1F3F5 (ตรงตามภาพตัวอย่างเป๊ะ ไม่ดำ 100%) -->
+                    <div class="bg-[#F1F3F5] px-2.5 py-1.5 border-b border-slate-200/80 flex items-center justify-between shrink-0">
                         <div class="flex items-center gap-1.5 min-w-0">
-                            <div class="w-5 h-5 rounded-md bg-white/15 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-location-dot text-[11px] text-white"></i>
+                            <i class="fa-solid fa-location-dot text-teal-600 text-xs shrink-0"></i>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1 text-[8.5px] text-slate-500 font-medium">
+                                    <span>พื้นที่ใกล้เคียง</span>
+                                    <i class="fa-solid fa-circle-info text-[7.5px] text-slate-400"></i>
+                                </div>
+                                <div id="gpsLocationNameText" class="text-[10px] sm:text-[11px] font-bold text-slate-800 truncate leading-tight">
+                                    กำลังค้นหาสถานที่...
+                                </div>
                             </div>
-                            <span class="font-extrabold text-xs text-white tracking-wide truncate">พิกัด (GPS)</span>
                         </div>
-                        <div class="flex items-center gap-1 text-[9px] text-emerald-200 font-bold bg-white/10 px-1.5 py-0.5 rounded-full">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span>พร้อม</span>
-                        </div>
+                        <i class="fa-solid fa-chevron-up text-slate-400 text-[10px] shrink-0"></i>
                         <span id="gpsRequirementBadge" class="hidden"></span>
+                        <span id="gpsLocationName" class="hidden"></span>
+                        <span id="gpsCoordsText" class="hidden">กำลังระบุพิกัด...</span>
                     </div>
 
-                    <!-- Centered Location & Coords Box -->
-                    <div class="flex-1 flex flex-col justify-center px-2.5 py-1 text-center my-auto">
-                        <div class="p-2 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 space-y-1">
-                            <div id="gpsLocationNameText" class="font-black text-xs sm:text-[13px] text-slate-900 dark:text-emerald-100 line-clamp-2 leading-tight">
-                                กำลังค้นหาชื่อสถานที่...
-                            </div>
-                            <span id="gpsLocationName" class="hidden"></span>
-                            <div class="flex items-center justify-center gap-1 text-[9.5px] sm:text-[10px] font-mono font-bold text-emerald-800 dark:text-emerald-300">
-                                <i class="fa-solid fa-crosshairs text-[8.5px] text-emerald-600 dark:text-emerald-400"></i>
-                                <span id="gpsCoordsText" class="truncate">กำลังระบุพิกัด...</span>
-                            </div>
+                    <!-- 2. Integrated Map Container -->
+                    <div class="relative flex-1 w-full h-full min-h-0 bg-slate-100">
+                        <div id="inlineGpsLeafletMap" class="w-full h-full"></div>
+
+                        <!-- 3. Shutter-Style Floating Refresh Button (Overlay Bottom Center) -->
+                        <div class="absolute bottom-2.5 inset-x-0 flex items-center justify-center pointer-events-none z-[400]">
+                            <button type="button" id="btnRefreshGps" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-emerald-700 shadow-lg border-2 border-white flex items-center justify-center pointer-events-auto cursor-pointer hover:bg-emerald-50 active:scale-90 transition shutter-glow" title="กดเพื่อระบุตำแหน่งใหม่">
+                                <i id="gpsRefreshSpinnerIcon" class="fa-solid fa-arrows-rotate text-xs sm:text-sm"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Docked Footer Action Buttons (mt-auto) -->
-                    <div class="mt-auto px-2.5 pb-2.5 pt-0 space-y-1.5 shrink-0 w-full">
-                        <button type="button" id="btnRefreshGps" class="w-full py-1.5 px-2 rounded-xl bg-[#00744B] hover:bg-[#005b3a] active:scale-[0.99] text-white text-[10.5px] sm:text-[11px] font-extrabold flex items-center justify-center gap-1.5 transition shadow-sm cursor-pointer" title="ค้นหาพิกัดใหม่">
-                            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
-                            <span>ค้นหาพิกัดใหม่</span>
-                        </button>
-                        <button type="button" id="btnViewGpsMapModal" class="w-full py-1 px-2 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-[#00744B] dark:text-emerald-300 border border-emerald-300/80 dark:border-emerald-700/60 text-[10px] sm:text-[10.5px] font-bold flex items-center justify-center gap-1.5 transition shadow-2xs cursor-pointer" title="ดูแผนที่ตามพิกัด">
-                            <i class="fa-solid fa-map-location-dot text-[11px] text-[#00744B] dark:text-emerald-400"></i>
-                            <span>ดูแผนที่</span>
-                        </button>
-                    </div>
-
-                    <!-- Hidden legacy embedded map for zero-break compatibility -->
-                    <div id="googleMapEmbedWrapper" class="hidden">
-                        <div id="googleMapPlaceholder" class="hidden"></div>
-                        <iframe id="googleMapRealtimeIframe" class="hidden"></iframe>
-                    </div>
+                    <!-- Hidden legacy compatibility elements to guarantee zero breakage -->
+                    <div id="googleMapEmbedWrapper" class="hidden"><div id="googleMapPlaceholder" class="hidden"></div><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
                     <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                    <button type="button" id="btnViewGpsMapModal" class="hidden"></button>
                 </div>
             </div>
 
