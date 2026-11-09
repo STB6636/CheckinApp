@@ -1694,6 +1694,7 @@ html.dark .bma-sticky-checkin-bar {
 #gpsSectionCard {
     isolation: isolate;
     z-index: 0;
+    padding: 0 !important;
 }
 #inlineGpsLeafletMap .leaflet-pane {
     z-index: 10 !important;

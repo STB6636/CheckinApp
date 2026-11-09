@@ -35,6 +35,9 @@ flow_links: ["FLOW_CHECKIN_01", "FLOW_GPS_01", "FLOW_LAYOUT_01"]
    - การ์ด `#gpsSectionCard` มี `style="isolation: isolate; z-index: 0;"` กักขัง Z-Index ทั้งหมดของ Leaflet (400-1000) ให้อยู่เฉพาะในบริบท 0
    - เลเยอร์ `#mobileHistoryDrawer` และ `#modalSpecialRequest` ยกขึ้นเป็น `z-[9999]`
    - ฟังก์ชัน `openMobileDrawer()` ซ่อนแผนที่ด้วยคลาส `invisible` และ `closeMobileDrawer()` กู้คืนพร้อมเรียก `invalidateSize()`
+7. **การป้องกันการเขียนทับคลาส Padding ใน JavaScript (Zero Padding Enforcement):**
+   - ใน `CheckinController.js` เมธอด `#applyDynamicWorkspaceLayout()` ต้องไม่กำหนด `gpsCard.className = 'bma-card p-3.5 ...'` เด็ดขาด เพราะจะทำให้เบราว์เซอร์เติม padding 14px ล้อมรอบการ์ด GPS จนกลายเป็นการ์ดซ้อนในการ์ด
+   - ต้องใช้เพียง `classList.toggle('hidden', ...)` และบังคับ `padding: 0 !important;` บน `#gpsSectionCard` ทั้งใน inline style และ global CSS เพื่อให้หัวข้อและแผนที่แสดงผลแนบชิดขอบการ์ด 100% ("เต็มการ์ด") ตามต้นแบบเสมอ
 
 ## 3. รายการ DOM IDs ที่ต้องรักษาไว้ครบถ้วน (Zero Breaking Changes)
 - `gpsSectionCard`

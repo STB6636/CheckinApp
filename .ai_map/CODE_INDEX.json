@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-09T05:11:18.973Z",
+  "generatedAt": "2026-11-09T06:50:38.399Z",
   "totalFilesScanned": 93,
   "totalSymbolsIndexed": 651,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "5936e7b21aae5309",
+      "fileHash": "fe345dbc09960652",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -294,8 +294,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "92f1613a6d58d51e",
-      "totalLines": 3170,
+      "fileHash": "8be402ad04ac2157",
+      "totalLines": 3147,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -312,9 +312,9 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 710,
+          "endLine": 687,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (699 lines)"
+          "summary": "Class Definition (676 lines)"
         },
         {
           "name": "CheckinController.constructor",
@@ -336,513 +336,513 @@
           "name": "CheckinController.#applyDynamicWorkspaceLayout",
           "kind": "private method",
           "startLine": 113,
-          "endLine": 153,
+          "endLine": 130,
           "signature": "() => any",
-          "summary": "private method L113-L153 (41 lines)"
+          "summary": "private method L113-L130 (18 lines)"
         },
         {
           "name": "CheckinController.#updateThemeButtonUI",
           "kind": "private method",
-          "startLine": 155,
-          "endLine": 173,
+          "startLine": 132,
+          "endLine": 150,
           "signature": "() => any",
-          "summary": "private method L155-L173 (19 lines)"
+          "summary": "private method L132-L150 (19 lines)"
         },
         {
           "name": "CheckinController.#checkAndShowWelcomeToast",
           "kind": "private method",
-          "startLine": 175,
-          "endLine": 183,
+          "startLine": 152,
+          "endLine": 160,
           "signature": "() => any",
-          "summary": "private method L175-L183 (9 lines)"
+          "summary": "private method L152-L160 (9 lines)"
         },
         {
           "name": "CheckinController.#startLiveClock24",
           "kind": "private method",
-          "startLine": 185,
-          "endLine": 212,
+          "startLine": 162,
+          "endLine": 189,
           "signature": "() => any",
-          "summary": "private method L185-L212 (28 lines)"
+          "summary": "private method L162-L189 (28 lines)"
         },
         {
           "name": "updateClock",
           "kind": "arrow_fn",
-          "startLine": 186,
-          "endLine": 209,
+          "startLine": 163,
+          "endLine": 186,
           "signature": "() => inferred",
-          "summary": "Arrow Function L186-L209"
+          "summary": "Arrow Function L163-L186"
         },
         {
           "name": "CheckinController.#isShiftAlreadyRecordedToday",
           "kind": "private method",
-          "startLine": 214,
-          "endLine": 262,
+          "startLine": 191,
+          "endLine": 239,
           "signature": "(shift) => any",
-          "summary": "private method L214-L262 (49 lines)"
+          "summary": "private method L191-L239 (49 lines)"
         },
         {
           "name": "CheckinController.#isShiftActiveAtCurrentTime",
           "kind": "private method",
-          "startLine": 264,
-          "endLine": 299,
+          "startLine": 241,
+          "endLine": 276,
           "signature": "(shift, nowMin, allowStartMin) => any",
-          "summary": "private method L264-L299 (36 lines)"
+          "summary": "private method L241-L276 (36 lines)"
         },
         {
           "name": "CheckinController.#evaluateTimeWindowAndPopulateShifts",
           "kind": "private method",
-          "startLine": 301,
-          "endLine": 410,
+          "startLine": 278,
+          "endLine": 387,
           "signature": "() => any",
-          "summary": "private method L301-L410 (110 lines)"
+          "summary": "private method L278-L387 (110 lines)"
         },
         {
           "name": "CheckinController.#calculateHaversineMeters",
           "kind": "private method",
-          "startLine": 415,
-          "endLine": 427,
+          "startLine": 392,
+          "endLine": 404,
           "signature": "(lat1, lon1, lat2, lon2) => any",
           "summary": "คำนวณระยะทางแบบ Haversine (หน่วย: เมตร)"
         },
         {
           "name": "CheckinController.evaluateOnsiteGeofence",
           "kind": "public method",
-          "startLine": 435,
-          "endLine": 504,
+          "startLine": 412,
+          "endLine": 481,
           "signature": "(currentLat, currentLng) => any",
-          "summary": "public method L435-L504 (70 lines)"
+          "summary": "public method L412-L481 (70 lines)"
         },
         {
           "name": "CheckinController.#renderGeofenceStatusUI",
           "kind": "private method",
-          "startLine": 506,
-          "endLine": 556,
+          "startLine": 483,
+          "endLine": 533,
           "signature": "() => any",
-          "summary": "private method L506-L556 (51 lines)"
+          "summary": "private method L483-L533 (51 lines)"
         },
         {
           "name": "CheckinController.#initLocaV2ModeAndChips",
           "kind": "private method",
-          "startLine": 558,
-          "endLine": 560,
+          "startLine": 535,
+          "endLine": 537,
           "signature": "() => any",
-          "summary": "private method L558-L560 (3 lines)"
+          "summary": "private method L535-L537 (3 lines)"
         },
         {
           "name": "CheckinController.#initModeSwitcher",
           "kind": "private method",
-          "startLine": 562,
-          "endLine": 652,
+          "startLine": 539,
+          "endLine": 629,
           "signature": "() => any",
-          "summary": "private method L562-L652 (91 lines)"
+          "summary": "private method L539-L629 (91 lines)"
         },
         {
           "name": "setActiveOffsiteGps",
           "kind": "arrow_fn",
-          "startLine": 614,
-          "endLine": 623,
+          "startLine": 591,
+          "endLine": 600,
           "signature": "(source) => inferred",
-          "summary": "Arrow Function L614-L623"
+          "summary": "Arrow Function L591-L600"
         },
         {
           "name": "CheckinController.#initViewGpsMapModal",
           "kind": "private method",
-          "startLine": 654,
-          "endLine": 661,
+          "startLine": 631,
+          "endLine": 638,
           "signature": "() => any",
-          "summary": "private method L654-L661 (8 lines)"
+          "summary": "private method L631-L638 (8 lines)"
         },
         {
           "name": "CheckinController.#openViewGpsMapModal",
           "kind": "private method",
-          "startLine": 663,
-          "endLine": 709,
+          "startLine": 640,
+          "endLine": 686,
           "signature": "() => any",
-          "summary": "private method L663-L709 (47 lines)"
+          "summary": "private method L640-L686 (47 lines)"
         },
         {
           "name": "#goToStep",
           "kind": "private method",
-          "startLine": 712,
-          "endLine": 777,
+          "startLine": 689,
+          "endLine": 754,
           "signature": "(step) => any",
-          "summary": "private method L712-L777 (66 lines)"
+          "summary": "private method L689-L754 (66 lines)"
         },
         {
           "name": "#updateStep1Validation",
           "kind": "private method",
-          "startLine": 779,
-          "endLine": 814,
+          "startLine": 756,
+          "endLine": 791,
           "signature": "() => any",
-          "summary": "private method L779-L814 (36 lines)"
+          "summary": "private method L756-L791 (36 lines)"
         },
         {
           "name": "#openOffsiteMapModal",
           "kind": "private method",
-          "startLine": 816,
-          "endLine": 877,
+          "startLine": 793,
+          "endLine": 854,
           "signature": "() => any",
-          "summary": "private method L816-L877 (62 lines)"
+          "summary": "private method L793-L854 (62 lines)"
         },
         {
           "name": "#updateOffsiteModalMarker",
           "kind": "private async method",
-          "startLine": 880,
-          "endLine": 916,
+          "startLine": 857,
+          "endLine": 893,
           "signature": "(lat, lng, explicitName = null) => Promise<any>",
-          "summary": "private async method L880-L916 (37 lines)"
+          "summary": "private async method L857-L893 (37 lines)"
         },
         {
           "name": "#initOffsiteModalGps",
           "kind": "private method",
-          "startLine": 918,
-          "endLine": 1015,
+          "startLine": 895,
+          "endLine": 992,
           "signature": "() => any",
-          "summary": "private method L918-L1015 (98 lines)"
+          "summary": "private method L895-L992 (98 lines)"
         },
         {
           "name": "closeModal",
           "kind": "arrow_fn",
-          "startLine": 927,
-          "endLine": 933,
+          "startLine": 904,
+          "endLine": 910,
           "signature": "() => inferred",
-          "summary": "Arrow Function L927-L933"
+          "summary": "Arrow Function L904-L910"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 974,
-          "endLine": 1014,
+          "startLine": 951,
+          "endLine": 991,
           "signature": "() => inferred",
-          "summary": "Arrow Function L974-L1014"
+          "summary": "Arrow Function L951-L991"
         },
         {
           "name": "#renderUserAndSettingsInfo",
           "kind": "private method",
-          "startLine": 1028,
-          "endLine": 1117,
+          "startLine": 1005,
+          "endLine": 1094,
           "signature": "() => any",
-          "summary": "private method L1028-L1117 (90 lines)"
+          "summary": "private method L1005-L1094 (90 lines)"
         },
         {
           "name": "setElText",
           "kind": "arrow_fn",
-          "startLine": 1033,
-          "endLine": 1036,
+          "startLine": 1010,
+          "endLine": 1013,
           "signature": "(id, text) => inferred",
-          "summary": "Arrow Function L1033-L1036"
+          "summary": "Arrow Function L1010-L1013"
         },
         {
           "name": "#refreshAllAttendanceData",
           "kind": "private async method",
-          "startLine": 1119,
-          "endLine": 1136,
+          "startLine": 1096,
+          "endLine": 1113,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1119-L1136 (18 lines)"
+          "summary": "private async method L1096-L1113 (18 lines)"
         },
         {
           "name": "#updateStatusCardsAndMainButton",
           "kind": "private method",
-          "startLine": 1138,
-          "endLine": 1231,
+          "startLine": 1115,
+          "endLine": 1208,
           "signature": "() => any",
-          "summary": "private method L1138-L1231 (94 lines)"
+          "summary": "private method L1115-L1208 (94 lines)"
         },
         {
           "name": "#renderPersonalAttendanceTabs",
           "kind": "private method",
-          "startLine": 1233,
-          "endLine": 1276,
+          "startLine": 1210,
+          "endLine": 1253,
           "signature": "() => any",
-          "summary": "private method L1233-L1276 (44 lines)"
+          "summary": "private method L1210-L1253 (44 lines)"
         },
         {
           "name": "#buildHistoryRowHtml",
           "kind": "private method",
-          "startLine": 1278,
-          "endLine": 1297,
+          "startLine": 1255,
+          "endLine": 1274,
           "signature": "(item, rowNumber) => any",
-          "summary": "private method L1278-L1297 (20 lines)"
+          "summary": "private method L1255-L1274 (20 lines)"
         },
         {
           "name": "#renderSpecialRequestsHistoryTable",
           "kind": "private method",
-          "startLine": 1299,
-          "endLine": 1341,
+          "startLine": 1276,
+          "endLine": 1318,
           "signature": "() => any",
-          "summary": "private method L1299-L1341 (43 lines)"
+          "summary": "private method L1276-L1318 (43 lines)"
         },
         {
           "name": "#openFullscreenCamera",
           "kind": "private async method",
-          "startLine": 1343,
-          "endLine": 1389,
+          "startLine": 1320,
+          "endLine": 1366,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1343-L1389 (47 lines)"
+          "summary": "private async method L1320-L1366 (47 lines)"
         },
         {
           "name": "#captureAndCloseCamera",
           "kind": "private method",
-          "startLine": 1391,
-          "endLine": 1422,
+          "startLine": 1368,
+          "endLine": 1399,
           "signature": "() => any",
-          "summary": "private method L1391-L1422 (32 lines)"
+          "summary": "private method L1368-L1399 (32 lines)"
         },
         {
           "name": "#closeFullscreenCamera",
           "kind": "private method",
-          "startLine": 1424,
-          "endLine": 1427,
+          "startLine": 1401,
+          "endLine": 1404,
           "signature": "() => any",
-          "summary": "private method L1424-L1427 (4 lines)"
+          "summary": "private method L1401-L1404 (4 lines)"
         },
         {
           "name": "#checkCameraHardware",
           "kind": "private async method",
-          "startLine": 1429,
-          "endLine": 1443,
+          "startLine": 1406,
+          "endLine": 1420,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1429-L1443 (15 lines)"
+          "summary": "private async method L1406-L1420 (15 lines)"
         },
         {
           "name": "#handleFallbackFileSelected",
           "kind": "private method",
-          "startLine": 1445,
-          "endLine": 1509,
+          "startLine": 1422,
+          "endLine": 1486,
           "signature": "(file) => any",
-          "summary": "private method L1445-L1509 (65 lines)"
+          "summary": "private method L1422-L1486 (65 lines)"
         },
         {
           "name": "#stopCameraHardwareStream",
           "kind": "private method",
-          "startLine": 1511,
-          "endLine": 1522,
+          "startLine": 1488,
+          "endLine": 1499,
           "signature": "() => any",
-          "summary": "private method L1511-L1522 (12 lines)"
+          "summary": "private method L1488-L1499 (12 lines)"
         },
         {
           "name": "#stopCameraAndShowStandby",
           "kind": "private method",
-          "startLine": 1524,
-          "endLine": 1550,
+          "startLine": 1501,
+          "endLine": 1527,
           "signature": "() => any",
-          "summary": "private method L1524-L1550 (27 lines)"
+          "summary": "private method L1501-L1527 (27 lines)"
         },
         {
           "name": "#openCameraOnDemand",
           "kind": "private async method",
-          "startLine": 1552,
-          "endLine": 1621,
+          "startLine": 1529,
+          "endLine": 1598,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1552-L1621 (70 lines)"
+          "summary": "private async method L1529-L1598 (70 lines)"
         },
         {
           "name": "#capturePhotoAndStopStream",
           "kind": "private method",
-          "startLine": 1623,
-          "endLine": 1655,
+          "startLine": 1600,
+          "endLine": 1632,
           "signature": "() => any",
-          "summary": "private method L1623-L1655 (33 lines)"
+          "summary": "private method L1600-L1632 (33 lines)"
         },
         {
           "name": "#resetPageAfterSave",
           "kind": "private async method",
-          "startLine": 1657,
-          "endLine": 1672,
+          "startLine": 1634,
+          "endLine": 1649,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1657-L1672 (16 lines)"
+          "summary": "private async method L1634-L1649 (16 lines)"
         },
         {
           "name": "#initGpsLocation",
           "kind": "private async method",
-          "startLine": 1680,
-          "endLine": 1777,
+          "startLine": 1657,
+          "endLine": 1754,
           "signature": "() => Promise<any>",
           "summary": "3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง [\"ใกล้เคียง \" + ชื่อซอย]"
         },
         {
           "name": "#renderInlineGpsMap",
           "kind": "private method",
-          "startLine": 1779,
-          "endLine": 1845,
+          "startLine": 1756,
+          "endLine": 1822,
           "signature": "(lat, lng) => any",
-          "summary": "private method L1779-L1845 (67 lines)"
+          "summary": "private method L1756-L1822 (67 lines)"
         },
         {
           "name": "#bindEvents",
           "kind": "private method",
-          "startLine": 1848,
-          "endLine": 2145,
+          "startLine": 1825,
+          "endLine": 2122,
           "signature": "() => any",
-          "summary": "private method L1848-L2145 (298 lines)"
+          "summary": "private method L1825-L2122 (298 lines)"
         },
         {
           "name": "openSpecialModal",
           "kind": "arrow_fn",
-          "startLine": 2011,
-          "endLine": 2014,
+          "startLine": 1988,
+          "endLine": 1991,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2011-L2014"
+          "summary": "Arrow Function L1988-L1991"
         },
         {
           "name": "setDesktopActiveTab",
           "kind": "arrow_fn",
-          "startLine": 2049,
-          "endLine": 2068,
+          "startLine": 2026,
+          "endLine": 2045,
           "signature": "(activeName) => inferred",
-          "summary": "Arrow Function L2049-L2068"
+          "summary": "Arrow Function L2026-L2045"
         },
         {
           "name": "openMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2079,
-          "endLine": 2097,
+          "startLine": 2056,
+          "endLine": 2074,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2079-L2097"
+          "summary": "Arrow Function L2056-L2074"
         },
         {
           "name": "closeMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2099,
-          "endLine": 2126,
+          "startLine": 2076,
+          "endLine": 2103,
           "signature": "(targetTab = null) => inferred",
-          "summary": "Arrow Function L2099-L2126"
+          "summary": "Arrow Function L2076-L2103"
         },
         {
           "name": "#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 2147,
-          "endLine": 2510,
+          "startLine": 2124,
+          "endLine": 2487,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2147-L2510 (364 lines)"
+          "summary": "private async method L2124-L2487 (364 lines)"
         },
         {
           "name": "#openSpecialRequestModal",
           "kind": "private method",
-          "startLine": 2512,
-          "endLine": 2542,
+          "startLine": 2489,
+          "endLine": 2519,
           "signature": "() => any",
-          "summary": "private method L2512-L2542 (31 lines)"
+          "summary": "private method L2489-L2519 (31 lines)"
         },
         {
           "name": "#initSpecialModalGps",
           "kind": "private method",
-          "startLine": 2544,
-          "endLine": 2647,
+          "startLine": 2521,
+          "endLine": 2624,
           "signature": "() => any",
-          "summary": "private method L2544-L2647 (104 lines)"
+          "summary": "private method L2521-L2624 (104 lines)"
         },
         {
           "name": "updateCustomPinAndLocation",
           "kind": "async_arrow_fn",
-          "startLine": 2556,
-          "endLine": 2604,
+          "startLine": 2533,
+          "endLine": 2581,
           "signature": "(lat, lng, flyTo = false, explicitName = null) => inferred",
-          "summary": "Arrow Function L2556-L2604"
+          "summary": "Arrow Function L2533-L2581"
         },
         {
           "name": "setupMapIfAvailable",
           "kind": "arrow_fn",
-          "startLine": 2606,
-          "endLine": 2641,
+          "startLine": 2583,
+          "endLine": 2618,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2606-L2641"
+          "summary": "Arrow Function L2583-L2618"
         },
         {
           "name": "getDistanceInMeters",
           "kind": "arrow_fn",
-          "startLine": 2666,
-          "endLine": 2685,
+          "startLine": 2643,
+          "endLine": 2662,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L2666-L2685"
+          "summary": "Arrow Function L2643-L2662"
         },
         {
           "name": "calculateDistance",
           "kind": "arrow_fn",
-          "startLine": 2687,
-          "endLine": 2696,
+          "startLine": 2664,
+          "endLine": 2673,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L2687-L2696"
+          "summary": "Arrow Function L2664-L2673"
         },
         {
           "name": "getCategoryLabel",
           "kind": "arrow_fn",
-          "startLine": 2698,
-          "endLine": 2737,
+          "startLine": 2675,
+          "endLine": 2714,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L2698-L2737"
+          "summary": "Arrow Function L2675-L2714"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 2739,
-          "endLine": 2747,
+          "startLine": 2716,
+          "endLine": 2724,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L2739-L2747"
+          "summary": "Arrow Function L2716-L2724"
         },
         {
           "name": "formatSubAddress",
           "kind": "arrow_fn",
-          "startLine": 2749,
-          "endLine": 2765,
+          "startLine": 2726,
+          "endLine": 2742,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L2749-L2765"
+          "summary": "Arrow Function L2726-L2742"
         },
         {
           "name": "getMainName",
           "kind": "arrow_fn",
-          "startLine": 2767,
-          "endLine": 2775,
+          "startLine": 2744,
+          "endLine": 2752,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L2767-L2775"
+          "summary": "Arrow Function L2744-L2752"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 2777,
-          "endLine": 2782,
+          "startLine": 2754,
+          "endLine": 2759,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2777-L2782"
+          "summary": "Arrow Function L2754-L2759"
         },
         {
           "name": "bindResultItemClicks",
           "kind": "arrow_fn",
-          "startLine": 2784,
-          "endLine": 2800,
+          "startLine": 2761,
+          "endLine": 2777,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2784-L2800"
+          "summary": "Arrow Function L2761-L2777"
         },
         {
           "name": "renderCoordsResult",
           "kind": "arrow_fn",
-          "startLine": 2802,
-          "endLine": 2826,
+          "startLine": 2779,
+          "endLine": 2803,
           "signature": "(lat, lng) => inferred",
-          "summary": "Arrow Function L2802-L2826"
+          "summary": "Arrow Function L2779-L2803"
         },
         {
           "name": "renderPlaceResults",
           "kind": "arrow_fn",
-          "startLine": 2828,
-          "endLine": 2873,
+          "startLine": 2805,
+          "endLine": 2850,
           "signature": "(items) => inferred",
-          "summary": "Arrow Function L2828-L2873"
+          "summary": "Arrow Function L2805-L2850"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 2878,
-          "endLine": 3050,
+          "startLine": 2855,
+          "endLine": 3027,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2878-L3050"
+          "summary": "Arrow Function L2855-L3027"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 3090,
-          "endLine": 3165,
+          "startLine": 3067,
+          "endLine": 3142,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L3090-L3165 (76 lines)"
+          "summary": "private async method L3067-L3142 (76 lines)"
         }
       ]
     },
@@ -3108,7 +3108,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "55c199f3f3131960",
+      "fileHash": "de736a001ef95fd1",
       "totalLines": 1014,
       "importsCount": 0,
       "importsPreview": [],
@@ -3327,7 +3327,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "85361ae71d0ce40e",
+      "fileHash": "9d69914131bd8324",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -3633,7 +3633,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "264ae4b1d80a2250",
+      "fileHash": "4ec52dfce4dfcba8",
       "totalLines": 378,
       "importsCount": 0,
       "importsPreview": [],
@@ -3692,7 +3692,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "31e039e2827071f3",
+      "fileHash": "b45d9f8c7dd6c1fb",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -5690,7 +5690,7 @@
     {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "cef83452f620fbe3",
+      "fileHash": "4132d040b0a137c5",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -5773,7 +5773,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ceea0d2905c8d7d9",
+      "fileHash": "88755006f58f7ead",
       "totalLines": 778,
       "importsCount": 0,
       "importsPreview": [],
@@ -6333,7 +6333,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3a9774d3ac5a8d38",
+      "fileHash": "4820e0214010625c",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],

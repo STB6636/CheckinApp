@@ -115,40 +115,17 @@ export class CheckinController {
         const showGps = Boolean(this.settings?.require_gps);
 
         const cameraCard = document.getElementById('cameraSectionCard');
-        const rightWrapper = document.getElementById('rightColumnWrapper');
+        const photoPreviewCard = document.getElementById('photoPreviewCard');
         const gpsCard = document.getElementById('gpsSectionCard');
-        const actionCard = document.getElementById('checkinActionCard');
 
-        if (!cameraCard || !rightWrapper || !gpsCard || !actionCard) return;
-
-        if (showPhoto && showGps) {
-            cameraCard.classList.remove('hidden');
-            gpsCard.classList.remove('hidden');
-
-            cameraCard.className = 'w-full bma-card p-2 sm:p-2.5 flex flex-col justify-start';
-            rightWrapper.className = 'w-full flex flex-col gap-3 lg:gap-3.5';
-            gpsCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
-            actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between';
-        } else if (!showPhoto && showGps) {
-            cameraCard.classList.add('hidden');
-            gpsCard.classList.remove('hidden');
-
-            rightWrapper.className = 'lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-stretch';
-            gpsCard.className = 'lg:col-span-7 bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full';
-            actionCard.className = 'lg:col-span-5 bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full';
-        } else if (showPhoto && !showGps) {
-            cameraCard.classList.remove('hidden');
-            gpsCard.classList.add('hidden');
-
-            cameraCard.className = 'w-full bma-card p-2 sm:p-2.5 flex flex-col justify-start h-full';
-            rightWrapper.className = 'w-full flex flex-col justify-stretch';
-            actionCard.className = 'bma-card p-3.5 lg:p-4 space-y-2 lg:space-y-2.5 flex flex-col justify-between h-full w-full';
-        } else {
-            cameraCard.classList.add('hidden');
-            gpsCard.classList.add('hidden');
-
-            rightWrapper.className = 'lg:col-span-12 max-w-2xl w-full mx-auto';
-            actionCard.className = 'bma-card p-4 sm:p-5 space-y-3 flex flex-col justify-between w-full shadow-xl';
+        if (photoPreviewCard) {
+            photoPreviewCard.classList.toggle('hidden', !showPhoto);
+        }
+        if (cameraCard) {
+            cameraCard.classList.toggle('hidden', !showPhoto);
+        }
+        if (gpsCard) {
+            gpsCard.classList.toggle('hidden', !showGps);
         }
     }
 

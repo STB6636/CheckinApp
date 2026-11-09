@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261109_0c02c509';
+            const CURRENT_APP_BUILD = '20261109_052b16a2';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -130,7 +130,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261109_0c02c509">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261109_052b16a2">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -319,7 +319,7 @@
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
-                <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden" style="isolation: isolate; z-index: 0;">
+                <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden p-0" style="isolation: isolate; z-index: 0; padding: 0 !important;">
                     
                     <!-- 1. Header Bar: Light Gray #F1F3F5 (ตรงตามภาพตัวอย่างเป๊ะ ไม่ดำ 100%) -->
                     <div class="bg-[#F1F3F5] px-2.5 py-1.5 border-b border-slate-200/80 flex items-center justify-between shrink-0">
@@ -880,7 +880,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261109_0c02c509"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261109_052b16a2"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
