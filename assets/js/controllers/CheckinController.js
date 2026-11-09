@@ -45,6 +45,7 @@ export class CheckinController {
         this.locationMode = 'ONSITE';
         this.geofenceResult = null;
         this.selectedOffsiteRemark = 'ปฏิบัติงานนอกสถานที่';
+        this.selectedOffsiteGpsSource = 'current';
         this.offsiteCustomGps = {
             mode: 'current',
             lat: null,
@@ -540,18 +541,40 @@ export class CheckinController {
         const btnOnsite = document.getElementById('btnModeOnsite');
         const btnOffsite = document.getElementById('btnModeOffsite');
         const offsiteSection = document.getElementById('offsiteLocationSection');
+        const btnCurrent = document.getElementById('btnOffsiteGpsCurrent');
+        const btnMap = document.getElementById('btnOpenOffsiteMapModal');
 
-        btnOnsite?.addEventListener('click', () => {
+        const setActiveOffsiteGps = (source) => {
+            if (!btnCurrent || !btnMap) return;
+            if (source === 'current') {
+                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                btnMap.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+            } else {
+                btnMap.className = 'py-2 px-2.5 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+            }
+        };
+
+        setActiveOffsiteGps('current');
+        this.selectedOffsiteGpsSource = 'current';
+
+        btnOnsite?.addEventListener('click', async () => {
+            const wasOffsite = this.locationMode === 'OFFSITE';
             this.locationMode = 'ONSITE';
             btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-[#00744B] text-white shadow-xs';
             btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
             offsiteSection?.classList.add('hidden');
+            if (wasOffsite) {
+                await this.#initGpsLocation();
+            }
             this.#renderGeofenceStatusUI();
             this.#updateStatusCardsAndMainButton();
         });
 
         btnOffsite?.addEventListener('click', () => {
             this.locationMode = 'OFFSITE';
+            this.selectedOffsiteGpsSource = 'current';
+            setActiveOffsiteGps('current');
             btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-sky-600 text-white shadow-xs';
             btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
             offsiteSection?.classList.remove('hidden');
@@ -585,29 +608,15 @@ export class CheckinController {
             });
         }
 
-        const btnCurrent = document.getElementById('btnOffsiteGpsCurrent');
-        const btnMap = document.getElementById('btnOpenOffsiteMapModal');
-
-        const setActiveOffsiteGps = (source) => {
-            if (!btnCurrent || !btnMap) return;
-            if (source === 'current') {
-                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
-                btnMap.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
-            } else {
-                btnMap.className = 'py-2 px-2.5 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
-                btnCurrent.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
-            }
-        };
-
-        setActiveOffsiteGps('current');
-
         btnCurrent?.addEventListener('click', async () => {
+            this.selectedOffsiteGpsSource = 'current';
             setActiveOffsiteGps('current');
             await this.#initGpsLocation();
             UIHelpers.showToast('อัปเดตพิกัดปัจจุบันสำหรับการปฏิบัติงานนอกสถานที่แล้ว', 'success');
         });
 
         btnMap?.addEventListener('click', () => {
+            this.selectedOffsiteGpsSource = 'map';
             setActiveOffsiteGps('map');
             this.#openOffsiteMapModal();
         });
@@ -917,6 +926,8 @@ export class CheckinController {
                 this.offsiteCustomGps.lat = this.tempOffsiteLocation.lat;
                 this.offsiteCustomGps.lng = this.tempOffsiteLocation.lng;
                 this.offsiteCustomGps.locationName = this.tempOffsiteLocation.name;
+                this.offsiteCustomGps.mode = 'map';
+                this.selectedOffsiteGpsSource = 'map';
 
                 this.gpsData.lat = this.tempOffsiteLocation.lat;
                 this.gpsData.lng = this.tempOffsiteLocation.lng;
@@ -932,6 +943,8 @@ export class CheckinController {
                 const mainGpsName = document.getElementById('gpsLocationNameText');
                 if (mainGpsCoords) mainGpsCoords.textContent = `${this.gpsData.lat.toFixed(6)}, ${this.gpsData.lng.toFixed(6)}`;
                 if (mainGpsName) mainGpsName.textContent = this.gpsData.locationName;
+
+                this.#renderInlineGpsMap(this.gpsData.lat, this.gpsData.lng);
 
                 const btnCurrent = document.getElementById('btnOffsiteGpsCurrent');
                 const btnMap = document.getElementById('btnOpenOffsiteMapModal');

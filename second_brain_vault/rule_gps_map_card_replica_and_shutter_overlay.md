@@ -38,6 +38,9 @@ flow_links: ["FLOW_CHECKIN_01", "FLOW_GPS_01", "FLOW_LAYOUT_01"]
 7. **การป้องกันการเขียนทับคลาส Padding ใน JavaScript (Zero Padding Enforcement):**
    - ใน `CheckinController.js` เมธอด `#applyDynamicWorkspaceLayout()` ต้องไม่กำหนด `gpsCard.className = 'bma-card p-3.5 ...'` เด็ดขาด เพราะจะทำให้เบราว์เซอร์เติม padding 14px ล้อมรอบการ์ด GPS จนกลายเป็นการ์ดซ้อนในการ์ด
    - ต้องใช้เพียง `classList.toggle('hidden', ...)` และบังคับ `padding: 0 !important;` บน `#gpsSectionCard` ทั้งใน inline style และ global CSS เพื่อให้หัวข้อและแผนที่แสดงผลแนบชิดขอบการ์ด 100% ("เต็มการ์ด") ตามต้นแบบเสมอ
+8. **การซิงก์พิกัดและการรีเฟรชการ์ด GPS เมื่อสลับโหมดปฏิบัติงาน (Mode Switch GPS Refresh & Custom Map Sync):**
+   - เมื่อสลับกลับมาจากโหมด "นอกสถานที่" สู่ "ในสถานที่" หรือสลับจาก "ค้นหาพิกัดเอง" กลับมา "GPS ปัจจุบัน": ต้องเรียก `await this.#initGpsLocation()` เพื่อค้นหาตำแหน่งพิกัดสดใหม่ทันที
+   - เมื่อผู้ใช้เลือกและยืนยันตำแหน่งจากโมดอลค้นหาพิกัดนอกสถานที่: ต้องเรียก `this.#renderInlineGpsMap(lat, lng)` เพื่อย้ายหมุดสีแดงและเลื่อนจุดกึ่งกลางแผนที่ Leaflet ในการ์ด GPS หน้าหลักไปยังพิกัดที่ยืนยันทันที พร้อมอัปเดต `#gpsLocationNameText`
 
 ## 3. รายการ DOM IDs ที่ต้องรักษาไว้ครบถ้วน (Zero Breaking Changes)
 - `gpsSectionCard`

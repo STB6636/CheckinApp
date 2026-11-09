@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan — ระบบสลับโหมดใน/นอกสถานที่ และการซิงก์พิกัดการ์ด GPS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background-color: #0f172a;
+            color: #334155;
+        }
+        .q-card-exact {
+            background-color: #F5F5F5;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 16px;
+            box-shadow: none;
+            overflow: hidden;
+            padding: 0 !important;
+        }
+        .pulse-marker {
+            animation: pulseAnim 1.5s infinite;
+        }
+        @keyframes pulseAnim {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-6xl mx-auto space-y-6">
+
+        <!-- Top Header -->
+        <header class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2.5">
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase tracking-wider">
+                        PLAN MODE • SMART GPS MODE SYNC
+                    </span>
+                    <span class="text-xs text-slate-400">Task: PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-black text-white mt-2 flex items-center gap-3">
+                    <i class="fa-solid fa-arrows-spin text-emerald-400"></i>
+                    <span>แผนปรับปรุงระบบสลับโหมด "ในสถานที่ / นอกสถานที่" และการซิงก์การ์ด GPS</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    ค้นหาพิกัดใหม่ทุกครั้งเมื่อสลับกลับโหมดปกติ พร้อมซิงก์พิกัดและชื่อสถานที่ลงการ์ด GPS หน้าหลักทันทีเมื่อเลือก "ค้นหาพิกัดเอง"
+                </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="px-3.5 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    <span>รอการอนุมัติ (Proceed)</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Feature Requirements Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Requirement 1 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2.5">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <span class="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">1</span>
+                    <span>ตัวเลือก "ในสถานที่" (Onsite)</span>
+                </div>
+                <ul class="text-xs text-slate-300 space-y-1.5">
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-check text-emerald-400 mt-0.5 shrink-0"></i>
+                        <span>เป็น <strong>ตัวเลือกค่าเริ่มต้น</strong> ทุกครั้งเมื่อเปิดระบบ</span>
+                    </li>
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-rotate text-emerald-400 mt-0.5 shrink-0"></i>
+                        <span>เมื่อสลับไป "นอกสถานที่" แล้ว <strong>กลับมาเลือก "ในสถานที่"</strong> ระบบจะเริ่มกระบวนการค้นหาพิกัดใหม่ทันที เพื่อปรับปรุงการ์ด GPS ให้เป็นปัจจุบัน</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Requirement 2 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2.5">
+                <div class="flex items-center gap-2 text-sky-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <span class="w-6 h-6 rounded-lg bg-sky-500/20 flex items-center justify-center">2</span>
+                    <span>ตัวเลือก "นอกสถานที่" (Offsite)</span>
+                </div>
+                <ul class="text-xs text-slate-300 space-y-1.5">
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-check text-sky-400 mt-0.5 shrink-0"></i>
+                        <span>กำหนดให้ตัวเลือก <strong>"GPS ปัจจุบัน"</strong> เป็นค่าเริ่มต้นเสมอเมื่อกดเข้ามา</span>
+                    </li>
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-rotate text-sky-400 mt-0.5 shrink-0"></i>
+                        <span>หากไปเลือก "ค้นหาพิกัดเอง" แล้ว <strong>กลับมาใช้ "GPS ปัจจุบัน"</strong> ให้เริ่มกระบวนการค้นหาตำแหน่งใหม่ทันที</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Requirement 3 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2.5">
+                <div class="flex items-center gap-2 text-indigo-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <span class="w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center">3</span>
+                    <span>ตัวเลือก "ค้นหาพิกัดเอง" (Custom)</span>
+                </div>
+                <ul class="text-xs text-slate-300 space-y-1.5">
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-map-pin text-indigo-400 mt-0.5 shrink-0"></i>
+                        <span>เมื่อค้นหาหรือเลือกจุดบนแผนที่ แล้ว <strong>กดยืนยันตำแหน่งนี้</strong></span>
+                    </li>
+                    <li class="flex items-start gap-1.5">
+                        <i class="fa-solid fa-sync text-indigo-400 mt-0.5 shrink-0"></i>
+                        <span><strong>ย้ายพิกัดและหมุดในการ์ด GPS</strong> หน้าหลักไปยังตำแหน่งที่เลือกทันที พร้อมอัปเดตชื่อสถานที่ตามที่ค้นหา</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Live Interactive Simulator Stage -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen-button text-emerald-400"></i>
+                        <span>จำลองการทำงานจริงบนหน้าจอลงเวลา (Interactive Cockpit)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400">ทดลองกดสลับโหมด หรือกด "ค้นหาพิกัดเอง" แล้วยืนยันสถานที่เพื่อดูการซิงก์การ์ด GPS แบบเรียลไทม์</p>
+                </div>
+                <span id="simulatorStatusToast" class="hidden px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition-all"></span>
+            </div>
+
+            <div class="max-w-md mx-auto bg-slate-950 p-4 sm:p-5 rounded-3xl border border-slate-800 shadow-2xl space-y-3.5">
+                
+                <!-- Status Banner -->
+                <div class="p-3 rounded-2xl bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex items-center justify-between shadow-md">
+                    <div>
+                        <div class="text-[11px] font-medium text-emerald-200">ลงเวลาเข้างาน</div>
+                        <div class="text-xs font-bold">พร้อมบันทึกเวลาทำงานวันนี้</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-base font-black font-mono">15:40:22 น.</div>
+                        <div class="text-[9px] text-emerald-200">เวลาปัจจุบัน</div>
+                    </div>
+                </div>
+
+                <!-- Cockpit Split 2 Columns -->
+                <div class="grid grid-cols-2 gap-2.5 items-stretch w-full">
+                    
+                    <!-- Left: Camera Box (Mockup) -->
+                    <div class="relative w-full aspect-[3/4] max-h-[30dvh] rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group">
+                        <div class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-500">
+                            <i class="fa-solid fa-user text-3xl text-slate-600 mb-0.5"></i>
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div class="w-10 h-10 rounded-full bg-slate-900/70 text-white backdrop-blur-sm border-2 border-white/70 shadow-lg flex items-center justify-center">
+                                <i class="fa-solid fa-camera text-sm text-amber-300"></i>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-1.5 inset-x-1.5 text-center pointer-events-none">
+                            <span class="inline-block px-2 py-0.5 rounded-full bg-black/60 text-[8.5px] text-white font-medium">แตะเพื่อถ่ายรูป</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: THE 100% EDGE-TO-EDGE GPS CARD -->
+                    <div id="simGpsCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden" style="padding: 0 !important; isolation: isolate; z-index: 0;">
+                        
+                        <!-- 1. Header Bar: bg-[#F1F3F5] flush edge-to-edge -->
+                        <div class="bg-[#F1F3F5] px-2.5 py-1.5 border-b border-slate-200/80 flex items-center justify-between shrink-0">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <i id="simGpsPinIcon" class="fa-solid fa-location-dot text-teal-600 text-xs shrink-0"></i>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-1 text-[8.5px] text-slate-500 font-medium">
+                                        <span id="simGpsHeaderSubtitle">พื้นที่ใกล้เคียง</span>
+                                        <i class="fa-solid fa-circle-info text-[7.5px] text-slate-400"></i>
+                                    </div>
+                                    <div id="simGpsLocationName" class="text-[10px] sm:text-[11px] font-bold text-slate-800 truncate leading-tight">
+                                        สำนักงานเทศกิจ
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-up text-slate-400 text-[10px] shrink-0"></i>
+                        </div>
+
+                        <!-- 2. Integrated Map Container -->
+                        <div class="relative flex-1 w-full h-full min-h-0 bg-slate-100 overflow-hidden rounded-b-2xl">
+                            <div id="simLeafletMap" class="w-full h-full"></div>
+
+                            <!-- Floating Shutter Refresh Button -->
+                            <div class="absolute bottom-2.5 inset-x-0 flex items-center justify-center pointer-events-none z-[10]">
+                                <button type="button" id="simBtnRefreshGps" class="w-9 h-9 rounded-full bg-white text-emerald-700 shadow-md border-2 border-white flex items-center justify-center pointer-events-auto cursor-pointer hover:bg-emerald-50 active:scale-90 transition" title="กดเพื่อระบุตำแหน่งใหม่">
+                                    <i id="simRefreshSpinner" class="fa-solid fa-arrows-rotate text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode Switcher Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-3 shadow-sm border border-slate-200/80 dark:border-slate-700/60 space-y-2.5 text-xs">
+                    
+                    <!-- Segmented Mode Buttons -->
+                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+                        <button type="button" id="simBtnOnsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-[#00744B] text-white shadow-xs cursor-pointer">
+                            <i class="fa-solid fa-building-circle-check"></i>
+                            <span>ในสถานที่</span>
+                        </button>
+                        <button type="button" id="simBtnOffsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>นอกสถานที่</span>
+                        </button>
+                    </div>
+
+                    <!-- Onsite Geofence Status Card -->
+                    <div id="simOnsiteGeofenceCard" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 text-[11px]">
+                                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                <span>สถานะรัศมีสถานที่ทำงาน:</span>
+                            </span>
+                            <span id="simGeofenceBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">อยู่ในสถานที่</span>
+                        </div>
+                        <div id="simGeofenceText" class="text-[10px] text-slate-600 dark:text-slate-400">
+                            อยู่ในสถานที่ปฏิบัติงาน "สำนักงานเทศกิจ" (ห่าง 72 ม. / รัศมี 700 ม.)
+                        </div>
+                    </div>
+
+                    <!-- Offsite Location Section (Hidden by default) -->
+                    <div id="simOffsiteSection" class="hidden space-y-2.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">ลักษณะงานนอกสถานที่ *</label>
+                            <select class="w-full py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs">
+                                <option>ปฏิบัติงานที่บ้าน (WFH)</option>
+                                <option>ปฏิบัติงานนอกสถานที่ (WFA)</option>
+                                <option>ไปประชุม / สัมมนา / ฝึกอบรม</option>
+                                <option>ตรวจพื้นที่ / ตรวจราชการภายนอก</option>
+                            </select>
+                        </div>
+
+                        <!-- Offsite GPS Source Selector -->
+                        <div class="space-y-1">
+                            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 block">เลือกแหล่งพิกัด:</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" id="simBtnGpsCurrent" class="py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                    <i class="fa-solid fa-location-crosshairs"></i>
+                                    <span>GPS ปัจจุบัน</span>
+                                </button>
+                                <button type="button" id="simBtnOpenCustomMapModal" class="py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer hover:bg-slate-200">
+                                    <i class="fa-solid fa-map-pin"></i>
+                                    <span>ค้นหาพิกัดเอง</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="simCustomLocDisplay" class="hidden p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-[11px] text-indigo-900 dark:text-indigo-200 flex items-center justify-between">
+                            <span class="truncate">📍 <strong id="simConfirmedLocName">-</strong></span>
+                            <span class="text-[9px] text-indigo-500 font-mono" id="simConfirmedLocCoords">-</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Simulated Modal Search (Popup) -->
+        <div id="simModalSearch" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+            <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2.5">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot text-[#00744B]"></i>
+                        <span>ค้นหา/ปักหมุดสถานที่ปฏิบัติงานนอกสถานที่</span>
+                    </h3>
+                    <button type="button" id="simBtnCloseModal" class="p-1 rounded-lg text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+                </div>
+
+                <div class="space-y-2">
+                    <span class="text-xs text-slate-500">เลือกสถานที่ตัวอย่างสำหรับทดสอบ:</span>
+                    <div class="space-y-1.5">
+                        <button type="button" class="sim-sample-poi w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-left hover:bg-emerald-50 dark:hover:bg-slate-700 transition flex items-center justify-between" data-name="ศาลาว่าการกรุงเทพมหานคร (เสาชิงช้า)" data-lat="13.7525" data-lng="100.5015">
+                            <div>
+                                <div class="font-bold text-xs text-slate-800 dark:text-white">ศาลาว่าการกรุงเทพมหานคร (เสาชิงช้า)</div>
+                                <div class="text-[10px] text-slate-400">ถนนดินสอ แขวงเสาชิงช้า เขตพระนคร</div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-300 text-sm check-icon"></i>
+                        </button>
+
+                        <button type="button" class="sim-sample-poi w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-left hover:bg-emerald-50 dark:hover:bg-slate-700 transition flex items-center justify-between" data-name="สำนักงานเขตบางกอกน้อย" data-lat="13.7578" data-lng="100.4789">
+                            <div>
+                                <div class="font-bold text-xs text-slate-800 dark:text-white">สำนักงานเขตบางกอกน้อย</div>
+                                <div class="text-[10px] text-slate-400">ถนนจรัญสนิทวงศ์ แขวงบางขุนศรี</div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-300 text-sm check-icon"></i>
+                        </button>
+
+                        <button type="button" class="sim-sample-poi w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-left hover:bg-emerald-50 dark:hover:bg-slate-700 transition flex items-center justify-between" data-name="ศูนย์เยาวชนกรุงเทพมหานคร (ไทย-ญี่ปุ่น)" data-lat="13.7663" data-lng="100.5534">
+                            <div>
+                                <div class="font-bold text-xs text-slate-800 dark:text-white">ศูนย์เยาวชนกรุงเทพมหานคร (ไทย-ญี่ปุ่น)</div>
+                                <div class="text-[10px] text-slate-400">ถนนมิตรไมตรี แขวงดินแดง เขตดินแดง</div>
+                            </div>
+                            <i class="fa-solid fa-circle-check text-slate-300 text-sm check-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700">
+                    <button type="button" id="simBtnCancelModal" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">ยกเลิก</button>
+                    <button type="button" id="simBtnConfirmModal" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] text-white shadow-md hover:bg-[#005B3A] transition">ยืนยันตำแหน่งนี้</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Simulator Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultOfficeLat = 13.7387;
+            const defaultOfficeLng = 100.4958;
+            const officeName = "สำนักงานเทศกิจ";
+
+            let currentLat = defaultOfficeLat;
+            let currentLng = defaultOfficeLng;
+            let currentLocName = officeName;
+            let selectedCustomPOI = null;
+
+            // Initialize Simulator Map
+            const map = L.map('simLeafletMap', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([currentLat, currentLng], 16);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            // Red Pin (User Position)
+            const redIcon = L.divIcon({
+                className: '',
+                html: '<div style="color: #dc2626; font-size: 20px; filter: drop-shadow(0 2px 4px rgba(220,38,38,0.5));"><i class="fa-solid fa-location-dot"></i></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 20]
+            });
+            const userMarker = L.marker([currentLat, currentLng], { icon: redIcon }).addTo(map);
+
+            // Blue Pin (Office Target)
+            const blueIcon = L.divIcon({
+                className: '',
+                html: '<div style="color: #2563eb; font-size: 20px; filter: drop-shadow(0 2px 4px rgba(37,99,235,0.5));"><i class="fa-solid fa-location-dot"></i></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 20]
+            });
+            const officeMarker = L.marker([defaultOfficeLat, defaultOfficeLng], { icon: blueIcon }).addTo(map);
+
+            // Radius Circle
+            const radiusCircle = L.circle([defaultOfficeLat, defaultOfficeLng], {
+                radius: 700,
+                color: '#10b981',
+                fillColor: '#10b981',
+                fillOpacity: 0.12,
+                weight: 1.5
+            }).addTo(map);
+
+            function showToast(msg) {
+                const toast = document.getElementById('simulatorStatusToast');
+                toast.textContent = msg;
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2500);
+            }
+
+            function triggerRefreshGpsAnimation(targetLat, targetLng, targetName) {
+                const spinner = document.getElementById('simRefreshSpinner');
+                const nameEl = document.getElementById('simGpsLocationName');
+                spinner.classList.add('fa-spin');
+                nameEl.textContent = 'กำลังค้นหาตำแหน่งพิกัด...';
+
+                setTimeout(() => {
+                    spinner.classList.remove('fa-spin');
+                    userMarker.setLatLng([targetLat, targetLng]);
+                    map.setView([targetLat, targetLng], 16);
+                    map.invalidateSize();
+                    nameEl.textContent = targetName;
+                    showToast('✔ ค้นหาตำแหน่งและอัปเดตการ์ด GPS เรียบร้อย');
+                }, 600);
+            }
+
+            // Mode Switching
+            const btnOnsite = document.getElementById('simBtnOnsite');
+            const btnOffsite = document.getElementById('simBtnOffsite');
+            const offsiteSection = document.getElementById('simOffsiteSection');
+            const onsiteGeofenceCard = document.getElementById('simOnsiteGeofenceCard');
+
+            btnOnsite.addEventListener('click', function() {
+                btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-[#00744B] text-white shadow-xs cursor-pointer';
+                btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+                offsiteSection.classList.add('hidden');
+                onsiteGeofenceCard.classList.remove('hidden');
+
+                // Requirement 1: สลับกลับมา "ในสถานที่" -> เริ่มกระบวนการค้นหาตำแหน่งใหม่
+                triggerRefreshGpsAnimation(defaultOfficeLat, defaultOfficeLng, officeName);
+            });
+
+            btnOffsite.addEventListener('click', function() {
+                btnOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all bg-sky-600 text-white shadow-xs cursor-pointer';
+                btnOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+                offsiteSection.classList.remove('hidden');
+                onsiteGeofenceCard.classList.add('hidden');
+
+                // Requirement 2: นอกสถานที่ใช้ "GPS ปัจจุบัน" เป็นค่าเริ่มต้น
+                setOffsiteChoice('current');
+            });
+
+            // Offsite Choice Buttons
+            const btnGpsCurrent = document.getElementById('simBtnGpsCurrent');
+            const btnOpenCustomMap = document.getElementById('simBtnOpenCustomMapModal');
+            const customDisplay = document.getElementById('simCustomLocDisplay');
+
+            function setOffsiteChoice(choice) {
+                if (choice === 'current') {
+                    btnGpsCurrent.className = 'py-2 px-2.5 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                    btnOpenCustomMap.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer hover:bg-slate-200';
+                    customDisplay.classList.add('hidden');
+                } else {
+                    btnOpenCustomMap.className = 'py-2 px-2.5 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer';
+                    btnGpsCurrent.className = 'py-2 px-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer hover:bg-slate-200';
+                }
+            }
+
+            btnGpsCurrent.addEventListener('click', function() {
+                setOffsiteChoice('current');
+                // Requirement 2: สลับกลับมาใช้ "GPS ปัจจุบัน" -> เริ่มกระบวนการค้นหาตำแหน่งใหม่
+                triggerRefreshGpsAnimation(defaultOfficeLat, defaultOfficeLng, officeName);
+            });
+
+            // Modal Interactions
+            const modal = document.getElementById('simModalSearch');
+            btnOpenCustomMap.addEventListener('click', function() {
+                setOffsiteChoice('map');
+                modal.classList.remove('hidden');
+            });
+
+            document.getElementById('simBtnCloseModal').addEventListener('click', () => modal.classList.add('hidden'));
+            document.getElementById('simBtnCancelModal').addEventListener('click', () => modal.classList.add('hidden'));
+
+            // Sample POI Selection in Modal
+            document.querySelectorAll('.sim-sample-poi').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.sim-sample-poi').forEach(b => {
+                        b.classList.remove('bg-emerald-50', 'border-emerald-500', 'dark:bg-slate-700');
+                        b.querySelector('.check-icon').className = 'fa-solid fa-circle-check text-slate-300 text-sm check-icon';
+                    });
+                    this.classList.add('bg-emerald-50', 'border-emerald-500', 'dark:bg-slate-700');
+                    this.querySelector('.check-icon').className = 'fa-solid fa-circle-check text-emerald-600 text-sm check-icon';
+
+                    selectedCustomPOI = {
+                        name: this.getAttribute('data-name'),
+                        lat: parseFloat(this.getAttribute('data-lat')),
+                        lng: parseFloat(this.getAttribute('data-lng'))
+                    };
+                });
+            });
+
+            // Requirement 3: ยืนยันตำแหน่งนี้ -> อัปเดตพิกัดในการ์ด GPS และชื่อสถานที่ทันที
+            document.getElementById('simBtnConfirmModal').addEventListener('click', function() {
+                if (!selectedCustomPOI) {
+                    alert('กรุณาเลือกสถานที่ตัวอย่างก่อนกดยืนยัน');
+                    return;
+                }
+
+                modal.classList.add('hidden');
+                customDisplay.classList.remove('hidden');
+                document.getElementById('simConfirmedLocName').textContent = selectedCustomPOI.name;
+                document.getElementById('simConfirmedLocCoords').textContent = `${selectedCustomPOI.lat.toFixed(5)}, ${selectedCustomPOI.lng.toFixed(5)}`;
+
+                // ซิงก์การ์ด GPS หน้าหลักทันที 100%
+                userMarker.setLatLng([selectedCustomPOI.lat, selectedCustomPOI.lng]);
+                map.setView([selectedCustomPOI.lat, selectedCustomPOI.lng], 16);
+                map.invalidateSize();
+                document.getElementById('simGpsLocationName').textContent = selectedCustomPOI.name;
+
+                showToast(`✔ ซิงก์ตำแหน่ง "${selectedCustomPOI.name}" ลงการ์ด GPS เรียบร้อย`);
+            });
+
+            // Refresh Button on Card
+            document.getElementById('simBtnRefreshGps').addEventListener('click', function() {
+                triggerRefreshGpsAnimation(defaultOfficeLat, defaultOfficeLng, officeName);
+            });
+        });
+    </script>
+</body>
+</html>
