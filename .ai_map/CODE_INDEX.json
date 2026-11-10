@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-10T08:56:29.421Z",
-  "totalFilesScanned": 101,
-  "totalSymbolsIndexed": 701,
+  "generatedAt": "2026-11-10T09:18:16.622Z",
+  "totalFilesScanned": 110,
+  "totalSymbolsIndexed": 717,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1636d167b26afc67",
+      "fileHash": "c85a786d2d3ebf8c",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -2645,7 +2645,7 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "ca465bd7914593e1",
+      "fileHash": "bfae71520304d51a",
       "totalLines": 1775,
       "importsCount": 5,
       "importsPreview": [
@@ -3304,7 +3304,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b0e5482717c68b57",
+      "fileHash": "9b22d2d258f06bba",
       "totalLines": 1014,
       "importsCount": 0,
       "importsPreview": [],
@@ -3523,7 +3523,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "559491f19fc74019",
+      "fileHash": "733af04568c9ce10",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -3829,7 +3829,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "056ead1c8c8d34a2",
+      "fileHash": "4ead749151588585",
       "totalLines": 378,
       "importsCount": 0,
       "importsPreview": [],
@@ -3888,7 +3888,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7bd8ecb2d985164b",
+      "fileHash": "c8ffca687b548b21",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -6123,6 +6123,33 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/inspect_staging_schema.mjs",
+      "layer": "Application Module",
+      "fileHash": "34578b11310ad8cc",
+      "totalLines": 133,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "queryPostgrest",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 36,
+          "signature": "(path, schema = 'staging', options = {}) => inferred",
+          "summary": "Function L4-L36"
+        },
+        {
+          "name": "inspect",
+          "kind": "async_function",
+          "startLine": 38,
+          "endLine": 130,
+          "signature": "() => inferred",
+          "summary": "Function L38-L130"
+        }
+      ]
+    },
+    {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
       "fileHash": "ab36a9c0cd2c55b6",
@@ -6144,7 +6171,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "3066e4ba44e8e38f",
+      "fileHash": "172da6c29bc306dc",
       "totalLines": 74,
       "importsCount": 1,
       "importsPreview": [
@@ -6167,9 +6194,207 @@
       "symbols": []
     },
     {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_live_persistence_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "ee29c199dd71d23c",
+      "totalLines": 100,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import vm from 'vm';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "StorageMock",
+          "kind": "class",
+          "startLine": 11,
+          "endLine": 27,
+          "signature": "class StorageMock",
+          "summary": "Mock localStorage and sessionStorage"
+        },
+        {
+          "name": "StorageMock.constructor",
+          "kind": "public constructor",
+          "startLine": 12,
+          "endLine": 14,
+          "signature": "() => any",
+          "summary": "public constructor L12-L14 (3 lines)"
+        },
+        {
+          "name": "StorageMock.getItem",
+          "kind": "public method",
+          "startLine": 15,
+          "endLine": 17,
+          "signature": "(key) => any",
+          "summary": "public method L15-L17 (3 lines)"
+        },
+        {
+          "name": "StorageMock.setItem",
+          "kind": "public method",
+          "startLine": 18,
+          "endLine": 20,
+          "signature": "(key, val) => any",
+          "summary": "public method L18-L20 (3 lines)"
+        },
+        {
+          "name": "StorageMock.removeItem",
+          "kind": "public method",
+          "startLine": 21,
+          "endLine": 23,
+          "signature": "(key) => any",
+          "summary": "public method L21-L23 (3 lines)"
+        },
+        {
+          "name": "StorageMock.clear",
+          "kind": "public method",
+          "startLine": 24,
+          "endLine": 26,
+          "signature": "() => any",
+          "summary": "public method L24-L26 (3 lines)"
+        },
+        {
+          "name": "runLivePersistenceTest",
+          "kind": "async_function",
+          "startLine": 46,
+          "endLine": 94,
+          "signature": "() => inferred",
+          "summary": "Function L46-L94"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_rev2_verification_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "5ceadf6f54684575",
+      "totalLines": 88,
+      "importsCount": 2,
+      "importsPreview": [
+        "import assert from 'assert';",
+        "import fs from 'fs';"
+      ],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_columns.mjs",
+      "layer": "Application Module",
+      "fileHash": "62c84bd9c2f55431",
+      "totalLines": 19,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "testSettingsColumns",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 16,
+          "signature": "() => inferred",
+          "summary": "Function L4-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_watermark.mjs",
+      "layer": "Application Module",
+      "fileHash": "50927bd4091763b9",
+      "totalLines": 19,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "testSettingsWatermark",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 16,
+          "signature": "() => inferred",
+          "summary": "Function L4-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_live.mjs",
+      "layer": "Application Module",
+      "fileHash": "8b8ff6e6c281c1bd",
+      "totalLines": 47,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "verifyWatermark",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 44,
+          "signature": "() => inferred",
+          "summary": "Function L4-L44"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_query.mjs",
+      "layer": "Application Module",
+      "fileHash": "08a3d9167cf2c55e",
+      "totalLines": 19,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "testQuery",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 16,
+          "signature": "() => inferred",
+          "summary": "Function L4-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_safe.mjs",
+      "layer": "Application Module",
+      "fileHash": "fa42408d36be917b",
+      "totalLines": 19,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "testQueryWithoutWorkMode",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 16,
+          "signature": "() => inferred",
+          "summary": "Function L4-L16"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_write_postgrest.mjs",
+      "layer": "Application Module",
+      "fileHash": "395d2623bcf39637",
+      "totalLines": 27,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "testWrite",
+          "kind": "async_function",
+          "startLine": 4,
+          "endLine": 24,
+          "signature": "() => inferred",
+          "summary": "Function L4-L24"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "59fbde7c91afa1af",
+      "fileHash": "f5d0522146f3ce69",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -6252,7 +6477,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1ec229a8c9700419",
+      "fileHash": "d7ead267f5dc7418",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -6392,7 +6617,7 @@
     {
       "filePath": "sql/alter_v2_8_loca_v2_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "3ced5a457d7d9328",
+      "fileHash": "26b7337735cdd7a0",
       "totalLines": 78,
       "importsCount": 0,
       "importsPreview": [],
@@ -6443,8 +6668,8 @@
     {
       "filePath": "sql/create_staging_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "92d07504c28ea766",
-      "totalLines": 114,
+      "fileHash": "deb2664907929682",
+      "totalLines": 120,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -6546,68 +6771,76 @@
           "summary": "Schema Alteration L53-L54"
         },
         {
-          "name": "ALTER staging.system_settings (L57)",
+          "name": "ALTER staging.attendance_logs (L56)",
           "kind": "sql_alter",
-          "startLine": 57,
-          "endLine": 57,
-          "signature": "ALTER TABLE staging.system_settings ENABLE ROW LEVEL SECURIT",
-          "summary": "Schema Alteration L57-L57"
-        },
-        {
-          "name": "ALTER staging.personnel (L58)",
-          "kind": "sql_alter",
-          "startLine": 58,
-          "endLine": 58,
-          "signature": "ALTER TABLE staging.personnel ENABLE ROW LEVEL SECURITY;",
-          "summary": "Schema Alteration L58-L58"
-        },
-        {
-          "name": "ALTER staging.user_accounts (L59)",
-          "kind": "sql_alter",
-          "startLine": 59,
-          "endLine": 59,
-          "signature": "ALTER TABLE staging.user_accounts ENABLE ROW LEVEL SECURITY;",
-          "summary": "Schema Alteration L59-L59"
-        },
-        {
-          "name": "ALTER staging.attendance_logs (L60)",
-          "kind": "sql_alter",
-          "startLine": 60,
+          "startLine": 56,
           "endLine": 60,
+          "signature": "ALTER TABLE staging.attendance_logs",
+          "summary": "Schema Alteration L56-L60"
+        },
+        {
+          "name": "ALTER staging.system_settings (L63)",
+          "kind": "sql_alter",
+          "startLine": 63,
+          "endLine": 63,
+          "signature": "ALTER TABLE staging.system_settings ENABLE ROW LEVEL SECURIT",
+          "summary": "Schema Alteration L63-L63"
+        },
+        {
+          "name": "ALTER staging.personnel (L64)",
+          "kind": "sql_alter",
+          "startLine": 64,
+          "endLine": 64,
+          "signature": "ALTER TABLE staging.personnel ENABLE ROW LEVEL SECURITY;",
+          "summary": "Schema Alteration L64-L64"
+        },
+        {
+          "name": "ALTER staging.user_accounts (L65)",
+          "kind": "sql_alter",
+          "startLine": 65,
+          "endLine": 65,
+          "signature": "ALTER TABLE staging.user_accounts ENABLE ROW LEVEL SECURITY;",
+          "summary": "Schema Alteration L65-L65"
+        },
+        {
+          "name": "ALTER staging.attendance_logs (L66)",
+          "kind": "sql_alter",
+          "startLine": 66,
+          "endLine": 66,
           "signature": "ALTER TABLE staging.attendance_logs ENABLE ROW LEVEL SECURIT",
-          "summary": "Schema Alteration L60-L60"
+          "summary": "Schema Alteration L66-L66"
         },
         {
           "name": "POLICY \"staging_system_settings_all\" ON staging.system_settings",
           "kind": "sql_rls_policy",
-          "startLine": 64,
-          "endLine": 64,
+          "startLine": 70,
+          "endLine": 70,
           "signature": "ON staging.system_settings",
-          "summary": "Supabase RLS Policy L64-L64"
+          "summary": "Supabase RLS Policy L70-L70"
         },
         {
           "name": "POLICY \"staging_personnel_all\" ON staging.personnel",
           "kind": "sql_rls_policy",
-          "startLine": 67,
-          "endLine": 67,
+          "startLine": 73,
+          "endLine": 73,
           "signature": "ON staging.personnel",
-          "summary": "Supabase RLS Policy L67-L67"
+          "summary": "Supabase RLS Policy L73-L73"
         },
         {
           "name": "POLICY \"staging_user_accounts_all\" ON staging.user_accounts",
           "kind": "sql_rls_policy",
-          "startLine": 70,
-          "endLine": 70,
+          "startLine": 76,
+          "endLine": 76,
           "signature": "ON staging.user_accounts",
-          "summary": "Supabase RLS Policy L70-L70"
+          "summary": "Supabase RLS Policy L76-L76"
         },
         {
           "name": "POLICY \"staging_attendance_logs_all\" ON staging.attendance_logs",
           "kind": "sql_rls_policy",
-          "startLine": 73,
-          "endLine": 73,
+          "startLine": 79,
+          "endLine": 79,
           "signature": "ON staging.attendance_logs",
-          "summary": "Supabase RLS Policy L73-L73"
+          "summary": "Supabase RLS Policy L79-L79"
         }
       ]
     },
@@ -6836,7 +7069,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9b42230399bb0ae7",
+      "fileHash": "28c9c5cb3f3b0e0d",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],

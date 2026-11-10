@@ -53,6 +53,12 @@ ADD COLUMN IF NOT EXISTS location_mode TEXT NOT NULL DEFAULT 'ONSITE';
 ALTER TABLE staging.attendance_logs 
 ADD COLUMN IF NOT EXISTS distance_from_official_meters DOUBLE PRECISION DEFAULT NULL;
 
+ALTER TABLE staging.attendance_logs
+ADD COLUMN IF NOT EXISTS work_mode TEXT DEFAULT 'onsite',
+ADD COLUMN IF NOT EXISTS offsite_reason TEXT DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS check_out_work_mode TEXT DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS check_out_offsite_reason TEXT DEFAULT NULL;
+
 -- 6. เปิดใช้งาน Row Level Security (RLS) และกำหนดสิทธิ์การเข้าถึงสำหรับ Schema staging
 ALTER TABLE staging.system_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staging.personnel ENABLE ROW LEVEL SECURITY;
