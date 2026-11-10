@@ -92,19 +92,19 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE staging.attendance_logs;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE staging.system_settings;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE staging.personnel;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
-      ALTER PUBLICATION supabase_realtime ADD TABLE staging.holidays;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.user_accounts;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
   END IF;
 END $$;

@@ -49,19 +49,19 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE public.attendance_logs;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE public.system_settings;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
       ALTER PUBLICATION supabase_realtime ADD TABLE public.personnel;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
     BEGIN
-      ALTER PUBLICATION supabase_realtime ADD TABLE public.holidays;
-    EXCEPTION WHEN duplicate_object THEN NULL;
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.user_accounts;
+    EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
     END;
   END IF;
 END $$;
