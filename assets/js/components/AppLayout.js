@@ -784,16 +784,15 @@ export class AppLayout {
                                 payload: payload
                             }
                         }));
-                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
-                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'password_reset_requests' }, (payload) => {
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'user_accounts' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
                         const actor = record?.approved_by || record?.reviewed_by || currentUser?.full_name || 'Admin';
                         window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
                             detail: {
-                                table: 'password_reset_requests',
+                                table: 'user_accounts',
                                 record: record,
                                 action: action,
                                 actor: actor,
@@ -801,7 +800,6 @@ export class AppLayout {
                                 payload: payload
                             }
                         }));
-                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
                     .on('postgres_changes', { event: '*', schema: activeSchema, table: 'personnel' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
@@ -818,7 +816,6 @@ export class AppLayout {
                                 payload: payload
                             }
                         }));
-                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
                     .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, (payload) => {
                         const record = payload.new || payload.old || null;
@@ -838,9 +835,10 @@ export class AppLayout {
                                 payload: payload
                             }
                         }));
-                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
-                    .subscribe();
+                    .subscribe((status, err) => {
+                        if (status !== 'SUBSCRIBED') console.warn('[AppLayout Realtime] Status:', status, err);
+                    });
 
                 client.channel('bma_global_realtime_bus')
                     .on('broadcast', { event: '*' }, (e) => {
@@ -857,7 +855,9 @@ export class AppLayout {
                             }));
                         }
                     })
-                    .subscribe();
+                    .subscribe((status, err) => {
+                        if (status !== 'SUBSCRIBED') console.warn('[AppLayout Global Bus] Status:', status, err);
+                    });
             } catch (err) {
                 console.warn('Realtime subscription error:', err);
             }

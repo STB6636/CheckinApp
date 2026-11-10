@@ -194,6 +194,10 @@ export class UIHelpers {
         return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
     }
 
+    static getTodayDateString() {
+        return UIHelpers.getTodayISO();
+    }
+
     static getCurrentTimeHHMM() {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');

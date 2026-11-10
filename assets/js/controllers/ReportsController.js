@@ -970,8 +970,12 @@ ${this.canManageRecords ? `
             const oldRecords = this.records || [];
             const oldMap = new Map();
             for (const r of oldRecords) {
-                const k = r.row_uid || r.log_id || `${r.personnel_id}_${r.work_date}`;
-                oldMap.set(String(k), r);
+                if (r.row_uid) oldMap.set(String(r.row_uid), r);
+                if (r.log_id) oldMap.set(String(r.log_id), r);
+                if (r.personnel_id && r.work_date) {
+                    oldMap.set(`${r.personnel_id}_${r.work_date}`, r);
+                    oldMap.set(`${r.personnel_id}_${r.work_date}_empty`, r);
+                }
             }
 
             const freshRecords = await AttendanceModel.getReportRecordsByDateRange(startDate, endDate, this.currentUser);
@@ -979,19 +983,24 @@ ${this.canManageRecords ? `
             let categoryChanged = false;
             const changedUids = new Set();
             for (const fr of freshRecords) {
-                const k = fr.row_uid || fr.log_id || `${fr.personnel_id}_${fr.work_date}`;
-                const prev = oldMap.get(String(k));
+                const prev = oldMap.get(String(fr.row_uid)) ||
+                    (fr.log_id ? oldMap.get(String(fr.log_id)) : null) ||
+                    oldMap.get(`${fr.personnel_id}_${fr.work_date}`) ||
+                    oldMap.get(`${fr.personnel_id}_${fr.work_date}_empty`);
+
                 if (prev) {
-                    if (prev.status_key !== fr.status_key) {
+                    const oldCat = prev.status_category || prev.status_key;
+                    const newCat = fr.status_category || fr.status_key;
+                    if (oldCat !== newCat) {
                         categoryChanged = true;
-                        changedUids.add(String(k));
                         if (fr.row_uid) changedUids.add(String(fr.row_uid));
                         if (fr.log_id) changedUids.add(String(fr.log_id));
                         if (fr.personnel_id) changedUids.add(String(fr.personnel_id));
+                        changedUids.add(`${fr.personnel_id}_${fr.work_date}`);
                     } else if (prev.check_in_time !== fr.check_in_time || prev.check_out_time !== fr.check_out_time) {
-                        changedUids.add(String(k));
                         if (fr.row_uid) changedUids.add(String(fr.row_uid));
                         if (fr.log_id) changedUids.add(String(fr.log_id));
+                        changedUids.add(`${fr.personnel_id}_${fr.work_date}`);
                     }
                 }
             }
@@ -1086,11 +1095,17 @@ ${this.canManageRecords ? `
     }
 
     #bindEvents() {
+        const triggerDebouncedReportSync = (detail) => {
+            if (this._realtimeDebounceTimer) clearTimeout(this._realtimeDebounceTimer);
+            this._realtimeDebounceTimer = setTimeout(() => {
+                this.syncReportsSilent(detail);
+            }, 250);
+        };
         window.addEventListener('bma:realtime-delta-sync', (e) => {
-            this.syncReportsSilent(e.detail);
+            triggerDebouncedReportSync(e.detail);
         });
         window.addEventListener('bma:realtime-sync', () => {
-            this.syncReportsSilent();
+            triggerDebouncedReportSync();
         });
         const btnSingle = document.getElementById('btnModeSingleDate');
         const btnRange = document.getElementById('btnModeRangeDate');

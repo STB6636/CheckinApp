@@ -1,0 +1,60 @@
+{
+  "task_id": "PIPE-20261110-realtime-diff-sync-robustness-fix",
+  "created_at": "2026-11-10T16:55:00+07:00",
+  "branch": "Loca-V2",
+  "files": [
+    {
+      "path": "assets/js/core/UIHelpers.js",
+      "target_symbol": "getTodayDateString",
+      "start_line": 190,
+      "end_line": 200,
+      "change_type": "ADD_SAFE_ALIAS",
+      "reason": "Provide static getTodayDateString() alias returning getTodayISO() to prevent TypeError crashes across current and legacy calls"
+    },
+    {
+      "path": "assets/js/models/AttendanceModel.js",
+      "target_symbols": [
+        "submitCheckinOrCheckout",
+        "saveAdminAttendanceRecord",
+        "deleteAttendanceRecord",
+        "getTodaySyncWatermark"
+      ],
+      "start_line": 1020,
+      "end_line": 1750,
+      "change_type": "SURGICAL_BROADCAST_AND_WATERMARK_FIX",
+      "reason": "Broadcast attendance_updated on bma_global_realtime_bus upon check-in/checkout/save/delete, and use getTodayISO() in getTodaySyncWatermark()"
+    },
+    {
+      "path": "assets/js/components/AppLayout.js",
+      "target_symbols": [
+        "initAdminRealtimeSync",
+        "refreshNotificationBell"
+      ],
+      "start_line": 640,
+      "end_line": 860,
+      "change_type": "SURGICAL_CLEANUP_AND_DEDUPLICATION",
+      "reason": "Deduplicate realtime events (dispatch only bma:realtime-delta-sync), listen to user_accounts instead of non-existent password_reset_requests, and add subscription logging"
+    },
+    {
+      "path": "assets/js/controllers/DashboardController.js",
+      "target_symbols": [
+        "#bindEvents",
+        "#updateKpiMetricsDifferentially"
+      ],
+      "start_line": 52,
+      "end_line": 192,
+      "change_type": "DEBOUNCE_AND_PERCENT_FIX",
+      "reason": "Debounce loadDashboardData(true) with 250ms timer and fix newCat.percentage typo to newCat.percent and update progress bar fill"
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "target_symbols": [
+        "#bindEvents"
+      ],
+      "start_line": 1088,
+      "end_line": 1100,
+      "change_type": "DEBOUNCE_SYNC",
+      "reason": "Debounce syncReportsSilent with 250ms timer to prevent concurrent async reconciliation cycles"
+    }
+  ]
+}

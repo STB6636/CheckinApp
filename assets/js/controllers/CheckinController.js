@@ -126,6 +126,22 @@ export class CheckinController {
             }
         });
 
+        const triggerDebouncedPersonalSync = (payload) => {
+            const affectedPersonId = payload?.personnel_id || payload?.new?.personnel_id || payload?.old?.personnel_id;
+            if (!affectedPersonId || String(affectedPersonId) === String(this.currentUser?.personnel_id)) {
+                if (this._realtimePersonalSyncTimer) clearTimeout(this._realtimePersonalSyncTimer);
+                this._realtimePersonalSyncTimer = setTimeout(() => {
+                    this.#syncPersonalAttendanceSilent();
+                }, 250);
+            }
+        };
+
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            if (e.detail?.table === 'attendance_logs') {
+                triggerDebouncedPersonalSync(e.detail);
+            }
+        });
+
         try {
             const activeSchema = (typeof Config !== 'undefined' && Config.SUPABASE_SCHEMA) ? Config.SUPABASE_SCHEMA : 'public';
             const client = window.supabaseClient || (typeof DatabaseService !== 'undefined' ? DatabaseService.getInstance().client : null);
@@ -139,6 +155,9 @@ export class CheckinController {
                             this.#applySettingsHotReload(fresh);
                         }
                     })
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'attendance_logs' }, (payload) => {
+                        triggerDebouncedPersonalSync(payload);
+                    })
                     .subscribe();
 
                 client.channel('bma_global_realtime_bus')
@@ -147,6 +166,8 @@ export class CheckinController {
                             sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
                             const fresh = await SettingsModel.getSettings(true);
                             this.#applySettingsHotReload(fresh);
+                        } else if (e.event === 'attendance_updated') {
+                            triggerDebouncedPersonalSync(e.payload);
                         }
                     })
                     .subscribe();
@@ -160,6 +181,14 @@ export class CheckinController {
                 await this.#syncSettingsHotReload();
             }
         }, 5000);
+    }
+
+    async #syncPersonalAttendanceSilent() {
+        try {
+            await this.#refreshAllAttendanceData();
+        } catch (err) {
+            console.warn('[CheckinController] Sync personal attendance silent error:', err);
+        }
     }
 
     async #syncSettingsHotReload() {

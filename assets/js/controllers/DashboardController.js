@@ -50,12 +50,14 @@ export class DashboardController {
     }
 
     #bindEvents() {
-        window.addEventListener('bma:realtime-delta-sync', () => {
-            this.loadDashboardData(true);
-        });
-        window.addEventListener('bma:realtime-sync', () => {
-            this.loadDashboardData(true);
-        });
+        const triggerDebouncedSync = () => {
+            if (this._realtimeDebounceTimer) clearTimeout(this._realtimeDebounceTimer);
+            this._realtimeDebounceTimer = setTimeout(() => {
+                this.loadDashboardData(true);
+            }, 250);
+        };
+        window.addEventListener('bma:realtime-delta-sync', triggerDebouncedSync);
+        window.addEventListener('bma:realtime-sync', triggerDebouncedSync);
         document.getElementById('dashboardDateFilter')?.addEventListener('change', (e) => {
             const thaiBadge = document.getElementById('dashboardThaiDateBadge');
             if (thaiBadge) thaiBadge.textContent = UIHelpers.formatThaiShortDate(e.target.value);
@@ -124,7 +126,17 @@ export class DashboardController {
             // กรองเฉพาะผู้ที่ลงเวลาปฏิบัติงานแล้ว และเรียงลำดับรายการล่าสุดขึ้นก่อน
             const freshCheckedIn = (freshRecords || [])
                 .filter(rec => Boolean(rec.log_id))
-                .reverse();
+                .sort((a, b) => {
+                    const timeB = b.updated_at || b.created_at;
+                    const timeA = a.updated_at || a.created_at;
+                    if (timeB && timeA) {
+                        const diff = new Date(timeB) - new Date(timeA);
+                        if (diff !== 0) return diff;
+                    }
+                    const checkOutDiff = (b.check_out_time || '').localeCompare(a.check_out_time || '');
+                    if (checkOutDiff !== 0) return checkOutDiff;
+                    return (b.check_in_time || '').localeCompare(a.check_in_time || '');
+                });
 
             const oldMetrics = this.lastMetrics;
             const newMetrics = AttendanceModel.calculateDashboardMetrics(freshRecords);

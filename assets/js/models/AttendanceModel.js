@@ -759,7 +759,7 @@ export class AttendanceModel {
         const db = DatabaseService.getInstance().client;
         let query = db
             .from('attendance_logs')
-            .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at')
+            .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at')
             .eq('work_date', workDate)
             .order('created_at', { ascending: true });
 
@@ -1014,6 +1014,14 @@ export class AttendanceModel {
             }
 
             const dateNotice = isPastDateRecord ? ` (ของวันที่ ${UIHelpers.formatThaiShortDate(activeRegularRecord.work_date)})` : '';
+            try {
+                DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                    action: 'checkin_checkout',
+                    id: data?.id || null,
+                    personnel_id: payload.personnel_id || null,
+                    timestamp: Date.now()
+                });
+            } catch (_) {}
             return {
                 success: true,
                 data,
@@ -1114,6 +1122,14 @@ export class AttendanceModel {
                 return { success: false, message: 'ไม่สามารถบันทึกลงเวลาปฏิบัติงานนอกเวลาได้: ' + otError.message };
             }
 
+            try {
+                DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                    action: 'checkin_checkout',
+                    id: createdOt?.id || null,
+                    personnel_id: payload.personnel_id || null,
+                    timestamp: Date.now()
+                });
+            } catch (_) {}
             return {
                 success: true,
                 data: createdOt,
@@ -1218,6 +1234,14 @@ export class AttendanceModel {
                 return { success: false, message: 'ไม่สามารถบันทึกลงเวลาได้: ' + error.message };
             }
 
+            try {
+                DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                    action: 'checkin_checkout',
+                    id: data?.id || null,
+                    personnel_id: payload.personnel_id || null,
+                    timestamp: Date.now()
+                });
+            } catch (_) {}
             return {
                 success: true,
                 data,
@@ -1277,6 +1301,14 @@ export class AttendanceModel {
             return { success: false, message: 'ไม่สามารถบันทึกลงเวลาเข้าปฏิบัติงานได้: ' + error.message };
         }
 
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'checkin_checkout',
+                id: data?.id || null,
+                personnel_id: payload.personnel_id || null,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
         return {
             success: true,
             data,
@@ -1365,6 +1397,14 @@ export class AttendanceModel {
             return { success: false, message: 'ไม่สามารถส่งคำขอลงเวลากรณีพิเศษได้: ' + error.message };
         }
 
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'special_request_submitted',
+                id: data?.id || null,
+                personnel_id: payload.personnel_id || null,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
         return {
             success: true,
             data,
@@ -1470,6 +1510,14 @@ export class AttendanceModel {
         }
 
         const actionLabel = decision === 'approved' ? 'อนุมัติ' : 'ไม่อนุมัติ';
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'bulk_special_approval',
+                decision: decision,
+                count: updatedCount,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
         return {
             success: updatedCount > 0,
             count: updatedCount,
@@ -1510,7 +1558,7 @@ export class AttendanceModel {
                 .order('work_group', { ascending: true })
                 .order('first_name', { ascending: true }),
             db.from('attendance_logs')
-                .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at')
+                .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at')
                 .gte('work_date', startDate)
                 .lte('work_date', effectiveEnd)
                 .order('work_date', { ascending: true })
@@ -1591,6 +1639,9 @@ export class AttendanceModel {
             check_in_photo: log?.check_in_photo || '',
             check_out_photo: log?.check_out_photo || '',
             remark: log?.remark || '',
+            created_at: log?.created_at || null,
+            updated_at: log?.updated_at || null,
+            status_key: evalStatus.status_key,
             status_category: evalStatus.status_key,
             status_label: evalStatus.status_label,
             row_color: evalStatus.row_color,
@@ -1643,6 +1694,14 @@ export class AttendanceModel {
             if (error) {
                 return { success: false, message: 'ไม่สามารถแก้ไขข้อมูลการลงเวลาได้: ' + error.message };
             }
+            try {
+                DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                    action: 'admin_save',
+                    id: payload.log_id || null,
+                    personnel_id: payload.personnel_id || null,
+                    timestamp: Date.now()
+                });
+            } catch (_) {}
             return { success: true, message: 'อัปเดตข้อมูลการลงเวลาเรียบร้อยแล้ว' };
         } else {
             const { error } = await db
@@ -1651,6 +1710,13 @@ export class AttendanceModel {
             if (error) {
                 return { success: false, message: 'ไม่สามารถเพิ่มข้อมูลการลงเวลาได้: ' + error.message };
             }
+            try {
+                DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                    action: 'admin_save',
+                    personnel_id: payload.personnel_id || null,
+                    timestamp: Date.now()
+                });
+            } catch (_) {}
             return { success: true, message: 'เพิ่มข้อมูลการลงเวลาเรียบร้อยแล้ว' };
         }
     }
@@ -1665,6 +1731,13 @@ export class AttendanceModel {
         if (error) {
             return { success: false, message: 'ไม่สามารถลบข้อมูลการลงเวลาได้: ' + error.message };
         }
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'admin_delete',
+                id: logId,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
         return { success: true, message: 'ลบรายการลงเวลาเรียบร้อยแล้ว' };
     }
 
@@ -1740,7 +1813,7 @@ export class AttendanceModel {
     static async getTodaySyncWatermark() {
         try {
             const db = DatabaseService.getInstance().client;
-            const todayStr = UIHelpers.getTodayDateString();
+            const todayStr = UIHelpers.getTodayISO();
 
             const [logsRes, settingsRes] = await Promise.all([
                 db.from('attendance_logs')
