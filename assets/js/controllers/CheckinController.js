@@ -79,7 +79,7 @@ export class CheckinController {
 
         UIHelpers.showLoading('กำลังเตรียมระบบลงเวลาปฏิบัติราชการ...');
         try {
-            this.settings = await SettingsModel.getSettings(false);
+            this.settings = await SettingsModel.getSettings(true);
             this.#renderUserAndSettingsInfo();
             this.#initModeSwitcher();
             this.#initOffsiteModalGps();
@@ -127,12 +127,23 @@ export class CheckinController {
         });
 
         try {
+            const activeSchema = (typeof Config !== 'undefined' && Config.SUPABASE_SCHEMA) ? Config.SUPABASE_SCHEMA : 'public';
             const client = window.supabaseClient || (typeof DatabaseService !== 'undefined' ? DatabaseService.getInstance().client : null);
             if (client) {
-                client.channel('bma_checkin_settings_realtime')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, async (payload) => {
+                client.channel(`bma_checkin_settings_${activeSchema}`)
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, async (payload) => {
                         const newSettings = payload.new;
                         if (newSettings) {
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            const fresh = await SettingsModel.getSettings(true);
+                            this.#applySettingsHotReload(fresh);
+                        }
+                    })
+                    .subscribe();
+
+                client.channel('bma_global_realtime_bus')
+                    .on('broadcast', { event: '*' }, async (e) => {
+                        if (e.event === 'settings_updated') {
                             sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
                             const fresh = await SettingsModel.getSettings(true);
                             this.#applySettingsHotReload(fresh);
@@ -143,6 +154,12 @@ export class CheckinController {
         } catch (err) {
             console.warn('Realtime settings subscription error:', err);
         }
+
+        setInterval(async () => {
+            if (!document.hidden) {
+                await this.#syncSettingsHotReload();
+            }
+        }, 5000);
     }
 
     async #syncSettingsHotReload() {
@@ -592,26 +609,36 @@ export class CheckinController {
             return;
         }
 
-        if (!this.gpsData.ready || this.gpsData.lat == null) {
-            badgeEl.className = 'bma-badge bma-badge-warning text-[10px] font-bold px-2.5 py-0.5 rounded-full';
-            badgeEl.textContent = 'กำลังรอพิกัด GPS...';
-            textEl.textContent = 'กำลังรอสัญญาณ GPS เพื่อประเมินรัศมีสถานที่ทำงาน...';
-            if (iconEl) iconEl.className = 'fa-solid fa-spinner fa-spin text-amber-500';
-            return;
-        }
-
-        const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
-        this.geofenceResult = evalRes;
-
-        if (this.settings?.enforce_geofence_radius === false) {
+        // ถ้าปิดการบังคับรัศมี หรือไม่บังคับ GPS ให้แสดงโหมดไม่จำกัดรัศมีทันที แม้ยังไม่ได้พิกัด GPS
+        if (this.settings?.enforce_geofence_radius === false || this.settings?.require_gps === false) {
             statusCard.className = 'p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5';
             badgeEl.className = 'bma-badge bma-badge-emerald text-[10px] font-bold px-2.5 py-0.5 rounded-full';
             badgeEl.textContent = 'ไม่จำกัดรัศมี';
             if (iconEl) iconEl.className = 'fa-solid fa-circle-check text-[#00744B] dark:text-emerald-400';
             textEl.className = 'text-[11px] font-semibold text-[#00744B] dark:text-emerald-300 leading-relaxed';
-            textEl.textContent = evalRes.message || 'ระบบเปิดให้ลงเวลาโดยไม่จำกัดรัศมีสถานที่ทำงาน (บันทึกพิกัดจริง)';
+
+            if (this.gpsData.ready && this.gpsData.lat != null) {
+                const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
+                this.geofenceResult = evalRes;
+                textEl.textContent = evalRes.message || 'โหมดไม่บังคับรัศมี (บันทึกพิกัดจริง)';
+            } else {
+                textEl.textContent = 'โหมดไม่บังคับรัศมี (ลงเวลาได้ทุกพื้นที่ สามารถกดถัดไปได้ทันที)';
+            }
+            this.#updateStep1Validation();
             return;
         }
+
+        if (!this.gpsData.ready || this.gpsData.lat == null) {
+            badgeEl.className = 'bma-badge bma-badge-warning text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'กำลังรอพิกัด GPS...';
+            textEl.textContent = 'กำลังรอสัญญาณ GPS เพื่อประเมินรัศมีสถานที่ทำงาน...';
+            if (iconEl) iconEl.className = 'fa-solid fa-spinner fa-spin text-amber-500';
+            this.#updateStep1Validation();
+            return;
+        }
+
+        const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
+        this.geofenceResult = evalRes;
 
         if (evalRes.matched) {
             statusCard.className = 'p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5';
@@ -801,7 +828,7 @@ export class CheckinController {
 
         if (step === 2) {
             if (this.locationMode === 'ONSITE') {
-                if (this.settings?.require_gps) {
+                if (this.settings?.require_gps && this.settings?.enforce_geofence_radius !== false) {
                     const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
                     if (!evalRes.matched) {
                         UIHelpers.alert(
@@ -868,7 +895,7 @@ export class CheckinController {
         let isValid = true;
 
         if (this.locationMode === 'ONSITE') {
-            if (this.settings?.require_gps) {
+            if (this.settings?.require_gps && this.settings?.enforce_geofence_radius !== false) {
                 if (!this.gpsData.ready || this.gpsData.lat == null) {
                     isValid = false;
                 } else {

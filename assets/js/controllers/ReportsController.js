@@ -967,15 +967,59 @@ ${this.canManageRecords ? `
         }
 
         try {
-            const freshRecords = await AttendanceModel.getReportRecordsByDateRange(startDate, endDate, this.currentUser);
-            this.records = freshRecords;
+            const oldRecords = this.records || [];
+            const oldMap = new Map();
+            for (const r of oldRecords) {
+                const k = r.row_uid || r.log_id || `${r.personnel_id}_${r.work_date}`;
+                oldMap.set(String(k), r);
+            }
 
-            // ปรับปรุงจำนวนบน Status Tag Chips โดยไม่ทำลาย DOM
+            const freshRecords = await AttendanceModel.getReportRecordsByDateRange(startDate, endDate, this.currentUser);
+
+            let categoryChanged = false;
+            const changedUids = new Set();
+            for (const fr of freshRecords) {
+                const k = fr.row_uid || fr.log_id || `${fr.personnel_id}_${fr.work_date}`;
+                const prev = oldMap.get(String(k));
+                if (prev) {
+                    if (prev.status_key !== fr.status_key) {
+                        categoryChanged = true;
+                        changedUids.add(String(k));
+                        if (fr.row_uid) changedUids.add(String(fr.row_uid));
+                        if (fr.log_id) changedUids.add(String(fr.log_id));
+                        if (fr.personnel_id) changedUids.add(String(fr.personnel_id));
+                    } else if (prev.check_in_time !== fr.check_in_time || prev.check_out_time !== fr.check_out_time) {
+                        changedUids.add(String(k));
+                        if (fr.row_uid) changedUids.add(String(fr.row_uid));
+                        if (fr.log_id) changedUids.add(String(fr.log_id));
+                    }
+                }
+            }
+
+            this.records = freshRecords;
             this.#renderStatusTagFilterChips();
 
-            // Diff ข้อมูลแถวที่แสดงอยู่เพื่ออัปเดตเวลาเข้า เวลาออก พิกัดสถานที่แบบ In-place
             const masterContainer = document.getElementById('reportTablesMasterContainer');
-            if (masterContainer) {
+            if (categoryChanged && masterContainer) {
+                // ย้ายแถวข้ามตารางสถานะ พร้อมคงตำแหน่ง Scroll เดิม
+                const prevScrollY = window.scrollY;
+                this.#renderSeparateTablesBySelectedTags(false);
+                window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+
+                // ไฮไลต์แถวของบุคคลที่สถานะเปลี่ยนข้ามตาราง
+                const rows = masterContainer.querySelectorAll('tr.report-person-row');
+                for (const row of rows) {
+                    const uid = row.getAttribute('data-row-uid');
+                    const logId = row.getAttribute('data-row-id');
+                    if (changedUids.has(uid) || changedUids.has(logId)) {
+                        row.classList.add('bg-emerald-500/15', 'transition-colors', 'duration-1000');
+                        setTimeout(() => {
+                            row.classList.remove('bg-emerald-500/15', 'transition-colors', 'duration-1000');
+                        }, 2200);
+                    }
+                }
+            } else if (masterContainer) {
+                // อัปเดตเฉพาะเซลล์แบบ In-Place หากสถานะตารางเดิมไม่เปลี่ยน
                 const freshMap = new Map();
                 for (const r of freshRecords) {
                     if (r.row_uid) freshMap.set(String(r.row_uid), r);

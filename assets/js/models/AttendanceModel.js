@@ -1732,4 +1732,44 @@ export class AttendanceModel {
             ]
         };
     }
+
+    /**
+     * ดึง Signature/Watermark ของ attendance_logs วันนี้และ system_settings เพื่อใช้ตรวจจับการเปลี่ยนแปลงแบบเบา (Lightweight Polling)
+     * @returns {Promise<{attendanceSignature: string, settingsSignature: string, settingsRow: object|null}>}
+     */
+    static async getTodaySyncWatermark() {
+        try {
+            const db = DatabaseService.getInstance().client;
+            const todayStr = UIHelpers.getTodayDateString();
+
+            const [logsRes, settingsRes] = await Promise.all([
+                db.from('attendance_logs')
+                    .select('id, status, work_mode, check_in_time, check_out_time, approval_status, updated_at')
+                    .eq('work_date', todayStr)
+                    .order('updated_at', { ascending: false })
+                    .limit(50),
+                db.from('system_settings')
+                    .select('id, updated_at, enforce_geofence_radius, require_gps, require_photo, allow_offsite_checkin, max_distance_meters, category_colors')
+                    .eq('id', 1)
+                    .maybeSingle()
+            ]);
+
+            const logs = logsRes.data || [];
+            const attendanceSignature = logs.map(l => `${l.id}:${l.status}:${l.check_in_time || ''}:${l.check_out_time || ''}:${l.approval_status || ''}:${l.updated_at || ''}`).join('|');
+
+            const sRow = settingsRes.data || null;
+            const settingsSignature = sRow
+                ? `${sRow.updated_at || ''}:${sRow.enforce_geofence_radius}:${sRow.require_gps}:${sRow.require_photo}:${JSON.stringify(sRow.category_colors || {})}`
+                : '';
+
+            return {
+                attendanceSignature,
+                settingsSignature,
+                settingsRow: sRow
+            };
+        } catch (err) {
+            console.warn('[AttendanceModel.getTodaySyncWatermark] Error:', err);
+            return { attendanceSignature: '', settingsSignature: '', settingsRow: null };
+        }
+    }
 }

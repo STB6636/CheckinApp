@@ -19,6 +19,8 @@ export class AppLayout {
     static #settings = null;
     static #lastPendingSpecialCount = null;
     static #lastPendingResetCount = null;
+    static #lastAttendanceWatermark = null;
+    static #lastSettingsWatermark = null;
 
     static PAGE_ROUTES = {
         'dashboard.html': {
@@ -635,6 +637,42 @@ export class AppLayout {
             AppLayout.#lastPendingSpecialCount = pendingSpecial.length;
             AppLayout.#lastPendingResetCount = pendingResets.length;
 
+            try {
+                const watermark = await AttendanceModel.getTodaySyncWatermark();
+                if (watermark) {
+                    if (AppLayout.#lastAttendanceWatermark !== null && AppLayout.#lastAttendanceWatermark !== watermark.attendanceSignature) {
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'attendance_logs',
+                                action: 'watermark_sync',
+                                actor: currentUser?.full_name || 'Admin',
+                                timestamp: Date.now()
+                            }
+                        }));
+                    }
+                    AppLayout.#lastAttendanceWatermark = watermark.attendanceSignature;
+
+                    if (AppLayout.#lastSettingsWatermark !== null && AppLayout.#lastSettingsWatermark !== watermark.settingsSignature) {
+                        sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                        if (watermark.settingsRow) {
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: watermark.settingsRow }));
+                        }
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'system_settings',
+                                action: 'watermark_sync',
+                                record: watermark.settingsRow,
+                                actor: currentUser?.full_name || 'Admin',
+                                timestamp: Date.now()
+                            }
+                        }));
+                    }
+                    AppLayout.#lastSettingsWatermark = watermark.settingsSignature;
+                }
+            } catch (wErr) {
+                console.warn('Sync watermark check error:', wErr);
+            }
+
             const topBellBadge = document.getElementById('topBellBadgeCount');
             const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
             const sidebarResetBadge = document.getElementById('sidebarResetBadge');
@@ -726,11 +764,12 @@ export class AppLayout {
         if (!currentUser || AppLayout.#isRealtimeSyncInitialized) return;
         AppLayout.#isRealtimeSyncInitialized = true;
 
+        const activeSchema = (typeof Config !== 'undefined' && Config.SUPABASE_SCHEMA) ? Config.SUPABASE_SCHEMA : 'public';
         const client = DatabaseService.getInstance().client || window.supabaseClient;
         if (client) {
             try {
-                client.channel('bma_admin_realtime')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'attendance_logs' }, (payload) => {
+                client.channel(`bma_admin_realtime_${activeSchema}`)
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'attendance_logs' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
@@ -747,7 +786,7 @@ export class AppLayout {
                         }));
                         window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'password_reset_requests' }, (payload) => {
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'password_reset_requests' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
@@ -764,7 +803,7 @@ export class AppLayout {
                         }));
                         window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'personnel' }, (payload) => {
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'personnel' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
@@ -781,7 +820,7 @@ export class AppLayout {
                         }));
                         window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, (payload) => {
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, (payload) => {
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
                         const actor = currentUser?.full_name || 'Admin';
@@ -802,6 +841,23 @@ export class AppLayout {
                         window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
                     })
                     .subscribe();
+
+                client.channel('bma_global_realtime_bus')
+                    .on('broadcast', { event: '*' }, (e) => {
+                        if (e.event === 'settings_updated') {
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: e.payload }));
+                            window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                                detail: { table: 'system_settings', action: 'broadcast_sync', timestamp: Date.now() }
+                            }));
+                        } else if (e.event === 'attendance_updated') {
+                            AppLayout.refreshNotificationBell(currentUser);
+                            window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                                detail: { table: 'attendance_logs', action: 'broadcast_sync', timestamp: Date.now() }
+                            }));
+                        }
+                    })
+                    .subscribe();
             } catch (err) {
                 console.warn('Realtime subscription error:', err);
             }
@@ -809,7 +865,7 @@ export class AppLayout {
 
         setInterval(() => {
             AppLayout.refreshNotificationBell(currentUser);
-        }, 15000);
+        }, 6000);
 
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {

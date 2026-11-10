@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 const version = JSON.parse(fs.readFileSync('version.json', 'utf8'));
-const targetBuildId = "20261110_1f88c57a";
+const targetBuildId = "20261110_7dac4bca";
 console.log('Target Build ID:', targetBuildId);
 console.log('version.json buildId:', version.buildId);
 

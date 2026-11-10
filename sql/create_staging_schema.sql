@@ -25,6 +25,16 @@ ALTER TABLE staging.system_settings
 ADD COLUMN IF NOT EXISTS official_locations JSONB NOT NULL 
 DEFAULT '[{"id":"LOC-001","name":"สำนักเทศกิจ","latitude":13.756331,"longitude":100.501765,"radius_meters":150,"is_active":true}]'::jsonb;
 
+ALTER TABLE staging.system_settings 
+ADD COLUMN IF NOT EXISTS enforce_geofence_radius BOOLEAN NOT NULL DEFAULT true;
+
+UPDATE staging.system_settings
+SET enforce_geofence_radius = COALESCE(
+  (category_colors->>'enforce_geofence_radius')::boolean,
+  enforce_geofence_radius,
+  true
+);
+
 -- อัปเดต remarks ใน staging.system_settings ให้มีตัวเลือกสำหรับโหมดนอกสถานที่ครบถ้วน
 UPDATE staging.system_settings
 SET remarks = (
@@ -75,3 +85,29 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA staging GRANT ALL ON ROUTINES TO anon, authen
 -- ตรวจสอบความถูกต้อง
 SELECT count(*) AS total_staging_personnel FROM staging.personnel;
 SELECT count(*) AS total_staging_settings FROM staging.system_settings;
+
+-- 8. เปิดใช้งาน Supabase Realtime Publication สำหรับตารางในสคีมา staging
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.attendance_logs;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.system_settings;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.personnel;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.holidays;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+  END IF;
+END $$;
+
+-- รีโหลด Schema Cache ของ PostgREST
+NOTIFY pgrst, 'reload schema';

@@ -120,11 +120,21 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_early_shift_window_minutes') !== null
                     ? Number(localStorage.getItem('bma_early_shift_window_minutes')) || 30
                     : Number(Config.DEFAULT_SETTINGS.early_shift_window_minutes ?? 30)),
-            enforce_geofence_radius: typeof data.enforce_geofence_radius === 'boolean'
-                ? data.enforce_geofence_radius
-                : (localStorage.getItem('bma_enforce_geofence_radius') !== null
-                    ? localStorage.getItem('bma_enforce_geofence_radius') !== 'false'
-                    : Boolean(Config.DEFAULT_SETTINGS.enforce_geofence_radius !== false)),
+            enforce_geofence_radius: (() => {
+                let enforceGeofence = true;
+                if (typeof data.enforce_geofence_radius === 'boolean') {
+                    enforceGeofence = data.enforce_geofence_radius;
+                } else if (data.category_colors && typeof data.category_colors === 'object' && typeof data.category_colors.enforce_geofence_radius === 'boolean') {
+                    enforceGeofence = data.category_colors.enforce_geofence_radius;
+                } else {
+                    const localEnforceGeofence = localStorage.getItem('bma_enforce_geofence_radius');
+                    if (localEnforceGeofence !== null) {
+                        enforceGeofence = localEnforceGeofence !== 'false';
+                    }
+                }
+                try { localStorage.setItem('bma_enforce_geofence_radius', String(enforceGeofence)); } catch (e) {}
+                return enforceGeofence;
+            })(),
             disable_normal_hours_checkin: typeof data.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
                 : (localStorage.getItem('bma_disable_normal_hours_checkin') !== null
@@ -163,6 +173,11 @@ export class SettingsModel {
 
     static async updateSettings(payload) {
         const db = DatabaseService.getInstance().client;
+        const enforceGeofenceFlag = Boolean(payload.enforce_geofence_radius !== false);
+        const mergedCategoryColors = {
+            ...(payload.category_colors || Config.DEFAULT_SETTINGS.category_colors),
+            enforce_geofence_radius: enforceGeofenceFlag
+        };
         const updateData = {
             id: 1,
             organization_name: payload.organization_name || 'กรุงเทพมหานคร',
@@ -192,7 +207,8 @@ export class SettingsModel {
             remarks: payload.remarks || [],
             official_locations: Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations,
             work_shifts: payload.work_shifts || [],
-            category_colors: payload.category_colors || Config.DEFAULT_SETTINGS.category_colors,
+            enforce_geofence_radius: enforceGeofenceFlag,
+            category_colors: mergedCategoryColors,
             updated_at: new Date().toISOString()
         };
 
@@ -233,6 +249,11 @@ export class SettingsModel {
                 delete fallbackUpdateData.official_locations;
                 retryNeeded = true;
             }
+            if (String(error.message || '').includes('enforce_geofence_radius') || error.code === '42703') {
+                delete fallbackUpdateData.enforce_geofence_radius;
+                fallbackUpdateData.category_colors = mergedCategoryColors;
+                retryNeeded = true;
+            }
             if (retryNeeded) {
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
@@ -244,7 +265,13 @@ export class SettingsModel {
             return { success: false, message: 'ไม่สามารถบันทึกการตั้งค่าระบบได้: ' + error.message };
         }
 
-        const enforceGeofenceVal = payload.enforce_geofence_radius !== false;
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('settings_updated', {
+                enforce_geofence_radius: enforceGeofenceFlag
+            });
+        } catch (e) {}
+
+        const enforceGeofenceVal = enforceGeofenceFlag;
         try { localStorage.setItem('bma_enforce_geofence_radius', String(enforceGeofenceVal)); } catch (e) {}
         const allowGalleryVal = Boolean(payload.allow_gallery_fallback);
         try { localStorage.setItem('bma_allow_gallery_fallback', String(allowGalleryVal)); } catch (e) {}

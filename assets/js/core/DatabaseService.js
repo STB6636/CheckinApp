@@ -30,6 +30,14 @@ export class DatabaseService {
     }
 
     /**
+     * ดึงชื่อ Schema ที่ใช้งานอยู่ปัจจุบันจาก Config (Single-Point of Truth)
+     * @returns {string}
+     */
+    static getActiveSchema() {
+        return (typeof Config !== 'undefined' && Config.SUPABASE_SCHEMA) ? Config.SUPABASE_SCHEMA : 'public';
+    }
+
+    /**
      * เริ่มต้นสร้าง Supabase Client จาก Global Object window.supabase
      */
     #initClient() {
@@ -42,7 +50,7 @@ export class DatabaseService {
                 persistSession: false
             }
         };
-        const activeSchema = Config.SUPABASE_SCHEMA || 'public';
+        const activeSchema = DatabaseService.getActiveSchema();
         if (activeSchema && activeSchema !== 'public') {
             clientOptions.db = { schema: activeSchema };
         }
@@ -74,6 +82,28 @@ export class DatabaseService {
             this.#initClient();
         }
         return this.#publicClient;
+    }
+
+    get activeSchema() {
+        return DatabaseService.getActiveSchema();
+    }
+
+    /**
+     * ส่ง Realtime Broadcast Event ผ่าน Supabase Channel
+     * @param {string} eventName
+     * @param {object} payload
+     */
+    async broadcastRealtimeEvent(eventName, payload = {}) {
+        try {
+            const channel = this.client.channel('bma_global_realtime_bus');
+            await channel.send({
+                type: 'broadcast',
+                event: eventName,
+                payload: { ...payload, schema: DatabaseService.getActiveSchema(), ts: Date.now() }
+            });
+        } catch (err) {
+            console.warn('broadcastRealtimeEvent warning:', err);
+        }
     }
 
     /**
