@@ -9,6 +9,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { UserModel } from '../models/UserModel.js';
+import { DatabaseService } from '../core/DatabaseService.js';
 
 export class AppLayout {
     static #isLayoutMounted = false;
@@ -725,9 +726,10 @@ export class AppLayout {
         if (!currentUser || AppLayout.#isRealtimeSyncInitialized) return;
         AppLayout.#isRealtimeSyncInitialized = true;
 
-        if (window.supabaseClient) {
+        const client = DatabaseService.getInstance().client || window.supabaseClient;
+        if (client) {
             try {
-                window.supabaseClient.channel('bma_admin_realtime')
+                client.channel('bma_admin_realtime')
                     .on('postgres_changes', { event: '*', schema: 'public', table: 'attendance_logs' }, (payload) => {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
@@ -770,6 +772,26 @@ export class AppLayout {
                         window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
                             detail: {
                                 table: 'personnel',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                        window.dispatchEvent(new CustomEvent('bma:realtime-sync', { detail: payload }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, (payload) => {
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = currentUser?.full_name || 'Admin';
+                        if (record) {
+                            sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(record));
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: record }));
+                        }
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'system_settings',
                                 record: record,
                                 action: action,
                                 actor: actor,

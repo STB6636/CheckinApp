@@ -973,16 +973,20 @@ ${this.canManageRecords ? `
             // ปรับปรุงจำนวนบน Status Tag Chips โดยไม่ทำลาย DOM
             this.#renderStatusTagFilterChips();
 
-            // Diff ข้อมูลแถวที่แสดงอยู่เพื่ออัปเดตเวลาออกหรือพิกัดแบบ In-place
+            // Diff ข้อมูลแถวที่แสดงอยู่เพื่ออัปเดตเวลาเข้า เวลาออก พิกัดสถานที่แบบ In-place
             const masterContainer = document.getElementById('reportTablesMasterContainer');
             if (masterContainer) {
                 const freshMap = new Map();
                 for (const r of freshRecords) {
-                    const rowUid = `${r.personnel_id}_${r.work_date}_${r.shift_id || 'default'}`;
-                    freshMap.set(rowUid, r);
+                    if (r.row_uid) freshMap.set(String(r.row_uid), r);
                     if (r.log_id) freshMap.set(String(r.log_id), r);
+                    if (r.personnel_id && r.work_date) {
+                        freshMap.set(`${r.personnel_id}_${r.work_date}`, r);
+                        freshMap.set(`${r.personnel_id}_${r.work_date}_empty`, r);
+                    }
                 }
 
+                const showGps = Boolean(this.settings?.require_gps);
                 const visibleRows = masterContainer.querySelectorAll('tr.report-person-row');
                 for (const row of visibleRows) {
                     const uid = row.getAttribute('data-row-uid');
@@ -990,13 +994,44 @@ ${this.canManageRecords ? `
                     const updated = freshMap.get(uid) || freshMap.get(logId);
                     if (updated) {
                         const cells = row.querySelectorAll('td');
-                        // cell 3: เวลาเข้า, cell 4: เวลาออก
+                        let isUpdated = false;
+
+                        // cell 3: เวลาเข้า
+                        if (cells[3]) {
+                            const newIn = updated.check_in_time ? updated.check_in_time + ' น.' : '-';
+                            if (cells[3].textContent.trim() !== newIn) {
+                                cells[3].textContent = newIn;
+                                isUpdated = true;
+                            }
+                        }
+                        // cell 4: เวลาออก
                         if (cells[4]) {
                             const newOut = updated.check_out_time ? updated.check_out_time + ' น.' : '-';
                             if (cells[4].textContent.trim() !== newOut) {
                                 cells[4].textContent = newOut;
-                                DOMDiffHelper.highlightRowUpdate(row);
+                                isUpdated = true;
                             }
+                        }
+                        // GPS location names
+                        if (showGps) {
+                            if (cells[5] && updated.check_in_location) {
+                                const inLocDiv = cells[5].querySelector('div');
+                                if (inLocDiv && !inLocDiv.textContent.includes(updated.check_in_location)) {
+                                    inLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${updated.check_in_location}`;
+                                    isUpdated = true;
+                                }
+                            }
+                            if (cells[6] && updated.check_out_location) {
+                                const outLocDiv = cells[6].querySelector('div');
+                                if (outLocDiv && !outLocDiv.textContent.includes(updated.check_out_location)) {
+                                    outLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${updated.check_out_location}`;
+                                    isUpdated = true;
+                                }
+                            }
+                        }
+
+                        if (isUpdated) {
+                            DOMDiffHelper.highlightRowUpdate(row);
                         }
                     }
                 }

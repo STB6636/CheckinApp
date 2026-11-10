@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261110_68098077';
+            const CURRENT_APP_BUILD = '20261110_1f88c57a';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -103,7 +103,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261110_68098077">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261110_1f88c57a">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -245,39 +245,62 @@
                             <h2 class="text-base font-extrabold text-slate-800 dark:text-white">การควบคุมฟังก์ชันลงเวลา</h2>
                         </div>
 
-                        <!-- สวิตช์ 3 ตัว -->
+                        <!-- สวิตช์ฟังก์ชันลงเวลาแบบ Modern Tailwind Switches -->
                         <div class="space-y-3">
-                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer select-none">
                                 <div class="pr-3">
                                     <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">บังคับถ่ายภาพยืนยันตัวตน</span>
                                     <span class="text-xs text-slate-500 block mt-0.5">ผู้ใช้ต้องเปิดกล้องและถ่ายภาพทุกครั้งที่ลงเวลา</span>
                                 </div>
-                                <input type="checkbox" id="toggleRequirePhoto" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                <div class="relative inline-flex items-center shrink-0">
+                                    <input type="checkbox" id="toggleRequirePhoto" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </div>
                             </label>
 
-                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer select-none">
                                 <div class="pr-3">
                                     <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">อนุญาตเลือกภาพถ่ายจากเครื่องเมื่อเปิดใน LINE หรือไม่มีกล้อง</span>
                                     <span class="text-xs text-slate-500 block mt-0.5">เมื่อเปิดใน LINE In-App Browser หรือไม่มีเว็บแคม ปุ่มถ่ายภาพจะเปิดคลังภาพ/กล้องของเครื่องให้อัตโนมัติ</span>
                                 </div>
-                                <input type="checkbox" id="toggleAllowGalleryFallback" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                <div class="relative inline-flex items-center shrink-0">
+                                    <input type="checkbox" id="toggleAllowGalleryFallback" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </div>
                             </label>
 
-                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer select-none">
                                 <div class="pr-3">
                                     <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">บังคับพิกัด GPS</span>
                                     <span class="text-xs text-slate-500 block mt-0.5">ต้องอนุญาตตำแหน่งพิกัด GPS จึงจะลงเวลาได้</span>
                                 </div>
-                                <input type="checkbox" id="toggleRequireGps" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                <div class="relative inline-flex items-center shrink-0">
+                                    <input type="checkbox" id="toggleRequireGps" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </div>
+                            </label>
+
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer select-none">
+                                <div class="pr-3">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">บังคับตรวจสอบรัศมีสถานที่ทำงาน (Geofence)</span>
+                                    <span class="text-xs text-slate-500 block mt-0.5">หากปิด ระบบจะอนุญาตให้ลงเวลาได้โดยไม่จำกัดรัศมี โดยยังคงบันทึกพิกัด GPS จริงตามปกติ</span>
+                                </div>
+                                <div class="relative inline-flex items-center shrink-0">
+                                    <input type="checkbox" id="toggleEnforceGeofenceRadius" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </div>
                             </label>
 
                             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <label class="flex items-center justify-between cursor-pointer">
+                                <label class="flex items-center justify-between cursor-pointer select-none">
                                     <div class="pr-3">
                                         <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">สุ่มระยะ GPS ขาออกงาน (สำหรับการลงเวลารูปแบบพิเศษ)</span>
                                         <span class="text-xs text-slate-500 block mt-0.5">สุ่มพิกัด GPS ขาออกในรัศมีที่กำหนด พร้อมค้นหาสถานที่ใกล้เคียง เพื่อให้พิกัดเข้า-ออกงานไม่ซ้ำกัน</span>
                                     </div>
-                                    <input type="checkbox" id="toggleRandomizeGpsCheckout" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                    <div class="relative inline-flex items-center shrink-0">
+                                        <input type="checkbox" id="toggleRandomizeGpsCheckout" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                    </div>
                                 </label>
                                 <div id="containerRandomizeGpsRadius" class="mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
                                     <div class="pr-3">
@@ -292,12 +315,15 @@
                             </div>
 
                             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60">
-                                <label class="flex items-center justify-between cursor-pointer">
+                                <label class="flex items-center justify-between cursor-pointer select-none">
                                     <div class="pr-3">
                                         <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">กรองช่วงเวลากะตามเวลาจริง (Real-time Filter)</span>
                                         <span class="text-xs text-slate-500 block mt-0.5">แสดงเฉพาะผลัดหรือช่วงเวลาที่ตรงกับเวลาปัจจุบัน</span>
                                     </div>
-                                    <input type="checkbox" id="toggleFilterShiftsByRealtime" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                    <div class="relative inline-flex items-center shrink-0">
+                                        <input type="checkbox" id="toggleFilterShiftsByRealtime" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                    </div>
                                 </label>
                                 <div id="containerEarlyShiftWindow" class="mt-2.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
                                     <div class="pr-3">
@@ -311,12 +337,15 @@
                                 </div>
                             </div>
 
-                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer">
+                            <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 cursor-pointer select-none">
                                 <div class="pr-3">
                                     <span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-white block">ปิดการลงเวลาในช่วงเวลาปกติ (08:30 - 16:30 น.)</span>
                                     <span class="text-xs text-slate-500 block mt-0.5">ไม่อนุญาตให้กดบันทึกเวลาหน้าหลักในช่วงเวลาราชการปกติ ทั้งรูปแบบปกติและรูปแบบพิเศษ</span>
                                 </div>
-                                <input type="checkbox" id="toggleDisableNormalHoursCheckin" class="w-5 h-5 accent-[#00744B] rounded cursor-pointer">
+                                <div class="relative inline-flex items-center shrink-0">
+                                    <input type="checkbox" id="toggleDisableNormalHoursCheckin" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </div>
                             </label>
                         </div>
 
@@ -718,7 +747,7 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261110_68098077"></script>
+    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261110_1f88c57a"></script>
 
     <!-- Robust Redundant Click Handler for Settings Tab Navigation -->
     <script>

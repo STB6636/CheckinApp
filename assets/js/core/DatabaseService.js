@@ -56,6 +56,7 @@ export class DatabaseService {
             Config.SUPABASE_ANON_KEY,
             { auth: { persistSession: false } }
         );
+        window.supabaseClient = this.#client;
     }
 
     /**

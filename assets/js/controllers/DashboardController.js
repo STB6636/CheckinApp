@@ -249,18 +249,31 @@ export class DashboardController {
                 }
 
                 DOMDiffHelper.reindexTableSequence(tbody, '.seq-num', 1);
-            } else {
-                for (const rec of targetPaged) {
-                    const rowEl = tbody.querySelector(`tr[data-row-id="${rec.log_id}"]`);
-                    if (rowEl) {
-                        const cells = rowEl.querySelectorAll('td');
-                        if (cells[5]) {
-                            const newOut = rec.check_out_time ? rec.check_out_time + ' น.' : '-';
-                            if (cells[5].textContent.trim() !== newOut) {
-                                cells[5].textContent = newOut;
-                                DOMDiffHelper.highlightRowUpdate(rowEl);
-                            }
+            }
+
+            for (const rec of targetPaged) {
+                const rowEl = tbody.querySelector(`tr[data-row-id="${rec.log_id}"]`);
+                if (rowEl) {
+                    const cells = rowEl.querySelectorAll('td');
+                    let isUpdated = false;
+                    if (cells[5]) {
+                        const newOut = rec.check_out_time ? rec.check_out_time + ' น.' : '-';
+                        if (cells[5].textContent.trim() !== newOut) {
+                            cells[5].textContent = newOut;
+                            isUpdated = true;
                         }
+                    }
+                    if (cells[6]) {
+                        const color = colors[rec.status_category] || rec.row_color || '#007B3E';
+                        const badge = cells[6].querySelector('.bma-badge');
+                        if (badge && (badge.textContent.trim() !== rec.status_label || badge.style.backgroundColor !== color)) {
+                            badge.textContent = rec.status_label;
+                            badge.style.backgroundColor = color;
+                            isUpdated = true;
+                        }
+                    }
+                    if (isUpdated) {
+                        DOMDiffHelper.highlightRowUpdate(rowEl);
                     }
                 }
             }

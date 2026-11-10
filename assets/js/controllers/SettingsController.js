@@ -76,6 +76,10 @@ export class SettingsController {
             elAllowGallery.checked = Boolean(this.settings.allow_gallery_fallback !== false);
         }
         document.getElementById('toggleRequireGps').checked = Boolean(this.settings.require_gps);
+        const elEnforceRadius = document.getElementById('toggleEnforceGeofenceRadius');
+        if (elEnforceRadius) {
+            elEnforceRadius.checked = Boolean(this.settings.enforce_geofence_radius !== false);
+        }
 
         const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
         const earlyShiftWindowEl = document.getElementById('setEarlyShiftWindowMinutes');
@@ -615,6 +619,10 @@ export class SettingsController {
         this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
         this.settings.allow_gallery_fallback = document.getElementById('toggleAllowGalleryFallback')?.checked !== false;
         this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
+        const elEnforceRadius = document.getElementById('toggleEnforceGeofenceRadius');
+        if (elEnforceRadius) {
+            this.settings.enforce_geofence_radius = Boolean(elEnforceRadius.checked);
+        }
         const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
         if (elFilterRealtime) {
             this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);

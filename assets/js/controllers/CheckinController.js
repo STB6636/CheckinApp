@@ -8,6 +8,7 @@ import { AuthService } from '../core/AuthService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
+import { DatabaseService } from '../core/DatabaseService.js';
 
 export class CheckinController {
     constructor() {
@@ -108,6 +109,73 @@ export class CheckinController {
                 locationName: '',
                 zoomLevel: 19
             };
+        }
+
+        this.#initRealtimeSettingsListener();
+        document.addEventListener('visibilitychange', async () => {
+            if (!document.hidden) {
+                await this.#syncSettingsHotReload();
+            }
+        });
+    }
+
+    #initRealtimeSettingsListener() {
+        window.addEventListener('bma:settings-updated', (e) => {
+            if (e.detail) {
+                this.#applySettingsHotReload(e.detail);
+            }
+        });
+
+        try {
+            const client = window.supabaseClient || (typeof DatabaseService !== 'undefined' ? DatabaseService.getInstance().client : null);
+            if (client) {
+                client.channel('bma_checkin_settings_realtime')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings' }, async (payload) => {
+                        const newSettings = payload.new;
+                        if (newSettings) {
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            const fresh = await SettingsModel.getSettings(true);
+                            this.#applySettingsHotReload(fresh);
+                        }
+                    })
+                    .subscribe();
+            }
+        } catch (err) {
+            console.warn('Realtime settings subscription error:', err);
+        }
+    }
+
+    async #syncSettingsHotReload() {
+        try {
+            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+            const fresh = await SettingsModel.getSettings(true);
+            this.#applySettingsHotReload(fresh);
+        } catch (err) {
+            console.warn('Sync settings hot reload error:', err);
+        }
+    }
+
+    #applySettingsHotReload(newSettings) {
+        if (!newSettings) return;
+        this.settings = newSettings;
+        this.#renderUserAndSettingsInfo();
+        this.#renderGeofenceStatusUI();
+        this.#applyDynamicWorkspaceLayout();
+        this.#evaluateTimeWindowAndPopulateShifts();
+        this.#updateStatusCardsAndMainButton();
+
+        if (this.settings.require_photo) {
+            if (!this.capturedPhotoDataUrl) {
+                this.#stopCameraAndShowStandby();
+            }
+        } else {
+            this.#stopCameraHardwareStream();
+        }
+
+        if (this.settings.require_gps) {
+            if (!this.gpsData.ready || this.gpsData.lat === null) {
+                this.#initGpsLocation();
+            }
         }
     }
 
@@ -481,6 +549,18 @@ export class CheckinController {
 
         const closestName = closestLocation ? closestLocation.name : 'สถานที่ทำงาน';
         const closestRadius = closestLocation ? (closestLocation.radius_meters || 150) : 150;
+
+        if (this.settings?.enforce_geofence_radius === false) {
+            const distText = minDistance !== Infinity ? ` (ห่างจาก "${closestName}" ประมาณ ${minDistance} ม.)` : '';
+            return {
+                matched: true,
+                location: closestLocation || { name: 'สถานที่ทำงาน (ไม่จำกัดรัศมี)' },
+                distanceMeters: minDistance === Infinity ? 0 : minDistance,
+                allowedRadius: 999999,
+                message: `ระบบเปิดให้ลงเวลาโดยไม่จำกัดรัศมีสถานที่ทำงาน${distText} (บันทึกพิกัดจริง)`
+            };
+        }
+
         return {
             matched: false,
             location: closestLocation,
@@ -522,6 +602,16 @@ export class CheckinController {
 
         const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
         this.geofenceResult = evalRes;
+
+        if (this.settings?.enforce_geofence_radius === false) {
+            statusCard.className = 'p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5';
+            badgeEl.className = 'bma-badge bma-badge-emerald text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            badgeEl.textContent = 'ไม่จำกัดรัศมี';
+            if (iconEl) iconEl.className = 'fa-solid fa-circle-check text-[#00744B] dark:text-emerald-400';
+            textEl.className = 'text-[11px] font-semibold text-[#00744B] dark:text-emerald-300 leading-relaxed';
+            textEl.textContent = evalRes.message || 'ระบบเปิดให้ลงเวลาโดยไม่จำกัดรัศมีสถานที่ทำงาน (บันทึกพิกัดจริง)';
+            return;
+        }
 
         if (evalRes.matched) {
             statusCard.className = 'p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5';
@@ -2386,7 +2476,7 @@ export class CheckinController {
         }
 
         if (this.locationMode === 'ONSITE') {
-            if (this.settings?.require_gps) {
+            if (this.settings?.require_gps && this.settings?.enforce_geofence_radius !== false) {
                 const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
                 if (!evalRes.matched) {
                     await UIHelpers.alert(

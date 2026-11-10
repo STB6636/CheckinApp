@@ -38,6 +38,7 @@ export class Config {
         require_photo: true,
         allow_gallery_fallback: true,
         require_gps: true,
+        enforce_geofence_radius: true,
         single_click_checkin: false,
         randomize_gps_checkout: false,
         randomize_gps_radius_meters: 20,

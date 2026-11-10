@@ -120,6 +120,11 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_early_shift_window_minutes') !== null
                     ? Number(localStorage.getItem('bma_early_shift_window_minutes')) || 30
                     : Number(Config.DEFAULT_SETTINGS.early_shift_window_minutes ?? 30)),
+            enforce_geofence_radius: typeof data.enforce_geofence_radius === 'boolean'
+                ? data.enforce_geofence_radius
+                : (localStorage.getItem('bma_enforce_geofence_radius') !== null
+                    ? localStorage.getItem('bma_enforce_geofence_radius') !== 'false'
+                    : Boolean(Config.DEFAULT_SETTINGS.enforce_geofence_radius !== false)),
             disable_normal_hours_checkin: typeof data.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
                 : (localStorage.getItem('bma_disable_normal_hours_checkin') !== null
@@ -239,6 +244,8 @@ export class SettingsModel {
             return { success: false, message: 'ไม่สามารถบันทึกการตั้งค่าระบบได้: ' + error.message };
         }
 
+        const enforceGeofenceVal = payload.enforce_geofence_radius !== false;
+        try { localStorage.setItem('bma_enforce_geofence_radius', String(enforceGeofenceVal)); } catch (e) {}
         const allowGalleryVal = Boolean(payload.allow_gallery_fallback);
         try { localStorage.setItem('bma_allow_gallery_fallback', String(allowGalleryVal)); } catch (e) {}
         const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
@@ -274,6 +281,9 @@ export class SettingsModel {
             disable_normal_hours_checkin: typeof data?.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
                 : disableNormalVal,
+            enforce_geofence_radius: typeof data?.enforce_geofence_radius === 'boolean'
+                ? data.enforce_geofence_radius
+                : enforceGeofenceVal,
             official_locations: Array.isArray(data?.official_locations)
                 ? data.official_locations
                 : officialLocationsVal
