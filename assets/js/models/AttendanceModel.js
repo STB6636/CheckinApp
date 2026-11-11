@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/AttendanceModel.js
- * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (อัปเกรดระบบ GPS ค้นหาระยะ z=19 "ใกล้เคียง..." -> z=20 "บริเวณ..." -> ซอย/ซอยย่อย "ใกล้เคียง..." และวนหาใหม่เมื่อเจอ ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด)
+ * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (ระบบระบุสถานที่ GPS สถาปัตยกรรม 5-Tier Nearby Places Resolution: Tier 0 Official Locations -> Tier 1 POI/Places -> Tier 2 Soi/Sub-soi -> Tier 3 Retry -> Tier 4 Smart Semantic Fallback)
  */
 
 import { Config } from '../core/Config.js';
@@ -12,6 +12,10 @@ import { SettingsModel } from './SettingsModel.js';
 export class AttendanceModel {
     // แคชเก็บผลลัพธ์สถานที่ตามพิกัด (ความละเอียดทศนิยม 5 ตำแหน่ง ~ 1.1 เมตร) เพื่อความเร็วสูงสุด
     static #locationCache = new Map();
+
+    static clearLocationCache() {
+        AttendanceModel.#locationCache.clear();
+    }
 
     static #calculateDistanceMeters(lat1, lon1, lat2, lon2) {
         const R = 6371000;
@@ -47,6 +51,11 @@ export class AttendanceModel {
             .replace(/^(ใกล้เคียง|บริเวณ)\s+/g, '')
             .trim();
         if (!clean) return true;
+
+        // บล็อก "ซอยในพื้นที่" และตัวเลขบ้านเลขที่ล้วนๆ หรือรหัสไปรษณีย์
+        if (/ซอยในพื้นที่/i.test(clean) || /^[\d\s\/\-\.]+$/.test(clean)) {
+            return true;
+        }
 
         // 1. บล็อกคำว่า "หมู่บ้าน" ทุกกรณีตามข้อกำหนด (เช่น หมู่บ้าน..., บ้าน...)
         if (/(^หมู่บ้าน|หมู่บ้าน|^หมู่ที่\s*\d+|ตำบล|อำเภอ|จังหวัด)/i.test(clean)) {
@@ -100,7 +109,7 @@ export class AttendanceModel {
             tags.building === 'public' ||
             tags.building === 'civic' ||
             ['townhall', 'police', 'courthouse', 'public_building', 'fire_station', 'post_office', 'hospital', 'school', 'university', 'college', 'community_centre', 'library'].includes(tags.amenity);
-        const isGovName = /(สำนัก|สำนักงาน|สำนักงานเขต|กอง|กรม|กระทรวง|ศาลาว่าการ|เทศกิจ|สถานีตำรวจ|สน\.|โรงพยาบาล|รพ\.|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล|ไปรษณีย์|ดับเพลิง|ราชการ)/.test(n);
+        const isGovName = /(สำนัก|สำนักงาน|สำนักงานเขต|กอง|กรม|กระทรวง|ศาลาว่าการ|เทศกิจ|สถานีตำรวจ|สน\.|โรงพยาบาล|รพ\.|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล|ไปรษณีย์|ดับเพลิง|ราชการ|ศูนย์ราชการ)/.test(n);
         if (isGovTag || isGovName) {
             return { matched: true, priority: 1, cleanName: n };
         }
@@ -116,7 +125,7 @@ export class AttendanceModel {
             tags.historic === 'memorial' ||
             tags.tourism === 'attraction' ||
             tags.tourism === 'museum';
-        const isLandmarkName = /(วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|อนุสาวรีย์|พระบรมมหาราชวัง|พิพิธภัณฑ์|ศาลเจ้า|มัสยิด|โบสถ์)/.test(n);
+        const isLandmarkName = /(วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|อนุสาวรีย์|พระบรมมหาราชวัง|พิพิธภัณฑ์|ศาลเจ้า|มัสยิด|โบสถ์|สวนสาธารณะ|อุทยาน|หอศิลป์)/.test(n);
         if (isLandmarkTag || isLandmarkName) {
             return { matched: true, priority: 1, cleanName: n };
         }
@@ -150,7 +159,7 @@ export class AttendanceModel {
             ['restaurant', 'cafe', 'fast_food', 'food_court', 'marketplace', 'convenience', 'bakery', 'pharmacy', 'clinic', 'bank', 'atm', 'fuel'].includes(tags.amenity) ||
             tags.building === 'commercial' ||
             tags.building === 'retail';
-        const isShopFoodName = /(ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|เบเกอรี่|ตลาด|มินิมาร์ท|เซเว่น|7-Eleven|7-11|Lotus|Big\s*C|Tops|Makro|CJ|ห้าง|คลินิก|ขายยา|ธนาคาร|ปั๊ม|Cafe|Coffee|Shop|Store|Market|Mall)/i.test(n);
+        const isShopFoodName = /(ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|เบเกอรี่|ตลาด|มินิมาร์ท|เซเว่น|7-Eleven|7-11|Lotus|Big\s*C|Tops|Makro|CJ|ห้าง|คลินิก|ขายยา|ธนาคาร|ปั๊ม|Cafe|Coffee|Shop|Store|Market|Mall|พารากอน|เซ็นทรัล|เดอะมอลล์|โรบินสัน|Paragon|Central|The Mall)/i.test(n);
         if (isShopFoodTag || isShopFoodName) {
             return { matched: true, priority: 3, cleanName: n };
         }
@@ -158,9 +167,12 @@ export class AttendanceModel {
         // 6. กรณีเป็นอาคารสำนักงานหรือสถานที่ที่มีชื่อเฉพาะซึ่งไม่ใช่ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด
         if (
             !tags.highway &&
-            (tags.building || tags.office || tags.amenity || tags.tourism || tags.leisure) &&
+            (tags.building || tags.office || tags.amenity || tags.tourism || tags.leisure || tags.historic || tags.shop) &&
             !AttendanceModel.#isForbiddenLocationTerm(n, tags)
         ) {
+            if (/^(ซอย|ซ\.|ตรอก|แยก)\s*/i.test(n)) {
+                return { matched: false, priority: 99, cleanName: '' };
+            }
             return { matched: true, priority: 4, cleanName: n };
         }
 
@@ -168,7 +180,7 @@ export class AttendanceModel {
     }
 
     /**
-     * สกัดชื่อสถานที่เป้าหมายจากผลลัพธ์ของ Nominatim (สำหรับการค้นหาที่ระดับ z=19 และ z=20)
+     * สกัดชื่อสถานที่เป้าหมายจากผลลัพธ์ของ Nominatim (สำหรับการค้นหาที่ระดับ z=18, z=19, z=20)
      * @param {Object} nomData
      * @returns {{matched: boolean, cleanName: string, priority: number}}
      */
@@ -177,11 +189,13 @@ export class AttendanceModel {
 
         const addr = nomData.address || {};
         const namedetails = nomData.namedetails || {};
+        const displayFirstPart = (nomData.display_name || '').split(',')[0]?.trim();
 
         const candidateNames = [
             namedetails['name:th'],
             namedetails.name,
             nomData.name,
+            displayFirstPart,
             addr.amenity,
             addr.building,
             addr.apartments,
@@ -198,6 +212,8 @@ export class AttendanceModel {
             office: nomData.category === 'office' ? nomData.type : (addr.office ? 'government' : ''),
             shop: nomData.category === 'shop' ? nomData.type : (addr.shop ? 'yes' : ''),
             tourism: nomData.category === 'tourism' ? nomData.type : (addr.tourism ? 'yes' : ''),
+            historic: nomData.category === 'historic' ? nomData.type : (addr.historic ? 'yes' : ''),
+            leisure: nomData.category === 'leisure' ? nomData.type : (addr.leisure ? 'yes' : ''),
             highway: nomData.category === 'highway' && nomData.type !== 'bus_stop' ? nomData.type : '',
             railway: nomData.category === 'railway' ? nomData.type : '',
             place: nomData.category === 'place' ? nomData.type : '',
@@ -267,7 +283,7 @@ export class AttendanceModel {
                 addr.soi,
                 addr.road,
                 addr.residential,
-                addr. pedestrian,
+                addr.pedestrian,
                 addr.footway
             ].filter(Boolean);
 
@@ -298,7 +314,10 @@ export class AttendanceModel {
         try {
             const response = await fetch(url, {
                 signal: controller.signal,
-                headers: { 'Accept': 'application/json' }
+                headers: {
+                    'Accept': 'application/json, application/osm3s+json, */*',
+                    'User-Agent': 'BMA-CheckinApp-Mobile/2.7 (Bangkok Metropolitan Administration)'
+                }
             });
             clearTimeout(timer);
             if (!response.ok) return null;
@@ -309,271 +328,378 @@ export class AttendanceModel {
         }
     }
 
-    static async #queryOverpassFast(query, timeoutMs = 1200) {
+    static async #queryOverpassFast(query, timeoutMs = 2200) {
         const encoded = encodeURIComponent(query);
         const mirrors = [
-            `https://overpass-api.de/api/interpreter?data=${encoded}`,
             `https://lz4.overpass-api.de/api/interpreter?data=${encoded}`,
+            `https://overpass-api.de/api/interpreter?data=${encoded}`,
             `https://overpass.kumi.systems/api/interpreter?data=${encoded}`
         ];
 
         try {
-            const results = await Promise.all(
-                mirrors.map(url => AttendanceModel.#fetchWithFastTimeout(url, timeoutMs))
-            );
-            return results.find(r => r && Array.isArray(r.elements) && r.elements.length > 0) || results.find(Boolean) || null;
-        } catch (e) {
+            // แข่งขัน (Race) ดึงข้อมูลจากกระจกเซิร์ฟเวอร์หลายจุด คืนผลลัพธ์ทันทีที่พบ elements แรก
+            const fetchMirrorWithElements = async (url) => {
+                const res = await AttendanceModel.#fetchWithFastTimeout(url, timeoutMs);
+                if (res && Array.isArray(res.elements) && res.elements.length > 0) {
+                    return res;
+                }
+                throw new Error('No elements');
+            };
+            return await Promise.any(mirrors.map(fetchMirrorWithElements));
+        } catch (_) {
             return null;
         }
     }
 
     /**
-     * ค้นหาสถานที่ใกล้เคียงพร้อมคืนค่าระดับ Zoom ที่ตรวจพบ (z=19 หรือ z=20) ตามข้อกำหนด STB Checkin แก้ไข 11:
-     * 1. ค้นหาในระยะค่า z = 19 (ประมาณ 20 เมตร) ก่อน -> แสดงคำขึ้นต้นว่า "ใกล้เคียง " + ชื่อสถานที่
-     * 2. หากไม่พบใน z = 19 ให้เปลี่ยนไปใช้ระยะค่า z = 20 (ประมาณ 10 เมตร) -> แสดงคำขึ้นต้นว่า "บริเวณ " + ชื่อสถานที่
-     * 3. หากใช้ z = 20 แล้วยังไม่เจอสถานที่ ให้เอา ซอย / ซอยย่อย -> แสดงคำขึ้นต้นว่า "ใกล้เคียง " + ชื่อซอย
-     * 4. หากได้ค่าเป็น ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด ให้วนกลับไปหาค่าใหม่อีกครั้งอัตโนมัติ
+     * ค้นหาสถานที่ใกล้เคียงพร้อมคืนค่าระดับ Zoom ที่ตรวจพบ (z=19 หรือ z=20) ตามสถาปัตยกรรม 5-Tier Resilience:
+     * Tier 0: ตรวจสอบสถานที่ทางการ (Official Locations) ในหน่วยความจำ (0ms, 100% Resilience)
+     * Tier 1: ค้นหาสถานที่จริง (POI / สถานที่สำคัญ / ร้านค้า / บริการสาธารณะ) ในระยะ 0-150m ก่อนชื่อซอยเสมอ
+     * Tier 2: ค้นหา ซอย / ซอยย่อย เมื่อไม่พบ POI ใน Tier 1
+     * Tier 3: Retry loop ขยายวงค้นหาโดยตรวจหาสถานที่ก่อนชื่อซอยเสมอ
+     * Tier 4: Smart Semantic Fallback แสดงชื่อถนน/แขวง/เขต (ไม่หลุดพิกัดดิบหรือคำว่า ซอยในพื้นที่)
      * @param {number} lat
      * @param {number} lng
+     * @param {Object} [options={}]
      * @returns {Promise<{locationName: string, zoomLevel: number}>}
      */
-    static async resolveLocationWithZoomMeta(lat, lng) {
-        if (typeof lat !== 'number' || typeof lng !== 'number') {
+    static async resolveLocationWithZoomMeta(lat, lng, options = {}) {
+        const numLat = Number(lat);
+        const numLng = Number(lng);
+        if (!Number.isFinite(numLat) || !Number.isFinite(numLng) || numLat < -90 || numLat > 90 || numLng < -180 || numLng > 180) {
             return { locationName: 'ไม่ระบุสถานที่', zoomLevel: 19 };
         }
 
-        const cacheKey = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-        if (AttendanceModel.#locationCache.has(cacheKey)) {
+        const opts = options || {};
+        const cacheKey = `${numLat.toFixed(5)},${numLng.toFixed(5)}`;
+        if (!opts.bypassCache && AttendanceModel.#locationCache.has(cacheKey)) {
             const cached = AttendanceModel.#locationCache.get(cacheKey);
             if (cached && !AttendanceModel.#isForbiddenLocationTerm(cached.locationName)) {
                 return cached;
             }
         }
 
-        // ยิงคำขอขนานชุดแรก: Nominatim z=19 (20m), Nominatim z=20 (10m) และ Overpass รัศมีเริ่มต้น
-        const nomUrlZ19 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=19&addressdetails=1&namedetails=1&accept-language=th`;
-        const nomUrlZ20 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=20&addressdetails=1&namedetails=1&accept-language=th`;
-        const initialOverpassQuery = `[out:json][timeout:1];(node(around:45,${lat},${lng})["name"];way(around:45,${lat},${lng})["name"];);out center;`;
+        try {
+            // ====================================================================
+            // Tier 0: ตรวจสอบสถานที่ทางการในหน่วยความจำ (Official Locations) (0ms, 100% Resilience)
+            // ====================================================================
+            let officialList = opts.officialLocations || Config.DEFAULT_SETTINGS?.official_locations;
+            if (!Array.isArray(officialList) || officialList.length === 0) {
+                officialList = [
+                    { id: 'LOC-001', name: 'สำนักเทศกิจ', latitude: 13.756331, longitude: 100.501765, radius_meters: 180, is_active: true }
+                ];
+            }
 
-        const [nomZ19, nomZ20, ovInitial] = await Promise.all([
-            AttendanceModel.#fetchWithFastTimeout(nomUrlZ19, 1100),
-            AttendanceModel.#fetchWithFastTimeout(nomUrlZ20, 1100),
-            AttendanceModel.#queryOverpassFast(initialOverpassQuery, 1200)
-        ]);
+            let bestOfficialMatch = null;
+            for (const loc of officialList) {
+                if (!loc || loc.is_active === false) continue;
+                const locLat = Number(loc.latitude ?? loc.lat);
+                const locLng = Number(loc.longitude ?? loc.lng ?? loc.lon);
+                if (!Number.isFinite(locLat) || !Number.isFinite(locLng)) continue;
 
-        const initialElements = ovInitial?.elements || [];
-
-        // คัดแยกสถานที่เป้าหมายจาก Overpass พร้อมคำนวณระยะห่างจริง
-        const classifyElementsWithinRadius = (elements, minExclusiveMeters, maxInclusiveMeters) => {
-            const list = [];
-            for (const el of elements) {
-                const tags = el.tags || {};
-                const rawName = String(tags['name:th'] || tags.name || '').trim();
-                if (!rawName) continue;
-
-                const classification = AttendanceModel.#classifyTargetPlace(tags, rawName);
-                if (!classification.matched) continue;
-
-                const elLat = el.lat ?? el.center?.lat;
-                const elLon = el.lon ?? el.center?.lon;
-                const dist = (typeof elLat === 'number' && typeof elLon === 'number')
-                    ? AttendanceModel.#calculateDistanceMeters(lat, lng, elLat, elLon)
-                    : maxInclusiveMeters;
-
-                if (dist > minExclusiveMeters && dist <= maxInclusiveMeters) {
-                    list.push({
-                        cleanName: classification.cleanName,
-                        dist,
-                        priority: classification.priority
-                    });
+                const dist = AttendanceModel.#calculateDistanceMeters(numLat, numLng, locLat, locLng);
+                const threshold = Math.max(loc.radius_meters || 150, 180);
+                if (dist <= threshold) {
+                    if (!bestOfficialMatch || dist < bestOfficialMatch.dist) {
+                        bestOfficialMatch = { name: loc.name, dist };
+                    }
                 }
             }
-            list.sort((a, b) => {
-                if (Math.abs(a.dist - b.dist) <= 6 && a.priority !== b.priority) {
-                    return a.priority - b.priority;
+
+            // ตรวจสอบสำนักเทศกิจ (Default City Law Office) เสมอหากยังไม่พบ และไม่ได้ถูกระบุปิดใช้งานโดยเจตนา
+            if (!bestOfficialMatch) {
+                const isExplicitlyDeactivated = Array.isArray(officialList) && officialList.some(loc => {
+                    if (!loc || loc.is_active !== false) return false;
+                    const lLat = Number(loc.latitude ?? loc.lat);
+                    const lLng = Number(loc.longitude ?? loc.lng ?? loc.lon);
+                    if (!Number.isFinite(lLat) || !Number.isFinite(lLng)) return false;
+                    return AttendanceModel.#calculateDistanceMeters(numLat, numLng, lLat, lLng) <= 180;
+                });
+
+                if (!isExplicitlyDeactivated) {
+                    const defaultDist = AttendanceModel.#calculateDistanceMeters(numLat, numLng, 13.756331, 100.501765);
+                    if (defaultDist <= 180) {
+                        bestOfficialMatch = { name: 'สำนักเทศกิจ', dist: defaultDist };
+                    }
                 }
-                return a.dist - b.dist;
-            });
-            return list;
-        };
-
-        // ====================================================================
-        // ขั้นตอนที่ 1: ค้นหาสถานที่ใกล้เคียงในระยะค่า z (Zoom Level) = 19 (ประมาณ 20 เมตร) ก่อน
-        // โดยแสดงคำขึ้นต้นว่า ["ใกล้เคียง " + ชื่อสถานที่]
-        // (หมายเหตุ: กรณีที่ตรวจพบจากระยะวง 10-20 เมตร หรือจาก Nominatim z=19)
-        // ====================================================================
-        const z19OverpassMatches = classifyElementsWithinRadius(initialElements, 10, 22);
-        if (z19OverpassMatches.length > 0) {
-            const bestZ19 = z19OverpassMatches[0];
-            if (!AttendanceModel.#isForbiddenLocationTerm(bestZ19.cleanName)) {
-                const resultObj = {
-                    locationName: `ใกล้เคียง ${bestZ19.cleanName}`,
-                    zoomLevel: 19
-                };
-                AttendanceModel.#locationCache.set(cacheKey, resultObj);
-                return resultObj;
             }
-        }
 
-        const nomZ19Check = AttendanceModel.#extractValidPlaceFromNominatim(nomZ19);
-        if (nomZ19Check.matched && !AttendanceModel.#isForbiddenLocationTerm(nomZ19Check.cleanName)) {
-            const nLat = parseFloat(nomZ19.lat);
-            const nLon = parseFloat(nomZ19.lon);
-            const nDist = (!isNaN(nLat) && !isNaN(nLon))
-                ? AttendanceModel.#calculateDistanceMeters(lat, lng, nLat, nLon)
-                : 18;
-            // หากอยู่ในระยะของ z=19 (ประมาณ 20 เมตร)
-            if (nDist > 10 && nDist <= 25) {
+            if (bestOfficialMatch) {
+                const prefix = bestOfficialMatch.dist <= 30 ? 'บริเวณ ' : 'ใกล้เคียง ';
                 const resultObj = {
-                    locationName: `ใกล้เคียง ${nomZ19Check.cleanName}`,
-                    zoomLevel: 19
-                };
-                AttendanceModel.#locationCache.set(cacheKey, resultObj);
-                return resultObj;
-            }
-        }
-
-        // ====================================================================
-        // ขั้นตอนที่ 2: หากในรัศมี z = 19 ไม่พบสถานที่ ให้เปลี่ยนไปใช้ระยะค่า z (Zoom Level) = 20 (ประมาณ 10 เมตร)
-        // โดยแสดงคำขึ้นต้นว่า ["บริเวณ " + ชื่อสถานที่]
-        // ====================================================================
-        const z20OverpassMatches = classifyElementsWithinRadius(initialElements, -1, 10);
-        if (z20OverpassMatches.length > 0) {
-            const bestZ20 = z20OverpassMatches[0];
-            if (!AttendanceModel.#isForbiddenLocationTerm(bestZ20.cleanName)) {
-                const resultObj = {
-                    locationName: `บริเวณ ${bestZ20.cleanName}`,
+                    locationName: `${prefix}${bestOfficialMatch.name}`,
                     zoomLevel: 20
                 };
                 AttendanceModel.#locationCache.set(cacheKey, resultObj);
                 return resultObj;
             }
-        }
 
-        const nomZ20Check = AttendanceModel.#extractValidPlaceFromNominatim(nomZ20);
-        if (nomZ20Check.matched && !AttendanceModel.#isForbiddenLocationTerm(nomZ20Check.cleanName)) {
-            const resultObj = {
-                locationName: `บริเวณ ${nomZ20Check.cleanName}`,
-                zoomLevel: 20
+            // ====================================================================
+            // ยิงคำขอขนาน: Nominatim (z=18, z=19, z=20) + Targeted Overpass POIs
+            // ====================================================================
+            const nomUrlZ18 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${numLat}&lon=${numLng}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`;
+            const nomUrlZ19 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${numLat}&lon=${numLng}&zoom=19&addressdetails=1&namedetails=1&accept-language=th`;
+            const nomUrlZ20 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${numLat}&lon=${numLng}&zoom=20&addressdetails=1&namedetails=1&accept-language=th`;
+            const targetedOverpassQuery = `[out:json][timeout:2];(nwr(around:80,${numLat},${numLng})["amenity"]["name"];nwr(around:80,${numLat},${numLng})["shop"]["name"];nwr(around:80,${numLat},${numLng})["office"]["name"];nwr(around:80,${numLat},${numLng})["tourism"]["name"];nwr(around:80,${numLat},${numLng})["historic"]["name"];nwr(around:80,${numLat},${numLng})["building"]["name"];);out center;`;
+
+            const [nomZ18, nomZ19, nomZ20, ovInitial] = await Promise.all([
+                AttendanceModel.#fetchWithFastTimeout(nomUrlZ18, 1800),
+                AttendanceModel.#fetchWithFastTimeout(nomUrlZ19, 1500),
+                AttendanceModel.#fetchWithFastTimeout(nomUrlZ20, 1500),
+                AttendanceModel.#queryOverpassFast(targetedOverpassQuery, 2000)
+            ]);
+
+            const initialElements = ovInitial?.elements || [];
+
+            // Helper คัดแยกสถานที่เป้าหมายจาก Overpass พร้อมคำนวณระยะห่างจริง
+            const classifyElementsWithinRadius = (elements, minExclusiveMeters, maxInclusiveMeters) => {
+                const list = [];
+                for (const el of elements) {
+                    const tags = el.tags || {};
+                    const rawName = String(tags['name:th'] || tags.name || '').trim();
+                    if (!rawName) continue;
+
+                    const classification = AttendanceModel.#classifyTargetPlace(tags, rawName);
+                    if (!classification.matched) continue;
+
+                    const elLat = el.lat ?? el.center?.lat;
+                    const elLon = el.lon ?? el.center?.lon;
+                    const dist = (typeof elLat === 'number' && typeof elLon === 'number')
+                        ? AttendanceModel.#calculateDistanceMeters(numLat, numLng, elLat, elLon)
+                        : maxInclusiveMeters;
+
+                    if (dist > minExclusiveMeters && dist <= maxInclusiveMeters) {
+                        list.push({
+                            cleanName: classification.cleanName,
+                            dist,
+                            priority: classification.priority
+                        });
+                    }
+                }
+                list.sort((a, b) => {
+                    if (Math.abs(a.dist - b.dist) <= 15 && a.priority !== b.priority) {
+                        return a.priority - b.priority;
+                    }
+                    return a.dist - b.dist;
+                });
+                return list;
             };
-            AttendanceModel.#locationCache.set(cacheKey, resultObj);
-            return resultObj;
-        }
 
-        // ====================================================================
-        // ขั้นตอนที่ 3: หากใช้ z = 20 แล้วยังไม่เจอสถานที่ ให้เอา "ซอย / ซอยย่อย"
-        // โดยแสดงคำขึ้นต้นว่า ["ใกล้เคียง " + ชื่อสถานที่]
-        // และหากได้ค่าเป็น ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด ให้วนกลับไปหาค่าใหม่อีกครั้ง
-        // ====================================================================
-        const initialSoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [nomZ20, nomZ19], initialElements);
-        if (initialSoi && !AttendanceModel.#isForbiddenLocationTerm(initialSoi)) {
-            const resultObj = {
-                locationName: `ใกล้เคียง ${initialSoi}`,
-                zoomLevel: 19
-            };
-            AttendanceModel.#locationCache.set(cacheKey, resultObj);
-            return resultObj;
-        }
+            // ====================================================================
+            // Tier 1: ค้นหาสถานที่จริง (POI / สถานที่สำคัญ / ร้านค้า / บริการ) ก่อนเสมอ (0 - 150 เมตร)
+            // ====================================================================
+            const candidatePlaces = [];
 
-        // ตรวจสอบว่าใน initialElements (ระยะ 22 - 45 เมตร) มีสถานที่เป้าหมายหรือไม่ก่อนขยายวง
-        const widerInitialMatches = classifyElementsWithinRadius(initialElements, 22, 45);
-        if (widerInitialMatches.length > 0) {
-            const bestWider = widerInitialMatches[0];
-            if (!AttendanceModel.#isForbiddenLocationTerm(bestWider.cleanName)) {
+            // 1.1 สถานที่จาก Overpass
+            const overpassPlaces = classifyElementsWithinRadius(initialElements, -1, 150);
+            for (const op of overpassPlaces) {
+                if (!AttendanceModel.#isForbiddenLocationTerm(op.cleanName)) {
+                    candidatePlaces.push(op);
+                }
+            }
+
+            // 1.2 สถานที่จาก Nominatim (z=18, z=19, z=20)
+            for (const nom of [nomZ18, nomZ19, nomZ20]) {
+                if (!nom) continue;
+                const placeCheck = AttendanceModel.#extractValidPlaceFromNominatim(nom);
+                if (placeCheck.matched && !AttendanceModel.#isForbiddenLocationTerm(placeCheck.cleanName)) {
+                    const nLat = parseFloat(nom.lat);
+                    const nLon = parseFloat(nom.lon);
+                    const nDist = (!isNaN(nLat) && !isNaN(nLon))
+                        ? AttendanceModel.#calculateDistanceMeters(numLat, numLng, nLat, nLon)
+                        : 20;
+
+                    if (nDist <= 150) {
+                        const exists = candidatePlaces.some(p => p.cleanName === placeCheck.cleanName);
+                        if (!exists) {
+                            candidatePlaces.push({
+                                cleanName: placeCheck.cleanName,
+                                dist: nDist,
+                                priority: placeCheck.priority
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (candidatePlaces.length > 0) {
+                candidatePlaces.sort((a, b) => {
+                    if (Math.abs(a.dist - b.dist) <= 15 && a.priority !== b.priority) {
+                        return a.priority - b.priority;
+                    }
+                    return a.dist - b.dist;
+                });
+                const bestPlace = candidatePlaces[0];
+                const prefix = bestPlace.dist <= 25 ? 'บริเวณ ' : 'ใกล้เคียง ';
                 const resultObj = {
-                    locationName: `ใกล้เคียง ${bestWider.cleanName}`,
+                    locationName: `${prefix}${bestPlace.cleanName}`,
+                    zoomLevel: bestPlace.dist <= 25 ? 20 : 19
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+
+            // ====================================================================
+            // Tier 2: ค้นหา ซอย / ซอยย่อย (เมื่อไม่พบ POI ใน Tier 1 เท่านั้น)
+            // ====================================================================
+            const initialSoi = AttendanceModel.#extractCleanSoiOrSubSoi(numLat, numLng, [nomZ18, nomZ20, nomZ19], initialElements);
+            if (initialSoi && !AttendanceModel.#isForbiddenLocationTerm(initialSoi)) {
+                const resultObj = {
+                    locationName: `ใกล้เคียง ${initialSoi}`,
                     zoomLevel: 19
                 };
                 AttendanceModel.#locationCache.set(cacheKey, resultObj);
                 return resultObj;
             }
-        }
 
-        // ====================================================================
-        // ขั้นตอนที่ 4 (Retry Loop): วนกลับไปหาค่าใหม่อีกครั้งเมื่อยังไม่พบหรือติดค่าต้องห้าม
-        // (ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด)
-        // ====================================================================
-        const retryRadii = [100, 220, 380];
-        for (const radius of retryRadii) {
-            const retryQuery = `[out:json][timeout:1];(node(around:${radius},${lat},${lng})["name"];way(around:${radius},${lat},${lng})["name"];);out center;`;
-            const ovRetry = await AttendanceModel.#queryOverpassFast(retryQuery, 1200);
-            const retryElements = ovRetry?.elements || [];
+            // ====================================================================
+            // Tier 3: Retry loop (ขยายวงค้นหาโดยตรวจสอบสถานที่ก่อนชื่อซอยเสมอ)
+            // ====================================================================
+            const retryRadii = [180, 300];
+            for (const radius of retryRadii) {
+                const retryQuery = `[out:json][timeout:2];(nwr(around:${radius},${numLat},${numLng})["amenity"]["name"];nwr(around:${radius},${numLat},${numLng})["shop"]["name"];nwr(around:${radius},${numLat},${numLng})["office"]["name"];nwr(around:${radius},${numLat},${numLng})["tourism"]["name"];nwr(around:${radius},${numLat},${numLng})["historic"]["name"];nwr(around:${radius},${numLat},${numLng})["building"]["name"];);out center;`;
+                const ovRetry = await AttendanceModel.#queryOverpassFast(retryQuery, 1800);
+                const retryElements = ovRetry?.elements || [];
 
-            if (retryElements.length === 0) continue;
+                if (retryElements.length === 0) continue;
 
-            // 4.1 ค้นหา ซอย / ซอยย่อย ที่ใกล้ที่สุดในวงค้นหาใหม่
-            const retrySoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [nomZ20, nomZ19], retryElements);
-            if (retrySoi && !AttendanceModel.#isForbiddenLocationTerm(retrySoi)) {
-                const resultObj = {
-                    locationName: `ใกล้เคียง ${retrySoi}`,
-                    zoomLevel: 19
-                };
-                AttendanceModel.#locationCache.set(cacheKey, resultObj);
-                return resultObj;
-            }
+                // 3.1 ตรวจสอบสถานที่จริงก่อน
+                const retryPlaces = classifyElementsWithinRadius(retryElements, -1, radius);
+                if (retryPlaces.length > 0) {
+                    const bestRetryPlace = retryPlaces[0];
+                    if (!AttendanceModel.#isForbiddenLocationTerm(bestRetryPlace.cleanName)) {
+                        const resultObj = {
+                            locationName: `ใกล้เคียง ${bestRetryPlace.cleanName}`,
+                            zoomLevel: 19
+                        };
+                        AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                        return resultObj;
+                    }
+                }
 
-            // 4.2 ค้นหาสถานที่เป้าหมายในวงค้นหาใหม่ (ที่ไม่ใช่ ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด)
-            const retryPlaces = classifyElementsWithinRadius(retryElements, -1, radius);
-            if (retryPlaces.length > 0) {
-                const bestRetryPlace = retryPlaces[0];
-                if (!AttendanceModel.#isForbiddenLocationTerm(bestRetryPlace.cleanName)) {
+                // 3.2 ตรวจสอบชื่อซอยตามมา
+                const retrySoi = AttendanceModel.#extractCleanSoiOrSubSoi(numLat, numLng, [nomZ18, nomZ20, nomZ19], retryElements);
+                if (retrySoi && !AttendanceModel.#isForbiddenLocationTerm(retrySoi)) {
                     const resultObj = {
-                        locationName: `ใกล้เคียง ${bestRetryPlace.cleanName}`,
+                        locationName: `ใกล้เคียง ${retrySoi}`,
                         zoomLevel: 19
                     };
                     AttendanceModel.#locationCache.set(cacheKey, resultObj);
                     return resultObj;
                 }
             }
-        }
 
-        // 4.3 กรณีพิกัดตรงจุดเป็นพื้นที่ว่าง ให้สแกนจุดพิกัดข้างเคียง 4 ทิศทางในระยะ ~40 เมตรด้วย z=20 เพื่อหาซอยย่อยหรือสถานที่อีกครั้ง
-        const offsets = [
-            [0.00035, 0.00035],
-            [-0.00035, -0.00035]
-        ];
-        for (const [dLat, dLng] of offsets) {
-            const probeUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${(lat + dLat).toFixed(6)}&lon=${(lng + dLng).toFixed(6)}&zoom=20&addressdetails=1&namedetails=1&accept-language=th`;
-            const probeData = await AttendanceModel.#fetchWithFastTimeout(probeUrl, 900);
-            if (!probeData) continue;
+            // 3.3 Probe พิกัดข้างเคียง (~40m) หากจุดหลักว่างเปล่า
+            const offsets = [
+                [0.00035, 0.00035],
+                [-0.00035, -0.00035]
+            ];
+            for (const [dLat, dLng] of offsets) {
+                const probeUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${(numLat + dLat).toFixed(6)}&lon=${(numLng + dLng).toFixed(6)}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`;
+                const probeData = await AttendanceModel.#fetchWithFastTimeout(probeUrl, 1000);
+                if (!probeData) continue;
 
-            const probePlace = AttendanceModel.#extractValidPlaceFromNominatim(probeData);
-            if (probePlace.matched && !AttendanceModel.#isForbiddenLocationTerm(probePlace.cleanName)) {
-                const resultObj = {
-                    locationName: `ใกล้เคียง ${probePlace.cleanName}`,
-                    zoomLevel: 20
-                };
-                AttendanceModel.#locationCache.set(cacheKey, resultObj);
-                return resultObj;
+                const probePlace = AttendanceModel.#extractValidPlaceFromNominatim(probeData);
+                if (probePlace.matched && !AttendanceModel.#isForbiddenLocationTerm(probePlace.cleanName)) {
+                    const resultObj = {
+                        locationName: `ใกล้เคียง ${probePlace.cleanName}`,
+                        zoomLevel: 20
+                    };
+                    AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                    return resultObj;
+                }
+
+                const probeSoi = AttendanceModel.#extractCleanSoiOrSubSoi(numLat, numLng, [probeData], []);
+                if (probeSoi && !AttendanceModel.#isForbiddenLocationTerm(probeSoi)) {
+                    const resultObj = {
+                        locationName: `ใกล้เคียง ${probeSoi}`,
+                        zoomLevel: 20
+                    };
+                    AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                    return resultObj;
+                }
             }
 
-            const probeSoi = AttendanceModel.#extractCleanSoiOrSubSoi(lat, lng, [probeData], []);
-            if (probeSoi && !AttendanceModel.#isForbiddenLocationTerm(probeSoi)) {
-                const resultObj = {
-                    locationName: `ใกล้เคียง ${probeSoi}`,
-                    zoomLevel: 20
-                };
-                AttendanceModel.#locationCache.set(cacheKey, resultObj);
-                return resultObj;
-            }
-        }
+            // ====================================================================
+            // Tier 4: Smart Semantic Fallback (ระบุย่าน/ถนน/แขวง/เขต ไม่หลุดพิกัดดิบหรือซอยในพื้นที่)
+            // ====================================================================
+            let road = '';
+            let suburb = '';
+            let district = '';
+            let city = '';
 
-        const fallbackObj = {
-            locationName: `ใกล้เคียง ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`,
-            zoomLevel: 19
-        };
-        AttendanceModel.#locationCache.set(cacheKey, fallbackObj);
-        return fallbackObj;
+            for (const nom of [nomZ18, nomZ19, nomZ20]) {
+                if (!nom?.address) continue;
+                const a = nom.address;
+                if (!road) road = a.road || a.pedestrian || a.footway || a.street || '';
+                if (!suburb) suburb = a.suburb || a.quarter || a.neighbourhood || '';
+                if (!district) district = a.city_district || a.district || a.county || '';
+                if (!city) city = a.city || a.state || '';
+            }
+
+            road = String(road || '').trim();
+            suburb = String(suburb || '').trim();
+            district = String(district || '').trim();
+            city = String(city || '').trim();
+
+            const isBangkok = !city || city.includes('กรุงเทพ') || city.includes('Bangkok');
+            let cleanSuburb = suburb;
+            if (cleanSuburb.startsWith('เขต') || cleanSuburb.startsWith('อำเภอ') || cleanSuburb.startsWith('อ.')) {
+                if (!district) district = cleanSuburb;
+                cleanSuburb = '';
+            } else if (cleanSuburb && !cleanSuburb.startsWith('แขวง') && !cleanSuburb.startsWith('ตำบล') && !cleanSuburb.startsWith('ต.')) {
+                cleanSuburb = isBangkok ? `แขวง${cleanSuburb}` : `ตำบล${cleanSuburb}`;
+            }
+
+            let cleanDistrict = district;
+            if (cleanDistrict && !cleanDistrict.startsWith('เขต') && !cleanDistrict.startsWith('อำเภอ') && !cleanDistrict.startsWith('อ.')) {
+                cleanDistrict = isBangkok ? `เขต${cleanDistrict}` : `อำเภอ${cleanDistrict}`;
+            }
+
+            const semanticParts = [];
+            if (road) semanticParts.push(road);
+            if (cleanSuburb && cleanSuburb !== cleanDistrict) semanticParts.push(cleanSuburb);
+            if (cleanDistrict) semanticParts.push(cleanDistrict);
+            if (!isBangkok && city) {
+                semanticParts.push(city.startsWith('จ.') || city.startsWith('จังหวัด') ? city : `จ.${city}`);
+            }
+
+            let fallbackName = '';
+            if (semanticParts.length > 0) {
+                fallbackName = `บริเวณ ${semanticParts.join(' ')}`;
+            } else if (city) {
+                fallbackName = `บริเวณ พื้นที่${city}`;
+            } else {
+                fallbackName = 'บริเวณ พื้นที่กรุงเทพมหานคร';
+            }
+
+            const fallbackObj = {
+                locationName: fallbackName,
+                zoomLevel: 19
+            };
+
+            // บันทึกแคชเฉพาะกรณีที่ได้รับข้อมูล semantic
+            // หากเกิดจาก network failure ทั้งหมด (ไม่มี address details และ elements ใดๆ เลย) จะไม่แคชถาวร เพื่อให้ retry สำเร็จเมื่อเน็ตกลับมา
+            const isOfflineNetworkFailure = !nomZ18?.address && !nomZ19?.address && !nomZ20?.address && initialElements.length === 0;
+            if (!isOfflineNetworkFailure) {
+                AttendanceModel.#locationCache.set(cacheKey, fallbackObj);
+            }
+            return fallbackObj;
+        } catch (err) {
+            console.warn('resolveLocationWithZoomMeta unhandled error:', err);
+            return { locationName: 'บริเวณ พื้นที่กรุงเทพมหานคร', zoomLevel: 19 };
+        }
     }
 
     /**
      * เมธอดหลักสำหรับคืนค่าชื่อสถานที่ (เรียกใช้ resolveLocationWithZoomMeta)
      * @param {number} lat
      * @param {number} lng
+     * @param {Object} [options={}]
      * @returns {Promise<string>}
      */
-    static async resolveLocationName(lat, lng) {
-        const res = await AttendanceModel.resolveLocationWithZoomMeta(lat, lng);
+    static async resolveLocationName(lat, lng, options = {}) {
+        const res = await AttendanceModel.resolveLocationWithZoomMeta(lat, lng, options);
         return res.locationName;
     }
 

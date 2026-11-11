@@ -1,6 +1,6 @@
 /**
  * @file assets/js/controllers/CheckinController.js
- * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (รองรับการค้นหาสถานที่ใกล้เคียงระยะ z=19 "ใกล้เคียง..." -> z=20 "บริเวณ..." -> ซอย/ซอยย่อย "ใกล้เคียง..." พร้อมปรับซูมแผนที่อัตโนมัติ)
+ * @description คลาสควบคุมหน้าลงเวลาปฏิบัติราชการ (รองรับการค้นหาสถานที่ใกล้เคียงสถาปัตยกรรม 5-Tier Nearby Places Resolution พร้อมปรับซูมแผนที่อัตโนมัติ)
  */
 
 import { Config } from '../core/Config.js';
@@ -17,6 +17,7 @@ export class CheckinController {
         this.mediaStream = null;
         this.isCameraRunning = false;
         this.capturedPhotoDataUrl = '';
+        this.isResolvingLocation = false;
         this.gpsData = {
             ready: false,
             lat: null,
@@ -1067,7 +1068,10 @@ export class CheckinController {
 
         if (locNameDisp) locNameDisp.textContent = 'กำลังตรวจสอบชื่อสถานที่...';
         try {
-            const locName = await AttendanceModel.resolveLocationName(numLat, numLng);
+            const resolveOptions = {
+                officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
+            };
+            const locName = await AttendanceModel.resolveLocationName(numLat, numLng, resolveOptions);
             const cleanName = (locName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim() || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
             if (locNameDisp) locNameDisp.textContent = cleanName;
             this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: cleanName };
@@ -1329,6 +1333,18 @@ export class CheckinController {
         const btnSubmitIcon = document.getElementById('btnSubmitCheckinIcon');
         const btnSubmitLabel = document.getElementById('btnSubmitCheckinLabel');
 
+        const applyGpsSearchingLock = () => {
+            if (this.settings?.require_gps && (this.isResolvingLocation || !this.gpsData?.locationName || this.gpsData.locationName.includes('กำลังค้นหา'))) {
+                if (btnSubmit) {
+                    btnSubmit.disabled = true;
+                    btnSubmit.classList.add('opacity-60', 'cursor-not-allowed', 'pointer-events-none');
+                    btnSubmit.classList.remove('cursor-pointer', 'hover:bg-[#005e3c]', 'hover:bg-[#7F1D1D]');
+                    if (btnSubmitIcon) btnSubmitIcon.className = 'fa-solid fa-spinner fa-spin text-lg';
+                    if (btnSubmitLabel) btnSubmitLabel.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+                }
+            }
+        };
+
         const setShiftCardVisibility = (visible) => {
             if (!visible) {
                 actionCard?.classList.add('hidden');
@@ -1400,6 +1416,7 @@ export class CheckinController {
                     ? `บันทึกลงเวลาเลิกงาน (${UIHelpers.formatThaiShortDate(this.activeRegularRecord.work_date)})`
                     : 'บันทึกลงเวลาเลิกงาน';
             }
+            applyGpsSearchingLock();
             return;
         }
 
@@ -1435,6 +1452,7 @@ export class CheckinController {
                 if (btnSubmitLabel) {
                     btnSubmitLabel.textContent = shiftObj ? 'บันทึกลงเวลาปฏิบัติงานนอกเวลา' : 'กรุณาเลือกช่วงเวลาปฏิบัติงานนอกเวลา';
                 }
+                applyGpsSearchingLock();
                 return;
             } else {
                 if (isNormalModeSetting) {
@@ -1492,6 +1510,7 @@ export class CheckinController {
                 }
                 if (btnSubmitIcon) btnSubmitIcon.className = 'fa-solid fa-arrow-right-to-bracket text-lg';
                 if (btnSubmitLabel) btnSubmitLabel.textContent = 'บันทึกลงเวลาเข้าปฏิบัติงาน';
+                applyGpsSearchingLock();
             }
             return;
         }
@@ -1569,6 +1588,8 @@ export class CheckinController {
         if (btnSubmitLabel) {
             btnSubmitLabel.textContent = isOvertimeContext ? 'บันทึกลงเวลาปฏิบัติงานนอกเวลา' : 'บันทึกลงเวลาเข้าปฏิบัติงาน';
         }
+
+        applyGpsSearchingLock();
     }
 
     #renderPersonalAttendanceTabs() {
@@ -2048,15 +2069,29 @@ export class CheckinController {
         const mapLink = document.getElementById('linkViewGoogleMap');
         const mapIframe = document.getElementById('googleMapRealtimeIframe');
         const mapPlaceholder = document.getElementById('googleMapPlaceholder');
+        const headerTitleEl = document.getElementById('gpsCardHeaderTitle');
+        const headerSpinnerEl = document.getElementById('gpsCardHeaderSpinner');
+        const headerInfoIconEl = document.getElementById('gpsCardHeaderInfoIcon');
 
         if (!navigator.geolocation) {
-            coordsEl.textContent = 'อุปกรณ์ไม่รองรับ GPS';
-            locNameEl.textContent = 'ไม่สามารถระบุสถานที่ได้';
+            this.isResolvingLocation = false;
+            if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+            headerSpinnerEl?.classList.add('hidden');
+            headerInfoIconEl?.classList.remove('hidden');
+            if (coordsEl) coordsEl.textContent = 'อุปกรณ์ไม่รองรับ GPS';
+            if (locNameEl) locNameEl.textContent = 'ไม่สามารถระบุสถานที่ได้';
+            this.#updateStatusCardsAndMainButton();
             return;
         }
 
-        coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
-        locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง (z=19 / 20 เมตร)...';
+        this.isResolvingLocation = true;
+        if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+        headerSpinnerEl?.classList.remove('hidden');
+        headerInfoIconEl?.classList.add('hidden');
+        if (coordsEl) coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
+        if (locNameEl) locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+        this.gpsData.locationName = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+        this.#updateStatusCardsAndMainButton();
 
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -2066,9 +2101,8 @@ export class CheckinController {
                 this.gpsData.lng = lng;
                 this.gpsData.ready = true;
                 this.gpsData.zoomLevel = 19;
-                this.gpsData.locationName = `ใกล้เคียง ซอยในพื้นที่ (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
 
-                coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                if (coordsEl) coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
                 // Render inline Leaflet map
                 this.#renderInlineGpsMap(lat, lng);
@@ -2085,8 +2119,16 @@ export class CheckinController {
                     mapLink.classList.remove('hidden');
                 }
 
-                // ค้นหาสถานที่ใกล้เคียงตามลำดับ z=19 -> z=20 -> ซอย/ซอยย่อย
-                this.locationResolvePromise = AttendanceModel.resolveLocationWithZoomMeta(lat, lng).then(resMeta => {
+                // ค้นหาสถานที่ใกล้เคียงตามลำดับ Tier 0 (ราชการ) -> Tier 1 (POI/สถานที่จริง) -> Tier 2 (ซอย/ซอยย่อย) -> Tier 3/4
+                const resolveOptions = {
+                    officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
+                };
+                this.locationResolvePromise = AttendanceModel.resolveLocationWithZoomMeta(lat, lng, resolveOptions).then(resMeta => {
+                    this.isResolvingLocation = false;
+                    if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+                    headerSpinnerEl?.classList.add('hidden');
+                    headerInfoIconEl?.classList.remove('hidden');
+
                     this.gpsData.locationName = resMeta.locationName;
                     this.gpsData.zoomLevel = resMeta.zoomLevel || 19;
 
@@ -2110,18 +2152,34 @@ export class CheckinController {
 
                     this.#renderGeofenceStatusUI();
                     this.#updateStep1Validation();
+                    this.#updateStatusCardsAndMainButton();
                     return resMeta.locationName;
+                }).catch(err => {
+                    console.warn('Location resolve error:', err);
+                    this.isResolvingLocation = false;
+                    if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+                    headerSpinnerEl?.classList.add('hidden');
+                    headerInfoIconEl?.classList.remove('hidden');
+                    this.#renderGeofenceStatusUI();
+                    this.#updateStep1Validation();
+                    this.#updateStatusCardsAndMainButton();
                 });
                 this.#renderGeofenceStatusUI();
                 this.#updateStep1Validation();
+                this.#updateStatusCardsAndMainButton();
             },
             async (err) => {
                 console.warn('Geolocation error:', err);
+                this.isResolvingLocation = false;
+                if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+                headerSpinnerEl?.classList.add('hidden');
+                headerInfoIconEl?.classList.remove('hidden');
                 this.gpsData.ready = false;
-                coordsEl.textContent = 'ไม่ได้เปิดการใช้งาน GPS';
-                locNameEl.textContent = 'กรุณาเปิดบริการตำแหน่งที่ตั้ง (Location Services)';
+                if (coordsEl) coordsEl.textContent = 'ไม่ได้เปิดการใช้งาน GPS';
+                if (locNameEl) locNameEl.textContent = 'กรุณาเปิดบริการตำแหน่งที่ตั้ง (Location Services)';
                 this.#renderGeofenceStatusUI();
                 this.#updateStep1Validation();
+                this.#updateStatusCardsAndMainButton();
 
                 if (this.settings.require_gps) {
                     await UIHelpers.alert(
@@ -2575,6 +2633,15 @@ export class CheckinController {
             return;
         }
 
+        if (this.settings?.require_gps && (this.isResolvingLocation || !this.gpsData.locationName || this.gpsData.locationName.includes('กำลังค้นหา'))) {
+            await UIHelpers.alert(
+                'กำลังค้นหาสถานที่ใกล้เคียง',
+                'ระบบกำลังค้นหาสถานที่ใกล้เคียง กรุณารอสักครู่จนกว่าจะขึ้นสถานที่ใกล้เคียงก่อนกดบันทึกลงเวลา',
+                'warning'
+            );
+            return;
+        }
+
         if (this.locationMode === 'ONSITE') {
             if (this.settings?.require_gps && this.settings?.enforce_geofence_radius !== false) {
                 const evalRes = this.evaluateOnsiteGeofence(this.gpsData.lat, this.gpsData.lng);
@@ -2931,7 +2998,10 @@ export class CheckinController {
         }
 
         if (this.gpsData.lat != null && (!this.gpsData.locationName || this.gpsData.locationName.includes('กำลังตรวจสอบ'))) {
-            AttendanceModel.resolveLocationName(this.gpsData.lat, this.gpsData.lng).then(locName => {
+            const resolveOptions = {
+                officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
+            };
+            AttendanceModel.resolveLocationName(this.gpsData.lat, this.gpsData.lng, resolveOptions).then(locName => {
                 if (locNameText && this.specialModalGps.mode === 'current') {
                     locNameText.textContent = locName;
                 }
@@ -2985,7 +3055,10 @@ export class CheckinController {
             }
 
             try {
-                const rawLocName = await AttendanceModel.resolveLocationName(numLat, numLng);
+                const resolveOptions = {
+                    officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
+                };
+                const rawLocName = await AttendanceModel.resolveLocationName(numLat, numLng, resolveOptions);
                 const locName = (rawLocName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
                 this.specialModalGps.customLocationName = locName;
                 if (customLocDisp) {

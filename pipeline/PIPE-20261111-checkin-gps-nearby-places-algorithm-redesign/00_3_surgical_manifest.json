@@ -1,0 +1,36 @@
+{
+  "task_id": "PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign",
+  "flow_id": "FLOW_GPS_01",
+  "mode": "PLAN",
+  "scope_addition": "เพิ่มการแสดงข้อความ 'กำลังค้นหา' ที่ Head การ์ด GPS และล็อกปุ่มลงเวลาจนกว่าจะระบุสถานที่ใกล้เคียงสำเร็จ",
+  "target_files": [
+    {
+      "path": "checkin.html",
+      "symbols": [
+        "gpsSectionCard",
+        "gpsCardHeaderTitle",
+        "gpsLocationNameText"
+      ],
+      "exact_line_range": "L325 - L340",
+      "recommended_read_window": "L320 - L345",
+      "surgical_scope": "เพิ่ม id='gpsCardHeaderTitle' ให้กับข้อความส่วนหัวของการ์ด GPS เพื่อให้สลับแสดง 'กำลังค้นหา' และ 'พื้นที่ใกล้เคียง' ได้อย่างแม่นยำ"
+    },
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "symbols": [
+        "isResolvingLocation",
+        "#initGpsLocation",
+        "#updateStatusCardsAndMainButton",
+        "#handleMainCheckin"
+      ],
+      "exact_line_range": "L20 - L30, L1395 - L1575, L2060 - L2120, L2570 - L2615",
+      "recommended_read_window": "L2050 - L2130",
+      "surgical_scope": "จัดการสถานะ isResolvingLocation: แสดงข้อความ 'กำลังค้นหา' ที่หัวการ์ด GPS และปิดการใช้งานปุ่มลงเวลา #btnSubmitCheckinMain จนกว่าการระบุสถานที่ใกล้เคียงจะเสร็จสิ้นสมบูรณ์ พร้อมการ์ดตรวจจับใน #handleMainCheckin"
+    }
+  ],
+  "verification_commands": [
+    "node --check assets/js/controllers/CheckinController.js",
+    "node pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_button_lock.mjs",
+    "node ./.ai_map/vscode_ast_mapper.mjs"
+  ]
+}

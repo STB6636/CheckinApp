@@ -72,6 +72,18 @@
       ],
       "trigger_conditions": "ใช้เมื่อต้องอัปเดตตารางข้อมูลหรือการ์ดสถิติแบบ Realtime โดยไม่ให้หน้าจอกระพริบ (ไร้ Full Reload / Skeleton) แทรกแถวใหม่ ลบแถวที่จัดการแล้ว รันเลขลำดับอัตโนมัติ และป้องกัน Race Condition หรือแก้ไขชนกันเมื่อมี Admin มากกว่า 2 คนเปิดหน้าจอเดียวกัน",
       "skill_file_path": "./ai_skills_registry/skills/realtime_differential_dom_diffing_and_concurrency/SKILL.md"
+    },
+    {
+      "skill_id": "multi_tier_resilient_reverse_geocoding",
+      "name": "Multi-Tier Resilient Reverse Geocoding & POI Resolution Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องแปลงพิกัด GPS เป็นชื่อสถานที่ มุ่งเน้นการให้ความสำคัญกับสถานที่สำคัญ/สถานที่ราชการ/ร้านค้าก่อนชื่อซอยเสมอ รองรับ In-Memory Official Locations (Tier 0 0ms), Overpass Mirror Racing (Promise.any), และการป้องกัน Cache Poisoning เมื่อเครือข่ายขัดข้อง",
+      "skill_file_path": "./ai_skills_registry/skills/multi_tier_resilient_reverse_geocoding/SKILL.md"
     }
   ]
 }
