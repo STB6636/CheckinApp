@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T08:50:17.309Z",
+  "generatedAt": "2026-11-11T09:02:54.171Z",
   "totalFilesScanned": 149,
   "totalSymbolsIndexed": 790,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d8fb3f1f3eb95871",
+      "fileHash": "a5bcc0c95a9eee2f",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -206,7 +206,7 @@
     {
       "filePath": "assets/js/components/SystemUpdateModal.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "781c89b807afb495",
+      "fileHash": "34b29b1482d33e60",
       "totalLines": 468,
       "importsCount": 0,
       "importsPreview": [],
@@ -3486,7 +3486,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "73ca285990a9b507",
+      "fileHash": "3db684984aa427a4",
       "totalLines": 1015,
       "importsCount": 0,
       "importsPreview": [],
@@ -3705,7 +3705,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "8512918f0100cca5",
+      "fileHash": "a0282104c8d0472f",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -4011,7 +4011,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4d9cbfd328dd465d",
+      "fileHash": "1484b0c59e81dd09",
       "totalLines": 379,
       "importsCount": 0,
       "importsPreview": [],
@@ -4070,7 +4070,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "904f40bb09e764a2",
+      "fileHash": "ffa947f3a7951e5b",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -7255,7 +7255,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "64c60ae520843884",
+      "fileHash": "482ae9522e98fa0b",
       "totalLines": 290,
       "importsCount": 0,
       "importsPreview": [],
@@ -7489,7 +7489,7 @@
     {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bdca8fc6d1869fbc",
+      "fileHash": "7b42b8cdf6999b9a",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -7572,7 +7572,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f4a71139197e35c9",
+      "fileHash": "a700abc05d8a6e1e",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -8164,7 +8164,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3d837800be11a971",
+      "fileHash": "8cc6ca116e0b35cc",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],

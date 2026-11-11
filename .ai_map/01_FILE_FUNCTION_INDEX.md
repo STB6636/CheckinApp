@@ -1,6 +1,6 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T08:50:17.309Z`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T09:02:54.171Z`
 - **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `149` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `790`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
@@ -8,7 +8,7 @@
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d8fb3f1f3eb95871` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a5bcc0c95a9eee2f` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -47,7 +47,7 @@
 
 ## File: `assets/js/components/SystemUpdateModal.js`
 - **Layer:** Shared UI Component Layer
-- **Hash:** `781c89b807afb495` | **Total Lines:** `468` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
+- **Hash:** `34b29b1482d33e60` | **Total Lines:** `468` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -580,7 +580,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `73ca285990a9b507` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3db684984aa427a4` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -615,7 +615,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8512918f0100cca5` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a0282104c8d0472f` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -699,7 +699,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `4d9cbfd328dd465d` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1484b0c59e81dd09` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -714,7 +714,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `904f40bb09e764a2` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ffa947f3a7951e5b` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1844,7 +1844,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `64c60ae520843884` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `482ae9522e98fa0b` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1944,7 +1944,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bdca8fc6d1869fbc` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7b42b8cdf6999b9a` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1962,7 +1962,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f4a71139197e35c9` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a700abc05d8a6e1e` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2097,7 +2097,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3d837800be11a971` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8cc6ca116e0b35cc` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

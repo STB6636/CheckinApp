@@ -3,7 +3,7 @@
 > **Status**: Accepted & Implemented  
 > **Date**: 2026-11-11  
 > **Task ID**: `PIPE-20261111-login-version-badge-and-whats-new-modal`  
-> **Build ID**: `20261111_c71e33f4`  
+> **Build ID**: `20261111_45daf456`  
 > **Flows**: `FLOW_AUTH_01` (Authentication & Login Flow), `FLOW_LAYOUT_01` (Civic Theme & Header UI)
 
 ---
