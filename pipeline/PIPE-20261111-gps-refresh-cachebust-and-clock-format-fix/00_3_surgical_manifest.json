@@ -1,0 +1,26 @@
+{
+  "taskId": "PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix",
+  "flowIds": ["FLOW_GPS_01", "FLOW_CHECKIN_01"],
+  "targets": [
+    {
+      "file": "checkin.html",
+      "lineRange": "267-271",
+      "purpose": "Update #liveClockDisplay default text from '00:00:00 น.' to '00:00 น.'"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lineRange": "315-328",
+      "purpose": "Format clock to `${hh}:${mm} น.` without seconds in updateClock()"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lineRange": "802-815",
+      "purpose": "Wire #btnRefreshGps click to await Promise-based #initGpsLocation({ forceRefresh: true }), sync spinner and toast"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lineRange": "2064-2198",
+      "purpose": "Refactor #initGpsLocation({ forceRefresh = false } = {}) to return Promise, set maximumAge: forceRefresh ? 0 : 5000, bypassCache: forceRefresh, clearLocationCache, reset loading text"
+    }
+  ]
+}

@@ -316,12 +316,11 @@ export class CheckinController {
             const now = new Date();
             const hh = String(now.getHours()).padStart(2, '0');
             const mm = String(now.getMinutes()).padStart(2, '0');
-            const ss = String(now.getSeconds()).padStart(2, '0');
 
             const clockEl = document.getElementById('liveClockDisplay');
             const dateEl = document.getElementById('liveDateDisplay');
             if (clockEl) {
-                clockEl.textContent = `${hh}:${mm}:${ss} น.`;
+                clockEl.textContent = `${hh}:${mm} น.`;
             }
             if (dateEl) {
                 dateEl.textContent = UIHelpers.formatThaiShortDate(UIHelpers.getTodayISO());
@@ -789,8 +788,12 @@ export class CheckinController {
         btnCurrent?.addEventListener('click', async () => {
             this.selectedOffsiteGpsSource = 'current';
             setActiveOffsiteGps('current');
-            await this.#initGpsLocation();
-            UIHelpers.showToast('อัปเดตพิกัดปัจจุบันสำหรับการปฏิบัติงานนอกสถานที่แล้ว', 'success');
+            const gpsRes = await this.#initGpsLocation({ forceRefresh: true });
+            if (gpsRes?.ready) {
+                UIHelpers.showToast('อัปเดตพิกัดปัจจุบันสำหรับการปฏิบัติงานนอกสถานที่แล้ว', 'success');
+            } else {
+                UIHelpers.showToast('ไม่สามารถระบุพิกัด GPS ได้ กรุณาตรวจสอบการเปิดใช้งาน GPS', 'warning');
+            }
         });
 
         btnMap?.addEventListener('click', () => {
@@ -799,14 +802,22 @@ export class CheckinController {
             this.#openOffsiteMapModal();
         });
 
-        document.getElementById('btnRefreshGps')?.addEventListener('click', async () => {
+        document.getElementById('btnRefreshGps')?.addEventListener('click', async (e) => {
+            if (this.isResolvingLocation) return;
+            const btn = e.currentTarget;
             const spinner = document.getElementById('gpsRefreshSpinnerIcon');
             spinner?.classList.add('fa-spin');
+            btn?.classList.add('pointer-events-none', 'opacity-70');
             try {
-                await this.#initGpsLocation();
-                UIHelpers.showToast('ตรวจสอบตำแหน่ง GPS ปัจจุบันสำเร็จ', 'success');
+                const res = await this.#initGpsLocation({ forceRefresh: true });
+                if (res?.ready) {
+                    UIHelpers.showToast('ตรวจสอบตำแหน่ง GPS ปัจจุบันสำเร็จ', 'success');
+                }
+            } catch (err) {
+                console.warn('GPS refresh error:', err);
             } finally {
-                setTimeout(() => spinner?.classList.remove('fa-spin'), 600);
+                spinner?.classList.remove('fa-spin');
+                btn?.classList.remove('pointer-events-none', 'opacity-70');
             }
         });
 
@@ -2061,8 +2072,8 @@ export class CheckinController {
      * 2. หากไม่พบใน z = 19 ระบบจะสลับไปใช้ z = 20 (ประมาณ 10 เมตร) -> แสดง ["บริเวณ " + ชื่อสถานที่] และปรับซูมแผนที่เป็น z = 20
      * 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย]
      */
-    async #initGpsLocation() {
-        if (!this.settings?.require_gps) return;
+    async #initGpsLocation({ forceRefresh = false } = {}) {
+        if (!this.settings?.require_gps) return null;
 
         const coordsEl = document.getElementById('gpsCoordsText');
         const locNameEl = document.getElementById('gpsLocationNameText');
@@ -2081,120 +2092,143 @@ export class CheckinController {
             if (coordsEl) coordsEl.textContent = 'อุปกรณ์ไม่รองรับ GPS';
             if (locNameEl) locNameEl.textContent = 'ไม่สามารถระบุสถานที่ได้';
             this.#updateStatusCardsAndMainButton();
-            return;
+            return null;
+        }
+
+        if (forceRefresh) {
+            AttendanceModel.clearLocationCache();
+            this.gpsData.ready = false;
+            this.gpsData.lat = null;
+            this.gpsData.lng = null;
+            this.gpsData.locationName = 'กำลังค้นหาสถานที่ใกล้เคียง...';
         }
 
         this.isResolvingLocation = true;
         if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
         headerSpinnerEl?.classList.remove('hidden');
         headerInfoIconEl?.classList.add('hidden');
-        if (coordsEl) coordsEl.textContent = 'กำลังดึงพิกัด GPS...';
+        if (coordsEl) {
+            coordsEl.textContent = forceRefresh ? 'กำลังดึงพิกัด GPS ใหม่...' : 'กำลังดึงพิกัด GPS...';
+        }
         if (locNameEl) locNameEl.textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
         this.gpsData.locationName = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+        this.#renderGeofenceStatusUI();
+        this.#updateStep1Validation();
         this.#updateStatusCardsAndMainButton();
 
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                this.gpsData.lat = lat;
-                this.gpsData.lng = lng;
-                this.gpsData.ready = true;
-                this.gpsData.zoomLevel = 19;
+        const geoOptions = {
+            enableHighAccuracy: true,
+            timeout: forceRefresh ? 12000 : 8000,
+            maximumAge: forceRefresh ? 0 : 5000
+        };
 
-                if (coordsEl) coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        return new Promise((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    this.gpsData.lat = lat;
+                    this.gpsData.lng = lng;
+                    this.gpsData.ready = true;
+                    this.gpsData.zoomLevel = 19;
 
-                // Render inline Leaflet map
-                this.#renderInlineGpsMap(lat, lng);
+                    if (coordsEl) coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 
-                // เริ่มต้นแสดงแผนที่ที่ระยะซูม z = 19 (ประมาณ 20 เมตร) ก่อน
-                if (mapIframe) {
-                    mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=19&output=embed`;
-                    mapIframe.classList.remove('hidden');
-                    mapPlaceholder?.classList.add('hidden');
-                }
+                    // Render inline Leaflet map
+                    this.#renderInlineGpsMap(lat, lng);
 
-                if (mapLink) {
-                    mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=19`;
-                    mapLink.classList.remove('hidden');
-                }
+                    // เริ่มต้นแสดงแผนที่ที่ระยะซูม z = 19 (ประมาณ 20 เมตร) ก่อน
+                    if (mapIframe) {
+                        mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=19&output=embed`;
+                        mapIframe.classList.remove('hidden');
+                        mapPlaceholder?.classList.add('hidden');
+                    }
 
-                // ค้นหาสถานที่ใกล้เคียงตามลำดับ Tier 0 (ราชการ) -> Tier 1 (POI/สถานที่จริง) -> Tier 2 (ซอย/ซอยย่อย) -> Tier 3/4
-                const resolveOptions = {
-                    officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
-                };
-                this.locationResolvePromise = AttendanceModel.resolveLocationWithZoomMeta(lat, lng, resolveOptions).then(resMeta => {
+                    if (mapLink) {
+                        mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=19`;
+                        mapLink.classList.remove('hidden');
+                    }
+
+                    // ค้นหาสถานที่ใกล้เคียงตามลำดับ Tier 0 (ราชการ) -> Tier 1 (POI/สถานที่จริง) -> Tier 2 (ซอย/ซอยย่อย) -> Tier 3/4
+                    const resolveOptions = {
+                        officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || []),
+                        bypassCache: forceRefresh
+                    };
+                    this.locationResolvePromise = AttendanceModel.resolveLocationWithZoomMeta(lat, lng, resolveOptions).then(resMeta => {
+                        this.isResolvingLocation = false;
+                        if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+                        headerSpinnerEl?.classList.add('hidden');
+                        headerInfoIconEl?.classList.remove('hidden');
+
+                        this.gpsData.locationName = resMeta.locationName;
+                        this.gpsData.zoomLevel = resMeta.zoomLevel || 19;
+
+                        if (locNameEl) {
+                            locNameEl.textContent = resMeta.locationName;
+                        }
+                        const spCurrentLoc = document.getElementById('spCurrentLocNameText');
+                        if (spCurrentLoc && this.specialModalGps?.mode === 'current') {
+                            spCurrentLoc.textContent = resMeta.locationName;
+                        }
+
+                        // หากระบบเปลี่ยนไปใช้ระยะ z = 20 (ประมาณ 10 เมตร) ให้ปรับซูมแผนที่ Google Map เป็น z = 20 ตามทันที
+                        if (resMeta.zoomLevel === 20) {
+                            if (mapIframe) {
+                                mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=20&output=embed`;
+                            }
+                            if (mapLink) {
+                                mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=20`;
+                            }
+                        }
+
+                        this.#renderGeofenceStatusUI();
+                        this.#updateStep1Validation();
+                        this.#updateStatusCardsAndMainButton();
+                        resolve(this.gpsData);
+                        return resMeta.locationName;
+                    }).catch(err => {
+                        console.warn('Location resolve error:', err);
+                        this.isResolvingLocation = false;
+                        if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
+                        headerSpinnerEl?.classList.add('hidden');
+                        headerInfoIconEl?.classList.remove('hidden');
+                        this.#renderGeofenceStatusUI();
+                        this.#updateStep1Validation();
+                        this.#updateStatusCardsAndMainButton();
+                        resolve(this.gpsData);
+                    });
+                    this.#renderGeofenceStatusUI();
+                    this.#updateStep1Validation();
+                    this.#updateStatusCardsAndMainButton();
+                },
+                async (err) => {
+                    console.warn('Geolocation error:', err);
                     this.isResolvingLocation = false;
                     if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
                     headerSpinnerEl?.classList.add('hidden');
                     headerInfoIconEl?.classList.remove('hidden');
-
-                    this.gpsData.locationName = resMeta.locationName;
-                    this.gpsData.zoomLevel = resMeta.zoomLevel || 19;
-
-                    if (locNameEl) {
-                        locNameEl.textContent = resMeta.locationName;
-                    }
-                    const spCurrentLoc = document.getElementById('spCurrentLocNameText');
-                    if (spCurrentLoc && this.specialModalGps?.mode === 'current') {
-                        spCurrentLoc.textContent = resMeta.locationName;
-                    }
-
-                    // หากระบบเปลี่ยนไปใช้ระยะ z = 20 (ประมาณ 10 เมตร) ให้ปรับซูมแผนที่ Google Map เป็น z = 20 ตามทันที
-                    if (resMeta.zoomLevel === 20) {
-                        if (mapIframe) {
-                            mapIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=th&z=20&output=embed`;
-                        }
-                        if (mapLink) {
-                            mapLink.href = `https://www.google.com/maps?q=${lat},${lng}&z=20`;
-                        }
-                    }
-
+                    this.gpsData.ready = false;
+                    this.gpsData.lat = null;
+                    this.gpsData.lng = null;
+                    this.gpsData.locationName = 'ไม่สามารถระบุสถานที่ได้';
+                    if (coordsEl) coordsEl.textContent = 'ไม่ได้เปิดการใช้งาน GPS';
+                    if (locNameEl) locNameEl.textContent = 'กรุณาเปิดบริการตำแหน่งที่ตั้ง (Location Services)';
                     this.#renderGeofenceStatusUI();
                     this.#updateStep1Validation();
                     this.#updateStatusCardsAndMainButton();
-                    return resMeta.locationName;
-                }).catch(err => {
-                    console.warn('Location resolve error:', err);
-                    this.isResolvingLocation = false;
-                    if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
-                    headerSpinnerEl?.classList.add('hidden');
-                    headerInfoIconEl?.classList.remove('hidden');
-                    this.#renderGeofenceStatusUI();
-                    this.#updateStep1Validation();
-                    this.#updateStatusCardsAndMainButton();
-                });
-                this.#renderGeofenceStatusUI();
-                this.#updateStep1Validation();
-                this.#updateStatusCardsAndMainButton();
-            },
-            async (err) => {
-                console.warn('Geolocation error:', err);
-                this.isResolvingLocation = false;
-                if (headerTitleEl) headerTitleEl.textContent = 'พื้นที่ใกล้เคียง';
-                headerSpinnerEl?.classList.add('hidden');
-                headerInfoIconEl?.classList.remove('hidden');
-                this.gpsData.ready = false;
-                if (coordsEl) coordsEl.textContent = 'ไม่ได้เปิดการใช้งาน GPS';
-                if (locNameEl) locNameEl.textContent = 'กรุณาเปิดบริการตำแหน่งที่ตั้ง (Location Services)';
-                this.#renderGeofenceStatusUI();
-                this.#updateStep1Validation();
-                this.#updateStatusCardsAndMainButton();
 
-                if (this.settings.require_gps) {
-                    await UIHelpers.alert(
-                        'กรุณาเปิดการใช้งานตำแหน่งที่ตั้ง (GPS)',
-                        'ระบบบังคับให้ต้องเปิด GPS เพื่อระบุพิกัดและชื่อสถานที่ก่อนบันทึกลงเวลาปฏิบัติราชการ',
-                        'warning'
-                    );
-                }
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 6000,
-                maximumAge: 30000
-            }
-        );
+                    if (this.settings?.require_gps) {
+                        await UIHelpers.alert(
+                            'กรุณาเปิดการใช้งานตำแหน่งที่ตั้ง (GPS)',
+                            'ระบบบังคับให้ต้องเปิด GPS เพื่อระบุพิกัดและชื่อสถานที่ก่อนบันทึกลงเวลาปฏิบัติราชการ',
+                            'warning'
+                        );
+                    }
+                    resolve(this.gpsData);
+                },
+                geoOptions
+            );
+        });
     }
 
     #renderInlineGpsMap(lat, lng) {

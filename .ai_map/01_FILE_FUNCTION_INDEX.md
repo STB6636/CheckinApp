@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T06:28:00.600Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `140` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `760`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T07:08:13.466Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `144` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `769`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7e734b2542138aa1` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `32f2e9a5102dd19a` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -66,11 +66,11 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `6b3f80c98ffebf3d` | **Total Lines:** `3641` | **Imports:** `6` | **Exports:** `CheckinController`
+- **Hash:** `d985151fd2a55197` | **Total Lines:** `3675` | **Imports:** `6` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L13 - L874** | `export class CheckinController` | Class Definition (862 lines) |
+| `CheckinController` | `class` | **L13 - L885** | `export class CheckinController` | Class Definition (873 lines) |
 | `CheckinController.constructor` | `public constructor` | **L14 - L67** | `() => any` | public constructor L14-L67 (54 lines) |
 | `CheckinController.init` | `public async method` | **L69 - L126** | `() => Promise<any>` | public async method L69-L126 (58 lines) |
 | `CheckinController.#initRealtimeSettingsListener` | `private method` | **L128 - L190** | `() => any` | private method L128-L190 (63 lines) |
@@ -81,69 +81,69 @@
 | `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L251 - L282** | `() => any` | private method L251-L282 (32 lines) |
 | `CheckinController.#updateThemeButtonUI` | `private method` | **L284 - L302** | `() => any` | private method L284-L302 (19 lines) |
 | `CheckinController.#checkAndShowWelcomeToast` | `private method` | **L304 - L312** | `() => any` | private method L304-L312 (9 lines) |
-| `CheckinController.#startLiveClock24` | `private method` | **L314 - L341** | `() => any` | private method L314-L341 (28 lines) |
-| `updateClock` | `arrow_fn` | **L315 - L338** | `() => inferred` | Arrow Function L315-L338 |
-| `CheckinController.#isShiftAlreadyRecordedToday` | `private method` | **L343 - L391** | `(shift) => any` | private method L343-L391 (49 lines) |
-| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L393 - L428** | `(shift, nowMin, allowStartMin) => any` | private method L393-L428 (36 lines) |
-| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L430 - L534** | `() => any` | private method L430-L534 (105 lines) |
-| `CheckinController.#calculateHaversineMeters` | `private method` | **L539 - L551** | `(lat1, lon1, lat2, lon2) => any` | คำนวณระยะทางแบบ Haversine (หน่วย: เมตร) |
-| `CheckinController.evaluateOnsiteGeofence` | `public method` | **L559 - L640** | `(currentLat, currentLng) => any` | public method L559-L640 (82 lines) |
-| `CheckinController.#renderGeofenceStatusUI` | `private method` | **L642 - L712** | `() => any` | private method L642-L712 (71 lines) |
-| `CheckinController.#initLocaV2ModeAndChips` | `private method` | **L714 - L716** | `() => any` | private method L714-L716 (3 lines) |
-| `CheckinController.#initModeSwitcher` | `private method` | **L718 - L816** | `() => any` | private method L718-L816 (99 lines) |
-| `setActiveOffsiteGps` | `arrow_fn` | **L725 - L734** | `(source) => inferred` | Arrow Function L725-L734 |
-| `CheckinController.#initViewGpsMapModal` | `private method` | **L818 - L825** | `() => any` | private method L818-L825 (8 lines) |
-| `CheckinController.#openViewGpsMapModal` | `private method` | **L827 - L873** | `() => any` | private method L827-L873 (47 lines) |
-| `#goToStep` | `private method` | **L876 - L941** | `(step) => any` | private method L876-L941 (66 lines) |
-| `#updateStep1Validation` | `private method` | **L943 - L978** | `() => any` | private method L943-L978 (36 lines) |
-| `#openOffsiteMapModal` | `private method` | **L980 - L1041** | `() => any` | private method L980-L1041 (62 lines) |
-| `#updateOffsiteModalMarker` | `private async method` | **L1044 - L1083** | `(lat, lng, explicitName = null) => Promise<any>` | private async method L1044-L1083 (40 lines) |
-| `#initOffsiteModalGps` | `private method` | **L1085 - L1186** | `() => any` | private method L1085-L1186 (102 lines) |
-| `closeModal` | `arrow_fn` | **L1094 - L1100** | `() => inferred` | Arrow Function L1094-L1100 |
-| `performSearch` | `async_arrow_fn` | **L1145 - L1185** | `() => inferred` | Arrow Function L1145-L1185 |
-| `#renderUserAndSettingsInfo` | `private method` | **L1199 - L1288** | `() => any` | private method L1199-L1288 (90 lines) |
-| `setElText` | `arrow_fn` | **L1204 - L1207** | `(id, text) => inferred` | Arrow Function L1204-L1207 |
-| `#refreshAllAttendanceData` | `private async method` | **L1290 - L1307** | `() => Promise<any>` | private async method L1290-L1307 (18 lines) |
-| `#updateStatusCardsAndMainButton` | `private method` | **L1309 - L1593** | `() => any` | private method L1309-L1593 (285 lines) |
-| `applyGpsSearchingLock` | `arrow_fn` | **L1336 - L1346** | `() => inferred` | Arrow Function L1336-L1346 |
-| `setShiftCardVisibility` | `arrow_fn` | **L1348 - L1357** | `(visible) => inferred` | Arrow Function L1348-L1357 |
-| `#renderPersonalAttendanceTabs` | `private method` | **L1595 - L1638** | `() => any` | private method L1595-L1638 (44 lines) |
-| `#buildHistoryRowHtml` | `private method` | **L1640 - L1659** | `(item, rowNumber) => any` | private method L1640-L1659 (20 lines) |
-| `#renderSpecialRequestsHistoryTable` | `private method` | **L1661 - L1703** | `() => any` | private method L1661-L1703 (43 lines) |
-| `#openFullscreenCamera` | `private async method` | **L1705 - L1761** | `() => Promise<any>` | private async method L1705-L1761 (57 lines) |
-| `#captureAndCloseCamera` | `private method` | **L1763 - L1803** | `() => any` | private method L1763-L1803 (41 lines) |
-| `#closeFullscreenCamera` | `private method` | **L1805 - L1808** | `() => any` | private method L1805-L1808 (4 lines) |
-| `#checkCameraHardware` | `private async method` | **L1810 - L1824** | `() => Promise<any>` | private async method L1810-L1824 (15 lines) |
-| `#handleFallbackFileSelected` | `private method` | **L1826 - L1890** | `(file) => any` | private method L1826-L1890 (65 lines) |
-| `#stopCameraHardwareStream` | `private method` | **L1892 - L1906** | `() => any` | private method L1892-L1906 (15 lines) |
-| `#stopCameraAndShowStandby` | `private method` | **L1908 - L1934** | `() => any` | private method L1908-L1934 (27 lines) |
-| `#openCameraOnDemand` | `private async method` | **L1936 - L2005** | `() => Promise<any>` | private async method L1936-L2005 (70 lines) |
-| `#capturePhotoAndStopStream` | `private method` | **L2007 - L2039** | `() => any` | private method L2007-L2039 (33 lines) |
-| `#resetPageAfterSave` | `private async method` | **L2041 - L2056** | `() => Promise<any>` | private async method L2041-L2056 (16 lines) |
-| `#initGpsLocation` | `private async method` | **L2064 - L2198** | `() => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `#renderInlineGpsMap` | `private method` | **L2200 - L2266** | `(lat, lng) => any` | private method L2200-L2266 (67 lines) |
-| `#bindEvents` | `private method` | **L2269 - L2566** | `() => any` | private method L2269-L2566 (298 lines) |
-| `openSpecialModal` | `arrow_fn` | **L2432 - L2435** | `() => inferred` | Arrow Function L2432-L2435 |
-| `setDesktopActiveTab` | `arrow_fn` | **L2470 - L2489** | `(activeName) => inferred` | Arrow Function L2470-L2489 |
-| `openMobileDrawer` | `arrow_fn` | **L2500 - L2518** | `() => inferred` | Arrow Function L2500-L2518 |
-| `closeMobileDrawer` | `arrow_fn` | **L2520 - L2547** | `(targetTab = null) => inferred` | Arrow Function L2520-L2547 |
-| `#handleMainCheckin` | `private async method` | **L2568 - L2975** | `() => Promise<any>` | private async method L2568-L2975 (408 lines) |
-| `#openSpecialRequestModal` | `private method` | **L2977 - L3010** | `() => any` | private method L2977-L3010 (34 lines) |
-| `#initSpecialModalGps` | `private method` | **L3012 - L3118** | `() => any` | private method L3012-L3118 (107 lines) |
-| `updateCustomPinAndLocation` | `async_arrow_fn` | **L3024 - L3075** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L3024-L3075 |
-| `setupMapIfAvailable` | `arrow_fn` | **L3077 - L3112** | `() => inferred` | Arrow Function L3077-L3112 |
-| `getDistanceInMeters` | `arrow_fn` | **L3137 - L3156** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3137-L3156 |
-| `calculateDistance` | `arrow_fn` | **L3158 - L3167** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3158-L3167 |
-| `getCategoryLabel` | `arrow_fn` | **L3169 - L3208** | `(item) => inferred` | Arrow Function L3169-L3208 |
-| `escapeHtml` | `arrow_fn` | **L3210 - L3218** | `(str) => inferred` | Arrow Function L3210-L3218 |
-| `formatSubAddress` | `arrow_fn` | **L3220 - L3236** | `(item) => inferred` | Arrow Function L3220-L3236 |
-| `getMainName` | `arrow_fn` | **L3238 - L3246** | `(item) => inferred` | Arrow Function L3238-L3246 |
-| `hideSearchResults` | `arrow_fn` | **L3248 - L3253** | `() => inferred` | Arrow Function L3248-L3253 |
-| `bindResultItemClicks` | `arrow_fn` | **L3255 - L3271** | `() => inferred` | Arrow Function L3255-L3271 |
-| `renderCoordsResult` | `arrow_fn` | **L3273 - L3297** | `(lat, lng) => inferred` | Arrow Function L3273-L3297 |
-| `renderPlaceResults` | `arrow_fn` | **L3299 - L3344** | `(items) => inferred` | Arrow Function L3299-L3344 |
-| `performSearch` | `async_arrow_fn` | **L3349 - L3521** | `() => inferred` | Arrow Function L3349-L3521 |
-| `#handleSubmitSpecialRequest` | `private async method` | **L3561 - L3636** | `(closeModalCallback) => Promise<any>` | private async method L3561-L3636 (76 lines) |
+| `CheckinController.#startLiveClock24` | `private method` | **L314 - L340** | `() => any` | private method L314-L340 (27 lines) |
+| `updateClock` | `arrow_fn` | **L315 - L337** | `() => inferred` | Arrow Function L315-L337 |
+| `CheckinController.#isShiftAlreadyRecordedToday` | `private method` | **L342 - L390** | `(shift) => any` | private method L342-L390 (49 lines) |
+| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L392 - L427** | `(shift, nowMin, allowStartMin) => any` | private method L392-L427 (36 lines) |
+| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L429 - L533** | `() => any` | private method L429-L533 (105 lines) |
+| `CheckinController.#calculateHaversineMeters` | `private method` | **L538 - L550** | `(lat1, lon1, lat2, lon2) => any` | คำนวณระยะทางแบบ Haversine (หน่วย: เมตร) |
+| `CheckinController.evaluateOnsiteGeofence` | `public method` | **L558 - L639** | `(currentLat, currentLng) => any` | public method L558-L639 (82 lines) |
+| `CheckinController.#renderGeofenceStatusUI` | `private method` | **L641 - L711** | `() => any` | private method L641-L711 (71 lines) |
+| `CheckinController.#initLocaV2ModeAndChips` | `private method` | **L713 - L715** | `() => any` | private method L713-L715 (3 lines) |
+| `CheckinController.#initModeSwitcher` | `private method` | **L717 - L827** | `() => any` | private method L717-L827 (111 lines) |
+| `setActiveOffsiteGps` | `arrow_fn` | **L724 - L733** | `(source) => inferred` | Arrow Function L724-L733 |
+| `CheckinController.#initViewGpsMapModal` | `private method` | **L829 - L836** | `() => any` | private method L829-L836 (8 lines) |
+| `CheckinController.#openViewGpsMapModal` | `private method` | **L838 - L884** | `() => any` | private method L838-L884 (47 lines) |
+| `#goToStep` | `private method` | **L887 - L952** | `(step) => any` | private method L887-L952 (66 lines) |
+| `#updateStep1Validation` | `private method` | **L954 - L989** | `() => any` | private method L954-L989 (36 lines) |
+| `#openOffsiteMapModal` | `private method` | **L991 - L1052** | `() => any` | private method L991-L1052 (62 lines) |
+| `#updateOffsiteModalMarker` | `private async method` | **L1055 - L1094** | `(lat, lng, explicitName = null) => Promise<any>` | private async method L1055-L1094 (40 lines) |
+| `#initOffsiteModalGps` | `private method` | **L1096 - L1197** | `() => any` | private method L1096-L1197 (102 lines) |
+| `closeModal` | `arrow_fn` | **L1105 - L1111** | `() => inferred` | Arrow Function L1105-L1111 |
+| `performSearch` | `async_arrow_fn` | **L1156 - L1196** | `() => inferred` | Arrow Function L1156-L1196 |
+| `#renderUserAndSettingsInfo` | `private method` | **L1210 - L1299** | `() => any` | private method L1210-L1299 (90 lines) |
+| `setElText` | `arrow_fn` | **L1215 - L1218** | `(id, text) => inferred` | Arrow Function L1215-L1218 |
+| `#refreshAllAttendanceData` | `private async method` | **L1301 - L1318** | `() => Promise<any>` | private async method L1301-L1318 (18 lines) |
+| `#updateStatusCardsAndMainButton` | `private method` | **L1320 - L1604** | `() => any` | private method L1320-L1604 (285 lines) |
+| `applyGpsSearchingLock` | `arrow_fn` | **L1347 - L1357** | `() => inferred` | Arrow Function L1347-L1357 |
+| `setShiftCardVisibility` | `arrow_fn` | **L1359 - L1368** | `(visible) => inferred` | Arrow Function L1359-L1368 |
+| `#renderPersonalAttendanceTabs` | `private method` | **L1606 - L1649** | `() => any` | private method L1606-L1649 (44 lines) |
+| `#buildHistoryRowHtml` | `private method` | **L1651 - L1670** | `(item, rowNumber) => any` | private method L1651-L1670 (20 lines) |
+| `#renderSpecialRequestsHistoryTable` | `private method` | **L1672 - L1714** | `() => any` | private method L1672-L1714 (43 lines) |
+| `#openFullscreenCamera` | `private async method` | **L1716 - L1772** | `() => Promise<any>` | private async method L1716-L1772 (57 lines) |
+| `#captureAndCloseCamera` | `private method` | **L1774 - L1814** | `() => any` | private method L1774-L1814 (41 lines) |
+| `#closeFullscreenCamera` | `private method` | **L1816 - L1819** | `() => any` | private method L1816-L1819 (4 lines) |
+| `#checkCameraHardware` | `private async method` | **L1821 - L1835** | `() => Promise<any>` | private async method L1821-L1835 (15 lines) |
+| `#handleFallbackFileSelected` | `private method` | **L1837 - L1901** | `(file) => any` | private method L1837-L1901 (65 lines) |
+| `#stopCameraHardwareStream` | `private method` | **L1903 - L1917** | `() => any` | private method L1903-L1917 (15 lines) |
+| `#stopCameraAndShowStandby` | `private method` | **L1919 - L1945** | `() => any` | private method L1919-L1945 (27 lines) |
+| `#openCameraOnDemand` | `private async method` | **L1947 - L2016** | `() => Promise<any>` | private async method L1947-L2016 (70 lines) |
+| `#capturePhotoAndStopStream` | `private method` | **L2018 - L2050** | `() => any` | private method L2018-L2050 (33 lines) |
+| `#resetPageAfterSave` | `private async method` | **L2052 - L2067** | `() => Promise<any>` | private async method L2052-L2067 (16 lines) |
+| `#initGpsLocation` | `private async method` | **L2075 - L2232** | `({ forceRefresh = false } = {}) => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
+| `#renderInlineGpsMap` | `private method` | **L2234 - L2300** | `(lat, lng) => any` | private method L2234-L2300 (67 lines) |
+| `#bindEvents` | `private method` | **L2303 - L2600** | `() => any` | private method L2303-L2600 (298 lines) |
+| `openSpecialModal` | `arrow_fn` | **L2466 - L2469** | `() => inferred` | Arrow Function L2466-L2469 |
+| `setDesktopActiveTab` | `arrow_fn` | **L2504 - L2523** | `(activeName) => inferred` | Arrow Function L2504-L2523 |
+| `openMobileDrawer` | `arrow_fn` | **L2534 - L2552** | `() => inferred` | Arrow Function L2534-L2552 |
+| `closeMobileDrawer` | `arrow_fn` | **L2554 - L2581** | `(targetTab = null) => inferred` | Arrow Function L2554-L2581 |
+| `#handleMainCheckin` | `private async method` | **L2602 - L3009** | `() => Promise<any>` | private async method L2602-L3009 (408 lines) |
+| `#openSpecialRequestModal` | `private method` | **L3011 - L3044** | `() => any` | private method L3011-L3044 (34 lines) |
+| `#initSpecialModalGps` | `private method` | **L3046 - L3152** | `() => any` | private method L3046-L3152 (107 lines) |
+| `updateCustomPinAndLocation` | `async_arrow_fn` | **L3058 - L3109** | `(lat, lng, flyTo = false, explicitName = null) => inferred` | Arrow Function L3058-L3109 |
+| `setupMapIfAvailable` | `arrow_fn` | **L3111 - L3146** | `() => inferred` | Arrow Function L3111-L3146 |
+| `getDistanceInMeters` | `arrow_fn` | **L3171 - L3190** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3171-L3190 |
+| `calculateDistance` | `arrow_fn` | **L3192 - L3201** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3192-L3201 |
+| `getCategoryLabel` | `arrow_fn` | **L3203 - L3242** | `(item) => inferred` | Arrow Function L3203-L3242 |
+| `escapeHtml` | `arrow_fn` | **L3244 - L3252** | `(str) => inferred` | Arrow Function L3244-L3252 |
+| `formatSubAddress` | `arrow_fn` | **L3254 - L3270** | `(item) => inferred` | Arrow Function L3254-L3270 |
+| `getMainName` | `arrow_fn` | **L3272 - L3280** | `(item) => inferred` | Arrow Function L3272-L3280 |
+| `hideSearchResults` | `arrow_fn` | **L3282 - L3287** | `() => inferred` | Arrow Function L3282-L3287 |
+| `bindResultItemClicks` | `arrow_fn` | **L3289 - L3305** | `() => inferred` | Arrow Function L3289-L3305 |
+| `renderCoordsResult` | `arrow_fn` | **L3307 - L3331** | `(lat, lng) => inferred` | Arrow Function L3307-L3331 |
+| `renderPlaceResults` | `arrow_fn` | **L3333 - L3378** | `(items) => inferred` | Arrow Function L3333-L3378 |
+| `performSearch` | `async_arrow_fn` | **L3383 - L3555** | `() => inferred` | Arrow Function L3383-L3555 |
+| `#handleSubmitSpecialRequest` | `private async method` | **L3595 - L3670** | `(closeModalCallback) => Promise<any>` | private async method L3595-L3670 (76 lines) |
 
 ---
 
@@ -558,7 +558,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b5e174a9d1e343b2` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `abc459562f7d1013` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -593,7 +593,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `076a5caf187c3aa4` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `da103f168dfd84a8` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -677,7 +677,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f66a864412e79397` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `d90c81879d63cca9` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -692,7 +692,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `1fbd26efe31bee90` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `20788605cabb0440` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1775,6 +1775,51 @@
 
 ---
 
+## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `b3250c98e3e18ed4` | **Total Lines:** `248` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L13** | `<head>` | HTML DOM Section L3-L13 |
+
+---
+
+## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_adversarial_verification.mjs`
+- **Layer:** Application Module
+- **Hash:** `3a8e926f76937ffd` | **Total Lines:** `107` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L11 - L20** | `(name, fn) => inferred` | Function L11-L20 |
+| `assert` | `public method` | **L38 - L43** | `(block.includes('if (res?.ready) => any` | public method L38-L43 (6 lines) |
+| `assert` | `public method` | **L77 - L81** | `(block.includes('if (gpsRes?.ready) => any` | public method L77-L81 (5 lines) |
+
+---
+
+## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_verify_gps_refresh_and_clock.mjs`
+- **Layer:** Application Module
+- **Hash:** `771827f9e89f9565` | **Total Lines:** `64` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `check` | `function` | **L12 - L20** | `(desc, condition) => inferred` | Function L12-L20 |
+| `formatTimeHHmm` | `function` | **L52 - L56** | `(date) => inferred` | 4. Test Clock Formatter Logic |
+
+---
+
+## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/test_full_verification.mjs`
+- **Layer:** Application Module
+- **Hash:** `1b1cd903588333db` | **Total Lines:** `191` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `test` | `function` | **L12 - L21** | `(desc, fn) => inferred` | Function L12-L21 |
+| `simulateInitGpsLocation` | `async_function` | **L109 - L129** | `({ forceRefresh = false } = {}) => inferred` | Simulate #initGpsLocation logic with forceRefresh = true |
+| `simulateInitGpsLocation` | `async_function` | **L154 - L174** | `({ forceRefresh = false } = {}) => inferred` | Function L154-L174 |
+
+---
+
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
 - **Hash:** `21f532f6f2e96b0a` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
@@ -1833,7 +1878,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7616d2d5bdb58a78` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `dff50f29e5a397b5` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1851,7 +1896,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6a87f7f2f0581298` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `75fac0c680c2cf2b` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1986,7 +2031,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d56912ffc45f5c1e` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7fbcfd8f02ab6e90` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

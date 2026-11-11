@@ -20,6 +20,7 @@ last_updated_phase: "PIPE-20261111-reports-print-pdf-pagebreak-fix"
 - [[ADR_0019_Camera_Lifecycle_Stream_Guard]] — ADR-0019: สถาปัตยกรรม Camera Lifecycle MediaStream Guard & Hardware Teardown Protocol ป้องกันกล้องดับและแก้ปัญหา "กล้องยังไม่พร้อมใช้งาน" (`FLOW_PHOTO_01`, `FLOW_CHECKIN_01`)
 - [[ADR_0020_Reports_Print_PDF_PageBreak_Architecture]] — ADR-0020: สถาปัตยกรรม Reports Print PDF Pagination & Paged Media Architecture แก้ปัญหา Header หลุดคนละหน้า (`FLOW_REPORTS_01`)
 - [[ADR_0021_GPS_5Tier_Nearby_Places_Resolution_Architecture]] — ADR-0021: สถาปัตยกรรม GPS 5-Tier Nearby Places Resolution Architecture แก้ปัญหาพิกัดหลุด "ใกล้เคียงซอย xxxx (พิกัด)" (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0022_GPS_Hardware_Cache_Busting_And_Live_Clock_Format]] — ADR-0022: สถาปัตยกรรม GPS Hardware Cache-Busting, Re-entrancy Resilience & Live Clock Format แก้ปัญหารีเฟรช GPS ค้างแคชเดิม และปรับเวลา HH:mm น. (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
