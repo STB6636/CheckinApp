@@ -1077,6 +1077,8 @@ export class UIHelpers {
             margin-bottom: 16px;
             border-bottom: 2px solid ${headerColor};
             padding-bottom: 10px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         .report-header h1 {
             margin: 0 0 4px 0;
@@ -1116,9 +1118,14 @@ export class UIHelpers {
             font-weight: 700;
             cursor: pointer;
         }
+        .day-section-banner {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
         .tag-section-block {
             margin-bottom: 22px;
-            page-break-inside: avoid;
+            page-break-inside: auto;
+            break-inside: auto;
         }
         .tag-section-title {
             font-size: 14px;
@@ -1127,6 +1134,8 @@ export class UIHelpers {
             border-radius: 6px;
             color: #FFFFFF;
             margin-bottom: 6px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         table {
             width: 100%;
@@ -1134,6 +1143,19 @@ export class UIHelpers {
             border-collapse: collapse;
             font-size: 13px;
             margin-bottom: 12px;
+            page-break-inside: auto;
+            break-inside: auto;
+        }
+        thead {
+            display: table-header-group;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         th, td {
             border: 1px solid #CBD5E1;
@@ -1149,6 +1171,10 @@ export class UIHelpers {
             font-weight: 700;
             white-space: nowrap;
         }
+        .group-row, .sub-group-row {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
         .group-row td {
             background-color: #E3F2E9 !important;
             font-weight: 700;
@@ -1161,13 +1187,13 @@ export class UIHelpers {
         }
         @page {
             size: A4 landscape;
-            margin: 0mm;
+            margin: 8mm 10mm;
         }
         @media print {
             .toolbar { display: none !important; }
             body {
                 margin: 0;
-                padding: 10mm 12mm;
+                padding: 0;
             }
         }
     </style>

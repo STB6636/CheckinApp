@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T03:41:22.046Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `129` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `747`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T04:25:45.032Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `135` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `751`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c98af0936cc5162e` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3464815a19ac522b` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -234,7 +234,7 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `2325c302f40a19fc` | **Total Lines:** `1371` | **Imports:** `8` | **Exports:** `ReportsController`
+- **Hash:** `655690f78677e2b9` | **Total Lines:** `1371` | **Imports:** `8` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -396,11 +396,11 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `f527443c128722ff` | **Total Lines:** `1199` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `f8130e44622702c4` | **Total Lines:** `1225` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1199** | `export class UIHelpers` | Class Definition (1192 lines) |
+| `UIHelpers` | `class` | **L8 - L1225** | `export class UIHelpers` | Class Definition (1218 lines) |
 | `UIHelpers.escapeHtml` | `static public method` | **L27 - L35** | `(str) => any` | static public method L27-L35 (9 lines) |
 | `UIHelpers.getRootBasePath` | `static public method` | **L37 - L46** | `() => any` | static public method L37-L46 (10 lines) |
 | `UIHelpers.maskUrlToRoot` | `static public method` | **L48 - L71** | `(explicitPageName = '') => any` | static public method L48-L71 (24 lines) |
@@ -432,7 +432,7 @@
 | `UIHelpers.exportMultiSheetExcel` | `static public method` | **L729 - L749** | `(sheets, fileName = 'export_data') => any` | static public method L729-L749 (21 lines) |
 | `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L758 - L1021** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L758-L1021 (264 lines) |
 | `UIHelpers.parseExcelFileUTF8` | `static public method` | **L1023 - L1045** | `(file) => any` | static public method L1023-L1045 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L1047 - L1198** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L1047-L1198 (152 lines) |
+| `UIHelpers.printReportInNewTab` | `static public method` | **L1047 - L1224** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L1047-L1224 (178 lines) |
 
 ---
 
@@ -555,7 +555,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `5e62a39ac3452f00` | **Total Lines:** `1014` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6c7941ceac464c62` | **Total Lines:** `1014` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -590,7 +590,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fc8fc1c3afbdfd2f` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `63f2240368ba63a7` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -674,7 +674,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `615c29d3828e504f` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `144f216ca2dab9d5` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -689,7 +689,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fe0d7fafa3ed126e` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `bbe6f627a0ebb3f1` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1710,21 +1710,77 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `83cd0f77d1eacbed` | **Total Lines:** `491` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `71b631730bc074b2` | **Total Lines:** `492` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `runTest` | `function` | **L20 - L31** | `(testName, fn) => inferred` | Function L20-L31 |
 | `runAsyncTest` | `async_function` | **L33 - L44** | `(testName, fn) => inferred` | Function L33-L44 |
-| `setupControllerHarness` | `function` | **L104 - L491** | `(options = {}) => inferred` | ------------------------------------------------------------- |
+| `setupControllerHarness` | `function` | **L104 - L492** | `(options = {}) => inferred` | ------------------------------------------------------------- |
 | `getOrCreateElem` | `function` | **L106 - L134** | `(id) => inferred` | Function L106-L134 |
 | `createChainableProxy` | `function` | **L146 - L170** | `(table = '') => inferred` | Function L146-L170 |
 
 ---
 
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `21f532f6f2e96b0a` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
+
+---
+
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs`
+- **Layer:** Application Module
+- **Hash:** `4fd5e25ecb67b95b` | **Total Lines:** `281` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L12 - L22** | `(name, fn) => inferred` | Function L12-L22 |
+
+---
+
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs`
+- **Layer:** Application Module
+- **Hash:** `e36b0752341bf8c7` | **Total Lines:** `139` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L12 - L22** | `(name, fn) => inferred` | Function L12-L22 |
+
+---
+
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs`
+- **Layer:** Application Module
+- **Hash:** `210b26a8c1603ab9` | **Total Lines:** `42` | **Imports:** `1` | **Exports:** `None`
+
+> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `8ceac785762c57bc` | **Total Lines:** `152` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L47 - L57** | `(name, fn) => inferred` | Function L47-L57 |
+
+---
+
+## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs`
+- **Layer:** Application Module
+- **Hash:** `ce02121fd6cbee88` | **Total Lines:** `123` | **Imports:** `3` | **Exports:** `None`
+
+> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `69ff78763364dc56` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ca6fad3a78002167` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1742,7 +1798,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `4782fbcc16655bf0` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `27abe7ce218a8dbd` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1877,7 +1933,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `5022d461047a373f` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `54f3302e6fef2742` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

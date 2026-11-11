@@ -365,7 +365,7 @@ export class ReportsController {
 
                 if (forPrintPdf) {
                     combinedHtml += `
-                        <div class="day-section-banner" style="background-color: #00351B; color: #FFFFFF; padding: 8px 14px; font-weight: 800; font-size: 15px; border-radius: 6px; margin-top: 18px; margin-bottom: 12px; page-break-after: avoid;">
+                        <div class="day-section-banner" style="background-color: #00351B; color: #FFFFFF; padding: 8px 14px; font-weight: 800; font-size: 15px; border-radius: 6px; margin-top: 18px; margin-bottom: 12px; page-break-after: avoid; break-after: avoid;">
                             รายงานประจำวันที่ ${dayThaiFull}
                         </div>
                     `;
@@ -466,7 +466,7 @@ export class ReportsController {
 
             return `
                 <div class="tag-section-block">
-                    <div class="tag-section-title" style="background-color: ${statusColor};">
+                    <div class="tag-section-title" style="background-color: ${statusColor}; page-break-after: avoid; break-after: avoid;">
                         ตารางสถานะ: ${statusMeta.label} - ประจำวันที่ ${daySubtitle} (จำนวน ${tagRecords.length} รายการ)
                     </div>
                     <table>

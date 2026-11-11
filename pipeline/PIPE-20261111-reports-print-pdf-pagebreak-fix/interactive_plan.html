@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: Reports Print PDF Page-Break Fix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased p-4 sm:p-6 lg:p-8">
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header Banner -->
+        <header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+                            <i class="fa-solid fa-file-pdf text-2xl text-emerald-300"></i>
+                        </div>
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/30 text-emerald-100 border border-emerald-400/30">
+                                PIPE-20261111-reports-print-pdf-pagebreak-fix
+                            </span>
+                            <h1 class="text-xl sm:text-2xl font-black mt-1">แผนปฏิบัติการแก้ไข: ปัญหา Header หลุดคนละหน้าตอนพิมพ์ PDF</h1>
+                            <p class="text-xs sm:text-sm text-emerald-100/90 mt-0.5">ระบบรายงานการปฏิบัติราชการ (FLOW_REPORTS_01)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-400 text-slate-900 shadow-sm animate-pulse">
+                            <i class="fa-solid fa-hourglass-half"></i> รออนุมัติ (Awaiting Approval)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- User Evidence Section -->
+        <section class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+                <i class="fa-solid fa-magnifying-glass text-emerald-600"></i>
+                หลักฐานเชิงประจักษ์จากภาพหน้าจอของผู้ใช้ (Visual Evidence)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        ภาพที่ 1: หน้าจอแท็บพิมพ์ปกติ (Header และตารางอยู่ติดกัน)
+                    </div>
+                    <div class="rounded-xl overflow-hidden border-2 border-slate-300 shadow-inner bg-slate-900 flex justify-center max-h-[380px]">
+                        <img src="media_1794369076056_d6aaa018.jpg" alt="หน้าจอแท็บพิมพ์ปกติ" class="object-contain max-h-[380px] w-auto">
+                    </div>
+                    <p class="text-[11px] text-slate-500 italic text-center">บนหน้าจอ Web View แสดงผลสมบูรณ์ หัวข้อและแถวแรกของตารางอยู่ติดกัน</p>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                        ภาพที่ 2: หน้า Print Preview (Header ถูกแยกอยู่หน้า 1 โดดเดี่ยว)
+                    </div>
+                    <div class="rounded-xl overflow-hidden border-2 border-slate-300 shadow-inner bg-slate-900 flex justify-center max-h-[380px]">
+                        <img src="media_1794369091233_bf2f0e73.jpg" alt="Print Preview Header หลุด" class="object-contain max-h-[380px] w-auto">
+                    </div>
+                    <p class="text-[11px] text-slate-500 italic text-center">หน้า 1 มีเฉพาะ Header แล้วตามด้วยพื้นที่สีขาวว่างเปล่า ตารางทั้งหมดถูกผลักไปหน้า 2</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Root Cause Breakdown -->
+        <section class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-bug text-red-500"></i>
+                การวิเคราะห์ต้นตอของปัญหา (Root Cause Breakdown)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs font-bold text-red-800 flex items-center gap-1.5 mb-1.5">
+                        <i class="fa-solid fa-ban text-red-600"></i> 1. page-break-inside: avoid
+                    </div>
+                    <p class="text-xs text-red-700 leading-relaxed">
+                        ใน <code class="bg-red-100 px-1 rounded">UIHelpers.js:1121</code> กำหนดให้ <code class="bg-red-100 px-1 rounded">.tag-section-block</code> มี <code class="bg-red-100 px-1 rounded">page-break-inside: avoid;</code>
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs font-bold text-red-800 flex items-center gap-1.5 mb-1.5">
+                        <i class="fa-solid fa-table text-red-600"></i> 2. บล็อกหุ้มตาราง 243 แถว
+                    </div>
+                    <p class="text-xs text-red-700 leading-relaxed">
+                        ใน <code class="bg-red-100 px-1 rounded">ReportsController.js:468</code> บล็อก <code class="bg-red-100 px-1 rounded">.tag-section-block</code> หุ้มทั้งตาราง 243 แถวซึ่งสูงเกิน 1 หน้ากระดาษ
+                    </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs font-bold text-red-800 flex items-center gap-1.5 mb-1.5">
+                        <i class="fa-solid fa-arrows-split-up-and-left text-amber-600"></i> 3. เบราว์เซอร์ผลักขึ้นหน้าใหม่
+                    </div>
+                    <p class="text-xs text-red-700 leading-relaxed">
+                        เมื่อบล็อก avoid ไม่พอดีในพื้นที่ที่เหลือของหน้า 1 Chromium จะแทรก Page Break ก่อนหน้าบล็อก ผลักทั้งตารางไปหน้า 2 เหลือหน้า 1 ว่างเปล่า!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Before vs After -->
+        <section class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-arrows-left-right text-indigo-600"></i>
+                เปรียบเทียบผลลัพธ์ (Before vs After)
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-slate-100 border border-slate-300">
+                    <h3 class="text-xs font-bold text-red-700 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-xmark text-red-600"></i> เดิม (Current Defect)
+                    </h3>
+                    <div class="text-xs text-slate-600 space-y-2">
+                        <div class="p-2 bg-white rounded border border-slate-200">
+                            <strong>หน้า 1:</strong> หัวข้อรายงาน + พื้นที่สีขาวว่างเปล่า 90%
+                        </div>
+                        <div class="p-2 bg-white rounded border border-slate-200">
+                            <strong>หน้า 2:</strong> ตารางสถานะ + ข้อมูลแถวที่ 1, 2, 3...
+                        </div>
+                        <div class="text-[11px] text-red-600 font-semibold mt-1">
+                            ⚠️ เสียพื้นที่กระดาษแผ่นแรกไปเปล่าประโยชน์ และแยกหัวข้อออกจากข้อมูล
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-300">
+                    <h3 class="text-xs font-bold text-emerald-800 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-check text-emerald-600"></i> ใหม่หลังแก้ (Fixed Layout)
+                    </h3>
+                    <div class="text-xs text-slate-700 space-y-2">
+                        <div class="p-2 bg-white rounded border border-emerald-200">
+                            <strong>หน้า 1:</strong> หัวข้อรายงาน + ตารางสถานะ + แถวที่ 1 ถึง 20 (เต็มหน้า)
+                        </div>
+                        <div class="p-2 bg-white rounded border border-emerald-200">
+                            <strong>หน้า 2..12:</strong> หัวตาราง (thead) พิมพ์ซ้ำด้านบน + แถวที่ 21 เป็นต้นไป
+                        </div>
+                        <div class="text-[11px] text-emerald-700 font-semibold mt-1">
+                            ✅ หัวข้อและตารางอยู่หน้าเดียวกันอย่างสวยงาม และหัวคอลัมน์ซ้ำทุกหน้า
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subagents Detailed Execution Plan -->
+        <section class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear text-indigo-600"></i>
+                    แผนการทำงานของ Subagents (Lean 2-SubAgent Architecture)
+                </h2>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    Flash 3.8 High (SubAgent 1 + SubAgent 2)
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- SubAgent 1 -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black text-indigo-700 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-code"></i> SubAgent 1: Implementer
+                            </span>
+                            <span class="text-[11px] font-mono bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                                subagent_01_implementer
+                            </span>
+                        </div>
+                        <ul class="text-xs text-slate-700 space-y-2">
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Paging Fix:</strong> เปลี่ยน <code class="bg-slate-200 px-1 rounded">.tag-section-block</code> เป็น <code class="bg-slate-200 px-1 rounded">page-break-inside: auto;</code></span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Header Binding:</strong> ใส่ <code class="bg-slate-200 px-1 rounded">page-break-after: avoid;</code> ให้กับหัวข้อรายงานและแถบสถานะ</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Repeating thead:</strong> กำหนด <code class="bg-slate-200 px-1 rounded">thead { display: table-header-group; }</code></span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Row Integrity:</strong> กำหนด <code class="bg-slate-200 px-1 rounded">tr { page-break-inside: avoid; }</code></span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Cache Version Sync:</strong> รัน <code class="bg-slate-200 px-1 rounded">node ./.ai_map/vscode_ast_mapper.mjs</code></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-2 border-t border-slate-200 text-[11px] text-slate-500">
+                        กฎเหล็ก: "แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง"
+                    </div>
+                </div>
+
+                <!-- SubAgent 2 -->
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black text-teal-700 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-vial-circle-check"></i> SubAgent 2: QA Auditor
+                            </span>
+                            <span class="text-[11px] font-mono bg-teal-100 text-teal-800 px-2 py-0.5 rounded">
+                                subagent_02_qa_auditor
+                            </span>
+                        </div>
+                        <ul class="text-xs text-slate-700 space-y-2">
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Syntax Check:</strong> รัน <code class="bg-slate-200 px-1 rounded">node --check</code> ผ่าน 100% ทั้ง 2 ไฟล์</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Print CSS Audit:</strong> ตรวจสอบว่าไม่มี avoid บนบล็อกตาราง และมี table-header-group</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Cache Sync Audit:</strong> ตรวจสอบ buildId ใน version.json ตรงกับ HTML ทั้ง 8 หน้า 100%</span>
+                            </li>
+                            <li class="flex items-start gap-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                                <span><strong>Main-Diff Audit:</strong> ตรวจสอบ <code class="bg-slate-200 px-1 rounded">git diff main</code> ปราศจากผลกระทบนอกขอบเขต</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-2 border-t border-slate-200 text-[11px] text-slate-500">
+                        เป้าหมาย: ออกผลการตรวจ (PASS / FAIL) รายงานกลับมายัง Orchestrator
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verification & Next Steps -->
+        <footer class="bg-slate-900 text-white rounded-2xl p-6 shadow-xl flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h4 class="font-bold text-sm text-emerald-400">แผนงานพร้อมดำเนินการตามสถาปัตยกรรม Lean 2-SubAgent</h4>
+                <p class="text-xs text-slate-300 mt-0.5">รอคำสั่ง <strong>Proceed</strong> เพื่อเริ่มขั้นตอน SubAgent 1 (Implementer) และ SubAgent 2 (QA Auditor)</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+                    Target: UIHelpers.js & ReportsController.js
+                </span>
+            </div>
+        </footer>
+
+    </div>
+</body>
+</html>

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T03:41:22.046Z",
-  "totalFilesScanned": 129,
-  "totalSymbolsIndexed": 747,
+  "generatedAt": "2026-11-11T04:25:45.032Z",
+  "totalFilesScanned": 135,
+  "totalSymbolsIndexed": 751,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c98af0936cc5162e",
+      "fileHash": "3464815a19ac522b",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -1437,7 +1437,7 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "2325c302f40a19fc",
+      "fileHash": "655690f78677e2b9",
       "totalLines": 1371,
       "importsCount": 8,
       "importsPreview": [
@@ -2406,8 +2406,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "f527443c128722ff",
-      "totalLines": 1199,
+      "fileHash": "f8130e44622702c4",
+      "totalLines": 1225,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -2420,9 +2420,9 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1199,
+          "endLine": 1225,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1192 lines)"
+          "summary": "Class Definition (1218 lines)"
         },
         {
           "name": "UIHelpers.escapeHtml",
@@ -2676,9 +2676,9 @@
           "name": "UIHelpers.printReportInNewTab",
           "kind": "static public method",
           "startLine": 1047,
-          "endLine": 1198,
+          "endLine": 1224,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L1047-L1198 (152 lines)"
+          "summary": "static public method L1047-L1224 (178 lines)"
         }
       ]
     },
@@ -3344,7 +3344,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "5e62a39ac3452f00",
+      "fileHash": "6c7941ceac464c62",
       "totalLines": 1014,
       "importsCount": 0,
       "importsPreview": [],
@@ -3563,7 +3563,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "fc8fc1c3afbdfd2f",
+      "fileHash": "63f2240368ba63a7",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -3869,7 +3869,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "615c29d3828e504f",
+      "fileHash": "144f216ca2dab9d5",
       "totalLines": 378,
       "importsCount": 0,
       "importsPreview": [],
@@ -3928,7 +3928,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "fe0d7fafa3ed126e",
+      "fileHash": "bbe6f627a0ebb3f1",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -6815,8 +6815,8 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs",
       "layer": "Application Module",
-      "fileHash": "83cd0f77d1eacbed",
-      "totalLines": 491,
+      "fileHash": "71b631730bc074b2",
+      "totalLines": 492,
       "importsCount": 4,
       "importsPreview": [
         "import fs from 'node:fs';",
@@ -6846,7 +6846,7 @@
           "name": "setupControllerHarness",
           "kind": "function",
           "startLine": 104,
-          "endLine": 491,
+          "endLine": 492,
           "signature": "(options = {}) => inferred",
           "summary": "-------------------------------------------------------------"
         },
@@ -6869,9 +6869,123 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "21f532f6f2e96b0a",
+      "totalLines": 258,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs",
+      "layer": "Application Module",
+      "fileHash": "4fd5e25ecb67b95b",
+      "totalLines": 281,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runTest",
+          "kind": "function",
+          "startLine": 12,
+          "endLine": 22,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L12-L22"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs",
+      "layer": "Application Module",
+      "fileHash": "e36b0752341bf8c7",
+      "totalLines": 139,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runTest",
+          "kind": "function",
+          "startLine": 12,
+          "endLine": 22,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L12-L22"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs",
+      "layer": "Application Module",
+      "fileHash": "210b26a8c1603ab9",
+      "totalLines": 42,
+      "importsCount": 1,
+      "importsPreview": [
+        "import fs from 'fs';"
+      ],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "8ceac785762c57bc",
+      "totalLines": 152,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runTest",
+          "kind": "function",
+          "startLine": 47,
+          "endLine": 57,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L47-L57"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs",
+      "layer": "Application Module",
+      "fileHash": "ce02121fd6cbee88",
+      "totalLines": 123,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": []
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "69ff78763364dc56",
+      "fileHash": "ca6fad3a78002167",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -6954,7 +7068,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4782fbcc16655bf0",
+      "fileHash": "27abe7ce218a8dbd",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -7546,7 +7660,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "5022d461047a373f",
+      "fileHash": "54f3302e6fef2742",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],
