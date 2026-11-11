@@ -7,6 +7,7 @@ import { AuthService } from '../core/AuthService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { Config } from '../core/Config.js';
+import { SystemUpdateModal } from '../components/SystemUpdateModal.js';
 
 export class LoginController {
     constructor() {
@@ -29,7 +30,10 @@ export class LoginController {
         this.#updateThemeButtonUI();
         this.#bindEvents();
         this.#loadRememberedUser();
-        await this.#loadOrganizationBranding();
+        await Promise.allSettled([
+            this.#loadOrganizationBranding(),
+            SystemUpdateModal.init({ targetBadgeSlot: '#loginVersionBadgeSlot' })
+        ]);
     }
 
     async #loadOrganizationBranding() {

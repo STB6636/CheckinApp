@@ -535,8 +535,10 @@ function syncFrontendCacheVersion() {
 
     const versionPayload = {
       buildId,
+      appVersion: existingVersion?.appVersion || 'v2.9.2',
       contentHash,
-      updatedAt
+      updatedAt,
+      releaseNotes: existingVersion?.releaseNotes || null
     };
     fs.writeFileSync(VERSION_FILE, JSON.stringify(versionPayload, null, 2) + '\n', 'utf8');
   }

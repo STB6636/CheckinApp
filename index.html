@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261111_1da74619';
+            const CURRENT_APP_BUILD = '20261111_f9aeaab1';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -103,7 +103,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261111_1da74619">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261111_f9aeaab1">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -174,6 +174,7 @@
 
             <!-- UPPER SECTION: Clean Header Window with Civic Crest -->
             <div class="login-card-header-gradient p-4 sm:p-5 flex flex-col items-center justify-center text-center relative">
+                <div id="loginVersionBadgeSlot" class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10"></div>
                 <div class="flex flex-col items-center gap-1.5 sm:gap-2">
                     <div id="orgLogoWrapper" class="w-12 h-12 rounded-xl flex items-center justify-center bg-white/15 backdrop-blur-md p-1.5 border border-white/25 shadow-lg text-[#F6DE51]">
                         <i class="fa-solid fa-landmark text-xl drop-shadow-md"></i>
@@ -373,6 +374,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/LoginController.js?v=20261111_1da74619"></script>
+    <script type="module" src="assets/js/controllers/LoginController.js?v=20261111_f9aeaab1"></script>
 </body>
 </html>

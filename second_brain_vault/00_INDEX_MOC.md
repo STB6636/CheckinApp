@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261111-reports-print-pdf-pagebreak-fix"
+last_updated_phase: "PIPE-20261111-login-version-badge-and-whats-new-modal"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -21,6 +21,7 @@ last_updated_phase: "PIPE-20261111-reports-print-pdf-pagebreak-fix"
 - [[ADR_0020_Reports_Print_PDF_PageBreak_Architecture]] — ADR-0020: สถาปัตยกรรม Reports Print PDF Pagination & Paged Media Architecture แก้ปัญหา Header หลุดคนละหน้า (`FLOW_REPORTS_01`)
 - [[ADR_0021_GPS_5Tier_Nearby_Places_Resolution_Architecture]] — ADR-0021: สถาปัตยกรรม GPS 5-Tier Nearby Places Resolution Architecture แก้ปัญหาพิกัดหลุด "ใกล้เคียงซอย xxxx (พิกัด)" (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
 - [[ADR_0022_GPS_Hardware_Cache_Busting_And_Live_Clock_Format]] — ADR-0022: สถาปัตยกรรม GPS Hardware Cache-Busting, Re-entrancy Resilience & Live Clock Format แก้ปัญหารีเฟรช GPS ค้างแคชเดิม และปรับเวลา HH:mm น. (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0023_Login_Version_Badge_And_OOP_System_Update_Modal]] — ADR-0023: สถาปัตยกรรม Login Version Badge & Dynamic OOP System Update Modal แสดงเวอร์ชันและกล่องแจ้งเตือนอัปเดตระบบอัตโนมัติ (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

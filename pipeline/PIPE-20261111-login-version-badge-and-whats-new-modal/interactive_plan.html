@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: OOP SystemUpdateModal, Zero DB & Auto Version Sync</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .login-card-header-gradient {
+            background: linear-gradient(180deg, #1A4D38 0%, #00744B 100%) !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 p-4 md:p-8 min-h-screen">
+    <div class="max-w-4xl mx-auto w-full space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
+                        <i class="fa-solid fa-database"></i> Zero DB Modification &bull; OOP Architecture
+                    </span>
+                    <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 mt-2">
+                        แผนงานฉบับสมบูรณ์: สถาปัตยกรรม OOP และการซิงค์เวอร์ชันอัตโนมัติ
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1">
+                        รหัสงาน: <span class="font-mono text-teal-700 font-semibold">PIPE-20261111-login-version-badge-and-whats-new-modal</span> &bull; 
+                        กิ่งระบบ: <span class="font-mono text-indigo-700 font-semibold">Loca-V2</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-check-double"></i> ไม่ต้องแก้ฐานข้อมูล 100%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Architectural Breakdown based on User Feedback -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4 text-xs">
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100 space-y-1">
+                    <span class="font-bold text-emerald-900 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-database text-emerald-600"></i> ไม่แก้ฐานข้อมูล 100%
+                    </span>
+                    <p class="text-emerald-700 leading-relaxed">
+                        เก็บข้อมูลใน <code class="bg-emerald-200/50 px-1 rounded">version.json</code> และจำค่าผ่าน LocalStorage ประหยัดโควตา เร็ว 0ms ไร้ความเสี่ยง
+                    </p>
+                </div>
+                <div class="p-3 bg-teal-50 rounded-xl border border-teal-100 space-y-1">
+                    <span class="font-bold text-teal-900 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-code-branch text-teal-600"></i> อัปเดตเวอร์ชันอัตโนมัติ
+                    </span>
+                    <p class="text-teal-700 leading-relaxed">
+                        ผูกป้ายเวอร์ชันเข้ากับ <code class="bg-teal-200/50 px-1 rounded">version.json</code> และ AST Mapper ทุกครั้งที่ Push ค่าจะเปลี่ยนสดอัตโนมัติ
+                    </p>
+                </div>
+                <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 space-y-1">
+                    <span class="font-bold text-indigo-900 block flex items-center gap-1.5">
+                        <i class="fa-solid fa-puzzle-piece text-indigo-600"></i> สถาปัตยกรรม OOP
+                    </span>
+                    <p class="text-indigo-700 leading-relaxed">
+                        สร้างคลาส <code class="bg-indigo-200/50 px-1 rounded">SystemUpdateModal.js</code> ตัวเดียว ควบคุมการสร้าง DOM และตรรกะทั้งหมด ไร้โค้ดซ้ำซ้อนใน HTML
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SubAgents Responsibilities Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <h2 class="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-indigo-600"></i> โครงสร้างและหน้าที่ความรับผิดชอบของ SubAgents (Lean Architecture)
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-left border-b border-slate-200">
+                            <th class="p-3 font-bold">Agent</th>
+                            <th class="p-3 font-bold">Model</th>
+                            <th class="p-3 font-bold">หน้าที่และความรับผิดชอบหลัก</th>
+                            <th class="p-3 font-bold">กฎเหล็กและข้อกำหนด</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs">
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Orchestrator
+                            </td>
+                            <td class="p-3 text-mono text-slate-600">Current Model</td>
+                            <td class="p-3 text-slate-700">ควบคุมทั้ง Pipeline, วางแผนงาน, สั่งการ SubAgents, ประเมินผล, บันทึก Second Brain, จัดการ Git Commit & Push</td>
+                            <td class="p-3 text-slate-600">ห้ามสั่ง Git Push ก่อนได้รับคำสั่งอนุมัติจากผู้ใช้เด็ดขาด</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> subagent_01_implementer
+                            </td>
+                            <td class="p-3 text-mono text-teal-700">Flash 3.8 High</td>
+                            <td class="p-3 text-slate-700">Lead Implementer: สร้าง SystemUpdateModal.js, เพิ่ม Slot ใน index.html, เชื่อมใน LoginController.js และอัปเดต AST mapper</td>
+                            <td class="p-3 text-slate-600">STRICT_SURGICAL_SCOPE_ONLY และต้องรัน vscode_ast_mapper.mjs ซิงค์แคชทุกครั้ง</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> subagent_02_qa_auditor
+                            </td>
+                            <td class="p-3 text-mono text-emerald-700">Flash 3.8 High</td>
+                            <td class="p-3 text-slate-700">QA Auditor: ตรวจ Syntax (node --check), รัน Automated Tests 6 Scenarios, ตรวจ Cache Sync 100%, ตรวจ git diff main</td>
+                            <td class="p-3 text-slate-600">ต้องยืนยันว่า buildId ใน version.json ตรงกับ 8 หน้า HTML 100% จึงจะ PASS</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Live Interactive Simulation -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-laptop-code text-teal-600"></i> ทดลองจำลองการทำงานจริง (Interactive Simulation)
+                </h2>
+                <span class="text-xs text-slate-500 font-semibold">คลิกป้ายเวอร์ชันเพื่อทดสอบ</span>
+            </div>
+
+            <!-- Login Card Mockup -->
+            <div class="flex justify-center py-4">
+                <div class="w-full max-w-[365px] rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-white transition-all">
+                    <!-- Upper Header with Badge Slot -->
+                    <div class="login-card-header-gradient p-5 flex flex-col items-center justify-center text-center relative">
+                        
+                        <!-- TARGET: Version Badge injected via OOP -->
+                        <div id="loginVersionBadgeSlot" class="absolute top-3 right-3">
+                            <button
+                                type="button"
+                                onclick="openOOPModal()"
+                                class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-white/15 hover:bg-white/30 active:scale-95 text-white backdrop-blur-md border border-white/25 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer select-none"
+                                title="คลิกเพื่อดูรายละเอียดการอัปเดตระบบ"
+                            >
+                                <i class="fa-solid fa-sparkles text-[9px] text-[#F6DE51]"></i>
+                                <span id="demoAppVersionText">v2.9.2</span>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-white/15 backdrop-blur-md p-1.5 border border-white/25 shadow-lg text-[#F6DE51]">
+                                <i class="fa-solid fa-landmark text-xl drop-shadow-md"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-extrabold text-white tracking-wide drop-shadow-sm">กรุงเทพมหานคร</h3>
+                                <p class="text-xs font-semibold text-emerald-200 mt-0.5">สำนักเทศกิจ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower Login Form -->
+                    <div class="p-6 bg-white space-y-3">
+                        <h4 class="text-xl font-black text-slate-800 text-center tracking-tight mb-2">Login</h4>
+                        <div class="h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center px-4 text-xs text-slate-400">
+                            <i class="fa-solid fa-user mr-2"></i> Username
+                        </div>
+                        <div class="h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center px-4 text-xs text-slate-400">
+                            <i class="fa-solid fa-lock mr-2"></i> Password
+                        </div>
+                        <div class="h-10 rounded-full bg-emerald-700 text-white font-bold text-xs flex items-center justify-center shadow-md">
+                            เข้าสู่ระบบ
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs border-t border-slate-100">
+                <button onclick="openOOPModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-bullhorn"></i> 1. ทดสอบเปิดโมดอล What's New
+                </button>
+                <button onclick="simulateBuildUpdate()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-arrows-rotate"></i> 2. จำลองการมี Build อัปเดตใหม่ (Auto-Trigger 1 ครั้ง)
+                </button>
+                <div id="simulationStatus" class="w-full text-center text-slate-600 font-semibold pt-1">
+                    สถานะปัจจุบัน: พร้อมใช้งาน
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- OOP Injected Modal Container Container (Simulator) -->
+    <div id="oopModalHost"></div>
+
+    <script>
+        const mockVersionData = {
+            appVersion: "v2.9.2",
+            buildId: "20261111_1da74619",
+            releaseDate: "11 พฤศจิกายน 2569",
+            title: "ปรับปรุงระบบระบุตำแหน่ง GPS สด & ปรับรูปแบบเวลา",
+            highlights: [
+                {
+                    icon: "fa-satellite-dish",
+                    color: "teal",
+                    title: "รีเฟรช GPS สดจากดาวเทียม 100%",
+                    desc: "ดึงพิกัดสดจากชิป GPS โดยตรง ไม่ค้างพิกัดเก่าจากแคช พร้อมระบบล็อกปุ่มและไอคอนหมุนแสดงสถานะ"
+                },
+                {
+                    icon: "fa-map-location-dot",
+                    color: "emerald",
+                    title: "ระบบค้นหาสถานที่อัจฉริยะ 5 ระดับ (5-Tier)",
+                    desc: "ค้นหาสถานที่สำคัญจริง (ราชการ, วัด, รพ., ร้านค้า) ก่อนชื่อถนน/ซอย แก้ปัญหาพิกัดหลุดเป็นชื่อซอย"
+                },
+                {
+                    icon: "fa-clock",
+                    color: "indigo",
+                    title: "ปรับรูปแบบเวลาปัจจุบัน (ชั่วโมง:นาที น.)",
+                    desc: "แสดงเวลาแบบสบายตาและกระชับในรูปแบบ HH:mm น. โดยตัดหน่วยวินาทีออก"
+                }
+            ]
+        };
+
+        function renderModalHTML(data) {
+            return `
+                <div id="activeOOPModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none">
+                    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-150">
+                        <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] p-5 text-white text-center relative shrink-0">
+                            <!-- Top Right Close X Button -->
+                            <button
+                                type="button"
+                                onclick="closeOOPModal()"
+                                class="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 active:scale-90 text-white flex items-center justify-center transition cursor-pointer"
+                                title="ปิดหน้าต่าง"
+                            >
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
+
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md text-[#F6DE51] text-xl shadow-inner mb-2 border border-white/20">
+                                <i class="fa-solid fa-bullhorn drop-shadow-sm"></i>
+                            </div>
+                            <h3 class="text-lg font-black tracking-wide">${data.title}</h3>
+                            <p class="text-xs text-emerald-100 font-medium mt-0.5">
+                                เวอร์ชัน <span class="font-bold text-[#F6DE51]">${data.appVersion}</span> &bull; ประจำวันที่ ${data.releaseDate}
+                            </p>
+                        </div>
+
+                        <div class="p-5 overflow-y-auto space-y-3 flex-1 text-slate-800 text-xs">
+                            <div class="text-slate-500 font-medium text-[11px] pb-1 border-b border-slate-100">
+                                รายละเอียดฟังก์ชันและประสิทธิภาพที่ได้รับการปรับปรุง:
+                            </div>
+                            ${data.highlights.map(h => `
+                                <div class="p-3 rounded-2xl bg-${h.color}-50 border border-${h.color}-100 flex gap-3 items-start">
+                                    <span class="w-7 h-7 rounded-xl bg-${h.color}-600 text-white flex items-center justify-center text-xs shrink-0 shadow-xs mt-0.5">
+                                        <i class="fa-solid ${h.icon}"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="font-bold text-${h.color}-950 text-xs sm:text-[13px]">${h.title}</h4>
+                                        <p class="text-[11px] text-${h.color}-800/80 mt-0.5 leading-relaxed">${h.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Center Bottom Close Button -->
+                        <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-center shrink-0">
+                            <button
+                                type="button"
+                                onclick="closeOOPModal()"
+                                class="w-full max-w-[260px] py-2.5 px-6 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#00351B] to-[#00744B] hover:brightness-110 active:scale-95 transition shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                            >
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>รับทราบและเข้าสู่ระบบ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openOOPModal() {
+            document.getElementById('oopModalHost').innerHTML = renderModalHTML(mockVersionData);
+        }
+
+        function closeOOPModal() {
+            document.getElementById('oopModalHost').innerHTML = '';
+            document.getElementById('simulationStatus').textContent = 'สถานะ: ผู้ใช้กดรับทราบแล้ว (บันทึกค่าลง LocalStorage เรียบร้อย จะไม่เด้งซ้ำ)';
+        }
+
+        function simulateBuildUpdate() {
+            document.getElementById('simulationStatus').textContent = 'จำลอง: มี Build ใหม่บน GitHub -> ระบบโหลดไฟล์เสร็จ -> เด้งโมดอลอัตโนมัติ 1 ครั้ง!';
+            openOOPModal();
+        }
+    </script>
+</body>
+</html>

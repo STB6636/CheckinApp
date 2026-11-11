@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T07:08:13.466Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `144` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `769`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-11T08:30:41.063Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `149` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `790`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `32f2e9a5102dd19a` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b41159675abfcae5` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -42,6 +42,28 @@
 | `AppLayout.refreshNotificationBell` | `static public async method` | **L599 - L761** | `(currentUser) => Promise<any>` | static public async method L599-L761 (163 lines) |
 | `AppLayout.initAdminRealtimeSync` | `static public method` | **L763 - L876** | `(currentUser) => any` | static public method L763-L876 (114 lines) |
 | `AppLayout.#bindGlobalDelegatedEvents` | `static private method` | **L878 - L991** | `() => any` | static private method L878-L991 (114 lines) |
+
+---
+
+## File: `assets/js/components/SystemUpdateModal.js`
+- **Layer:** Shared UI Component Layer
+- **Hash:** `6a002232a406dc59` | **Total Lines:** `468` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `SystemUpdateModal` | `class` | **L8 - L467** | `export class SystemUpdateModal` | และมีระบบตรวจสอบการเปิดดูอัตโนมัติเพียง 1 ครั้งต่อเวอร์ชันอัปเดต (Single-view per build update) |
+| `SystemUpdateModal.getCurrentAppBuild` | `static public method` | **L48 - L58** | `() => any` | static public method L48-L58 (11 lines) |
+| `SystemUpdateModal.#escapeHtml` | `static private method` | **L65 - L73** | `(str) => any` | static private method L65-L73 (9 lines) |
+| `SystemUpdateModal.#resolveVersionUrl` | `static private method` | **L79 - L87** | `() => any` | static private method L79-L87 (9 lines) |
+| `SystemUpdateModal.#injectStyles` | `static private method` | **L92 - L124** | `() => any` | ติดตั้ง CSS Animations และสไตล์ที่จำเป็นแบบ Self-contained |
+| `SystemUpdateModal.init` | `static public async method` | **L133 - L144** | `(options = {}) => Promise<any>` | static public async method L133-L144 (12 lines) |
+| `SystemUpdateModal.fetchVersionData` | `static public async method` | **L150 - L185** | `() => Promise<any>` | static public async method L150-L185 (36 lines) |
+| `SystemUpdateModal.renderBadge` | `static public method` | **L191 - L226** | `(targetSlotSelector = '#loginVersionBadgeSlot') => any` | static public method L191-L226 (36 lines) |
+| `SystemUpdateModal.checkAndShowAuto` | `static public method` | **L231 - L242** | `() => any` | ตรวจสอบว่าผู้ใช้เคยดูการแจ้งเตือนของ Build ปัจจุบันหรือยัง หากยังไม่เคยจะเปิด Modal อัตโนมัติ 1 ครั้ง |
+| `SystemUpdateModal.show` | `static public method` | **L247 - L418** | `() => any` | เปิดหน้าต่างแจ้งเตือนการอัปเดตระบบ (What's New Modal) |
+| `SystemUpdateModal.open` | `static public method` | **L423 - L425** | `() => any` | Alias for show() |
+| `SystemUpdateModal.close` | `static public method` | **L431 - L458** | `(saveAcknowledge = true) => any` | static public method L431-L458 (28 lines) |
+| `SystemUpdateModal.getVersionData` | `static public method` | **L464 - L466** | `() => any` | static public method L464-L466 (3 lines) |
 
 ---
 
@@ -170,24 +192,24 @@
 
 ## File: `assets/js/controllers/LoginController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `f440671fee411685` | **Total Lines:** `303` | **Imports:** `4` | **Exports:** `LoginController`
+- **Hash:** `3d343836fe9cae7b` | **Total Lines:** `307` | **Imports:** `5` | **Exports:** `LoginController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `LoginController` | `class` | **L11 - L299** | `export class LoginController` | Class Definition (289 lines) |
-| `LoginController.constructor` | `public constructor` | **L12 - L15** | `() => any` | public constructor L12-L15 (4 lines) |
-| `LoginController.init` | `public async method` | **L17 - L33** | `() => Promise<any>` | public async method L17-L33 (17 lines) |
-| `LoginController.#loadOrganizationBranding` | `private async method` | **L35 - L69** | `() => Promise<any>` | private async method L35-L69 (35 lines) |
-| `LoginController.#updateThemeButtonUI` | `private method` | **L71 - L81** | `() => any` | private method L71-L81 (11 lines) |
-| `LoginController.#bindEvents` | `private method` | **L83 - L188** | `() => any` | private method L83-L188 (106 lines) |
-| `openChangeModal` | `arrow_fn` | **L124 - L133** | `() => inferred` | Arrow Function L124-L133 |
-| `validatePasswordMatch` | `arrow_fn` | **L140 - L162** | `() => inferred` | Arrow Function L140-L162 |
-| `openForgotModal` | `arrow_fn` | **L173 - L177** | `() => inferred` | Arrow Function L173-L177 |
-| `LoginController.#handleLogin` | `private async method` | **L190 - L212** | `(mode) => Promise<any>` | private async method L190-L212 (23 lines) |
-| `LoginController.#loadRememberedUser` | `private method` | **L214 - L234** | `() => any` | private method L214-L234 (21 lines) |
-| `LoginController.#persistRememberedUser` | `private method` | **L236 - L251** | `(username) => any` | private method L236-L251 (16 lines) |
-| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L253 - L277** | `(closeModalCallback) => Promise<any>` | private async method L253-L277 (25 lines) |
-| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L279 - L298** | `(closeModalCallback) => Promise<any>` | private async method L279-L298 (20 lines) |
+| `LoginController` | `class` | **L12 - L303** | `export class LoginController` | Class Definition (292 lines) |
+| `LoginController.constructor` | `public constructor` | **L13 - L16** | `() => any` | public constructor L13-L16 (4 lines) |
+| `LoginController.init` | `public async method` | **L18 - L37** | `() => Promise<any>` | public async method L18-L37 (20 lines) |
+| `LoginController.#loadOrganizationBranding` | `private async method` | **L39 - L73** | `() => Promise<any>` | private async method L39-L73 (35 lines) |
+| `LoginController.#updateThemeButtonUI` | `private method` | **L75 - L85** | `() => any` | private method L75-L85 (11 lines) |
+| `LoginController.#bindEvents` | `private method` | **L87 - L192** | `() => any` | private method L87-L192 (106 lines) |
+| `openChangeModal` | `arrow_fn` | **L128 - L137** | `() => inferred` | Arrow Function L128-L137 |
+| `validatePasswordMatch` | `arrow_fn` | **L144 - L166** | `() => inferred` | Arrow Function L144-L166 |
+| `openForgotModal` | `arrow_fn` | **L177 - L181** | `() => inferred` | Arrow Function L177-L181 |
+| `LoginController.#handleLogin` | `private async method` | **L194 - L216** | `(mode) => Promise<any>` | private async method L194-L216 (23 lines) |
+| `LoginController.#loadRememberedUser` | `private method` | **L218 - L238** | `() => any` | private method L218-L238 (21 lines) |
+| `LoginController.#persistRememberedUser` | `private method` | **L240 - L255** | `(username) => any` | private method L240-L255 (16 lines) |
+| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L257 - L281** | `(closeModalCallback) => Promise<any>` | private async method L257-L281 (25 lines) |
+| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L283 - L302** | `(closeModalCallback) => Promise<any>` | private async method L283-L302 (20 lines) |
 
 ---
 
@@ -558,7 +580,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `abc459562f7d1013` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ed870f6d8f8cc705` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -593,7 +615,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `da103f168dfd84a8` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9cbb7d2ab752873e` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -677,22 +699,22 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d90c81879d63cca9` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8228698ea8eeab8c` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L140** | `<head>` | HTML DOM Section L3-L140 |
 | `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L165 - L165** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L165-L165 |
-| `<main>` | `html_dom_section` | **L172 - L283** | `<main>` | HTML DOM Section L172-L283 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L178 - L180** | `id="orgLogoWrapper"` | HTML DOM Section L178-L180 |
-| `<form#loginForm>` | `html_dom_section` | **L192 - L280** | `id="loginForm"` | HTML DOM Section L192-L280 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L376 - L376** | `<script>` | Bootstrap script L376-L376 |
+| `<main>` | `html_dom_section` | **L172 - L284** | `<main>` | HTML DOM Section L172-L284 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L179 - L181** | `id="orgLogoWrapper"` | HTML DOM Section L179-L181 |
+| `<form#loginForm>` | `html_dom_section` | **L193 - L281** | `id="loginForm"` | HTML DOM Section L193-L281 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L377 - L377** | `<script>` | Bootstrap script L377-L377 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `20788605cabb0440` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `01c3c3f30d920fe4` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1820,6 +1842,50 @@
 
 ---
 
+## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `d13bb716aa19cced` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L16** | `<head>` | HTML DOM Section L3-L16 |
+| `<div#activeOOPModal>` | `html_dom_section` | **L220 - L271** | `id="activeOOPModal"` | HTML DOM Section L220-L271 |
+
+---
+
+## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs`
+- **Layer:** Application Module
+- **Hash:** `bbe37b558bba82da` | **Total Lines:** `66` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `check` | `function` | **L13 - L21** | `(desc, condition) => inferred` | Function L13-L21 |
+
+---
+
+## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs`
+- **Layer:** Application Module
+- **Hash:** `aff2048a6ed002bd` | **Total Lines:** `190` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `check` | `async_function` | **L13 - L23** | `(name, fn) => inferred` | Function L13-L23 |
+| `run` | `async_function` | **L25 - L184** | `() => inferred` | Function L25-L184 |
+
+---
+
+## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs`
+- **Layer:** Application Module
+- **Hash:** `6b0e318bd230b7c5` | **Total Lines:** `275` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `test` | `async_function` | **L13 - L23** | `(description, fn) => inferred` | Function L13-L23 |
+| `runSuite` | `async_function` | **L25 - L275** | `() => inferred` | Function L25-L275 |
+| `MockElement` | `class` | **L134 - L183** | `class MockElement` | Class Definition (50 lines) |
+
+---
+
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
 - **Hash:** `21f532f6f2e96b0a` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
@@ -1878,7 +1944,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `dff50f29e5a397b5` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3e391bfbdab06c07` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1896,7 +1962,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `75fac0c680c2cf2b` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7ed479cfbba0c91f` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2031,7 +2097,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7fbcfd8f02ab6e90` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e64ab47acd864aba` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

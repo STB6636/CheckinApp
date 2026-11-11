@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T07:08:13.466Z",
-  "totalFilesScanned": 144,
-  "totalSymbolsIndexed": 769,
+  "generatedAt": "2026-11-11T08:30:41.063Z",
+  "totalFilesScanned": 149,
+  "totalSymbolsIndexed": 790,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "32f2e9a5102dd19a",
+      "fileHash": "b41159675abfcae5",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -200,6 +200,123 @@
           "endLine": 991,
           "signature": "() => any",
           "summary": "static private method L878-L991 (114 lines)"
+        }
+      ]
+    },
+    {
+      "filePath": "assets/js/components/SystemUpdateModal.js",
+      "layer": "Shared UI Component Layer",
+      "fileHash": "6a002232a406dc59",
+      "totalLines": 468,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [
+        "SystemUpdateModal"
+      ],
+      "symbols": [
+        {
+          "name": "SystemUpdateModal",
+          "kind": "class",
+          "startLine": 8,
+          "endLine": 467,
+          "signature": "export class SystemUpdateModal",
+          "summary": "และมีระบบตรวจสอบการเปิดดูอัตโนมัติเพียง 1 ครั้งต่อเวอร์ชันอัปเดต (Single-view per build update)"
+        },
+        {
+          "name": "SystemUpdateModal.getCurrentAppBuild",
+          "kind": "static public method",
+          "startLine": 48,
+          "endLine": 58,
+          "signature": "() => any",
+          "summary": "static public method L48-L58 (11 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.#escapeHtml",
+          "kind": "static private method",
+          "startLine": 65,
+          "endLine": 73,
+          "signature": "(str) => any",
+          "summary": "static private method L65-L73 (9 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.#resolveVersionUrl",
+          "kind": "static private method",
+          "startLine": 79,
+          "endLine": 87,
+          "signature": "() => any",
+          "summary": "static private method L79-L87 (9 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.#injectStyles",
+          "kind": "static private method",
+          "startLine": 92,
+          "endLine": 124,
+          "signature": "() => any",
+          "summary": "ติดตั้ง CSS Animations และสไตล์ที่จำเป็นแบบ Self-contained"
+        },
+        {
+          "name": "SystemUpdateModal.init",
+          "kind": "static public async method",
+          "startLine": 133,
+          "endLine": 144,
+          "signature": "(options = {}) => Promise<any>",
+          "summary": "static public async method L133-L144 (12 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.fetchVersionData",
+          "kind": "static public async method",
+          "startLine": 150,
+          "endLine": 185,
+          "signature": "() => Promise<any>",
+          "summary": "static public async method L150-L185 (36 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.renderBadge",
+          "kind": "static public method",
+          "startLine": 191,
+          "endLine": 226,
+          "signature": "(targetSlotSelector = '#loginVersionBadgeSlot') => any",
+          "summary": "static public method L191-L226 (36 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.checkAndShowAuto",
+          "kind": "static public method",
+          "startLine": 231,
+          "endLine": 242,
+          "signature": "() => any",
+          "summary": "ตรวจสอบว่าผู้ใช้เคยดูการแจ้งเตือนของ Build ปัจจุบันหรือยัง หากยังไม่เคยจะเปิด Modal อัตโนมัติ 1 ครั้ง"
+        },
+        {
+          "name": "SystemUpdateModal.show",
+          "kind": "static public method",
+          "startLine": 247,
+          "endLine": 418,
+          "signature": "() => any",
+          "summary": "เปิดหน้าต่างแจ้งเตือนการอัปเดตระบบ (What's New Modal)"
+        },
+        {
+          "name": "SystemUpdateModal.open",
+          "kind": "static public method",
+          "startLine": 423,
+          "endLine": 425,
+          "signature": "() => any",
+          "summary": "Alias for show()"
+        },
+        {
+          "name": "SystemUpdateModal.close",
+          "kind": "static public method",
+          "startLine": 431,
+          "endLine": 458,
+          "signature": "(saveAcknowledge = true) => any",
+          "summary": "static public method L431-L458 (28 lines)"
+        },
+        {
+          "name": "SystemUpdateModal.getVersionData",
+          "kind": "static public method",
+          "startLine": 464,
+          "endLine": 466,
+          "signature": "() => any",
+          "summary": "static public method L464-L466 (3 lines)"
         }
       ]
     },
@@ -1032,14 +1149,15 @@
     {
       "filePath": "assets/js/controllers/LoginController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "f440671fee411685",
-      "totalLines": 303,
-      "importsCount": 4,
+      "fileHash": "3d343836fe9cae7b",
+      "totalLines": 307,
+      "importsCount": 5,
       "importsPreview": [
         "import { AuthService } from '../core/AuthService.js';",
         "import { UIHelpers } from '../core/UIHelpers.js';",
         "import { SettingsModel } from '../models/SettingsModel.js';",
-        "import { Config } from '../core/Config.js';"
+        "import { Config } from '../core/Config.js';",
+        "import { SystemUpdateModal } from '../components/SystemUpdateModal.js';"
       ],
       "exports": [
         "LoginController"
@@ -1048,114 +1166,114 @@
         {
           "name": "LoginController",
           "kind": "class",
-          "startLine": 11,
-          "endLine": 299,
+          "startLine": 12,
+          "endLine": 303,
           "signature": "export class LoginController",
-          "summary": "Class Definition (289 lines)"
+          "summary": "Class Definition (292 lines)"
         },
         {
           "name": "LoginController.constructor",
           "kind": "public constructor",
-          "startLine": 12,
-          "endLine": 15,
+          "startLine": 13,
+          "endLine": 16,
           "signature": "() => any",
-          "summary": "public constructor L12-L15 (4 lines)"
+          "summary": "public constructor L13-L16 (4 lines)"
         },
         {
           "name": "LoginController.init",
           "kind": "public async method",
-          "startLine": 17,
-          "endLine": 33,
+          "startLine": 18,
+          "endLine": 37,
           "signature": "() => Promise<any>",
-          "summary": "public async method L17-L33 (17 lines)"
+          "summary": "public async method L18-L37 (20 lines)"
         },
         {
           "name": "LoginController.#loadOrganizationBranding",
           "kind": "private async method",
-          "startLine": 35,
-          "endLine": 69,
+          "startLine": 39,
+          "endLine": 73,
           "signature": "() => Promise<any>",
-          "summary": "private async method L35-L69 (35 lines)"
+          "summary": "private async method L39-L73 (35 lines)"
         },
         {
           "name": "LoginController.#updateThemeButtonUI",
           "kind": "private method",
-          "startLine": 71,
-          "endLine": 81,
+          "startLine": 75,
+          "endLine": 85,
           "signature": "() => any",
-          "summary": "private method L71-L81 (11 lines)"
+          "summary": "private method L75-L85 (11 lines)"
         },
         {
           "name": "LoginController.#bindEvents",
           "kind": "private method",
-          "startLine": 83,
-          "endLine": 188,
+          "startLine": 87,
+          "endLine": 192,
           "signature": "() => any",
-          "summary": "private method L83-L188 (106 lines)"
+          "summary": "private method L87-L192 (106 lines)"
         },
         {
           "name": "openChangeModal",
           "kind": "arrow_fn",
-          "startLine": 124,
-          "endLine": 133,
+          "startLine": 128,
+          "endLine": 137,
           "signature": "() => inferred",
-          "summary": "Arrow Function L124-L133"
+          "summary": "Arrow Function L128-L137"
         },
         {
           "name": "validatePasswordMatch",
           "kind": "arrow_fn",
-          "startLine": 140,
-          "endLine": 162,
+          "startLine": 144,
+          "endLine": 166,
           "signature": "() => inferred",
-          "summary": "Arrow Function L140-L162"
+          "summary": "Arrow Function L144-L166"
         },
         {
           "name": "openForgotModal",
           "kind": "arrow_fn",
-          "startLine": 173,
-          "endLine": 177,
+          "startLine": 177,
+          "endLine": 181,
           "signature": "() => inferred",
-          "summary": "Arrow Function L173-L177"
+          "summary": "Arrow Function L177-L181"
         },
         {
           "name": "LoginController.#handleLogin",
           "kind": "private async method",
-          "startLine": 190,
-          "endLine": 212,
+          "startLine": 194,
+          "endLine": 216,
           "signature": "(mode) => Promise<any>",
-          "summary": "private async method L190-L212 (23 lines)"
+          "summary": "private async method L194-L216 (23 lines)"
         },
         {
           "name": "LoginController.#loadRememberedUser",
           "kind": "private method",
-          "startLine": 214,
-          "endLine": 234,
+          "startLine": 218,
+          "endLine": 238,
           "signature": "() => any",
-          "summary": "private method L214-L234 (21 lines)"
+          "summary": "private method L218-L238 (21 lines)"
         },
         {
           "name": "LoginController.#persistRememberedUser",
           "kind": "private method",
-          "startLine": 236,
-          "endLine": 251,
+          "startLine": 240,
+          "endLine": 255,
           "signature": "(username) => any",
-          "summary": "private method L236-L251 (16 lines)"
+          "summary": "private method L240-L255 (16 lines)"
         },
         {
           "name": "LoginController.#handleChangePasswordSubmit",
           "kind": "private async method",
-          "startLine": 253,
-          "endLine": 277,
+          "startLine": 257,
+          "endLine": 281,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L253-L277 (25 lines)"
+          "summary": "private async method L257-L281 (25 lines)"
         },
         {
           "name": "LoginController.#handleForgotPasswordSubmit",
           "kind": "private async method",
-          "startLine": 279,
-          "endLine": 298,
+          "startLine": 283,
+          "endLine": 302,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L279-L298 (20 lines)"
+          "summary": "private async method L283-L302 (20 lines)"
         }
       ]
     },
@@ -3368,7 +3486,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "abc459562f7d1013",
+      "fileHash": "ed870f6d8f8cc705",
       "totalLines": 1015,
       "importsCount": 0,
       "importsPreview": [],
@@ -3587,7 +3705,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "da103f168dfd84a8",
+      "fileHash": "9cbb7d2ab752873e",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -3893,8 +4011,8 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d90c81879d63cca9",
-      "totalLines": 378,
+      "fileHash": "8228698ea8eeab8c",
+      "totalLines": 379,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3919,40 +4037,40 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 172,
-          "endLine": 283,
+          "endLine": 284,
           "signature": "<main>",
-          "summary": "HTML DOM Section L172-L283"
+          "summary": "HTML DOM Section L172-L284"
         },
         {
           "name": "<div#orgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 178,
-          "endLine": 180,
+          "startLine": 179,
+          "endLine": 181,
           "signature": "id=\"orgLogoWrapper\"",
-          "summary": "HTML DOM Section L178-L180"
+          "summary": "HTML DOM Section L179-L181"
         },
         {
           "name": "<form#loginForm>",
           "kind": "html_dom_section",
-          "startLine": 192,
-          "endLine": 280,
+          "startLine": 193,
+          "endLine": 281,
           "signature": "id=\"loginForm\"",
-          "summary": "HTML DOM Section L192-L280"
+          "summary": "HTML DOM Section L193-L281"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 376,
-          "endLine": 376,
+          "startLine": 377,
+          "endLine": 377,
           "signature": "<script>",
-          "summary": "Bootstrap script L376-L376"
+          "summary": "Bootstrap script L377-L377"
         }
       ]
     },
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "20788605cabb0440",
+      "fileHash": "01c3c3f30d920fe4",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -7135,6 +7253,126 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "d13bb716aa19cced",
+      "totalLines": 290,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 16,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L16"
+        },
+        {
+          "name": "<div#activeOOPModal>",
+          "kind": "html_dom_section",
+          "startLine": 220,
+          "endLine": 271,
+          "signature": "id=\"activeOOPModal\"",
+          "summary": "HTML DOM Section L220-L271"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs",
+      "layer": "Application Module",
+      "fileHash": "bbe37b558bba82da",
+      "totalLines": 66,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "check",
+          "kind": "function",
+          "startLine": 13,
+          "endLine": 21,
+          "signature": "(desc, condition) => inferred",
+          "summary": "Function L13-L21"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs",
+      "layer": "Application Module",
+      "fileHash": "aff2048a6ed002bd",
+      "totalLines": 190,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "check",
+          "kind": "async_function",
+          "startLine": 13,
+          "endLine": 23,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L13-L23"
+        },
+        {
+          "name": "run",
+          "kind": "async_function",
+          "startLine": 25,
+          "endLine": 184,
+          "signature": "() => inferred",
+          "summary": "Function L25-L184"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs",
+      "layer": "Application Module",
+      "fileHash": "6b0e318bd230b7c5",
+      "totalLines": 275,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "test",
+          "kind": "async_function",
+          "startLine": 13,
+          "endLine": 23,
+          "signature": "(description, fn) => inferred",
+          "summary": "Function L13-L23"
+        },
+        {
+          "name": "runSuite",
+          "kind": "async_function",
+          "startLine": 25,
+          "endLine": 275,
+          "signature": "() => inferred",
+          "summary": "Function L25-L275"
+        },
+        {
+          "name": "MockElement",
+          "kind": "class",
+          "startLine": 134,
+          "endLine": 183,
+          "signature": "class MockElement",
+          "summary": "Class Definition (50 lines)"
+        }
+      ]
+    },
+    {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
       "fileHash": "21f532f6f2e96b0a",
@@ -7251,7 +7489,7 @@
     {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "dff50f29e5a397b5",
+      "fileHash": "3e391bfbdab06c07",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -7334,7 +7572,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "75fac0c680c2cf2b",
+      "fileHash": "7ed479cfbba0c91f",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -7926,7 +8164,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7fbcfd8f02ab6e90",
+      "fileHash": "e64ab47acd864aba",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],
