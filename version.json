@@ -1,16 +1,16 @@
 {
-  "buildId": "20261111_f9aeaab1",
+  "buildId": "20261111_c71e33f4",
   "appVersion": "v2.9.2",
-  "contentHash": "f9aeaab1c2d9abdc03f44220f26f31349614dadb14e8818473474692e377866c",
-  "updatedAt": "2026-11-11T08:26:31.329Z",
+  "contentHash": "c71e33f46800903702069317ca698628fc836fcbc776f2679df7cb49f6dd2b35",
+  "updatedAt": "2026-11-11T08:49:13.569Z",
   "releaseNotes": {
     "releaseDate": "11 พฤศจิกายน 2569",
-    "title": "ปรับปรุงระบบระบุตำแหน่ง GPS สด & ปรับรูปแบบเวลา",
+    "title": "ปรับปรุงรูปแบบระบบลงเวลาและระบบ Sync Data RealTime ของผู้ดูแลระบบ",
     "highlights": [
       {
         "icon": "fa-satellite-dish",
         "color": "teal",
-        "title": "รีเฟรช GPS สดจากดาวเทียม 100%",
+        "title": "รีเฟรช GPS สดจากดาวเทียม",
         "desc": "ดึงพิกัดสดจากชิป GPS โดยตรง ไม่ค้างพิกัดเก่าจากแคช พร้อมระบบล็อกปุ่มและไอคอนหมุนแสดงสถานะ"
       },
       {

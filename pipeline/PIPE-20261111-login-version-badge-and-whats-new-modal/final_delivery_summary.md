@@ -1,7 +1,7 @@
 # Final Delivery Summary
 **Feature**: Login Version Badge & Dynamic System Update Modal  
 **Pipeline ID**: `PIPE-20261111-login-version-badge-and-whats-new-modal`  
-**Build ID**: `20261111_f9aeaab1`  
+**Build ID**: `20261111_c71e33f4`  
 **Branch**: `Loca-V2` (`origin/Loca-V2`)  
 
 ---
@@ -19,7 +19,7 @@
    - ไม่มีการแก้ไขฐานข้อมูลใดๆ ทั้งสิ้น (Zero Database Changes) ข้อมูลเวอร์ชันและ Release Notes ผูกอยู่กับ `version.json` และตัวสร้าง Content Hash อัตโนมัติ
    - ไม่เกิดปัญหาชนกับระบบเคลียร์แคชเดิม (`checkRemoteVersion` และ `performHardCachePurge`)
 4. **Mandatory Cache Version Synchronization**:
-   - ซิงก์ `CURRENT_APP_BUILD = '20261111_f9aeaab1'` และ `?v=20261111_f9aeaab1` ครบถ้วนทั้ง 8 หน้าหลักของระบบ 100%
+   - ซิงก์ `CURRENT_APP_BUILD = '20261111_c71e33f4'` และ `?v=20261111_c71e33f4` ครบถ้วนทั้ง 8 หน้าหลักของระบบ 100%
 
 ---
 

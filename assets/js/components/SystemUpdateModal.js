@@ -14,15 +14,15 @@ export class SystemUpdateModal {
 
     static DEFAULT_DATA = {
         appVersion: 'v2.9.2',
-        buildId: '20261111_99bee4ac',
+        buildId: '20261111_f9aeaab1',
         releaseNotes: {
             releaseDate: '11 พฤศจิกายน 2569',
-            title: 'ปรับปรุงระบบระบุตำแหน่ง GPS สด & ปรับรูปแบบเวลา',
+            title: 'ปรับปรุงรูปแบบระบบลงเวลาและระบบ Sync Data RealTime ของผู้ดูแลระบบ',
             highlights: [
                 {
                     icon: 'fa-satellite-dish',
                     color: 'teal',
-                    title: 'รีเฟรช GPS สดจากดาวเทียม 100%',
+                    title: 'รีเฟรช GPS สดจากดาวเทียม',
                     desc: 'ดึงพิกัดสดจากชิป GPS โดยตรง ไม่ค้างพิกัดเก่าจากแคช พร้อมระบบล็อกปุ่มและไอคอนหมุนแสดงสถานะ'
                 },
                 {
@@ -344,7 +344,7 @@ export class SystemUpdateModal {
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md text-[#F6DE51] text-xl shadow-inner mb-2 border border-white/20">
                         <i class="fa-solid fa-bullhorn drop-shadow-sm"></i>
                     </div>
-                    <h3 id="bmaUpdateModalTitle" class="text-base sm:text-lg font-black tracking-wide text-white drop-shadow-sm">${title}</h3>
+                    <h3 id="bmaUpdateModalTitle" class="text-base sm:text-lg font-black tracking-wide text-white drop-shadow-sm leading-snug px-2">${title}</h3>
                     <p class="text-xs text-emerald-100 font-medium mt-0.5">
                         เวอร์ชัน <span class="font-bold text-[#F6DE51]">${appVersion}</span>${releaseDate ? ` &bull; ประจำวันที่ ${releaseDate}` : ''}
                     </p>
