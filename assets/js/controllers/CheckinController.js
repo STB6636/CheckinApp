@@ -114,6 +114,11 @@ export class CheckinController {
         this.#initRealtimeSettingsListener();
         document.addEventListener('visibilitychange', async () => {
             if (!document.hidden) {
+                const modalCamera = document.getElementById('modalFullscreenCamera');
+                const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
+                if (this.isCameraRunning || isModalOpen) {
+                    return;
+                }
                 await this.#syncSettingsHotReload();
             }
         });
@@ -192,9 +197,22 @@ export class CheckinController {
     }
 
     async #syncSettingsHotReload() {
+        const modalCamera = document.getElementById('modalFullscreenCamera');
+        const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
+        if (this.isCameraRunning || isModalOpen) {
+            return;
+        }
         try {
             sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
             const fresh = await SettingsModel.getSettings(true);
+            const modalCameraNow = document.getElementById('modalFullscreenCamera');
+            const isModalOpenNow = modalCameraNow && !modalCameraNow.classList.contains('hidden');
+            if (this.isCameraRunning || isModalOpenNow) {
+                return;
+            }
+            if (JSON.stringify(fresh) === JSON.stringify(this.settings)) {
+                return;
+            }
             this.#applySettingsHotReload(fresh);
         } catch (err) {
             console.warn('Sync settings hot reload error:', err);
@@ -210,11 +228,15 @@ export class CheckinController {
         this.#evaluateTimeWindowAndPopulateShifts();
         this.#updateStatusCardsAndMainButton();
 
+        const modalCamera = document.getElementById('modalFullscreenCamera');
+        const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
+        const isCameraActive = this.isCameraRunning || isModalOpen;
+
         if (this.settings.require_photo) {
-            if (!this.capturedPhotoDataUrl) {
+            if (!this.capturedPhotoDataUrl && !isCameraActive) {
                 this.#stopCameraAndShowStandby();
             }
-        } else {
+        } else if (!isCameraActive) {
             this.#stopCameraHardwareStream();
         }
 
@@ -1677,21 +1699,31 @@ export class CheckinController {
 
         try {
             this.#stopCameraHardwareStream();
-            this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
-                audio: false
-            });
+            modal?.classList.remove('hidden');
+
+            try {
+                this.mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
+                    audio: false
+                });
+            } catch (constraintErr) {
+                console.warn('High-res camera constraints failed, falling back to standard user camera:', constraintErr);
+                this.mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user' },
+                    audio: false
+                });
+            }
 
             this.isCameraRunning = true;
             if (video) {
                 video.srcObject = this.mediaStream;
                 video.classList.remove('hidden');
+                await video.play().catch(playErr => console.warn('Video play error:', playErr));
             }
-
-            modal?.classList.remove('hidden');
         } catch (err) {
             console.warn('Fullscreen camera access error:', err);
             this.#stopCameraHardwareStream();
+            modal?.classList.add('hidden');
             if (allowFallback) {
                 const fallbackInput = document.getElementById('cameraFallbackFileInput');
                 if (fallbackInput) {
@@ -1716,12 +1748,21 @@ export class CheckinController {
         const statusText = document.getElementById('photoStatusBadgeText');
         const modal = document.getElementById('modalFullscreenCamera');
 
-        if (!video || !video.srcObject) {
+        if (!video || !video.srcObject || !canvas) {
             UIHelpers.alert('กล้องยังไม่พร้อมใช้งาน', 'กรุณารอสักครู่แล้วลองใหม่อีกครั้ง', 'warning');
             return;
         }
 
+        if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+            UIHelpers.alert('กล้องกำลังเริ่มต้น', 'กรุณารอสักครู่ให้ภาพปรากฏชัดเจนแล้วกดถ่ายใหม่อีกครั้ง', 'info');
+            return;
+        }
+
         this.capturedPhotoDataUrl = UIHelpers.capturePortrait3x4FromVideo(video, canvas);
+        if (!this.capturedPhotoDataUrl) {
+            UIHelpers.alert('ถ่ายภาพไม่สำเร็จ', 'ไม่สามารถบันทึกภาพจากกล้องได้ กรุณาลองใหม่อีกครั้ง', 'warning');
+            return;
+        }
         this.#stopCameraHardwareStream();
 
         if (preview) {
@@ -1834,6 +1875,9 @@ export class CheckinController {
         }
         const video = document.getElementById('cameraVideoStream');
         if (video) {
+            try {
+                video.pause();
+            } catch (_) {}
             video.srcObject = null;
         }
         document.getElementById('btnInFrameShutter')?.classList.add('hidden');
