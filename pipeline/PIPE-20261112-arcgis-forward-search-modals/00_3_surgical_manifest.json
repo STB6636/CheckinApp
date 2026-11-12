@@ -1,0 +1,62 @@
+{
+  "task_id": "PIPE-20261112-arcgis-forward-search-modals",
+  "created_at": "2026-11-12T17:23:00+07:00",
+  "target_branch": "Loca-V2",
+  "git_push_policy": "push_to_origin_loca_v2_after_qa_pass",
+  "flow_ids": [
+    "FLOW_SPECIAL_REQ_01",
+    "FLOW_GPS_01",
+    "FLOW_CHECKIN_01"
+  ],
+  "surgical_scope_rules": [
+    "STRICT_SURGICAL_SCOPE_ONLY",
+    "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+    "ZERO_DATABASE_MODIFICATIONS",
+    "ZERO_UNRELATED_CONTROLLER_OR_CSS_MODIFICATIONS"
+  ],
+  "targets": [
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "target_symbols": [
+        "normalizeSearchQuery",
+        "#mapArcGISTypeToCategory",
+        "#queryArcGISForwardGeocode",
+        "#queryPhotonForwardGeocode",
+        "#queryNominatimForwardGeocode",
+        "searchPlaces"
+      ],
+      "exact_line_range": "370-475, 835-850",
+      "recommended_read_window": [360, 485],
+      "operation": "add_and_export_unified_forward_search"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "target_symbols": [
+        "#initOffsiteModalGps",
+        "#updateOffsiteModalMarker",
+        "performSearch (offsite)",
+        "performSearch (special request)"
+      ],
+      "exact_line_range": "1055-1205, 3383-3580",
+      "recommended_read_window": [1045, 1215],
+      "operation": "refactor_to_unified_attendance_model_search"
+    }
+  ],
+  "cache_sync": {
+    "script": "node ./.ai_map/vscode_ast_mapper.mjs",
+    "targets": [
+      "version.json",
+      "index.html",
+      "checkin.html",
+      "dashboard.html",
+      "approvals.html",
+      "reports.html",
+      "personnel.html",
+      "settings.html",
+      "users.html"
+    ]
+  },
+  "verification_files": [
+    "pipeline/PIPE-20261112-arcgis-forward-search-modals/preflight_forward_search_simulation.mjs"
+  ]
+}

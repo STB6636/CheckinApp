@@ -325,7 +325,7 @@ export class AttendanceModel {
         return '';
     }
 
-    static async #fetchWithFastTimeout(url, timeoutMs = 1100) {
+    static async #fetchWithFastTimeout(url, timeoutMs = 1100, customHeaders = {}) {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), timeoutMs);
         try {
@@ -333,7 +333,8 @@ export class AttendanceModel {
                 signal: controller.signal,
                 headers: {
                     'Accept': 'application/json, application/osm3s+json, */*',
-                    'User-Agent': 'BMA-CheckinApp-Mobile/2.7 (Bangkok Metropolitan Administration)'
+                    'User-Agent': 'BMA-CheckinApp-Mobile/2.7 (Bangkok Metropolitan Administration)',
+                    ...customHeaders
                 }
             });
             clearTimeout(timer);
@@ -836,6 +837,516 @@ export class AttendanceModel {
     static async resolveLocationName(lat, lng, options = {}) {
         const res = await AttendanceModel.resolveLocationWithZoomMeta(lat, lng, options);
         return res.locationName;
+    }
+
+    /**
+     * ขยายคำย่อภาษาไทยและอังกฤษก่อนส่งค้นหา Geocoding
+     * @param {string} query
+     * @returns {string}
+     */
+    static normalizeSearchQuery(query) {
+        if (!query || typeof query !== 'string') return '';
+        let q = query.trim();
+        q = q.replace(/^bts\s*/i, 'สถานีรถไฟฟ้า ');
+        q = q.replace(/^mrt\s*/i, 'สถานีรถไฟฟ้า ');
+        q = q.replace(/^สน\.\s*/i, 'สถานีตำรวจนครบาล ');
+        q = q.replace(/^รพ\.\s*/i, 'โรงพยาบาล ');
+        q = q.replace(/^รร\.\s*/i, 'โรงเรียน ');
+        // ขยายคำค้นโรงพยาบาลจุฬาฯ โดยปกป้องจุฬาภรณ์
+        q = q.replace(/^(?:รพ\.?|โรงพยาบาล)\s*จุฬา(?:ลงกรณ์)?(?!\S*ภรณ์)(?=\s|$|[0-9])\s*/i, 'โรงพยาบาลจุฬาลงกรณ์ ');
+        q = q.replace(/^ม\.?\s*เกษตร(?:ศาสตร์)?\s*/i, 'มหาวิทยาลัยเกษตรศาสตร์ ');
+        q = q.replace(/^(?:ม\.?\s*ธรรมศาสตร์|มธ\.?)(?=\s|$|[0-9])\s*/i, 'มหาวิทยาลัยธรรมศาสตร์ ');
+        q = q.replace(/^ม\.?\s*ราม(?:คำแหง)?\s*/i, 'มหาวิทยาลัยรามคำแหง ');
+        q = q.replace(/^(?:ม\.?\s*เชียงใหม่|มช\.?)(?=\s|$|[0-9])\s*/i, 'มหาวิทยาลัยเชียงใหม่ ');
+        q = q.replace(/^ม\.?\s*จุฬา(?:ลงกรณ์)?(?:มหาวิทยาลัย)?(?:ฯ)?(?!\S*ภรณ์)(?=\s|$|[0-9])\s*/i, 'จุฬาลงกรณ์มหาวิทยาลัย ');
+        q = q.replace(/^จุฬา(?:ลงกรณ์)?(?:มหาวิทยาลัย)?(?:ฯ)?(?!\S*ภรณ์)(?=\s|$|[0-9])\s*/i, 'จุฬาลงกรณ์มหาวิทยาลัย ');
+        q = q.replace(/^(?:bma|กทม\.?)(?=\s|$|[0-9])\s*/i, 'ศาลาว่าการกรุงเทพมหานคร ');
+        return q.trim();
+    }
+
+    /**
+     * แปลงหมวดหมู่สถานที่จาก ArcGIS Type / Addr_type เป็นหมวดหมู่ภาษาไทย (11 หมวด)
+     * @param {string} [arcType='']
+     * @param {string} [addrType='']
+     * @param {string} [name='']
+     * @returns {string}
+     */
+    static #mapArcGISTypeToCategory(arcType = '', addrType = '', name = '') {
+        const typeStr = String(arcType || '').toLowerCase();
+        const addrStr = String(addrType || '').toLowerCase();
+        const nameStr = String(name || '').toLowerCase();
+        const combined = `${typeStr} ${addrStr} ${nameStr}`;
+
+        if (/bma|กรุงเทพมหานคร|สำนักงานเขต|bangkok metropolitan administration/i.test(nameStr) ||
+            (/ศาลาว่าการ/i.test(nameStr) && !/พัทยา/i.test(nameStr)) ||
+            /bma|bangkok metropolitan administration/i.test(typeStr)) {
+            return 'สถานที่ราชการ กทม.';
+        }
+        if (/government|police|court|city hall|town hall|public|civic|fire station|post office|embassy|consulate|ministry|department/i.test(combined)) {
+            return 'สถานที่ราชการ';
+        }
+        if (/school|university|college|education|library|academy|kindergarten/i.test(combined)) {
+            return 'สถานศึกษา';
+        }
+        if (/hospital|clinic|health|medical|doctor|dentist|pharmacy|drugstore/i.test(combined)) {
+            return 'โรงพยาบาล / สาธารณสุข';
+        }
+        if (/train|station|metro|subway|transit|bus|airport|ferry|pier|railway/i.test(combined)) {
+            return 'สถานีขนส่ง / รถไฟฟ้า';
+        }
+        if (/shopping|mall|market|supermarket|convenience|grocery|retail|shop|store|department store/i.test(combined)) {
+            return 'ห้างสรรพสินค้า / ตลาด';
+        }
+        if (/temple|worship|church|mosque|shrine|pagoda|religious/i.test(combined)) {
+            return 'ศาสนสถาน';
+        }
+        if (/park|garden|zoo|recreation|playground|sports|stadium|arena|gym|fitness/i.test(combined)) {
+            return 'สวนสาธารณะ / พักผ่อน';
+        }
+        if (/office|business|professional|corporate|commercial|industrial|bank|financial|company/i.test(combined)) {
+            return 'อาคาร / สำนักงาน';
+        }
+        if (/hotel|motel|resort|hostel|lodging|apartment|dorm|condo|residence/i.test(combined)) {
+            return 'โรงแรม / ที่พัก';
+        }
+        return 'สถานที่ / จุดสังเกต';
+    }
+
+    /**
+     * แปลงหมวดหมู่สถานที่จาก OSM Key/Value เป็นหมวดหมู่ภาษาไทย (11 หมวด)
+     * @param {string} [osmKey='']
+     * @param {string} [osmVal='']
+     * @param {string} [name='']
+     * @returns {string}
+     */
+    static #mapOsmTypeToCategory(osmKey = '', osmVal = '', name = '') {
+        const k = String(osmKey || '').toLowerCase();
+        const v = String(osmVal || '').toLowerCase();
+        const n = String(name || '').toLowerCase();
+
+        if (/bma|กทม|ศาลาว่าการ|กรุงเทพมหานคร/i.test(n) || /bma/i.test(v)) {
+            return 'สถานที่ราชการ กทม.';
+        }
+        if (k === 'government' || /government|townhall|courthouse|public_building|police|post_office|fire_station|embassy/i.test(v)) {
+            return 'สถานที่ราชการ';
+        }
+        if (k === 'education' || /school|university|college|kindergarten|library/i.test(v)) {
+            return 'สถานศึกษา';
+        }
+        if (/hospital|clinic|doctors|pharmacy|health/i.test(v)) {
+            return 'โรงพยาบาล / สาธารณสุข';
+        }
+        if (k === 'railway' || /station|subway|bus_stop|bus_station|airport|ferry|pier|transit/i.test(v)) {
+            return 'สถานีขนส่ง / รถไฟฟ้า';
+        }
+        if (k === 'shop' || /mall|supermarket|department_store|convenience|market|grocery/i.test(v)) {
+            return 'ห้างสรรพสินค้า / ตลาด';
+        }
+        if (/worship|temple|church|mosque|shrine/i.test(v)) {
+            return 'ศาสนสถาน';
+        }
+        if (k === 'leisure' || /park|garden|pitch|playground|sports_centre|stadium/i.test(v)) {
+            return 'สวนสาธารณะ / พักผ่อน';
+        }
+        if (k === 'office' || /building|commercial|bank/i.test(v) || k === 'building') {
+            return 'อาคาร / สำนักงาน';
+        }
+        if (k === 'tourism' || /hotel|motel|resort|hostel|guest_house/i.test(v)) {
+            return 'โรงแรม / ที่พัก';
+        }
+        return 'สถานที่ / จุดสังเกต';
+    }
+
+    /**
+     * ค้นหาสถานที่ไปข้างหน้าผ่าน ArcGIS World Geocoding Service (Tier 1 Primary Engine)
+     * @param {string} query
+     * @param {Object} [options={}]
+     * @returns {Promise<Array<{lat: number, lng: number, mainName: string, subAddr: string, category: string, extent: Object|null, score: number, source: string}>>}
+     */
+    static async #queryArcGISForwardGeocode(query, options = {}) {
+        const normQuery = AttendanceModel.normalizeSearchQuery(query);
+        if (!normQuery) return [];
+
+        const limit = Math.max(1, Math.min(options.limit || 8, 20));
+        let url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?singleLine=${encodeURIComponent(normQuery)}&f=json&outSR=4326&countryCode=THA&langCode=th&maxLocations=${limit}&outFields=PlaceName,Type,Addr_type,Place_addr,City,Subregion,Region,Postal`;
+
+        const refLat = Number(options.refLat);
+        const refLng = Number(options.refLng);
+        if (Number.isFinite(refLat) && Number.isFinite(refLng) && refLat >= -90 && refLat <= 90 && refLng >= -180 && refLng <= 180) {
+            url += `&location=${refLng},${refLat}`;
+        }
+
+        try {
+            const data = await AttendanceModel.#fetchWithFastTimeout(url, 1800);
+            if (!data || !Array.isArray(data.candidates) || data.candidates.length === 0) {
+                return [];
+            }
+
+            const items = [];
+            for (const c of data.candidates) {
+                const score = Number(c.score || 0);
+                if (score < 70) continue;
+
+                const loc = c.location || {};
+                const lat = Number(loc.y);
+                const lng = Number(loc.x);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
+
+                const attrs = c.attributes || {};
+                const mainName = (attrs.PlaceName || c.address || '').trim();
+                if (!mainName) continue;
+
+                const addrParts = [];
+                if (attrs.Place_addr && attrs.Place_addr !== mainName) addrParts.push(attrs.Place_addr);
+                if (attrs.Subregion && attrs.Subregion !== mainName && !addrParts.includes(attrs.Subregion)) addrParts.push(attrs.Subregion);
+                if (attrs.City && attrs.City !== mainName && !addrParts.includes(attrs.City)) addrParts.push(attrs.City);
+                if (attrs.Region && attrs.Region !== mainName && !addrParts.includes(attrs.Region)) addrParts.push(attrs.Region);
+                const subAddr = addrParts.join(', ') || attrs.Place_addr || attrs.Region || '';
+
+                const category = AttendanceModel.#mapArcGISTypeToCategory(attrs.Type, attrs.Addr_type, mainName);
+
+                let extent = null;
+                if (c.extent && c.extent.ymin != null && c.extent.ymax != null && c.extent.xmin != null && c.extent.xmax != null) {
+                    extent = {
+                        ymin: Math.min(Number(c.extent.ymin), Number(c.extent.ymax)),
+                        ymax: Math.max(Number(c.extent.ymin), Number(c.extent.ymax)),
+                        xmin: Math.min(Number(c.extent.xmin), Number(c.extent.xmax)),
+                        xmax: Math.max(Number(c.extent.xmin), Number(c.extent.xmax))
+                    };
+                }
+
+                items.push({
+                    lat,
+                    lng,
+                    mainName,
+                    subAddr,
+                    category,
+                    extent,
+                    score,
+                    source: 'arcgis'
+                });
+            }
+            return items;
+        } catch (_) {
+            return [];
+        }
+    }
+
+    /**
+     * ค้นหาสถานที่ไปข้างหน้าผ่าน Photon Komoot API (Tier 2 Fallback Engine)
+     * @param {string} query
+     * @param {Object} [options={}]
+     * @returns {Promise<Array<{lat: number, lng: number, mainName: string, subAddr: string, category: string, extent: Object|null, score: number, source: string}>>}
+     */
+    static async #queryPhotonForwardGeocode(query, options = {}) {
+        const normQuery = AttendanceModel.normalizeSearchQuery(query);
+        if (!normQuery) return [];
+
+        const limit = Math.max(1, Math.min(options.limit || 8, 20));
+        const refLat = Number(options.refLat);
+        const refLng = Number(options.refLng);
+        const hasRef = Number.isFinite(refLat) && Number.isFinite(refLng) && refLat >= -90 && refLat <= 90 && refLng >= -180 && refLng <= 180;
+
+        const locParam = hasRef ? `&lat=${refLat}&lon=${refLng}` : '';
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(normQuery)}&limit=${limit}${locParam}&lang=default`;
+
+        try {
+            const data = await AttendanceModel.#fetchWithFastTimeout(url, 2000);
+            if (!data || !Array.isArray(data.features) || data.features.length === 0) {
+                return [];
+            }
+
+            const items = [];
+            for (const f of data.features) {
+                const coords = f.geometry?.coordinates || [];
+                const lng = Number(coords[0]);
+                const lat = Number(coords[1]);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
+
+                const props = f.properties || {};
+                const mainName = (props.name || props.street || props.district || props.city || 'สถานที่ที่เลือก').trim();
+
+                const addrParts = [];
+                if (props.street && props.street !== mainName) addrParts.push(props.street);
+                if (props.district && props.district !== mainName && !addrParts.includes(props.district)) addrParts.push(props.district);
+                if (props.city && props.city !== mainName && !addrParts.includes(props.city)) addrParts.push(props.city);
+                if (props.state && props.state !== mainName && props.state !== props.city && !addrParts.includes(props.state)) addrParts.push(props.state);
+                const subAddr = addrParts.join(', ') || props.country || '';
+
+                const category = AttendanceModel.#mapOsmTypeToCategory(props.osm_key, props.osm_value, mainName);
+
+                let extent = null;
+                if (Array.isArray(f.properties?.extent) && f.properties.extent.length === 4) {
+                    const e0 = Number(f.properties.extent[0]);
+                    const e1 = Number(f.properties.extent[1]);
+                    const e2 = Number(f.properties.extent[2]);
+                    const e3 = Number(f.properties.extent[3]);
+                    if (Number.isFinite(e0) && Number.isFinite(e1) && Number.isFinite(e2) && Number.isFinite(e3)) {
+                        extent = {
+                            ymin: Math.min(e1, e3),
+                            ymax: Math.max(e1, e3),
+                            xmin: Math.min(e0, e2),
+                            xmax: Math.max(e0, e2)
+                        };
+                    }
+                }
+
+                items.push({
+                    lat,
+                    lng,
+                    mainName,
+                    subAddr,
+                    category,
+                    extent,
+                    score: 80,
+                    source: 'photon'
+                });
+            }
+            return items;
+        } catch (_) {
+            return [];
+        }
+    }
+
+    /**
+     * ค้นหาสถานที่ไปข้างหน้าผ่าน Nominatim OpenStreetMap (Tier 3 Fallback Engine)
+     * @param {string} query
+     * @param {Object} [options={}]
+     * @returns {Promise<Array<{lat: number, lng: number, mainName: string, subAddr: string, category: string, extent: Object|null, score: number, source: string}>>}
+     */
+    static async #queryNominatimForwardGeocode(query, options = {}) {
+        const normQuery = AttendanceModel.normalizeSearchQuery(query);
+        if (!normQuery) return [];
+
+        const limit = Math.max(1, Math.min(options.limit || 6, 20));
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(normQuery)}&countrycodes=th&limit=${limit}&accept-language=th&addressdetails=1`;
+
+        try {
+            const data = await AttendanceModel.#fetchWithFastTimeout(url, 2200, {
+                'User-Agent': 'CheckinApp-BMA/2.0'
+            });
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                return [];
+            }
+
+            const items = [];
+            for (const it of data) {
+                const lat = Number(it.lat);
+                const lng = Number(it.lon);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) continue;
+
+                let mainName = (it.name || '').trim();
+                if (!mainName && it.address) {
+                    const a = it.address;
+                    mainName = (a.amenity || a.building || a.office || a.leisure || a.tourism || a.shop || '').trim();
+                }
+                if (!mainName) {
+                    mainName = (it.display_name || '').split(',')[0].trim() || 'สถานที่ที่เลือก';
+                }
+
+                let subAddr = '';
+                if (it.address) {
+                    const a = it.address;
+                    const parts = [];
+                    if (a.road) parts.push(a.road);
+                    const sub = a.quarter || a.suburb || a.neighbourhood;
+                    if (sub && !parts.includes(sub) && sub !== mainName) parts.push(sub);
+                    const dist = a.city_district || a.district || (a.suburb !== sub ? a.suburb : '') || a.county;
+                    if (dist && !parts.includes(dist) && dist !== mainName) parts.push(dist);
+                    const prov = a.state || a.province || a.city;
+                    if (prov && !parts.includes(prov) && prov !== mainName) parts.push(prov);
+                    if (parts.length > 0) subAddr = parts.join(', ');
+                }
+                if (!subAddr) {
+                    const tokens = (it.display_name || '').split(',').map(s => s.trim());
+                    subAddr = tokens.slice(1, 4).join(', ') || it.display_name || '';
+                }
+
+                const category = AttendanceModel.#mapOsmTypeToCategory(it.class, it.type, mainName);
+
+                let extent = null;
+                if (Array.isArray(it.boundingbox) && it.boundingbox.length === 4) {
+                    const b0 = Number(it.boundingbox[0]);
+                    const b1 = Number(it.boundingbox[1]);
+                    const b2 = Number(it.boundingbox[2]);
+                    const b3 = Number(it.boundingbox[3]);
+                    if (Number.isFinite(b0) && Number.isFinite(b1) && Number.isFinite(b2) && Number.isFinite(b3)) {
+                        extent = {
+                            ymin: Math.min(b0, b1),
+                            ymax: Math.max(b0, b1),
+                            xmin: Math.min(b2, b3),
+                            xmax: Math.max(b2, b3)
+                        };
+                    }
+                }
+
+                items.push({
+                    lat,
+                    lng,
+                    mainName,
+                    subAddr,
+                    category,
+                    extent,
+                    score: 70,
+                    source: 'nominatim'
+                });
+            }
+            return items;
+        } catch (_) {
+            return [];
+        }
+    }
+
+    /**
+     * ค้นหาสถานที่ไปข้างหน้า (Forward Geocoding Search) ด้วยระบบ 3-Tier Multi-Engine Resilience:
+     * Tier 0: Direct GPS Coordinate Match (หากตรงรูปแบบละติจูด, ลองจิจูด คืนการ์ดนำทางพิกัดทันที)
+     * Tier 1: ArcGIS World Geocoding Engine (Primary Engine คืน POI คุณภาพสูงและ Boundary Extent)
+     * Tier 2: Photon Komoot Engine (Fallback Engine รองรับ Proximity Bias)
+     * Tier 3: Nominatim OpenStreetMap (Fallback Engine สุดท้าย)
+     * พร้อมคำนวณระยะห่าง Haversine และจัดลำดับความสำคัญตามจังหวัดและระยะทางที่ใกล้ที่สุด
+     * @param {string} query
+     * @param {Object} [options={}]
+     * @param {number} [options.refLat]
+     * @param {number} [options.refLng]
+     * @param {string} [options.userProvince]
+     * @param {number} [options.limit=8]
+     * @returns {Promise<Array<{lat: number, lng: number, mainName: string, subAddr: string, category: string, extent: Object|null, score: number, source: string, distanceMeters: number|null, distStr: string, isCoordinate?: boolean}>>}
+     */
+    static async searchPlaces(query, options = {}) {
+        const rawQuery = String(query || '').trim();
+        if (!rawQuery) return [];
+
+        // 1. Direct coordinate Regex detection
+        const coordRegex = /^\s*([+-]?\d+(?:\.\d+)?)[,\s]+([+-]?\d+(?:\.\d+)?)\s*$/;
+        const match = rawQuery.match(coordRegex);
+        if (match) {
+            let lat = parseFloat(match[1]);
+            let lng = parseFloat(match[2]);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                if (Math.abs(lat) > 90 && Math.abs(lng) <= 90) {
+                    const tmp = lat;
+                    lat = lng;
+                    lng = tmp;
+                }
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    const refLat = Number(options.refLat);
+                    const refLng = Number(options.refLng);
+                    let distanceMeters = null;
+                    let distStr = '';
+                    if (Number.isFinite(refLat) && Number.isFinite(refLng)) {
+                        distanceMeters = AttendanceModel.#calculateDistanceMeters(refLat, refLng, lat, lng);
+                        distStr = distanceMeters < 1000 ? `• ${Math.round(distanceMeters)} ม.` : `• ${(distanceMeters / 1000).toFixed(1)} กม.`;
+                    }
+                    return [{
+                        lat,
+                        lng,
+                        mainName: `พิกัด (${lat.toFixed(6)}, ${lng.toFixed(6)})`,
+                        subAddr: 'พิกัดทางภูมิศาสตร์ที่ระบุโดยตรง',
+                        category: 'พิกัด GPS',
+                        extent: null,
+                        score: 100,
+                        source: 'coordinates',
+                        distanceMeters,
+                        distStr,
+                        isCoordinate: true
+                    }];
+                }
+            }
+        }
+
+        // 2. Query Tier 1 ArcGIS -> fallback to Tier 2 Photon -> fallback to Tier 3 Nominatim
+        let results = [];
+        try {
+            results = await AttendanceModel.#queryArcGISForwardGeocode(rawQuery, options);
+        } catch (_) {
+            results = [];
+        }
+
+        if (!results || results.length === 0) {
+            try {
+                results = await AttendanceModel.#queryPhotonForwardGeocode(rawQuery, options);
+            } catch (_) {
+                results = [];
+            }
+        }
+
+        if (!results || results.length === 0) {
+            try {
+                results = await AttendanceModel.#queryNominatimForwardGeocode(rawQuery, options);
+            } catch (_) {
+                results = [];
+            }
+        }
+
+        if (!results || results.length === 0) {
+            return [];
+        }
+
+        // 3. Calculate distance and format display
+        const refLat = Number(options.refLat);
+        const refLng = Number(options.refLng);
+        const hasRef = Number.isFinite(refLat) && Number.isFinite(refLng);
+        const userProvince = (options.userProvince || '').trim();
+
+        results.forEach(item => {
+            if (hasRef && Number.isFinite(item.lat) && Number.isFinite(item.lng)) {
+                const dist = AttendanceModel.#calculateDistanceMeters(refLat, refLng, item.lat, item.lng);
+                item.distanceMeters = dist;
+                item.distStr = dist < 1000 ? `• ${Math.round(dist)} ม.` : `• ${(dist / 1000).toFixed(1)} กม.`;
+            } else {
+                item.distanceMeters = null;
+                item.distStr = '';
+            }
+        });
+
+        // 4. Sort results prioritizing matching user's province then closest distance
+        if (hasRef || userProvince) {
+            const isBangkokUser = /กรุงเทพ|กทม|bangkok/i.test(userProvince);
+            const cleanProv = userProvince
+                .replace(/^(จ\.|จังหวัด)\s*/i, '')
+                .replace(/^(กทม\.?|กรุงเทพฯ|กรุงเทพมหานคร)$/i, 'กรุงเทพ')
+                .trim();
+
+            results.sort((a, b) => {
+                if (userProvince || cleanProv || isBangkokUser) {
+                    const textA = `${a.mainName || ''} ${a.subAddr || ''}`;
+                    const textB = `${b.mainName || ''} ${b.subAddr || ''}`;
+                    let aProv = (userProvince && textA.includes(userProvince)) || (cleanProv && textA.includes(cleanProv));
+                    let bProv = (userProvince && textB.includes(userProvince)) || (cleanProv && textB.includes(cleanProv));
+                    if (isBangkokUser) {
+                        if (/กรุงเทพ|กทม|bangkok/i.test(textA)) aProv = true;
+                        if (/กรุงเทพ|กทม|bangkok/i.test(textB)) bProv = true;
+                    }
+                    if (aProv && !bProv) return -1;
+                    if (!aProv && bProv) return 1;
+                }
+                if (a.distanceMeters != null && b.distanceMeters != null) {
+                    return a.distanceMeters - b.distanceMeters;
+                }
+                if (a.distanceMeters != null) return -1;
+                if (b.distanceMeters != null) return 1;
+                return (b.score || 0) - (a.score || 0);
+            });
+        }
+
+        // 5. Deduplicate results with identical mainName and close proximity (< 250m)
+        const uniqueResults = [];
+        for (const item of results) {
+            const isDup = uniqueResults.some(u => {
+                if (u.mainName.toLowerCase() === item.mainName.toLowerCase()) {
+                    if (u.lat === item.lat && u.lng === item.lng) return true;
+                    if (Number.isFinite(u.lat) && Number.isFinite(item.lat)) {
+                        const d = AttendanceModel.#calculateDistanceMeters(u.lat, u.lng, item.lat, item.lng);
+                        if (d < 250) return true;
+                    }
+                }
+                return false;
+            });
+            if (!isDup) uniqueResults.push(item);
+        }
+
+        const maxLimit = Math.max(1, Math.min(options.limit || 8, 20));
+        return uniqueResults.slice(0, maxLimit);
     }
 
     /**

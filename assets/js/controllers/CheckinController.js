@@ -1003,6 +1003,40 @@ export class CheckinController {
             coordsDisp.textContent = `${Number(initialLat).toFixed(6)}, ${Number(initialLng).toFixed(6)}`;
         }
 
+        const initialName = this.offsiteCustomGps.locationName || this.gpsData.locationName;
+        if (locNameDisp) {
+            if (initialName) {
+                locNameDisp.textContent = initialName.replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+            } else {
+                locNameDisp.textContent = 'กำลังตรวจสอบชื่อสถานที่...';
+            }
+        }
+        this.tempOffsiteLocation = {
+            lat: Number(initialLat),
+            lng: Number(initialLng),
+            name: locNameDisp?.textContent || `พิกัด (${Number(initialLat).toFixed(5)}, ${Number(initialLng).toFixed(5)})`
+        };
+
+        this._offsiteUpdateSeq = (this._offsiteUpdateSeq || 0) + 1;
+        const openSeq = this._offsiteUpdateSeq;
+
+        // On modal open, ensure initial coordinate name is resolved via AttendanceModel.resolveLocationName so the text does not stay blank or generic
+        if (!this.offsiteCustomGps.locationName || this.offsiteCustomGps.locationName.startsWith('พิกัด')) {
+            AttendanceModel.resolveLocationName(initialLat, initialLng, {
+                officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
+            }).then(resolved => {
+                if (openSeq !== this._offsiteUpdateSeq) return;
+                const clean = (resolved || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim() || `พิกัด (${Number(initialLat).toFixed(5)}, ${Number(initialLng).toFixed(5)})`;
+                if (locNameDisp) locNameDisp.textContent = clean;
+                if (this.tempOffsiteLocation) this.tempOffsiteLocation.name = clean;
+            }).catch(() => {
+                if (openSeq !== this._offsiteUpdateSeq) return;
+                const fallback = `พิกัด (${Number(initialLat).toFixed(5)}, ${Number(initialLng).toFixed(5)})`;
+                if (locNameDisp && !locNameDisp.textContent) locNameDisp.textContent = fallback;
+                if (this.tempOffsiteLocation) this.tempOffsiteLocation.name = fallback;
+            });
+        }
+
         setTimeout(() => {
             if (typeof L === 'undefined') {
                 console.warn('Leaflet is not loaded');
@@ -1052,16 +1086,34 @@ export class CheckinController {
         }, 150);
     }
 
-    async #updateOffsiteModalMarker(lat, lng, explicitName = null) {
+    async #updateOffsiteModalMarker(lat, lng, explicitName = null, extent = null) {
         const numLat = Number(lat);
         const numLng = Number(lng);
         if (isNaN(numLat) || isNaN(numLng)) return;
+
+        this._offsiteUpdateSeq = (this._offsiteUpdateSeq || 0) + 1;
+        const currentSeq = this._offsiteUpdateSeq;
 
         if (this.offsiteMarker) {
             this.offsiteMarker.setLatLng([numLat, numLng]);
         }
         if (this.offsiteLeafletMap) {
-            this.offsiteLeafletMap.panTo([numLat, numLng]);
+            if (extent && extent.ymin != null && extent.xmin != null && extent.ymax != null && extent.xmax != null) {
+                const south = Math.min(Number(extent.ymin), Number(extent.ymax));
+                const north = Math.max(Number(extent.ymin), Number(extent.ymax));
+                const west = Math.min(Number(extent.xmin), Number(extent.xmax));
+                const east = Math.max(Number(extent.xmin), Number(extent.xmax));
+                if (Number.isFinite(south) && Number.isFinite(north) && Number.isFinite(west) && Number.isFinite(east)) {
+                    this.offsiteLeafletMap.fitBounds([
+                        [south, west],
+                        [north, east]
+                    ], { animate: true, maxZoom: 18, padding: [30, 30] });
+                } else {
+                    this.offsiteLeafletMap.setView([numLat, numLng], Math.max(this.offsiteLeafletMap.getZoom() || 16, 16));
+                }
+            } else {
+                this.offsiteLeafletMap.setView([numLat, numLng], Math.max(this.offsiteLeafletMap.getZoom() || 16, 16));
+            }
         }
 
         const coordsDisp = document.getElementById('offsiteCustomCoordsDisplay');
@@ -1072,8 +1124,9 @@ export class CheckinController {
         }
 
         if (explicitName) {
-            if (locNameDisp) locNameDisp.textContent = explicitName;
-            this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: explicitName };
+            const clean = String(explicitName).replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+            if (locNameDisp) locNameDisp.textContent = clean;
+            this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: clean };
             return;
         }
 
@@ -1083,10 +1136,12 @@ export class CheckinController {
                 officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
             };
             const locName = await AttendanceModel.resolveLocationName(numLat, numLng, resolveOptions);
+            if (currentSeq !== this._offsiteUpdateSeq) return;
             const cleanName = (locName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim() || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
             if (locNameDisp) locNameDisp.textContent = cleanName;
             this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: cleanName };
         } catch (e) {
+            if (currentSeq !== this._offsiteUpdateSeq) return;
             const fallback = `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
             if (locNameDisp) locNameDisp.textContent = fallback;
             this.tempOffsiteLocation = { lat: numLat, lng: numLng, name: fallback };
@@ -1102,12 +1157,26 @@ export class CheckinController {
         const btnCancel = document.getElementById('btnCancelOffsiteMapModal');
         const btnConfirm = document.getElementById('btnConfirmOffsiteCustomLocation');
 
-        const closeModal = () => {
-            modal?.classList.add('hidden');
+        const escapeHtml = (str) => {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        };
+
+        const hideSearchResults = () => {
             if (searchResultsEl) {
                 searchResultsEl.classList.add('hidden');
                 searchResultsEl.innerHTML = '';
             }
+        };
+
+        const closeModal = () => {
+            modal?.classList.add('hidden');
+            hideSearchResults();
         };
 
         btnClose?.addEventListener('click', closeModal);
@@ -1153,54 +1222,156 @@ export class CheckinController {
             this.#updateStep1Validation();
         });
 
-        const performSearch = async () => {
-            const query = searchInput?.value?.trim();
-            if (!query) return;
+        let searchSeq = 0;
+        let debounceTimer = null;
 
-            const coordMatch = query.match(/^\s*([+-]?\d+(?:\.\d+)?)\s*[,\s]\s*([+-]?\d+(?:\.\d+)?)\s*$/);
-            if (coordMatch) {
-                const cLat = parseFloat(coordMatch[1]);
-                const cLng = parseFloat(coordMatch[2]);
-                if (!isNaN(cLat) && !isNaN(cLng)) {
-                    await this.#updateOffsiteModalMarker(cLat, cLng, `พิกัด (${cLat.toFixed(5)}, ${cLng.toFixed(5)})`);
-                    return;
-                }
+        const performSearch = async () => {
+            const query = (searchInput?.value || '').trim();
+            if (!query) {
+                hideSearchResults();
+                return;
+            }
+
+            const currentSeq = ++searchSeq;
+            if (searchResultsEl) {
+                searchResultsEl.innerHTML = `
+                    <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-spinner fa-spin text-emerald-600"></i>
+                        <span>กำลังค้นหาสถานที่ใกล้เคียง...</span>
+                    </div>
+                `;
+                searchResultsEl.classList.remove('hidden');
+            }
+
+            const origBtnText = btnSearch ? btnSearch.innerHTML : '';
+            if (btnSearch) {
+                btnSearch.disabled = true;
+                btnSearch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            }
+
+            const refLat = this.gpsData?.lat;
+            const refLng = this.gpsData?.lng;
+            let userProvince = '';
+            if (this.gpsData?.locationName) {
+                const pMatch = this.gpsData.locationName.match(/(?:จ\.|จังหวัด|กรุงเทพมหานคร|กรุงเทพฯ|กทม\.)([^\s,]+)?/i);
+                if (pMatch) userProvince = pMatch[0].trim();
             }
 
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=th&limit=5`, {
-                    headers: { 'Accept-Language': 'th,en' }
+                const items = await AttendanceModel.searchPlaces(query, {
+                    refLat,
+                    refLng,
+                    userProvince,
+                    limit: 8
                 });
-                const items = await res.json();
-                if (items && items.length > 0 && searchResultsEl) {
-                    searchResultsEl.innerHTML = items.map(it => `
-                        <div class="offsite-search-item p-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer text-xs" data-lat="${it.lat}" data-lng="${it.lon}" data-name="${it.display_name.split(',')[0]}">
-                            <div class="font-bold text-slate-800 dark:text-slate-100">${it.display_name.split(',')[0]}</div>
-                            <div class="text-[11px] text-slate-500 truncate">${it.display_name}</div>
-                        </div>
-                    `).join('');
-                    searchResultsEl.classList.remove('hidden');
 
-                    searchResultsEl.querySelectorAll('.offsite-search-item').forEach(el => {
-                        el.addEventListener('click', async () => {
-                            const lat = parseFloat(el.dataset.lat);
-                            const lng = parseFloat(el.dataset.lng);
-                            const name = el.dataset.name;
-                            searchResultsEl.classList.add('hidden');
-                            await this.#updateOffsiteModalMarker(lat, lng, name);
-                        });
-                    });
+                if (currentSeq !== searchSeq) return;
+
+                if (!items || items.length === 0) {
+                    searchResultsEl.innerHTML = `
+                        <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 mb-1 block text-base"></i>
+                            <span>ไม่พบสถานที่ใกล้เคียง กรุณาระบุชื่อเพิ่มเติมหรือลากหมุดบนแผนที่</span>
+                        </div>
+                    `;
+                    searchResultsEl.classList.remove('hidden');
+                    return;
                 }
+
+                const html = items.map(item => {
+                    const itemLat = parseFloat(item.lat);
+                    const itemLng = parseFloat(item.lng ?? item.lon);
+                    const mainName = item.mainName || 'สถานที่ที่เลือก';
+                    const subAddr = item.subAddr || '';
+                    const category = item.category || 'สถานที่ทั่วไป';
+                    const distHtml = item.distStr ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] shrink-0">${escapeHtml(item.distStr)}</span>` : '';
+                    const extentAttr = item.extent ? ` data-extent="${escapeHtml(JSON.stringify(item.extent))}"` : '';
+
+                    return `
+                        <div class="offsite-search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start gap-3 transition" data-lat="${itemLat}" data-lng="${itemLng}" data-name="${escapeHtml(mainName)}"${extentAttr}>
+                            <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-1 text-sm shrink-0"></i>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-xs">${escapeHtml(mainName)}</span>
+                                    ${distHtml}
+                                </div>
+                                <div class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">${escapeHtml(subAddr)}</div>
+                                <div class="mt-1">
+                                    <span class="inline-flex items-center px-2 py-0.5 text-[10px] rounded-full bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 font-medium">${escapeHtml(category)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                searchResultsEl.innerHTML = html;
+                searchResultsEl.classList.remove('hidden');
+
+                searchResultsEl.querySelectorAll('.offsite-search-item').forEach(el => {
+                    el.addEventListener('click', async () => {
+                        const lat = parseFloat(el.dataset.lat);
+                        const lng = parseFloat(el.dataset.lng);
+                        const name = (el.dataset.name || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+                        let extent = null;
+                        try {
+                            if (el.dataset.extent) extent = JSON.parse(el.dataset.extent);
+                        } catch (_) {}
+                        if (searchInput) searchInput.value = name;
+                        hideSearchResults();
+                        await this.#updateOffsiteModalMarker(lat, lng, name, extent);
+                    });
+                });
             } catch (err) {
+                if (currentSeq !== searchSeq) return;
                 console.warn('Offsite map search error:', err);
+                if (searchResultsEl) {
+                    searchResultsEl.innerHTML = `
+                        <div class="p-4 text-center text-xs text-rose-500 dark:text-rose-400">
+                            <i class="fa-solid fa-circle-exclamation mb-1 block text-base"></i>
+                            <span>เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ค้นหา</span>
+                        </div>
+                    `;
+                    searchResultsEl.classList.remove('hidden');
+                }
+            } finally {
+                if (btnSearch) {
+                    btnSearch.disabled = false;
+                    btnSearch.innerHTML = origBtnText;
+                }
             }
         };
 
-        btnSearch?.addEventListener('click', performSearch);
+        searchInput?.addEventListener('input', () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            const query = (searchInput?.value || '').trim();
+            if (!query || query.length < 2) {
+                hideSearchResults();
+                return;
+            }
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 450);
+        });
+
+        btnSearch?.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (debounceTimer) clearTimeout(debounceTimer);
+            performSearch();
+        });
+
         searchInput?.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
+                if (debounceTimer) clearTimeout(debounceTimer);
                 performSearch();
+            } else if (e.key === 'Escape') {
+                hideSearchResults();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (searchInput && searchResultsEl && !searchInput.contains(e.target) && !searchResultsEl.contains(e.target) && (!btnSearch || !btnSearch.contains(e.target))) {
+                hideSearchResults();
             }
         });
     }
@@ -3055,10 +3226,13 @@ export class CheckinController {
         const customCoordsDisp = document.getElementById('spCustomCoordsDisplay');
         const customLocDisp = document.getElementById('spCustomLocNameDisplay');
 
-        const updateCustomPinAndLocation = async (lat, lng, flyTo = false, explicitName = null) => {
+        const updateCustomPinAndLocation = async (lat, lng, flyTo = false, explicitName = null, extent = null) => {
             const numLat = Number(lat);
             const numLng = Number(lng);
             if (isNaN(numLat) || isNaN(numLng)) return;
+
+            this._spLocationUpdateSeq = (this._spLocationUpdateSeq || 0) + 1;
+            const currentSeq = this._spLocationUpdateSeq;
 
             this.specialModalGps.customLat = numLat;
             this.specialModalGps.customLng = numLng;
@@ -3071,7 +3245,22 @@ export class CheckinController {
                 this.spLeafletMarker.setLatLng([numLat, numLng]);
             }
             if (this.spLeafletMap && flyTo) {
-                this.spLeafletMap.flyTo([numLat, numLng], 16, { animate: true, duration: 1 });
+                if (extent && extent.ymin != null && extent.xmin != null && extent.ymax != null && extent.xmax != null) {
+                    const south = Math.min(Number(extent.ymin), Number(extent.ymax));
+                    const north = Math.max(Number(extent.ymin), Number(extent.ymax));
+                    const west = Math.min(Number(extent.xmin), Number(extent.xmax));
+                    const east = Math.max(Number(extent.xmin), Number(extent.xmax));
+                    if (Number.isFinite(south) && Number.isFinite(north) && Number.isFinite(west) && Number.isFinite(east)) {
+                        this.spLeafletMap.fitBounds([
+                            [south, west],
+                            [north, east]
+                        ], { animate: true, maxZoom: 18, padding: [30, 30] });
+                    } else {
+                        this.spLeafletMap.flyTo([numLat, numLng], 16, { animate: true, duration: 1 });
+                    }
+                } else {
+                    this.spLeafletMap.flyTo([numLat, numLng], 16, { animate: true, duration: 1 });
+                }
             }
 
             // หากมีชื่อสถานที่ที่เลือกมาโดยตรง ให้ใช้ชื่อนั้นทันทีโดยไม่ต้องมีคำว่า ใกล้เคียง หรือ บริเวณ
@@ -3093,12 +3282,14 @@ export class CheckinController {
                     officialLocations: (this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [])
                 };
                 const rawLocName = await AttendanceModel.resolveLocationName(numLat, numLng, resolveOptions);
+                if (currentSeq !== this._spLocationUpdateSeq) return;
                 const locName = (rawLocName || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
                 this.specialModalGps.customLocationName = locName;
                 if (customLocDisp) {
                     customLocDisp.textContent = locName || `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
                 }
             } catch (err) {
+                if (currentSeq !== this._spLocationUpdateSeq) return;
                 console.warn('Resolve custom location error:', err);
                 const fallbackName = `พิกัด (${numLat.toFixed(5)}, ${numLng.toFixed(5)})`;
                 this.specialModalGps.customLocationName = fallbackName;
@@ -3293,12 +3484,16 @@ export class CheckinController {
                     const lat = parseFloat(itemEl.dataset.lat);
                     const lng = parseFloat(itemEl.dataset.lng);
                     const name = (itemEl.dataset.name || '').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+                    let extent = null;
+                    try {
+                        if (itemEl.dataset.extent) extent = JSON.parse(itemEl.dataset.extent);
+                    } catch (_) {}
                     if (searchInput) {
                         searchInput.value = name;
                     }
                     hideSearchResults();
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        await updateCustomPinAndLocation(lat, lng, true, name);
+                        await updateCustomPinAndLocation(lat, lng, true, name, extent);
                     }
                 });
             });
@@ -3354,9 +3549,10 @@ export class CheckinController {
                 const category = item.category || getCategoryLabel(item);
                 const distStr = item.distStr || calculateDistance(refLat, refLng, itemLat, itemLng);
                 const distHtml = distStr ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold text-[11px] shrink-0">${escapeHtml(distStr)}</span>` : '';
+                const extentAttr = item.extent ? ` data-extent="${escapeHtml(JSON.stringify(item.extent))}"` : '';
 
                 return `
-                    <div class="sp-search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start gap-3 transition" data-lat="${itemLat}" data-lng="${itemLng}" data-name="${escapeHtml(mainName)}">
+                    <div class="sp-search-item p-3 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start gap-3 transition" data-lat="${itemLat}" data-lng="${itemLng}" data-name="${escapeHtml(mainName)}"${extentAttr}>
                         <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-1 text-sm shrink-0"></i>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
@@ -3387,19 +3583,6 @@ export class CheckinController {
                 return;
             }
 
-            // 1. Check if coordinate format e.g. "13.7563, 100.5018"
-            const coordRegex = /^(-?\d+(?:\.\d+)?)[,\s]+(-?\d+(?:\.\d+)?)$/;
-            const match = query.match(coordRegex);
-            if (match) {
-                const lat = parseFloat(match[1]);
-                const lng = parseFloat(match[2]);
-                if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
-                    renderCoordsResult(lat, lng);
-                    return;
-                }
-            }
-
-            // 2. Dual-Engine Search: Photon (Primary) + Nominatim (Fallback)
             const currentSeq = ++searchSeq;
             if (searchResultsEl) {
                 searchResultsEl.innerHTML = `
@@ -3419,119 +3602,21 @@ export class CheckinController {
 
             const refLat = this.gpsData?.lat;
             const refLng = this.gpsData?.lng;
+            let userProvince = '';
+            if (this.gpsData?.locationName) {
+                const pMatch = this.gpsData.locationName.match(/(?:จ\.|จังหวัด|กรุงเทพมหานคร|กรุงเทพฯ|กทม\.)([^\s,]+)?/i);
+                if (pMatch) userProvince = pMatch[0].trim();
+            }
 
             try {
-                let items = [];
-                let photonSuccess = false;
-
-                // Primary Engine: Photon API
-                try {
-                    const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8${refLat && refLng ? `&lat=${refLat}&lon=${refLng}` : ''}&lang=default`;
-                    const res = await fetch(photonUrl);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (currentSeq !== searchSeq) return;
-
-                        if (data && Array.isArray(data.features) && data.features.length > 0) {
-                            items = data.features.map(f => {
-                                const props = f.properties || {};
-                                const coords = f.geometry?.coordinates || [0, 0];
-                                const lng = coords[0];
-                                const lat = coords[1];
-                                const mainName = props.name || props.street || props.district || props.city || 'สถานที่ที่เลือก';
-
-                                // ที่อยู่ย่อย
-                                const addrParts = [];
-                                if (props.street && props.street !== mainName) addrParts.push(props.street);
-                                if (props.district && props.district !== mainName) addrParts.push(props.district);
-                                if (props.city && props.city !== mainName) addrParts.push(props.city);
-                                if (props.state && props.state !== mainName && props.state !== props.city) addrParts.push(props.state);
-                                const subAddr = addrParts.join(', ') || props.country || '';
-
-                                // หมวดหมู่
-                                const category = getCategoryLabel({
-                                    type: props.osm_value,
-                                    class: props.osm_key
-                                });
-
-                                return {
-                                    lat,
-                                    lng,
-                                    mainName,
-                                    subAddr,
-                                    category,
-                                    rawProps: props
-                                };
-                            });
-                            photonSuccess = items.length > 0;
-                        }
-                    }
-                } catch (photonErr) {
-                    console.warn('Photon search error, falling back to Nominatim:', photonErr);
-                }
+                const items = await AttendanceModel.searchPlaces(query, {
+                    refLat,
+                    refLng,
+                    userProvince,
+                    limit: 8
+                });
 
                 if (currentSeq !== searchSeq) return;
-
-                // Fallback Engine: Nominatim API (if Photon returns 0 results or throws error)
-                if (!photonSuccess) {
-                    try {
-                        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=6&countrycodes=th&accept-language=th&addressdetails=1`;
-                        const resNom = await fetch(nomUrl, {
-                            headers: { 'User-Agent': 'CheckinApp-BMA/2.0' }
-                        });
-                        if (resNom.ok) {
-                            const dataNom = await resNom.json();
-                            if (currentSeq !== searchSeq) return;
-
-                            if (Array.isArray(dataNom) && dataNom.length > 0) {
-                                items = dataNom.map(item => {
-                                    const lat = parseFloat(item.lat);
-                                    const lng = parseFloat(item.lon);
-                                    const mainName = getMainName(item);
-                                    const subAddr = formatSubAddress(item);
-                                    const category = getCategoryLabel(item);
-
-                                    return {
-                                        lat,
-                                        lng,
-                                        mainName,
-                                        subAddr,
-                                        category,
-                                        rawProps: item
-                                    };
-                                });
-                            }
-                        }
-                    } catch (nomErr) {
-                        console.warn('Nominatim search fallback error:', nomErr);
-                    }
-                }
-
-                if (currentSeq !== searchSeq) return;
-
-                // Sort results (Province & Proximity Bias) if GPS is available
-                if (refLat && refLng && items.length > 0) {
-                    let userProvince = '';
-                    if (this.gpsData?.locationName) {
-                        const pMatch = this.gpsData.locationName.match(/(?:จ\.|จังหวัด|กรุงเทพมหานคร|กรุงเทพฯ|กทม\.)([^\s,]+)?/i);
-                        if (pMatch) userProvince = pMatch[0].trim();
-                    }
-
-                    items.forEach(item => {
-                        item.distanceMeters = getDistanceInMeters(refLat, refLng, item.lat, item.lng);
-                        item.distStr = calculateDistance(refLat, refLng, item.lat, item.lng);
-                    });
-
-                    items.sort((a, b) => {
-                        if (userProvince) {
-                            const aProv = `${a.subAddr || ''} ${a.rawProps?.state || ''} ${a.rawProps?.city || ''}`.includes(userProvince);
-                            const bProv = `${b.subAddr || ''} ${b.rawProps?.state || ''} ${b.rawProps?.city || ''}`.includes(userProvince);
-                            if (aProv && !bProv) return -1;
-                            if (!aProv && bProv) return 1;
-                        }
-                        return (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity);
-                    });
-                }
 
                 renderPlaceResults(items);
             } catch (err) {
@@ -3565,7 +3650,7 @@ export class CheckinController {
             }
             debounceTimer = setTimeout(() => {
                 performSearch();
-            }, 2000);
+            }, 450);
         });
 
         btnSearch?.addEventListener('click', (e) => {
