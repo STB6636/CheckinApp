@@ -1,6 +1,6 @@
 /**
  * @file assets/js/models/AttendanceModel.js
- * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (ระบบระบุสถานที่ GPS สถาปัตยกรรม 5-Tier Nearby Places Resolution: Tier 0 Official Locations -> Tier 1 POI/Places -> Tier 2 Soi/Sub-soi -> Tier 3 Retry -> Tier 4 Smart Semantic Fallback)
+ * @description คลาสจัดการการลงเวลาปฏิบัติราชการ (ระบบระบุสถานที่ GPS สถาปัตยกรรม 6-Tier Nearby Places Resolution: Tier 0 Official Locations -> Tier 1 ArcGIS POI Engine -> Tier 2 Overpass/OSM POIs -> Tier 3 Soi/Sub-soi -> Tier 4 Retry -> Tier 5 Smart Semantic Fallback)
  */
 
 import { Config } from '../core/Config.js';
@@ -39,7 +39,7 @@ export class AttendanceModel {
 
     /**
      * ตรวจสอบว่าชื่อสถานที่ที่ได้เป็นคำต้องห้าม ได้แก่:
-     * "ถนน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด" หรือไม่
+     * "ถนน, ถ., ทางหลวง, ทางพิเศษ, ทางด่วน, แขวง, เขต, หมู่บ้าน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์/บ้านเลขที่ล้วน, ซอยในพื้นที่"
      * หากใช่ ระบบจะไม่อนุญาตให้ใช้ค่านี้ และจะวนกลับไปหาค่าใหม่อีกครั้ง
      * @param {string} rawName
      * @param {Object} tags
@@ -52,13 +52,19 @@ export class AttendanceModel {
             .trim();
         if (!clean) return true;
 
-        // บล็อก "ซอยในพื้นที่" และตัวเลขบ้านเลขที่ล้วนๆ หรือรหัสไปรษณีย์
-        if (/ซอยในพื้นที่/i.test(clean) || /^[\d\s\/\-\.]+$/.test(clean)) {
+        // บล็อก "ซอยในพื้นที่", ตัวเลขบ้านเลขที่ล้วนๆ, รหัสไปรษณีย์ล้วน
+        if (
+            /ซอยในพื้นที่/i.test(clean) ||
+            /^[\d\s\/\-\.]+$/.test(clean) ||
+            /^(บ้านเลขที่|เลขที่)\s*[\d\s\/\-\.]+$/i.test(clean) ||
+            /^(รหัสไปรษณีย์|ปณ\.)\s*\d{5}/i.test(clean) ||
+            /^\d{5}(\s*,\s*|\s+)(ประเทศไทย|Thailand)?$/i.test(clean)
+        ) {
             return true;
         }
 
-        // 1. บล็อกคำว่า "หมู่บ้าน" ทุกกรณีตามข้อกำหนด (เช่น หมู่บ้าน..., บ้าน...)
-        if (/(^หมู่บ้าน|หมู่บ้าน|^หมู่ที่\s*\d+|ตำบล|อำเภอ|จังหวัด)/i.test(clean)) {
+        // 1. บล็อกคำว่า "หมู่บ้าน" ทุกกรณีตามข้อกำหนด (เช่น หมู่บ้าน..., หมู่ที่...)
+        if (/(หมู่บ้าน|^หมู่ที่\s*\d+)/i.test(clean)) {
             return true;
         }
         if (tags && ['village', 'hamlet', 'suburb', 'quarter', 'neighbourhood', 'Watch', 'municipality', 'district', 'city_district', 'county', 'state', 'province'].includes(tags.place)) {
@@ -73,9 +79,14 @@ export class AttendanceModel {
             return false;
         }
 
-        // 3. บล็อก ถนน, แขวง, เขต, ตำบล, อำเภอ, จังหวัด
-        // (ยกเว้น "สำนักงานเขต..." ซึ่งเป็นสถานที่ราชการ)
+        // 3. บล็อก ถนน, ถ., ทางหลวง, ทางพิเศษ, ทางด่วน, แขวง, เขต, ตำบล, อำเภอ, จังหวัด
+        // (ยกเว้น "สำนักงานเขต..." หรือสถานที่ราชการ/สำคัญ เช่น "ศาลากลางจังหวัด...", "ที่ว่าการอำเภอ...", "ศาลจังหวัด...")
         if (/^(ถนน|ถ\.|ทางหลวง|ทางพิเศษ|ทางด่วน|แขวง|เขต|ตำบล|ต\.|อำเภอ|อ\.|จังหวัด|จ\.|กรุงเทพมหานคร|พื้นที่ปฏิบัติราชการ)/i.test(clean)) {
+            return true;
+        }
+
+        // 4. บล็อก Highway tags (ถนน) จาก OSM
+        if (tags && tags.highway && !['bus_stop', 'platform'].includes(tags.highway) && !/(ซอย|ซ\.|ตรอก)/.test(clean)) {
             return true;
         }
 
@@ -83,12 +94,11 @@ export class AttendanceModel {
     }
 
     /**
-     * คัดกรองเฉพาะสถานที่ในกลุ่มเป้าหมายตามข้อกำหนด:
-     * 1. สถานที่ราชการ
-     * 2. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
-     * 3. บริการสาธารณะ (สถานีรถไฟ, สถานีรถไฟฟ้า, ป้ายรถเมล์)
-     * 4. ร้านค้า, ร้านอาหาร
-     * 5. อพาร์ทเม้นส์, คอนโด, หอพัก ฯลฯ
+     * คัดกรองเฉพาะสถานที่ในกลุ่มเป้าหมายตามข้อกำหนด 4 ลำดับความสำคัญ:
+     * Priority 1 (สูงสุด): สถานที่ราชการและสถานที่สำคัญ (ศาลาว่าการ, สำนัก, สำนักงานเขต, กอง, กรม, กระทรวง, สถานีตำรวจ, โรงพยาบาล, โรงเรียน, มหาวิทยาลัย, ศาล, วัด, พระอาราม, สนามหลวง, ท่าเรือ, สะพาน, เสาหลักเมือง, อนุสาวรีย์, พิพิธภัณฑ์, สโมสร)
+     * Priority 2: อาคารสำนักงานและพาณิชย์อื่นๆ (อาคารสำนักงานที่มีชื่อเฉพาะ เช่น อาคาร, ทาวเวอร์, ตึก, บิลดิ้ง, ซิตี้, เซ็นเตอร์, สำนักงานใหญ่/สาขา)
+     * Priority 3: ระบบขนส่งและที่พักอาศัย (สถานีรถไฟ, BTS/MRT, ป้ายรถเมล์, คอนโดมิเนียม, อพาร์ตเมนต์, หอพัก, แมนชั่น, โรงแรม)
+     * Priority 4: ร้านค้าและบริการสาธารณะ (ห้างสรรพสินค้า, 7-Eleven, ซูเปอร์มาร์เก็ต, คาเฟ่, ร้านอาหาร, ธนาคาร, ปั๊มน้ำมัน)
      * @param {Object} tags
      * @param {string} name
      * @returns {{matched: boolean, priority: number, cleanName: string}}
@@ -102,19 +112,15 @@ export class AttendanceModel {
             return { matched: false, priority: 99, cleanName: '' };
         }
 
-        // 1. สถานที่ราชการ
+        const isShopPrefix = /^(7-Eleven|7-11|เซเว่น|ร้าน|คาเฟ่|Cafe|Coffee)/i.test(n);
+
+        // Priority 1 (สูงสุด): สถานที่ราชการและสถานที่สำคัญ
         const isGovTag =
             tags.office === 'government' ||
             tags.building === 'government' ||
             tags.building === 'public' ||
             tags.building === 'civic' ||
             ['townhall', 'police', 'courthouse', 'public_building', 'fire_station', 'post_office', 'hospital', 'school', 'university', 'college', 'community_centre', 'library'].includes(tags.amenity);
-        const isGovName = /(สำนัก|สำนักงาน|สำนักงานเขต|กอง|กรม|กระทรวง|ศาลาว่าการ|เทศกิจ|สถานีตำรวจ|สน\.|โรงพยาบาล|รพ\.|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล|ไปรษณีย์|ดับเพลิง|ราชการ|ศูนย์ราชการ)/.test(n);
-        if (isGovTag || isGovName) {
-            return { matched: true, priority: 1, cleanName: n };
-        }
-
-        // 2. สถานที่สำคัญ (วัด, สนามหลวง, ท่าเรือ, วงเวียน, สะพาน, เสาหลักเมือง)
         const isLandmarkTag =
             tags.amenity === 'place_of_worship' ||
             tags.amenity === 'ferry_terminal' ||
@@ -125,12 +131,26 @@ export class AttendanceModel {
             tags.historic === 'memorial' ||
             tags.tourism === 'attraction' ||
             tags.tourism === 'museum';
-        const isLandmarkName = /(วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|อนุสาวรีย์|พระบรมมหาราชวัง|พิพิธภัณฑ์|ศาลเจ้า|มัสยิด|โบสถ์|สวนสาธารณะ|อุทยาน|หอศิลป์)/.test(n);
-        if (isLandmarkTag || isLandmarkName) {
+        const isGovOrLandmarkName = /(ศาลาว่าการ|ศาลากลาง|ที่ว่าการ|สำนัก(?!งาน(ใหญ่|สาขา))|สำนักงานเขต|กอง|กรม|กระทรวง|สถานทูต|สถานกงสุล|Embassy|Consulate|สถานีตำรวจ|สน\.|สภ\.|โรงพยาบาล|รพ\.|รพ\.สต\.|สถานีอนามัย|ศูนย์บริการสาธารณสุข|โรงเรียน|มหาวิทยาลัย|วิทยาลัย|ศาล|ไปรษณีย์|ดับเพลิง|ราชการ|ศูนย์ราชการ|เทศกิจ|วัด|พระอาราม|สนามหลวง|ท่าเรือ|ท่าข้าม|วงเวียน|สะพาน|เสาหลักเมือง|ศาลหลักเมือง|อนุสาวรีย์|อนุสรณ์สถาน|อนุสรณ์|พระบรมราชานุสาวรีย์|พระบรมมหาราชวัง|พระราชวัง|พระที่นั่ง|ปราสาท|พระปรางค์|เจดีย์|พิพิธภัณฑ์|พิพิธภัณฑสถาน|หอสมุด|ศาลเจ้า|มัสยิด|โบสถ์|สวนสาธารณะ|อุทยาน|หอศิลป์|สนามกีฬา|ศูนย์เยาวชน|สโมสร)/i.test(n);
+
+        if (!isShopPrefix && (isGovTag || isLandmarkTag || isGovOrLandmarkName)) {
             return { matched: true, priority: 1, cleanName: n };
         }
 
-        // 3. บริการสาธารณะ (สถานีรถไฟ, สถานีรถไฟฟ้า, ป้ายรถเมล์)
+        // Priority 2: อาคารสำนักงานและพาณิชย์อื่นๆ (อาคารสำนักงานที่มีชื่อเฉพาะ)
+        const isOfficeTag =
+            tags.building === 'office' ||
+            tags.building === 'commercial' ||
+            Boolean(tags.office);
+        const isOfficeName = /(อาคาร|ทาวเวอร์|ตึก|บิลดิ้ง|ซิตี้|เซ็นเตอร์|สำนักงานใหญ่|สำนักงานสาขา|สำนักงาน|บริษัท|บจก\.|บมจ\.|ห้างหุ้นส่วน|หจก\.|Building|Tower|Center|Centre|City|Office|Company|Corp|Corporation)/i.test(n);
+
+        if (!isShopPrefix && (isOfficeTag || isOfficeName)) {
+            if (!/^(ซอย|ซ\.|ตรอก|แยก)\s*/i.test(n)) {
+                return { matched: true, priority: 2, cleanName: n };
+            }
+        }
+
+        // Priority 3: ระบบขนส่งและที่พักอาศัย
         const isTransitTag =
             tags.railway === 'station' ||
             tags.railway === 'halt' ||
@@ -139,32 +159,29 @@ export class AttendanceModel {
             tags.highway === 'bus_stop' ||
             tags.amenity === 'bus_station' ||
             Boolean(tags.public_transport);
-        const isTransitName = /(สถานีรถไฟ|สถานีรถไฟฟ้า|BTS|MRT|ARL|SRT|ป้ายรถประจำทาง|ป้ายรถเมล์|ท่ารถ|สถานีขนส่ง)/.test(n);
-        if (isTransitTag || isTransitName) {
-            return { matched: true, priority: 2, cleanName: n };
-        }
+        const isTransitName = /(สถานีรถไฟ|สถานีรถไฟฟ้า|BTS|MRT|ARL|SRT|ป้ายรถประจำทาง|ป้ายรถเมล์|ท่ารถ|สถานีขนส่ง|ท่าอากาศยาน|สนามบิน|Airport)/i.test(n);
 
-        // 4. อพาร์ทเม้นส์, คอนโด, หอพัก ฯลฯ
         const isResidenceTag =
             ['apartments', 'dormitory', 'residential', 'condominium', 'hotel', 'hostel'].includes(tags.building) ||
             ['apartment', 'hotel', 'hostel', 'guest_house', 'motel'].includes(tags.tourism);
-        const isResidenceName = /(อพาร์ทเม้น|อพาร์ตเมนต์|คอนโด|หอพัก|แมนชั่น|เรสซิเดนซ์|เพลส|คอร์ท|ทาวเวอร์|วิลล่า|โฮเทล|โรงแรม|โฮสเทล|เกสต์เฮาส์|ห้องพัก|Apartment|Condo|Mansion|Residence|Place|Court|Dorm|Hotel|Hostel|Tower)/i.test(n);
-        if (isResidenceTag || isResidenceName) {
-            return { matched: true, priority: 2, cleanName: n };
-        }
+        const isResidenceName = /(คอนโดมิเนียม|คอนโด|อพาร์ทเม้น|อพาร์ตเมนต์|หอพัก|แมนชั่น|เรสซิเดนซ์|เพลส|คอร์ท|วิลล่า|โฮเทล|โรงแรม|โฮสเทล|เกสต์เฮาส์|ห้องพัก|รีสอร์ท|Condo|Condominium|Apartment|Mansion|Residence|Place|Court|Dorm|Hotel|Hostel|Resort)/i.test(n);
 
-        // 5. ร้านค้า, ร้านอาหาร ฯลฯ
-        const isShopFoodTag =
-            Boolean(tags.shop) ||
-            ['restaurant', 'cafe', 'fast_food', 'food_court', 'marketplace', 'convenience', 'bakery', 'pharmacy', 'clinic', 'bank', 'atm', 'fuel'].includes(tags.amenity) ||
-            tags.building === 'commercial' ||
-            tags.building === 'retail';
-        const isShopFoodName = /(ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|เบเกอรี่|ตลาด|มินิมาร์ท|เซเว่น|7-Eleven|7-11|Lotus|Big\s*C|Tops|Makro|CJ|ห้าง|คลินิก|ขายยา|ธนาคาร|ปั๊ม|Cafe|Coffee|Shop|Store|Market|Mall|พารากอน|เซ็นทรัล|เดอะมอลล์|โรบินสัน|Paragon|Central|The Mall)/i.test(n);
-        if (isShopFoodTag || isShopFoodName) {
+        if (isTransitTag || isTransitName || isResidenceTag || isResidenceName) {
             return { matched: true, priority: 3, cleanName: n };
         }
 
-        // 6. กรณีเป็นอาคารสำนักงานหรือสถานที่ที่มีชื่อเฉพาะซึ่งไม่ใช่ถนน/แขวง/เขต/หมู่บ้าน/ตำบล/อำเภอ/จังหวัด
+        // Priority 4: ร้านค้าและบริการสาธารณะ
+        const isShopFoodTag =
+            Boolean(tags.shop) ||
+            ['restaurant', 'cafe', 'fast_food', 'food_court', 'marketplace', 'convenience', 'bakery', 'pharmacy', 'clinic', 'bank', 'atm', 'fuel'].includes(tags.amenity) ||
+            tags.building === 'retail';
+        const isShopFoodName = /(ห้าง|เซ็นทรัล|พารากอน|เดอะมอลล์|โรบินสัน|โลตัส|บิ๊กซี|แม็คโคร|ท็อปส์|ซีเจ|Lotus|Big\s*C|Tops|Makro|CJ|7-Eleven|7-11|เซเว่น|ร้าน|ภัตตาคาร|คาเฟ่|กาแฟ|ข้าวมันไก่|ก๋วยเตี๋ยว|ตามสั่ง|โภชนา|เบเกอรี่|ตลาด|มินิมาร์ท|คลินิก|ขายยา|ธนาคาร|ปั๊ม|ปตท\.|บางจาก|เชลล์|เอสโซ่|PT|Shell|Esso|Caltex|Bangchak|Cafe|Coffee|Shop|Store|Market|Mall|Paragon|Central|The Mall|Bank|Fuel|Pharmacy|Drugstore|Cinema|Theater|Gym|Fitness|Bakery)/i.test(n);
+
+        if (isShopFoodTag || isShopFoodName || isShopPrefix) {
+            return { matched: true, priority: 4, cleanName: n };
+        }
+
+        // กรณีเป็นสถานที่เฉพาะอื่นๆ ที่ไม่ใช่ทางหลวง/การปกครอง และมีแท็กระบุตัวตน
         if (
             !tags.highway &&
             (tags.building || tags.office || tags.amenity || tags.tourism || tags.leisure || tags.historic || tags.shop) &&
@@ -352,12 +369,115 @@ export class AttendanceModel {
     }
 
     /**
-     * ค้นหาสถานที่ใกล้เคียงพร้อมคืนค่าระดับ Zoom ที่ตรวจพบ (z=19 หรือ z=20) ตามสถาปัตยกรรม 5-Tier Resilience:
+     * ค้นหาสถานที่ใกล้เคียงด้วย ArcGIS World Geocoding Service (Reverse Geocode POI)
+     * รองรับระยะค้นหาไม่เกิน 400 เมตร และ timeout ที่กำหนด
+     * @param {number} lat
+     * @param {number} lng
+     * @param {number} [maxDistance=400]
+     * @param {number} [timeoutMs=1800]
+     * @returns {Promise<{cleanName: string, dist: number, priority: number, zoomLevel: number, locationName: string, source: string}|null>}
+     */
+    static async #queryArcGISWorldGeocode(lat, lng, maxDistance = 400, timeoutMs = 1800) {
+        const numLat = Number(lat);
+        const numLng = Number(lng);
+        if (!Number.isFinite(numLat) || !Number.isFinite(numLng)) return null;
+
+        try {
+            const locStr = JSON.stringify({ x: numLng, y: numLat, spatialReference: { wkid: 4326 } });
+            const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode/?f=json&distance=${maxDistance}&category=POI&location=${encodeURIComponent(locStr)}`;
+
+            const data = await AttendanceModel.#fetchWithFastTimeout(url, timeoutMs);
+            if (!data || !data.address) return null;
+
+            const addr = data.address;
+            const loc = data.location || {};
+
+            // ตรวจสอบว่า ArcGIS คืนผลลัพธ์เป็นประเภท POI เท่านั้น (ไม่รับ PointAddress/StreetAddress/StreetName/Locality)
+            const addrType = String(addr.Addr_type || '').toUpperCase();
+            if (addrType !== 'POI') {
+                return null;
+            }
+
+            const targetName = (addr.PlaceName || addr.ShortLabel || addr.Match_addr || '').trim();
+            if (!targetName) return null;
+
+            if (AttendanceModel.#isForbiddenLocationTerm(targetName)) {
+                return null;
+            }
+
+            const locLat = Number(loc.y);
+            const locLng = Number(loc.x);
+            if (!Number.isFinite(locLat) || !Number.isFinite(locLng)) return null;
+
+            const dist = AttendanceModel.#calculateDistanceMeters(numLat, numLng, locLat, locLng);
+            if (dist > maxDistance) return null;
+
+            // แมปประเภทสถานที่จาก ArcGIS (addr.Type) เป็นแท็กเชิงความหมายสำหรับจัดลำดับความสำคัญ
+            const arcType = String(addr.Type || '').toLowerCase();
+            const tags = {
+                source: 'ArcGIS',
+                amenity: '',
+                building: '',
+                office: '',
+                tourism: '',
+                historic: '',
+                shop: '',
+                railway: '',
+                highway: ''
+            };
+
+            if (/government|police|court|city hall|town hall|hospital|clinic|health|medical|doctor|dentist|school|university|college|education|library|post office|fire station|embassy|consulate|public|civic/i.test(arcType)) {
+                tags.office = 'government';
+                tags.amenity = 'public_building';
+            } else if (/landmark|historical|monument|memorial|museum|attraction|place of worship|worship|temple|church|mosque|shrine|park|garden|zoo/i.test(arcType)) {
+                tags.historic = 'monument';
+                tags.tourism = 'attraction';
+            } else if (/office|business|professional|commercial|corporate|industrial|company/i.test(arcType)) {
+                tags.office = 'yes';
+                tags.building = 'office';
+            } else if (/train|station|metro|subway|transit|bus|airport|ferry|pier/i.test(arcType)) {
+                tags.railway = 'station';
+            } else if (/hotel|motel|apartment|dorm|residence|estate|lodging|condo|hostel|resort/i.test(arcType)) {
+                tags.building = 'apartments';
+                tags.tourism = 'hotel';
+            } else if (/coffee|cafe|restaurant|food|dining|bakery|bar|pub|nightlife|shop|store|mall|market|supermarket|convenience|grocery|retail|bank|atm|financial|gas|fuel|dealership|pharmacy|drugstore|cinema|movie|theater|entertainment|sports|stadium|arena|gym|fitness|recreation|bowling|golf|spa|beauty|service|repair|auto|car wash|laundry/i.test(arcType)) {
+                tags.shop = 'yes';
+                tags.amenity = 'restaurant';
+            } else {
+                // Fallback สำหรับ POI อื่นๆ จาก ArcGIS ที่ได้รับการรับรอง Addr_type === 'POI' แล้ว
+                tags.amenity = 'place_of_interest';
+                tags.shop = 'yes';
+            }
+
+            const classification = AttendanceModel.#classifyTargetPlace(tags, targetName);
+            if (!classification.matched) {
+                return null;
+            }
+
+            const prefix = dist <= 30 ? 'บริเวณ ' : 'ใกล้เคียง ';
+            const zoomLevel = dist <= 30 ? 20 : 19;
+
+            return {
+                cleanName: classification.cleanName,
+                dist,
+                priority: classification.priority,
+                zoomLevel,
+                locationName: `${prefix}${classification.cleanName}`,
+                source: 'ArcGIS'
+            };
+        } catch (_) {
+            return null;
+        }
+    }
+
+    /**
+     * ค้นหาสถานที่ใกล้เคียงพร้อมคืนค่าระดับ Zoom ที่ตรวจพบ (z=19 หรือ z=20) ตามสถาปัตยกรรม 6-Tier Resilience:
      * Tier 0: ตรวจสอบสถานที่ทางการ (Official Locations) ในหน่วยความจำ (0ms, 100% Resilience)
-     * Tier 1: ค้นหาสถานที่จริง (POI / สถานที่สำคัญ / ร้านค้า / บริการสาธารณะ) ในระยะ 0-150m ก่อนชื่อซอยเสมอ
-     * Tier 2: ค้นหา ซอย / ซอยย่อย เมื่อไม่พบ POI ใน Tier 1
-     * Tier 3: Retry loop ขยายวงค้นหาโดยตรวจหาสถานที่ก่อนชื่อซอยเสมอ
-     * Tier 4: Smart Semantic Fallback แสดงชื่อถนน/แขวง/เขต (ไม่หลุดพิกัดดิบหรือคำว่า ซอยในพื้นที่)
+     * Tier 1: ArcGIS World Geocoding Engine (Primary POI Resolution ระยะไม่เกิน 400m)
+     * Tier 2: OpenStreetMap & Overpass API (Fallback POI Search ในระยะ 0-150m)
+     * Tier 3: ค้นหา ซอย / ซอยย่อย เมื่อไม่พบ POI ใน Tier 1 และ Tier 2
+     * Tier 4: Retry loop ขยายวงค้นหา Overpass (180m, 300m) พร้อม Probe พิกัดข้างเคียง
+     * Tier 5: Smart Semantic Fallback แสดงชื่อย่าน/ถนน/แขวง/เขต (ไม่หลุดพิกัดดิบหรือคำว่า ซอยในพื้นที่)
      * @param {number} lat
      * @param {number} lng
      * @param {Object} [options={}]
@@ -435,7 +555,22 @@ export class AttendanceModel {
             }
 
             // ====================================================================
-            // ยิงคำขอขนาน: Nominatim (z=18, z=19, z=20) + Targeted Overpass POIs
+            // Tier 1: ค้นหาสถานที่หลักด้วย ArcGIS World Geocoding Engine (Primary POI Resolution 0-400m)
+            // ====================================================================
+            const arcGisResult = await AttendanceModel.#queryArcGISWorldGeocode(numLat, numLng, 400, 1800);
+            if (arcGisResult && arcGisResult.cleanName && arcGisResult.dist <= 400) {
+                const prefix = arcGisResult.dist <= 30 ? 'บริเวณ ' : 'ใกล้เคียง ';
+                const zoomLevel = arcGisResult.dist <= 30 ? 20 : 19;
+                const resultObj = {
+                    locationName: `${prefix}${arcGisResult.cleanName}`,
+                    zoomLevel
+                };
+                AttendanceModel.#locationCache.set(cacheKey, resultObj);
+                return resultObj;
+            }
+
+            // ====================================================================
+            // Tier 2: ยิงคำขอขนาน OpenStreetMap & Overpass API (Fallback เมื่อไม่พบจาก ArcGIS หรือ Timeout)
             // ====================================================================
             const nomUrlZ18 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${numLat}&lon=${numLng}&zoom=18&addressdetails=1&namedetails=1&accept-language=th`;
             const nomUrlZ19 = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${numLat}&lon=${numLng}&zoom=19&addressdetails=1&namedetails=1&accept-language=th`;
@@ -486,7 +621,7 @@ export class AttendanceModel {
             };
 
             // ====================================================================
-            // Tier 1: ค้นหาสถานที่จริง (POI / สถานที่สำคัญ / ร้านค้า / บริการ) ก่อนเสมอ (0 - 150 เมตร)
+            // Tier 2: OpenStreetMap & Overpass API (Fallback POI Search 0-150m)
             // ====================================================================
             const candidatePlaces = [];
 
@@ -540,7 +675,7 @@ export class AttendanceModel {
             }
 
             // ====================================================================
-            // Tier 2: ค้นหา ซอย / ซอยย่อย (เมื่อไม่พบ POI ใน Tier 1 เท่านั้น)
+            // Tier 3: ค้นหา ซอย / ซอยย่อย (เมื่อไม่พบ POI ใน Tier 1 และ Tier 2 เท่านั้น)
             // ====================================================================
             const initialSoi = AttendanceModel.#extractCleanSoiOrSubSoi(numLat, numLng, [nomZ18, nomZ20, nomZ19], initialElements);
             if (initialSoi && !AttendanceModel.#isForbiddenLocationTerm(initialSoi)) {
@@ -553,7 +688,7 @@ export class AttendanceModel {
             }
 
             // ====================================================================
-            // Tier 3: Retry loop (ขยายวงค้นหาโดยตรวจสอบสถานที่ก่อนชื่อซอยเสมอ)
+            // Tier 4: Retry loop (ขยายวงค้นหาโดยตรวจสอบสถานที่ก่อนชื่อซอยเสมอ)
             // ====================================================================
             const retryRadii = [180, 300];
             for (const radius of retryRadii) {
@@ -563,7 +698,7 @@ export class AttendanceModel {
 
                 if (retryElements.length === 0) continue;
 
-                // 3.1 ตรวจสอบสถานที่จริงก่อน
+                // 4.1 ตรวจสอบสถานที่จริงก่อน
                 const retryPlaces = classifyElementsWithinRadius(retryElements, -1, radius);
                 if (retryPlaces.length > 0) {
                     const bestRetryPlace = retryPlaces[0];
@@ -577,7 +712,7 @@ export class AttendanceModel {
                     }
                 }
 
-                // 3.2 ตรวจสอบชื่อซอยตามมา
+                // 4.2 ตรวจสอบชื่อซอยตามมา
                 const retrySoi = AttendanceModel.#extractCleanSoiOrSubSoi(numLat, numLng, [nomZ18, nomZ20, nomZ19], retryElements);
                 if (retrySoi && !AttendanceModel.#isForbiddenLocationTerm(retrySoi)) {
                     const resultObj = {
@@ -589,7 +724,7 @@ export class AttendanceModel {
                 }
             }
 
-            // 3.3 Probe พิกัดข้างเคียง (~40m) หากจุดหลักว่างเปล่า
+            // 4.3 Probe พิกัดข้างเคียง (~40m) หากจุดหลักว่างเปล่า
             const offsets = [
                 [0.00035, 0.00035],
                 [-0.00035, -0.00035]
@@ -621,7 +756,7 @@ export class AttendanceModel {
             }
 
             // ====================================================================
-            // Tier 4: Smart Semantic Fallback (ระบุย่าน/ถนน/แขวง/เขต ไม่หลุดพิกัดดิบหรือซอยในพื้นที่)
+            // Tier 5: Smart Semantic Fallback (ระบุย่าน/ถนน/แขวง/เขต ไม่หลุดพิกัดดิบหรือซอยในพื้นที่)
             // ====================================================================
             let road = '';
             let suburb = '';

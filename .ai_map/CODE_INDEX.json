@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T09:02:54.171Z",
-  "totalFilesScanned": 149,
-  "totalSymbolsIndexed": 790,
+  "generatedAt": "2026-11-12T05:42:52.018Z",
+  "totalFilesScanned": 153,
+  "totalSymbolsIndexed": 800,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a5bcc0c95a9eee2f",
+      "fileHash": "1cea2dd6e091f4c9",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -2811,8 +2811,8 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "0f559b0b54f47c33",
-      "totalLines": 1974,
+      "fileHash": "666d0154c1dcbc12",
+      "totalLines": 2109,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -2829,9 +2829,9 @@
           "name": "AttendanceModel",
           "kind": "class",
           "startLine": 12,
-          "endLine": 1974,
+          "endLine": 2109,
           "signature": "export class AttendanceModel",
-          "summary": "Class Definition (1963 lines)"
+          "summary": "Class Definition (2098 lines)"
         },
         {
           "name": "AttendanceModel.clearLocationCache",
@@ -2861,233 +2861,241 @@
           "name": "AttendanceModel.#isForbiddenLocationTerm",
           "kind": "static private method",
           "startLine": 48,
-          "endLine": 83,
+          "endLine": 94,
           "signature": "(rawName, tags = {}) => any",
-          "summary": "static private method L48-L83 (36 lines)"
+          "summary": "static private method L48-L94 (47 lines)"
         },
         {
           "name": "AttendanceModel.#classifyTargetPlace",
           "kind": "static private method",
-          "startLine": 96,
-          "endLine": 180,
+          "startLine": 106,
+          "endLine": 197,
           "signature": "(tags = {}, name = '') => any",
-          "summary": "static private method L96-L180 (85 lines)"
+          "summary": "static private method L106-L197 (92 lines)"
         },
         {
           "name": "AttendanceModel.#extractValidPlaceFromNominatim",
           "kind": "static private method",
-          "startLine": 187,
-          "endLine": 231,
+          "startLine": 204,
+          "endLine": 248,
           "signature": "(nomData) => any",
-          "summary": "static private method L187-L231 (45 lines)"
+          "summary": "static private method L204-L248 (45 lines)"
         },
         {
           "name": "AttendanceModel.#extractCleanSoiOrSubSoi",
           "kind": "static private method",
-          "startLine": 241,
-          "endLine": 309,
+          "startLine": 258,
+          "endLine": 326,
           "signature": "(lat, lng, nominatimList = [], overpassElements = []) => any",
-          "summary": "static private method L241-L309 (69 lines)"
+          "summary": "static private method L258-L326 (69 lines)"
         },
         {
           "name": "AttendanceModel.#fetchWithFastTimeout",
           "kind": "static private async method",
-          "startLine": 311,
-          "endLine": 329,
+          "startLine": 328,
+          "endLine": 346,
           "signature": "(url, timeoutMs = 1100) => Promise<any>",
-          "summary": "static private async method L311-L329 (19 lines)"
+          "summary": "static private async method L328-L346 (19 lines)"
         },
         {
           "name": "AttendanceModel.#queryOverpassFast",
           "kind": "static private async method",
-          "startLine": 331,
-          "endLine": 352,
+          "startLine": 348,
+          "endLine": 369,
           "signature": "(query, timeoutMs = 2200) => Promise<any>",
-          "summary": "static private async method L331-L352 (22 lines)"
+          "summary": "static private async method L348-L369 (22 lines)"
         },
         {
           "name": "fetchMirrorWithElements",
           "kind": "async_arrow_fn",
-          "startLine": 341,
-          "endLine": 347,
+          "startLine": 358,
+          "endLine": 364,
           "signature": "(url) => inferred",
           "summary": "แข่งขัน (Race) ดึงข้อมูลจากกระจกเซิร์ฟเวอร์หลายจุด คืนผลลัพธ์ทันทีที่พบ elements แรก"
         },
         {
+          "name": "AttendanceModel.#queryArcGISWorldGeocode",
+          "kind": "static private async method",
+          "startLine": 380,
+          "endLine": 471,
+          "signature": "(lat, lng, maxDistance = 400, timeoutMs = 1800) => Promise<any>",
+          "summary": "static private async method L380-L471 (92 lines)"
+        },
+        {
           "name": "AttendanceModel.resolveLocationWithZoomMeta",
           "kind": "static public async method",
-          "startLine": 366,
-          "endLine": 692,
+          "startLine": 486,
+          "endLine": 827,
           "signature": "(lat, lng, options = {}) => Promise<any>",
-          "summary": "static public async method L366-L692 (327 lines)"
+          "summary": "static public async method L486-L827 (342 lines)"
         },
         {
           "name": "classifyElementsWithinRadius",
           "kind": "arrow_fn",
-          "startLine": 455,
-          "endLine": 486,
+          "startLine": 590,
+          "endLine": 621,
           "signature": "(elements, minExclusiveMeters, maxInclusiveMeters) => inferred",
           "summary": "Helper คัดแยกสถานที่เป้าหมายจาก Overpass พร้อมคำนวณระยะห่างจริง"
         },
         {
           "name": "AttendanceModel.resolveLocationName",
           "kind": "static public async method",
-          "startLine": 701,
-          "endLine": 704,
+          "startLine": 836,
+          "endLine": 839,
           "signature": "(lat, lng, options = {}) => Promise<any>",
-          "summary": "static public async method L701-L704 (4 lines)"
+          "summary": "static public async method L836-L839 (4 lines)"
         },
         {
           "name": "AttendanceModel.calculateGpsJitter",
           "kind": "static public method",
-          "startLine": 714,
-          "endLine": 728,
+          "startLine": 849,
+          "endLine": 863,
           "signature": "(lat, lng, maxRadiusMeters = 20, minRadiusMeters = null) => any",
-          "summary": "static public method L714-L728 (15 lines)"
+          "summary": "static public method L849-L863 (15 lines)"
         },
         {
           "name": "AttendanceModel.resolveJitteredCheckoutWithLocation",
           "kind": "static public async method",
-          "startLine": 738,
-          "endLine": 779,
+          "startLine": 873,
+          "endLine": 914,
           "signature": "(baseLat, baseLng, radiusMeters = 20, maxAttempts = 3) => Promise<any>",
-          "summary": "static public async method L738-L779 (42 lines)"
+          "summary": "static public async method L873-L914 (42 lines)"
         },
         {
           "name": "AttendanceModel.evaluateOfficialStatus",
           "kind": "static public method",
-          "startLine": 781,
-          "endLine": 882,
+          "startLine": 916,
+          "endLine": 1017,
           "signature": "(log, settings) => any",
-          "summary": "static public method L781-L882 (102 lines)"
+          "summary": "static public method L916-L1017 (102 lines)"
         },
         {
           "name": "AttendanceModel.getActiveRegularRecordForCheckout",
           "kind": "static public async method",
-          "startLine": 911,
-          "endLine": 942,
+          "startLine": 1046,
+          "endLine": 1077,
           "signature": "(personnelId, userId, settings) => Promise<any>",
-          "summary": "static public async method L911-L942 (32 lines)"
+          "summary": "static public async method L1046-L1077 (32 lines)"
         },
         {
           "name": "AttendanceModel.getPersonalAttendanceHistory",
           "kind": "static public async method",
-          "startLine": 944,
-          "endLine": 980,
+          "startLine": 1079,
+          "endLine": 1115,
           "signature": "(personnelId, userId, limit = 35) => Promise<any>",
-          "summary": "static public async method L944-L980 (37 lines)"
+          "summary": "static public async method L1079-L1115 (37 lines)"
         },
         {
           "name": "AttendanceModel.getPersonalSpecialRequests",
           "kind": "static public async method",
-          "startLine": 982,
-          "endLine": 1008,
+          "startLine": 1117,
+          "endLine": 1143,
           "signature": "(personnelId, userId) => Promise<any>",
-          "summary": "static public async method L982-L1008 (27 lines)"
+          "summary": "static public async method L1117-L1143 (27 lines)"
         },
         {
           "name": "AttendanceModel.deletePendingSpecialRequestByUser",
           "kind": "static public async method",
-          "startLine": 1010,
-          "endLine": 1044,
+          "startLine": 1145,
+          "endLine": 1179,
           "signature": "(logId, personnelId, userId) => Promise<any>",
-          "summary": "static public async method L1010-L1044 (35 lines)"
+          "summary": "static public async method L1145-L1179 (35 lines)"
         },
         {
           "name": "AttendanceModel.submitCheckinOrCheckout",
           "kind": "static public async method",
-          "startLine": 1046,
-          "endLine": 1443,
+          "startLine": 1181,
+          "endLine": 1578,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L1046-L1443 (398 lines)"
+          "summary": "static public async method L1181-L1578 (398 lines)"
         },
         {
           "name": "AttendanceModel.submitSpecialRequest",
           "kind": "static public async method",
-          "startLine": 1445,
-          "endLine": 1539,
+          "startLine": 1580,
+          "endLine": 1674,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L1445-L1539 (95 lines)"
+          "summary": "static public async method L1580-L1674 (95 lines)"
         },
         {
           "name": "AttendanceModel.getSpecialRequests",
           "kind": "static public async method",
-          "startLine": 1541,
-          "endLine": 1581,
+          "startLine": 1676,
+          "endLine": 1716,
           "signature": "(currentUser, statusFilter = 'pending') => Promise<any>",
-          "summary": "static public async method L1541-L1581 (41 lines)"
+          "summary": "static public async method L1676-L1716 (41 lines)"
         },
         {
           "name": "AttendanceModel.processSpecialRequestsBulk",
           "kind": "static public async method",
-          "startLine": 1583,
-          "endLine": 1652,
+          "startLine": 1718,
+          "endLine": 1787,
           "signature": "(logIds, decision, approverUserId) => Promise<any>",
-          "summary": "static public async method L1583-L1652 (70 lines)"
+          "summary": "static public async method L1718-L1787 (70 lines)"
         },
         {
           "name": "AttendanceModel.getDatesBetween",
           "kind": "static public method",
-          "startLine": 1654,
-          "endLine": 1671,
+          "startLine": 1789,
+          "endLine": 1806,
           "signature": "(startDate, endDate) => any",
-          "summary": "static public method L1654-L1671 (18 lines)"
+          "summary": "static public method L1789-L1806 (18 lines)"
         },
         {
           "name": "AttendanceModel.getReportRecordsByDateRange",
           "kind": "static public async method",
-          "startLine": 1673,
-          "endLine": 1732,
+          "startLine": 1808,
+          "endLine": 1867,
           "signature": "(startDate, endDate, currentUser) => Promise<any>",
-          "summary": "static public async method L1673-L1732 (60 lines)"
+          "summary": "static public async method L1808-L1867 (60 lines)"
         },
         {
           "name": "AttendanceModel.#formatReportRow",
           "kind": "static private method",
-          "startLine": 1734,
-          "endLine": 1778,
+          "startLine": 1869,
+          "endLine": 1913,
           "signature": "(person, log, workDate, evalStatus) => any",
-          "summary": "static private method L1734-L1778 (45 lines)"
+          "summary": "static private method L1869-L1913 (45 lines)"
         },
         {
           "name": "AttendanceModel.getDailyReportRecords",
           "kind": "static public async method",
-          "startLine": 1780,
-          "endLine": 1782,
+          "startLine": 1915,
+          "endLine": 1917,
           "signature": "(workDate, currentUser) => Promise<any>",
-          "summary": "static public async method L1780-L1782 (3 lines)"
+          "summary": "static public async method L1915-L1917 (3 lines)"
         },
         {
           "name": "AttendanceModel.saveAdminAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 1784,
-          "endLine": 1848,
+          "startLine": 1919,
+          "endLine": 1983,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L1784-L1848 (65 lines)"
+          "summary": "static public async method L1919-L1983 (65 lines)"
         },
         {
           "name": "AttendanceModel.deleteAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 1850,
-          "endLine": 1868,
+          "startLine": 1985,
+          "endLine": 2003,
           "signature": "(logId) => Promise<any>",
-          "summary": "static public async method L1850-L1868 (19 lines)"
+          "summary": "static public async method L1985-L2003 (19 lines)"
         },
         {
           "name": "AttendanceModel.calculateDashboardMetrics",
           "kind": "static public method",
-          "startLine": 1870,
-          "endLine": 1933,
+          "startLine": 2005,
+          "endLine": 2068,
           "signature": "(dailyRecords) => any",
-          "summary": "static public method L1870-L1933 (64 lines)"
+          "summary": "static public method L2005-L2068 (64 lines)"
         },
         {
           "name": "AttendanceModel.getTodaySyncWatermark",
           "kind": "static public async method",
-          "startLine": 1939,
-          "endLine": 1973,
+          "startLine": 2074,
+          "endLine": 2108,
           "signature": "() => Promise<any>",
-          "summary": "static public async method L1939-L1973 (35 lines)"
+          "summary": "static public async method L2074-L2108 (35 lines)"
         }
       ]
     },
@@ -3486,7 +3494,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3db684984aa427a4",
+      "fileHash": "87f78807409dea45",
       "totalLines": 1015,
       "importsCount": 0,
       "importsPreview": [],
@@ -3705,7 +3713,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a0282104c8d0472f",
+      "fileHash": "a3b4d5268474fc8b",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -4011,7 +4019,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1484b0c59e81dd09",
+      "fileHash": "c1b73007fce7a46d",
       "totalLines": 379,
       "importsCount": 0,
       "importsPreview": [],
@@ -4070,7 +4078,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ffa947f3a7951e5b",
+      "fileHash": "a93d647061bc4951",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -7487,9 +7495,133 @@
       "symbols": []
     },
     {
+      "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "82e9d84f5289d02e",
+      "totalLines": 200,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/preflight_arcgis_simulation.mjs",
+      "layer": "Application Module",
+      "fileHash": "434dc204883e6319",
+      "totalLines": 131,
+      "importsCount": 1,
+      "importsPreview": [
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "calculateDistanceMeters",
+          "kind": "function",
+          "startLine": 12,
+          "endLine": 22,
+          "signature": "(lat1, lon1, lat2, lon2) => inferred",
+          "summary": "4. Fallback chain behaves idempotently without unhandled rejections."
+        },
+        {
+          "name": "parseArcGISResponse",
+          "kind": "function",
+          "startLine": 24,
+          "endLine": 57,
+          "signature": "(data, userLat, userLng, maxDistMeters = 400) => inferred",
+          "summary": "Function L24-L57"
+        },
+        {
+          "name": "runPreflightTests",
+          "kind": "async_function",
+          "startLine": 59,
+          "endLine": 125,
+          "signature": "() => inferred",
+          "summary": "Function L59-L125"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_arcgis.mjs",
+      "layer": "Application Module",
+      "fileHash": "44f250e6f084eca4",
+      "totalLines": 395,
+      "importsCount": 2,
+      "importsPreview": [
+        "import assert from 'assert';",
+        "import { AttendanceModel } from '../../assets/js/models/AttendanceModel.js';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "isForbiddenLocationTerm",
+          "kind": "function",
+          "startLine": 23,
+          "endLine": 69,
+          "signature": "(rawName, tags = {}) => inferred",
+          "summary": "Function L23-L69"
+        },
+        {
+          "name": "classifyTargetPlace",
+          "kind": "function",
+          "startLine": 71,
+          "endLine": 162,
+          "signature": "(tags = {}, name = '') => inferred",
+          "summary": "Function L71-L162"
+        },
+        {
+          "name": "calculateDistanceMeters",
+          "kind": "function",
+          "startLine": 164,
+          "endLine": 174,
+          "signature": "(lat1, lon1, lat2, lon2) => inferred",
+          "summary": "Function L164-L174"
+        },
+        {
+          "name": "testLiveArcGIS",
+          "kind": "async_function",
+          "startLine": 279,
+          "endLine": 384,
+          "signature": "() => inferred",
+          "summary": "Function L279-L384"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_e2e.mjs",
+      "layer": "Application Module",
+      "fileHash": "6e353677c22c5903",
+      "totalLines": 92,
+      "importsCount": 2,
+      "importsPreview": [
+        "import { AttendanceModel } from '../../assets/js/models/AttendanceModel.js';",
+        "import assert from 'assert';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runEndToEndVerification",
+          "kind": "async_function",
+          "startLine": 22,
+          "endLine": 81,
+          "signature": "() => inferred",
+          "summary": "Function L22-L81"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7b42b8cdf6999b9a",
+      "fileHash": "98aa2bdde23c3c6f",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -7572,7 +7704,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a700abc05d8a6e1e",
+      "fileHash": "62b3ac1935a8f39b",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -8164,7 +8296,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "8cc6ca116e0b35cc",
+      "fileHash": "f56015d77aac83e7",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],
