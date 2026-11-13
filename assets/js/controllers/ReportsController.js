@@ -426,6 +426,13 @@ export class ReportsController {
             }
             if (rec.check_out_location_mode === 'OFFSITE') return 'OFFSITE';
             if (rec.check_out_location_mode === 'ONSITE') return 'ONSITE';
+
+            // Special requests: check-out inherits check-in mode when check_out_location_mode is null/empty
+            if (rec.is_special_request) {
+                if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+                if (rec.location_mode === 'ONSITE') return 'ONSITE';
+            }
+
             const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
             const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
             if (outLat !== null && outLng !== null) {
@@ -441,7 +448,7 @@ export class ReportsController {
         return null;
     }
 
-    #resolveReportRemark(rec) {
+    #resolveReportRemark(rec, { forExcel = false } = {}) {
         if (!rec || !rec.log_id) return '-';
 
         const SUPPRESSED_STATUS_REMARKS = new Set([
@@ -455,11 +462,22 @@ export class ReportsController {
         ]);
 
         if (rec.is_special_request) {
-            const spRemark = (rec.remark || '').trim();
-            if (!spRemark || spRemark === '-' || SUPPRESSED_STATUS_REMARKS.has(spRemark)) {
-                return '-';
+            let reason = (rec.remark || rec.offsite_reason || '').trim();
+            if (reason === '-' || SUPPRESSED_STATUS_REMARKS.has(reason) || reason === 'กรณีพิเศษ' || reason === 'ปฏิบัติงานนอกสถานที่' || reason === 'นอกสถานที่') {
+                reason = (rec.offsite_reason && !SUPPRESSED_STATUS_REMARKS.has(rec.offsite_reason) && rec.offsite_reason !== '-' && rec.offsite_reason !== 'ปฏิบัติงานนอกสถานที่')
+                    ? rec.offsite_reason.trim()
+                    : ((reason !== 'กรณีพิเศษ' && reason !== '-' && !SUPPRESSED_STATUS_REMARKS.has(reason)) ? reason : '');
             }
-            return spRemark;
+
+            reason = reason.replace(/^กรณีพิเศษ\s*\((.*?)\)$/i, '$1').replace(/^กรณีพิเศษ\s*[-:—–/]?\s*/i, '').trim();
+
+            if (forExcel) {
+                return reason ? `กรณีพิเศษ\n${reason}` : 'กรณีพิเศษ';
+            }
+
+            return reason
+                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5" style="font-size: 10px; color: #475569;">${reason}</div>`
+                : `<span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span>`;
         }
 
         const inMode = rec.location_mode || this.#resolveLocationMode(rec, 'check_in');
@@ -1003,13 +1021,16 @@ ${this.canManageRecords ? `
         const remEl = document.getElementById('resumeRowRemark');
         if (remEl) {
             const parts = [];
+            if (rec.is_special_request) {
+                parts.push('กรณีพิเศษ');
+            }
             if (rec.offsite_reason) {
                 parts.push(`ลักษณะงานนอกสถานที่: ${rec.offsite_reason}`);
             }
             if (rec.check_out_offsite_reason && rec.check_out_offsite_reason !== rec.offsite_reason) {
                 parts.push(`ขากลับนอกสถานที่: ${rec.check_out_offsite_reason}`);
             }
-            if (rec.remark && rec.remark !== rec.offsite_reason && rec.remark !== 'ในสถานที่') {
+            if (rec.remark && rec.remark !== rec.offsite_reason && rec.remark !== 'ในสถานที่' && rec.remark !== 'กรณีพิเศษ') {
                 parts.push(rec.remark);
             }
             remEl.textContent = parts.length > 0 ? parts.join(' | ') : (rec.remark || 'ไม่มีหมายเหตุ');
@@ -1395,7 +1416,7 @@ ${this.canManageRecords ? `
                     outGpsDisplay = (outLocFormatted && outLocFormatted !== '-') ? `${modeText}\n${outLocFormatted}` : modeText;
                 }
 
-                const resolvedRemark = this.#resolveReportRemark(r);
+                const resolvedRemark = this.#resolveReportRemark(r, { forExcel: true });
 
                 const rowObj = {
                     'ลำดับ': idx + 1,

@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261113-reports-table-gps-and-remarks-redesign"
+last_updated_phase: "PIPE-20261113-special-request-mode-and-reports-remarks-redesign"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -26,6 +26,7 @@ last_updated_phase: "PIPE-20261113-reports-table-gps-and-remarks-redesign"
 - [[ADR_0025_unified_arcgis_forward_geocoding_architecture]] — ADR-0025: สถาปัตยกรรม Unified ArcGIS Forward Geocoding พร้อม Smart Query Normalizer, 3-Tier Fallback, และ Sequence Guard สำหรับ `#modalSpecialRequest` และ `#modalOffsiteMapSearch` (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_GPS_01`)
 - [[ADR_0026_remove_special_request_button_from_shift_card]] — ADR-0026: สถาปัตยกรรม Shift Selection Card Zero-Scroll Optimization ลบปุ่มคำขอกรณีพิเศษออกจากการ์ดกะ พร้อมรักษา DOM ID Invariance สำหรับการทดสอบและ Controller (`FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_LAYOUT_01`)
 - [[ADR_0027_reports_table_gps_and_remarks_redesign]] — ADR-0027: สถาปัตยกรรมตารางรายงานการลงเวลา 5 TAG ปรับคอลัมน์พิกัด GPS 2 บรรทัด (ไร้ค่าพิกัดตัวเลข) และการปรับปรุงคอลัมน์หมายเหตุตามมาตรฐานราชการ (`FLOW_REPORTS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0028_special_request_mode_and_reports_remarks_redesign]] — ADR-0028: สถาปัตยกรรมฟอร์มคำขอลงเวลากรณีพิเศษ [ในสถานที่/นอกสถานที่], การอ้างอิงพิกัดแรกขาออก และการแสดงผลหมายเหตุ 2 บรรทัดตามมาตรฐานราชการ (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_REPORTS_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

@@ -2142,6 +2142,17 @@ export class AttendanceModel {
             }
         }
 
+        const locMode = payload.location_mode || 'ONSITE';
+        const outLocMode = payload.check_out_location_mode || locMode;
+        const offReason = payload.offsite_reason || null;
+        const outOffReason = payload.check_out_offsite_reason || offReason;
+        const distIn = (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null)
+            ? Number(payload.distance_from_official_meters)
+            : null;
+        const distOut = (payload.check_out_distance_from_official_meters !== undefined && payload.check_out_distance_from_official_meters !== null)
+            ? Number(payload.check_out_distance_from_official_meters)
+            : distIn;
+
         const db = DatabaseService.getInstance().client;
         const insertData = {
             personnel_id: payload.personnel_id || null,
@@ -2160,8 +2171,12 @@ export class AttendanceModel {
             check_out_location: outLocName,
             status: targetStatus,
             remark: payload.remark,
-            location_mode: payload.location_mode || 'OFFSITE',
-            distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
+            location_mode: locMode,
+            offsite_reason: offReason,
+            check_out_location_mode: outLocMode,
+            check_out_offsite_reason: outOffReason,
+            distance_from_official_meters: distIn,
+            check_out_distance_from_official_meters: distOut,
             row_color: targetColor,
             is_overtime: isOvertimeShift,
             is_special_request: true,
@@ -2176,7 +2191,11 @@ export class AttendanceModel {
 
         if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
             delete insertData.location_mode;
+            delete insertData.offsite_reason;
+            delete insertData.check_out_location_mode;
+            delete insertData.check_out_offsite_reason;
             delete insertData.distance_from_official_meters;
+            delete insertData.check_out_distance_from_official_meters;
             const retry = await db
                 .from('attendance_logs')
                 .insert(insertData)
@@ -2207,18 +2226,32 @@ export class AttendanceModel {
 
     static async getSpecialRequests(currentUser, statusFilter = 'pending') {
         const db = DatabaseService.getInstance().client;
+        const selectWithLocMode = `
+            id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
+            check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location,
+            status, remark, row_color, is_overtime, is_special_request, approval_status,
+            location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason,
+            distance_from_official_meters, check_out_distance_from_official_meters, created_at,
+            personnel:personnel_id (
+                id, national_id, prefix, first_name, last_name,
+                position_type, position_title, position_level,
+                organization, bureau, division, work_group
+            )
+        `;
+        const selectFallback = `
+            id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
+            check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location,
+            status, remark, row_color, is_overtime, is_special_request, approval_status, created_at,
+            personnel:personnel_id (
+                id, national_id, prefix, first_name, last_name,
+                position_type, position_title, position_level,
+                organization, bureau, division, work_group
+            )
+        `;
+
         let query = db
             .from('attendance_logs')
-            .select(`
-                id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
-                check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location,
-                status, remark, row_color, is_overtime, is_special_request, approval_status, created_at,
-                personnel:personnel_id (
-                    id, national_id, prefix, first_name, last_name,
-                    position_type, position_title, position_level,
-                    organization, bureau, division, work_group
-                )
-            `)
+            .select(selectWithLocMode)
             .eq('is_special_request', true)
             .order('work_date', { ascending: false })
             .order('created_at', { ascending: false });
@@ -2227,7 +2260,23 @@ export class AttendanceModel {
             query = query.eq('approval_status', statusFilter);
         }
 
-        const { data, error } = await query;
+        let { data, error } = await query;
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+            let fallbackQuery = db
+                .from('attendance_logs')
+                .select(selectFallback)
+                .eq('is_special_request', true)
+                .order('work_date', { ascending: false })
+                .order('created_at', { ascending: false });
+
+            if (statusFilter !== 'all') {
+                fallbackQuery = fallbackQuery.eq('approval_status', statusFilter);
+            }
+            const fallbackRes = await fallbackQuery;
+            data = fallbackRes.data;
+            error = fallbackRes.error;
+        }
+
         if (error) {
             console.error('Error fetching special requests:', error);
             return [];
@@ -2438,15 +2487,15 @@ export class AttendanceModel {
             check_in_lat: log?.check_in_lat ?? null,
             check_in_lng: log?.check_in_lng ?? null,
             check_in_location: log?.check_in_location || '',
-            check_out_lat: log?.check_out_lat ?? null,
-            check_out_lng: log?.check_out_lng ?? null,
-            check_out_location: log?.check_out_location || '',
+            check_out_lat: log?.check_out_lat ?? (log?.is_special_request ? (log?.check_in_lat ?? null) : null),
+            check_out_lng: log?.check_out_lng ?? (log?.is_special_request ? (log?.check_in_lng ?? null) : null),
+            check_out_location: log?.check_out_location || (log?.is_special_request ? (log?.check_in_location || '') : ''),
             check_in_photo: log?.check_in_photo || '',
-            check_out_photo: log?.check_out_photo || '',
+            check_out_photo: log?.check_out_photo || (log?.is_special_request ? (log?.check_in_photo || '') : ''),
             location_mode: log?.location_mode || 'ONSITE',
             offsite_reason: log?.offsite_reason || null,
-            check_out_location_mode: log?.check_out_location_mode || (log?.check_out_time ? 'ONSITE' : null),
-            check_out_offsite_reason: log?.check_out_offsite_reason || null,
+            check_out_location_mode: log?.check_out_location_mode || (log?.is_special_request ? (log?.location_mode || 'ONSITE') : (log?.check_out_time ? 'ONSITE' : null)),
+            check_out_offsite_reason: log?.check_out_offsite_reason || (log?.is_special_request ? (log?.offsite_reason || null) : null),
             check_out_distance_from_official_meters: log?.check_out_distance_from_official_meters || null,
             remark: log?.remark || '',
             created_at: log?.created_at || null,

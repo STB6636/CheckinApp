@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261113_6dcf28ee';
+            const CURRENT_APP_BUILD = '20261113_04d9fb32';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -130,7 +130,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261113_6dcf28ee">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261113_04d9fb32">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -779,13 +779,35 @@
                     </div>
                 </div>
 
+                <!-- 3. รูปแบบสถานที่ปฏิบัติงาน -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">3. เลือกหมายเหตุ / เหตุผล *</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">3. รูปแบบสถานที่ปฏิบัติงาน *</label>
+                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+                        <button type="button" id="spModeOnsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30">
+                            <i class="fa-solid fa-building-circle-check"></i>
+                            <span>ในสถานที่</span>
+                        </button>
+                        <button type="button" id="spModeOffsite" class="py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>นอกสถานที่</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">4. เลือกหมายเหตุ / เหตุผล *</label>
                     <select id="spRemarkSelect" class="bma-select text-sm rounded-xl w-full" required></select>
                 </div>
-                <!-- 4. พิกัดและสถานที่ปฏิบัติราชการ -->
+
+                <!-- นอกสถานที่: เหตุผล / ลักษณะงานนอกสถานที่ (แสดงเมื่อเลือกนอกสถานที่) -->
+                <div id="spOffsiteReasonContainer" class="hidden">
+                    <label for="spOffsiteReasonSelect" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ลักษณะงานนอกสถานที่ *</label>
+                    <select id="spOffsiteReasonSelect" class="bma-select text-sm rounded-xl w-full"></select>
+                </div>
+
+                <!-- 5. พิกัดและสถานที่ปฏิบัติราชการ -->
                 <div class="space-y-2.5 pt-1 border-t border-slate-200/80 dark:border-slate-700/80">
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">4. พิกัดและสถานที่ปฏิบัติราชการ *</label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">5. พิกัดและสถานที่ปฏิบัติราชการ *</label>
                     
                     <!-- Radio GPS Mode Selection -->
                     <div class="grid grid-cols-2 gap-2">
@@ -875,7 +897,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261113_6dcf28ee"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261113_04d9fb32"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
