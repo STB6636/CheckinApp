@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-12T11:08:51.389Z",
-  "totalFilesScanned": 157,
-  "totalSymbolsIndexed": 813,
+  "generatedAt": "2026-11-13T03:21:25.019Z",
+  "totalFilesScanned": 160,
+  "totalSymbolsIndexed": 821,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "74011f1d52f3e216",
+      "fileHash": "fb68c66194182f28",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -3566,8 +3566,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "6ab70a8fbcaf1f39",
-      "totalLines": 1015,
+      "fileHash": "5e05be74f2d0f8a4",
+      "totalLines": 1009,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3584,17 +3584,17 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 252,
-          "endLine": 646,
+          "endLine": 640,
           "signature": "<main>",
-          "summary": "HTML DOM Section L252-L646"
+          "summary": "HTML DOM Section L252-L640"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
           "startLine": 255,
-          "endLine": 504,
+          "endLine": 498,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L255-L504"
+          "summary": "HTML DOM Section L255-L498"
         },
         {
           "name": "<div#photoPreviewCard>",
@@ -3648,9 +3648,9 @@
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
           "startLine": 434,
-          "endLine": 474,
+          "endLine": 467,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L434-L474"
+          "summary": "HTML DOM Section L434-L467"
         },
         {
           "name": "<div#shiftSelectorContainer>",
@@ -3671,121 +3671,121 @@
         {
           "name": "<div#checkinStep1Container>",
           "kind": "html_dom_section",
-          "startLine": 486,
-          "endLine": 486,
+          "startLine": 480,
+          "endLine": 480,
           "signature": "id=\"checkinStep1Container\"",
-          "summary": "HTML DOM Section L486-L486"
+          "summary": "HTML DOM Section L480-L480"
         },
         {
           "name": "<div#checkinStep2Container>",
           "kind": "html_dom_section",
-          "startLine": 487,
-          "endLine": 487,
+          "startLine": 481,
+          "endLine": 481,
           "signature": "id=\"checkinStep2Container\"",
-          "summary": "HTML DOM Section L487-L487"
+          "summary": "HTML DOM Section L481-L481"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 488,
-          "endLine": 488,
+          "startLine": 482,
+          "endLine": 482,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L488-L488"
+          "summary": "HTML DOM Section L482-L482"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 492,
-          "endLine": 492,
+          "startLine": 486,
+          "endLine": 486,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L492-L492"
+          "summary": "HTML DOM Section L486-L486"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 500,
-          "endLine": 500,
+          "startLine": 494,
+          "endLine": 494,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L500-L500"
+          "summary": "HTML DOM Section L494-L494"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 507,
-          "endLine": 644,
+          "startLine": 501,
+          "endLine": 638,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L507-L644"
+          "summary": "HTML DOM Section L501-L638"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 510,
-          "endLine": 599,
+          "startLine": 504,
+          "endLine": 593,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L510-L599"
+          "summary": "HTML DOM Section L504-L593"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 536,
-          "endLine": 553,
+          "startLine": 530,
+          "endLine": 547,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L536-L553"
+          "summary": "HTML DOM Section L530-L547"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 556,
-          "endLine": 596,
+          "startLine": 550,
+          "endLine": 590,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L556-L596"
+          "summary": "HTML DOM Section L550-L590"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 602,
-          "endLine": 642,
+          "startLine": 596,
+          "endLine": 636,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L602-L642"
+          "summary": "HTML DOM Section L596-L636"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 654,
-          "endLine": 744,
+          "startLine": 648,
+          "endLine": 738,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L654-L744"
+          "summary": "HTML DOM Section L648-L738"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 777,
-          "endLine": 786,
+          "startLine": 771,
+          "endLine": 780,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L777-L786"
+          "summary": "HTML DOM Section L771-L780"
         },
         {
           "name": "<div#spSearchWrapper>",
           "kind": "html_dom_section",
-          "startLine": 828,
-          "endLine": 834,
+          "startLine": 822,
+          "endLine": 828,
           "signature": "id=\"spSearchWrapper\"",
-          "summary": "HTML DOM Section L828-L834"
+          "summary": "HTML DOM Section L822-L828"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 884,
-          "endLine": 884,
+          "startLine": 878,
+          "endLine": 878,
           "signature": "<script>",
-          "summary": "Bootstrap script L884-L884"
+          "summary": "Bootstrap script L878-L878"
         }
       ]
     },
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b8a971d39c11b10c",
+      "fileHash": "fba5c17c4656f928",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -4091,7 +4091,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ed8ec28e4fdb5e40",
+      "fileHash": "a6d567ad6f9174cb",
       "totalLines": 379,
       "importsCount": 0,
       "importsPreview": [],
@@ -4150,7 +4150,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "abe813ea6c9a1ea3",
+      "fileHash": "939283527cbbb6af",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -7773,9 +7773,111 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "b85b5690967fefa7",
+      "totalLines": 222,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 15,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L15"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs",
+      "layer": "Application Module",
+      "fileHash": "15e72590d71fbc93",
+      "totalLines": 35,
+      "importsCount": 2,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';"
+      ],
+      "exports": [],
+      "symbols": []
+    },
+    {
+      "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "05afa63faeeeff18",
+      "totalLines": 162,
+      "importsCount": 2,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "assert",
+          "kind": "function",
+          "startLine": 12,
+          "endLine": 20,
+          "signature": "(condition, message) => inferred",
+          "summary": "Function L12-L20"
+        },
+        {
+          "name": "MockDOMElement",
+          "kind": "class",
+          "startLine": 101,
+          "endLine": 116,
+          "signature": "class MockDOMElement",
+          "summary": "Class Definition (16 lines)"
+        },
+        {
+          "name": "MockDOMElement.constructor",
+          "kind": "public constructor",
+          "startLine": 102,
+          "endLine": 107,
+          "signature": "(id, tag = 'DIV') => any",
+          "summary": "public constructor L102-L107 (6 lines)"
+        },
+        {
+          "name": "MockDOMElement.addEventListener",
+          "kind": "public method",
+          "startLine": 108,
+          "endLine": 111,
+          "signature": "(event, callback) => any",
+          "summary": "public method L108-L111 (4 lines)"
+        },
+        {
+          "name": "MockDOMElement.click",
+          "kind": "public method",
+          "startLine": 112,
+          "endLine": 115,
+          "signature": "() => any",
+          "summary": "public method L112-L115 (4 lines)"
+        },
+        {
+          "name": "openSpecialModal",
+          "kind": "arrow_fn",
+          "startLine": 126,
+          "endLine": 129,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L126-L129"
+        },
+        {
+          "name": "closeSpecialModal",
+          "kind": "arrow_fn",
+          "startLine": 130,
+          "endLine": 132,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L130-L132"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4b94385acd5f1a43",
+      "fileHash": "ae9e672823f9742f",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -7858,7 +7960,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9f0f725ee205de75",
+      "fileHash": "432713bbcd6fdddb",
       "totalLines": 807,
       "importsCount": 0,
       "importsPreview": [],
@@ -8450,7 +8552,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d5e3abcc94cd0762",
+      "fileHash": "9d4fa0c785c432a8",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],

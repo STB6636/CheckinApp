@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-12T11:08:51.389Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `157` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `813`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-13T03:21:25.019Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `160` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `821`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `74011f1d52f3e216` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fb68c66194182f28` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -590,42 +590,42 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6ab70a8fbcaf1f39` | **Total Lines:** `1015` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5e05be74f2d0f8a4` | **Total Lines:** `1009` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L171** | `<head>` | HTML DOM Section L3-L171 |
-| `<main>` | `html_dom_section` | **L252 - L646** | `<main>` | HTML DOM Section L252-L646 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L255 - L504** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L255-L504 |
+| `<main>` | `html_dom_section` | **L252 - L640** | `<main>` | HTML DOM Section L252-L640 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L255 - L498** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L255-L498 |
 | `<div#photoPreviewCard>` | `html_dom_section` | **L298 - L319** | `id="photoPreviewCard"` | HTML DOM Section L298-L319 |
 | `<div#gpsSectionCard>` | `html_dom_section` | **L322 - L359** | `id="gpsSectionCard"` | HTML DOM Section L322-L359 |
 | `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L356 - L356** | `id="googleMapEmbedWrapper"` | HTML DOM Section L356-L356 |
 | `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L380 - L391** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L380-L391 |
 | `<div#offsiteLocationSection>` | `html_dom_section` | **L394 - L430** | `id="offsiteLocationSection"` | HTML DOM Section L394-L430 |
 | `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L426 - L426** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L426-L426 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L434 - L474** | `id="checkinActionCard"` | HTML DOM Section L434-L474 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L434 - L467** | `id="checkinActionCard"` | HTML DOM Section L434-L467 |
 | `<div#shiftSelectorContainer>` | `html_dom_section` | **L444 - L449** | `id="shiftSelectorContainer"` | HTML DOM Section L444-L449 |
 | `<div#mainCustomTimeContainer>` | `html_dom_section` | **L451 - L460** | `id="mainCustomTimeContainer"` | HTML DOM Section L451-L460 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L486 - L486** | `id="checkinStep1Container"` | HTML DOM Section L486-L486 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L487 - L487** | `id="checkinStep2Container"` | HTML DOM Section L487-L487 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L488 - L488** | `id="rightColumnWrapper"` | HTML DOM Section L488-L488 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L492 - L492** | `id="cameraSectionCard"` | HTML DOM Section L492-L492 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L500 - L500** | `id="cameraStandbyOverlay"` | HTML DOM Section L500-L500 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L507 - L644** | `id="desktopPanesContainer"` | HTML DOM Section L507-L644 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L510 - L599** | `id="desktopHistoryWrapper"` | HTML DOM Section L510-L599 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L536 - L553** | `id="todayHistoryTabPanel"` | HTML DOM Section L536-L553 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L556 - L596** | `id="pastHistoryTabPanel"` | HTML DOM Section L556-L596 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L602 - L642** | `id="desktopSpecialWrapper"` | HTML DOM Section L602-L642 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L654 - L744** | `id="mobileDrawerPanel"` | HTML DOM Section L654-L744 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L777 - L786** | `id="spCustomTimeContainer"` | HTML DOM Section L777-L786 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L828 - L834** | `id="spSearchWrapper"` | HTML DOM Section L828-L834 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L884 - L884** | `<script>` | Bootstrap script L884-L884 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L480 - L480** | `id="checkinStep1Container"` | HTML DOM Section L480-L480 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L481 - L481** | `id="checkinStep2Container"` | HTML DOM Section L481-L481 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L482 - L482** | `id="rightColumnWrapper"` | HTML DOM Section L482-L482 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L486 - L486** | `id="cameraSectionCard"` | HTML DOM Section L486-L486 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L494 - L494** | `id="cameraStandbyOverlay"` | HTML DOM Section L494-L494 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L501 - L638** | `id="desktopPanesContainer"` | HTML DOM Section L501-L638 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L504 - L593** | `id="desktopHistoryWrapper"` | HTML DOM Section L504-L593 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L530 - L547** | `id="todayHistoryTabPanel"` | HTML DOM Section L530-L547 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L550 - L590** | `id="pastHistoryTabPanel"` | HTML DOM Section L550-L590 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L596 - L636** | `id="desktopSpecialWrapper"` | HTML DOM Section L596-L636 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L648 - L738** | `id="mobileDrawerPanel"` | HTML DOM Section L648-L738 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L771 - L780** | `id="spCustomTimeContainer"` | HTML DOM Section L771-L780 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L822 - L828** | `id="spSearchWrapper"` | HTML DOM Section L822-L828 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L878 - L878** | `<script>` | Bootstrap script L878-L878 |
 
 ---
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b8a971d39c11b10c` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fba5c17c4656f928` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -709,7 +709,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ed8ec28e4fdb5e40` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a6d567ad6f9174cb` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -724,7 +724,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `abe813ea6c9a1ea3` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `939283527cbbb6af` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2036,9 +2036,43 @@
 
 ---
 
+## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `b85b5690967fefa7` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L15** | `<head>` | HTML DOM Section L3-L15 |
+
+---
+
+## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs`
+- **Layer:** Application Module
+- **Hash:** `15e72590d71fbc93` | **Total Lines:** `35` | **Imports:** `2` | **Exports:** `None`
+
+> *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
+
+---
+
+## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `05afa63faeeeff18` | **Total Lines:** `162` | **Imports:** `2` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `assert` | `function` | **L12 - L20** | `(condition, message) => inferred` | Function L12-L20 |
+| `MockDOMElement` | `class` | **L101 - L116** | `class MockDOMElement` | Class Definition (16 lines) |
+| `MockDOMElement.constructor` | `public constructor` | **L102 - L107** | `(id, tag = 'DIV') => any` | public constructor L102-L107 (6 lines) |
+| `MockDOMElement.addEventListener` | `public method` | **L108 - L111** | `(event, callback) => any` | public method L108-L111 (4 lines) |
+| `MockDOMElement.click` | `public method` | **L112 - L115** | `() => any` | public method L112-L115 (4 lines) |
+| `openSpecialModal` | `arrow_fn` | **L126 - L129** | `() => inferred` | Arrow Function L126-L129 |
+| `closeSpecialModal` | `arrow_fn` | **L130 - L132** | `() => inferred` | Arrow Function L130-L132 |
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `4b94385acd5f1a43` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ae9e672823f9742f` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2056,7 +2090,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9f0f725ee205de75` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `432713bbcd6fdddb` | **Total Lines:** `807` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2191,7 +2225,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d5e3abcc94cd0762` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9d4fa0c785c432a8` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

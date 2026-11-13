@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261112-arcgis-forward-search-modals"
+last_updated_phase: "PIPE-20261113-remove-special-request-btn-from-shift-card"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -24,6 +24,7 @@ last_updated_phase: "PIPE-20261112-arcgis-forward-search-modals"
 - [[ADR_0023_Login_Version_Badge_And_OOP_System_Update_Modal]] — ADR-0023: สถาปัตยกรรม Login Version Badge & Dynamic OOP System Update Modal แสดงเวอร์ชันและกล่องแจ้งเตือนอัปเดตระบบอัตโนมัติ (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
 - [[ADR_0024_ArcGIS_Primary_POI_Resolution_Architecture]] — ADR-0024: สถาปัตยกรรม ArcGIS World Geocoding Primary POI Resolution & 4-Tier Priority Architecture พร้อมการล็อกรัศมี 400 ม. และการคัดกรองคำต้องห้าม (`FLOW_GPS_01`, `FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`)
 - [[ADR_0025_unified_arcgis_forward_geocoding_architecture]] — ADR-0025: สถาปัตยกรรม Unified ArcGIS Forward Geocoding พร้อม Smart Query Normalizer, 3-Tier Fallback, และ Sequence Guard สำหรับ `#modalSpecialRequest` และ `#modalOffsiteMapSearch` (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_GPS_01`)
+- [[ADR_0026_remove_special_request_button_from_shift_card]] — ADR-0026: สถาปัตยกรรม Shift Selection Card Zero-Scroll Optimization ลบปุ่มคำขอกรณีพิเศษออกจากการ์ดกะ พร้อมรักษา DOM ID Invariance สำหรับการทดสอบและ Controller (`FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_LAYOUT_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261112_0e3e0502';
+            const CURRENT_APP_BUILD = '20261113_5994aba7';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -130,7 +130,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261112_0e3e0502">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261113_5994aba7">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -464,13 +464,6 @@
                         <span id="regularCompletedNoticeText">ข้อมูลสถานะการลงเวลา</span>
                     </div>
                 </div>
-
-                <div class="pt-1">
-                    <button type="button" id="btnOpenSpecialRequestModal" class="inline-flex w-full items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-100 transition cursor-pointer border border-indigo-200 dark:border-indigo-800/40">
-                        <i class="fa-solid fa-calendar-plus"></i>
-                        <span>ส่งคำขอลงเวลากรณีพิเศษ</span>
-                    </button>
-                </div>
             </div>
 
             <!-- Sticky Bottom Check-in Action Bar -->
@@ -482,6 +475,7 @@
             </div>
 
             <!-- Hidden legacy containers to preserve 100% DOM IDs -->
+            <button type="button" id="btnOpenSpecialRequestModal" class="hidden" aria-hidden="true"></button>
             <div id="checkinWorkspaceGrid" class="hidden"></div>
             <div id="checkinStep1Container" class="hidden"><button type="button" id="btnNextStepCheckin" class="hidden"><span id="btnNextStepLabel"></span></button></div>
             <div id="checkinStep2Container" class="hidden"><button type="button" id="btnPrevStepCheckin" class="hidden"></button><div id="step2SummaryBadge"><span id="step2SummaryText"></span></div></div>
@@ -881,7 +875,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261112_0e3e0502"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261113_5994aba7"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
