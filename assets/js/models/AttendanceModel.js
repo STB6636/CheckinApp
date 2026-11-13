@@ -2322,7 +2322,10 @@ export class AttendanceModel {
         const effectiveEnd = endDate && endDate >= startDate ? endDate : startDate;
         const dateList = AttendanceModel.getDatesBetween(startDate, effectiveEnd);
 
-        const [personnelRes, logsRes] = await Promise.all([
+        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, location_mode, created_at, updated_at';
+        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at';
+
+        let [personnelRes, logsRes] = await Promise.all([
             db.from('personnel')
                 .select('id, national_id, prefix, first_name, last_name, position_type, position_title, position_level, organization, bureau, division, work_group')
                 .order('bureau', { ascending: true })
@@ -2330,12 +2333,21 @@ export class AttendanceModel {
                 .order('work_group', { ascending: true })
                 .order('first_name', { ascending: true }),
             db.from('attendance_logs')
-                .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at')
+                .select(selectWithLocMode)
                 .gte('work_date', startDate)
                 .lte('work_date', effectiveEnd)
                 .order('work_date', { ascending: true })
                 .order('created_at', { ascending: true })
         ]);
+
+        if (logsRes.error && (logsRes.error.message?.includes('column') || logsRes.error.code === '42703' || logsRes.error.message?.includes('does not exist'))) {
+            logsRes = await db.from('attendance_logs')
+                .select(selectFallback)
+                .gte('work_date', startDate)
+                .lte('work_date', effectiveEnd)
+                .order('work_date', { ascending: true })
+                .order('created_at', { ascending: true });
+        }
 
         const allPersonnel = (personnelRes.data || []).filter(p =>
             !currentUser || currentUser.role === 'SuperAdmin'
@@ -2410,6 +2422,7 @@ export class AttendanceModel {
             check_out_location: log?.check_out_location || '',
             check_in_photo: log?.check_in_photo || '',
             check_out_photo: log?.check_out_photo || '',
+            location_mode: log?.location_mode || 'ONSITE',
             remark: log?.remark || '',
             created_at: log?.created_at || null,
             updated_at: log?.updated_at || null,

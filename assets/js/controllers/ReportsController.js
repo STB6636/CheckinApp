@@ -337,6 +337,140 @@ export class ReportsController {
         return `${Math.abs(nLat).toFixed(6)}° ${latDir}, ${Math.abs(nLng).toFixed(6)}° ${lngDir}`;
     }
 
+    #calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const toRad = (deg) => (deg * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    #isWithinGeofence(lat, lng) {
+        if (lat === null || lat === undefined || lng === null || lng === undefined) return null;
+        const numLat = parseFloat(lat);
+        const numLng = parseFloat(lng);
+        if (isNaN(numLat) || isNaN(numLng)) return null;
+
+        const officialList = this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [];
+        if (!Array.isArray(officialList) || officialList.length === 0) {
+            const d = this.#calculateDistanceMeters(numLat, numLng, 13.756331, 100.501765);
+            return d <= 180;
+        }
+
+        for (const loc of officialList) {
+            if (!loc || loc.is_active === false) continue;
+            const locLat = Number(loc.latitude ?? loc.lat);
+            const locLng = Number(loc.longitude ?? loc.lng ?? loc.lon);
+            if (!Number.isFinite(locLat) || !Number.isFinite(locLng)) continue;
+
+            const radius = Math.max(loc.radius_meters || 150, 180);
+            const dist = this.#calculateDistanceMeters(numLat, numLng, locLat, locLng);
+            if (dist <= radius) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    #formatLocationName(locName) {
+        if (!locName) return '-';
+        const trimmed = String(locName).trim();
+        if (!trimmed || trimmed === '-' || trimmed.toLowerCase() === 'null' || trimmed.toLowerCase() === 'undefined') {
+            return '-';
+        }
+        if (/^(บริเวณ|ใกล้เคียง)/.test(trimmed)) {
+            return trimmed;
+        }
+        return `บริเวณ ${trimmed}`;
+    }
+
+    #resolveLocationMode(rec, type = 'check_in') {
+        if (!rec || !rec.log_id) return null;
+
+        if (type === 'check_in') {
+            const hasCheckIn = Boolean(rec.check_in_time || rec.check_in_lat || rec.check_in_location);
+            if (!hasCheckIn && !rec.is_special_request) {
+                return null;
+            }
+            if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.location_mode === 'ONSITE') return 'ONSITE';
+
+            const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
+            const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
+            if (inLat !== null && inLng !== null) {
+                const inGeofence = this.#isWithinGeofence(inLat, inLng);
+                if (inGeofence !== null) {
+                    return inGeofence ? 'ONSITE' : 'OFFSITE';
+                }
+            }
+            if (rec.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(rec.remark.trim())) {
+                return 'OFFSITE';
+            }
+            return 'ONSITE';
+        }
+
+        if (type === 'check_out') {
+            const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location);
+            if (!isCheckedOut && !rec.is_special_request) {
+                return null;
+            }
+            const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
+            const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
+            if (outLat !== null && outLng !== null) {
+                const outGeofence = this.#isWithinGeofence(outLat, outLng);
+                if (outGeofence !== null) {
+                    return outGeofence ? 'ONSITE' : 'OFFSITE';
+                }
+            }
+            if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+            return 'ONSITE';
+        }
+
+        return null;
+    }
+
+    #resolveReportRemark(rec) {
+        if (!rec || !rec.log_id) return '-';
+
+        const SUPPRESSED_STATUS_REMARKS = new Set([
+            'ปฏิบัติงานปกติ',
+            'มาสาย',
+            'ขาดราชการ',
+            'ไม่ลงเวลา',
+            'ปฏิบัติงานนอกเวลา',
+            'ปฏิบัติงานนอกเวลาราชการ',
+            'ในสถานที่'
+        ]);
+
+        if (rec.is_special_request) {
+            const spRemark = (rec.remark || '').trim();
+            if (!spRemark || spRemark === '-' || SUPPRESSED_STATUS_REMARKS.has(spRemark)) {
+                return '-';
+            }
+            return spRemark;
+        }
+
+        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        if (inMode === 'ONSITE') {
+            return '-';
+        }
+
+        if (inMode === 'OFFSITE') {
+            const rawRemark = (rec.remark || '').trim();
+            if (!rawRemark || rawRemark === '-' || SUPPRESSED_STATUS_REMARKS.has(rawRemark)) {
+                return 'ปฏิบัติงานนอกสถานที่';
+            }
+            return rawRemark;
+        }
+
+        return '-';
+    }
+
     #renderSeparateTablesBySelectedTags(forPrintPdf = false) {
         const masterContainer = document.getElementById('reportTablesMasterContainer');
         const activeStatuses = Config.OFFICIAL_STATUSES.filter(st => this.selectedStatusKeys.has(st.key));
@@ -596,33 +730,30 @@ export class ReportsController {
 
         const showGps = Boolean(this.settings?.require_gps);
         const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
-        const remarkDisplay = rec.remark || '-';
+        const remarkDisplay = this.#resolveReportRemark(rec);
         const fullName = rec.full_name || '-';
         const rowUid = rec.row_uid || '';
 
-        const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
-        const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
-        const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
-        const inLocName = (rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '') || '').trim();
+        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        const inLocName = this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : ''));
 
-        const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location);
-        const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
-        const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
-        const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
-        let outLocName = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
-        if (!outLocName && !isCheckedOut && !rec.is_special_request) {
-            outLocName = '-';
-        }
+        const outMode = this.#resolveLocationMode(rec, 'check_out');
+        const outRawLoc = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        const outLocName = this.#formatLocationName(outRawLoc);
 
         if (forPrintPdf) {
             const gpsPrintCells = showGps ? `
-                    <td style="font-size: 11px;">
-                        <div style="font-weight: 600;">${inLocName || '-'}</div>
-                        ${inGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${inGpsCoords}</div>` : ''}
+                    <td style="font-size: 11px; vertical-align: middle;">
+                        ${inMode ? `
+                            <div><span style="display: inline-block; padding: 1px 6px; border-radius: 9999px; background: ${inMode === 'ONSITE' ? '#D1FAE5' : '#E0F2FE'}; color: ${inMode === 'ONSITE' ? '#065F46' : '#0369A1'}; font-weight: 700; font-size: 10px;">${inMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่'}</span></div>
+                            <div style="font-size: 10px; color: #334155; margin-top: 2px;">${inLocName}</div>
+                        ` : `<div style="text-align: center; color: #64748B;">-</div>`}
                     </td>
-                    <td style="font-size: 11px;">
-                        <div style="font-weight: 600;">${outLocName || '-'}</div>
-                        ${outGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${outGpsCoords}</div>` : ''}
+                    <td style="font-size: 11px; vertical-align: middle;">
+                        ${outMode ? `
+                            <div><span style="display: inline-block; padding: 1px 6px; border-radius: 9999px; background: ${outMode === 'ONSITE' ? '#D1FAE5' : '#E0F2FE'}; color: ${outMode === 'ONSITE' ? '#065F46' : '#0369A1'}; font-weight: 700; font-size: 10px;">${outMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่'}</span></div>
+                            <div style="font-size: 10px; color: #334155; margin-top: 2px;">${outLocName}</div>
+                        ` : `<div style="text-align: center; color: #64748B;">-</div>`}
                     </td>
             ` : '';
 
@@ -643,19 +774,43 @@ export class ReportsController {
             ? 'w-28 text-center font-mono font-bold'
             : 'w-32 text-center font-mono font-bold';
 
+        const inBadge = inMode === 'ONSITE'
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/40"><i class="fa-solid fa-building text-[10px]"></i>ในสถานที่</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-300/40"><i class="fa-solid fa-map-location-dot text-[10px]"></i>นอกสถานที่</span>`;
+
+        const inLocDisp = (inLocName && inLocName !== '-')
+            ? `<div class="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-[170px] mt-1" title="${inLocName}"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${inLocName}</div>`
+            : `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">-</div>`;
+
+        const outBadge = outMode === 'ONSITE'
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/40"><i class="fa-solid fa-building text-[10px]"></i>ในสถานที่</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-300/40"><i class="fa-solid fa-map-location-dot text-[10px]"></i>นอกสถานที่</span>`;
+
+        const outLocDisp = (outLocName && outLocName !== '-')
+            ? `<div class="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-[170px] mt-1" title="${outLocName}"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${outLocName}</div>`
+            : `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">-</div>`;
+
+        const inCellHtml = inMode
+            ? `<td class="w-44 min-w-[180px] py-2">
+                    <div class="flex flex-col items-start justify-center">
+                        ${inBadge}
+                        ${inLocDisp}
+                    </div>
+               </td>`
+            : `<td class="w-44 min-w-[180px] text-center text-slate-500 dark:text-slate-400 font-medium">-</td>`;
+
+        const outCellHtml = outMode
+            ? `<td class="w-44 min-w-[180px] py-2">
+                    <div class="flex flex-col items-start justify-center">
+                        ${outBadge}
+                        ${outLocDisp}
+                    </div>
+               </td>`
+            : `<td class="w-44 min-w-[180px] text-center text-slate-500 dark:text-slate-400 font-medium">-</td>`;
+
         const gpsWebCells = showGps ? `
-                <td class="w-44 min-w-[180px]">
-                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${inLocName || '-'}">
-                        ${inLocName && inLocName !== '-' ? `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${inLocName}` : (inLocName || '-')}
-                    </div>
-                    ${inGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${inGpsCoords}</div>` : ''}
-                </td>
-                <td class="w-44 min-w-[180px]">
-                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${outLocName || '-'}">
-                        ${outLocName && outLocName !== '-' ? `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${outLocName}` : (outLocName || '-')}
-                    </div>
-                    ${outGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${outGpsCoords}</div>` : ''}
-                </td>
+                ${inCellHtml}
+                ${outCellHtml}
         ` : '';
 
         return `
@@ -1200,21 +1355,24 @@ ${this.canManageRecords ? `
             }
             const showGps = Boolean(this.settings?.require_gps);
             const rows = filtered.map((r, idx) => {
-                const inLat = r.check_in_lat ?? (r.is_special_request ? r.check_out_lat : null);
-                const inLng = r.check_in_lng ?? (r.is_special_request ? r.check_out_lng : null);
-                const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
-                const inLocName = (r.check_in_location || (r.is_special_request ? r.check_out_location : '') || '').trim();
-                const inGpsDisplay = [inLocName, inGpsCoords].filter(Boolean).join(' ') || '-';
-
-                const isCheckedOut = Boolean(r.check_out_time || r.check_out_lat || r.check_out_location);
-                const outLat = r.check_out_lat ?? (r.is_special_request ? r.check_in_lat : null);
-                const outLng = r.check_out_lng ?? (r.is_special_request ? r.check_in_lng : null);
-                const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
-                let outLocName = (r.check_out_location || (r.is_special_request ? r.check_in_location : '') || '').trim();
-                if (!outLocName && !isCheckedOut && !r.is_special_request) {
-                    outLocName = '-';
+                const inMode = this.#resolveLocationMode(r, 'check_in');
+                const inLocFormatted = this.#formatLocationName(r.check_in_location || (r.is_special_request ? r.check_out_location : ''));
+                let inGpsDisplay = '-';
+                if (inMode) {
+                    const modeText = inMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
+                    inGpsDisplay = (inLocFormatted && inLocFormatted !== '-') ? `${modeText} ${inLocFormatted}` : modeText;
                 }
-                const outGpsDisplay = [outLocName, outGpsCoords].filter(Boolean).join(' ') || '-';
+
+                const outMode = this.#resolveLocationMode(r, 'check_out');
+                const outRawLoc = (r.check_out_location || (r.is_special_request ? r.check_in_location : '') || '').trim();
+                const outLocFormatted = this.#formatLocationName(outRawLoc);
+                let outGpsDisplay = '-';
+                if (outMode) {
+                    const modeText = outMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
+                    outGpsDisplay = (outLocFormatted && outLocFormatted !== '-') ? `${modeText} ${outLocFormatted}` : modeText;
+                }
+
+                const resolvedRemark = this.#resolveReportRemark(r);
 
                 const rowObj = {
                     'ลำดับ': idx + 1,
@@ -1234,7 +1392,7 @@ ${this.canManageRecords ? `
                 }
 
                 rowObj['สถานะ'] = r.status_label;
-                rowObj['หมายเหตุ'] = r.remark || '';
+                rowObj['หมายเหตุ'] = resolvedRemark;
 
                 return rowObj;
             });
@@ -1256,12 +1414,12 @@ ${this.canManageRecords ? `
             };
 
             if (showGps) {
-                sampleItem['พิกัด GPS เข้างาน'] = 'สำนักเทศกิจ 13.733790° N, 100.468261° E';
-                sampleItem['พิกัด GPS ออกงาน'] = 'ศาลาว่าการ กทม. 13.756300° N, 100.501800° E';
+                sampleItem['พิกัด GPS เข้างาน'] = 'ในสถานที่ บริเวณ สำนักเทศกิจ';
+                sampleItem['พิกัด GPS ออกงาน'] = 'ในสถานที่ บริเวณ ศาลาว่าการ กทม.';
             }
 
             sampleItem['สถานะ'] = 'ปฏิบัติงานปกติ';
-            sampleItem['หมายเหตุ'] = '';
+            sampleItem['หมายเหตุ'] = '-';
 
             const sample = [sampleItem];
             UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');

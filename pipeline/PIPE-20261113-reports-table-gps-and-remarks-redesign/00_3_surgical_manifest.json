@@ -1,0 +1,43 @@
+{
+  "task_id": "PIPE-20261113-reports-table-gps-and-remarks-redesign",
+  "flow_id": "FLOW_REPORTS_01",
+  "target_branch": "Loca-V2",
+  "created_at": "2026-11-13T13:58:00+07:00",
+  "targets": [
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.getReportRecordsByDateRange",
+      "line_range": "2330-2340",
+      "recommended_read_window": [2320, 2350],
+      "operation": "EDIT",
+      "purpose": "Include location_mode in the Supabase SELECT query for attendance_logs with graceful fallback if column is absent."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.#formatReportRow",
+      "line_range": "2400-2425",
+      "recommended_read_window": [2395, 2435],
+      "operation": "EDIT",
+      "purpose": "Map location_mode: log?.location_mode || 'ONSITE' into the returned normalized report row object."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#buildSingleRowHtml",
+      "line_range": "594-705",
+      "recommended_read_window": [584, 715],
+      "operation": "EDIT",
+      "purpose": "Redesign GPS Check-in & Check-out columns (Line 1: [ในสถานที่,นอกสถานที่], Line 2: [บริเวณ,ใกล้เคียง], no raw coordinates) and Remarks column (Rules 2.1-2.4) across both Web DOM and Print PDF modes."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#bindEvents",
+      "line_range": "1200-1245",
+      "recommended_read_window": [1190, 1255],
+      "operation": "EDIT",
+      "purpose": "Synchronize Excel export rows to match the new GPS format (no raw coordinates) and new Remarks rules."
+    }
+  ],
+  "verification_suite": [
+    "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs"
+  ]
+}
