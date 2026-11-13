@@ -146,6 +146,17 @@ export class ApprovalsController {
         const latNum = hasCoords ? Number(req.check_in_lat).toFixed(5) : null;
         const lngNum = hasCoords ? Number(req.check_in_lng).toFixed(5) : null;
 
+        const locMode = req.location_mode || (req.offsite_reason || (req.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(String(req.remark).trim())) ? 'OFFSITE' : 'ONSITE');
+        const isOffsite = locMode === 'OFFSITE';
+        const modeBadgeHtml = isOffsite
+            ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 mr-1 shrink-0">[นอกสถานที่]</span>`
+            : `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 mr-1 shrink-0">[ในสถานที่]</span>`;
+
+        let remarkDisplay = req.remark || '-';
+        if (isOffsite && req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
+            remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
+        }
+
         let commandColHtml = '';
         if (isPending) {
             commandColHtml = `
@@ -178,10 +189,10 @@ export class ApprovalsController {
                 </td>
                 <td class="text-xs">
                     <div class="flex items-start gap-1.5">
-                        <i class="fa-solid fa-location-dot text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0"></i>
+                        <i class="${isOffsite ? 'fa-solid fa-map-location-dot text-sky-600 dark:text-sky-400' : 'fa-solid fa-building-circle-check text-emerald-600 dark:text-emerald-400'} mt-0.5 shrink-0"></i>
                         <div class="min-w-0">
                             <div class="font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug" title="${locName}">
-                                ${locName}
+                                ${modeBadgeHtml}${locName}
                             </div>
                             ${hasCoords ? `
                                 <div class="mt-0.5 flex items-center gap-1.5 text-[11px] font-mono text-slate-500 dark:text-slate-400">
@@ -195,7 +206,7 @@ export class ApprovalsController {
                     </div>
                 </td>
                 <td>
-                    <span class="bma-badge bma-badge-indigo">${req.remark || '-'}</span>
+                    <span class="bma-badge bma-badge-indigo">${remarkDisplay}</span>
                 </td>
                 <td class="text-center">${commandColHtml}</td>
             </tr>

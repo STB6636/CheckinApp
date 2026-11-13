@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261113_04d9fb32';
+            const CURRENT_APP_BUILD = '20261113_96384181';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
@@ -103,7 +103,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261113_04d9fb32">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261113_96384181">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -132,7 +132,7 @@
                 </button>
                 <button type="button" class="settings-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700" data-tab-target="tab-panel-prefixes">
                     <i class="fa-solid fa-user-tag"></i>
-                    <span>4. คำนำหน้า &amp; หมายเหตุ</span>
+                    <span>4. คำนำหน้า, ลักษณะงาน &amp; หมายเหตุ</span>
                 </button>
                 <button type="button" class="settings-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700" data-tab-target="tab-panel-positions">
                     <i class="fa-solid fa-briefcase"></i>
@@ -548,15 +548,15 @@
                 </div>
             </div>
 
-            <!-- Tab Pane 4: คำนำหน้าชื่อ และหมายเหตุ -->
+            <!-- Tab Pane 4: คำนำหน้าชื่อ, ลักษณะงาน และเหตุผลกรณีพิเศษ -->
             <div id="tab-panel-prefixes" class="settings-tab-pane hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 mb-6">
-                    <!-- Prefixes -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8 mb-6">
+                    <!-- 1. คำนำหน้าชื่อ -->
                     <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60">
                         <div class="-mt-6 mx-4 rounded-2xl p-4 bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-900/30 flex items-center justify-between">
                             <div class="flex items-center gap-2.5">
                                 <i class="fa-solid fa-user-tag text-lg"></i>
-                                <h3 class="font-extrabold text-sm sm:text-base text-white">จัดการคำนำหน้าชื่อ</h3>
+                                <h3 class="font-extrabold text-sm sm:text-base text-white">1. คำนำหน้าชื่อ</h3>
                             </div>
                             <button type="button" id="btnAddPrefix" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-[#00744B] hover:bg-emerald-50 transition shadow-sm cursor-pointer">
                                 <i class="fa-solid fa-plus"></i> เพิ่มคำนำหน้า
@@ -568,20 +568,37 @@
                         </div>
                     </div>
 
-                    <!-- Remarks -->
+                    <!-- 2. ลักษณะงานนอกสถานที่ -->
                     <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60">
-                        <div class="-mt-6 mx-4 rounded-2xl p-4 bg-gradient-to-r from-[#0971CE] to-[#0284C7] text-white shadow-lg shadow-blue-900/30 flex items-center justify-between">
+                        <div class="-mt-6 mx-4 rounded-2xl p-4 bg-gradient-to-r from-[#0284C7] to-[#0EA5E9] text-white shadow-lg shadow-sky-900/30 flex items-center justify-between">
                             <div class="flex items-center gap-2.5">
-                                <i class="fa-solid fa-comment-dots text-lg"></i>
-                                <h3 class="font-extrabold text-sm sm:text-base text-white">จัดการตัวเลือกหมายเหตุ</h3>
+                                <i class="fa-solid fa-briefcase text-lg"></i>
+                                <h3 class="font-extrabold text-sm sm:text-base text-white">2. ลักษณะงานนอกสถานที่</h3>
                             </div>
-                            <button type="button" id="btnAddRemark" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-[#0971CE] hover:bg-blue-50 transition shadow-sm cursor-pointer">
-                                <i class="fa-solid fa-plus"></i> เพิ่มหมายเหตุ
+                            <button type="button" id="btnAddOffsiteJobType" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-[#0284C7] hover:bg-sky-50 transition shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> เพิ่มลักษณะงาน
                             </button>
                         </div>
                         <div class="p-5">
-                            <p class="text-xs text-slate-500 mb-3">กดปุ่มลูกศร ขึ้น/ลง เพื่อจัดลำดับการแสดงผลใน Dropdown</p>
-                            <div id="remarkListContainer" class="space-y-2"></div>
+                            <p class="text-xs text-slate-500 mb-3">สำหรับตัวเลือกลงเวลานอกสถานที่ (ปกติ และกรณีพิเศษ)</p>
+                            <div id="offsiteJobTypeListContainer" class="space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. เหตุผลลงเวลากรณีพิเศษ -->
+                    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60">
+                        <div class="-mt-6 mx-4 rounded-2xl p-4 bg-gradient-to-r from-[#D97706] to-[#F59E0B] text-white shadow-lg shadow-amber-900/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-file-circle-exclamation text-lg"></i>
+                                <h3 class="font-extrabold text-sm sm:text-base text-white">3. เหตุผลลงเวลากรณีพิเศษ</h3>
+                            </div>
+                            <button type="button" id="btnAddSpecialReason" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white text-[#D97706] hover:bg-amber-50 transition shadow-sm cursor-pointer">
+                                <i class="fa-solid fa-plus"></i> เพิ่มเหตุผล
+                            </button>
+                        </div>
+                        <div class="p-5">
+                            <p class="text-xs text-slate-500 mb-3">สำหรับตัวเลือกเหตุผลในการยื่นคำขอลงเวลากรณีพิเศษ</p>
+                            <div id="specialReasonListContainer" class="space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -747,7 +764,7 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261113_04d9fb32"></script>
+    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261113_96384181"></script>
 
     <!-- Robust Redundant Click Handler for Settings Tab Navigation -->
     <script>

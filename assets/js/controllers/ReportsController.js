@@ -431,6 +431,8 @@ export class ReportsController {
             if (rec.is_special_request) {
                 if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
                 if (rec.location_mode === 'ONSITE') return 'ONSITE';
+                const inheritedInMode = this.#resolveLocationMode(rec, 'check_in');
+                if (inheritedInMode) return inheritedInMode;
             }
 
             const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
@@ -442,6 +444,9 @@ export class ReportsController {
                 }
             }
             if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(rec.remark.trim())) {
+                return 'OFFSITE';
+            }
             return 'ONSITE';
         }
 
@@ -462,21 +467,25 @@ export class ReportsController {
         ]);
 
         if (rec.is_special_request) {
-            let reason = (rec.remark || rec.offsite_reason || '').trim();
-            if (reason === '-' || SUPPRESSED_STATUS_REMARKS.has(reason) || reason === 'กรณีพิเศษ' || reason === 'ปฏิบัติงานนอกสถานที่' || reason === 'นอกสถานที่') {
-                reason = (rec.offsite_reason && !SUPPRESSED_STATUS_REMARKS.has(rec.offsite_reason) && rec.offsite_reason !== '-' && rec.offsite_reason !== 'ปฏิบัติงานนอกสถานที่')
-                    ? rec.offsite_reason.trim()
-                    : ((reason !== 'กรณีพิเศษ' && reason !== '-' && !SUPPRESSED_STATUS_REMARKS.has(reason)) ? reason : '');
-            }
+            const rawRemark = (rec.remark || '').replace(/^กรณีพิเศษ\s*\((.*?)\)$/i, '$1').replace(/^กรณีพิเศษ\s*[-:—–/]?\s*/i, '').trim();
+            const rawOffsite = (rec.offsite_reason || '').trim();
 
-            reason = reason.replace(/^กรณีพิเศษ\s*\((.*?)\)$/i, '$1').replace(/^กรณีพิเศษ\s*[-:—–/]?\s*/i, '').trim();
+            const validRemark = (rawRemark && rawRemark !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawRemark) && rawRemark !== 'กรณีพิเศษ' && rawRemark !== 'ปฏิบัติงานนอกสถานที่' && rawRemark !== 'นอกสถานที่') ? rawRemark : '';
+            const validOffsite = (rawOffsite && rawOffsite !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawOffsite) && rawOffsite !== 'กรณีพิเศษ') ? rawOffsite : '';
+
+            let combinedReason = '';
+            if (validRemark && validOffsite && validRemark !== validOffsite && !validRemark.includes(validOffsite)) {
+                combinedReason = `${validRemark} (${validOffsite})`;
+            } else {
+                combinedReason = validRemark || validOffsite || '';
+            }
 
             if (forExcel) {
-                return reason ? `กรณีพิเศษ\n${reason}` : 'กรณีพิเศษ';
+                return combinedReason ? `กรณีพิเศษ\n${combinedReason}` : 'กรณีพิเศษ';
             }
 
-            return reason
-                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5" style="font-size: 10px; color: #475569;">${reason}</div>`
+            return combinedReason
+                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5" style="font-size: 10px; color: #475569;">${combinedReason}</div>`
                 : `<span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span>`;
         }
 

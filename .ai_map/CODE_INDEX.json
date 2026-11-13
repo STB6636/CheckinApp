@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-13T09:27:49.431Z",
-  "totalFilesScanned": 165,
-  "totalSymbolsIndexed": 838,
+  "generatedAt": "2026-11-13T11:01:06.354Z",
+  "totalFilesScanned": 168,
+  "totalSymbolsIndexed": 853,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "cdb4dc6d168e8e66",
+      "fileHash": "4e13b27fc07e3054",
       "totalLines": 214,
       "importsCount": 0,
       "importsPreview": [],
@@ -323,8 +323,8 @@
     {
       "filePath": "assets/js/controllers/ApprovalsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "63bfe5af8592fbd7",
-      "totalLines": 370,
+      "fileHash": "5354b21c8dde6203",
+      "totalLines": 381,
       "importsCount": 4,
       "importsPreview": [
         "import { UIHelpers } from '../core/UIHelpers.js';",
@@ -340,9 +340,9 @@
           "name": "ApprovalsController",
           "kind": "class",
           "startLine": 11,
-          "endLine": 366,
+          "endLine": 377,
           "signature": "export class ApprovalsController",
-          "summary": "Class Definition (356 lines)"
+          "summary": "Class Definition (367 lines)"
         },
         {
           "name": "ApprovalsController.constructor",
@@ -388,41 +388,41 @@
           "name": "ApprovalsController.#buildRequestRowHtml",
           "kind": "private method",
           "startLine": 136,
-          "endLine": 203,
+          "endLine": 214,
           "signature": "(req, indexNo) => any",
-          "summary": "private method L136-L203 (68 lines)"
+          "summary": "private method L136-L214 (79 lines)"
         },
         {
           "name": "ApprovalsController.syncRequestsSilent",
           "kind": "public async method",
-          "startLine": 205,
-          "endLine": 266,
+          "startLine": 216,
+          "endLine": 277,
           "signature": "(deltaDetail = null) => Promise<any>",
-          "summary": "public async method L205-L266 (62 lines)"
+          "summary": "public async method L216-L277 (62 lines)"
         },
         {
           "name": "ApprovalsController.#bindEvents",
           "kind": "private method",
-          "startLine": 268,
-          "endLine": 331,
+          "startLine": 279,
+          "endLine": 342,
           "signature": "() => any",
-          "summary": "private method L268-L331 (64 lines)"
+          "summary": "private method L279-L342 (64 lines)"
         },
         {
           "name": "ApprovalsController.#processDecision",
           "kind": "private async method",
-          "startLine": 333,
-          "endLine": 365,
+          "startLine": 344,
+          "endLine": 376,
           "signature": "(ids, decision) => Promise<any>",
-          "summary": "private async method L333-L365 (33 lines)"
+          "summary": "private async method L344-L376 (33 lines)"
         }
       ]
     },
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "a6bcabbebcf00a78",
-      "totalLines": 3878,
+      "fileHash": "5200120d30326b96",
+      "totalLines": 3984,
       "importsCount": 6,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -704,9 +704,9 @@
           "name": "#renderUserAndSettingsInfo",
           "kind": "private method",
           "startLine": 1382,
-          "endLine": 1471,
+          "endLine": 1513,
           "signature": "() => any",
-          "summary": "private method L1382-L1471 (90 lines)"
+          "summary": "private method L1382-L1513 (132 lines)"
         },
         {
           "name": "setElText",
@@ -719,338 +719,338 @@
         {
           "name": "#refreshAllAttendanceData",
           "kind": "private async method",
-          "startLine": 1473,
-          "endLine": 1490,
+          "startLine": 1515,
+          "endLine": 1532,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1473-L1490 (18 lines)"
+          "summary": "private async method L1515-L1532 (18 lines)"
         },
         {
           "name": "#updateStatusCardsAndMainButton",
           "kind": "private method",
-          "startLine": 1492,
-          "endLine": 1776,
+          "startLine": 1534,
+          "endLine": 1818,
           "signature": "() => any",
-          "summary": "private method L1492-L1776 (285 lines)"
+          "summary": "private method L1534-L1818 (285 lines)"
         },
         {
           "name": "applyGpsSearchingLock",
           "kind": "arrow_fn",
-          "startLine": 1519,
-          "endLine": 1529,
+          "startLine": 1561,
+          "endLine": 1571,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1519-L1529"
+          "summary": "Arrow Function L1561-L1571"
         },
         {
           "name": "setShiftCardVisibility",
           "kind": "arrow_fn",
-          "startLine": 1531,
-          "endLine": 1540,
+          "startLine": 1573,
+          "endLine": 1582,
           "signature": "(visible) => inferred",
-          "summary": "Arrow Function L1531-L1540"
+          "summary": "Arrow Function L1573-L1582"
         },
         {
           "name": "#renderPersonalAttendanceTabs",
           "kind": "private method",
-          "startLine": 1778,
-          "endLine": 1821,
+          "startLine": 1820,
+          "endLine": 1863,
           "signature": "() => any",
-          "summary": "private method L1778-L1821 (44 lines)"
+          "summary": "private method L1820-L1863 (44 lines)"
         },
         {
           "name": "#buildHistoryRowHtml",
           "kind": "private method",
-          "startLine": 1823,
-          "endLine": 1843,
+          "startLine": 1865,
+          "endLine": 1885,
           "signature": "(item, rowNumber) => any",
-          "summary": "private method L1823-L1843 (21 lines)"
+          "summary": "private method L1865-L1885 (21 lines)"
         },
         {
           "name": "#renderSpecialRequestsHistoryTable",
           "kind": "private method",
-          "startLine": 1845,
-          "endLine": 1887,
+          "startLine": 1887,
+          "endLine": 1934,
           "signature": "() => any",
-          "summary": "private method L1845-L1887 (43 lines)"
+          "summary": "private method L1887-L1934 (48 lines)"
         },
         {
           "name": "#openFullscreenCamera",
           "kind": "private async method",
-          "startLine": 1889,
-          "endLine": 1945,
+          "startLine": 1936,
+          "endLine": 1992,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1889-L1945 (57 lines)"
+          "summary": "private async method L1936-L1992 (57 lines)"
         },
         {
           "name": "#captureAndCloseCamera",
           "kind": "private method",
-          "startLine": 1947,
-          "endLine": 1987,
+          "startLine": 1994,
+          "endLine": 2034,
           "signature": "() => any",
-          "summary": "private method L1947-L1987 (41 lines)"
+          "summary": "private method L1994-L2034 (41 lines)"
         },
         {
           "name": "#closeFullscreenCamera",
           "kind": "private method",
-          "startLine": 1989,
-          "endLine": 1992,
+          "startLine": 2036,
+          "endLine": 2039,
           "signature": "() => any",
-          "summary": "private method L1989-L1992 (4 lines)"
+          "summary": "private method L2036-L2039 (4 lines)"
         },
         {
           "name": "#checkCameraHardware",
           "kind": "private async method",
-          "startLine": 1994,
-          "endLine": 2008,
+          "startLine": 2041,
+          "endLine": 2055,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1994-L2008 (15 lines)"
+          "summary": "private async method L2041-L2055 (15 lines)"
         },
         {
           "name": "#handleFallbackFileSelected",
           "kind": "private method",
-          "startLine": 2010,
-          "endLine": 2074,
+          "startLine": 2057,
+          "endLine": 2121,
           "signature": "(file) => any",
-          "summary": "private method L2010-L2074 (65 lines)"
+          "summary": "private method L2057-L2121 (65 lines)"
         },
         {
           "name": "#stopCameraHardwareStream",
           "kind": "private method",
-          "startLine": 2076,
-          "endLine": 2090,
+          "startLine": 2123,
+          "endLine": 2137,
           "signature": "() => any",
-          "summary": "private method L2076-L2090 (15 lines)"
+          "summary": "private method L2123-L2137 (15 lines)"
         },
         {
           "name": "#stopCameraAndShowStandby",
           "kind": "private method",
-          "startLine": 2092,
-          "endLine": 2118,
+          "startLine": 2139,
+          "endLine": 2165,
           "signature": "() => any",
-          "summary": "private method L2092-L2118 (27 lines)"
+          "summary": "private method L2139-L2165 (27 lines)"
         },
         {
           "name": "#openCameraOnDemand",
           "kind": "private async method",
-          "startLine": 2120,
-          "endLine": 2189,
+          "startLine": 2167,
+          "endLine": 2236,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2120-L2189 (70 lines)"
+          "summary": "private async method L2167-L2236 (70 lines)"
         },
         {
           "name": "#capturePhotoAndStopStream",
           "kind": "private method",
-          "startLine": 2191,
-          "endLine": 2223,
+          "startLine": 2238,
+          "endLine": 2270,
           "signature": "() => any",
-          "summary": "private method L2191-L2223 (33 lines)"
+          "summary": "private method L2238-L2270 (33 lines)"
         },
         {
           "name": "#resetPageAfterSave",
           "kind": "private async method",
-          "startLine": 2225,
-          "endLine": 2240,
+          "startLine": 2272,
+          "endLine": 2287,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2225-L2240 (16 lines)"
+          "summary": "private async method L2272-L2287 (16 lines)"
         },
         {
           "name": "#initGpsLocation",
           "kind": "private async method",
-          "startLine": 2248,
-          "endLine": 2405,
+          "startLine": 2295,
+          "endLine": 2452,
           "signature": "({ forceRefresh = false } = {}) => Promise<any>",
           "summary": "3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง [\"ใกล้เคียง \" + ชื่อซอย]"
         },
         {
           "name": "#renderInlineGpsMap",
           "kind": "private method",
-          "startLine": 2407,
-          "endLine": 2473,
+          "startLine": 2454,
+          "endLine": 2520,
           "signature": "(lat, lng) => any",
-          "summary": "private method L2407-L2473 (67 lines)"
+          "summary": "private method L2454-L2520 (67 lines)"
         },
         {
           "name": "#bindEvents",
           "kind": "private method",
-          "startLine": 2476,
-          "endLine": 2774,
+          "startLine": 2523,
+          "endLine": 2822,
           "signature": "() => any",
-          "summary": "private method L2476-L2774 (299 lines)"
+          "summary": "private method L2523-L2822 (300 lines)"
         },
         {
           "name": "openSpecialModal",
           "kind": "arrow_fn",
-          "startLine": 2639,
-          "endLine": 2642,
+          "startLine": 2686,
+          "endLine": 2689,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2639-L2642"
+          "summary": "Arrow Function L2686-L2689"
         },
         {
           "name": "setDesktopActiveTab",
           "kind": "arrow_fn",
-          "startLine": 2678,
-          "endLine": 2697,
+          "startLine": 2726,
+          "endLine": 2745,
           "signature": "(activeName) => inferred",
-          "summary": "Arrow Function L2678-L2697"
+          "summary": "Arrow Function L2726-L2745"
         },
         {
           "name": "openMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2708,
-          "endLine": 2726,
+          "startLine": 2756,
+          "endLine": 2774,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2708-L2726"
+          "summary": "Arrow Function L2756-L2774"
         },
         {
           "name": "closeMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2728,
-          "endLine": 2755,
+          "startLine": 2776,
+          "endLine": 2803,
           "signature": "(targetTab = null) => inferred",
-          "summary": "Arrow Function L2728-L2755"
+          "summary": "Arrow Function L2776-L2803"
         },
         {
           "name": "#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 2776,
-          "endLine": 3201,
+          "startLine": 2824,
+          "endLine": 3249,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2776-L3201 (426 lines)"
+          "summary": "private async method L2824-L3249 (426 lines)"
         },
         {
           "name": "#openSpecialRequestModal",
           "kind": "private method",
-          "startLine": 3203,
-          "endLine": 3270,
+          "startLine": 3251,
+          "endLine": 3328,
           "signature": "() => any",
-          "summary": "private method L3203-L3270 (68 lines)"
+          "summary": "private method L3251-L3328 (78 lines)"
         },
         {
           "name": "#initModalSpecialRequest",
           "kind": "private method",
-          "startLine": 3272,
-          "endLine": 3316,
+          "startLine": 3330,
+          "endLine": 3382,
           "signature": "() => any",
-          "summary": "private method L3272-L3316 (45 lines)"
+          "summary": "private method L3330-L3382 (53 lines)"
         },
         {
           "name": "#initSpecialModalGps",
           "kind": "private method",
-          "startLine": 3318,
-          "endLine": 3444,
+          "startLine": 3384,
+          "endLine": 3510,
           "signature": "() => any",
-          "summary": "private method L3318-L3444 (127 lines)"
+          "summary": "private method L3384-L3510 (127 lines)"
         },
         {
           "name": "updateCustomPinAndLocation",
           "kind": "async_arrow_fn",
-          "startLine": 3330,
-          "endLine": 3401,
+          "startLine": 3396,
+          "endLine": 3467,
           "signature": "(lat, lng, flyTo = false, explicitName = null, extent = null) => inferred",
-          "summary": "Arrow Function L3330-L3401"
+          "summary": "Arrow Function L3396-L3467"
         },
         {
           "name": "setupMapIfAvailable",
           "kind": "arrow_fn",
-          "startLine": 3403,
-          "endLine": 3438,
+          "startLine": 3469,
+          "endLine": 3504,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3403-L3438"
+          "summary": "Arrow Function L3469-L3504"
         },
         {
           "name": "getDistanceInMeters",
           "kind": "arrow_fn",
-          "startLine": 3463,
-          "endLine": 3482,
+          "startLine": 3529,
+          "endLine": 3548,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L3463-L3482"
+          "summary": "Arrow Function L3529-L3548"
         },
         {
           "name": "calculateDistance",
           "kind": "arrow_fn",
-          "startLine": 3484,
-          "endLine": 3493,
+          "startLine": 3550,
+          "endLine": 3559,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L3484-L3493"
+          "summary": "Arrow Function L3550-L3559"
         },
         {
           "name": "getCategoryLabel",
           "kind": "arrow_fn",
-          "startLine": 3495,
-          "endLine": 3534,
+          "startLine": 3561,
+          "endLine": 3600,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3495-L3534"
+          "summary": "Arrow Function L3561-L3600"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 3536,
-          "endLine": 3544,
+          "startLine": 3602,
+          "endLine": 3610,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L3536-L3544"
+          "summary": "Arrow Function L3602-L3610"
         },
         {
           "name": "formatSubAddress",
           "kind": "arrow_fn",
-          "startLine": 3546,
-          "endLine": 3562,
+          "startLine": 3612,
+          "endLine": 3628,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3546-L3562"
+          "summary": "Arrow Function L3612-L3628"
         },
         {
           "name": "getMainName",
           "kind": "arrow_fn",
-          "startLine": 3564,
-          "endLine": 3572,
+          "startLine": 3630,
+          "endLine": 3638,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3564-L3572"
+          "summary": "Arrow Function L3630-L3638"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 3574,
-          "endLine": 3579,
+          "startLine": 3640,
+          "endLine": 3645,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3574-L3579"
+          "summary": "Arrow Function L3640-L3645"
         },
         {
           "name": "bindResultItemClicks",
           "kind": "arrow_fn",
-          "startLine": 3581,
-          "endLine": 3601,
+          "startLine": 3647,
+          "endLine": 3667,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3581-L3601"
+          "summary": "Arrow Function L3647-L3667"
         },
         {
           "name": "renderCoordsResult",
           "kind": "arrow_fn",
-          "startLine": 3603,
-          "endLine": 3627,
+          "startLine": 3669,
+          "endLine": 3693,
           "signature": "(lat, lng) => inferred",
-          "summary": "Arrow Function L3603-L3627"
+          "summary": "Arrow Function L3669-L3693"
         },
         {
           "name": "renderPlaceResults",
           "kind": "arrow_fn",
-          "startLine": 3629,
-          "endLine": 3675,
+          "startLine": 3695,
+          "endLine": 3741,
           "signature": "(items) => inferred",
-          "summary": "Arrow Function L3629-L3675"
+          "summary": "Arrow Function L3695-L3741"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 3680,
-          "endLine": 3741,
+          "startLine": 3746,
+          "endLine": 3807,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3680-L3741"
+          "summary": "Arrow Function L3746-L3807"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 3781,
-          "endLine": 3873,
+          "startLine": 3847,
+          "endLine": 3979,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L3781-L3873 (93 lines)"
+          "summary": "private async method L3847-L3979 (133 lines)"
         }
       ]
     },
@@ -1587,8 +1587,8 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "837e7a1c74a7d47b",
-      "totalLines": 1573,
+      "fileHash": "b7bb4d8a0520829e",
+      "totalLines": 1582,
       "importsCount": 8,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -1608,9 +1608,9 @@
           "name": "ReportsController",
           "kind": "class",
           "startLine": 15,
-          "endLine": 1564,
+          "endLine": 1573,
           "signature": "export class ReportsController",
-          "summary": "Class Definition (1550 lines)"
+          "summary": "Class Definition (1559 lines)"
         },
         {
           "name": "ReportsController.constructor",
@@ -1744,137 +1744,137 @@
           "name": "ReportsController.#resolveLocationMode",
           "kind": "private method",
           "startLine": 397,
-          "endLine": 449,
+          "endLine": 454,
           "signature": "(rec, type = 'check_in') => any",
-          "summary": "private method L397-L449 (53 lines)"
+          "summary": "private method L397-L454 (58 lines)"
         },
         {
           "name": "ReportsController.#resolveReportRemark",
           "kind": "private method",
-          "startLine": 451,
-          "endLine": 501,
+          "startLine": 456,
+          "endLine": 510,
           "signature": "(rec, { forExcel = false } = {}) => any",
-          "summary": "private method L451-L501 (51 lines)"
+          "summary": "private method L456-L510 (55 lines)"
         },
         {
           "name": "ReportsController.#renderSeparateTablesBySelectedTags",
           "kind": "private method",
-          "startLine": 503,
-          "endLine": 571,
+          "startLine": 512,
+          "endLine": 580,
           "signature": "(forPrintPdf = false) => any",
-          "summary": "private method L503-L571 (69 lines)"
+          "summary": "private method L512-L580 (69 lines)"
         },
         {
           "name": "ReportsController.#renderSingleStatusTableHtml",
           "kind": "private method",
-          "startLine": 573,
-          "endLine": 701,
+          "startLine": 582,
+          "endLine": 710,
           "signature": "(statusMeta, statusColor, tagRecords, daySubtitle, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L573-L701 (129 lines)"
+          "summary": "private method L582-L710 (129 lines)"
         },
         {
           "name": "ReportsController.#buildGroupedRowsForTag",
           "kind": "private method",
-          "startLine": 703,
-          "endLine": 755,
+          "startLine": 712,
+          "endLine": 764,
           "signature": "(tagRecords, groupHeaderColor, forPrintPdf) => any",
-          "summary": "private method L703-L755 (53 lines)"
+          "summary": "private method L712-L764 (53 lines)"
         },
         {
           "name": "ReportsController.#buildSingleRowHtml",
           "kind": "private method",
-          "startLine": 757,
-          "endLine": 877,
+          "startLine": 766,
+          "endLine": 886,
           "signature": "(rec, indexNo, forPrintPdf) => any",
-          "summary": "private method L757-L877 (121 lines)"
+          "summary": "private method L766-L886 (121 lines)"
         },
         {
           "name": "ReportsController.#openResumeProfileForSpecificRow",
           "kind": "private method",
-          "startLine": 886,
-          "endLine": 1105,
+          "startLine": 895,
+          "endLine": 1114,
           "signature": "(rowUid) => any",
-          "summary": "private method L886-L1105 (220 lines)"
+          "summary": "private method L895-L1114 (220 lines)"
         },
         {
           "name": "setupPhotoBox",
           "kind": "arrow_fn",
-          "startLine": 955,
-          "endLine": 998,
+          "startLine": 964,
+          "endLine": 1007,
           "signature": "(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred",
-          "summary": "Arrow Function L955-L998"
+          "summary": "Arrow Function L964-L1007"
         },
         {
           "name": "setupGpsAndMap",
           "kind": "arrow_fn",
-          "startLine": 1052,
-          "endLine": 1082,
+          "startLine": 1061,
+          "endLine": 1091,
           "signature": "(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred",
-          "summary": "Arrow Function L1052-L1082"
+          "summary": "Arrow Function L1061-L1091"
         },
         {
           "name": "ReportsController.#closeResumeModal",
           "kind": "private method",
-          "startLine": 1107,
-          "endLine": 1117,
+          "startLine": 1116,
+          "endLine": 1126,
           "signature": "() => any",
-          "summary": "private method L1107-L1117 (11 lines)"
+          "summary": "private method L1116-L1126 (11 lines)"
         },
         {
           "name": "ReportsController.#openModal",
           "kind": "private method",
-          "startLine": 1119,
-          "endLine": 1151,
+          "startLine": 1128,
+          "endLine": 1160,
           "signature": "(rec = null) => any",
-          "summary": "private method L1119-L1151 (33 lines)"
+          "summary": "private method L1128-L1160 (33 lines)"
         },
         {
           "name": "ReportsController.#closeModal",
           "kind": "private method",
-          "startLine": 1153,
-          "endLine": 1155,
+          "startLine": 1162,
+          "endLine": 1164,
           "signature": "() => any",
-          "summary": "private method L1153-L1155 (3 lines)"
+          "summary": "private method L1162-L1164 (3 lines)"
         },
         {
           "name": "ReportsController.syncReportsSilent",
           "kind": "public async method",
-          "startLine": 1157,
-          "endLine": 1294,
+          "startLine": 1166,
+          "endLine": 1303,
           "signature": "(deltaDetail = null) => Promise<any>",
-          "summary": "public async method L1157-L1294 (138 lines)"
+          "summary": "public async method L1166-L1303 (138 lines)"
         },
         {
           "name": "ReportsController.#bindEvents",
           "kind": "private method",
-          "startLine": 1296,
-          "endLine": 1523,
+          "startLine": 1305,
+          "endLine": 1532,
           "signature": "() => any",
-          "summary": "private method L1296-L1523 (228 lines)"
+          "summary": "private method L1305-L1532 (228 lines)"
         },
         {
           "name": "triggerDebouncedReportSync",
           "kind": "arrow_fn",
-          "startLine": 1297,
-          "endLine": 1302,
+          "startLine": 1306,
+          "endLine": 1311,
           "signature": "(detail) => inferred",
-          "summary": "Arrow Function L1297-L1302"
+          "summary": "Arrow Function L1306-L1311"
         },
         {
           "name": "ReportsController.#handleSaveReportRecord",
           "kind": "private async method",
-          "startLine": 1525,
-          "endLine": 1563,
+          "startLine": 1534,
+          "endLine": 1572,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1525-L1563 (39 lines)"
+          "summary": "private async method L1534-L1572 (39 lines)"
         }
       ]
     },
     {
       "filePath": "assets/js/controllers/SettingsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "101345b0f959654a",
-      "totalLines": 1491,
+      "fileHash": "1a72884691614ab5",
+      "totalLines": 1617,
       "importsCount": 4,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -1890,9 +1890,9 @@
           "name": "SettingsController",
           "kind": "class",
           "startLine": 11,
-          "endLine": 1482,
+          "endLine": 1608,
           "signature": "export class SettingsController",
-          "summary": "Class Definition (1472 lines)"
+          "summary": "Class Definition (1598 lines)"
         },
         {
           "name": "SettingsController.constructor",
@@ -1914,9 +1914,9 @@
           "name": "SettingsController.#renderAllSettings",
           "kind": "private method",
           "startLine": 39,
-          "endLine": 170,
+          "endLine": 172,
           "signature": "() => any",
-          "summary": "private method L39-L170 (132 lines)"
+          "summary": "private method L39-L172 (134 lines)"
         },
         {
           "name": "syncEarlyWindowVisibility",
@@ -1937,250 +1937,266 @@
         {
           "name": "SettingsController.#updateColorPreviewBadges",
           "kind": "private method",
-          "startLine": 172,
-          "endLine": 188,
+          "startLine": 174,
+          "endLine": 190,
           "signature": "() => any",
-          "summary": "private method L172-L188 (17 lines)"
+          "summary": "private method L174-L190 (17 lines)"
         },
         {
           "name": "SettingsController.#syncCheckinModeUI",
           "kind": "private method",
-          "startLine": 193,
-          "endLine": 224,
+          "startLine": 195,
+          "endLine": 226,
           "signature": "(isSingleClick) => any",
           "summary": "ย่อข้อความป้าย Tag ให้เหลือแค่ \"รูปแบบพิเศษ\" หรือ \"รูปแบบปกติ\" เพื่อไม่ให้ล้นจอหรือเบียดข้อความในมือถือ"
         },
         {
           "name": "SettingsController.#updateLogoPreview",
           "kind": "private method",
-          "startLine": 226,
-          "endLine": 234,
+          "startLine": 228,
+          "endLine": 236,
           "signature": "(url) => any",
-          "summary": "private method L226-L234 (9 lines)"
+          "summary": "private method L228-L236 (9 lines)"
         },
         {
           "name": "SettingsController.#buildSortButtonsHtml",
           "kind": "private method",
-          "startLine": 236,
-          "endLine": 249,
+          "startLine": 238,
+          "endLine": 251,
           "signature": "(category, index, totalLength) => any",
-          "summary": "private method L236-L249 (14 lines)"
+          "summary": "private method L238-L251 (14 lines)"
         },
         {
           "name": "SettingsController.#renderPrefixes",
           "kind": "private method",
-          "startLine": 251,
-          "endLine": 271,
+          "startLine": 253,
+          "endLine": 273,
           "signature": "() => any",
-          "summary": "private method L251-L271 (21 lines)"
+          "summary": "private method L253-L273 (21 lines)"
         },
         {
           "name": "SettingsController.#renderRemarks",
           "kind": "private method",
-          "startLine": 273,
-          "endLine": 293,
+          "startLine": 275,
+          "endLine": 295,
           "signature": "() => any",
-          "summary": "private method L273-L293 (21 lines)"
+          "summary": "private method L275-L295 (21 lines)"
+        },
+        {
+          "name": "SettingsController.#renderOffsiteJobTypes",
+          "kind": "private method",
+          "startLine": 297,
+          "endLine": 320,
+          "signature": "() => any",
+          "summary": "private method L297-L320 (24 lines)"
+        },
+        {
+          "name": "SettingsController.#renderSpecialReasons",
+          "kind": "private method",
+          "startLine": 322,
+          "endLine": 345,
+          "signature": "() => any",
+          "summary": "private method L322-L345 (24 lines)"
         },
         {
           "name": "SettingsController.#renderShifts",
           "kind": "private method",
-          "startLine": 295,
-          "endLine": 347,
+          "startLine": 347,
+          "endLine": 399,
           "signature": "() => any",
-          "summary": "private method L295-L347 (53 lines)"
+          "summary": "private method L347-L399 (53 lines)"
         },
         {
           "name": "SettingsController.#renderPositions",
           "kind": "private method",
-          "startLine": 349,
-          "endLine": 370,
+          "startLine": 401,
+          "endLine": 422,
           "signature": "() => any",
-          "summary": "private method L349-L370 (22 lines)"
+          "summary": "private method L401-L422 (22 lines)"
         },
         {
           "name": "SettingsController.#renderAffiliations",
           "kind": "private method",
-          "startLine": 372,
-          "endLine": 394,
+          "startLine": 424,
+          "endLine": 446,
           "signature": "() => any",
-          "summary": "private method L372-L394 (23 lines)"
+          "summary": "private method L424-L446 (23 lines)"
         },
         {
           "name": "SettingsController.#renderOfficialLocations",
           "kind": "private method",
-          "startLine": 396,
-          "endLine": 460,
+          "startLine": 448,
+          "endLine": 512,
           "signature": "() => any",
-          "summary": "private method L396-L460 (65 lines)"
+          "summary": "private method L448-L512 (65 lines)"
         },
         {
           "name": "SettingsController.#openOfficialLocationModal",
           "kind": "private method",
-          "startLine": 462,
-          "endLine": 609,
+          "startLine": 514,
+          "endLine": 661,
           "signature": "(editIndex = null) => any",
-          "summary": "private method L462-L609 (148 lines)"
+          "summary": "private method L514-L661 (148 lines)"
         },
         {
           "name": "updateMapLink",
           "kind": "arrow_fn",
-          "startLine": 601,
-          "endLine": 606,
+          "startLine": 653,
+          "endLine": 658,
           "signature": "() => inferred",
-          "summary": "Arrow Function L601-L606"
+          "summary": "Arrow Function L653-L658"
         },
         {
           "name": "SettingsController.#collectMainAndColorFieldsIntoSettings",
           "kind": "private method",
-          "startLine": 611,
-          "endLine": 661,
+          "startLine": 663,
+          "endLine": 713,
           "signature": "() => any",
-          "summary": "private method L611-L661 (51 lines)"
+          "summary": "private method L663-L713 (51 lines)"
         },
         {
           "name": "SettingsController.#persistSettings",
           "kind": "private async method",
-          "startLine": 663,
-          "endLine": 686,
+          "startLine": 715,
+          "endLine": 738,
           "signature": "(showToastAlert = true) => Promise<any>",
-          "summary": "private async method L663-L686 (24 lines)"
+          "summary": "private async method L715-L738 (24 lines)"
         },
         {
           "name": "SettingsController.#openModal",
           "kind": "private method",
-          "startLine": 688,
-          "endLine": 693,
+          "startLine": 740,
+          "endLine": 745,
           "signature": "(title, bodyHtml, onSubmitCallback) => any",
-          "summary": "private method L688-L693 (6 lines)"
+          "summary": "private method L740-L745 (6 lines)"
         },
         {
           "name": "SettingsController.#closeModal",
           "kind": "private method",
-          "startLine": 695,
-          "endLine": 698,
+          "startLine": 747,
+          "endLine": 750,
           "signature": "() => any",
-          "summary": "private method L695-L698 (4 lines)"
+          "summary": "private method L747-L750 (4 lines)"
         },
         {
           "name": "SettingsController.#buildMultiRowInputsHtml",
           "kind": "private method",
-          "startLine": 700,
-          "endLine": 719,
+          "startLine": 752,
+          "endLine": 771,
           "signature": "(fieldLabel, placeholder) => any",
-          "summary": "private method L700-L719 (20 lines)"
+          "summary": "private method L752-L771 (20 lines)"
         },
         {
           "name": "SettingsController.#bindDynamicMultiRowEvents",
           "kind": "private method",
-          "startLine": 721,
-          "endLine": 749,
+          "startLine": 773,
+          "endLine": 801,
           "signature": "(placeholder = 'ระบุข้อมูล...') => any",
-          "summary": "private method L721-L749 (29 lines)"
+          "summary": "private method L773-L801 (29 lines)"
         },
         {
           "name": "SettingsController.#getDynamicMultiRowValues",
           "kind": "private method",
-          "startLine": 751,
-          "endLine": 756,
+          "startLine": 803,
+          "endLine": 808,
           "signature": "() => any",
-          "summary": "private method L751-L756 (6 lines)"
+          "summary": "private method L803-L808 (6 lines)"
         },
         {
           "name": "SettingsController.#bindEvents",
           "kind": "private method",
-          "startLine": 758,
-          "endLine": 1002,
+          "startLine": 810,
+          "endLine": 1128,
           "signature": "() => any",
-          "summary": "private method L758-L1002 (245 lines)"
+          "summary": "private method L810-L1128 (319 lines)"
         },
         {
           "name": "SettingsController.#openShiftModal",
           "kind": "private method",
-          "startLine": 1004,
-          "endLine": 1095,
+          "startLine": 1130,
+          "endLine": 1221,
           "signature": "(editIndex = null) => any",
-          "summary": "private method L1004-L1095 (92 lines)"
+          "summary": "private method L1130-L1221 (92 lines)"
         },
         {
           "name": "checkOvernightAuto",
           "kind": "arrow_fn",
-          "startLine": 1085,
-          "endLine": 1092,
+          "startLine": 1211,
+          "endLine": 1218,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1085-L1092"
+          "summary": "Arrow Function L1211-L1218"
         },
         {
           "name": "SettingsController.#openAddPositionStep1Modal",
           "kind": "private method",
-          "startLine": 1097,
-          "endLine": 1113,
+          "startLine": 1223,
+          "endLine": 1239,
           "signature": "() => any",
-          "summary": "private method L1097-L1113 (17 lines)"
+          "summary": "private method L1223-L1239 (17 lines)"
         },
         {
           "name": "SettingsController.#openAddPositionStep2Modal",
           "kind": "private method",
-          "startLine": 1115,
-          "endLine": 1158,
+          "startLine": 1241,
+          "endLine": 1284,
           "signature": "() => any",
-          "summary": "private method L1115-L1158 (44 lines)"
+          "summary": "private method L1241-L1284 (44 lines)"
         },
         {
           "name": "SettingsController.#openAddPositionStep3Modal",
           "kind": "private method",
-          "startLine": 1160,
-          "endLine": 1224,
+          "startLine": 1286,
+          "endLine": 1350,
           "signature": "() => any",
-          "summary": "private method L1160-L1224 (65 lines)"
+          "summary": "private method L1286-L1350 (65 lines)"
         },
         {
           "name": "SettingsController.#openEditSinglePositionModal",
           "kind": "private method",
-          "startLine": 1226,
-          "endLine": 1249,
+          "startLine": 1352,
+          "endLine": 1375,
           "signature": "(editIndex) => any",
-          "summary": "private method L1226-L1249 (24 lines)"
+          "summary": "private method L1352-L1375 (24 lines)"
         },
         {
           "name": "SettingsController.#openAddAffiliationStep1OrgModal",
           "kind": "private method",
-          "startLine": 1251,
-          "endLine": 1267,
+          "startLine": 1377,
+          "endLine": 1393,
           "signature": "() => any",
-          "summary": "private method L1251-L1267 (17 lines)"
+          "summary": "private method L1377-L1393 (17 lines)"
         },
         {
           "name": "SettingsController.#openAddAffiliationStep2BureauModal",
           "kind": "private method",
-          "startLine": 1269,
-          "endLine": 1307,
+          "startLine": 1395,
+          "endLine": 1433,
           "signature": "() => any",
-          "summary": "private method L1269-L1307 (39 lines)"
+          "summary": "private method L1395-L1433 (39 lines)"
         },
         {
           "name": "SettingsController.#openAddAffiliationStep3DivisionModal",
           "kind": "private method",
-          "startLine": 1309,
-          "endLine": 1365,
+          "startLine": 1435,
+          "endLine": 1491,
           "signature": "() => any",
-          "summary": "private method L1309-L1365 (57 lines)"
+          "summary": "private method L1435-L1491 (57 lines)"
         },
         {
           "name": "SettingsController.#openAddAffiliationStep4GroupModal",
           "kind": "private method",
-          "startLine": 1367,
-          "endLine": 1451,
+          "startLine": 1493,
+          "endLine": 1577,
           "signature": "() => any",
-          "summary": "private method L1367-L1451 (85 lines)"
+          "summary": "private method L1493-L1577 (85 lines)"
         },
         {
           "name": "SettingsController.#openEditSingleAffiliationModal",
           "kind": "private method",
-          "startLine": 1453,
-          "endLine": 1481,
+          "startLine": 1579,
+          "endLine": 1607,
           "signature": "(editIndex) => any",
-          "summary": "private method L1453-L1481 (29 lines)"
+          "summary": "private method L1579-L1607 (29 lines)"
         }
       ]
     },
@@ -2504,8 +2520,8 @@
     {
       "filePath": "assets/js/core/Config.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "d795be328d1e1e4c",
-      "totalLines": 100,
+      "fileHash": "fe6416909adb3d23",
+      "totalLines": 114,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [
@@ -2516,7 +2532,7 @@
           "name": "Config",
           "kind": "class",
           "startLine": 6,
-          "endLine": 100,
+          "endLine": 114,
           "signature": "export class Config",
           "summary": "คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.7"
         }
@@ -2875,8 +2891,8 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "bc451744e8e74bf7",
-      "totalLines": 2738,
+      "fileHash": "012263d6dbdde89a",
+      "totalLines": 2758,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -2893,9 +2909,9 @@
           "name": "AttendanceModel",
           "kind": "class",
           "startLine": 12,
-          "endLine": 2738,
+          "endLine": 2758,
           "signature": "export class AttendanceModel",
-          "summary": "Class Definition (2727 lines)"
+          "summary": "Class Definition (2747 lines)"
         },
         {
           "name": "AttendanceModel.clearLocationCache",
@@ -3109,113 +3125,113 @@
           "name": "AttendanceModel.getPersonalSpecialRequests",
           "kind": "static public async method",
           "startLine": 1628,
-          "endLine": 1654,
+          "endLine": 1674,
           "signature": "(personnelId, userId) => Promise<any>",
-          "summary": "static public async method L1628-L1654 (27 lines)"
+          "summary": "static public async method L1628-L1674 (47 lines)"
         },
         {
           "name": "AttendanceModel.deletePendingSpecialRequestByUser",
           "kind": "static public async method",
-          "startLine": 1656,
-          "endLine": 1690,
+          "startLine": 1676,
+          "endLine": 1710,
           "signature": "(logId, personnelId, userId) => Promise<any>",
-          "summary": "static public async method L1656-L1690 (35 lines)"
+          "summary": "static public async method L1676-L1710 (35 lines)"
         },
         {
           "name": "AttendanceModel.submitCheckinOrCheckout",
           "kind": "static public async method",
-          "startLine": 1692,
-          "endLine": 2110,
+          "startLine": 1712,
+          "endLine": 2130,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L1692-L2110 (419 lines)"
+          "summary": "static public async method L1712-L2130 (419 lines)"
         },
         {
           "name": "AttendanceModel.submitSpecialRequest",
           "kind": "static public async method",
-          "startLine": 2112,
-          "endLine": 2225,
+          "startLine": 2132,
+          "endLine": 2245,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L2112-L2225 (114 lines)"
+          "summary": "static public async method L2132-L2245 (114 lines)"
         },
         {
           "name": "AttendanceModel.getSpecialRequests",
           "kind": "static public async method",
-          "startLine": 2227,
-          "endLine": 2297,
+          "startLine": 2247,
+          "endLine": 2317,
           "signature": "(currentUser, statusFilter = 'pending') => Promise<any>",
-          "summary": "static public async method L2227-L2297 (71 lines)"
+          "summary": "static public async method L2247-L2317 (71 lines)"
         },
         {
           "name": "AttendanceModel.processSpecialRequestsBulk",
           "kind": "static public async method",
-          "startLine": 2299,
-          "endLine": 2368,
+          "startLine": 2319,
+          "endLine": 2388,
           "signature": "(logIds, decision, approverUserId) => Promise<any>",
-          "summary": "static public async method L2299-L2368 (70 lines)"
+          "summary": "static public async method L2319-L2388 (70 lines)"
         },
         {
           "name": "AttendanceModel.getDatesBetween",
           "kind": "static public method",
-          "startLine": 2370,
-          "endLine": 2387,
+          "startLine": 2390,
+          "endLine": 2407,
           "signature": "(startDate, endDate) => any",
-          "summary": "static public method L2370-L2387 (18 lines)"
+          "summary": "static public method L2390-L2407 (18 lines)"
         },
         {
           "name": "AttendanceModel.getReportRecordsByDateRange",
           "kind": "static public async method",
-          "startLine": 2389,
-          "endLine": 2460,
+          "startLine": 2409,
+          "endLine": 2480,
           "signature": "(startDate, endDate, currentUser) => Promise<any>",
-          "summary": "static public async method L2389-L2460 (72 lines)"
+          "summary": "static public async method L2409-L2480 (72 lines)"
         },
         {
           "name": "AttendanceModel.#formatReportRow",
           "kind": "static private method",
-          "startLine": 2462,
-          "endLine": 2511,
+          "startLine": 2482,
+          "endLine": 2531,
           "signature": "(person, log, workDate, evalStatus) => any",
-          "summary": "static private method L2462-L2511 (50 lines)"
+          "summary": "static private method L2482-L2531 (50 lines)"
         },
         {
           "name": "AttendanceModel.getDailyReportRecords",
           "kind": "static public async method",
-          "startLine": 2513,
-          "endLine": 2515,
+          "startLine": 2533,
+          "endLine": 2535,
           "signature": "(workDate, currentUser) => Promise<any>",
-          "summary": "static public async method L2513-L2515 (3 lines)"
+          "summary": "static public async method L2533-L2535 (3 lines)"
         },
         {
           "name": "AttendanceModel.saveAdminAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 2517,
-          "endLine": 2612,
+          "startLine": 2537,
+          "endLine": 2632,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L2517-L2612 (96 lines)"
+          "summary": "static public async method L2537-L2632 (96 lines)"
         },
         {
           "name": "AttendanceModel.deleteAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 2614,
-          "endLine": 2632,
+          "startLine": 2634,
+          "endLine": 2652,
           "signature": "(logId) => Promise<any>",
-          "summary": "static public async method L2614-L2632 (19 lines)"
+          "summary": "static public async method L2634-L2652 (19 lines)"
         },
         {
           "name": "AttendanceModel.calculateDashboardMetrics",
           "kind": "static public method",
-          "startLine": 2634,
-          "endLine": 2697,
+          "startLine": 2654,
+          "endLine": 2717,
           "signature": "(dailyRecords) => any",
-          "summary": "static public method L2634-L2697 (64 lines)"
+          "summary": "static public method L2654-L2717 (64 lines)"
         },
         {
           "name": "AttendanceModel.getTodaySyncWatermark",
           "kind": "static public async method",
-          "startLine": 2703,
-          "endLine": 2737,
+          "startLine": 2723,
+          "endLine": 2757,
           "signature": "() => Promise<any>",
-          "summary": "static public async method L2703-L2737 (35 lines)"
+          "summary": "static public async method L2723-L2757 (35 lines)"
         }
       ]
     },
@@ -3327,8 +3343,8 @@
     {
       "filePath": "assets/js/models/SettingsModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "a843eaaf96d9f574",
-      "totalLines": 411,
+      "fileHash": "e1ba560437d925d9",
+      "totalLines": 460,
       "importsCount": 3,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -3343,9 +3359,9 @@
           "name": "SettingsModel",
           "kind": "class",
           "startLine": 10,
-          "endLine": 411,
+          "endLine": 460,
           "signature": "export class SettingsModel",
-          "summary": "Class Definition (402 lines)"
+          "summary": "Class Definition (451 lines)"
         },
         {
           "name": "SettingsModel.formatShiftDisplayText",
@@ -3359,89 +3375,89 @@
           "name": "SettingsModel.getSettings",
           "kind": "static public async method",
           "startLine": 39,
-          "endLine": 172,
+          "endLine": 211,
           "signature": "(forceRefresh = false) => Promise<any>",
-          "summary": "static public async method L39-L172 (134 lines)"
+          "summary": "static public async method L39-L211 (173 lines)"
         },
         {
           "name": "SettingsModel.updateSettings",
           "kind": "static public async method",
-          "startLine": 174,
-          "endLine": 326,
+          "startLine": 213,
+          "endLine": 375,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L174-L326 (153 lines)"
+          "summary": "static public async method L213-L375 (163 lines)"
         },
         {
           "name": "SettingsModel.moveItemInArray",
           "kind": "static public method",
-          "startLine": 328,
-          "endLine": 337,
+          "startLine": 377,
+          "endLine": 386,
           "signature": "(arr, fromIndex, direction) => any",
-          "summary": "static public method L328-L337 (10 lines)"
+          "summary": "static public method L377-L386 (10 lines)"
         },
         {
           "name": "SettingsModel.fileToDataUrl",
           "kind": "static public method",
-          "startLine": 339,
-          "endLine": 346,
+          "startLine": 388,
+          "endLine": 395,
           "signature": "(file) => any",
-          "summary": "static public method L339-L346 (8 lines)"
+          "summary": "static public method L388-L395 (8 lines)"
         },
         {
           "name": "SettingsModel.getUniquePositionTypes",
           "kind": "static public method",
-          "startLine": 348,
-          "endLine": 351,
+          "startLine": 397,
+          "endLine": 400,
           "signature": "(settings) => any",
-          "summary": "static public method L348-L351 (4 lines)"
+          "summary": "static public method L397-L400 (4 lines)"
         },
         {
           "name": "SettingsModel.getUniquePositionTitles",
           "kind": "static public method",
-          "startLine": 353,
-          "endLine": 359,
+          "startLine": 402,
+          "endLine": 408,
           "signature": "(settings, filterType = '') => any",
-          "summary": "static public method L353-L359 (7 lines)"
+          "summary": "static public method L402-L408 (7 lines)"
         },
         {
           "name": "SettingsModel.getUniquePositionLevels",
           "kind": "static public method",
-          "startLine": 361,
-          "endLine": 370,
+          "startLine": 410,
+          "endLine": 419,
           "signature": "(settings, filterType = '', filterTitle = '') => any",
-          "summary": "static public method L361-L370 (10 lines)"
+          "summary": "static public method L410-L419 (10 lines)"
         },
         {
           "name": "SettingsModel.getUniqueOrganizations",
           "kind": "static public method",
-          "startLine": 372,
-          "endLine": 376,
+          "startLine": 421,
+          "endLine": 425,
           "signature": "(settings) => any",
-          "summary": "static public method L372-L376 (5 lines)"
+          "summary": "static public method L421-L425 (5 lines)"
         },
         {
           "name": "SettingsModel.getUniqueBureaus",
           "kind": "static public method",
-          "startLine": 378,
-          "endLine": 385,
+          "startLine": 427,
+          "endLine": 434,
           "signature": "(settings, filterOrg = '') => any",
-          "summary": "static public method L378-L385 (8 lines)"
+          "summary": "static public method L427-L434 (8 lines)"
         },
         {
           "name": "SettingsModel.getUniqueDivisions",
           "kind": "static public method",
-          "startLine": 387,
-          "endLine": 396,
+          "startLine": 436,
+          "endLine": 445,
           "signature": "(settings, filterBureau = '', filterOrg = '') => any",
-          "summary": "static public method L387-L396 (10 lines)"
+          "summary": "static public method L436-L445 (10 lines)"
         },
         {
           "name": "SettingsModel.getUniqueGroups",
           "kind": "static public method",
-          "startLine": 398,
-          "endLine": 410,
+          "startLine": 447,
+          "endLine": 459,
           "signature": "(settings, filterBureau = '', filterDivision = '', filterOrg = '') => any",
-          "summary": "static public method L398-L410 (13 lines)"
+          "summary": "static public method L447-L459 (13 lines)"
         }
       ]
     },
@@ -3614,8 +3630,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f3bcad44de5bc9e3",
-      "totalLines": 1031,
+      "fileHash": "2dcda5fee0e8fefb",
+      "totalLines": 1057,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3813,35 +3829,51 @@
           "summary": "HTML DOM Section L771-L780"
         },
         {
+          "name": "<div#spOnsiteSection>",
+          "kind": "html_dom_section",
+          "startLine": 808,
+          "endLine": 815,
+          "signature": "id=\"spOnsiteSection\"",
+          "summary": "HTML DOM Section L808-L815"
+        },
+        {
+          "name": "<div#spOffsiteSection>",
+          "kind": "html_dom_section",
+          "startLine": 818,
+          "endLine": 899,
+          "signature": "id=\"spOffsiteSection\"",
+          "summary": "HTML DOM Section L818-L899"
+        },
+        {
           "name": "<div#spOffsiteReasonContainer>",
           "kind": "html_dom_section",
-          "startLine": 803,
-          "endLine": 806,
+          "startLine": 819,
+          "endLine": 826,
           "signature": "id=\"spOffsiteReasonContainer\"",
-          "summary": "HTML DOM Section L803-L806"
+          "summary": "HTML DOM Section L819-L826"
         },
         {
           "name": "<div#spSearchWrapper>",
           "kind": "html_dom_section",
-          "startLine": 844,
-          "endLine": 850,
+          "startLine": 868,
+          "endLine": 874,
           "signature": "id=\"spSearchWrapper\"",
-          "summary": "HTML DOM Section L844-L850"
+          "summary": "HTML DOM Section L868-L874"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 900,
-          "endLine": 900,
+          "startLine": 926,
+          "endLine": 926,
           "signature": "<script>",
-          "summary": "Bootstrap script L900-L900"
+          "summary": "Bootstrap script L926-L926"
         }
       ]
     },
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bf1e2ec3cbc78fd1",
+      "fileHash": "c7d6c6807d0b41d5",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -4147,7 +4179,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bb66b256b89a7284",
+      "fileHash": "ffd1747e45eefc32",
       "totalLines": 379,
       "importsCount": 0,
       "importsPreview": [],
@@ -4206,7 +4238,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "06e8dec64cece2cc",
+      "fileHash": "c1fc36670d9b0d2d",
       "totalLines": 675,
       "importsCount": 0,
       "importsPreview": [],
@@ -8080,9 +8112,87 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_deep_adversarial_verification.mjs",
+      "layer": "Application Module",
+      "fileHash": "4562c61b56167fba",
+      "totalLines": 456,
+      "importsCount": 3,
+      "importsPreview": [
+        "import assert from 'assert';",
+        "import fs from 'fs';",
+        "import path from 'path';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "mockDbUpsert",
+          "kind": "async_arrow_fn",
+          "startLine": 24,
+          "endLine": 41,
+          "signature": "(payload) => inferred",
+          "summary": "Arrow Function L24-L41"
+        },
+        {
+          "name": "safeLoad",
+          "kind": "arrow_fn",
+          "startLine": 106,
+          "endLine": 113,
+          "signature": "(rawStored, defaultVal) => inferred",
+          "summary": "Safe loader logic"
+        },
+        {
+          "name": "formatReportRemark",
+          "kind": "arrow_fn",
+          "startLine": 147,
+          "endLine": 172,
+          "signature": "(rec, forExcel = false) => inferred",
+          "summary": "Arrow Function L147-L172"
+        },
+        {
+          "name": "formatApprovalsRowElements",
+          "kind": "arrow_fn",
+          "startLine": 220,
+          "endLine": 233,
+          "signature": "(req) => inferred",
+          "summary": "Arrow Function L220-L233"
+        },
+        {
+          "name": "evaluateCheckoutCoords",
+          "kind": "arrow_fn",
+          "startLine": 375,
+          "endLine": 388,
+          "signature": "(locMode, lat, lng, locName, randomizeGps) => inferred",
+          "summary": "Simulate ONSITE special request checkout logic"
+        },
+        {
+          "name": "formatApprovalsRemark",
+          "kind": "arrow_fn",
+          "startLine": 431,
+          "endLine": 440,
+          "signature": "(req) => inferred",
+          "summary": "Arrow Function L431-L440"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_split_dropdowns_verification.mjs",
+      "layer": "Application Module",
+      "fileHash": "0dfe8b171bf47e8f",
+      "totalLines": 103,
+      "importsCount": 4,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import assert from 'assert';",
+        "import { Config } from '../../assets/js/core/Config.js';"
+      ],
+      "exports": [],
+      "symbols": []
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "dc4e8ef14e0ac695",
+      "fileHash": "3efdd9b6c11c2bf0",
       "totalLines": 529,
       "importsCount": 0,
       "importsPreview": [],
@@ -8165,8 +8275,8 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "e4fee26ecc378b8f",
-      "totalLines": 807,
+      "fileHash": "81b7e992c728a3fb",
+      "totalLines": 824,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -8199,9 +8309,9 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 117,
-          "endLine": 721,
+          "endLine": 738,
           "signature": "<main>",
-          "summary": "HTML DOM Section L117-L721"
+          "summary": "HTML DOM Section L117-L738"
         },
         {
           "name": "<div#prefixListContainer>",
@@ -8212,28 +8322,36 @@
           "summary": "HTML DOM Section L567-L567"
         },
         {
-          "name": "<div#remarkListContainer>",
+          "name": "<div#offsiteJobTypeListContainer>",
           "kind": "html_dom_section",
           "startLine": 584,
           "endLine": 584,
-          "signature": "id=\"remarkListContainer\"",
+          "signature": "id=\"offsiteJobTypeListContainer\"",
           "summary": "HTML DOM Section L584-L584"
+        },
+        {
+          "name": "<div#specialReasonListContainer>",
+          "kind": "html_dom_section",
+          "startLine": 601,
+          "endLine": 601,
+          "signature": "id=\"specialReasonListContainer\"",
+          "summary": "HTML DOM Section L601-L601"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 723,
-          "endLine": 723,
+          "startLine": 740,
+          "endLine": 740,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L723-L723"
+          "summary": "HTML DOM Section L740-L740"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 750,
-          "endLine": 750,
+          "startLine": 767,
+          "endLine": 767,
           "signature": "<script>",
-          "summary": "Bootstrap script L750-L750"
+          "summary": "Bootstrap script L767-L767"
         }
       ]
     },
@@ -8356,8 +8474,8 @@
     {
       "filePath": "sql/create_staging_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "3922ac229dbcec8d",
-      "totalLines": 120,
+      "fileHash": "848511e7669bd05d",
+      "totalLines": 129,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -8443,92 +8561,108 @@
           "summary": "Schema Alteration L28-L29"
         },
         {
-          "name": "ALTER staging.attendance_logs (L50)",
+          "name": "ALTER staging.system_settings (L50)",
           "kind": "sql_alter",
           "startLine": 50,
-          "endLine": 51,
-          "signature": "ALTER TABLE staging.attendance_logs",
-          "summary": "Schema Alteration L50-L51"
+          "endLine": 52,
+          "signature": "ALTER TABLE staging.system_settings",
+          "summary": "Schema Alteration L50-L52"
         },
         {
-          "name": "ALTER staging.attendance_logs (L53)",
+          "name": "ALTER staging.system_settings (L54)",
           "kind": "sql_alter",
-          "startLine": 53,
-          "endLine": 54,
-          "signature": "ALTER TABLE staging.attendance_logs",
-          "summary": "Schema Alteration L53-L54"
+          "startLine": 54,
+          "endLine": 56,
+          "signature": "ALTER TABLE staging.system_settings",
+          "summary": "Schema Alteration L54-L56"
         },
         {
-          "name": "ALTER staging.attendance_logs (L56)",
+          "name": "ALTER staging.attendance_logs (L59)",
           "kind": "sql_alter",
-          "startLine": 56,
+          "startLine": 59,
           "endLine": 60,
           "signature": "ALTER TABLE staging.attendance_logs",
-          "summary": "Schema Alteration L56-L60"
+          "summary": "Schema Alteration L59-L60"
         },
         {
-          "name": "ALTER staging.system_settings (L63)",
+          "name": "ALTER staging.attendance_logs (L62)",
           "kind": "sql_alter",
-          "startLine": 63,
+          "startLine": 62,
           "endLine": 63,
-          "signature": "ALTER TABLE staging.system_settings ENABLE ROW LEVEL SECURIT",
-          "summary": "Schema Alteration L63-L63"
+          "signature": "ALTER TABLE staging.attendance_logs",
+          "summary": "Schema Alteration L62-L63"
         },
         {
-          "name": "ALTER staging.personnel (L64)",
-          "kind": "sql_alter",
-          "startLine": 64,
-          "endLine": 64,
-          "signature": "ALTER TABLE staging.personnel ENABLE ROW LEVEL SECURITY;",
-          "summary": "Schema Alteration L64-L64"
-        },
-        {
-          "name": "ALTER staging.user_accounts (L65)",
+          "name": "ALTER staging.attendance_logs (L65)",
           "kind": "sql_alter",
           "startLine": 65,
-          "endLine": 65,
-          "signature": "ALTER TABLE staging.user_accounts ENABLE ROW LEVEL SECURITY;",
-          "summary": "Schema Alteration L65-L65"
+          "endLine": 69,
+          "signature": "ALTER TABLE staging.attendance_logs",
+          "summary": "Schema Alteration L65-L69"
         },
         {
-          "name": "ALTER staging.attendance_logs (L66)",
+          "name": "ALTER staging.system_settings (L72)",
           "kind": "sql_alter",
-          "startLine": 66,
-          "endLine": 66,
+          "startLine": 72,
+          "endLine": 72,
+          "signature": "ALTER TABLE staging.system_settings ENABLE ROW LEVEL SECURIT",
+          "summary": "Schema Alteration L72-L72"
+        },
+        {
+          "name": "ALTER staging.personnel (L73)",
+          "kind": "sql_alter",
+          "startLine": 73,
+          "endLine": 73,
+          "signature": "ALTER TABLE staging.personnel ENABLE ROW LEVEL SECURITY;",
+          "summary": "Schema Alteration L73-L73"
+        },
+        {
+          "name": "ALTER staging.user_accounts (L74)",
+          "kind": "sql_alter",
+          "startLine": 74,
+          "endLine": 74,
+          "signature": "ALTER TABLE staging.user_accounts ENABLE ROW LEVEL SECURITY;",
+          "summary": "Schema Alteration L74-L74"
+        },
+        {
+          "name": "ALTER staging.attendance_logs (L75)",
+          "kind": "sql_alter",
+          "startLine": 75,
+          "endLine": 75,
           "signature": "ALTER TABLE staging.attendance_logs ENABLE ROW LEVEL SECURIT",
-          "summary": "Schema Alteration L66-L66"
+          "summary": "Schema Alteration L75-L75"
         },
         {
           "name": "POLICY \"staging_system_settings_all\" ON staging.system_settings",
           "kind": "sql_rls_policy",
-          "startLine": 70,
-          "endLine": 70,
+          "startLine": 79,
+          "endLine": 79,
           "signature": "ON staging.system_settings",
-          "summary": "Supabase RLS Policy L70-L70"
+          "summary": "Supabase RLS Policy L79-L79"
         },
         {
           "name": "POLICY \"staging_personnel_all\" ON staging.personnel",
           "kind": "sql_rls_policy",
-          "startLine": 73,
-          "endLine": 73,
+          "startLine": 82,
+          "endLine": 82,
           "signature": "ON staging.personnel",
-          "summary": "Supabase RLS Policy L73-L73"
+          "summary": "Supabase RLS Policy L82-L82"
         },
         {
           "name": "POLICY \"staging_user_accounts_all\" ON staging.user_accounts",
           "kind": "sql_rls_policy",
-          "startLine": 76,
-          "endLine": 76,
+          "startLine": 85,
+          "endLine": 85,
           "signature": "ON staging.user_accounts",
-          "summary": "Supabase RLS Policy L76-L76"
+          "summary": "Supabase RLS Policy L85-L85"
         },
         {
           "name": "POLICY \"staging_attendance_logs_all\" ON staging.attendance_logs",
           "kind": "sql_rls_policy",
-          "startLine": 79,
-          "endLine": 79,
+          "startLine": 88,
+          "endLine": 88,
           "signature": "ON staging.attendance_logs",
-          "summary": "Supabase RLS Policy L79-L79"
+          "summary": "Supabase RLS Policy L88-L88"
         }
       ]
     },
@@ -8588,6 +8722,33 @@
           "endLine": 20,
           "signature": "ALTER TABLE staging.attendance_logs",
           "summary": "Schema Alteration L18-L20"
+        }
+      ]
+    },
+    {
+      "filePath": "sql/migration_staging_split_dropdowns.sql",
+      "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
+      "fileHash": "b86ac35a324e0f5f",
+      "totalLines": 68,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "ALTER staging.system_settings (L9)",
+          "kind": "sql_alter",
+          "startLine": 9,
+          "endLine": 17,
+          "signature": "ALTER TABLE staging.system_settings",
+          "summary": "Schema Alteration L9-L17"
+        },
+        {
+          "name": "ALTER staging.system_settings (L20)",
+          "kind": "sql_alter",
+          "startLine": 20,
+          "endLine": 28,
+          "signature": "ALTER TABLE staging.system_settings",
+          "summary": "Schema Alteration L20-L28"
         }
       ]
     },
@@ -8757,7 +8918,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4feb23784e5e2950",
+      "fileHash": "4e42cc5266c34bce",
       "totalLines": 424,
       "importsCount": 0,
       "importsPreview": [],

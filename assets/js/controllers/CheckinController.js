@@ -764,14 +764,14 @@ export class CheckinController {
         const customRemarkBox = document.getElementById('offsiteCustomRemarkBox');
         const customRemarkInput = document.getElementById('offsiteCustomRemarkInput');
 
-        const remarks = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
-            ? this.settings.remarks
-            : ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
+        const offsiteJobTypes = (this.settings?.offsite_job_types && Array.isArray(this.settings.offsite_job_types) && this.settings.offsite_job_types.length > 0)
+            ? this.settings.offsite_job_types
+            : (Config.DEFAULT_SETTINGS.offsite_job_types || ['ปฏิบัติงานนอกสถานที่', 'อบรม/สัมมนา/ประชุมราชการ', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน', 'อื่นๆ']);
 
         if (selectEl) {
-            selectEl.innerHTML = remarks.map(r => `<option value="${r}">${r}</option>`).join('');
-            if (!remarks.includes('อื่นๆ')) {
-                selectEl.innerHTML += `<option value="อื่นๆ">อื่นๆ (ระบุหมายเหตุเพิ่มเติม)</option>`;
+            selectEl.innerHTML = offsiteJobTypes.map(r => `<option value="${r}">${r}</option>`).join('');
+            if (!offsiteJobTypes.includes('อื่นๆ')) {
+                selectEl.innerHTML += `<option value="อื่นๆ">อื่นๆ</option>`;
             }
             this.selectedOffsiteRemark = selectEl.value;
 
@@ -1456,12 +1456,54 @@ export class CheckinController {
             ).join('');
         }
 
-        const remarks = this.settings?.remarks || [];
+        const specialReasons = (this.settings?.special_request_reasons && Array.isArray(this.settings.special_request_reasons) && this.settings.special_request_reasons.length > 0)
+            ? this.settings.special_request_reasons
+            : (Config.DEFAULT_SETTINGS.special_request_reasons || ['ลืมลงเวลาปฏิบัติราชการ', 'โทรศัพท์/อุปกรณ์ขัดข้อง', 'ระบบอินเทอร์เน็ตขัดข้อง', 'ปฏิบัติงานภารกิจเร่งด่วน', 'อื่นๆ']);
         const spRemarkSelect = document.getElementById('spRemarkSelect');
         if (spRemarkSelect) {
-            spRemarkSelect.innerHTML = remarks.map(r =>
+            spRemarkSelect.innerHTML = specialReasons.map(r =>
                 `<option value="${r}">${r}</option>`
             ).join('');
+            if (!specialReasons.includes('อื่นๆ')) {
+                spRemarkSelect.innerHTML += `<option value="อื่นๆ">อื่นๆ</option>`;
+            }
+        }
+
+        const offsiteJobTypes = (this.settings?.offsite_job_types && Array.isArray(this.settings.offsite_job_types) && this.settings.offsite_job_types.length > 0)
+            ? this.settings.offsite_job_types
+            : (Config.DEFAULT_SETTINGS.offsite_job_types || ['ปฏิบัติงานนอกสถานที่', 'อบรม/สัมมนา/ประชุมราชการ', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน', 'อื่นๆ']);
+        const spOffsiteReasonSelect = document.getElementById('spOffsiteReasonSelect');
+        if (spOffsiteReasonSelect) {
+            spOffsiteReasonSelect.innerHTML = offsiteJobTypes.map(r =>
+                `<option value="${r}">${r}</option>`
+            ).join('');
+            if (!offsiteJobTypes.includes('อื่นๆ')) {
+                spOffsiteReasonSelect.innerHTML += `<option value="อื่นๆ">อื่นๆ</option>`;
+            }
+        }
+
+        const officialLocations = (this.settings?.official_locations && this.settings.official_locations.length > 0
+            ? this.settings.official_locations
+            : Config.DEFAULT_SETTINGS.official_locations || [])
+            .filter(loc => loc.is_active !== false);
+        const spOfficialLocSelect = document.getElementById('spOfficialLocationSelect');
+        if (spOfficialLocSelect) {
+            spOfficialLocSelect.innerHTML = officialLocations.map((loc, idx) =>
+                `<option value="${loc.id ?? idx}">${loc.name}</option>`
+            ).join('');
+        }
+
+        const offsiteRemarkSelect = document.getElementById('offsiteRemarkSelect');
+        if (offsiteRemarkSelect) {
+            const currentVal = offsiteRemarkSelect.value;
+            offsiteRemarkSelect.innerHTML = offsiteJobTypes.map(r => `<option value="${r}">${r}</option>`).join('');
+            if (!offsiteJobTypes.includes('อื่นๆ')) {
+                offsiteRemarkSelect.innerHTML += `<option value="อื่นๆ">อื่นๆ</option>`;
+            }
+            if (offsiteJobTypes.includes(currentVal) || currentVal === 'อื่นๆ') {
+                offsiteRemarkSelect.value = currentVal;
+            }
+            this.selectedOffsiteRemark = offsiteRemarkSelect.value;
         }
 
         const spWorkDate = document.getElementById('spWorkDate');
@@ -1872,13 +1914,18 @@ export class CheckinController {
 
             const timeRange = `${req.check_in_time || '-'} - ${req.check_out_time || '-'} น.`;
 
+            let remarkDisplay = req.remark || '-';
+            if (req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
+                remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
+            }
+
             return `
                 <tr>
                     <td class="text-center font-semibold">${idx + 1}</td>
                     <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</td>
                     <td class="font-semibold bma-text-main">${req.shift_name || '-'}</td>
                     <td class="text-center font-mono font-bold whitespace-nowrap">${timeRange}</td>
-                    <td><span class="bma-badge bma-badge-indigo">${req.remark || '-'}</span></td>
+                    <td><span class="bma-badge bma-badge-indigo">${remarkDisplay}</span></td>
                     <td class="text-center">${statusBadgeHtml}</td>
                     <td class="text-center whitespace-nowrap">${actionHtml}</td>
                 </tr>
@@ -2642,6 +2689,7 @@ export class CheckinController {
         };
 
         document.getElementById('btnOpenSpecialRequestModal')?.addEventListener('click', openSpecialModal);
+        document.getElementById('btnOpenSpecialFromDesktopTab')?.addEventListener('click', openSpecialModal);
         document.getElementById('btnCloseSpecialModal')?.addEventListener('click', closeSpecialModal);
         document.getElementById('btnCancelSpecialModal')?.addEventListener('click', closeSpecialModal);
 
@@ -3204,23 +3252,21 @@ export class CheckinController {
         this.specialModalLocationMode = 'ONSITE';
         const btnSpOnsite = document.getElementById('spModeOnsite');
         const btnSpOffsite = document.getElementById('spModeOffsite');
-        const spOffsiteContainer = document.getElementById('spOffsiteReasonContainer');
+        const spOnsiteSection = document.getElementById('spOnsiteSection');
+        const spOffsiteSection = document.getElementById('spOffsiteSection');
+        const spCustomRemarkBox = document.getElementById('spCustomRemarkBox');
+        const spCustomRemarkInput = document.getElementById('spCustomRemarkInput');
+        const spCustomOffsiteBox = document.getElementById('spCustomOffsiteReasonBox');
+        const spCustomOffsiteInput = document.getElementById('spCustomOffsiteReasonInput');
 
         if (btnSpOnsite) btnSpOnsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30';
         if (btnSpOffsite) btnSpOffsite.className = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
-        spOffsiteContainer?.classList.add('hidden');
-
-        const spOffSelect = document.getElementById('spOffsiteReasonSelect');
-        if (spOffSelect && spOffSelect.options.length === 0) {
-            const excluded = new Set(['ลืมลงเวลาปฏิบัติราชการ', 'โทรศัพท์/อุปกรณ์ขัดข้อง', 'ในสถานที่']);
-            let remarks = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
-                ? this.settings.remarks.filter(r => !excluded.has(r))
-                : ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
-            if (remarks.length === 0) {
-                remarks = ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
-            }
-            spOffSelect.innerHTML = remarks.map(r => `<option value="${r}">${r}</option>`).join('');
-        }
+        spOnsiteSection?.classList.remove('hidden');
+        spOffsiteSection?.classList.add('hidden');
+        spCustomRemarkBox?.classList.add('hidden');
+        if (spCustomRemarkInput) spCustomRemarkInput.value = '';
+        spCustomOffsiteBox?.classList.add('hidden');
+        if (spCustomOffsiteInput) spCustomOffsiteInput.value = '';
 
         const spWorkDate = document.getElementById('spWorkDate');
         if (spWorkDate && !spWorkDate.value) {
@@ -3232,7 +3278,19 @@ export class CheckinController {
             const hasForgot = Array.from(spRemarkSelect.options).some(o => o.value === 'ลืมลงเวลาปฏิบัติราชการ');
             if (hasForgot) {
                 spRemarkSelect.value = 'ลืมลงเวลาปฏิบัติราชการ';
+            } else if (spRemarkSelect.options.length > 0) {
+                spRemarkSelect.selectedIndex = 0;
             }
+        }
+
+        const spOffSelect = document.getElementById('spOffsiteReasonSelect');
+        if (spOffSelect && spOffSelect.options.length > 0) {
+            spOffSelect.selectedIndex = 0;
+        }
+
+        const spOfficialLocSelect = document.getElementById('spOfficialLocationSelect');
+        if (spOfficialLocSelect && spOfficialLocSelect.options.length > 0) {
+            spOfficialLocSelect.selectedIndex = 0;
         }
 
         this.specialModalGps.mode = 'current';
@@ -3272,8 +3330,8 @@ export class CheckinController {
     #initModalSpecialRequest() {
         const btnSpOnsite = document.getElementById('spModeOnsite');
         const btnSpOffsite = document.getElementById('spModeOffsite');
-        const spOffsiteContainer = document.getElementById('spOffsiteReasonContainer');
-        const spOffSelect = document.getElementById('spOffsiteReasonSelect');
+        const spOnsiteSection = document.getElementById('spOnsiteSection');
+        const spOffsiteSection = document.getElementById('spOffsiteSection');
 
         const activeOnsiteClass = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all shadow-sm bg-white dark:bg-slate-800 text-[#00744B] dark:text-emerald-400 border border-emerald-500/30';
         const inactiveClass = 'py-2 px-3 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
@@ -3283,36 +3341,44 @@ export class CheckinController {
             this.specialModalLocationMode = 'ONSITE';
             if (btnSpOnsite) btnSpOnsite.className = activeOnsiteClass;
             if (btnSpOffsite) btnSpOffsite.className = inactiveClass;
-            spOffsiteContainer?.classList.add('hidden');
-            const spRemarkSelect = document.getElementById('spRemarkSelect');
-            if (spRemarkSelect && spRemarkSelect.value === 'ปฏิบัติงานนอกสถานที่') {
-                const hasForgot = Array.from(spRemarkSelect.options).some(o => o.value === 'ลืมลงเวลาปฏิบัติราชการ');
-                if (hasForgot) spRemarkSelect.value = 'ลืมลงเวลาปฏิบัติราชการ';
-            }
+            spOnsiteSection?.classList.remove('hidden');
+            spOffsiteSection?.classList.add('hidden');
         });
 
         btnSpOffsite?.addEventListener('click', () => {
             this.specialModalLocationMode = 'OFFSITE';
             if (btnSpOffsite) btnSpOffsite.className = activeOffsiteClass;
             if (btnSpOnsite) btnSpOnsite.className = inactiveClass;
-            spOffsiteContainer?.classList.remove('hidden');
-            const spRemarkSelect = document.getElementById('spRemarkSelect');
-            if (spRemarkSelect && spRemarkSelect.value === 'ลืมลงเวลาปฏิบัติราชการ') {
-                const hasOffsite = Array.from(spRemarkSelect.options).some(o => o.value === 'ปฏิบัติงานนอกสถานที่');
-                if (hasOffsite) spRemarkSelect.value = 'ปฏิบัติงานนอกสถานที่';
+            spOnsiteSection?.classList.add('hidden');
+            spOffsiteSection?.classList.remove('hidden');
+            if (this.spLeafletMap) {
+                setTimeout(() => this.spLeafletMap.invalidateSize(), 150);
             }
         });
 
-        if (spOffSelect && spOffSelect.options.length === 0) {
-            const excluded = new Set(['ลืมลงเวลาปฏิบัติราชการ', 'โทรศัพท์/อุปกรณ์ขัดข้อง', 'ในสถานที่']);
-            let remarks = (this.settings?.remarks && Array.isArray(this.settings.remarks) && this.settings.remarks.length > 0)
-                ? this.settings.remarks.filter(r => !excluded.has(r))
-                : ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
-            if (remarks.length === 0) {
-                remarks = ['ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานนอกสถานที่ (WFA)', 'ไปประชุม / สัมมนา / ฝึกอบรม', 'ตรวจพื้นที่ / ตรวจราชการภายนอก', 'อื่นๆ'];
+        const spRemarkSelect = document.getElementById('spRemarkSelect');
+        const spCustomRemarkBox = document.getElementById('spCustomRemarkBox');
+        const spCustomRemarkInput = document.getElementById('spCustomRemarkInput');
+        spRemarkSelect?.addEventListener('change', () => {
+            if (spRemarkSelect.value === 'อื่นๆ') {
+                spCustomRemarkBox?.classList.remove('hidden');
+                spCustomRemarkInput?.focus();
+            } else {
+                spCustomRemarkBox?.classList.add('hidden');
             }
-            spOffSelect.innerHTML = remarks.map(r => `<option value="${r}">${r}</option>`).join('');
-        }
+        });
+
+        const spOffSelect = document.getElementById('spOffsiteReasonSelect');
+        const spCustomOffBox = document.getElementById('spCustomOffsiteReasonBox');
+        const spCustomOffInput = document.getElementById('spCustomOffsiteReasonInput');
+        spOffSelect?.addEventListener('change', () => {
+            if (spOffSelect.value === 'อื่นๆ') {
+                spCustomOffBox?.classList.remove('hidden');
+                spCustomOffInput?.focus();
+            } else {
+                spCustomOffBox?.classList.add('hidden');
+            }
+        });
     }
 
     #initSpecialModalGps() {
@@ -3790,7 +3856,6 @@ export class CheckinController {
             is_custom: false,
             is_overtime: false
         };
-        const remark = document.getElementById('spRemarkSelect').value;
 
         let checkInTime = shiftObj.check_in || this.settings.standard_check_in || '08:30';
         let checkOutTime = shiftObj.check_out || this.settings.standard_check_out || '16:30';
@@ -3798,6 +3863,72 @@ export class CheckinController {
         if (shiftObj.is_custom || String(shiftObj.name || '').includes('อื่นๆ')) {
             checkInTime = UIHelpers.formatTime24(document.getElementById('spCustomCheckin').value || '08:30');
             checkOutTime = UIHelpers.formatTime24(document.getElementById('spCustomCheckout').value || '16:30');
+        }
+
+        const locationMode = this.specialModalLocationMode || 'ONSITE';
+        let finalLat = null;
+        let finalLng = null;
+        let finalLocName = 'ขอลงเวลากรณีพิเศษ';
+        let offsiteReason = null;
+        let distanceMeters = null;
+
+        if (locationMode === 'ONSITE') {
+            const officialLocations = (this.settings?.official_locations && this.settings.official_locations.length > 0
+                ? this.settings.official_locations
+                : Config.DEFAULT_SETTINGS?.official_locations || [])
+                .filter(loc => loc.is_active !== false);
+            const fallbackLoc = officialLocations[0] || Config.DEFAULT_SETTINGS?.official_locations?.[0];
+            const selectedVal = document.getElementById('spOfficialLocationSelect')?.value;
+            const selectedLoc = officialLocations.find((loc, idx) => String(loc.id ?? idx) === String(selectedVal)) || fallbackLoc;
+
+            if (selectedLoc) {
+                finalLat = selectedLoc.latitude;
+                finalLng = selectedLoc.longitude;
+                finalLocName = selectedLoc.name;
+            }
+            distanceMeters = 0;
+            offsiteReason = null;
+        } else {
+            // OFFSITE mode
+            if (this.specialModalGps?.mode === 'custom' && this.specialModalGps.customLat != null && this.specialModalGps.customLng != null) {
+                finalLat = this.specialModalGps.customLat;
+                finalLng = this.specialModalGps.customLng;
+                finalLocName = (this.specialModalGps.customLocationName || 'พิกัดกำหนดเอง').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
+            } else {
+                finalLat = this.settings.require_gps ? this.gpsData.lat : null;
+                finalLng = this.settings.require_gps ? this.gpsData.lng : null;
+                finalLocName = (this.settings.require_gps && this.gpsData.locationName) ? this.gpsData.locationName : 'ขอลงเวลากรณีพิเศษ (นอกสถานที่)';
+            }
+
+            if (this.settings.require_gps && (finalLat == null || finalLng == null)) {
+                await UIHelpers.alert('ไม่พบข้อมูลพิกัด GPS', 'กรุณารอระบบระบุพิกัด GPS ปัจจุบัน หรือเลือก "ค้นหาสถานที่ด้วยตัวเอง" บนแผนที่', 'warning');
+                return;
+            }
+
+            const offReasonSelect = document.getElementById('spOffsiteReasonSelect');
+            const customOffReasonInput = document.getElementById('spCustomOffsiteReasonInput');
+            let rawOffReason = offReasonSelect?.value || 'ปฏิบัติงานนอกสถานที่';
+            if (rawOffReason === 'อื่นๆ') {
+                const customVal = customOffReasonInput?.value?.trim();
+                if (!customVal) {
+                    await UIHelpers.alert('กรุณาระบุลักษณะงาน', 'กรุณาระบุลักษณะงานนอกสถานที่เพิ่มเติมในช่อง "ระบุลักษณะงานเพิ่มเติม"', 'warning');
+                    return;
+                }
+                rawOffReason = `อื่นๆ: ${customVal}`;
+            }
+            offsiteReason = rawOffReason;
+            distanceMeters = null;
+        }
+
+        let finalRemark = document.getElementById('spRemarkSelect')?.value || 'ขอลงเวลากรณีพิเศษ';
+        const customRemarkInput = document.getElementById('spCustomRemarkInput');
+        if (finalRemark === 'อื่นๆ') {
+            const customVal = customRemarkInput?.value?.trim();
+            if (!customVal) {
+                await UIHelpers.alert('กรุณาระบุเหตุผล', 'กรุณาระบุเหตุผลคำขอกรณีพิเศษในช่อง "ระบุเหตุผลเพิ่มเติม"', 'warning');
+                return;
+            }
+            finalRemark = `อื่นๆ: ${customVal}`;
         }
 
         UIHelpers.showLoading('กำลังส่งคำขอลงเวลากรณีพิเศษ กรุณารอสักครู่...');
@@ -3811,31 +3942,6 @@ export class CheckinController {
                 );
             }
 
-            let finalLat = null;
-            let finalLng = null;
-            let finalLocName = 'ขอลงเวลากรณีพิเศษ';
-
-            if (this.specialModalGps?.mode === 'custom' && this.specialModalGps.customLat != null && this.specialModalGps.customLng != null) {
-                finalLat = this.specialModalGps.customLat;
-                finalLng = this.specialModalGps.customLng;
-                finalLocName = (this.specialModalGps.customLocationName || 'พิกัดกำหนดเอง').replace(/^(ใกล้เคียง|บริเวณ)\s*/, '').trim();
-            } else {
-                finalLat = this.settings.require_gps ? this.gpsData.lat : null;
-                finalLng = this.settings.require_gps ? this.gpsData.lng : null;
-                finalLocName = (this.settings.require_gps && this.gpsData.locationName) ? this.gpsData.locationName : 'ขอลงเวลากรณีพิเศษ';
-            }
-
-            const locationMode = this.specialModalLocationMode || 'ONSITE';
-            const offsiteReason = locationMode === 'OFFSITE'
-                ? (document.getElementById('spOffsiteReasonSelect')?.value || remark)
-                : null;
-
-            let distanceMeters = null;
-            if (locationMode === 'ONSITE' && finalLat != null && finalLng != null) {
-                const geofence = this.evaluateOnsiteGeofence(finalLat, finalLng);
-                distanceMeters = geofence?.distanceMeters ?? 0;
-            }
-
             const res = await AttendanceModel.submitSpecialRequest({
                 personnel_id: this.currentUser.personnel_id,
                 user_id: this.currentUser.id,
@@ -3844,7 +3950,7 @@ export class CheckinController {
                 check_in_time: checkInTime,
                 check_out_time: checkOutTime,
                 is_overtime: Boolean(shiftObj.is_overtime),
-                remark,
+                remark: finalRemark,
                 photo_url: finalPhotoUrl,
                 lat: finalLat,
                 lng: finalLng,

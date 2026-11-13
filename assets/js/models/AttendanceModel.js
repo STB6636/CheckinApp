@@ -1627,9 +1627,12 @@ export class AttendanceModel {
 
     static async getPersonalSpecialRequests(personnelId, userId) {
         const db = DatabaseService.getInstance().client;
+        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_in_lat, check_in_lng, status, remark, location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason, is_overtime, is_special_request, approval_status, created_at';
+        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, status, remark, is_overtime, is_special_request, approval_status, created_at';
+
         let query = db
             .from('attendance_logs')
-            .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, status, remark, is_overtime, is_special_request, approval_status, created_at')
+            .select(selectWithLocMode)
             .eq('is_special_request', true)
             .order('work_date', { ascending: false })
             .order('created_at', { ascending: false });
@@ -1640,7 +1643,24 @@ export class AttendanceModel {
             query = query.eq('user_id', userId);
         }
 
-        const { data, error } = await query;
+        let { data, error } = await query;
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+            let fallbackQuery = db
+                .from('attendance_logs')
+                .select(selectFallback)
+                .eq('is_special_request', true)
+                .order('work_date', { ascending: false })
+                .order('created_at', { ascending: false });
+
+            if (personnelId) {
+                fallbackQuery = fallbackQuery.eq('personnel_id', personnelId);
+            } else if (userId) {
+                fallbackQuery = fallbackQuery.eq('user_id', userId);
+            }
+            const fallbackRes = await fallbackQuery;
+            data = fallbackRes.data;
+            error = fallbackRes.error;
+        }
         if (error) {
             console.error('Error fetching personal special requests:', error);
             return [];
@@ -2124,11 +2144,16 @@ export class AttendanceModel {
         const checkIn24 = UIHelpers.formatTime24(payload.check_in_time || settings.standard_check_in || '08:30');
         const checkOut24 = UIHelpers.formatTime24(payload.check_out_time || settings.standard_check_out || '16:30');
 
+        const locMode = payload.location_mode || 'ONSITE';
+        const outLocMode = payload.check_out_location_mode || locMode;
+        const offReason = payload.offsite_reason || null;
+        const outOffReason = payload.check_out_offsite_reason || offReason;
+
         let outLat = payload.lat ?? null;
         let outLng = payload.lng ?? null;
         let outLocName = payload.location_name || 'ขอลงเวลากรณีพิเศษ';
 
-        if (settings.randomize_gps_checkout && payload.lat != null && payload.lng != null) {
+        if (locMode === 'OFFSITE' && settings.randomize_gps_checkout && payload.lat != null && payload.lng != null) {
             const numLat = Number(payload.lat);
             const numLng = Number(payload.lng);
             if (!isNaN(numLat) && !isNaN(numLng)) {
@@ -2141,11 +2166,6 @@ export class AttendanceModel {
                 }
             }
         }
-
-        const locMode = payload.location_mode || 'ONSITE';
-        const outLocMode = payload.check_out_location_mode || locMode;
-        const offReason = payload.offsite_reason || null;
-        const outOffReason = payload.check_out_offsite_reason || offReason;
         const distIn = (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null)
             ? Number(payload.distance_from_official_meters)
             : null;

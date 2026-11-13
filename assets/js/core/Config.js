@@ -79,6 +79,20 @@ export class Config {
             'โทรศัพท์/อุปกรณ์ขัดข้อง',
             'อื่นๆ'
         ],
+        offsite_job_types: [
+            'ปฏิบัติงานนอกสถานที่',
+            'อบรม/สัมมนา/ประชุมราชการ',
+            'ปฏิบัติงานที่บ้าน (WFH)',
+            'ปฏิบัติงานเวรประจำวัน',
+            'อื่นๆ'
+        ],
+        special_request_reasons: [
+            'ลืมลงเวลาปฏิบัติราชการ',
+            'โทรศัพท์/อุปกรณ์ขัดข้อง',
+            'ระบบอินเทอร์เน็ตขัดข้อง',
+            'ปฏิบัติงานภารกิจเร่งด่วน',
+            'อื่นๆ'
+        ],
         work_shifts: [
             { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },
             { name: 'ผลัดเช้า', check_in: '06:00', check_out: '14:00', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },

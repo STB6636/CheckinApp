@@ -163,6 +163,8 @@ export class SettingsController {
         this.#updateLogoPreview(this.settings.logo_url);
         this.#renderPrefixes();
         this.#renderRemarks();
+        this.#renderOffsiteJobTypes();
+        this.#renderSpecialReasons();
         this.#renderShifts();
         this.#renderPositions();
         this.#renderAffiliations();
@@ -285,6 +287,56 @@ export class SettingsController {
                         <i class="fa-solid fa-pen"></i>
                     </button>
                     <button type="button" data-action="delete-remark" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    #renderOffsiteJobTypes() {
+        const container = document.getElementById('offsiteJobTypeListContainer');
+        if (!container) return;
+        if (!Array.isArray(this.settings.offsite_job_types) || this.settings.offsite_job_types.length === 0) {
+            this.settings.offsite_job_types = [...(Config.DEFAULT_SETTINGS.offsite_job_types || [])];
+        }
+        const jobTypes = this.settings.offsite_job_types;
+        container.innerHTML = jobTypes.map((jobType, idx) => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl border bma-border text-sm">
+                <div class="flex items-center gap-2.5">
+                    ${this.#buildSortButtonsHtml('offsite_job_types', idx, jobTypes.length)}
+                    <span class="font-semibold bma-text-main">${idx + 1}. ${jobType}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" data-action="edit-offsite-job-type" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" data-action="delete-offsite-job-type" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    #renderSpecialReasons() {
+        const container = document.getElementById('specialReasonListContainer');
+        if (!container) return;
+        if (!Array.isArray(this.settings.special_request_reasons) || this.settings.special_request_reasons.length === 0) {
+            this.settings.special_request_reasons = [...(Config.DEFAULT_SETTINGS.special_request_reasons || [])];
+        }
+        const reasons = this.settings.special_request_reasons;
+        container.innerHTML = reasons.map((reason, idx) => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl border bma-border text-sm">
+                <div class="flex items-center gap-2.5">
+                    ${this.#buildSortButtonsHtml('special_request_reasons', idx, reasons.length)}
+                    <span class="font-semibold bma-text-main">${idx + 1}. ${reason}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" data-action="edit-special-reason" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-amber-500" title="แก้ไข">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" data-action="delete-special-reason" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
@@ -901,6 +953,42 @@ export class SettingsController {
             this.#bindDynamicMultiRowEvents('เช่น ปฏิบัติราชการนอกสถานที่');
         });
 
+        document.getElementById('btnAddOffsiteJobType')?.addEventListener('click', () => {
+            this.#openModal(
+                'เพิ่มลักษณะงานนอกสถานที่',
+                this.#buildMultiRowInputsHtml('ลักษณะงานนอกสถานที่', 'เช่น ปฏิบัติงานนอกสถานที่, อบรม/สัมมนา'),
+                async () => {
+                    const values = this.#getDynamicMultiRowValues();
+                    if (values.length > 0) {
+                        if (!Array.isArray(this.settings.offsite_job_types)) {
+                            this.settings.offsite_job_types = [...(Config.DEFAULT_SETTINGS.offsite_job_types || [])];
+                        }
+                        this.settings.offsite_job_types.push(...values);
+                        await this.#persistSettings(true);
+                    }
+                }
+            );
+            this.#bindDynamicMultiRowEvents('เช่น ปฏิบัติงานนอกสถานที่, อบรม/สัมมนา');
+        });
+
+        document.getElementById('btnAddSpecialReason')?.addEventListener('click', () => {
+            this.#openModal(
+                'เพิ่มเหตุผลลงเวลากรณีพิเศษ',
+                this.#buildMultiRowInputsHtml('เหตุผลลงเวลากรณีพิเศษ', 'เช่น ลืมลงเวลาปฏิบัติราชการ, โทรศัพท์ขัดข้อง'),
+                async () => {
+                    const values = this.#getDynamicMultiRowValues();
+                    if (values.length > 0) {
+                        if (!Array.isArray(this.settings.special_request_reasons)) {
+                            this.settings.special_request_reasons = [...(Config.DEFAULT_SETTINGS.special_request_reasons || [])];
+                        }
+                        this.settings.special_request_reasons.push(...values);
+                        await this.#persistSettings(true);
+                    }
+                }
+            );
+            this.#bindDynamicMultiRowEvents('เช่น ลืมลงเวลาปฏิบัติราชการ, โทรศัพท์ขัดข้อง');
+        });
+
         document.getElementById('btnAddShift')?.addEventListener('click', () => {
             this.#openShiftModal();
         });
@@ -964,6 +1052,44 @@ export class SettingsController {
             } else if (action === 'delete-remark') {
                 if (await UIHelpers.confirm('ยืนยันการลบหมายเหตุ', `ต้องการลบ "${this.settings.remarks[idx]}" ใช่หรือไม่?`, 'ลบรายการ')) {
                     this.settings.remarks.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
+            } else if (action === 'edit-offsite-job-type') {
+                const currentVal = this.settings.offsite_job_types[idx];
+                this.#openModal('แก้ไขลักษณะงานนอกสถานที่', `
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">ลักษณะงานนอกสถานที่ *</label>
+                        <input type="text" id="modalInputOffsiteJobType" class="bma-input" value="${currentVal}" required>
+                    </div>
+                `, async () => {
+                    const val = document.getElementById('modalInputOffsiteJobType')?.value?.trim();
+                    if (val) {
+                        this.settings.offsite_job_types[idx] = val;
+                        await this.#persistSettings(true);
+                    }
+                });
+            } else if (action === 'delete-offsite-job-type') {
+                if (await UIHelpers.confirm('ยืนยันการลบลักษณะงานนอกสถานที่', `ต้องการลบ "${this.settings.offsite_job_types[idx]}" ใช่หรือไม่?`, 'ลบรายการ')) {
+                    this.settings.offsite_job_types.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
+            } else if (action === 'edit-special-reason') {
+                const currentVal = this.settings.special_request_reasons[idx];
+                this.#openModal('แก้ไขเหตุผลลงเวลากรณีพิเศษ', `
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">เหตุผลลงเวลากรณีพิเศษ *</label>
+                        <input type="text" id="modalInputSpecialReason" class="bma-input" value="${currentVal}" required>
+                    </div>
+                `, async () => {
+                    const val = document.getElementById('modalInputSpecialReason')?.value?.trim();
+                    if (val) {
+                        this.settings.special_request_reasons[idx] = val;
+                        await this.#persistSettings(true);
+                    }
+                });
+            } else if (action === 'delete-special-reason') {
+                if (await UIHelpers.confirm('ยืนยันการลบเหตุผลกรณีพิเศษ', `ต้องการลบ "${this.settings.special_request_reasons[idx]}" ใช่หรือไม่?`, 'ลบรายการ')) {
+                    this.settings.special_request_reasons.splice(idx, 1);
                     await this.#persistSettings(true);
                 }
             } else if (action === 'edit-shift') {

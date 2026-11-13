@@ -41,7 +41,26 @@ export class SettingsModel {
             const cached = sessionStorage.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
             if (cached) {
                 try {
-                    return JSON.parse(cached);
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object') {
+                        if (!Array.isArray(parsed.offsite_job_types) || parsed.offsite_job_types.length === 0) {
+                            try {
+                                const local = JSON.parse(localStorage.getItem('bma_offsite_job_types') || '[]');
+                                parsed.offsite_job_types = (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.offsite_job_types;
+                            } catch (e) {
+                                parsed.offsite_job_types = Config.DEFAULT_SETTINGS.offsite_job_types;
+                            }
+                        }
+                        if (!Array.isArray(parsed.special_request_reasons) || parsed.special_request_reasons.length === 0) {
+                            try {
+                                const local = JSON.parse(localStorage.getItem('bma_special_request_reasons') || '[]');
+                                parsed.special_request_reasons = (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.special_request_reasons;
+                            } catch (e) {
+                                parsed.special_request_reasons = Config.DEFAULT_SETTINGS.special_request_reasons;
+                            }
+                        }
+                        return parsed;
+                    }
                 } catch (e) {
                     console.warn('Invalid cached settings:', e);
                 }
@@ -158,6 +177,26 @@ export class SettingsModel {
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
             remarks: Array.isArray(data.remarks) ? data.remarks : Config.DEFAULT_SETTINGS.remarks,
+            offsite_job_types: (Array.isArray(data.offsite_job_types) && data.offsite_job_types.length > 0)
+                ? data.offsite_job_types
+                : (() => {
+                    try {
+                        const local = JSON.parse(localStorage.getItem('bma_offsite_job_types') || '[]');
+                        return (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.offsite_job_types;
+                    } catch (e) {
+                        return Config.DEFAULT_SETTINGS.offsite_job_types;
+                    }
+                })(),
+            special_request_reasons: (Array.isArray(data.special_request_reasons) && data.special_request_reasons.length > 0)
+                ? data.special_request_reasons
+                : (() => {
+                    try {
+                        const local = JSON.parse(localStorage.getItem('bma_special_request_reasons') || '[]');
+                        return (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.special_request_reasons;
+                    } catch (e) {
+                        return Config.DEFAULT_SETTINGS.special_request_reasons;
+                    }
+                })(),
             official_locations: Array.isArray(data.official_locations) && data.official_locations.length > 0
                 ? data.official_locations
                 : (localStorage.getItem('bma_official_locations_v2') !== null
@@ -204,7 +243,12 @@ export class SettingsModel {
             prefixes: payload.prefixes || [],
             positions: payload.positions || [],
             affiliations: payload.affiliations || [],
-            remarks: payload.remarks || [],
+            remarks: Array.from(new Set([
+                ...(Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types),
+                ...(Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons)
+            ])),
+            offsite_job_types: Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types,
+            special_request_reasons: Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons,
             official_locations: Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations,
             work_shifts: payload.work_shifts || [],
             enforce_geofence_radius: enforceGeofenceFlag,
@@ -219,42 +263,37 @@ export class SettingsModel {
             .single();
 
         if (error) {
-            let retryNeeded = false;
             const fallbackUpdateData = { ...updateData };
-            if (String(error.message || '').includes('allow_gallery_fallback')) {
-                delete fallbackUpdateData.allow_gallery_fallback;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('filter_shifts_by_realtime')) {
-                delete fallbackUpdateData.filter_shifts_by_realtime;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('disable_normal_hours_checkin')) {
-                delete fallbackUpdateData.disable_normal_hours_checkin;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('randomize_gps_radius_meters')) {
-                delete fallbackUpdateData.randomize_gps_radius_meters;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('randomize_gps_checkout')) {
-                delete fallbackUpdateData.randomize_gps_checkout;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('early_shift_window_minutes')) {
-                delete fallbackUpdateData.early_shift_window_minutes;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('official_locations')) {
-                delete fallbackUpdateData.official_locations;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('enforce_geofence_radius') || error.code === '42703') {
-                delete fallbackUpdateData.enforce_geofence_radius;
-                fallbackUpdateData.category_colors = mergedCategoryColors;
-                retryNeeded = true;
-            }
-            if (retryNeeded) {
+            let maxRetries = 6;
+            while (error && maxRetries > 0 && (error.code === '42703' || String(error.message || '').includes('column') || String(error.message || '').includes('does not exist'))) {
+                maxRetries--;
+                let strippedAny = false;
+                const errMsg = String(error.message || '');
+                const knownOptionalColumns = [
+                    'offsite_job_types',
+                    'special_request_reasons',
+                    'official_locations',
+                    'allow_gallery_fallback',
+                    'filter_shifts_by_realtime',
+                    'disable_normal_hours_checkin',
+                    'randomize_gps_radius_meters',
+                    'randomize_gps_checkout',
+                    'early_shift_window_minutes'
+                ];
+                for (const col of knownOptionalColumns) {
+                    if (errMsg.includes(col) && col in fallbackUpdateData) {
+                        delete fallbackUpdateData[col];
+                        strippedAny = true;
+                    }
+                }
+                if (errMsg.includes('enforce_geofence_radius') || error.code === '42703') {
+                    if ('enforce_geofence_radius' in fallbackUpdateData) {
+                        delete fallbackUpdateData.enforce_geofence_radius;
+                        fallbackUpdateData.category_colors = mergedCategoryColors;
+                        strippedAny = true;
+                    }
+                }
+                if (!strippedAny) break;
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
                 error = retryRes.error;
@@ -287,6 +326,10 @@ export class SettingsModel {
         try { localStorage.setItem('bma_early_shift_window_minutes', String(earlyShiftWindowVal)); } catch (e) {}
         const officialLocationsVal = Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations;
         try { localStorage.setItem('bma_official_locations_v2', JSON.stringify(officialLocationsVal)); } catch (e) {}
+        const offsiteJobTypesVal = Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types;
+        try { localStorage.setItem('bma_offsite_job_types', JSON.stringify(offsiteJobTypesVal)); } catch (e) {}
+        const specialReasonsVal = Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons;
+        try { localStorage.setItem('bma_special_request_reasons', JSON.stringify(specialReasonsVal)); } catch (e) {}
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
@@ -313,7 +356,13 @@ export class SettingsModel {
                 : enforceGeofenceVal,
             official_locations: Array.isArray(data?.official_locations)
                 ? data.official_locations
-                : officialLocationsVal
+                : officialLocationsVal,
+            offsite_job_types: Array.isArray(data?.offsite_job_types)
+                ? data.offsite_job_types
+                : offsiteJobTypesVal,
+            special_request_reasons: Array.isArray(data?.special_request_reasons)
+                ? data.special_request_reasons
+                : specialReasonsVal
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));

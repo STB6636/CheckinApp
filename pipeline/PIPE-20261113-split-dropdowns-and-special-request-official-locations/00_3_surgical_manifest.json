@@ -1,0 +1,48 @@
+{
+  "taskId": "PIPE-20261113-split-dropdowns-and-special-request-official-locations",
+  "branch": "Loca-V2",
+  "schema": "staging",
+  "timestamp": "2026-11-13T17:25:00+07:00",
+  "files": [
+    {
+      "path": "sql/migration_staging_split_dropdowns.sql",
+      "description": "SQL Migration adding offsite_job_types and special_request_reasons JSONB columns to staging.system_settings"
+    },
+    {
+      "path": "sql/create_staging_schema.sql",
+      "description": "Added offsite_job_types and special_request_reasons definitions to consolidated schema"
+    },
+    {
+      "path": "assets/js/core/Config.js",
+      "description": "Added offsite_job_types and special_request_reasons to DEFAULT_SETTINGS"
+    },
+    {
+      "path": "assets/js/models/SettingsModel.js",
+      "description": "Handled offsite_job_types and special_request_reasons loading, caching, fallback, and saving, keeping remarks backward-compatible"
+    },
+    {
+      "path": "settings.html",
+      "description": "Updated Tab 4 title and split into 3 distinct cards: Prefixes, Offsite Job Types, and Special Request Reasons"
+    },
+    {
+      "path": "assets/js/controllers/SettingsController.js",
+      "description": "Implemented renderOffsiteJobTypes and renderSpecialReasons, wired up add, edit, sort, and delete"
+    },
+    {
+      "path": "checkin.html",
+      "description": "Updated modalSpecialRequest form order (step 3 reasons before step 4 location), onsite official location dropdown without extra cards or GPS, and offsite job types + GPS options"
+    },
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "description": "Populated dropdowns correctly and bound onsite/offsite logic in handleSubmitSpecialRequest"
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "description": "Formatted report remark for special requests to show both request reason and offsite job type"
+    },
+    {
+      "path": "assets/js/controllers/ApprovalsController.js",
+      "description": "Added [ในสถานที่] and [นอกสถานที่] badges to location column in approvals table"
+    }
+  ]
+}

@@ -46,6 +46,15 @@ SET remarks = (
 )
 WHERE id = 1;
 
+-- เพิ่มคอลัมน์แยกตัวเลือก ลักษณะงานนอกสถานที่ (offsite_job_types) และ เหตุผลคำขอกรณีพิเศษ (special_request_reasons)
+ALTER TABLE staging.system_settings 
+ADD COLUMN IF NOT EXISTS offsite_job_types JSONB NOT NULL 
+DEFAULT '["ปฏิบัติงานนอกสถานที่", "อบรม/สัมมนา/ประชุมราชการ", "ปฏิบัติงานที่บ้าน (WFH)", "ปฏิบัติงานเวรประจำวัน", "อื่นๆ"]'::jsonb;
+
+ALTER TABLE staging.system_settings 
+ADD COLUMN IF NOT EXISTS special_request_reasons JSONB NOT NULL 
+DEFAULT '["ลืมลงเวลาปฏิบัติราชการ", "โทรศัพท์/อุปกรณ์ขัดข้อง", "ระบบอินเทอร์เน็ตขัดข้อง", "ปฏิบัติงานภารกิจเร่งด่วน", "อื่นๆ"]'::jsonb;
+
 -- 5. เพิ่มคอลัมน์ใหม่สำหรับบันทึกโหมดและระยะทางใน staging.attendance_logs
 ALTER TABLE staging.attendance_logs 
 ADD COLUMN IF NOT EXISTS location_mode TEXT NOT NULL DEFAULT 'ONSITE';
