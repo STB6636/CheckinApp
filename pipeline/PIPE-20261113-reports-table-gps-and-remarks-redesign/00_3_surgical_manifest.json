@@ -2,39 +2,59 @@
   "task_id": "PIPE-20261113-reports-table-gps-and-remarks-redesign",
   "flow_id": "FLOW_REPORTS_01",
   "target_branch": "Loca-V2",
-  "created_at": "2026-11-13T13:58:00+07:00",
+  "target_schema": "staging",
+  "created_at": "2026-11-13T14:52:00+07:00",
+  "database_prerequisite": {
+    "schema": "staging",
+    "table": "attendance_logs",
+    "required_columns": [
+      "offsite_reason",
+      "check_out_location_mode",
+      "check_out_distance_from_official_meters",
+      "check_out_offsite_reason"
+    ],
+    "sql_file": "sql/create_staging_schema.sql"
+  },
   "targets": [
     {
-      "file": "assets/js/models/AttendanceModel.js",
-      "symbol": "AttendanceModel.getReportRecordsByDateRange",
-      "line_range": "2330-2340",
-      "recommended_read_window": [2320, 2350],
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#handleMainCheckin",
+      "line_range": "2850-3180",
+      "recommended_read_window": [2840, 3190],
       "operation": "EDIT",
-      "purpose": "Include location_mode in the Supabase SELECT query for attendance_logs with graceful fallback if column is absent."
+      "purpose": "Pass dedicated offsite_reason, check_out_location_mode, check_out_offsite_reason cleanly across regular in/out, overtime, and single-click flows without remark overwriting."
     },
     {
       "file": "assets/js/models/AttendanceModel.js",
-      "symbol": "AttendanceModel.#formatReportRow",
-      "line_range": "2400-2425",
-      "recommended_read_window": [2395, 2435],
+      "symbol": "AttendanceModel.submitCheckinOrCheckout",
+      "line_range": "1740-2070",
+      "recommended_read_window": [1730, 2080],
       "operation": "EDIT",
-      "purpose": "Map location_mode: log?.location_mode || 'ONSITE' into the returned normalized report row object."
+      "purpose": "Persist offsite_reason and check_out fields directly to staging.attendance_logs without fallback deletion hacks, preserving check-in offsite_reason on checkout."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.getReportRecordsByDateRange",
+      "line_range": "2330-2430",
+      "recommended_read_window": [2320, 2440],
+      "operation": "EDIT",
+      "purpose": "Query and map dedicated columns (location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason) directly into report rows."
     },
     {
       "file": "assets/js/controllers/ReportsController.js",
       "symbol": "ReportsController.#buildSingleRowHtml",
-      "line_range": "594-705",
-      "recommended_read_window": [584, 715],
+      "line_range": "730-860",
+      "recommended_read_window": [720, 870],
       "operation": "EDIT",
-      "purpose": "Redesign GPS Check-in & Check-out columns (Line 1: [ในสถานที่,นอกสถานที่], Line 2: [บริเวณ,ใกล้เคียง], no raw coordinates) and Remarks column (Rules 2.1-2.4) across both Web DOM and Print PDF modes."
+      "purpose": "Render GPS columns (Line 1: [ในสถานที่,นอกสถานที่], Line 2: [บริเวณ,ใกล้เคียง], strictly no coordinate numbers) and Remarks column (Rules 2.1-2.4) using rec.offsite_reason directly across Web DOM and Print PDF."
     },
     {
       "file": "assets/js/controllers/ReportsController.js",
       "symbol": "ReportsController.#bindEvents",
-      "line_range": "1200-1245",
-      "recommended_read_window": [1190, 1255],
+      "line_range": "1350-1430",
+      "recommended_read_window": [1340, 1440],
       "operation": "EDIT",
-      "purpose": "Synchronize Excel export rows to match the new GPS format (no raw coordinates) and new Remarks rules."
+      "purpose": "Synchronize Excel export rows to match the new GPS 2-line format (no coordinate numbers) and dedicated offsite_reason remarks."
     }
   ],
   "verification_suite": [

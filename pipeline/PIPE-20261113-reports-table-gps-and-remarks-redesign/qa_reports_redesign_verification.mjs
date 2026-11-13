@@ -545,7 +545,7 @@ console.log('\n▶️ Test Case 9: Regression Suites & File Syntax Checks');
 console.log('\n▶️ Cache Version & BuildId Audit');
 {
     const versionJson = JSON.parse(fs.readFileSync('version.json', 'utf8'));
-    const expectedBuildId = '20261113_a5af5dd7';
+    const expectedBuildId = '20261113_6dcf28ee';
     assert(versionJson.buildId === expectedBuildId, `version.json buildId is ${expectedBuildId}`);
 
     const htmlFiles = [

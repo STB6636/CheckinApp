@@ -1,7 +1,7 @@
 # ADR 0027: Reports Table GPS 2-Line Format and Civil Service Remarks Normalization
 
 - **Date**: 2026-11-13
-- **Status**: Accepted & Verified (`Build ID: 20261113_a5af5dd7`)
+- **Status**: Accepted & Verified (`Build ID: 20261113_6dcf28ee`)
 - **Task ID**: `PIPE-20261113-reports-table-gps-and-remarks-redesign`
 - **Linked Flows**: `FLOW_REPORTS_01` (Attendance Reports, Tag Filtering & Print/Export Flow), `FLOW_CHECKIN_01` (Regular & Special Check-in/Check-out Lifecycle)
 
@@ -18,9 +18,17 @@ In the Attendance Reports view (`reports.html` / `ReportsController.js`), attend
 
 ## Decision & Implementation
 
-### 1. Inclusion of `location_mode` in Data Layer
-- Updated `AttendanceModel.getReportRecordsByDateRange()` to select `location_mode` with graceful fallback handling if Postgres schema does not yet have the column.
-- Mapped `location_mode: log?.location_mode || 'ONSITE'` in `AttendanceModel.#formatReportRow()`.
+### 1. Inclusion of `location_mode` and Staging Schema Zero-Overwrite Architecture
+- **Staging-Only Dedicated Columns**:
+  - `staging.attendance_logs` extended with 4 dedicated columns: `offsite_reason`, `check_out_location_mode`, `check_out_distance_from_official_meters`, `check_out_offsite_reason`.
+  - Public schema remained strictly untouched per user direction.
+- **Strict Zero-Overwrite Preservation**:
+  - In `AttendanceModel.submitCheckinOrCheckout` (`updateOut`), removed `updateOut.remark = payload.remark`. Regular check-out strictly writes to dedicated check-out columns (`check_out_location_mode`, `check_out_distance_from_official_meters`, `check_out_offsite_reason`), permanently eliminating the regression where check-out overwrote the morning check-in `remark` or `offsite_reason` with `'ในสถานที่'`.
+- **42703 Resilience & Graceful Fallback**:
+  - All writes and reads in `AttendanceModel.js` implement fallback retries upon encountering Postgres error code `42703` (column does not exist), guaranteeing 100% operational continuity before and after schema migrations.
+- Updated `AttendanceModel.getReportRecordsByDateRange()` to select `location_mode`, `offsite_reason`, `check_out_location_mode`, `check_out_distance_from_official_meters`, `check_out_offsite_reason`.
+- Mapped all attributes cleanly in `AttendanceModel.#formatReportRow()`.
+- Synchronized connected surfaces: `#modalResumeProfile` (Admin check-in details), `#buildHistoryRowHtml` (personal attendance history), and `saveAdminAttendanceRecord` (preserves existing check-in mode and offsite reason).
 
 ### 2. GPS 2-Line Presentation Standard (Zero Coordinate Numbers)
 - **Line 1 (`[ในสถานที่, นอกสถานที่]`)**:

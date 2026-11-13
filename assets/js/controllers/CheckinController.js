@@ -1820,13 +1820,14 @@ export class CheckinController {
     }
 
     #buildHistoryRowHtml(item, rowNumber) {
+        const displayRemark = item.offsite_reason || item.remark || '';
         return `
             <tr>
                 <td class="text-center font-semibold">${rowNumber}</td>
                 <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(item.work_date)}</td>
                 <td>
                     <div class="font-semibold bma-text-main">${item.shift_name || '-'}</div>
-                    ${item.remark ? `<div class="text-xs bma-text-sub">${item.remark}</div>` : ''}
+                    ${displayRemark ? `<div class="text-xs bma-text-sub">${displayRemark}</div>` : ''}
                 </td>
                 <td class="text-center font-mono font-bold">${item.check_in_time ? item.check_in_time + ' น.' : '-'}</td>
                 <td class="text-center font-mono font-bold">${item.check_out_time ? item.check_out_time + ' น.' : '-'}</td>
@@ -3127,11 +3128,25 @@ export class CheckinController {
             const finalLocName = (this.locationMode === 'OFFSITE' && this.offsiteCustomGps.mode === 'map' && this.offsiteCustomGps.locationName)
                 ? this.offsiteCustomGps.locationName
                 : (this.settings.require_gps ? this.gpsData.locationName : '');
-            const finalRemark = (this.locationMode === 'OFFSITE')
+            const offsiteReasonValue = (this.locationMode === 'OFFSITE')
                 ? (this.selectedOffsiteRemark === 'อื่นๆ' ? (document.getElementById('offsiteCustomRemarkInput')?.value?.trim() || 'อื่นๆ') : this.selectedOffsiteRemark)
+                : null;
+            const finalRemark = (this.locationMode === 'OFFSITE')
+                ? (offsiteReasonValue || 'ปฏิบัติงานนอกสถานที่')
                 : 'ในสถานที่';
             const finalDistanceMeters = (this.locationMode === 'ONSITE' && this.geofenceResult?.distanceMeters !== undefined)
                 ? this.geofenceResult.distanceMeters
+                : null;
+
+            const isSingleClickOrOt = Boolean(this.settings?.single_click_checkin || effectiveOvertimeShift);
+            const checkOutLocationMode = (hasUnclosedRegular || isSingleClickOrOt)
+                ? (this.locationMode === 'OFFSITE' ? 'OFFSITE' : 'ONSITE')
+                : null;
+            const checkOutOffsiteReason = (hasUnclosedRegular || isSingleClickOrOt)
+                ? offsiteReasonValue
+                : null;
+            const checkOutDistanceMeters = (hasUnclosedRegular || isSingleClickOrOt)
+                ? finalDistanceMeters
                 : null;
 
             const res = await AttendanceModel.submitCheckinOrCheckout({
@@ -3151,14 +3166,18 @@ export class CheckinController {
                 custom_check_out_time: (isNormalModeSetting && !effectiveOvertimeShift) ? '' : (customCheckOut || ''),
                 is_overtime_shift: effectiveOvertimeShift,
                 is_overnight: Boolean(shiftObj.is_overnight),
-                single_click_checkin: Boolean(this.settings.single_click_checkin || effectiveOvertimeShift),
+                single_click_checkin: isSingleClickOrOt,
                 photo_url: finalPhotoUrl,
                 lat: finalLat,
                 lng: finalLng,
                 location_name: finalLocName,
                 location_mode: this.locationMode,
-                remark: finalRemark,
-                distance_from_official_meters: finalDistanceMeters
+                offsite_reason: offsiteReasonValue,
+                distance_from_official_meters: finalDistanceMeters,
+                check_out_location_mode: checkOutLocationMode,
+                check_out_offsite_reason: checkOutOffsiteReason,
+                check_out_distance_from_official_meters: checkOutDistanceMeters,
+                remark: finalRemark
             });
 
             UIHelpers.hideLoading();

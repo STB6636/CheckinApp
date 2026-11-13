@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Plan: ปรับปรุงตารางรายงานการลงเวลา (GPS 2 บรรทัด & หมายเหตุ)</title>
+    <title>Interactive Plan (Updated): แผนปรับปรุงสถาปัตยกรรม Staging ทีเดียวจบ (Zero-Fallback CRUD & 5 TAG Reports)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -32,12 +32,6 @@
             }
         }
     </script>
-    <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
-    </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased">
     <!-- Header -->
@@ -45,13 +39,13 @@
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00744B] to-emerald-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-500/20">
-                    <i class="fa-solid fa-table-list"></i>
+                    <i class="fa-solid fa-database"></i>
                 </span>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-lg font-extrabold text-slate-900 dark:text-white">แผนปรับปรุงตารางรายงานการลงเวลา (5 TAG)</h1>
-                        <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                            Build ID Sync
+                        <h1 class="text-lg font-extrabold text-slate-900 dark:text-white">แผนปรับปรุงสถาปัตยกรรม Staging ทีเดียวจบ (Zero-Fallback CRUD)</h1>
+                        <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                            Schema: staging only
                         </span>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -61,7 +55,7 @@
             </div>
             <div class="flex items-center gap-2.5">
                 <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 flex items-center gap-1.5 border border-amber-300/60">
-                    <i class="fa-solid fa-clock-rotate-left"></i> รออนุมัติแผน (Proceed)
+                    <i class="fa-solid fa-clock-rotate-left"></i> รอตรวจทานแผน (Proceed)
                 </span>
             </div>
         </div>
@@ -70,244 +64,98 @@
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8 w-full">
 
-        <!-- Executive Summary Banner -->
-        <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl text-white pointer-events-none">
-                <i class="fa-solid fa-map-location-dot"></i>
-            </div>
+        <!-- Executive Banner -->
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
             <div class="relative z-10 max-w-4xl space-y-3">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-emerald-200 border border-white/10">
-                    <i class="fa-solid fa-bullseye"></i> วัตถุประสงค์หลัก
+                    <i class="fa-solid fa-shield-halved"></i> ข้อกำหนดสำคัญ
                 </div>
                 <h2 class="text-xl sm:text-2xl font-extrabold leading-tight">
-                    ปรับปรุงคอลัมน์ "พิกัด GPS" และ "หมายเหตุ" ในตารางรายงาน 5 TAG ให้สะอาดตา ชัดเจน ไร้ค่าพิกัดตัวเลข และตรงตามข้อกำหนดราชการ 100%
+                    สคีม่าเป้าหมาย: เฉพาะ `staging` เท่านั้น (ยังไม่ยุ่งกับ `public`) • ปรับคอลัมน์และ CRUD ให้ครบถ้วนตามความเป็นจริง ไร้ Fallback
                 </h2>
                 <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                    1. ปรับ <b>พิกัด GPS เข้างาน</b> และ <b>พิกัด GPS ออกงาน</b> เป็น 2 บรรทัด (บรรทัดที่ 1: [ในสถานที่, นอกสถานที่], บรรทัดที่ 2: สถานที่ [บริเวณ..., ใกล้เคียง...]) โดยตัดตัวเลขพิกัดออกเด็ดขาด<br>
-                    2. ปรับ <b>หมายเหตุ</b> ให้แสดงเฉพาะข้อมูลสาระสำคัญ (กรณีในสถานที่: ไม่แสดงข้อความ, กรณีนอกสถานที่: แสดงลักษณะงานนอกสถานที่, กรณีพิเศษ: แสดงเหตุผลที่ขอ) และตัดสถานะซ้ำซ้อนจากหัวตารางออกทั้งหมด
+                    เพิ่มคอลัมน์เก็บ <b>ลักษณะงานนอกสถานที่ (offsite_reason)</b> และ <b>โหมดขาออกงาน (check_out_location_mode)</b> ใน <code>staging.attendance_logs</code> พร้อมปรับโค้ด CRUD ใน <code>CheckinController.js</code> และ <code>AttendanceModel.js</code> ให้บันทึกตรงเข้าคอลัมน์จริงโดยไม่เกิดปัญหาเขียนทับข้อมูลขาเข้างาน และรองรับตารางรายงาน 5 TAG (GPS 2 บรรทัด ไร้พิกัดตัวเลข) อย่างสมบูรณ์
                 </p>
             </div>
         </div>
 
-        <!-- Critique & Strategic Recommendations (วิจารณ์และข้อเสนอแนะเชิงลึก) -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
-            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-700">
-                <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 flex items-center justify-center text-sm font-bold">
-                    <i class="fa-solid fa-lightbulb"></i>
-                </span>
-                <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">การวิจารณ์และข้อเสนอแนะเชิงสถาปัตยกรรม (Architectural Critique & Advice)</h3>
-                    <p class="text-xs text-slate-500">บทวิเคราะห์เจาะลึกเพื่อความสมบูรณ์แบบของระบบรายงานราชการ</p>
+        <!-- SQL Script for Staging -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-terminal"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white">คำสั่ง SQL Migration สำหรับสคีม่า `staging` (รันใน Supabase SQL Editor)</h3>
+                        <p class="text-xs text-slate-500">รันเฉพาะสคีม่า staging เท่านั้น ปลอดภัย ไม่กระทบสคีม่า public</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
-                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2">
-                    <div class="font-bold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-check"></i> 1. ข้อดีอย่างยิ่งของการปรับปรุงครั้งนี้
-                    </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-300">
-                        <li><b>ลด Visual Noise:</b> ตัวเลขพิกัด <code>13.756331° N, 100.501765° E</code> ที่ยาวเหยียดทำให้ตารางดูรกและอ่านยาก การตัดออกแล้วคงไว้เฉพาะชื่อสถานที่ [บริเวณ, ใกล้เคียง] ช่วยให้อ่านรายงานได้ง่ายและเป็นมืออาชีพ</li>
-                        <li><b>ขจัดปัญหา Tag Stomping ซ้ำซ้อน:</b> หัวตารางบอกอยู่แล้วว่าเป็นตาราง "มาสาย" หรือ "ปฏิบัติงานปกติ" แต่เดิมในช่องหมายเหตุกลับพิมพ์คำว่า "มาสาย" ซ้ำอีก การตัดออกช่วยให้ช่องหมายเหตุมีไว้สำหรับ "สาระสำคัญจริง" (เช่น อบรม, ประชุม, ลืมลงเวลา)</li>
-                        <li><b>แบ่งแยกสถานะ ในสถานที่/นอกสถานที่ ชัดเจน:</b> ผู้บริหารสามารถกวาดสายตาดูบรรทัดที่ 1 ของช่อง GPS รู้ได้ทันทีโดยไม่ต้องไปแกะพิกัด</li>
-                    </ul>
-                </div>
-
-                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2">
-                    <div class="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                        <i class="fa-solid fa-triangle-exclamation"></i> 2. ข้อเสนอแนะเชิงเทคนิคที่ต้องระวัง (Pitfalls)
-                    </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-300">
-                        <li><b>SQL Query Omission ใน AttendanceModel:</b> ปัจจุบันฟังก์ชัน <code>getReportRecordsByDateRange</code> ระบุคอลัมน์ตายตัวใน <code>.select()</code> โดยไม่มี <code>location_mode</code>! หากไม่แก้ไขจุดนี้ ตารางรายงานจะอ่านค่า <code>location_mode</code> เป็น <code>undefined</code> จึงต้องเพิ่มใน Model อย่างรอบคอบ</li>
-                        <li><b>Check-out Location Mode:</b> ในโฟลว์ปกติ ขาออกงานไม่มีคอลัมน์แยก <code>check_out_location_mode</code> จึงต้องใช้ระบบ Fallback Geofence ตรวจสอบพิกัด <code>check_out_lat/lng</code> เทียบกับรัศมี <code>official_locations</code> แบบอัตโนมัติ</li>
-                        <li><b>ความสอดคล้อง 3 ช่องทาง:</b> ต้องอัปเดตให้เหมือนกันทั้งหน้าเว็บ (Web DOM), การพิมพ์รายงานราชการ (Print PDF), และการดาวน์โหลดไฟล์ Excel (Export XLSX)</li>
-                    </ul>
-                </div>
+            <div class="p-4 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+<pre><span class="text-emerald-400">-- เพิ่มคอลัมน์ใหม่สำหรับเก็บลักษณะงานนอกสถานที่และโหมดขาออกงานใน staging.attendance_logs</span>
+<span class="text-sky-400">ALTER TABLE</span> staging.attendance_logs
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> offsite_reason <span class="text-amber-300">TEXT DEFAULT NULL</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_location_mode <span class="text-amber-300">TEXT DEFAULT 'ONSITE'</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_distance_from_official_meters <span class="text-amber-300">DOUBLE PRECISION DEFAULT NULL</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_offsite_reason <span class="text-amber-300">TEXT DEFAULT NULL</span>;</pre>
             </div>
         </div>
 
-        <!-- Visual Comparison: Before vs After -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-5">
-            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-700">
-                <span class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300 flex items-center justify-center text-sm font-bold">
-                    <i class="fa-solid fa-arrows-split-up-and-left"></i>
-                </span>
-                <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">เปรียบเทียบการแสดงผล (Before vs After)</h3>
-                    <p class="text-xs text-slate-500">ตัวอย่างตารางแสดงผลตามรูปแบบเดิมและรูปแบบใหม่ที่พัฒนา</p>
+        <!-- 4-Pillar Architectural Redesign -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pillar 1: Check-in / Check-out Lifecycle -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="flex items-center gap-2 font-extrabold text-sm text-emerald-700 dark:text-emerald-400">
+                    <i class="fa-solid fa-right-to-bracket"></i> 1. วงจรการบันทึกเวลา (Check-in / Out Lifecycle)
                 </div>
+                <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+                    <li><b>ขาเข้างาน:</b> บันทึก <code>location_mode</code> + <code>offsite_reason</code> (เช่น อบรม, ประชุม, WFH) + <code>distance_from_official_meters</code></li>
+                    <li><b>ขาออกงาน:</b> บันทึก <code>check_out_location_mode</code> + <code>check_out_offsite_reason</code> โดย <b>ไม่เขียนทับ <code>remark</code> หรือ <code>offsite_reason</code> ของขาเข้างาน</b></li>
+                    <li><b>กะนอกเวลา (OT) & Single-Click:</b> บันทึกทั้ง <code>location_mode</code> และ <code>offsite_reason</code> ครบถ้วน</li>
+                    <li><b>คำขอพิเศษ:</b> บันทึกเหตุผลคำขอลงใน <code>remark</code> แยกอิสระ</li>
+                </ul>
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs text-left border-collapse border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
-                    <thead>
-                        <tr class="bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
-                            <th class="p-3 w-1/4">กรณีการลงเวลา</th>
-                            <th class="p-3 w-3/8 text-rose-700 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/20">
-                                <i class="fa-solid fa-times-circle mr-1"></i> เดิม (Before)
-                            </th>
-                            <th class="p-3 w-3/8 text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20">
-                                <i class="fa-solid fa-check-circle mr-1"></i> ใหม่ (After - Clean & Standardized)
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                        <tr>
-                            <td class="p-3 font-bold bg-slate-50/50 dark:bg-slate-900/30">
-                                1. ปฏิบัติงานปกติ (ในสถานที่)<br>
-                                <span class="text-[10px] text-slate-500 font-normal">กะปกติ 08:30 - 16:30</span>
-                            </td>
-                            <td class="p-3 font-mono text-[11px] bg-rose-50/20 dark:bg-rose-950/10">
-                                <b>GPS เข้า:</b> สำนักเทศกิจ<br>
-                                <span class="text-slate-400">13.756331° N, 100.501765° E</span><br>
-                                <b>หมายเหตุ:</b> ในสถานที่ (หรือ มาสาย / ปฏิบัติงานปกติ)
-                            </td>
-                            <td class="p-3 bg-emerald-50/20 dark:bg-emerald-950/10">
-                                <b>GPS เข้า:</b><br>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">ในสถานที่</span><br>
-                                <span class="text-slate-700 dark:text-slate-300">บริเวณ สำนักเทศกิจ</span><br>
-                                <b>หมายเหตุ:</b> <span class="text-slate-400 font-semibold">-</span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="p-3 font-bold bg-slate-50/50 dark:bg-slate-900/30">
-                                2. ปฏิบัติงานนอกสถานที่ (เข้างาน)<br>
-                                <span class="text-[10px] text-slate-500 font-normal">เลือก "อบรม"</span>
-                            </td>
-                            <td class="p-3 font-mono text-[11px] bg-rose-50/20 dark:bg-rose-950/10">
-                                <b>GPS เข้า:</b> ศูนย์ฝึกอบรมหนองจอก<br>
-                                <span class="text-slate-400">13.856123° N, 100.864321° E</span><br>
-                                <b>หมายเหตุ:</b> อบรม
-                            </td>
-                            <td class="p-3 bg-emerald-50/20 dark:bg-emerald-950/10">
-                                <b>GPS เข้า:</b><br>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">นอกสถานที่</span><br>
-                                <span class="text-slate-700 dark:text-slate-300">ใกล้เคียง ศูนย์ฝึกอบรมหนองจอก</span><br>
-                                <b>หมายเหตุ:</b> <span class="font-semibold text-slate-800 dark:text-slate-200">อบรม</span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="p-3 font-bold bg-slate-50/50 dark:bg-slate-900/30">
-                                3. รูปแบบพิเศษ (บันทึกครั้งเดียว/นอกเวลา)<br>
-                                <span class="text-[10px] text-slate-500 font-normal">ในสถานที่</span>
-                            </td>
-                            <td class="p-3 font-mono text-[11px] bg-rose-50/20 dark:bg-rose-950/10">
-                                <b>GPS เข้า-ออก:</b> สำนักเทศกิจ + พิกัดตัวเลข<br>
-                                <b>หมายเหตุ:</b> ปฏิบัติงานนอกเวลา (ซ้ำกับ Tag หัวตาราง)
-                            </td>
-                            <td class="p-3 bg-emerald-50/20 dark:bg-emerald-950/10">
-                                <b>GPS เข้า-ออก:</b><br>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">ในสถานที่</span><br>
-                                <span class="text-slate-700 dark:text-slate-300">บริเวณ สำนักเทศกิจ</span><br>
-                                <b>หมายเหตุ:</b> <span class="text-slate-400 font-semibold">-</span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="p-3 font-bold bg-slate-50/50 dark:bg-slate-900/30">
-                                4. คำขอลงเวลากรณีพิเศษ<br>
-                                <span class="text-[10px] text-slate-500 font-normal">เลือก "ลืมลงเวลาปฏิบัติราชการ"</span>
-                            </td>
-                            <td class="p-3 font-mono text-[11px] bg-rose-50/20 dark:bg-rose-950/10">
-                                <b>GPS:</b> ขอลงเวลากรณีพิเศษ + พิกัด<br>
-                                <b>หมายเหตุ:</b> ลืมลงเวลาปฏิบัติราชการ
-                            </td>
-                            <td class="p-3 bg-emerald-50/20 dark:bg-emerald-950/10">
-                                <b>GPS เข้า-ออก:</b><br>
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">ในสถานที่</span> (หรือนอกสถานที่ตามที่เลือก)<br>
-                                <span class="text-slate-700 dark:text-slate-300">บริเวณ สำนักเทศกิจ</span><br>
-                                <b>หมายเหตุ:</b> <span class="font-semibold text-slate-800 dark:text-slate-200">ลืมลงเวลาปฏิบัติราชการ</span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Pillar 2: Reports Table Presentation -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="flex items-center gap-2 font-extrabold text-sm text-sky-700 dark:text-sky-400">
+                    <i class="fa-solid fa-table"></i> 2. ตารางรายงาน 5 TAG & จุดเชื่อมโยง 3 จุด
+                </div>
+                <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+                    <li><b>GPS เข้า/ออกงาน (2 บรรทัด):</b> บรรทัดที่ 1 = [ในสถานที่, นอกสถานที่], บรรทัดที่ 2 = [บริเวณ..., ใกล้เคียง...] <b>ไร้ค่าพิกัดตัวเลข 100%</b></li>
+                    <li><b>หมายเหตุ:</b> ตัดสถานะ TAG ตารางออกทั้งหมด (เช่น มาสาย, ปฏิบัติงานปกติ)</li>
+                    <li><b>ในสถานที่:</b> แสดง <code>-</code> (ไม่แสดงข้อความใดๆ ตามกฎ 2.1.1 & 2.3.1)</li>
+                    <li><b>นอกสถานที่:</b> แสดงข้อมูลตามตัวเลือก <code>rec.offsite_reason</code></li>
+                    <li><b>จุดเชื่อมโยง 3 จุด:</b> หน้าต่างโปรไฟล์ย่อ (#modalResumeProfile), ตารางประวัติส่วนตัวใน checkin.html, และฟอร์มแก้ไขเวลาแอดมิน ปรับให้อ่านและรักษา offsite_reason ครบถ้วน</li>
+                    <li><b>ส่งออก 3 ทาง:</b> Web DOM, Print PDF, และ Excel XLSX ตรงกัน 100%</li>
+                </ul>
             </div>
         </div>
 
-        <!-- SubAgents Execution Pipeline (Lean Architecture) -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
-            <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-slate-700">
-                <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 flex items-center justify-center text-sm font-bold">
-                    <i class="fa-solid fa-users-gear"></i>
-                </span>
-                <div>
-                    <h3 class="text-base font-extrabold text-slate-900 dark:text-white">แผนการดำเนินงานของ SubAgents และ Orchestrator</h3>
-                    <p class="text-xs text-slate-500">ลำดับขั้นตอนการทำงานแบบ Closed-Loop 4 ขั้นตอน</p>
+        <!-- SubAgents Execution Pipeline -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-emerald-600"></i> ขั้นตอนการทำงานของ SubAgents (Lean AI Workflow)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                <div class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-50/20 space-y-1">
+                    <span class="font-bold text-emerald-700 block">Stage 1: Pre-Flight & Migration Check</span>
+                    <p class="text-slate-500">ตรวจสอบว่าคำสั่ง SQL รันบน <code>staging.attendance_logs</code> สำเร็จและพบคอลัมน์ครบ 4 คอลัมน์</p>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Stage 1 -->
-                <div class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#00744B] text-white">Stage 1</span>
-                        <span class="text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-check"></i> เสร็จสิ้น</span>
-                    </div>
-                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200">Phase 0 Pre-Flight & Dual Plan</h4>
-                    <p class="text-[11px] text-slate-500 leading-normal">
-                        - ดึงข้อมูล Second Brain & Skills<br>
-                        - สำรวจ AST Codebase Map เจาะจงบรรทัด<br>
-                        - ส่งมอบ Dual Plan (MD + HTML) รอคำสั่ง Proceed
-                    </p>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-sky-700 block">Stage 2: SubAgent 1 (Implementer)</span>
+                    <p class="text-slate-500">ปรับปรุง Model, CheckinController, ReportsController ตัด Fallback ทิ้ง รัน AST mapper ซิงค์ buildId</p>
                 </div>
-
-                <!-- Stage 2 -->
-                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-sky-600 text-white">Stage 2</span>
-                        <span class="text-[11px] font-bold text-slate-400">ถัดไปหลัง Proceed</span>
-                    </div>
-                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200">SubAgent 1 (Implementer)</h4>
-                    <p class="text-[11px] text-slate-500 leading-normal">
-                        - แก้ไข <code>AttendanceModel.js</code> (เพิ่ม location_mode ใน select)<br>
-                        - แก้ไข <code>ReportsController.js</code> (#buildSingleRowHtml & Export Excel)<br>
-                        - รัน <code>vscode_ast_mapper.mjs</code> ปรับ Build ID
-                    </p>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-purple-700 block">Stage 3: SubAgent 2 (QA Auditor)</span>
+                    <p class="text-slate-500">รันชุดทดสอบความถูกต้องของการบันทึกและการอ่านข้อมูลบน Staging ตรวจสอบ git diff main</p>
                 </div>
-
-                <!-- Stage 3 -->
-                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-600 text-white">Stage 3</span>
-                        <span class="text-[11px] font-bold text-slate-400">หลัง Stage 2</span>
-                    </div>
-                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200">SubAgent 2 (QA Auditor)</h4>
-                    <p class="text-[11px] text-slate-500 leading-normal">
-                        - รันชุดทดสอบอัตโนมัติครอบคลุม 5 TAG<br>
-                        - ตรวจสอบความถูกต้องของ GPS 2 บรรทัด & หมายเหตุ<br>
-                        - ตรวจสอบ <code>version.json</code> & Cache Stamps<br>
-                        - ตรวจสอบ <code>git diff main</code>
-                    </p>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-amber-700 block">Stage 4: Orchestrator Ingest & Push</span>
+                    <p class="text-slate-500">บันทึกสถาปัตยกรรมลง ADR-0027, อัปเดต 00_INDEX_MOC.md และ Git Commit & Push Branch Loca-V2</p>
                 </div>
-
-                <!-- Stage 4 -->
-                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-600 text-white">Stage 4</span>
-                        <span class="text-[11px] font-bold text-slate-400">ปิดงาน</span>
-                    </div>
-                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-200">Orchestrator Ingest & Push</h4>
-                    <p class="text-[11px] text-slate-500 leading-normal">
-                        - บันทึกสถาปัตยกรรมลง ADR-0027<br>
-                        - อัปเดต Second Brain <code>00_INDEX_MOC.md</code><br>
-                        - Commit & Push Branch <code>Loca-V2</code> ขึ้น GitHub
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Call to Action -->
-        <div class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
-            <div class="space-y-1">
-                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white">พร้อมเริ่มการดำเนินการหรือไม่?</h4>
-                <p class="text-xs text-slate-500">กรุณาตรวจสอบแผนงานด้านบน หากเห็นชอบสามารถพิมพ์ <b>"Proceed"</b> หรือกดปุ่มดำเนินการ</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <button type="button" onclick="alert('กรุณากลับไปพิมพ์คำสั่ง Proceed ในห้องแชทของระบบเพื่อเริ่มงานครับ')" class="px-5 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-[#00744B] to-emerald-600 hover:from-emerald-700 hover:to-emerald-500 text-white shadow-md shadow-emerald-500/20 transition cursor-pointer">
-                    <i class="fa-solid fa-play mr-1.5"></i> สั่งเริ่มดำเนินการ (Proceed)
-                </button>
             </div>
         </div>
 
@@ -315,7 +163,7 @@
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
-        BMA Check-in App V2.8 • Lean AI Software Engineering Pipeline • Branch: <span class="font-mono text-emerald-600 font-bold">Loca-V2</span>
+        BMA Check-in App V2.8 • Lean AI Software Engineering Pipeline • Schema: <span class="font-mono text-emerald-600 font-bold">staging</span> • Branch: <span class="font-mono text-sky-600 font-bold">Loca-V2</span>
     </footer>
 </body>
 </html>

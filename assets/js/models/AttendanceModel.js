@@ -1753,12 +1753,14 @@ export class AttendanceModel {
                 check_out_location: payload.location_name || activeRegularRecord.check_out_location || '',
                 status: evalOut.status_label,
                 row_color: evalOut.row_color,
-                updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString(),
+                check_out_location_mode: payload.check_out_location_mode || payload.location_mode || 'ONSITE',
+                check_out_offsite_reason: payload.check_out_offsite_reason || null
             };
-            if (payload.remark) updateOut.remark = payload.remark;
-            if (payload.location_mode) updateOut.location_mode = payload.location_mode;
-            if (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) {
-                updateOut.distance_from_official_meters = Number(payload.distance_from_official_meters);
+            if (payload.check_out_distance_from_official_meters !== undefined && payload.check_out_distance_from_official_meters !== null) {
+                updateOut.check_out_distance_from_official_meters = Number(payload.check_out_distance_from_official_meters);
+            } else if (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) {
+                updateOut.check_out_distance_from_official_meters = Number(payload.distance_from_official_meters);
             }
 
             let { data, error } = await db
@@ -1769,8 +1771,9 @@ export class AttendanceModel {
                 .single();
 
             if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
-                delete updateOut.location_mode;
-                delete updateOut.distance_from_official_meters;
+                delete updateOut.check_out_location_mode;
+                delete updateOut.check_out_distance_from_official_meters;
+                delete updateOut.check_out_offsite_reason;
                 const retry = await db
                     .from('attendance_logs')
                     .update(updateOut)
@@ -1865,7 +1868,11 @@ export class AttendanceModel {
                 status: 'ปฏิบัติงานนอกเวลา',
                 remark: payload.remark || (payload.is_overnight ? 'ปฏิบัติงานนอกเวลา (ข้ามวัน)' : 'ปฏิบัติงานนอกเวลา'),
                 location_mode: payload.location_mode || 'ONSITE',
+                offsite_reason: payload.offsite_reason || null,
                 distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
+                check_out_location_mode: payload.check_out_location_mode || payload.location_mode || 'ONSITE',
+                check_out_distance_from_official_meters: (payload.check_out_distance_from_official_meters !== undefined && payload.check_out_distance_from_official_meters !== null) ? Number(payload.check_out_distance_from_official_meters) : ((payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null),
+                check_out_offsite_reason: payload.check_out_offsite_reason || payload.offsite_reason || null,
                 row_color: colors.overtime || '#2563EB',
                 is_overtime: true,
                 is_special_request: false,
@@ -1880,7 +1887,11 @@ export class AttendanceModel {
 
             if (otError && (otError.message?.includes('column') || otError.code === '42703' || otError.message?.includes('does not exist'))) {
                 delete insertOtData.location_mode;
+                delete insertOtData.offsite_reason;
                 delete insertOtData.distance_from_official_meters;
+                delete insertOtData.check_out_location_mode;
+                delete insertOtData.check_out_distance_from_official_meters;
+                delete insertOtData.check_out_offsite_reason;
                 const retry = await db
                     .from('attendance_logs')
                     .insert(insertOtData)
@@ -1977,7 +1988,11 @@ export class AttendanceModel {
                 status: evalResult.status_label,
                 remark: payload.remark || '',
                 location_mode: payload.location_mode || 'ONSITE',
+                offsite_reason: payload.offsite_reason || null,
                 distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
+                check_out_location_mode: payload.check_out_location_mode || payload.location_mode || 'ONSITE',
+                check_out_distance_from_official_meters: (payload.check_out_distance_from_official_meters !== undefined && payload.check_out_distance_from_official_meters !== null) ? Number(payload.check_out_distance_from_official_meters) : ((payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null),
+                check_out_offsite_reason: payload.check_out_offsite_reason || payload.offsite_reason || null,
                 row_color: evalResult.row_color,
                 is_overtime: false,
                 is_special_request: false,
@@ -1992,7 +2007,11 @@ export class AttendanceModel {
 
             if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
                 delete insertBoth.location_mode;
+                delete insertBoth.offsite_reason;
                 delete insertBoth.distance_from_official_meters;
+                delete insertBoth.check_out_location_mode;
+                delete insertBoth.check_out_distance_from_official_meters;
+                delete insertBoth.check_out_offsite_reason;
                 const retry = await db
                     .from('attendance_logs')
                     .insert(insertBoth)
@@ -2044,6 +2063,7 @@ export class AttendanceModel {
             status: evalIn.status_label,
             remark: payload.remark || '',
             location_mode: payload.location_mode || 'ONSITE',
+            offsite_reason: payload.offsite_reason || null,
             distance_from_official_meters: (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) ? Number(payload.distance_from_official_meters) : null,
             row_color: evalIn.row_color,
             is_overtime: false,
@@ -2059,6 +2079,7 @@ export class AttendanceModel {
 
         if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
             delete insertIn.location_mode;
+            delete insertIn.offsite_reason;
             delete insertIn.distance_from_official_meters;
             const retry = await db
                 .from('attendance_logs')
@@ -2322,7 +2343,7 @@ export class AttendanceModel {
         const effectiveEnd = endDate && endDate >= startDate ? endDate : startDate;
         const dateList = AttendanceModel.getDatesBetween(startDate, effectiveEnd);
 
-        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, location_mode, created_at, updated_at';
+        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, location_mode, offsite_reason, check_out_location_mode, check_out_distance_from_official_meters, check_out_offsite_reason, created_at, updated_at';
         const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at';
 
         let [personnelRes, logsRes] = await Promise.all([
@@ -2423,6 +2444,10 @@ export class AttendanceModel {
             check_in_photo: log?.check_in_photo || '',
             check_out_photo: log?.check_out_photo || '',
             location_mode: log?.location_mode || 'ONSITE',
+            offsite_reason: log?.offsite_reason || null,
+            check_out_location_mode: log?.check_out_location_mode || (log?.check_out_time ? 'ONSITE' : null),
+            check_out_offsite_reason: log?.check_out_offsite_reason || null,
+            check_out_distance_from_official_meters: log?.check_out_distance_from_official_meters || null,
             remark: log?.remark || '',
             created_at: log?.created_at || null,
             updated_at: log?.updated_at || null,
@@ -2471,11 +2496,29 @@ export class AttendanceModel {
             updated_at: new Date().toISOString()
         };
 
+        if (payload.location_mode) recordData.location_mode = payload.location_mode;
+        if (payload.offsite_reason) recordData.offsite_reason = payload.offsite_reason;
+        if (payload.check_out_location_mode) recordData.check_out_location_mode = payload.check_out_location_mode;
+        if (payload.check_out_offsite_reason) recordData.check_out_offsite_reason = payload.check_out_offsite_reason;
+
         if (payload.log_id) {
-            const { error } = await db
+            let { error } = await db
                 .from('attendance_logs')
                 .update(recordData)
                 .eq('id', payload.log_id);
+
+            if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+                delete recordData.offsite_reason;
+                delete recordData.check_out_location_mode;
+                delete recordData.check_out_offsite_reason;
+                delete recordData.location_mode;
+                const retry = await db
+                    .from('attendance_logs')
+                    .update(recordData)
+                    .eq('id', payload.log_id);
+                error = retry.error;
+            }
+
             if (error) {
                 return { success: false, message: 'ไม่สามารถแก้ไขข้อมูลการลงเวลาได้: ' + error.message };
             }
@@ -2489,9 +2532,22 @@ export class AttendanceModel {
             } catch (_) {}
             return { success: true, message: 'อัปเดตข้อมูลการลงเวลาเรียบร้อยแล้ว' };
         } else {
-            const { error } = await db
+            if (!recordData.location_mode) recordData.location_mode = 'ONSITE';
+            let { error } = await db
                 .from('attendance_logs')
                 .insert(recordData);
+
+            if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+                delete recordData.offsite_reason;
+                delete recordData.check_out_location_mode;
+                delete recordData.check_out_offsite_reason;
+                delete recordData.location_mode;
+                const retry = await db
+                    .from('attendance_logs')
+                    .insert(recordData);
+                error = retry.error;
+            }
+
             if (error) {
                 return { success: false, message: 'ไม่สามารถเพิ่มข้อมูลการลงเวลาได้: ' + error.message };
             }

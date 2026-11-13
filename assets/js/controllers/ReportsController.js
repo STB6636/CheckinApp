@@ -379,10 +379,15 @@ export class ReportsController {
 
     #formatLocationName(locName) {
         if (!locName) return '-';
-        const trimmed = String(locName).trim();
+        let trimmed = String(locName).trim();
         if (!trimmed || trimmed === '-' || trimmed.toLowerCase() === 'null' || trimmed.toLowerCase() === 'undefined') {
             return '-';
         }
+        trimmed = trimmed.replace(/\(?พิกัด:?\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\)?/gi, '').trim();
+        if (/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(trimmed)) {
+            return '-';
+        }
+        if (!trimmed || trimmed === '-') return '-';
         if (/^(บริเวณ|ใกล้เคียง)/.test(trimmed)) {
             return trimmed;
         }
@@ -419,6 +424,8 @@ export class ReportsController {
             if (!isCheckedOut && !rec.is_special_request) {
                 return null;
             }
+            if (rec.check_out_location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.check_out_location_mode === 'ONSITE') return 'ONSITE';
             const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
             const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
             if (outLat !== null && outLng !== null) {
@@ -455,17 +462,21 @@ export class ReportsController {
             return spRemark;
         }
 
-        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        const inMode = rec.location_mode || this.#resolveLocationMode(rec, 'check_in');
         if (inMode === 'ONSITE') {
             return '-';
         }
 
         if (inMode === 'OFFSITE') {
-            const rawRemark = (rec.remark || '').trim();
-            if (!rawRemark || rawRemark === '-' || SUPPRESSED_STATUS_REMARKS.has(rawRemark)) {
-                return 'ปฏิบัติงานนอกสถานที่';
+            const rawOffsite = (rec.offsite_reason || '').trim();
+            if (rawOffsite && rawOffsite !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawOffsite)) {
+                return rawOffsite;
             }
-            return rawRemark;
+            const rawRemark = (rec.remark || '').trim();
+            if (rawRemark && rawRemark !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawRemark)) {
+                return rawRemark;
+            }
+            return 'ปฏิบัติงานนอกสถานที่';
         }
 
         return '-';
@@ -990,7 +1001,19 @@ ${this.canManageRecords ? `
         const outEl = document.getElementById('resumeRowCheckoutTime');
         if (outEl) outEl.textContent = rec.check_out_time ? `${rec.check_out_time} น.` : 'ไม่ได้ลงเวลา';
         const remEl = document.getElementById('resumeRowRemark');
-        if (remEl) remEl.textContent = rec.remark || 'ไม่มีหมายเหตุ';
+        if (remEl) {
+            const parts = [];
+            if (rec.offsite_reason) {
+                parts.push(`ลักษณะงานนอกสถานที่: ${rec.offsite_reason}`);
+            }
+            if (rec.check_out_offsite_reason && rec.check_out_offsite_reason !== rec.offsite_reason) {
+                parts.push(`ขากลับนอกสถานที่: ${rec.check_out_offsite_reason}`);
+            }
+            if (rec.remark && rec.remark !== rec.offsite_reason && rec.remark !== 'ในสถานที่') {
+                parts.push(rec.remark);
+            }
+            remEl.textContent = parts.length > 0 ? parts.join(' | ') : (rec.remark || 'ไม่มีหมายเหตุ');
+        }
 
         // 5. พิกัดตำแหน่งและแผนที่ Google Map เฉพาะของ Row นี้ (ทั้งขาเข้า และ ขาออก)
         const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
@@ -1360,7 +1383,7 @@ ${this.canManageRecords ? `
                 let inGpsDisplay = '-';
                 if (inMode) {
                     const modeText = inMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
-                    inGpsDisplay = (inLocFormatted && inLocFormatted !== '-') ? `${modeText} ${inLocFormatted}` : modeText;
+                    inGpsDisplay = (inLocFormatted && inLocFormatted !== '-') ? `${modeText}\n${inLocFormatted}` : modeText;
                 }
 
                 const outMode = this.#resolveLocationMode(r, 'check_out');
@@ -1369,7 +1392,7 @@ ${this.canManageRecords ? `
                 let outGpsDisplay = '-';
                 if (outMode) {
                     const modeText = outMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
-                    outGpsDisplay = (outLocFormatted && outLocFormatted !== '-') ? `${modeText} ${outLocFormatted}` : modeText;
+                    outGpsDisplay = (outLocFormatted && outLocFormatted !== '-') ? `${modeText}\n${outLocFormatted}` : modeText;
                 }
 
                 const resolvedRemark = this.#resolveReportRemark(r);
