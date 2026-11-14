@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Plan — PIPE-20261114-approvals-remark-two-line</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    body { font-family: 'Sarabun', 'Noto Sans Thai', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
+    <!-- Header -->
+    <header class="rounded-2xl bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white p-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur">
+            <i class="fa-solid fa-diagram-project"></i> PLAN MODE — รออนุมัติ (ยังไม่ Proceed)
+          </span>
+          <h1 class="text-xl sm:text-2xl font-extrabold mt-2">
+            ปรับปรุงคอลัมน์ "หมายเหตุ" หน้าอนุมัติกรณีพิเศษเป็น 2 บรรทัด
+          </h1>
+          <p class="text-xs sm:text-sm text-emerald-100 mt-1">
+            Task ID: <code>PIPE-20261114-approvals-remark-two-line</code> | Target Branch: <code>Loca-V2</code>
+          </p>
+        </div>
+        <div class="bg-white/15 backdrop-blur rounded-xl px-4 py-3 text-xs space-y-1">
+          <div><i class="fa-solid fa-code-branch mr-1.5"></i>GitHub: <strong>STB6636/CheckinApp (Loca-V2)</strong></div>
+          <div><i class="fa-solid fa-robot mr-1.5"></i>Architecture: <strong>Lean 2-SubAgent + 1-Orchestrator</strong></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Before / After Visual Comparison -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-eye text-emerald-600"></i>
+        เปรียบเทียบการแสดงผลคอลัมน์ "หมายเหตุ" (Before vs After)
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Before -->
+        <div class="rounded-xl border border-rose-200 bg-rose-50/40 p-4 space-y-2">
+          <div class="text-xs font-bold text-rose-700 uppercase">Before (ปัจจุบัน — ยาวในบรรทัดเดียว)</div>
+          <div class="bg-white rounded-lg p-3 border border-slate-200 overflow-x-auto">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-indigo-50 text-indigo-700">
+              ปฏิบัติงานภารกิจเร่งด่วน (ปฏิบัติงานนอกสถานที่)
+            </span>
+          </div>
+          <p class="text-xs text-slate-600">ใช้ <code>.bma-badge</code> ซึ่งมี <code>white-space: nowrap</code> ทำให้ข้อความยาวเกินไป</p>
+        </div>
+        <!-- After -->
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-2">
+          <div class="text-xs font-bold text-emerald-700 uppercase">After (แผนที่เสนอ — แยก 2 บรรทัดกระชับ)</div>
+          <div class="bg-white rounded-lg p-3 border border-slate-200 space-y-2">
+            <div class="inline-flex flex-col items-start gap-0.5 px-3 py-1.5 rounded-xl text-xs leading-snug bg-indigo-50 text-indigo-700 max-w-[230px]">
+              <span class="font-semibold break-words">ปฏิบัติงานภารกิจเร่งด่วน</span>
+              <span class="text-[11px] font-medium opacity-90 break-words">(ปฏิบัติงานนอกสถานที่)</span>
+            </div>
+            <div class="text-xs text-slate-500">กรณีไม่มีลักษณะงานนอกสถานที่ (เช่น ในสถานที่):</div>
+            <div class="inline-flex flex-col items-start px-3 py-1.5 rounded-xl text-xs leading-snug bg-indigo-50 text-indigo-700 max-w-[230px]">
+              <span class="font-semibold break-words">อื่นๆ: ทดสอบเหตุผลคำขอ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sub Agents Execution Plan -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-users-gear text-emerald-600"></i>
+        แผนการทำงานของ Sub Agents (Lean 2-SubAgent + 1-Orchestrator)
+      </h2>
+      <div class="space-y-3 text-sm">
+        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
+          <div class="font-bold text-slate-900">Stage 1: <code>agent_00_orchestrator</code> (Main Agent) — ดำเนินการแล้ว</div>
+          <p class="text-xs text-slate-600 mt-1">ทำ Phase 0 (Second Brain, Skill Matching, Codebase Map Target Locator) และจัดทำแผนคู่ขนาน รอผู้ใช้ยืนยัน Proceed</p>
+        </div>
+        <div class="p-4 rounded-xl border border-sky-200 bg-sky-50/50">
+          <div class="font-bold text-sky-900">Stage 2: <code>subagent_01_implementer</code> (Model: Flash 3.8 High, 1 ตัว)</div>
+          <ul class="list-disc list-inside text-xs text-slate-700 mt-1 space-y-1">
+            <li>อ่านเฉพาะช่วงบรรทัด <code>L126–L224</code> ใน <code>assets/js/controllers/ApprovalsController.js</code></li>
+            <li>แก้ไข <code>#buildRequestRowHtml</code> (<code>L155–L158</code>, <code>L208–L210</code>) ให้แยกแสดงผล 2 บรรทัดตามเงื่อนไข (ไม่แตะต้อง Global <code>.bma-badge</code>)</li>
+            <li>รัน <code>node ./.ai_map/vscode_ast_mapper.mjs</code> เพื่อซิงก์ <code>version.json</code>, 8 HTML files และ <code>.ai_map/</code></li>
+          </ul>
+        </div>
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+          <div class="font-bold text-amber-900">Stage 3: <code>subagent_02_qa_auditor</code> (Model: Flash 3.8 High, 1 ตัว)</div>
+          <ul class="list-disc list-inside text-xs text-slate-700 mt-1 space-y-1">
+            <li>ตรวจ Syntax ด้วย <code>node --check assets/js/controllers/ApprovalsController.js</code></li>
+            <li>สร้างและรัน Unit Tests ครบทุกเคส (Offsite 2 บรรทัด, Onsite 1 บรรทัด, Pre-combined string, WFH, XSS Escape)</li>
+            <li>ตรวจสอบ <code>git diff</code> และ Cache Version Sync ครบทั้ง 8 ไฟล์ HTML ก่อนออกผล <code>PASS</code></li>
+          </ul>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+          <div class="font-bold text-emerald-900">Stage 4: <code>agent_00_orchestrator</code> — Knowledge Ingest &amp; GitHub Push</div>
+          <ul class="list-disc list-inside text-xs text-slate-700 mt-1 space-y-1">
+            <li>บันทึก Second Brain เชื่อมโยง <code>FLOW_APPROVALS_01</code> และ <code>FLOW_SPECIAL_REQ_01</code></li>
+            <li>Commit บน Branch <code>Loca-V2</code> และรัน <code>git push origin Loca-V2</code> ขึ้น GitHub หลัง QA ผ่านทั้งหมด</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Checklist -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-emerald-600"></i>
+        Verification Checklist (หลัง Proceed)
+      </h2>
+      <div id="checklist" class="space-y-2 text-xs text-slate-700">
+        <label class="flex items-center gap-2"><input type="checkbox" class="rounded accent-emerald-600" /> บรรทัดที่ 1 แสดงเหตุผลหลัก (เช่น <code>ปฏิบัติงานภารกิจเร่งด่วน</code>)</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="rounded accent-emerald-600" /> บรรทัดที่ 2 แสดงลักษณะงานนอกสถานที่ในวงเล็บ (เช่น <code>(ปฏิบัติงานนอกสถานที่)</code>)</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="rounded accent-emerald-600" /> คำขอในสถานที่ (ONSITE) แสดงเฉพาะบรรทัดที่ 1 ไม่ดึง <code>offsite_reason</code> มาต่อท้าย</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="rounded accent-emerald-600" /> รัน <code>node ./.ai_map/vscode_ast_mapper.mjs</code> ซิงก์ <code>buildId</code> ทั้ง 8 หน้า HTML</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="rounded accent-emerald-600" /> ผ่าน QA Auditor และ Push Branch <code>Loca-V2</code> ขึ้น GitHub</label>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

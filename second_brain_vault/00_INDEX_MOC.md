@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261113-split-dropdowns-and-special-request-official-locations"
+last_updated_phase: "PIPE-20261114-approvals-remark-two-line"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -28,6 +28,7 @@ last_updated_phase: "PIPE-20261113-split-dropdowns-and-special-request-official-
 - [[ADR_0027_reports_table_gps_and_remarks_redesign]] — ADR-0027: สถาปัตยกรรมตารางรายงานการลงเวลา 5 TAG ปรับคอลัมน์พิกัด GPS 2 บรรทัด (ไร้ค่าพิกัดตัวเลข) และการปรับปรุงคอลัมน์หมายเหตุตามมาตรฐานราชการ (`FLOW_REPORTS_01`, `FLOW_CHECKIN_01`)
 - [[ADR_0028_special_request_mode_and_reports_remarks_redesign]] — ADR-0028: สถาปัตยกรรมฟอร์มคำขอลงเวลากรณีพิเศษ [ในสถานที่/นอกสถานที่], การอ้างอิงพิกัดแรกขาออก และการแสดงผลหมายเหตุ 2 บรรทัดตามมาตรฐานราชการ (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_REPORTS_01`)
 - [[ADR_0029_split_dropdowns_and_special_request_official_locations]] — ADR-0029: สถาปัตยกรรมแยกตัวเลือก "ลักษณะงาน" นอกสถานที่ และ "เหตุผลลงเวลากรณีพิเศษ" พร้อมระบบเลือกสถานที่ราชการทางการสำหรับคำขอในสถานที่ (`FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`)
+- [[ADR_0030_approvals_two_line_remark_badge]] — ADR-0030: สถาปัตยกรรมป้ายหมายเหตุ 2 บรรทัดในตารางอนุมัติคำขอกรณีพิเศษ (แยกเหตุผลหลักบรรทัดที่ 1 และลักษณะงานนอกสถานที่บรรทัดที่ 2 พร้อมคงความเข้ากันได้กับ WFH และโหมด ONSITE) (`FLOW_APPROVALS_01`, `FLOW_SPECIAL_REQ_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

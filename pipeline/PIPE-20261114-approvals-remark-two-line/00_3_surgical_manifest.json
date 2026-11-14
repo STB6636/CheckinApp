@@ -1,0 +1,61 @@
+{
+  "task_id": "PIPE-20261114-approvals-remark-two-line",
+  "mode": "PLAN",
+  "target_branch": "Loca-V2",
+  "flow_ids": [
+    "FLOW_SPECIAL_REQ_01",
+    "FLOW_APPROVALS_01"
+  ],
+  "strict_policies": [
+    "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+    "STRICT_SURGICAL_SCOPE_ONLY",
+    "NO_PLACEHOLDERS_IN_TARGET_SCOPE",
+    "MANDATORY_CACHE_VERSION_SYNC"
+  ],
+  "surgical_targets": [
+    {
+      "file_path": "assets/js/controllers/ApprovalsController.js",
+      "symbol": "ApprovalsController.#buildRequestRowHtml",
+      "start_line": 136,
+      "end_line": 214,
+      "recommended_read_window": "126-224",
+      "focus_lines": "155-158, 208-210",
+      "action": "แยกการสร้างข้อความคอลัมน์หมายเหตุเป็น 2 บรรทัด: บรรทัดที่ 1 แสดงเหตุผลหลัก (เช่น ปฏิบัติงานภารกิจเร่งด่วน) และบรรทัดที่ 2 แสดงลักษณะงานนอกสถานที่ในวงเล็บ (เช่น (ปฏิบัติงานนอกสถานที่)) เฉพาะกรณีมีข้อมูลลักษณะงานนอกสถานที่ รองรับทั้งกรณีแยกฟิลด์ (req.remark + req.offsite_reason) และกรณีรวมอยู่ใน req.remark พร้อมรักษาสีป้าย bma-badge-indigo และรองรับ Dark Mode + การตัดคำไม่ให้ตารางล้น"
+    }
+  ],
+  "auto_stamped_files_on_build": [
+    "version.json",
+    "index.html",
+    "checkin.html",
+    "dashboard.html",
+    "approvals.html",
+    "reports.html",
+    "personnel.html",
+    "settings.html",
+    "users.html",
+    ".ai_map/01_FILE_FUNCTION_INDEX.md",
+    ".ai_map/CODE_INDEX.json"
+  ],
+  "untouched_reference_files": [
+    {
+      "file_path": "assets/css/bma-theme.css",
+      "lines_checked": "940-975",
+      "note": "ไม่แก้ไข global .bma-badge เพื่อป้องกันผลกระทบต่อป้ายสถานะหน้าอื่น"
+    },
+    {
+      "file_path": "approvals.html",
+      "lines_checked": "183-199",
+      "note": "คอลัมน์หมายเหตุมี min-w-[140px] อยู่แล้ว แก้เฉพาะ ?v= ผ่าน vscode_ast_mapper.mjs"
+    },
+    {
+      "file_path": "assets/js/models/AttendanceModel.js",
+      "lines_checked": "2247-2317",
+      "note": "getSpecialRequests ดึง remark, offsite_reason และ location_mode มาครบแล้ว"
+    }
+  ],
+  "git_plan": {
+    "branch": "Loca-V2",
+    "push_requested_by_user": true,
+    "execute_push_only_after_proceed_and_qa_pass": true
+  }
+}

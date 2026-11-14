@@ -1,8 +1,8 @@
 {
-  "buildId": "20261113_96384181",
+  "buildId": "20261114_63a734d6",
   "appVersion": "v2.9.2",
-  "contentHash": "96384181cac4c05ebd967b3a86e28c7eece008eab34c08b4cce2d41f3aa5a398",
-  "updatedAt": "2026-11-13T10:59:42.324Z",
+  "contentHash": "63a734d605268b5b66f3262e8c059e529f79e3d117935b65cf37d1f0ef5ff7e0",
+  "updatedAt": "2026-11-14T09:34:33.419Z",
   "releaseNotes": {
     "releaseDate": "11 พฤศจิกายน 2569",
     "title": "ปรับปรุงรูปแบบระบบลงเวลาและระบบ Sync Data RealTime ของผู้ดูแลระบบ",

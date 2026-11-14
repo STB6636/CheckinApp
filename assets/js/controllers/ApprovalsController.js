@@ -146,16 +146,22 @@ export class ApprovalsController {
         const latNum = hasCoords ? Number(req.check_in_lat).toFixed(5) : null;
         const lngNum = hasCoords ? Number(req.check_in_lng).toFixed(5) : null;
 
-        const locMode = req.location_mode || (req.offsite_reason || (req.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(String(req.remark).trim())) ? 'OFFSITE' : 'ONSITE');
+        const hasValidOffsiteReason = Boolean(req.offsite_reason && String(req.offsite_reason).trim() && String(req.offsite_reason).trim() !== '-');
+        const locMode = req.location_mode || (
+            hasValidOffsiteReason || 
+            (req.remark && (
+                ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(String(req.remark).trim()) ||
+                /(?:นอกสถานที่|อบรม|ประชุม|สัมมนา|WFH|ปฏิบัติงานที่บ้าน|เวรประจำวัน|ปฏิบัติงานเวร)/i.test(String(req.remark))
+            ))
+            ? 'OFFSITE' 
+            : 'ONSITE'
+        );
         const isOffsite = locMode === 'OFFSITE';
         const modeBadgeHtml = isOffsite
             ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 mr-1 shrink-0">[นอกสถานที่]</span>`
             : `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 mr-1 shrink-0">[ในสถานที่]</span>`;
 
-        let remarkDisplay = req.remark || '-';
-        if (isOffsite && req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
-            remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
-        }
+        const remarkCellHtml = this.#formatRemarkCellHtml(req, isOffsite);
 
         let commandColHtml = '';
         if (isPending) {
@@ -206,11 +212,164 @@ export class ApprovalsController {
                     </div>
                 </td>
                 <td>
-                    <span class="bma-badge bma-badge-indigo">${remarkDisplay}</span>
+                    ${remarkCellHtml}
                 </td>
                 <td class="text-center">${commandColHtml}</td>
             </tr>
         `;
+    }
+
+    #escapeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    #formatRemarkCellHtml(req, isOffsite) {
+        let rawRemark = (req?.remark || '').trim();
+        if (rawRemark === '-') rawRemark = '';
+        let primaryRemark = rawRemark;
+        let offsiteDetail = '';
+
+        if (isOffsite) {
+            let offsiteReason = (req?.offsite_reason || '').trim();
+            if (offsiteReason === '-') offsiteReason = '';
+
+            if (offsiteReason) {
+                let unparenthesizedOffsite = offsiteReason;
+                while (unparenthesizedOffsite.startsWith('(') && unparenthesizedOffsite.endsWith(')')) {
+                    const inner = unparenthesizedOffsite.slice(1, -1).trim();
+                    let depth = 0;
+                    let balanced = true;
+                    for (let i = 0; i < inner.length; i++) {
+                        if (inner[i] === '(') depth++;
+                        else if (inner[i] === ')') {
+                            depth--;
+                            if (depth < 0) {
+                                balanced = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (balanced && depth === 0) {
+                        unparenthesizedOffsite = inner;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (primaryRemark) {
+                    if (
+                        (primaryRemark === 'ปฏิบัติงานที่บ้าน' || primaryRemark === 'ปฏิบัติงานที่บ้าน (WFH)') &&
+                        (unparenthesizedOffsite === 'WFH' || unparenthesizedOffsite === 'ปฏิบัติงานที่บ้าน (WFH)')
+                    ) {
+                        primaryRemark = 'ปฏิบัติงานที่บ้าน (WFH)';
+                        offsiteDetail = '';
+                    } else {
+                        const bracketedWithOriginal = `(${offsiteReason})`;
+                        const bracketedWithUnparenthesized = `(${unparenthesizedOffsite})`;
+
+                        if (primaryRemark === offsiteReason || primaryRemark === unparenthesizedOffsite || primaryRemark === bracketedWithOriginal || primaryRemark === bracketedWithUnparenthesized) {
+                            primaryRemark = offsiteReason;
+                            offsiteDetail = '';
+                        } else if (primaryRemark.endsWith(bracketedWithOriginal)) {
+                            primaryRemark = primaryRemark.slice(0, -bracketedWithOriginal.length).trim();
+                            offsiteDetail = unparenthesizedOffsite;
+                        } else if (primaryRemark.endsWith(bracketedWithUnparenthesized)) {
+                            primaryRemark = primaryRemark.slice(0, -bracketedWithUnparenthesized.length).trim();
+                            offsiteDetail = unparenthesizedOffsite;
+                        } else if (primaryRemark.endsWith(unparenthesizedOffsite)) {
+                            primaryRemark = primaryRemark.slice(0, -unparenthesizedOffsite.length).trim();
+                            offsiteDetail = unparenthesizedOffsite;
+                        } else {
+                            offsiteDetail = unparenthesizedOffsite;
+                        }
+
+                        if (primaryRemark === offsiteDetail) {
+                            offsiteDetail = '';
+                        }
+                    }
+                } else {
+                    primaryRemark = 'กรณีพิเศษ';
+                    offsiteDetail = unparenthesizedOffsite;
+                }
+            } else if (primaryRemark) {
+                const match = primaryRemark.match(/^(.*?)\s*\(([^()]*?(?:\([^()]*?\)[^()]*?)*)\)$/);
+                if (match) {
+                    const candidatePrimary = match[1].trim();
+                    const candidateOffsite = match[2].trim();
+                    if (candidatePrimary === 'ปฏิบัติงานที่บ้าน' && candidateOffsite === 'WFH') {
+                        // คงข้อความ 'ปฏิบัติงานที่บ้าน (WFH)' ไว้เป็นเหตุผลหลักบรรทัดเดียว
+                    } else if (candidatePrimary === candidateOffsite) {
+                        primaryRemark = candidatePrimary;
+                        offsiteDetail = '';
+                    } else if (candidatePrimary && /(?:นอกสถานที่|อบรม|ประชุม|สัมมนา|WFH|ปฏิบัติงานที่บ้าน|เวรประจำวัน|ปฏิบัติงานเวร)/i.test(candidateOffsite)) {
+                        primaryRemark = candidatePrimary;
+                        offsiteDetail = candidateOffsite;
+                    }
+                }
+            }
+        }
+
+        if (!primaryRemark) {
+            primaryRemark = '-';
+        }
+
+        let formattedOffsite = '';
+        if (offsiteDetail) {
+            let cleanOffsite = offsiteDetail.trim();
+            while (cleanOffsite.startsWith('(') && cleanOffsite.endsWith(')')) {
+                const inner = cleanOffsite.slice(1, -1).trim();
+                let depth = 0;
+                let balanced = true;
+                for (let i = 0; i < inner.length; i++) {
+                    if (inner[i] === '(') depth++;
+                    else if (inner[i] === ')') {
+                        depth--;
+                        if (depth < 0) {
+                            balanced = false;
+                            break;
+                        }
+                    }
+                }
+                if (balanced && depth === 0) {
+                    cleanOffsite = inner;
+                } else {
+                    break;
+                }
+            }
+
+            if (
+                (primaryRemark === 'ปฏิบัติงานที่บ้าน' || primaryRemark === 'ปฏิบัติงานที่บ้าน (WFH)') &&
+                (cleanOffsite === 'WFH' || cleanOffsite === 'ปฏิบัติงานที่บ้าน (WFH)')
+            ) {
+                primaryRemark = 'ปฏิบัติงานที่บ้าน (WFH)';
+                cleanOffsite = '';
+            } else if (cleanOffsite === primaryRemark) {
+                cleanOffsite = '';
+            }
+
+            formattedOffsite = cleanOffsite ? `(${cleanOffsite})` : '';
+        }
+
+        if (formattedOffsite) {
+            return `
+                <div class="bma-badge-indigo inline-flex flex-col items-start gap-0.5 px-2.5 py-1.5 rounded-xl text-xs leading-snug max-w-[240px] text-left whitespace-normal">
+                    <span class="font-semibold break-words">${this.#escapeHtml(primaryRemark)}</span>
+                    <span class="text-[11px] font-medium opacity-90 break-words">${this.#escapeHtml(formattedOffsite)}</span>
+                </div>
+            `.trim();
+        }
+
+        return `
+            <div class="bma-badge-indigo inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-semibold leading-snug max-w-[240px] break-words text-left whitespace-normal">
+                <span>${this.#escapeHtml(primaryRemark)}</span>
+            </div>
+        `.trim();
     }
 
     async syncRequestsSilent(deltaDetail = null) {
