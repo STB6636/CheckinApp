@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-16T05:01:21.830Z",
-  "totalFilesScanned": 172,
-  "totalSymbolsIndexed": 900,
+  "generatedAt": "2026-11-16T09:30:45.181Z",
+  "totalFilesScanned": 176,
+  "totalSymbolsIndexed": 921,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f95d9c0cef8ad4e2",
+      "fileHash": "8c9e3dd5fdc58a81",
       "totalLines": 221,
       "importsCount": 0,
       "importsPreview": [],
@@ -1291,10 +1291,148 @@
       ]
     },
     {
+      "filePath": "assets/js/controllers/LoadingController.js",
+      "layer": "Frontend Page Controller Layer (OOP)",
+      "fileHash": "2e0f15f882025b64",
+      "totalLines": 372,
+      "importsCount": 4,
+      "importsPreview": [
+        "import { Config } from '../core/Config.js';",
+        "import { AuthService } from '../core/AuthService.js';",
+        "import { UIHelpers } from '../core/UIHelpers.js';",
+        "import { SettingsModel } from '../models/SettingsModel.js';"
+      ],
+      "exports": [
+        "LoadingController"
+      ],
+      "symbols": [
+        {
+          "name": "LoadingController",
+          "kind": "class",
+          "startLine": 14,
+          "endLine": 358,
+          "signature": "export class LoadingController",
+          "summary": "Class Definition (345 lines)"
+        },
+        {
+          "name": "LoadingController.constructor",
+          "kind": "public constructor",
+          "startLine": 25,
+          "endLine": 27,
+          "signature": "() => any",
+          "summary": "public constructor L25-L27 (3 lines)"
+        },
+        {
+          "name": "LoadingController.init",
+          "kind": "public async method",
+          "startLine": 29,
+          "endLine": 105,
+          "signature": "() => Promise<any>",
+          "summary": "public async method L29-L105 (77 lines)"
+        },
+        {
+          "name": "LoadingController.#bindFallbackEvents",
+          "kind": "private method",
+          "startLine": 107,
+          "endLine": 117,
+          "signature": "() => any",
+          "summary": "private method L107-L117 (11 lines)"
+        },
+        {
+          "name": "LoadingController.#hydrateFromLocalBrandCache",
+          "kind": "private method",
+          "startLine": 119,
+          "endLine": 148,
+          "signature": "() => any",
+          "summary": "private method L119-L148 (30 lines)"
+        },
+        {
+          "name": "LoadingController.#verifyAndPreloadData",
+          "kind": "private async method",
+          "startLine": 150,
+          "endLine": 174,
+          "signature": "(sessionUser) => Promise<any>",
+          "summary": "private async method L150-L174 (25 lines)"
+        },
+        {
+          "name": "LoadingController.#fetchSettingsWithTimeout",
+          "kind": "private async method",
+          "startLine": 176,
+          "endLine": 190,
+          "signature": "(timeoutMs) => Promise<any>",
+          "summary": "private async method L176-L190 (15 lines)"
+        },
+        {
+          "name": "LoadingController.#verifySessionWithTimeout",
+          "kind": "private async method",
+          "startLine": 192,
+          "endLine": 206,
+          "signature": "(timeoutMs) => Promise<any>",
+          "summary": "private async method L192-L206 (15 lines)"
+        },
+        {
+          "name": "LoadingController.#applyLiveSettingsBranding",
+          "kind": "private method",
+          "startLine": 208,
+          "endLine": 253,
+          "signature": "(settings) => any",
+          "summary": "private method L208-L253 (46 lines)"
+        },
+        {
+          "name": "LoadingController.#sanitizeAndApplyLogoCssVar",
+          "kind": "private async method",
+          "startLine": 255,
+          "endLine": 315,
+          "signature": "(varName, rawUrl, fallbackUrl) => Promise<any>",
+          "summary": "private async method L255-L315 (61 lines)"
+        },
+        {
+          "name": "LoadingController.#setStepLabel",
+          "kind": "private method",
+          "startLine": 317,
+          "endLine": 322,
+          "signature": "(text) => any",
+          "summary": "private method L317-L322 (6 lines)"
+        },
+        {
+          "name": "LoadingController.#armWatchdog",
+          "kind": "private method",
+          "startLine": 324,
+          "endLine": 334,
+          "signature": "() => any",
+          "summary": "private method L324-L334 (11 lines)"
+        },
+        {
+          "name": "LoadingController.#clearWatchdog",
+          "kind": "private method",
+          "startLine": 336,
+          "endLine": 341,
+          "signature": "() => any",
+          "summary": "private method L336-L341 (6 lines)"
+        },
+        {
+          "name": "LoadingController.#navigateToTarget",
+          "kind": "private async method",
+          "startLine": 343,
+          "endLine": 357,
+          "signature": "(targetUrl) => Promise<any>",
+          "summary": "private async method L343-L357 (15 lines)"
+        },
+        {
+          "name": "bootLoadingController",
+          "kind": "function",
+          "startLine": 361,
+          "endLine": 365,
+          "signature": "() => inferred",
+          "summary": "Bootstrap Singleton"
+        }
+      ]
+    },
+    {
       "filePath": "assets/js/controllers/LoginController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "3d343836fe9cae7b",
-      "totalLines": 307,
+      "fileHash": "1f54258e4a592633",
+      "totalLines": 305,
       "importsCount": 5,
       "importsPreview": [
         "import { AuthService } from '../core/AuthService.js';",
@@ -1311,9 +1449,9 @@
           "name": "LoginController",
           "kind": "class",
           "startLine": 12,
-          "endLine": 303,
+          "endLine": 301,
           "signature": "export class LoginController",
-          "summary": "Class Definition (292 lines)"
+          "summary": "Class Definition (290 lines)"
         },
         {
           "name": "LoginController.constructor",
@@ -1327,97 +1465,97 @@
           "name": "LoginController.init",
           "kind": "public async method",
           "startLine": 18,
-          "endLine": 37,
+          "endLine": 36,
           "signature": "() => Promise<any>",
-          "summary": "public async method L18-L37 (20 lines)"
+          "summary": "public async method L18-L36 (19 lines)"
         },
         {
           "name": "LoginController.#loadOrganizationBranding",
           "kind": "private async method",
-          "startLine": 39,
-          "endLine": 73,
+          "startLine": 38,
+          "endLine": 72,
           "signature": "() => Promise<any>",
-          "summary": "private async method L39-L73 (35 lines)"
+          "summary": "private async method L38-L72 (35 lines)"
         },
         {
           "name": "LoginController.#updateThemeButtonUI",
           "kind": "private method",
-          "startLine": 75,
-          "endLine": 85,
+          "startLine": 74,
+          "endLine": 84,
           "signature": "() => any",
-          "summary": "private method L75-L85 (11 lines)"
+          "summary": "private method L74-L84 (11 lines)"
         },
         {
           "name": "LoginController.#bindEvents",
           "kind": "private method",
-          "startLine": 87,
-          "endLine": 192,
+          "startLine": 86,
+          "endLine": 191,
           "signature": "() => any",
-          "summary": "private method L87-L192 (106 lines)"
+          "summary": "private method L86-L191 (106 lines)"
         },
         {
           "name": "openChangeModal",
           "kind": "arrow_fn",
-          "startLine": 128,
-          "endLine": 137,
+          "startLine": 127,
+          "endLine": 136,
           "signature": "() => inferred",
-          "summary": "Arrow Function L128-L137"
+          "summary": "Arrow Function L127-L136"
         },
         {
           "name": "validatePasswordMatch",
           "kind": "arrow_fn",
-          "startLine": 144,
-          "endLine": 166,
+          "startLine": 143,
+          "endLine": 165,
           "signature": "() => inferred",
-          "summary": "Arrow Function L144-L166"
+          "summary": "Arrow Function L143-L165"
         },
         {
           "name": "openForgotModal",
           "kind": "arrow_fn",
-          "startLine": 177,
-          "endLine": 181,
+          "startLine": 176,
+          "endLine": 180,
           "signature": "() => inferred",
-          "summary": "Arrow Function L177-L181"
+          "summary": "Arrow Function L176-L180"
         },
         {
           "name": "LoginController.#handleLogin",
           "kind": "private async method",
-          "startLine": 194,
-          "endLine": 216,
+          "startLine": 193,
+          "endLine": 214,
           "signature": "(mode) => Promise<any>",
-          "summary": "private async method L194-L216 (23 lines)"
+          "summary": "private async method L193-L214 (22 lines)"
         },
         {
           "name": "LoginController.#loadRememberedUser",
           "kind": "private method",
-          "startLine": 218,
-          "endLine": 238,
+          "startLine": 216,
+          "endLine": 236,
           "signature": "() => any",
-          "summary": "private method L218-L238 (21 lines)"
+          "summary": "private method L216-L236 (21 lines)"
         },
         {
           "name": "LoginController.#persistRememberedUser",
           "kind": "private method",
-          "startLine": 240,
-          "endLine": 255,
+          "startLine": 238,
+          "endLine": 253,
           "signature": "(username) => any",
-          "summary": "private method L240-L255 (16 lines)"
+          "summary": "private method L238-L253 (16 lines)"
         },
         {
           "name": "LoginController.#handleChangePasswordSubmit",
           "kind": "private async method",
-          "startLine": 257,
-          "endLine": 281,
+          "startLine": 255,
+          "endLine": 279,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L257-L281 (25 lines)"
+          "summary": "private async method L255-L279 (25 lines)"
         },
         {
           "name": "LoginController.#handleForgotPasswordSubmit",
           "kind": "private async method",
-          "startLine": 283,
-          "endLine": 302,
+          "startLine": 281,
+          "endLine": 300,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L283-L302 (20 lines)"
+          "summary": "private async method L281-L300 (20 lines)"
         }
       ]
     },
@@ -3750,7 +3888,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "284d5abb348e46ff",
+      "fileHash": "632fbce99f5dcb2c",
       "totalLines": 1072,
       "importsCount": 0,
       "importsPreview": [],
@@ -3993,7 +4131,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "80ac7572fa210dff",
+      "fileHash": "8366d5c434e865df",
       "totalLines": 278,
       "importsCount": 0,
       "importsPreview": [],
@@ -4299,8 +4437,8 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "8f46aea0d70ef323",
-      "totalLines": 386,
+      "fileHash": "611bab74a3310d3d",
+      "totalLines": 431,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -4309,56 +4447,83 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 147,
+          "endLine": 192,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L147"
+          "summary": "HTML DOM Section L3-L192"
         },
         {
           "name": "<div#mobileOrgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 172,
-          "endLine": 172,
+          "startLine": 217,
+          "endLine": 217,
           "signature": "id=\"mobileOrgLogoWrapper\"",
-          "summary": "HTML DOM Section L172-L172"
+          "summary": "HTML DOM Section L217-L217"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 179,
-          "endLine": 291,
+          "startLine": 224,
+          "endLine": 336,
           "signature": "<main>",
-          "summary": "HTML DOM Section L179-L291"
+          "summary": "HTML DOM Section L224-L336"
         },
         {
           "name": "<div#orgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 186,
-          "endLine": 188,
+          "startLine": 231,
+          "endLine": 233,
           "signature": "id=\"orgLogoWrapper\"",
-          "summary": "HTML DOM Section L186-L188"
+          "summary": "HTML DOM Section L231-L233"
         },
         {
           "name": "<form#loginForm>",
           "kind": "html_dom_section",
-          "startLine": 200,
-          "endLine": 288,
+          "startLine": 245,
+          "endLine": 333,
           "signature": "id=\"loginForm\"",
-          "summary": "HTML DOM Section L200-L288"
+          "summary": "HTML DOM Section L245-L333"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 384,
-          "endLine": 384,
+          "startLine": 429,
+          "endLine": 429,
           "signature": "<script>",
-          "summary": "Bootstrap script L384-L384"
+          "summary": "Bootstrap script L429-L429"
+        }
+      ]
+    },
+    {
+      "filePath": "loading.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "bd8d1eb374a10634",
+      "totalLines": 442,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 376,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L376"
+        },
+        {
+          "name": "<script type=\"module\"> (Page Bootstrap)",
+          "kind": "html_module_script",
+          "startLine": 440,
+          "endLine": 440,
+          "signature": "<script>",
+          "summary": "Bootstrap script L440-L440"
         }
       ]
     },
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bab0afab9e4966ad",
+      "fileHash": "7eb248a23dcb084f",
       "totalLines": 682,
       "importsCount": 0,
       "importsPreview": [],
@@ -8622,9 +8787,71 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261116-loading-entry-screen/qa_runtime_deep_simulation.mjs",
+      "layer": "Application Module",
+      "fileHash": "5a6beb6077644e56",
+      "totalLines": 294,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import { fileURLToPath } from 'url';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "assert",
+          "kind": "function",
+          "startLine": 18,
+          "endLine": 27,
+          "signature": "(cond, desc) => inferred",
+          "summary": "Function L18-L27"
+        },
+        {
+          "name": "sanitizeAndResolveLogo",
+          "kind": "function",
+          "startLine": 36,
+          "endLine": 55,
+          "signature": "(rawUrl, fallbackUrl) => inferred",
+          "summary": "Function L36-L55"
+        },
+        {
+          "name": "resolveTargetUrl",
+          "kind": "function",
+          "startLine": 264,
+          "endLine": 270,
+          "signature": "(redirectUrl, sessionUser) => inferred",
+          "summary": "Function L264-L270"
+        }
+      ]
+    },
+    {
+      "filePath": "pipeline/PIPE-20261116-loading-entry-screen/qa_test_suite.mjs",
+      "layer": "Application Module",
+      "fileHash": "89fc2f8f53bfee0a",
+      "totalLines": 372,
+      "importsCount": 3,
+      "importsPreview": [
+        "import fs from 'fs';",
+        "import path from 'path';",
+        "import { fileURLToPath } from 'url';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "assert",
+          "kind": "function",
+          "startLine": 41,
+          "endLine": 50,
+          "signature": "(condition, message) => inferred",
+          "summary": "Function L41-L50"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f5664f3d64b440e2",
+      "fileHash": "7ba41be645495164",
       "totalLines": 536,
       "importsCount": 0,
       "importsPreview": [],
@@ -8707,7 +8934,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "21366aa39bae7c95",
+      "fileHash": "6bb471c02b9c0264",
       "totalLines": 831,
       "importsCount": 0,
       "importsPreview": [],
@@ -9350,7 +9577,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b31c4d11b795b451",
+      "fileHash": "fdbd5733811cd12a",
       "totalLines": 431,
       "importsCount": 0,
       "importsPreview": [],

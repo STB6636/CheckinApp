@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-16T05:01:21.830Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `172` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `900`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-16T09:30:45.181Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `176` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `921`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f95d9c0cef8ad4e2` | **Total Lines:** `221` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8c9e3dd5fdc58a81` | **Total Lines:** `221` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -208,26 +208,50 @@
 
 ---
 
-## File: `assets/js/controllers/LoginController.js`
+## File: `assets/js/controllers/LoadingController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `3d343836fe9cae7b` | **Total Lines:** `307` | **Imports:** `5` | **Exports:** `LoginController`
+- **Hash:** `2e0f15f882025b64` | **Total Lines:** `372` | **Imports:** `4` | **Exports:** `LoadingController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `LoginController` | `class` | **L12 - L303** | `export class LoginController` | Class Definition (292 lines) |
+| `LoadingController` | `class` | **L14 - L358** | `export class LoadingController` | Class Definition (345 lines) |
+| `LoadingController.constructor` | `public constructor` | **L25 - L27** | `() => any` | public constructor L25-L27 (3 lines) |
+| `LoadingController.init` | `public async method` | **L29 - L105** | `() => Promise<any>` | public async method L29-L105 (77 lines) |
+| `LoadingController.#bindFallbackEvents` | `private method` | **L107 - L117** | `() => any` | private method L107-L117 (11 lines) |
+| `LoadingController.#hydrateFromLocalBrandCache` | `private method` | **L119 - L148** | `() => any` | private method L119-L148 (30 lines) |
+| `LoadingController.#verifyAndPreloadData` | `private async method` | **L150 - L174** | `(sessionUser) => Promise<any>` | private async method L150-L174 (25 lines) |
+| `LoadingController.#fetchSettingsWithTimeout` | `private async method` | **L176 - L190** | `(timeoutMs) => Promise<any>` | private async method L176-L190 (15 lines) |
+| `LoadingController.#verifySessionWithTimeout` | `private async method` | **L192 - L206** | `(timeoutMs) => Promise<any>` | private async method L192-L206 (15 lines) |
+| `LoadingController.#applyLiveSettingsBranding` | `private method` | **L208 - L253** | `(settings) => any` | private method L208-L253 (46 lines) |
+| `LoadingController.#sanitizeAndApplyLogoCssVar` | `private async method` | **L255 - L315** | `(varName, rawUrl, fallbackUrl) => Promise<any>` | private async method L255-L315 (61 lines) |
+| `LoadingController.#setStepLabel` | `private method` | **L317 - L322** | `(text) => any` | private method L317-L322 (6 lines) |
+| `LoadingController.#armWatchdog` | `private method` | **L324 - L334** | `() => any` | private method L324-L334 (11 lines) |
+| `LoadingController.#clearWatchdog` | `private method` | **L336 - L341** | `() => any` | private method L336-L341 (6 lines) |
+| `LoadingController.#navigateToTarget` | `private async method` | **L343 - L357** | `(targetUrl) => Promise<any>` | private async method L343-L357 (15 lines) |
+| `bootLoadingController` | `function` | **L361 - L365** | `() => inferred` | Bootstrap Singleton |
+
+---
+
+## File: `assets/js/controllers/LoginController.js`
+- **Layer:** Frontend Page Controller Layer (OOP)
+- **Hash:** `1f54258e4a592633` | **Total Lines:** `305` | **Imports:** `5` | **Exports:** `LoginController`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `LoginController` | `class` | **L12 - L301** | `export class LoginController` | Class Definition (290 lines) |
 | `LoginController.constructor` | `public constructor` | **L13 - L16** | `() => any` | public constructor L13-L16 (4 lines) |
-| `LoginController.init` | `public async method` | **L18 - L37** | `() => Promise<any>` | public async method L18-L37 (20 lines) |
-| `LoginController.#loadOrganizationBranding` | `private async method` | **L39 - L73** | `() => Promise<any>` | private async method L39-L73 (35 lines) |
-| `LoginController.#updateThemeButtonUI` | `private method` | **L75 - L85** | `() => any` | private method L75-L85 (11 lines) |
-| `LoginController.#bindEvents` | `private method` | **L87 - L192** | `() => any` | private method L87-L192 (106 lines) |
-| `openChangeModal` | `arrow_fn` | **L128 - L137** | `() => inferred` | Arrow Function L128-L137 |
-| `validatePasswordMatch` | `arrow_fn` | **L144 - L166** | `() => inferred` | Arrow Function L144-L166 |
-| `openForgotModal` | `arrow_fn` | **L177 - L181** | `() => inferred` | Arrow Function L177-L181 |
-| `LoginController.#handleLogin` | `private async method` | **L194 - L216** | `(mode) => Promise<any>` | private async method L194-L216 (23 lines) |
-| `LoginController.#loadRememberedUser` | `private method` | **L218 - L238** | `() => any` | private method L218-L238 (21 lines) |
-| `LoginController.#persistRememberedUser` | `private method` | **L240 - L255** | `(username) => any` | private method L240-L255 (16 lines) |
-| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L257 - L281** | `(closeModalCallback) => Promise<any>` | private async method L257-L281 (25 lines) |
-| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L283 - L302** | `(closeModalCallback) => Promise<any>` | private async method L283-L302 (20 lines) |
+| `LoginController.init` | `public async method` | **L18 - L36** | `() => Promise<any>` | public async method L18-L36 (19 lines) |
+| `LoginController.#loadOrganizationBranding` | `private async method` | **L38 - L72** | `() => Promise<any>` | private async method L38-L72 (35 lines) |
+| `LoginController.#updateThemeButtonUI` | `private method` | **L74 - L84** | `() => any` | private method L74-L84 (11 lines) |
+| `LoginController.#bindEvents` | `private method` | **L86 - L191** | `() => any` | private method L86-L191 (106 lines) |
+| `openChangeModal` | `arrow_fn` | **L127 - L136** | `() => inferred` | Arrow Function L127-L136 |
+| `validatePasswordMatch` | `arrow_fn` | **L143 - L165** | `() => inferred` | Arrow Function L143-L165 |
+| `openForgotModal` | `arrow_fn` | **L176 - L180** | `() => inferred` | Arrow Function L176-L180 |
+| `LoginController.#handleLogin` | `private async method` | **L193 - L214** | `(mode) => Promise<any>` | private async method L193-L214 (22 lines) |
+| `LoginController.#loadRememberedUser` | `private method` | **L216 - L236** | `() => any` | private method L216-L236 (21 lines) |
+| `LoginController.#persistRememberedUser` | `private method` | **L238 - L253** | `(username) => any` | private method L238-L253 (16 lines) |
+| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L255 - L279** | `(closeModalCallback) => Promise<any>` | private async method L255-L279 (25 lines) |
+| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L281 - L300** | `(closeModalCallback) => Promise<any>` | private async method L281-L300 (20 lines) |
 
 ---
 
@@ -613,7 +637,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `284d5abb348e46ff` | **Total Lines:** `1072` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `632fbce99f5dcb2c` | **Total Lines:** `1072` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -651,7 +675,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `80ac7572fa210dff` | **Total Lines:** `278` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8366d5c434e865df` | **Total Lines:** `278` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -735,22 +759,33 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8f46aea0d70ef323` | **Total Lines:** `386` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `611bab74a3310d3d` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L147** | `<head>` | HTML DOM Section L3-L147 |
-| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L172 - L172** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L172-L172 |
-| `<main>` | `html_dom_section` | **L179 - L291** | `<main>` | HTML DOM Section L179-L291 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L186 - L188** | `id="orgLogoWrapper"` | HTML DOM Section L186-L188 |
-| `<form#loginForm>` | `html_dom_section` | **L200 - L288** | `id="loginForm"` | HTML DOM Section L200-L288 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L384 - L384** | `<script>` | Bootstrap script L384-L384 |
+| `<head>` | `html_dom_section` | **L3 - L192** | `<head>` | HTML DOM Section L3-L192 |
+| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L217 - L217** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L217-L217 |
+| `<main>` | `html_dom_section` | **L224 - L336** | `<main>` | HTML DOM Section L224-L336 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L231 - L233** | `id="orgLogoWrapper"` | HTML DOM Section L231-L233 |
+| `<form#loginForm>` | `html_dom_section` | **L245 - L333** | `id="loginForm"` | HTML DOM Section L245-L333 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L429 - L429** | `<script>` | Bootstrap script L429-L429 |
+
+---
+
+## File: `loading.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `bd8d1eb374a10634` | **Total Lines:** `442` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L376** | `<head>` | HTML DOM Section L3-L376 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L440 - L440** | `<script>` | Bootstrap script L440-L440 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bab0afab9e4966ad` | **Total Lines:** `682` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7eb248a23dcb084f` | **Total Lines:** `682` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2242,9 +2277,31 @@
 
 ---
 
+## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_runtime_deep_simulation.mjs`
+- **Layer:** Application Module
+- **Hash:** `5a6beb6077644e56` | **Total Lines:** `294` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `assert` | `function` | **L18 - L27** | `(cond, desc) => inferred` | Function L18-L27 |
+| `sanitizeAndResolveLogo` | `function` | **L36 - L55** | `(rawUrl, fallbackUrl) => inferred` | Function L36-L55 |
+| `resolveTargetUrl` | `function` | **L264 - L270** | `(redirectUrl, sessionUser) => inferred` | Function L264-L270 |
+
+---
+
+## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_test_suite.mjs`
+- **Layer:** Application Module
+- **Hash:** `89fc2f8f53bfee0a` | **Total Lines:** `372` | **Imports:** `3` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `assert` | `function` | **L41 - L50** | `(condition, message) => inferred` | Function L41-L50 |
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f5664f3d64b440e2` | **Total Lines:** `536` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7ba41be645495164` | **Total Lines:** `536` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2262,7 +2319,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `21366aa39bae7c95` | **Total Lines:** `831` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6bb471c02b9c0264` | **Total Lines:** `831` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2411,7 +2468,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b31c4d11b795b451` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fdbd5733811cd12a` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

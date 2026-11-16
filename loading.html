@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Force Browser Revalidation & Auto Cache-Busting (Remote version.json + Hard Cache Purge) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        (function() {
+            const CURRENT_APP_BUILD = '20261116_c4c52e6f';
+            const BUILD_STORAGE_KEY = 'bma_app_build';
+            const RELOAD_GUARD_KEY = 'bma_reloaded_build';
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                BUILD_STORAGE_KEY
+            ];
+
+            // Clean up temporary cache-busting query param (?_cb=...) after forced reload
+            try {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('_cb')) {
+                    url.searchParams.delete('_cb');
+                    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+                }
+            } catch (_) {}
+
+            let purgePromise = null;
+            function performHardCachePurge(targetBuild) {
+                window.__bmaPurgeActive = true;
+                purgePromise = (async () => {
+                    try {
+                        if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                        sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
+
+                        Object.keys(localStorage).forEach((key) => {
+                            if (!PRESERVE_KEYS.includes(key)) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                        if ('caches' in window) {
+                            const names = await window.caches.keys();
+                            await Promise.all(names.map((n) => window.caches.delete(n)));
+                        }
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                            const regs = await navigator.serviceWorker.getRegistrations();
+                            await Promise.all(regs.map((r) => r.unregister()));
+                        }
+                        try {
+                            await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                        } catch (_) {}
+
+                        const nextUrl = new URL(window.location.href);
+                        nextUrl.searchParams.set('_cb', targetBuild);
+                        window.location.replace(nextUrl.toString());
+                    } catch (err) {
+                        console.warn('[CacheBuster] Hard purge error:', err);
+                    } finally {
+                        window.__bmaPurgeActive = false;
+                    }
+                })();
+                window.__bmaPurgePromise = purgePromise;
+                return purgePromise;
+            }
+
+            try {
+                const prevBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+                if (prevBuild && prevBuild !== CURRENT_APP_BUILD) {
+                    performHardCachePurge(CURRENT_APP_BUILD);
+                    return;
+                }
+                if (!prevBuild) {
+                    localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_APP_BUILD);
+                }
+            } catch (_) {}
+
+            async function checkRemoteVersion() {
+                try {
+                    const res = await fetch('./version.json?_t=' + Date.now(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const remoteBuild = data && data.buildId ? String(data.buildId).trim() : '';
+                    if (!remoteBuild) return;
+                    const localBuild = localStorage.getItem(BUILD_STORAGE_KEY) || CURRENT_APP_BUILD;
+                    if (remoteBuild !== localBuild || remoteBuild !== CURRENT_APP_BUILD) {
+                        await performHardCachePurge(remoteBuild);
+                    }
+                } catch (_) {}
+            }
+
+            checkRemoteVersion();
+            window.addEventListener('pageshow', (e) => { if (e.persisted) checkRemoteVersion(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkRemoteVersion();
+            });
+        })();
+    </script>
+    <script>
+        // 0ms Inline Theme and Brand Pre-hydration
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('bma_checkin_theme_mode_v2_7');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (_) {}
+
+            try {
+                const rawBrand = localStorage.getItem('bma_cached_brand_v2_7');
+                if (rawBrand) {
+                    const b = JSON.parse(rawBrand);
+                    if (b && typeof b === 'object') {
+                        const isSafe = (u) => /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(String(u || '').trim());
+                        if (b.logoUrl && isSafe(b.logoUrl)) {
+                            let normLogo = b.logoUrl;
+                            const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(b.logoUrl);
+                            if (isGoogleDrive) {
+                                const m = String(b.logoUrl).match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                                if (m && m[1]) normLogo = 'https://lh3.googleusercontent.com/d/' + m[1];
+                            }
+                            document.documentElement.style.setProperty('--logo-dept', "url('" + normLogo.replace(/['"\\]/g, '') + "')");
+                        }
+                        if (b.bmaLogoUrl && isSafe(b.bmaLogoUrl)) {
+                            document.documentElement.style.setProperty('--logo-bma', "url('" + b.bmaLogoUrl.replace(/['"\\]/g, '') + "')");
+                        }
+                        window.__bmaPreloadedBrand = b;
+                    }
+                }
+            } catch (_) {}
+        })();
+    </script>
+    <title>กำลังเข้าสู่ระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_c4c52e6f">
+    <style>
+        /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
+        body.login-vertical-gradient,
+        .login-vertical-gradient {
+            background: 
+                radial-gradient(ellipse 70% 50% at 85% 10%, rgba(9, 113, 206, 0.32) 0%, transparent 65%),
+                radial-gradient(ellipse 55% 45% at 12% 88%, rgba(235, 61, 169, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 82%, rgba(255, 180, 73, 0.28) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 15% 18%, rgba(72, 0, 128, 0.35) 0%, transparent 65%),
+                linear-gradient(180deg, #132E22 0%, #215A41 18%, #00744B 42%, #00995D 65%, #00C08A 84%, #66A33A 100%) !important;
+            background-color: #00744B !important;
+            min-height: 100dvh !important;
+            height: 100dvh !important;
+        }
+        html.dark body.login-vertical-gradient,
+        html.dark .login-vertical-gradient {
+            background: 
+                radial-gradient(ellipse 70% 50% at 85% 10%, rgba(9, 113, 206, 0.22) 0%, transparent 65%),
+                radial-gradient(ellipse 55% 45% at 12% 88%, rgba(235, 61, 169, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 82%, rgba(255, 180, 73, 0.20) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 45% at 15% 18%, rgba(72, 0, 128, 0.28) 0%, transparent 65%),
+                linear-gradient(180deg, #071911 0%, #122B20 20%, #004D32 45%, #00744B 75%, #00C08A 100%) !important;
+            background-color: #071911 !important;
+            min-height: 100dvh !important;
+            height: 100dvh !important;
+        }
+
+        :root {
+            --ld-size: 104px;
+            --logo-bma-fallback: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1OCIgZmlsbD0iIzAwNzQ0QiIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWRhc2hhcnJheT0iMywyIi8+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNDYiIGZpbGw9IiMwMDVBM0EiLz4KICA8cGF0aCBkPSJNNjAgMjIgTDYzIDMyIEw2OSAzNCBMNjQgMzggTDY1IDQ0IEw2MCA0MSBMNTUgNDQgTDU2IDM4IEw1MSAzNCBMNTcgMzIgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxwYXRoIGQ9Ik01NyA0MiBDNTcgMzkgNjMgMzkgNjMgNDIgTDY0IDUwIEM2NiA1MiA2OCA1NSA2OCA1OSBMNTIgNTkgQzUyIDU1IDU0IDUyIDU2IDUwIFoiIGZpbGw9IiNGRkZGRkYiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjQwIiByPSIzLjUiIGZpbGw9IiNGNkRFNTEiLz4KICA8cGF0aCBkPSJNNjYgNDMgTDcyIDM4IE03MSAzNiBMNzMgNDAiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNNDIgNjYgQzQwIDYwIDQ2IDU0IDUyIDU2IEM1NCA1MyA2NiA1MyA2OCA1NiBDNzQgNTQgODAgNjAgNzggNjYgQzc3IDc0IDc0IDgxIDcyIDg3IEM3MCA5MSA2NiA5MSA2NiA4NSBDNjYgNzkgNjcgNzMgNjYgNjkgQzY1IDY3IDYzIDY2IDYwIDY2IEM1NyA2NiA1NSA2NyA1NCA2OSBDNTMgNzMgNTQgNzkgNTQgODUgQzU0IDkxIDUwIDkxIDQ4IDg3IEM0NiA4MSA0MyA3NCA0MiA2NiBaIiBmaWxsPSIjRkZGRkZGIi8+CiAgPHBhdGggZD0iTTQ3IDcwIEM0NCA3MiA0MCA3MCAzOCA2NiBDNDAgNjcgNDQgNjcgNDYgNjggTTczIDcwIEM3NiA3MiA4MCA3MCA4MiA2NiBDODAgNjcgNzYgNjcgNzQgNjgiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0zOCA5MCBDNDUgODYgNTIgODggNjAgODggQzY4IDg4IDc1IDg2IDgyIDkwIEM3NSA5NCA2OCA5NSA2MCA5NSBDNTIgOTUgNDUgOTQgMzggOTAgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxwYXRoIGQ9Ik00MiA5MCBRNjAgOTggNzggOTAgUTYwIDk0IDQyIDkwIFoiIGZpbGw9IiMwMDc0NEIiLz4KPC9zdmc+");
+            --logo-dept-fallback: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8cGF0aCBkPSJNNjAgMTIgTDk2IDIyIEM5NiA2MiA4MiA5NCA2MCAxMDggQzM4IDk0IDI0IDYyIDI0IDIyIFoiIGZpbGw9IiMxMzJFMjIiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIzLjUiLz4KICA8cGF0aCBkPSJNNjAgMTggTDkxIDI2LjUgQzkxIDYwIDc4IDg5IDYwIDEwMSBDNDIgODkgMjkgNjAgMjkgMjYuNSBaIiBmaWxsPSIjMUI0RDM2IiBzdHJva2U9IiMwMEMwOEEiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHBhdGggZD0iTTMzIDMwIFE2MCAyMiA4NyAzMCBMODUgMzggUTYwIDMxIDM1IDM4IFoiIGZpbGw9IiNGNkRFNTEiLz4KICA8dGV4dCB4PSI2MCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMxMzJFMjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkJBTkdLT0s8L3RleHQ+CiAgPGxpbmUgeDE9IjYwIiB5MT0iNDIiIHgyPSI2MCIgeTI9Ijg0IiBzdHJva2U9IiNGNkRFNTEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBvbHlnb24gcG9pbnRzPSI2MCwzOSA1Nyw0NCA2Myw0NCIgZmlsbD0iI0Y2REU1MSIvPgogIDxsaW5lIHgxPSI1MyIgeTE9Ijg0IiB4Mj0iNjciIHkyPSI4NCIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjQwIiB5MT0iNTIiIHgyPSI4MCIgeTI9IjUyIiBzdHJva2U9IiNGNkRFNTEiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjUyIiByPSIzIiBmaWxsPSIjRkZGRkZGIi8+CiAgPGxpbmUgeDE9IjQwIiB5MT0iNTIiIHgyPSIzNSIgeTI9IjY1IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxsaW5lIHgxPSI0MCIgeTE9IjUyIiB4Mj0iNDUiIHkyPSI2NSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8cGF0aCBkPSJNMzMgNjUgUTQwIDcwIDQ3IDY1IFoiIGZpbGw9IiNGNkRFNTEiLz4KICA8bGluZSB4MT0iODAiIHkxPSI1MiIgeDI9Ijc1IiB5Mj0iNjUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPGxpbmUgeDE9IjgwIiB5MT0iNTIiIHgyPSI4NSIgeTI9IjY1IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxwYXRoIGQ9Ik03MyA2NSBRODAgNzAgODcgNjUgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxjaXJjbGUgY3g9IjYwIiBjeT0iNzQiIHI9IjUiIGZpbGw9IiMwMDc0NEIiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8cG9seWdvbiBwb2ludHM9IjYwLDcwIDYxLjUsNzMgNjUsNzQgNjEuNSw3NSA2MCw3OCA1OC41LDc1IDU1LDc0IDU4LjUsNzMiIGZpbGw9IiNGNkRFNTEiLz4KPC9zdmc+");
+            --logo-bma: url('https://pr-bangkok.com/wp-content/uploads/2025/06/231116_BMA-Emblem_Edited_Green-600x600.png');
+            --logo-dept: url('https://upload.wikimedia.org/wikipedia/commons/3/35/Patch_of_Bangkok_City_Law_Enforcement_Department.png');
+        }
+
+        /* 3D Flip Loader */
+        .loader {
+            position: relative;
+            width: var(--ld-size, 104px);
+            height: var(--ld-size, 104px);
+            display: inline-block;
+            flex: none;
+        }
+        .loader::before,
+        .loader::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: var(--logo-bma), var(--logo-bma-fallback);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transform-origin: center center;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            animation: logo-flip 2s infinite linear;
+        }
+        .loader::before {
+            --clip-v: inset(0 50% 0 0);
+            --clip-h: inset(0 0 50% 0);
+            --tx-v: calc(var(--ld-size, 104px) * -0.16);
+            --ty-h: calc(var(--ld-size, 104px) * -0.16);
+            clip-path: var(--clip-v);
+            -webkit-clip-path: var(--clip-v);
+        }
+        .loader::after {
+            --clip-v: inset(0 0 0 50%);
+            --clip-h: inset(50% 0 0 0);
+            --tx-v: calc(var(--ld-size, 104px) * 0.16);
+            --ty-h: calc(var(--ld-size, 104px) * 0.16);
+            clip-path: var(--clip-v);
+            -webkit-clip-path: var(--clip-v);
+        }
+
+        @keyframes logo-flip {
+            0%, 2.5% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(0px, 0px) perspective(200px) rotateX(0deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+            16.5% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(0deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+            24.75% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(90deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+            24.76% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(90deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            33% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(0deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            47.5%, 49.9% {
+                clip-path: var(--clip-v);
+                -webkit-clip-path: var(--clip-v);
+                transform: translate(0px, 0px) perspective(200px) rotateX(0deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            50%, 52.5% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, 0px) perspective(200px) rotateY(0deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            66.5% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(0deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            74.75% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(90deg);
+                background-image: var(--logo-dept), var(--logo-dept-fallback);
+            }
+            74.76% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(90deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+            83% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(0deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+            97.5%, 100% {
+                clip-path: var(--clip-h);
+                -webkit-clip-path: var(--clip-h);
+                transform: translate(0px, 0px) perspective(200px) rotateY(0deg);
+                background-image: var(--logo-bma), var(--logo-bma-fallback);
+            }
+        }
+
+        /* Card Container */
+        .ld-card {
+            background: var(--bma-surface-1, #FFFFFF);
+            border: 1px solid var(--bma-border, #E2E8F0);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+            border-radius: 1.5rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        html.dark .ld-card {
+            background: var(--bma-surface-1, #11231B);
+            border-color: var(--bma-border, #244737);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+        }
+
+        .login-card-header-gradient {
+            background: linear-gradient(180deg, #1A4D38 0%, #00744B 100%) !important;
+        }
+        html.dark .login-card-header-gradient {
+            background: linear-gradient(180deg, #0F2D21 0%, #005436 100%) !important;
+        }
+
+        /* Progress Bar */
+        .ld-bar {
+            width: 160px;
+            height: 4px;
+            border-radius: 99px;
+            background: var(--bma-border, #E2E8F0);
+            overflow: hidden;
+            position: relative;
+        }
+        html.dark .ld-bar {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .ld-bar > span {
+            position: absolute;
+            left: -40%;
+            top: 0;
+            height: 100%;
+            width: 40%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #00744B, #00C08A, #F6DE51);
+            animation: ld-slide 1.2s ease-in-out infinite;
+        }
+        @keyframes ld-slide {
+            0% { left: -40%; }
+            100% { left: 100%; }
+        }
+
+        /* Fade out transition */
+        .sp-fade {
+            opacity: 0 !important;
+            transform: scale(0.98);
+            transition: opacity 0.22s ease-out, transform 0.22s ease-out !important;
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --ld-size: 84px;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .loader::before,
+            .loader::after {
+                animation-duration: 6s;
+            }
+            .ld-bar > span {
+                animation-duration: 2.4s;
+            }
+        }
+    </style>
+</head>
+<body class="login-vertical-gradient flex items-center justify-center min-h-[100dvh] h-[100dvh] p-4 select-none">
+    <div id="bmaSplash" class="w-full max-w-sm flex flex-col items-center">
+        <div class="ld-card relative overflow-hidden w-full px-6 py-8 sm:px-8 sm:py-9 flex flex-col items-center text-center">
+            <!-- Top Civic Accent Stripe -->
+            <div class="login-card-header-gradient h-1.5 w-full absolute top-0 left-0"></div>
+
+            <!-- Dual-Logo 3D Flip Loader -->
+            <div class="loader my-3" id="ldFlipLoader" aria-label="กำลังโหลดระบบ"></div>
+
+            <!-- Organization & System Branding -->
+            <h1 id="ldOrgName" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-1">กรุงเทพมหานคร</h1>
+            <p id="ldBureauName" class="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">สำนักเทศกิจ</p>
+            <p id="ldSystemTitle" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">BMA e-Government Time Attendance System</p>
+            <script>
+                // 0ms instant text pre-hydration from cached brand
+                (function() {
+                    try {
+                        const b = window.__bmaPreloadedBrand;
+                        if (b && typeof b === 'object') {
+                            if (b.orgName) document.getElementById('ldOrgName').textContent = b.orgName;
+                            if (b.bureauName) document.getElementById('ldBureauName').textContent = b.bureauName;
+                            if (b.headerSystemTitle) document.getElementById('ldSystemTitle').textContent = b.headerSystemTitle;
+                        }
+                    } catch (_) {}
+                })();
+            </script>
+
+            <!-- Status Step Chip -->
+            <div class="mt-4 flex items-center justify-center">
+                <div class="ld-chip px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+                    <i id="ldSpinnerIcon" class="fa-solid fa-circle-notch fa-spin text-emerald-600 dark:text-emerald-400 text-xs"></i>
+                    <span id="ldStepLabel">กำลังเตรียมข้อมูลระบบ...</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="ld-bar mt-4">
+                <span id="ldProgressInner"></span>
+            </div>
+
+            <!-- Watchdog Fallback Actions (Hidden by default, shown after 12s timeout) -->
+            <div id="ldFallbackActions" class="hidden mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 w-full flex flex-col items-center gap-2.5">
+                <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">การเชื่อมต่อใช้เวลานานกว่าปกติ</p>
+                <div class="flex gap-2 w-full justify-center">
+                    <button id="btnRetryLoad" type="button" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition cursor-pointer">
+                        <i class="fa-solid fa-rotate-right mr-1.5"></i>ลองใหม่อีกครั้ง
+                    </button>
+                    <button id="btnBackToLogin" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-semibold transition cursor-pointer">
+                        <i class="fa-solid fa-arrow-left mr-1.5"></i>กลับหน้าเข้าสู่ระบบ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BFCache back-button safety -->
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (window.performance && window.performance.getEntriesByType && window.performance.getEntriesByType('navigation')[0] && window.performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
+                window.location.replace('loading.html?entry=session');
+            }
+        });
+    </script>
+    <script type="module" src="assets/js/controllers/LoadingController.js?v=20261116_c4c52e6f"></script>
+</body>
+</html>

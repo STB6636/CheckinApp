@@ -443,6 +443,7 @@ function analyzeSourceFile(filePath) {
 
 const ROOT_HTML_ENTRIES = [
   'index.html',
+  'loading.html',
   'checkin.html',
   'dashboard.html',
   'approvals.html',
@@ -543,7 +544,7 @@ function syncFrontendCacheVersion() {
     fs.writeFileSync(VERSION_FILE, JSON.stringify(versionPayload, null, 2) + '\n', 'utf8');
   }
 
-  // Stamp ทั้ง 8 Root HTML entry files
+  // Stamp ทั้ง 9 Root HTML entry files (รวม loading.html)
   for (const htmlFile of ROOT_HTML_ENTRIES) {
     const htmlPath = path.join(WORKSPACE_ROOT, htmlFile);
     if (!fs.existsSync(htmlPath)) continue;
@@ -570,7 +571,7 @@ function syncFrontendCacheVersion() {
  */
 function buildCodebaseMap() {
   const syncResult = syncFrontendCacheVersion();
-  console.log(`   ├── Synced version.json & 8 HTML cache stamps (buildId: ${syncResult.buildId})`);
+  console.log(`   ├── Synced version.json & ${ROOT_HTML_ENTRIES.length} HTML cache stamps (buildId: ${syncResult.buildId})`);
 
   if (!fs.existsSync(MAP_DIR)) {
     fs.mkdirSync(MAP_DIR, { recursive: true });

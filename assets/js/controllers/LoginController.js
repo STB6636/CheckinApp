@@ -19,11 +19,10 @@ export class LoginController {
         // ซ่อนชื่อไฟล์ .html ทันทีให้เหลือเฉพาะ https://stb6636.github.io/CheckinApp/
         UIHelpers.initTheme();
 
-        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าล่าสุดทันทีโดยไม่ต้อง Login ซ้ำ
+        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าโหลดเพื่อตรวจสอบสถานะก่อนเข้าสู่ระบบ
         const existingSessionUser = AuthService.getCurrentUser(true);
         if (existingSessionUser) {
-            const targetUrl = AuthService.getRedirectUrlForSession(existingSessionUser);
-            window.location.replace(targetUrl);
+            window.location.replace('loading.html?entry=session');
             return;
         }
 
@@ -207,8 +206,7 @@ export class LoginController {
 
             this.#persistRememberedUser(username);
 
-            await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
-            window.location.replace(result.redirectUrl);
+            window.location.replace('loading.html?entry=login');
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);

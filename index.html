@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261116_b9b109ff';
+            const CURRENT_APP_BUILD = '20261116_c4c52e6f';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -30,36 +30,51 @@
                 }
             } catch (_) {}
 
-            async function performHardCachePurge(targetBuild) {
-                try {
-                    if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
-                    sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
-
-                    Object.keys(localStorage).forEach((key) => {
-                        if (!PRESERVE_KEYS.includes(key)) {
-                            localStorage.removeItem(key);
-                        }
-                    });
-                    localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
-
-                    if ('caches' in window) {
-                        const names = await window.caches.keys();
-                        await Promise.all(names.map((n) => window.caches.delete(n)));
-                    }
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
-                        const regs = await navigator.serviceWorker.getRegistrations();
-                        await Promise.all(regs.map((r) => r.unregister()));
-                    }
+            let purgePromise = null;
+            function performHardCachePurge(targetBuild) {
+                window.__bmaPurgeActive = true;
+                purgePromise = (async () => {
                     try {
-                        await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
-                    } catch (_) {}
+                        if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                        sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
 
-                    const nextUrl = new URL(window.location.href);
-                    nextUrl.searchParams.set('_cb', targetBuild);
-                    window.location.replace(nextUrl.toString());
-                } catch (err) {
-                    console.warn('[CacheBuster] Hard purge error:', err);
-                }
+                        Object.keys(localStorage).forEach((key) => {
+                            if (!PRESERVE_KEYS.includes(key)) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                        if ('caches' in window) {
+                            const names = await window.caches.keys();
+                            await Promise.all(names.map((n) => window.caches.delete(n)));
+                        }
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                            const regs = await navigator.serviceWorker.getRegistrations();
+                            await Promise.all(regs.map((r) => r.unregister()));
+                        }
+                        try {
+                            await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                        } catch (_) {}
+
+                        const nextUrl = new URL(window.location.href);
+                        nextUrl.searchParams.set('_cb', targetBuild);
+                        if (document.documentElement.classList.contains('bma-session-redirecting')) {
+                            const loadingUrl = new URL('loading.html', window.location.href);
+                            loadingUrl.searchParams.set('entry', 'session');
+                            loadingUrl.searchParams.set('_cb', targetBuild);
+                            window.location.replace(loadingUrl.toString());
+                            return;
+                        }
+                        window.location.replace(nextUrl.toString());
+                    } catch (err) {
+                        console.warn('[CacheBuster] Hard purge error:', err);
+                    } finally {
+                        window.__bmaPurgeActive = false;
+                    }
+                })();
+                window.__bmaPurgePromise = purgePromise;
+                return purgePromise;
             }
 
             try {
@@ -100,6 +115,36 @@
             });
         })();
     </script>
+    <style>
+        html.bma-session-redirecting body {
+            display: none !important;
+        }
+    </style>
+    <script>
+        // Fast-path Session Redirect Guard (รันก่อนวาด Body เพื่อป้องกัน FOUC เมื่อมี Session เดิมที่ยังไม่หมดอายุ)
+        (function() {
+            try {
+                const rawUser = localStorage.getItem('bma_checkin_session_user_v2_7');
+                if (rawUser) {
+                    const parsed = JSON.parse(rawUser);
+                    if (parsed && parsed.id && parsed.expires_at && parsed.expires_at > Date.now()) {
+                        document.documentElement.classList.add('bma-session-redirecting');
+                        const proceedRedirect = function() {
+                            window.location.replace('loading.html?entry=session');
+                        };
+                        if (window.__bmaPurgeActive && window.__bmaPurgePromise) {
+                            Promise.race([
+                                window.__bmaPurgePromise,
+                                new Promise(function(resolve) { setTimeout(resolve, 1200); })
+                            ]).then(proceedRedirect).catch(proceedRedirect);
+                        } else {
+                            proceedRedirect();
+                        }
+                    }
+                }
+            } catch (_) {}
+        })();
+    </script>
     <title>เข้าสู่ระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -110,7 +155,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_b9b109ff">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_c4c52e6f">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -381,6 +426,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/LoginController.js?v=20261116_b9b109ff"></script>
+    <script type="module" src="assets/js/controllers/LoginController.js?v=20261116_c4c52e6f"></script>
 </body>
 </html>
