@@ -1,33 +1,33 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-14T09:38:04.630Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `171` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `860`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-16T05:01:21.830Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `172` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `900`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7d8ca5616909fec8` | **Total Lines:** `214` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f95d9c0cef8ad4e2` | **Total Lines:** `221` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L107** | `<head>` | HTML DOM Section L3-L107 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L111 - L111** | `id="bmaSidebarContainer"` | HTML DOM Section L111-L111 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L115 - L115** | `id="bmaTopbarContainer"` | HTML DOM Section L115-L115 |
-| `<main>` | `html_dom_section` | **L117 - L205** | `<main>` | HTML DOM Section L117-L205 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L207 - L207** | `id="bmaFooterContainer"` | HTML DOM Section L207-L207 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L212 - L212** | `<script>` | Bootstrap script L212-L212 |
+| `<head>` | `html_dom_section` | **L3 - L114** | `<head>` | HTML DOM Section L3-L114 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L118 - L118** | `id="bmaSidebarContainer"` | HTML DOM Section L118-L118 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L122 - L122** | `id="bmaTopbarContainer"` | HTML DOM Section L122-L122 |
+| `<main>` | `html_dom_section` | **L124 - L212** | `<main>` | HTML DOM Section L124-L212 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L214 - L214** | `id="bmaFooterContainer"` | HTML DOM Section L214-L214 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L219 - L219** | `<script>` | Bootstrap script L219-L219 |
 
 ---
 
 ## File: `assets/js/components/AppLayout.js`
 - **Layer:** Shared UI Component Layer
-- **Hash:** `bdc5e9ac41d7d705` | **Total Lines:** `992` | **Imports:** `7` | **Exports:** `AppLayout`
+- **Hash:** `0bd13e26d6aa5aee` | **Total Lines:** `998` | **Imports:** `7` | **Exports:** `AppLayout`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AppLayout` | `class` | **L14 - L992** | `export class AppLayout` | Class Definition (979 lines) |
+| `AppLayout` | `class` | **L14 - L998** | `export class AppLayout` | Class Definition (985 lines) |
 | `AppLayout.canViewUsersMenu` | `static public method` | **L64 - L71** | `(user) => any` | static public method L64-L71 (8 lines) |
 | `AppLayout.initAdminLayout` | `static public async method` | **L73 - L132** | `({ activePage, pageTitle, pageSubtitle = '' }) => Promise<any>` | static public async method L73-L132 (60 lines) |
 | `AppLayout.checkAndShowWelcomeToast` | `static public method` | **L134 - L143** | `(currentUser) => any` | static public method L134-L143 (10 lines) |
@@ -40,14 +40,14 @@
 | `AppLayout.getMobileShortcutGridHtml` | `static public method` | **L546 - L576** | `(currentUser) => any` | static public method L546-L576 (31 lines) |
 | `AppLayout.#renderFooter` | `static private method` | **L578 - L597** | `(settings) => any` | static private method L578-L597 (20 lines) |
 | `AppLayout.refreshNotificationBell` | `static public async method` | **L599 - L761** | `(currentUser) => Promise<any>` | static public async method L599-L761 (163 lines) |
-| `AppLayout.initAdminRealtimeSync` | `static public method` | **L763 - L876** | `(currentUser) => any` | static public method L763-L876 (114 lines) |
-| `AppLayout.#bindGlobalDelegatedEvents` | `static private method` | **L878 - L991** | `() => any` | static private method L878-L991 (114 lines) |
+| `AppLayout.initAdminRealtimeSync` | `static public method` | **L763 - L882** | `(currentUser) => any` | static public method L763-L882 (120 lines) |
+| `AppLayout.#bindGlobalDelegatedEvents` | `static private method` | **L884 - L997** | `() => any` | static private method L884-L997 (114 lines) |
 
 ---
 
 ## File: `assets/js/components/SystemUpdateModal.js`
 - **Layer:** Shared UI Component Layer
-- **Hash:** `277c182392a7ba13` | **Total Lines:** `468` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
+- **Hash:** `34b29b1482d33e60` | **Total Lines:** `468` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -90,87 +90,100 @@
 
 ## File: `assets/js/controllers/CheckinController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `135313c0a5c4cc43` | **Total Lines:** `3984` | **Imports:** `6` | **Exports:** `CheckinController`
+- **Hash:** `9512a6b8942cc2e4` | **Total Lines:** `4467` | **Imports:** `6` | **Exports:** `CheckinController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `CheckinController` | `class` | **L13 - L886** | `export class CheckinController` | Class Definition (874 lines) |
-| `CheckinController.constructor` | `public constructor` | **L14 - L68** | `() => any` | public constructor L14-L68 (55 lines) |
-| `CheckinController.init` | `public async method` | **L70 - L127** | `() => Promise<any>` | public async method L70-L127 (58 lines) |
-| `CheckinController.#initRealtimeSettingsListener` | `private method` | **L129 - L191** | `() => any` | private method L129-L191 (63 lines) |
-| `triggerDebouncedPersonalSync` | `arrow_fn` | **L136 - L144** | `(payload) => inferred` | Arrow Function L136-L144 |
-| `CheckinController.#syncPersonalAttendanceSilent` | `private async method` | **L193 - L199** | `() => Promise<any>` | private async method L193-L199 (7 lines) |
-| `CheckinController.#syncSettingsHotReload` | `private async method` | **L201 - L222** | `() => Promise<any>` | private async method L201-L222 (22 lines) |
-| `CheckinController.#applySettingsHotReload` | `private method` | **L224 - L250** | `(newSettings) => any` | private method L224-L250 (27 lines) |
-| `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L252 - L283** | `() => any` | private method L252-L283 (32 lines) |
-| `CheckinController.#updateThemeButtonUI` | `private method` | **L285 - L303** | `() => any` | private method L285-L303 (19 lines) |
-| `CheckinController.#checkAndShowWelcomeToast` | `private method` | **L305 - L313** | `() => any` | private method L305-L313 (9 lines) |
-| `CheckinController.#startLiveClock24` | `private method` | **L315 - L341** | `() => any` | private method L315-L341 (27 lines) |
-| `updateClock` | `arrow_fn` | **L316 - L338** | `() => inferred` | Arrow Function L316-L338 |
-| `CheckinController.#isShiftAlreadyRecordedToday` | `private method` | **L343 - L391** | `(shift) => any` | private method L343-L391 (49 lines) |
-| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L393 - L428** | `(shift, nowMin, allowStartMin) => any` | private method L393-L428 (36 lines) |
-| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L430 - L534** | `() => any` | private method L430-L534 (105 lines) |
-| `CheckinController.#calculateHaversineMeters` | `private method` | **L539 - L551** | `(lat1, lon1, lat2, lon2) => any` | คำนวณระยะทางแบบ Haversine (หน่วย: เมตร) |
-| `CheckinController.evaluateOnsiteGeofence` | `public method` | **L559 - L640** | `(currentLat, currentLng) => any` | public method L559-L640 (82 lines) |
-| `CheckinController.#renderGeofenceStatusUI` | `private method` | **L642 - L712** | `() => any` | private method L642-L712 (71 lines) |
-| `CheckinController.#initLocaV2ModeAndChips` | `private method` | **L714 - L716** | `() => any` | private method L714-L716 (3 lines) |
-| `CheckinController.#initModeSwitcher` | `private method` | **L718 - L828** | `() => any` | private method L718-L828 (111 lines) |
-| `setActiveOffsiteGps` | `arrow_fn` | **L725 - L734** | `(source) => inferred` | Arrow Function L725-L734 |
-| `CheckinController.#initViewGpsMapModal` | `private method` | **L830 - L837** | `() => any` | private method L830-L837 (8 lines) |
-| `CheckinController.#openViewGpsMapModal` | `private method` | **L839 - L885** | `() => any` | private method L839-L885 (47 lines) |
-| `#goToStep` | `private method` | **L888 - L953** | `(step) => any` | private method L888-L953 (66 lines) |
-| `#updateStep1Validation` | `private method` | **L955 - L990** | `() => any` | private method L955-L990 (36 lines) |
-| `#openOffsiteMapModal` | `private method` | **L992 - L1087** | `() => any` | private method L992-L1087 (96 lines) |
-| `#updateOffsiteModalMarker` | `private async method` | **L1090 - L1150** | `(lat, lng, explicitName = null, extent = null) => Promise<any>` | private async method L1090-L1150 (61 lines) |
-| `#initOffsiteModalGps` | `private method` | **L1152 - L1378** | `() => any` | private method L1152-L1378 (227 lines) |
-| `escapeHtml` | `arrow_fn` | **L1161 - L1169** | `(str) => inferred` | Arrow Function L1161-L1169 |
-| `hideSearchResults` | `arrow_fn` | **L1171 - L1176** | `() => inferred` | Arrow Function L1171-L1176 |
-| `closeModal` | `arrow_fn` | **L1178 - L1181** | `() => inferred` | Arrow Function L1178-L1181 |
-| `performSearch` | `async_arrow_fn` | **L1229 - L1343** | `() => inferred` | Arrow Function L1229-L1343 |
-| `#renderUserAndSettingsInfo` | `private method` | **L1382 - L1513** | `() => any` | private method L1382-L1513 (132 lines) |
-| `setElText` | `arrow_fn` | **L1387 - L1390** | `(id, text) => inferred` | Arrow Function L1387-L1390 |
-| `#refreshAllAttendanceData` | `private async method` | **L1515 - L1532** | `() => Promise<any>` | private async method L1515-L1532 (18 lines) |
-| `#updateStatusCardsAndMainButton` | `private method` | **L1534 - L1818** | `() => any` | private method L1534-L1818 (285 lines) |
-| `applyGpsSearchingLock` | `arrow_fn` | **L1561 - L1571** | `() => inferred` | Arrow Function L1561-L1571 |
-| `setShiftCardVisibility` | `arrow_fn` | **L1573 - L1582** | `(visible) => inferred` | Arrow Function L1573-L1582 |
-| `#renderPersonalAttendanceTabs` | `private method` | **L1820 - L1863** | `() => any` | private method L1820-L1863 (44 lines) |
-| `#buildHistoryRowHtml` | `private method` | **L1865 - L1885** | `(item, rowNumber) => any` | private method L1865-L1885 (21 lines) |
-| `#renderSpecialRequestsHistoryTable` | `private method` | **L1887 - L1934** | `() => any` | private method L1887-L1934 (48 lines) |
-| `#openFullscreenCamera` | `private async method` | **L1936 - L1992** | `() => Promise<any>` | private async method L1936-L1992 (57 lines) |
-| `#captureAndCloseCamera` | `private method` | **L1994 - L2034** | `() => any` | private method L1994-L2034 (41 lines) |
-| `#closeFullscreenCamera` | `private method` | **L2036 - L2039** | `() => any` | private method L2036-L2039 (4 lines) |
-| `#checkCameraHardware` | `private async method` | **L2041 - L2055** | `() => Promise<any>` | private async method L2041-L2055 (15 lines) |
-| `#handleFallbackFileSelected` | `private method` | **L2057 - L2121** | `(file) => any` | private method L2057-L2121 (65 lines) |
-| `#stopCameraHardwareStream` | `private method` | **L2123 - L2137** | `() => any` | private method L2123-L2137 (15 lines) |
-| `#stopCameraAndShowStandby` | `private method` | **L2139 - L2165** | `() => any` | private method L2139-L2165 (27 lines) |
-| `#openCameraOnDemand` | `private async method` | **L2167 - L2236** | `() => Promise<any>` | private async method L2167-L2236 (70 lines) |
-| `#capturePhotoAndStopStream` | `private method` | **L2238 - L2270** | `() => any` | private method L2238-L2270 (33 lines) |
-| `#resetPageAfterSave` | `private async method` | **L2272 - L2287** | `() => Promise<any>` | private async method L2272-L2287 (16 lines) |
-| `#initGpsLocation` | `private async method` | **L2295 - L2452** | `({ forceRefresh = false } = {}) => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
-| `#renderInlineGpsMap` | `private method` | **L2454 - L2520** | `(lat, lng) => any` | private method L2454-L2520 (67 lines) |
-| `#bindEvents` | `private method` | **L2523 - L2822** | `() => any` | private method L2523-L2822 (300 lines) |
-| `openSpecialModal` | `arrow_fn` | **L2686 - L2689** | `() => inferred` | Arrow Function L2686-L2689 |
-| `setDesktopActiveTab` | `arrow_fn` | **L2726 - L2745** | `(activeName) => inferred` | Arrow Function L2726-L2745 |
-| `openMobileDrawer` | `arrow_fn` | **L2756 - L2774** | `() => inferred` | Arrow Function L2756-L2774 |
-| `closeMobileDrawer` | `arrow_fn` | **L2776 - L2803** | `(targetTab = null) => inferred` | Arrow Function L2776-L2803 |
-| `#handleMainCheckin` | `private async method` | **L2824 - L3249** | `() => Promise<any>` | private async method L2824-L3249 (426 lines) |
-| `#openSpecialRequestModal` | `private method` | **L3251 - L3328** | `() => any` | private method L3251-L3328 (78 lines) |
-| `#initModalSpecialRequest` | `private method` | **L3330 - L3382** | `() => any` | private method L3330-L3382 (53 lines) |
-| `#initSpecialModalGps` | `private method` | **L3384 - L3510** | `() => any` | private method L3384-L3510 (127 lines) |
-| `updateCustomPinAndLocation` | `async_arrow_fn` | **L3396 - L3467** | `(lat, lng, flyTo = false, explicitName = null, extent = null) => inferred` | Arrow Function L3396-L3467 |
-| `setupMapIfAvailable` | `arrow_fn` | **L3469 - L3504** | `() => inferred` | Arrow Function L3469-L3504 |
-| `getDistanceInMeters` | `arrow_fn` | **L3529 - L3548** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3529-L3548 |
-| `calculateDistance` | `arrow_fn` | **L3550 - L3559** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L3550-L3559 |
-| `getCategoryLabel` | `arrow_fn` | **L3561 - L3600** | `(item) => inferred` | Arrow Function L3561-L3600 |
-| `escapeHtml` | `arrow_fn` | **L3602 - L3610** | `(str) => inferred` | Arrow Function L3602-L3610 |
-| `formatSubAddress` | `arrow_fn` | **L3612 - L3628** | `(item) => inferred` | Arrow Function L3612-L3628 |
-| `getMainName` | `arrow_fn` | **L3630 - L3638** | `(item) => inferred` | Arrow Function L3630-L3638 |
-| `hideSearchResults` | `arrow_fn` | **L3640 - L3645** | `() => inferred` | Arrow Function L3640-L3645 |
-| `bindResultItemClicks` | `arrow_fn` | **L3647 - L3667** | `() => inferred` | Arrow Function L3647-L3667 |
-| `renderCoordsResult` | `arrow_fn` | **L3669 - L3693** | `(lat, lng) => inferred` | Arrow Function L3669-L3693 |
-| `renderPlaceResults` | `arrow_fn` | **L3695 - L3741** | `(items) => inferred` | Arrow Function L3695-L3741 |
-| `performSearch` | `async_arrow_fn` | **L3746 - L3807** | `() => inferred` | Arrow Function L3746-L3807 |
-| `#handleSubmitSpecialRequest` | `private async method` | **L3847 - L3979** | `(closeModalCallback) => Promise<any>` | private async method L3847-L3979 (133 lines) |
+| `CheckinController` | `class` | **L13 - L905** | `export class CheckinController` | Class Definition (893 lines) |
+| `CheckinController.constructor` | `public constructor` | **L14 - L71** | `() => any` | public constructor L14-L71 (58 lines) |
+| `CheckinController.init` | `public async method` | **L73 - L146** | `() => Promise<any>` | public async method L73-L146 (74 lines) |
+| `CheckinController.#initRealtimeSettingsListener` | `private method` | **L148 - L210** | `() => any` | private method L148-L210 (63 lines) |
+| `triggerDebouncedPersonalSync` | `arrow_fn` | **L155 - L163** | `(payload) => inferred` | Arrow Function L155-L163 |
+| `CheckinController.#syncPersonalAttendanceSilent` | `private async method` | **L212 - L218** | `() => Promise<any>` | private async method L212-L218 (7 lines) |
+| `CheckinController.#syncSettingsHotReload` | `private async method` | **L220 - L241** | `() => Promise<any>` | private async method L220-L241 (22 lines) |
+| `CheckinController.#applySettingsHotReload` | `private method` | **L243 - L269** | `(newSettings) => any` | private method L243-L269 (27 lines) |
+| `CheckinController.#applyDynamicWorkspaceLayout` | `private method` | **L271 - L302** | `() => any` | private method L271-L302 (32 lines) |
+| `CheckinController.#updateThemeButtonUI` | `private method` | **L304 - L322** | `() => any` | private method L304-L322 (19 lines) |
+| `CheckinController.#checkAndShowWelcomeToast` | `private method` | **L324 - L332** | `() => any` | private method L324-L332 (9 lines) |
+| `CheckinController.#startLiveClock24` | `private method` | **L334 - L360** | `() => any` | private method L334-L360 (27 lines) |
+| `updateClock` | `arrow_fn` | **L335 - L357** | `() => inferred` | Arrow Function L335-L357 |
+| `CheckinController.#isShiftAlreadyRecordedToday` | `private method` | **L362 - L410** | `(shift) => any` | private method L362-L410 (49 lines) |
+| `CheckinController.#isShiftActiveAtCurrentTime` | `private method` | **L412 - L447** | `(shift, nowMin, allowStartMin) => any` | private method L412-L447 (36 lines) |
+| `CheckinController.#evaluateTimeWindowAndPopulateShifts` | `private method` | **L449 - L553** | `() => any` | private method L449-L553 (105 lines) |
+| `CheckinController.#calculateHaversineMeters` | `private method` | **L558 - L570** | `(lat1, lon1, lat2, lon2) => any` | คำนวณระยะทางแบบ Haversine (หน่วย: เมตร) |
+| `CheckinController.evaluateOnsiteGeofence` | `public method` | **L578 - L659** | `(currentLat, currentLng) => any` | public method L578-L659 (82 lines) |
+| `CheckinController.#renderGeofenceStatusUI` | `private method` | **L661 - L731** | `() => any` | private method L661-L731 (71 lines) |
+| `CheckinController.#initLocaV2ModeAndChips` | `private method` | **L733 - L735** | `() => any` | private method L733-L735 (3 lines) |
+| `CheckinController.#initModeSwitcher` | `private method` | **L737 - L847** | `() => any` | private method L737-L847 (111 lines) |
+| `setActiveOffsiteGps` | `arrow_fn` | **L744 - L753** | `(source) => inferred` | Arrow Function L744-L753 |
+| `CheckinController.#initViewGpsMapModal` | `private method` | **L849 - L856** | `() => any` | private method L849-L856 (8 lines) |
+| `CheckinController.#openViewGpsMapModal` | `private method` | **L858 - L904** | `() => any` | private method L858-L904 (47 lines) |
+| `#goToStep` | `private method` | **L907 - L972** | `(step) => any` | private method L907-L972 (66 lines) |
+| `#updateStep1Validation` | `private method` | **L974 - L1009** | `() => any` | private method L974-L1009 (36 lines) |
+| `#openOffsiteMapModal` | `private method` | **L1011 - L1106** | `() => any` | private method L1011-L1106 (96 lines) |
+| `#updateOffsiteModalMarker` | `private async method` | **L1109 - L1169** | `(lat, lng, explicitName = null, extent = null) => Promise<any>` | private async method L1109-L1169 (61 lines) |
+| `#initOffsiteModalGps` | `private method` | **L1171 - L1397** | `() => any` | private method L1171-L1397 (227 lines) |
+| `escapeHtml` | `arrow_fn` | **L1180 - L1188** | `(str) => inferred` | Arrow Function L1180-L1188 |
+| `hideSearchResults` | `arrow_fn` | **L1190 - L1195** | `() => inferred` | Arrow Function L1190-L1195 |
+| `closeModal` | `arrow_fn` | **L1197 - L1200** | `() => inferred` | Arrow Function L1197-L1200 |
+| `performSearch` | `async_arrow_fn` | **L1248 - L1362** | `() => inferred` | Arrow Function L1248-L1362 |
+| `#renderUserAndSettingsInfo` | `private method` | **L1401 - L1532** | `() => any` | private method L1401-L1532 (132 lines) |
+| `setElText` | `arrow_fn` | **L1406 - L1409** | `(id, text) => inferred` | Arrow Function L1406-L1409 |
+| `#refreshAllAttendanceData` | `private async method` | **L1534 - L1551** | `() => Promise<any>` | private async method L1534-L1551 (18 lines) |
+| `#updateStatusCardsAndMainButton` | `private method` | **L1553 - L1837** | `() => any` | private method L1553-L1837 (285 lines) |
+| `applyGpsSearchingLock` | `arrow_fn` | **L1580 - L1590** | `() => inferred` | Arrow Function L1580-L1590 |
+| `setShiftCardVisibility` | `arrow_fn` | **L1592 - L1601** | `(visible) => inferred` | Arrow Function L1592-L1601 |
+| `#renderPersonalAttendanceTabs` | `private method` | **L1839 - L1882** | `() => any` | private method L1839-L1882 (44 lines) |
+| `#buildHistoryRowHtml` | `private method` | **L1884 - L1904** | `(item, rowNumber) => any` | private method L1884-L1904 (21 lines) |
+| `#renderSpecialRequestsHistoryTable` | `private method` | **L1906 - L1953** | `() => any` | private method L1906-L1953 (48 lines) |
+| `#openFullscreenCamera` | `private async method` | **L1958 - L1960** | `() => Promise<any>` | เปิดกล้องแบบเต็มหน้าจอเพื่อถ่ายภาพยืนยันตัวตน |
+| `#captureAndCloseCamera` | `private method` | **L1962 - L2002** | `() => any` | private method L1962-L2002 (41 lines) |
+| `#closeFullscreenCamera` | `private method` | **L2004 - L2009** | `() => any` | private method L2004-L2009 (6 lines) |
+| `#checkCameraHardware` | `private async method` | **L2015 - L2032** | `() => Promise<any>` | private async method L2015-L2032 (18 lines) |
+| `#handleFallbackFileSelected` | `private method` | **L2034 - L2118** | `(file) => any` | private method L2034-L2118 (85 lines) |
+| `resetFileInput` | `arrow_fn` | **L2040 - L2043** | `() => inferred` | Arrow Function L2040-L2043 |
+| `notifyReadError` | `arrow_fn` | **L2044 - L2051** | `() => inferred` | Arrow Function L2044-L2051 |
+| `#stopCameraHardwareStream` | `private method` | **L2120 - L2139** | `() => any` | private method L2120-L2139 (20 lines) |
+| `#stopCameraAndShowStandby` | `private method` | **L2141 - L2169** | `() => any` | private method L2141-L2169 (29 lines) |
+| `#openCameraOnDemand` | `private async method` | **L2174 - L2192** | `() => Promise<any>` | เปิดกล้องอัตโนมัติเมื่อเข้าสู่ Step 2 (คงการอัปเดต DOM สำหรับโหมด On-Demand) |
+| `#startCameraSession` | `private async method` | **L2199 - L2325** | `({ showFullscreenModal = true } = {}) => Promise<any>` | private async method L2199-L2325 (127 lines) |
+| `#acquireCameraStreamWithRetry` | `private async method` | **L2333 - L2384** | `(initialStreamPromise, sessionToken) => Promise<any>` | private async method L2333-L2384 (52 lines) |
+| `#bindCameraStreamLifecycle` | `private method` | **L2390 - L2398** | `(stream) => any` | private method L2390-L2398 (9 lines) |
+| `#handleUnexpectedCameraStreamStop` | `private method` | **L2404 - L2431** | `(message = '') => any` | private method L2404-L2431 (28 lines) |
+| `#detectCameraBrowserProfile` | `private method` | **L2437 - L2465** | `() => any` | private method L2437-L2465 (29 lines) |
+| `#getCameraPermissionHintHtml` | `private method` | **L2472 - L2485** | `(profile) => any` | private method L2472-L2485 (14 lines) |
+| `#hideCameraPermissionHint` | `private method` | **L2504 - L2510** | `() => any` | ซ่อนแบนเนอร์แนะนำสิทธิ์กล้องและยกเลิก Timer ที่ค้างอยู่ |
+| `#scheduleCameraPermissionHint` | `private method` | **L2516 - L2545** | `(sessionToken = this.cameraSessionToken) => any` | private method L2516-L2545 (30 lines) |
+| `#classifyCameraErrorReason` | `private method` | **L2552 - L2567** | `(err) => any` | private method L2552-L2567 (16 lines) |
+| `#getBrowserPermissionRecoveryStepsHtml` | `private method` | **L2574 - L2613** | `(profile) => any` | private method L2574-L2613 (40 lines) |
+| `#showCameraGuidanceModal` | `private async method` | **L2619 - L2700** | `({ reason, allowFallback }) => Promise<any>` | private async method L2619-L2700 (82 lines) |
+| `#capturePhotoAndStopStream` | `private method` | **L2702 - L2734** | `() => any` | private method L2702-L2734 (33 lines) |
+| `#resetPageAfterSave` | `private async method` | **L2736 - L2751** | `() => Promise<any>` | private async method L2736-L2751 (16 lines) |
+| `#initGpsLocation` | `private async method` | **L2759 - L2916** | `({ forceRefresh = false } = {}) => Promise<any>` | 3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง ["ใกล้เคียง " + ชื่อซอย] |
+| `#renderInlineGpsMap` | `private method` | **L2918 - L2984** | `(lat, lng) => any` | private method L2918-L2984 (67 lines) |
+| `#bindEvents` | `private method` | **L2987 - L3291** | `() => any` | private method L2987-L3291 (305 lines) |
+| `openSpecialModal` | `arrow_fn` | **L3155 - L3158** | `() => inferred` | Arrow Function L3155-L3158 |
+| `setDesktopActiveTab` | `arrow_fn` | **L3195 - L3214** | `(activeName) => inferred` | Arrow Function L3195-L3214 |
+| `openMobileDrawer` | `arrow_fn` | **L3225 - L3243** | `() => inferred` | Arrow Function L3225-L3243 |
+| `closeMobileDrawer` | `arrow_fn` | **L3245 - L3272** | `(targetTab = null) => inferred` | Arrow Function L3245-L3272 |
+| `#handleMainCheckin` | `private async method` | **L3293 - L3725** | `() => Promise<any>` | private async method L3293-L3725 (433 lines) |
+| `#openSpecialRequestModal` | `private method` | **L3727 - L3804** | `() => any` | private method L3727-L3804 (78 lines) |
+| `#initModalSpecialRequest` | `private method` | **L3806 - L3858** | `() => any` | private method L3806-L3858 (53 lines) |
+| `#initSpecialModalGps` | `private method` | **L3860 - L3986** | `() => any` | private method L3860-L3986 (127 lines) |
+| `updateCustomPinAndLocation` | `async_arrow_fn` | **L3872 - L3943** | `(lat, lng, flyTo = false, explicitName = null, extent = null) => inferred` | Arrow Function L3872-L3943 |
+| `setupMapIfAvailable` | `arrow_fn` | **L3945 - L3980** | `() => inferred` | Arrow Function L3945-L3980 |
+| `getDistanceInMeters` | `arrow_fn` | **L4005 - L4024** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L4005-L4024 |
+| `calculateDistance` | `arrow_fn` | **L4026 - L4035** | `(lat1, lon1, lat2, lon2) => inferred` | Arrow Function L4026-L4035 |
+| `getCategoryLabel` | `arrow_fn` | **L4037 - L4076** | `(item) => inferred` | Arrow Function L4037-L4076 |
+| `escapeHtml` | `arrow_fn` | **L4078 - L4086** | `(str) => inferred` | Arrow Function L4078-L4086 |
+| `formatSubAddress` | `arrow_fn` | **L4088 - L4104** | `(item) => inferred` | Arrow Function L4088-L4104 |
+| `getMainName` | `arrow_fn` | **L4106 - L4114** | `(item) => inferred` | Arrow Function L4106-L4114 |
+| `hideSearchResults` | `arrow_fn` | **L4116 - L4121** | `() => inferred` | Arrow Function L4116-L4121 |
+| `bindResultItemClicks` | `arrow_fn` | **L4123 - L4143** | `() => inferred` | Arrow Function L4123-L4143 |
+| `renderCoordsResult` | `arrow_fn` | **L4145 - L4169** | `(lat, lng) => inferred` | Arrow Function L4145-L4169 |
+| `renderPlaceResults` | `arrow_fn` | **L4171 - L4217** | `(items) => inferred` | Arrow Function L4171-L4217 |
+| `performSearch` | `async_arrow_fn` | **L4222 - L4283** | `() => inferred` | Arrow Function L4222-L4283 |
+| `#handleSubmitSpecialRequest` | `private async method` | **L4323 - L4462** | `(closeModalCallback) => Promise<any>` | private async method L4323-L4462 (140 lines) |
 
 ---
 
@@ -583,7 +596,7 @@
 
 ## File: `assets/js/utils/DOMDiffHelper.js`
 - **Layer:** Application Module
-- **Hash:** `8e724dbbd3949abc` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `DOMDiffHelper`
+- **Hash:** `cfa5908ccef75054` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `DOMDiffHelper`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -600,55 +613,55 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `0a275f6db2379152` | **Total Lines:** `1057` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `284d5abb348e46ff` | **Total Lines:** `1072` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L171** | `<head>` | HTML DOM Section L3-L171 |
-| `<main>` | `html_dom_section` | **L252 - L640** | `<main>` | HTML DOM Section L252-L640 |
-| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L255 - L498** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L255-L498 |
-| `<div#photoPreviewCard>` | `html_dom_section` | **L298 - L319** | `id="photoPreviewCard"` | HTML DOM Section L298-L319 |
-| `<div#gpsSectionCard>` | `html_dom_section` | **L322 - L359** | `id="gpsSectionCard"` | HTML DOM Section L322-L359 |
-| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L356 - L356** | `id="googleMapEmbedWrapper"` | HTML DOM Section L356-L356 |
-| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L380 - L391** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L380-L391 |
-| `<div#offsiteLocationSection>` | `html_dom_section` | **L394 - L430** | `id="offsiteLocationSection"` | HTML DOM Section L394-L430 |
-| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L426 - L426** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L426-L426 |
-| `<div#checkinActionCard>` | `html_dom_section` | **L434 - L467** | `id="checkinActionCard"` | HTML DOM Section L434-L467 |
-| `<div#shiftSelectorContainer>` | `html_dom_section` | **L444 - L449** | `id="shiftSelectorContainer"` | HTML DOM Section L444-L449 |
-| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L451 - L460** | `id="mainCustomTimeContainer"` | HTML DOM Section L451-L460 |
-| `<div#checkinStep1Container>` | `html_dom_section` | **L480 - L480** | `id="checkinStep1Container"` | HTML DOM Section L480-L480 |
-| `<div#checkinStep2Container>` | `html_dom_section` | **L481 - L481** | `id="checkinStep2Container"` | HTML DOM Section L481-L481 |
-| `<div#rightColumnWrapper>` | `html_dom_section` | **L482 - L482** | `id="rightColumnWrapper"` | HTML DOM Section L482-L482 |
-| `<div#cameraSectionCard>` | `html_dom_section` | **L486 - L486** | `id="cameraSectionCard"` | HTML DOM Section L486-L486 |
-| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L494 - L494** | `id="cameraStandbyOverlay"` | HTML DOM Section L494-L494 |
-| `<div#desktopPanesContainer>` | `html_dom_section` | **L501 - L638** | `id="desktopPanesContainer"` | HTML DOM Section L501-L638 |
-| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L504 - L593** | `id="desktopHistoryWrapper"` | HTML DOM Section L504-L593 |
-| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L530 - L547** | `id="todayHistoryTabPanel"` | HTML DOM Section L530-L547 |
-| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L550 - L590** | `id="pastHistoryTabPanel"` | HTML DOM Section L550-L590 |
-| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L596 - L636** | `id="desktopSpecialWrapper"` | HTML DOM Section L596-L636 |
-| `<div#mobileDrawerPanel>` | `html_dom_section` | **L648 - L738** | `id="mobileDrawerPanel"` | HTML DOM Section L648-L738 |
-| `<div#spCustomTimeContainer>` | `html_dom_section` | **L771 - L780** | `id="spCustomTimeContainer"` | HTML DOM Section L771-L780 |
-| `<div#spOnsiteSection>` | `html_dom_section` | **L808 - L815** | `id="spOnsiteSection"` | HTML DOM Section L808-L815 |
-| `<div#spOffsiteSection>` | `html_dom_section` | **L818 - L899** | `id="spOffsiteSection"` | HTML DOM Section L818-L899 |
-| `<div#spOffsiteReasonContainer>` | `html_dom_section` | **L819 - L826** | `id="spOffsiteReasonContainer"` | HTML DOM Section L819-L826 |
-| `<div#spSearchWrapper>` | `html_dom_section` | **L868 - L874** | `id="spSearchWrapper"` | HTML DOM Section L868-L874 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L926 - L926** | `<script>` | Bootstrap script L926-L926 |
+| `<head>` | `html_dom_section` | **L3 - L178** | `<head>` | HTML DOM Section L3-L178 |
+| `<main>` | `html_dom_section` | **L259 - L647** | `<main>` | HTML DOM Section L259-L647 |
+| `<div#checkinWorkspaceWrapper>` | `html_dom_section` | **L262 - L505** | `id="checkinWorkspaceWrapper"` | HTML DOM Section L262-L505 |
+| `<div#photoPreviewCard>` | `html_dom_section` | **L305 - L326** | `id="photoPreviewCard"` | HTML DOM Section L305-L326 |
+| `<div#gpsSectionCard>` | `html_dom_section` | **L329 - L366** | `id="gpsSectionCard"` | HTML DOM Section L329-L366 |
+| `<div#googleMapEmbedWrapper>` | `html_dom_section` | **L363 - L363** | `id="googleMapEmbedWrapper"` | HTML DOM Section L363-L363 |
+| `<div#onsiteGeofenceStatusCard>` | `html_dom_section` | **L387 - L398** | `id="onsiteGeofenceStatusCard"` | HTML DOM Section L387-L398 |
+| `<div#offsiteLocationSection>` | `html_dom_section` | **L401 - L437** | `id="offsiteLocationSection"` | HTML DOM Section L401-L437 |
+| `<div#offsiteRemarkChipsContainer>` | `html_dom_section` | **L433 - L433** | `id="offsiteRemarkChipsContainer"` | HTML DOM Section L433-L433 |
+| `<div#checkinActionCard>` | `html_dom_section` | **L441 - L474** | `id="checkinActionCard"` | HTML DOM Section L441-L474 |
+| `<div#shiftSelectorContainer>` | `html_dom_section` | **L451 - L456** | `id="shiftSelectorContainer"` | HTML DOM Section L451-L456 |
+| `<div#mainCustomTimeContainer>` | `html_dom_section` | **L458 - L467** | `id="mainCustomTimeContainer"` | HTML DOM Section L458-L467 |
+| `<div#checkinStep1Container>` | `html_dom_section` | **L487 - L487** | `id="checkinStep1Container"` | HTML DOM Section L487-L487 |
+| `<div#checkinStep2Container>` | `html_dom_section` | **L488 - L488** | `id="checkinStep2Container"` | HTML DOM Section L488-L488 |
+| `<div#rightColumnWrapper>` | `html_dom_section` | **L489 - L489** | `id="rightColumnWrapper"` | HTML DOM Section L489-L489 |
+| `<div#cameraSectionCard>` | `html_dom_section` | **L493 - L493** | `id="cameraSectionCard"` | HTML DOM Section L493-L493 |
+| `<div#cameraStandbyOverlay>` | `html_dom_section` | **L501 - L501** | `id="cameraStandbyOverlay"` | HTML DOM Section L501-L501 |
+| `<div#desktopPanesContainer>` | `html_dom_section` | **L508 - L645** | `id="desktopPanesContainer"` | HTML DOM Section L508-L645 |
+| `<div#desktopHistoryWrapper>` | `html_dom_section` | **L511 - L600** | `id="desktopHistoryWrapper"` | HTML DOM Section L511-L600 |
+| `<div#todayHistoryTabPanel>` | `html_dom_section` | **L537 - L554** | `id="todayHistoryTabPanel"` | HTML DOM Section L537-L554 |
+| `<div#pastHistoryTabPanel>` | `html_dom_section` | **L557 - L597** | `id="pastHistoryTabPanel"` | HTML DOM Section L557-L597 |
+| `<div#desktopSpecialWrapper>` | `html_dom_section` | **L603 - L643** | `id="desktopSpecialWrapper"` | HTML DOM Section L603-L643 |
+| `<div#mobileDrawerPanel>` | `html_dom_section` | **L655 - L745** | `id="mobileDrawerPanel"` | HTML DOM Section L655-L745 |
+| `<div#spCustomTimeContainer>` | `html_dom_section` | **L778 - L787** | `id="spCustomTimeContainer"` | HTML DOM Section L778-L787 |
+| `<div#spOnsiteSection>` | `html_dom_section` | **L815 - L822** | `id="spOnsiteSection"` | HTML DOM Section L815-L822 |
+| `<div#spOffsiteSection>` | `html_dom_section` | **L825 - L906** | `id="spOffsiteSection"` | HTML DOM Section L825-L906 |
+| `<div#spOffsiteReasonContainer>` | `html_dom_section` | **L826 - L833** | `id="spOffsiteReasonContainer"` | HTML DOM Section L826-L833 |
+| `<div#spSearchWrapper>` | `html_dom_section` | **L875 - L881** | `id="spSearchWrapper"` | HTML DOM Section L875-L881 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L933 - L933** | `<script>` | Bootstrap script L933-L933 |
 
 ---
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `a039f59dab439bd5` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `80ac7572fa210dff` | **Total Lines:** `278` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L118 - L118** | `id="bmaTopbarContainer"` | HTML DOM Section L118-L118 |
-| `<main>` | `html_dom_section` | **L121 - L260** | `<main>` | HTML DOM Section L121-L260 |
-| `<div#mobileShortcutContainer>` | `html_dom_section` | **L124 - L124** | `id="mobileShortcutContainer"` | HTML DOM Section L124-L124 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L263 - L263** | `id="bmaFooterContainer"` | HTML DOM Section L263-L263 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L269 - L269** | `<script>` | Bootstrap script L269-L269 |
+| `<head>` | `html_dom_section` | **L3 - L115** | `<head>` | HTML DOM Section L3-L115 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L119 - L119** | `id="bmaSidebarContainer"` | HTML DOM Section L119-L119 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L125 - L125** | `id="bmaTopbarContainer"` | HTML DOM Section L125-L125 |
+| `<main>` | `html_dom_section` | **L128 - L267** | `<main>` | HTML DOM Section L128-L267 |
+| `<div#mobileShortcutContainer>` | `html_dom_section` | **L131 - L131** | `id="mobileShortcutContainer"` | HTML DOM Section L131-L131 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L270 - L270** | `id="bmaFooterContainer"` | HTML DOM Section L270-L270 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L276 - L276** | `<script>` | Bootstrap script L276-L276 |
 
 ---
 
@@ -693,15 +706,15 @@
 
 ## File: `docs/manual/manual-user.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bde6d6d5d54045fb` | **Total Lines:** `1375` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `72db24cf3ec0b53b` | **Total Lines:** `1386` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L170 - L1135** | `<main>` | HTML DOM Section L170-L1135 |
-| `<div#mockupModal>` | `html_dom_section` | **L1144 - L1170** | `id="mockupModal"` | HTML DOM Section L1144-L1170 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1146 - L1169** | `id="mockupModalPanel"` | HTML DOM Section L1146-L1169 |
+| `<main>` | `html_dom_section` | **L170 - L1146** | `<main>` | HTML DOM Section L170-L1146 |
+| `<div#mockupModal>` | `html_dom_section` | **L1155 - L1181** | `id="mockupModal"` | HTML DOM Section L1155-L1181 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1157 - L1180** | `id="mockupModalPanel"` | HTML DOM Section L1157-L1180 |
 
 ---
 
@@ -722,34 +735,34 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6f108c659b6b0b52` | **Total Lines:** `379` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8f46aea0d70ef323` | **Total Lines:** `386` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L140** | `<head>` | HTML DOM Section L3-L140 |
-| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L165 - L165** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L165-L165 |
-| `<main>` | `html_dom_section` | **L172 - L284** | `<main>` | HTML DOM Section L172-L284 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L179 - L181** | `id="orgLogoWrapper"` | HTML DOM Section L179-L181 |
-| `<form#loginForm>` | `html_dom_section` | **L193 - L281** | `id="loginForm"` | HTML DOM Section L193-L281 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L377 - L377** | `<script>` | Bootstrap script L377-L377 |
+| `<head>` | `html_dom_section` | **L3 - L147** | `<head>` | HTML DOM Section L3-L147 |
+| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L172 - L172** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L172-L172 |
+| `<main>` | `html_dom_section` | **L179 - L291** | `<main>` | HTML DOM Section L179-L291 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L186 - L188** | `id="orgLogoWrapper"` | HTML DOM Section L186-L188 |
+| `<form#loginForm>` | `html_dom_section` | **L200 - L288** | `id="loginForm"` | HTML DOM Section L200-L288 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L384 - L384** | `<script>` | Bootstrap script L384-L384 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bb17f4e2323d0514` | **Total Lines:** `675` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `bab0afab9e4966ad` | **Total Lines:** `682` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L109** | `<head>` | HTML DOM Section L3-L109 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L113 - L113** | `id="bmaSidebarContainer"` | HTML DOM Section L113-L113 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L117 - L117** | `id="bmaTopbarContainer"` | HTML DOM Section L117-L117 |
-| `<main>` | `html_dom_section` | **L119 - L251** | `<main>` | HTML DOM Section L119-L251 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L253 - L253** | `id="bmaFooterContainer"` | HTML DOM Section L253-L253 |
-| `<div#modalPersonnelForm>` | `html_dom_section` | **L259 - L370** | `id="modalPersonnelForm"` | HTML DOM Section L259-L370 |
-| `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L586 - L627** | `id="bulkImportPreviewContainer"` | HTML DOM Section L586-L627 |
-| `<div#bulkImportProgressContainer>` | `html_dom_section` | **L647 - L655** | `id="bulkImportProgressContainer"` | HTML DOM Section L647-L655 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L673 - L673** | `<script>` | Bootstrap script L673-L673 |
+| `<head>` | `html_dom_section` | **L3 - L116** | `<head>` | HTML DOM Section L3-L116 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L120 - L120** | `id="bmaSidebarContainer"` | HTML DOM Section L120-L120 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L124 - L124** | `id="bmaTopbarContainer"` | HTML DOM Section L124-L124 |
+| `<main>` | `html_dom_section` | **L126 - L258** | `<main>` | HTML DOM Section L126-L258 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L260 - L260** | `id="bmaFooterContainer"` | HTML DOM Section L260-L260 |
+| `<div#modalPersonnelForm>` | `html_dom_section` | **L266 - L377** | `id="modalPersonnelForm"` | HTML DOM Section L266-L377 |
+| `<div#bulkImportPreviewContainer>` | `html_dom_section` | **L593 - L634** | `id="bulkImportPreviewContainer"` | HTML DOM Section L593-L634 |
+| `<div#bulkImportProgressContainer>` | `html_dom_section` | **L654 - L662** | `id="bulkImportProgressContainer"` | HTML DOM Section L654-L662 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L680 - L680** | `<script>` | Bootstrap script L680-L680 |
 
 ---
 
@@ -1246,7 +1259,7 @@
 
 ## File: `pipeline/PIPE-20261104-fix-staging-table-relations/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e651c1facdf9b65e` | **Total Lines:** `196` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7d44056a9bdb417a` | **Total Lines:** `196` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1256,7 +1269,7 @@
 
 ## File: `pipeline/PIPE-20261104-lean-ai-workflow/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9d34aa2596f0e230` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `bd26ac30913a5b32` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1266,7 +1279,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6b1f620d7c170f75` | **Total Lines:** `134` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3aacfb4b78b96b32` | **Total Lines:** `134` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1276,7 +1289,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/qa_loca_v2_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `14b1eb2263e07a22` | **Total Lines:** `341` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `ad9ead718c9dee87` | **Total Lines:** `341` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1290,7 +1303,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e631e305ae8ce3f6` | **Total Lines:** `609` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ef35adbb2d2d1565` | **Total Lines:** `609` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1303,7 +1316,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/qa_zero_scroll_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `9f0b1bf20adac291` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `ba0df63fd43f1d5b` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1313,7 +1326,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-3to4-zero-scroll/qa_3to4_zero_scroll_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `fc6414843b654edd` | **Total Lines:** `246` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `784e708257ad7745` | **Total Lines:** `246` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1323,7 +1336,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-cockpit-split-layout/qa_cockpit_split_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `9e6968af8d9af300` | **Total Lines:** `327` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `ed864983a4037a3c` | **Total Lines:** `327` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1333,7 +1346,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `9216ce1451b4c319` | **Total Lines:** `140` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `c6df485d154a960c` | **Total Lines:** `140` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1343,7 +1356,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `4c829ae3391757c8` | **Total Lines:** `352` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c82916fd7a05fc2e` | **Total Lines:** `352` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1357,7 +1370,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/qa_gps_symmetry_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `60c115de4404ece7` | **Total Lines:** `221` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `03d9d7ed698ed5e7` | **Total Lines:** `221` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1367,7 +1380,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e82e2910ac332157` | **Total Lines:** `697` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `87418c6c3d0fa5a8` | **Total Lines:** `697` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1389,7 +1402,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `3693c8b1cd484c70` | **Total Lines:** `151` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `841b5ace65f0238a` | **Total Lines:** `151` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1399,7 +1412,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-polish/qa_loca_v2_polish_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `89ae60c5e5161039` | **Total Lines:** `99` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `9067a4ef8530d0ed` | **Total Lines:** `99` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1409,7 +1422,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `606754168b2a74b7` | **Total Lines:** `770` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `eb7b4899bbe550d6` | **Total Lines:** `770` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1420,7 +1433,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `5d851a6619234635` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `bf683afec1a72744` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1428,7 +1441,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_dom_diff_unit_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `acfa5290bf0a566b` | **Total Lines:** `217` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `7cabe8b1b23895fa` | **Total Lines:** `217` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1455,7 +1468,7 @@
 
 ## File: `pipeline/PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `add50985244b0508` | **Total Lines:** `497` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `38f23e696ded318b` | **Total Lines:** `497` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1468,7 +1481,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3655adccd260bdbb` | **Total Lines:** `142` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `859782ae5f8429e2` | **Total Lines:** `142` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1478,7 +1491,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `b824495242f833e1` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `875a992ddf90dcf2` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1486,7 +1499,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_functional_robustness_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `74863609ce346320` | **Total Lines:** `284` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `742111fb296344e2` | **Total Lines:** `284` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1501,7 +1514,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_app_layout.mjs`
 - **Layer:** Application Module
-- **Hash:** `af394dfa47048c11` | **Total Lines:** `184` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `6a6d1a90b975d135` | **Total Lines:** `184` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1509,7 +1522,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_attendance_model.mjs`
 - **Layer:** Application Module
-- **Hash:** `29a00a83689a1b4e` | **Total Lines:** `358` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `5cf78dd64cf632d0` | **Total Lines:** `358` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1517,7 +1530,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_checkin.mjs`
 - **Layer:** Application Module
-- **Hash:** `e8327e01dc50f7b8` | **Total Lines:** `134` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `098682ffc77649e3` | **Total Lines:** `134` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1525,7 +1538,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_dashboard.mjs`
 - **Layer:** Application Module
-- **Hash:** `3511cdabfa44b439` | **Total Lines:** `70` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `6f0116dd21203e09` | **Total Lines:** `70` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1533,7 +1546,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_reports.mjs`
 - **Layer:** Application Module
-- **Hash:** `533841669eaabe54` | **Total Lines:** `121` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `07ef5eeaf087acf9` | **Total Lines:** `121` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1541,7 +1554,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/inspect_staging_schema.mjs`
 - **Layer:** Application Module
-- **Hash:** `890e7ddac163ae28` | **Total Lines:** `133` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `34578b11310ad8cc` | **Total Lines:** `133` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1552,7 +1565,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fee2788fdca6c2a9` | **Total Lines:** `224` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ab36a9c0cd2c55b6` | **Total Lines:** `224` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1562,7 +1575,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `23aff4fbf439b149` | **Total Lines:** `74` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `172da6c29bc306dc` | **Total Lines:** `74` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1570,7 +1583,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_comprehensive_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `325da2bc88343839` | **Total Lines:** `124` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `d87d1929f093d2c1` | **Total Lines:** `124` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1578,7 +1591,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_live_persistence_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `bb4a4c22366868a4` | **Total Lines:** `100` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `ee29c199dd71d23c` | **Total Lines:** `100` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1594,7 +1607,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_rev2_verification_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `269a5ecd93113b12` | **Total Lines:** `88` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `5ceadf6f54684575` | **Total Lines:** `88` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1602,7 +1615,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_applayout_realtime_js.mjs`
 - **Layer:** Application Module
-- **Hash:** `6bcf0bf88a14b49d` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `654bccafd3c3fc9e` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1617,7 +1630,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_broadcast_behavior.mjs`
 - **Layer:** Application Module
-- **Hash:** `57e70cc0aab16715` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `f940ae6471ebbce7` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1625,7 +1638,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_daily_report_records.mjs`
 - **Layer:** Application Module
-- **Hash:** `cdf44f23bd216aee` | **Total Lines:** `44` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `665cb702462272f8` | **Total Lines:** `44` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1633,7 +1646,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_live_ws_trigger.mjs`
 - **Layer:** Application Module
-- **Hash:** `76bab416874b3723` | **Total Lines:** `74` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5ec5d12d8a3a4298` | **Total Lines:** `74` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1641,7 +1654,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_non_existent_table_sub.mjs`
 - **Layer:** Application Module
-- **Hash:** `5611f5f4736629f7` | **Total Lines:** `33` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `bfcd14b107a75c1e` | **Total Lines:** `33` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1649,7 +1662,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_realtime_crud_live.mjs`
 - **Layer:** Application Module
-- **Hash:** `5ac21cc7bec74cd3` | **Total Lines:** `97` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `a5971a764c73d573` | **Total Lines:** `97` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1657,7 +1670,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_checkin_flow.mjs`
 - **Layer:** Application Module
-- **Hash:** `3efeffc7826c70eb` | **Total Lines:** `28` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `43af9bc5286ec09a` | **Total Lines:** `28` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1672,7 +1685,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_columns.mjs`
 - **Layer:** Application Module
-- **Hash:** `f14b0fbcf7f0ac5b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `62c84bd9c2f55431` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1682,7 +1695,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_watermark.mjs`
 - **Layer:** Application Module
-- **Hash:** `3ded696faf3aa959` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `50927bd4091763b9` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1692,7 +1705,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_supabase_realtime_ws.mjs`
 - **Layer:** Application Module
-- **Hash:** `1b025b94e40ff4a3` | **Total Lines:** `58` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1d02d30f6bf46175` | **Total Lines:** `58` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1700,7 +1713,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_debug.mjs`
 - **Layer:** Application Module
-- **Hash:** `5e9e9ed971b8a676` | **Total Lines:** `41` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `2f31d06487c2a984` | **Total Lines:** `41` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1708,7 +1721,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_live.mjs`
 - **Layer:** Application Module
-- **Hash:** `2d85a0963e44b71b` | **Total Lines:** `47` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8b8ff6e6c281c1bd` | **Total Lines:** `47` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1718,7 +1731,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_query.mjs`
 - **Layer:** Application Module
-- **Hash:** `e703c363d5832497` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `08a3d9167cf2c55e` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1728,7 +1741,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_safe.mjs`
 - **Layer:** Application Module
-- **Hash:** `d055b9bd3d84c94b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fa42408d36be917b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1738,7 +1751,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_write_postgrest.mjs`
 - **Layer:** Application Module
-- **Hash:** `aa3f997ef807db73` | **Total Lines:** `27` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `395d2623bcf39637` | **Total Lines:** `27` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1748,7 +1761,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7224279609c12254` | **Total Lines:** `250` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `4089bfbc498cc6a7` | **Total Lines:** `250` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1758,7 +1771,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `2da3175d09e13e94` | **Total Lines:** `492` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `71b631730bc074b2` | **Total Lines:** `492` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1772,7 +1785,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/audit_cache_sync.mjs`
 - **Layer:** Application Module
-- **Hash:** `42128d1382167564` | **Total Lines:** `50` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `33b4e39f15afc3e5` | **Total Lines:** `50` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1780,7 +1793,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `71e975bb092c4974` | **Total Lines:** `212` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8c4b8fd2770a6869` | **Total Lines:** `212` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1790,7 +1803,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_unit_mock_tests.mjs`
 - **Layer:** Application Module
-- **Hash:** `fc45a29c7be67452` | **Total Lines:** `430` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `618a241232fe53e6` | **Total Lines:** `430` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1801,7 +1814,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_button_lock.mjs`
 - **Layer:** Application Module
-- **Hash:** `a0f180444bed904e` | **Total Lines:** `45` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `4c5b9a0a06b4987b` | **Total Lines:** `45` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1811,7 +1824,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_places.mjs`
 - **Layer:** Application Module
-- **Hash:** `96395561bf851fb6` | **Total Lines:** `194` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `4b5fd299d3159aeb` | **Total Lines:** `194` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1822,7 +1835,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `cdea2f0f97a5294c` | **Total Lines:** `248` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b3250c98e3e18ed4` | **Total Lines:** `248` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1832,7 +1845,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_adversarial_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `5ae72241f5e0e9d9` | **Total Lines:** `107` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `3a8e926f76937ffd` | **Total Lines:** `107` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1844,7 +1857,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_verify_gps_refresh_and_clock.mjs`
 - **Layer:** Application Module
-- **Hash:** `d1bff993c36b03b7` | **Total Lines:** `64` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `771827f9e89f9565` | **Total Lines:** `64` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1855,7 +1868,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/test_full_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `b27a7f849f222305` | **Total Lines:** `191` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `1b1cd903588333db` | **Total Lines:** `191` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1867,7 +1880,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `5e32f2db1fb1eba9` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `482ae9522e98fa0b` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1878,7 +1891,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `5eb039f430dddc70` | **Total Lines:** `66` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `bbe37b558bba82da` | **Total Lines:** `66` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1888,7 +1901,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs`
 - **Layer:** Application Module
-- **Hash:** `10c726c567ab6c4b` | **Total Lines:** `190` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `aff2048a6ed002bd` | **Total Lines:** `190` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1899,7 +1912,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs`
 - **Layer:** Application Module
-- **Hash:** `215fbed204e391b6` | **Total Lines:** `275` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `6b0e318bd230b7c5` | **Total Lines:** `275` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1911,7 +1924,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `2a2c16c6942ab063` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `21f532f6f2e96b0a` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1921,7 +1934,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `5fe81e53e24d2be1` | **Total Lines:** `281` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `4fd5e25ecb67b95b` | **Total Lines:** `281` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1931,7 +1944,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `cc2c2683ab0f8b3e` | **Total Lines:** `139` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `e36b0752341bf8c7` | **Total Lines:** `139` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1941,7 +1954,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `609fc01074f988af` | **Total Lines:** `42` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `210b26a8c1603ab9` | **Total Lines:** `42` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1949,7 +1962,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `c910c0f7f57b4555` | **Total Lines:** `152` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `8ceac785762c57bc` | **Total Lines:** `152` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1959,7 +1972,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs`
 - **Layer:** Application Module
-- **Hash:** `31ecadf08a2b088b` | **Total Lines:** `123` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `ce02121fd6cbee88` | **Total Lines:** `123` | **Imports:** `3` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1967,7 +1980,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b7a2909b17765728` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `09dc9139f36c8556` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1977,7 +1990,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/preflight_forward_search_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `21130928faee9378` | **Total Lines:** `64` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `573023b649fb4832` | **Total Lines:** `64` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1987,7 +2000,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/qa_audit_test_suite.mjs`
 - **Layer:** Application Module
-- **Hash:** `cabf204e484c9bfd` | **Total Lines:** `363` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `9f8427e6aec77e01` | **Total Lines:** `363` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1998,7 +2011,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/verify_cache_sync.mjs`
 - **Layer:** Application Module
-- **Hash:** `5918c0aafe77004d` | **Total Lines:** `29` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `16e79d04c52cc7f8` | **Total Lines:** `29` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2006,7 +2019,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3410ca95e5fe4dd6` | **Total Lines:** `200` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `82e9d84f5289d02e` | **Total Lines:** `200` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2016,7 +2029,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/preflight_arcgis_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `bcfe866fd66c17a0` | **Total Lines:** `131` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `434dc204883e6319` | **Total Lines:** `131` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2028,7 +2041,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_arcgis.mjs`
 - **Layer:** Application Module
-- **Hash:** `e49722e56b9b2b26` | **Total Lines:** `395` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `44f250e6f084eca4` | **Total Lines:** `395` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2041,7 +2054,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_e2e.mjs`
 - **Layer:** Application Module
-- **Hash:** `ce0bd37aff0d4489` | **Total Lines:** `92` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `6e353677c22c5903` | **Total Lines:** `92` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2051,7 +2064,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ed635ba5111c1524` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b85b5690967fefa7` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2061,7 +2074,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `025f08c97ea8a6b1` | **Total Lines:** `35` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `15e72590d71fbc93` | **Total Lines:** `35` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2069,7 +2082,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `08b4880c46b84008` | **Total Lines:** `162` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `05afa63faeeeff18` | **Total Lines:** `162` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2085,7 +2098,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `abe86103ffa1c1cb` | **Total Lines:** `170` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7e1c6e0d00300ff3` | **Total Lines:** `170` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2096,7 +2109,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/preflight_plan_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `f5ca59801d3ddb1d` | **Total Lines:** `48` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `2fee2287d6d2fbd6` | **Total Lines:** `48` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2106,7 +2119,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `c24e19e947c6e44b` | **Total Lines:** `588` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `a5c1a6776e47939c` | **Total Lines:** `588` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2117,7 +2130,7 @@
 
 ## File: `pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_adversarial_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `338cf68ff35eb6fe` | **Total Lines:** `225` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `ee99ddc0ecb52330` | **Total Lines:** `225` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2127,7 +2140,7 @@
 
 ## File: `pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_special_request_mode_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `a42192ac4a210695` | **Total Lines:** `433` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `e5bb15ed3728a226` | **Total Lines:** `433` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2140,7 +2153,7 @@
 
 ## File: `pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_deep_adversarial_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `52a3070a401c6fec` | **Total Lines:** `456` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `4562c61b56167fba` | **Total Lines:** `456` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2155,7 +2168,7 @@
 
 ## File: `pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_split_dropdowns_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `6de0056798b27d8b` | **Total Lines:** `103` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `0dfe8b171bf47e8f` | **Total Lines:** `103` | **Imports:** `4` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2163,7 +2176,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `433792dff37b5c3a` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e433a99f8a02dcc7` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2173,7 +2186,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `8fdb352bdc5bac92` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `5618b32df35273b3` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2185,7 +2198,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs`
 - **Layer:** Application Module
-- **Hash:** `366c3946e33e3d65` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `08b7a6ef3cad9055` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2193,39 +2206,75 @@
 
 ---
 
-## File: `reports.html`
-- **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `0ba553c0c260f661` | **Total Lines:** `529` | **Imports:** `0` | **Exports:** `None`
+## File: `pipeline/PIPE-20261116-fix-mobile-logout-session-camera/qa_fix_mobile_logout_session_camera.mjs`
+- **Layer:** Application Module
+- **Hash:** `d629aba93c0c1598` | **Total Lines:** `1681` | **Imports:** `7` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L116 - L116** | `id="bmaTopbarContainer"` | HTML DOM Section L116-L116 |
-| `<main>` | `html_dom_section` | **L118 - L275** | `<main>` | HTML DOM Section L118-L275 |
-| `<div#reportMobileShortcutContainer>` | `html_dom_section` | **L120 - L120** | `id="reportMobileShortcutContainer"` | HTML DOM Section L120-L120 |
-| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L266 - L266** | `id="statusTagsFilterContainer"` | HTML DOM Section L266-L266 |
-| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L273 - L273** | `id="reportTablesMasterContainer"` | HTML DOM Section L273-L273 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L277 - L277** | `id="bmaFooterContainer"` | HTML DOM Section L277-L277 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L527 - L527** | `<script>` | Bootstrap script L527-L527 |
+| `runTest` | `function` | **L38 - L49** | `(name, fn) => inferred` | Function L38-L49 |
+| `runAsyncTest` | `async_function` | **L51 - L62** | `(name, fn) => inferred` | Function L51-L62 |
+| `makeMockStream` | `function` | **L64 - L82** | `(harness, opts = {}) => inferred` | Function L64-L82 |
+| `stop` | `public method` | **L69 - L73** | `() => any` | public method L69-L73 (5 lines) |
+| `createSharedMockDb` | `function` | **L86 - L137** | `() => inferred` | Function L86-L137 |
+| `createChainableProxy` | `function` | **L87 - L132** | `(table = '', op = 'select', isSingle = false) => inferred` | Function L87-L132 |
+| `setupBrowserHarness` | `function` | **L142 - L469** | `(options = {}) => inferred` | Function L142-L469 |
+| `MockClassList` | `class` | **L151 - L169** | `class MockClassList` | Class Definition (19 lines) |
+| `MockClassList.constructor` | `public constructor` | **L152 - L154** | `(initial = []) => any` | public constructor L152-L154 (3 lines) |
+| `MockClassList.contains` | `public method` | **L155 - L155** | `(c) => any` | public method L155-L155 (1 lines) |
+| `MockClassList.add` | `public method` | **L156 - L156** | `(...cls) => any` | public method L156-L156 (1 lines) |
+| `MockClassList.remove` | `public method` | **L157 - L157** | `(...cls) => any` | public method L157-L157 (1 lines) |
+| `MockClassList.toggle` | `public method` | **L158 - L167** | `(c, force) => any` | public method L158-L167 (10 lines) |
+| `MockClassList.toString` | `public method` | **L168 - L168** | `() => any` | public method L168-L168 (1 lines) |
+| `getOrCreateElem` | `function` | **L171 - L269** | `(id, defaults = {}) => inferred` | Function L171-L269 |
+| `cleanup` | `public method` | **L304 - L307** | `() => any` | public method L304-L307 (4 lines) |
+| `addEventListener` | `public method` | **L354 - L354** | `(t, fn) => any` | public method L354-L354 (1 lines) |
+| `removeEventListener` | `public method` | **L355 - L355** | `() => any` | public method L355-L355 (1 lines) |
+| `dispatchEvent` | `public method` | **L356 - L356** | `(evt) => any` | public method L356-L356 (1 lines) |
+| `constructor` | `public constructor` | **L395 - L398** | `(type, init = {}) => any` | public constructor L395-L398 (4 lines) |
+| `addEventListener` | `public method` | **L407 - L407** | `(t, fn) => any` | public method L407-L407 (1 lines) |
+| `removeEventListener` | `public method` | **L408 - L408** | `() => any` | public method L408-L408 (1 lines) |
+| `readAsDataURL` | `public method` | **L417 - L425** | `() => any` | public method L417-L425 (9 lines) |
+| `flushMicrotasks` | `async_function` | **L471 - L473** | `(ms = 30) => inferred` | Function L471-L473 |
+| `main` | `async_function` | **L475 - L703** | `() => inferred` | Function L475-L703 |
+| `walkAssets` | `arrow_fn` | **L502 - L512** | `(dir, out = []) => inferred` | Arrow Function L502-L512 |
+| `runPurgeScenario` | `async_arrow_fn` | **L564 - L638** | `({ storedBuild, remoteBuildResponse }) => inferred` | Arrow Function L564-L638 |
+
+---
+
+## File: `reports.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `f5664f3d64b440e2` | **Total Lines:** `536` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L115** | `<head>` | HTML DOM Section L3-L115 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L119 - L119** | `id="bmaSidebarContainer"` | HTML DOM Section L119-L119 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L123 - L123** | `id="bmaTopbarContainer"` | HTML DOM Section L123-L123 |
+| `<main>` | `html_dom_section` | **L125 - L282** | `<main>` | HTML DOM Section L125-L282 |
+| `<div#reportMobileShortcutContainer>` | `html_dom_section` | **L127 - L127** | `id="reportMobileShortcutContainer"` | HTML DOM Section L127-L127 |
+| `<div#statusTagsFilterContainer>` | `html_dom_section` | **L273 - L273** | `id="statusTagsFilterContainer"` | HTML DOM Section L273-L273 |
+| `<div#reportTablesMasterContainer>` | `html_dom_section` | **L280 - L280** | `id="reportTablesMasterContainer"` | HTML DOM Section L280-L280 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L284 - L284** | `id="bmaFooterContainer"` | HTML DOM Section L284-L284 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L534 - L534** | `<script>` | Bootstrap script L534-L534 |
 
 ---
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3057a1a0d08d6483` | **Total Lines:** `824` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `21366aa39bae7c95` | **Total Lines:** `831` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L107** | `<head>` | HTML DOM Section L3-L107 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L111 - L111** | `id="bmaSidebarContainer"` | HTML DOM Section L111-L111 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L115 - L115** | `id="bmaTopbarContainer"` | HTML DOM Section L115-L115 |
-| `<main>` | `html_dom_section` | **L117 - L738** | `<main>` | HTML DOM Section L117-L738 |
-| `<div#prefixListContainer>` | `html_dom_section` | **L567 - L567** | `id="prefixListContainer"` | HTML DOM Section L567-L567 |
-| `<div#offsiteJobTypeListContainer>` | `html_dom_section` | **L584 - L584** | `id="offsiteJobTypeListContainer"` | HTML DOM Section L584-L584 |
-| `<div#specialReasonListContainer>` | `html_dom_section` | **L601 - L601** | `id="specialReasonListContainer"` | HTML DOM Section L601-L601 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L740 - L740** | `id="bmaFooterContainer"` | HTML DOM Section L740-L740 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L767 - L767** | `<script>` | Bootstrap script L767-L767 |
+| `<head>` | `html_dom_section` | **L3 - L114** | `<head>` | HTML DOM Section L3-L114 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L118 - L118** | `id="bmaSidebarContainer"` | HTML DOM Section L118-L118 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L122 - L122** | `id="bmaTopbarContainer"` | HTML DOM Section L122-L122 |
+| `<main>` | `html_dom_section` | **L124 - L745** | `<main>` | HTML DOM Section L124-L745 |
+| `<div#prefixListContainer>` | `html_dom_section` | **L574 - L574** | `id="prefixListContainer"` | HTML DOM Section L574-L574 |
+| `<div#offsiteJobTypeListContainer>` | `html_dom_section` | **L591 - L591** | `id="offsiteJobTypeListContainer"` | HTML DOM Section L591-L591 |
+| `<div#specialReasonListContainer>` | `html_dom_section` | **L608 - L608** | `id="specialReasonListContainer"` | HTML DOM Section L608-L608 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L747 - L747** | `id="bmaFooterContainer"` | HTML DOM Section L747-L747 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L774 - L774** | `<script>` | Bootstrap script L774-L774 |
 
 ---
 
@@ -2262,7 +2311,7 @@
 
 ## File: `sql/alter_v2_8_loca_v2_schema.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `23fb13f6e2808d02` | **Total Lines:** `78` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `26b7337735cdd7a0` | **Total Lines:** `78` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2276,7 +2325,7 @@
 
 ## File: `sql/create_staging_schema.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `ff4ba4c7e236c571` | **Total Lines:** `129` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `848511e7669bd05d` | **Total Lines:** `129` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2308,7 +2357,7 @@
 
 ## File: `sql/fix_staging_foreign_keys.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `7cb1070ec4983509` | **Total Lines:** `24` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a30e70683a5f8c75` | **Total Lines:** `24` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2323,7 +2372,7 @@
 
 ## File: `sql/migration_staging_split_dropdowns.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `5527b77210220b7c` | **Total Lines:** `68` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b86ac35a324e0f5f` | **Total Lines:** `68` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2362,17 +2411,17 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `530103f9a5b2d777` | **Total Lines:** `424` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b31c4d11b795b451` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L108** | `<head>` | HTML DOM Section L3-L108 |
-| `<div#bmaSidebarContainer>` | `html_dom_section` | **L112 - L112** | `id="bmaSidebarContainer"` | HTML DOM Section L112-L112 |
-| `<div#bmaTopbarContainer>` | `html_dom_section` | **L116 - L116** | `id="bmaTopbarContainer"` | HTML DOM Section L116-L116 |
-| `<main>` | `html_dom_section` | **L118 - L287** | `<main>` | HTML DOM Section L118-L287 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L289 - L289** | `id="bmaFooterContainer"` | HTML DOM Section L289-L289 |
-| `<div#modalUserAccountForm>` | `html_dom_section` | **L295 - L420** | `id="modalUserAccountForm"` | HTML DOM Section L295-L420 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L422 - L422** | `<script>` | Bootstrap script L422-L422 |
+| `<head>` | `html_dom_section` | **L3 - L115** | `<head>` | HTML DOM Section L3-L115 |
+| `<div#bmaSidebarContainer>` | `html_dom_section` | **L119 - L119** | `id="bmaSidebarContainer"` | HTML DOM Section L119-L119 |
+| `<div#bmaTopbarContainer>` | `html_dom_section` | **L123 - L123** | `id="bmaTopbarContainer"` | HTML DOM Section L123-L123 |
+| `<main>` | `html_dom_section` | **L125 - L294** | `<main>` | HTML DOM Section L125-L294 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L296 - L296** | `id="bmaFooterContainer"` | HTML DOM Section L296-L296 |
+| `<div#modalUserAccountForm>` | `html_dom_section` | **L302 - L427** | `id="modalUserAccountForm"` | HTML DOM Section L302-L427 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L429 - L429** | `<script>` | Bootstrap script L429-L429 |
 
 ---
 

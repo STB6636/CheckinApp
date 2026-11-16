@@ -16,6 +16,9 @@ export class CheckinController {
         this.settings = null;
         this.mediaStream = null;
         this.isCameraRunning = false;
+        this.isCameraOpening = false;
+        this.cameraHintTimer = null;
+        this.cameraSessionToken = 0;
         this.capturedPhotoDataUrl = '';
         this.isResolvingLocation = false;
         this.gpsData = {
@@ -116,9 +119,25 @@ export class CheckinController {
         this.#initRealtimeSettingsListener();
         document.addEventListener('visibilitychange', async () => {
             if (!document.hidden) {
+                const activeUser = AuthService.getCurrentUser(true);
+                if (!activeUser) {
+                    this.#stopCameraHardwareStream();
+                    window.location.replace(UIHelpers.getRootBasePath());
+                    return;
+                }
+                this.currentUser = activeUser;
+
                 const modalCamera = document.getElementById('modalFullscreenCamera');
-                const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
+                const isModalOpen = Boolean(modalCamera && !modalCamera.classList.contains('hidden'));
                 if (this.isCameraRunning || isModalOpen) {
+                    const hasLiveTrack = Boolean(
+                        this.mediaStream &&
+                        typeof this.mediaStream.getVideoTracks === 'function' &&
+                        this.mediaStream.getVideoTracks().some((t) => t.readyState === 'live')
+                    );
+                    if ((this.isCameraRunning && !hasLiveTrack) || (isModalOpen && !hasLiveTrack && !this.isCameraOpening)) {
+                        this.#handleUnexpectedCameraStreamStop('การเชื่อมต่อกล้องถูกหยุดชั่วคราวระหว่างสลับหน้าจอ กรุณาแตะเพื่อเปิดกล้องใหม่อีกครั้ง');
+                    }
                     return;
                 }
                 await this.#syncSettingsHotReload();
@@ -201,7 +220,7 @@ export class CheckinController {
     async #syncSettingsHotReload() {
         const modalCamera = document.getElementById('modalFullscreenCamera');
         const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
-        if (this.isCameraRunning || isModalOpen) {
+        if (this.isCameraRunning || this.isCameraOpening || isModalOpen) {
             return;
         }
         try {
@@ -209,7 +228,7 @@ export class CheckinController {
             const fresh = await SettingsModel.getSettings(true);
             const modalCameraNow = document.getElementById('modalFullscreenCamera');
             const isModalOpenNow = modalCameraNow && !modalCameraNow.classList.contains('hidden');
-            if (this.isCameraRunning || isModalOpenNow) {
+            if (this.isCameraRunning || this.isCameraOpening || isModalOpenNow) {
                 return;
             }
             if (JSON.stringify(fresh) === JSON.stringify(this.settings)) {
@@ -232,7 +251,7 @@ export class CheckinController {
 
         const modalCamera = document.getElementById('modalFullscreenCamera');
         const isModalOpen = modalCamera && !modalCamera.classList.contains('hidden');
-        const isCameraActive = this.isCameraRunning || isModalOpen;
+        const isCameraActive = this.isCameraRunning || this.isCameraOpening || isModalOpen;
 
         if (this.settings.require_photo) {
             if (!this.capturedPhotoDataUrl && !isCameraActive) {
@@ -1933,62 +1952,11 @@ export class CheckinController {
         }).join('');
     }
 
+    /**
+     * เปิดกล้องแบบเต็มหน้าจอเพื่อถ่ายภาพยืนยันตัวตน
+     */
     async #openFullscreenCamera() {
-        const modal = document.getElementById('modalFullscreenCamera');
-        const video = document.getElementById('cameraVideoStream');
-
-        const allowFallback = Boolean(this.settings?.allow_gallery_fallback !== false);
-        const isLineBrowser = /Line\//i.test(navigator.userAgent);
-        const hasCamera = await this.#checkCameraHardware();
-
-        if (allowFallback && (isLineBrowser || !hasCamera)) {
-            const fallbackInput = document.getElementById('cameraFallbackFileInput');
-            if (fallbackInput) {
-                fallbackInput.click();
-                return;
-            }
-        }
-
-        try {
-            this.#stopCameraHardwareStream();
-            modal?.classList.remove('hidden');
-
-            try {
-                this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
-                    audio: false
-                });
-            } catch (constraintErr) {
-                console.warn('High-res camera constraints failed, falling back to standard user camera:', constraintErr);
-                this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user' },
-                    audio: false
-                });
-            }
-
-            this.isCameraRunning = true;
-            if (video) {
-                video.srcObject = this.mediaStream;
-                video.classList.remove('hidden');
-                await video.play().catch(playErr => console.warn('Video play error:', playErr));
-            }
-        } catch (err) {
-            console.warn('Fullscreen camera access error:', err);
-            this.#stopCameraHardwareStream();
-            modal?.classList.add('hidden');
-            if (allowFallback) {
-                const fallbackInput = document.getElementById('cameraFallbackFileInput');
-                if (fallbackInput) {
-                    fallbackInput.click();
-                    return;
-                }
-            }
-            await UIHelpers.alert(
-                'ไม่สามารถเข้าถึงกล้องถ่ายรูปได้',
-                'กรุณาอนุญาตการเข้าถึงกล้องบนเบราว์เซอร์เพื่อถ่ายภาพยืนยันตัวตน',
-                'warning'
-            );
-        }
+        await this.#startCameraSession({ showFullscreenModal: true });
     }
 
     #captureAndCloseCamera() {
@@ -2034,34 +2002,64 @@ export class CheckinController {
     }
 
     #closeFullscreenCamera() {
+        this.cameraSessionToken += 1;
+        this.isCameraOpening = false;
         this.#stopCameraHardwareStream();
         document.getElementById('modalFullscreenCamera')?.classList.add('hidden');
     }
 
+    /**
+     * ตรวจสอบความพร้อมของอุปกรณ์กล้องอย่างปลอดภัย (ไม่หลงเชื่อผลว่างจากการป้องกัน Fingerprinting ของ Brave/Safari)
+     * @returns {Promise<boolean>}
+     */
     async #checkCameraHardware() {
         try {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 return false;
             }
-            if (navigator.mediaDevices.enumerateDevices) {
+            if (typeof navigator.mediaDevices.enumerateDevices === 'function') {
                 const devices = await navigator.mediaDevices.enumerateDevices();
-                return devices.some(d => d.kind === 'videoinput');
+                if (Array.isArray(devices) && devices.length > 0) {
+                    return devices.some(d => d.kind === 'videoinput');
+                }
+                return true;
             }
             return true;
         } catch (e) {
             console.warn('Check camera hardware error:', e);
-            return false;
+            return true;
         }
     }
 
     #handleFallbackFileSelected(file) {
         if (!file) return;
+        this.#hideCameraPermissionHint();
+        if (window.Swal?.isVisible?.()) {
+            window.Swal.close();
+        }
+        const resetFileInput = () => {
+            const fileInput = document.getElementById('cameraFallbackFileInput');
+            if (fileInput) fileInput.value = '';
+        };
+        const notifyReadError = () => {
+            resetFileInput();
+            UIHelpers.alert(
+                'ไม่สามารถอ่านไฟล์รูปภาพได้',
+                'กรุณาเลือกไฟล์รูปภาพที่รองรับ (JPG, PNG) หรือลองใหม่อีกครั้ง',
+                'warning'
+            );
+        };
         const reader = new FileReader();
+        reader.onerror = notifyReadError;
         reader.onload = (e) => {
             const img = new Image();
+            img.onerror = notifyReadError;
             img.onload = () => {
                 const canvas = document.getElementById('cameraCaptureCanvas');
-                if (!canvas) return;
+                if (!canvas) {
+                    resetFileInput();
+                    return;
+                }
                 const targetWidth = 720;
                 const targetHeight = 960;
                 canvas.width = targetWidth;
@@ -2112,8 +2110,7 @@ export class CheckinController {
                 btnStop?.classList.add('hidden');
                 btnRetake?.classList.add('hidden');
 
-                const fileInput = document.getElementById('cameraFallbackFileInput');
-                if (fileInput) fileInput.value = '';
+                resetFileInput();
             };
             img.src = e.target.result;
         };
@@ -2121,9 +2118,14 @@ export class CheckinController {
     }
 
     #stopCameraHardwareStream() {
-        if (this.mediaStream) {
-            this.mediaStream.getTracks().forEach(track => track.stop());
-            this.mediaStream = null;
+        this.#hideCameraPermissionHint();
+        const streamToStop = this.mediaStream;
+        this.mediaStream = null;
+        if (streamToStop) {
+            streamToStop.getTracks().forEach((track) => {
+                try { track.onended = null; } catch (_) {}
+                try { track.stop(); } catch (_) {}
+            });
         }
         const video = document.getElementById('cameraVideoStream');
         if (video) {
@@ -2137,6 +2139,8 @@ export class CheckinController {
     }
 
     #stopCameraAndShowStandby() {
+        this.cameraSessionToken += 1;
+        this.isCameraOpening = false;
         this.#stopCameraHardwareStream();
         this.capturedPhotoDataUrl = '';
 
@@ -2164,74 +2168,534 @@ export class CheckinController {
         btnRetake?.classList.add('hidden');
     }
 
+    /**
+     * เปิดกล้องอัตโนมัติเมื่อเข้าสู่ Step 2 (คงการอัปเดต DOM สำหรับโหมด On-Demand)
+     */
     async #openCameraOnDemand() {
-        const video = document.getElementById('cameraVideoStream');
-        const preview = document.getElementById('capturedPhotoPreview');
-        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
-        const msgEl = document.getElementById('cameraStatusMessage');
-        const btnInFrame = document.getElementById('btnInFrameShutter');
+        const started = await this.#startCameraSession({ showFullscreenModal: false });
+        if (!started) return;
 
+        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+        const btnInFrame = document.getElementById('btnInFrameShutter');
         const btnStartBottom = document.getElementById('btnStartCameraBottom');
         const btnCapture = document.getElementById('btnCapturePhoto');
         const btnStop = document.getElementById('btnStopCamera');
         const btnRetake = document.getElementById('btnRetakePhoto');
 
-        const allowFallback = Boolean(this.settings?.allow_gallery_fallback !== false);
-        const isLineBrowser = /Line\//i.test(navigator.userAgent);
-        const hasCamera = await this.#checkCameraHardware();
+        standbyOverlay?.classList.add('hidden');
+        btnInFrame?.classList.remove('hidden');
 
-        if (allowFallback && (isLineBrowser || !hasCamera)) {
+        btnStartBottom?.classList.add('hidden');
+        btnRetake?.classList.add('hidden');
+        btnCapture?.classList.remove('hidden');
+        btnStop?.classList.remove('hidden');
+    }
+
+    /**
+     * จัดการวงจรเปิดกล้องร่วมกันทั้งแบบเต็มหน้าจอและแบบ On-Demand โดยคง User Activation ไว้ใน Synchronous Turn
+     * @param {{ showFullscreenModal?: boolean }} [options]
+     * @returns {Promise<boolean>}
+     */
+    async #startCameraSession({ showFullscreenModal = true } = {}) {
+        const allowFallback = Boolean(this.settings?.allow_gallery_fallback !== false);
+        const isLineBrowser = /Line\//i.test(navigator.userAgent || '');
+        const isSupported = Boolean(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+
+        if (allowFallback && isLineBrowser) {
             const fallbackInput = document.getElementById('cameraFallbackFileInput');
             if (fallbackInput) {
                 fallbackInput.click();
-                return;
+                return false;
             }
         }
 
-        try {
-            this.#stopCameraHardwareStream();
+        if (!isSupported) {
+            if (!showFullscreenModal) {
+                const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+                const msgEl = document.getElementById('cameraStatusMessage');
+                standbyOverlay?.classList.remove('hidden');
+                if (msgEl) {
+                    msgEl.textContent = 'เบราว์เซอร์นี้ไม่รองรับการเปิดกล้องโดยตรง';
+                }
+            }
+            await this.#showCameraGuidanceModal({ reason: 'unsupported', allowFallback });
+            return false;
+        }
+
+        if (this.isCameraOpening) {
+            return false;
+        }
+        this.isCameraOpening = true;
+        const sessionToken = ++this.cameraSessionToken;
+
+        const modal = showFullscreenModal ? document.getElementById('modalFullscreenCamera') : null;
+        const video = document.getElementById('cameraVideoStream');
+
+        this.#stopCameraHardwareStream();
+
+        if (!showFullscreenModal) {
+            const preview = document.getElementById('capturedPhotoPreview');
             this.capturedPhotoDataUrl = '';
             if (preview) {
                 preview.src = '';
                 preview.classList.add('hidden');
             }
+        } else {
+            modal?.classList.remove('hidden');
+        }
 
-            this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
-                audio: false
-            });
+        const primaryConstraints = {
+            video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
+            audio: false
+        };
 
+        let streamPromise;
+        try {
+            streamPromise = navigator.mediaDevices.getUserMedia(primaryConstraints);
+        } catch (syncErr) {
+            streamPromise = Promise.reject(syncErr);
+        }
+
+        if (showFullscreenModal) {
+            this.#scheduleCameraPermissionHint(sessionToken);
+        }
+
+        try {
+            const stream = await this.#acquireCameraStreamWithRetry(streamPromise, sessionToken);
+
+            if (sessionToken !== this.cameraSessionToken) {
+                stream?.getTracks?.().forEach((track) => {
+                    try { track.stop(); } catch (_) {}
+                });
+                return false;
+            }
+
+            this.#hideCameraPermissionHint();
+            this.mediaStream = stream;
+            this.#bindCameraStreamLifecycle(stream);
             this.isCameraRunning = true;
+
             if (video) {
                 video.srcObject = this.mediaStream;
                 video.classList.remove('hidden');
+                await video.play().catch(playErr => console.warn('Video play error:', playErr));
             }
-            standbyOverlay?.classList.add('hidden');
-            btnInFrame?.classList.remove('hidden');
-
-            btnStartBottom?.classList.add('hidden');
-            btnRetake?.classList.add('hidden');
-            btnCapture?.classList.remove('hidden');
-            btnStop?.classList.remove('hidden');
+            if (sessionToken !== this.cameraSessionToken) {
+                if (this.mediaStream === stream) {
+                    this.#stopCameraHardwareStream();
+                } else {
+                    stream?.getTracks?.().forEach((track) => {
+                        try { track.stop(); } catch (_) {}
+                    });
+                }
+                return false;
+            }
+            this.#hideCameraPermissionHint();
+            return true;
         } catch (err) {
-            console.warn('Camera access error:', err);
-            this.#stopCameraHardwareStream();
-            if (allowFallback) {
-                const fallbackInput = document.getElementById('cameraFallbackFileInput');
-                if (fallbackInput) {
-                    fallbackInput.click();
-                    return;
+            console.warn(showFullscreenModal ? 'Fullscreen camera access error:' : 'Camera access error:', err);
+            if (sessionToken === this.cameraSessionToken) {
+                this.isCameraOpening = false;
+                this.#stopCameraHardwareStream();
+            }
+
+            if (sessionToken !== this.cameraSessionToken) {
+                return false;
+            }
+
+            if (showFullscreenModal) {
+                modal?.classList.add('hidden');
+            } else {
+                const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+                const msgEl = document.getElementById('cameraStatusMessage');
+                standbyOverlay?.classList.remove('hidden');
+                if (msgEl) {
+                    msgEl.textContent = 'ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้กล้องบนเบราว์เซอร์';
                 }
             }
-            standbyOverlay?.classList.remove('hidden');
-            if (msgEl) {
-                msgEl.textContent = 'ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้กล้องบนเบราว์เซอร์';
+
+            const reason = this.#classifyCameraErrorReason(err);
+            await this.#showCameraGuidanceModal({ reason, allowFallback });
+            return false;
+        } finally {
+            if (this.cameraSessionToken === sessionToken) {
+                this.isCameraOpening = false;
             }
-            await UIHelpers.alert(
-                'ไม่สามารถเข้าถึงกล้องถ่ายรูปได้',
-                'กรุณาอนุญาตการเข้าถึงกล้องบนเบราว์เซอร์เพื่อถ่ายภาพยืนยันตัวตน',
-                'warning'
-            );
+        }
+    }
+
+    /**
+     * ลองเชื่อมต่อสตรีมกล้องซ้ำเฉพาะกรณีข้อผิดพลาดที่ระบุชัดเจน (ไม่ลองซ้ำเมื่อสิทธิ์ถูกปฏิเสธ)
+     * @param {Promise<MediaStream>} initialStreamPromise
+     * @param {number} sessionToken
+     * @returns {Promise<MediaStream>}
+     */
+    async #acquireCameraStreamWithRetry(initialStreamPromise, sessionToken) {
+        try {
+            return await initialStreamPromise;
+        } catch (err) {
+            if (sessionToken !== this.cameraSessionToken) {
+                throw err;
+            }
+            const errName = err?.name || '';
+
+            if (errName === 'NotAllowedError' || errName === 'PermissionDeniedError') {
+                throw err;
+            }
+
+            if (errName === 'OverconstrainedError' || errName === 'ConstraintNotSatisfiedError') {
+                console.warn('High-res camera constraints failed, falling back to standard user camera:', err);
+                return await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user' },
+                    audio: false
+                });
+            }
+
+            if (errName === 'NotReadableError' || errName === 'AbortError') {
+                console.warn(`Camera hardware busy/aborted (${errName}), retrying once after 300ms...`, err);
+                await new Promise((resolve) => setTimeout(resolve, 300));
+                if (sessionToken !== this.cameraSessionToken) {
+                    const cancelErr = new Error('Camera session cancelled during retry delay');
+                    cancelErr.name = 'AbortError';
+                    cancelErr.cancelled = true;
+                    throw cancelErr;
+                }
+                try {
+                    return await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'user' },
+                        audio: false
+                    });
+                } catch (retryErr) {
+                    if (retryErr?.name === 'NotAllowedError' || retryErr?.name === 'PermissionDeniedError') {
+                        const preservedErr = new Error(err?.message || retryErr?.message || 'Camera hardware busy');
+                        preservedErr.name = errName;
+                        preservedErr.code = 'NotAllowedError_FromRetry';
+                        preservedErr.fromHardwareRetry = true;
+                        preservedErr.originalError = err;
+                        preservedErr.retryError = retryErr;
+                        throw preservedErr;
+                    }
+                    throw retryErr;
+                }
+            }
+
+            throw err;
+        }
+    }
+
+    /**
+     * ผูกเหตุการณ์ track.onended บนแทร็กวิดีโอเพื่อป้องกันหน้าจอดำค้างเมื่อ OS ตัดสตรีมกลางคัน
+     * @param {MediaStream} stream
+     */
+    #bindCameraStreamLifecycle(stream) {
+        if (!stream || typeof stream.getVideoTracks !== 'function') return;
+        stream.getVideoTracks().forEach((track) => {
+            track.onended = () => {
+                if (this.mediaStream !== stream) return;
+                this.#handleUnexpectedCameraStreamStop('การเชื่อมต่อกล้องถูกหยุดลง กรุณาแตะเพื่อเปิดกล้องใหม่อีกครั้ง');
+            };
+        });
+    }
+
+    /**
+     * รีเซ็ตสถานะฮาร์ดแวร์และ UI กล้องเมื่อสตรีมถูกหยุดโดยระบบปฏิบัติการ
+     * @param {string} [message]
+     */
+    #handleUnexpectedCameraStreamStop(message = '') {
+        this.cameraSessionToken += 1;
+        this.isCameraOpening = false;
+        const modal = document.getElementById('modalFullscreenCamera');
+        const wasModalOpen = Boolean(modal && !modal.classList.contains('hidden'));
+        this.#stopCameraHardwareStream();
+        modal?.classList.add('hidden');
+
+        const video = document.getElementById('cameraVideoStream');
+        const standbyOverlay = document.getElementById('cameraStandbyOverlay');
+        const msgEl = document.getElementById('cameraStatusMessage');
+        const btnStartBottom = document.getElementById('btnStartCameraBottom');
+        const btnCapture = document.getElementById('btnCapturePhoto');
+        const btnStop = document.getElementById('btnStopCamera');
+        const btnRetake = document.getElementById('btnRetakePhoto');
+
+        video?.classList.add('hidden');
+        standbyOverlay?.classList.remove('hidden');
+        if (msgEl && message) msgEl.textContent = message;
+        btnStartBottom?.classList.remove('hidden');
+        btnCapture?.classList.add('hidden');
+        btnStop?.classList.add('hidden');
+        btnRetake?.classList.add('hidden');
+
+        if (wasModalOpen && message && !document.hidden) {
+            UIHelpers.showToast?.(message, 'warning', 3200);
+        }
+    }
+
+    /**
+     * ตรวจจับเบราว์เซอร์และระบบปฏิบัติการของผู้ใช้เพื่อแสดงคำแนะนำที่ตรงรุ่นที่สุด
+     * @returns {{ key: string, label: string, isIOS: boolean, isAndroid: boolean }}
+     */
+    #detectCameraBrowserProfile() {
+        const ua = navigator.userAgent || '';
+        const isIOS = /iPad|iPhone|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const isAndroid = /Android/i.test(ua);
+        const isLine = /Line\//i.test(ua);
+        const isBrave = Boolean(navigator.brave) || /\bBrave\b/i.test(ua);
+        const isChromeIOS = isIOS && /CriOS\//i.test(ua);
+        const isEdgeIOS = isIOS && /EdgiOS\//i.test(ua);
+        const isFirefoxIOS = isIOS && /FxiOS\//i.test(ua);
+        const isSafariIOS = isIOS && !isChromeIOS && !isEdgeIOS && !isFirefoxIOS && !isLine && /Safari\//i.test(ua);
+        const isChromeAndroid = isAndroid && !isBrave && !isLine && (/Chrome\//i.test(ua) || /Chromium\//i.test(ua)) && !/EdgA\/|OPR\/|SamsungBrowser\//i.test(ua);
+
+        if (isLine) {
+            return { key: 'line', label: 'LINE Browser', isIOS, isAndroid };
+        }
+        if (isAndroid && isBrave) {
+            return { key: 'brave_android', label: 'Brave (Android)', isIOS: false, isAndroid: true };
+        }
+        if (isChromeAndroid) {
+            return { key: 'chrome_android', label: 'Chrome (Android)', isIOS: false, isAndroid: true };
+        }
+        if (isChromeIOS) {
+            return { key: 'chrome_ios', label: 'Chrome (iOS)', isIOS: true, isAndroid: false };
+        }
+        if (isSafariIOS || isIOS) {
+            return { key: 'safari_ios', label: 'Safari (iOS)', isIOS: true, isAndroid: false };
+        }
+        return { key: 'desktop_or_generic', label: isAndroid ? 'เบราว์เซอร์ Android' : 'เว็บบราวเซอร์', isIOS, isAndroid };
+    }
+
+    /**
+     * สร้างข้อความคำแนะนำแบบกะทัดรัดสำหรับแสดงในแบนเนอร์ขณะรอการกดอนุญาตสิทธิ์กล้อง
+     * @param {{ key: string }} profile
+     * @returns {string}
+     */
+    #getCameraPermissionHintHtml(profile) {
+        switch (profile?.key) {
+            case 'brave_android':
+                return '<b>Brave Android:</b> แนะนำเลือก <b>"ตลอดไป"</b> เพื่อให้เบราว์เซอร์จำสิทธิ์กล้องไว้ใช้งานครั้งถัดไป';
+            case 'chrome_android':
+                return '<b>Chrome Android:</b> แนะนำเลือก <b>"อนุญาตขณะเข้าชมเว็บไซต์"</b> เพื่อลดการถามซ้ำ';
+            case 'safari_ios':
+                return '<b>Safari iOS:</b> กด <b>"อนุญาต"</b> และตั้งถาวรที่ <span class="underline">aA / เมนูหน้าเว็บ &gt; การตั้งค่าเว็บไซต์ &gt; กล้อง &gt; อนุญาต</span>';
+            case 'chrome_ios':
+                return '<b>Chrome iOS:</b> กดอนุญาตกล้อง (หากถามซ้ำทุกครั้ง แนะนำเปิดใช้งานด้วย <b>Safari</b>)';
+            default:
+                return 'กรุณากด <b>"อนุญาต" (Allow)</b> และเลือกอนุญาตถาวร/ขณะเข้าชมเว็บไซต์ เพื่อเปิดกล้องยืนยันตัวตน';
+        }
+    }
+
+    /**
+     * แสดงแบนเนอร์แนะนำสิทธิ์กล้องแบบ Non-Blocking ภายใน Modal กล้อง
+     * @param {{ key: string }} [profile]
+     */
+    #showCameraPermissionHint(profile = this.#detectCameraBrowserProfile()) {
+        const banner = document.getElementById('cameraPermissionHintBanner');
+        const textEl = document.getElementById('cameraPermissionHintText');
+        if (!banner) return;
+        if (textEl) {
+            textEl.innerHTML = this.#getCameraPermissionHintHtml(profile);
+        }
+        banner.classList.remove('hidden');
+    }
+
+    /**
+     * ซ่อนแบนเนอร์แนะนำสิทธิ์กล้องและยกเลิก Timer ที่ค้างอยู่
+     */
+    #hideCameraPermissionHint() {
+        if (this.cameraHintTimer) {
+            clearTimeout(this.cameraHintTimer);
+            this.cameraHintTimer = null;
+        }
+        document.getElementById('cameraPermissionHintBanner')?.classList.add('hidden');
+    }
+
+    /**
+     * ตรวจสอบสิทธิ์แบบ Non-Blocking เพื่อแสดงแบนเนอร์แนะนำเฉพาะตอนรอ Prompt (~120ms) โดยไม่กระพริบเมื่อ Granted
+     * @param {number} [sessionToken]
+     */
+    #scheduleCameraPermissionHint(sessionToken = this.cameraSessionToken) {
+        this.#hideCameraPermissionHint();
+        const profile = this.#detectCameraBrowserProfile();
+        let permissionState = 'unknown';
+
+        this.cameraHintTimer = setTimeout(() => {
+            this.cameraHintTimer = null;
+            if (sessionToken !== this.cameraSessionToken) return;
+            if (!this.isCameraOpening || this.isCameraRunning) return;
+            if (permissionState === 'granted' || permissionState === 'denied') return;
+            this.#showCameraPermissionHint(profile);
+        }, 120);
+
+        if (navigator.permissions && typeof navigator.permissions.query === 'function') {
+            Promise.resolve()
+                .then(() => navigator.permissions.query({ name: 'camera' }))
+                .then((status) => {
+                    if (sessionToken !== this.cameraSessionToken) return;
+                    permissionState = status?.state || 'unknown';
+                    if (permissionState === 'granted' || permissionState === 'denied') {
+                        this.#hideCameraPermissionHint();
+                    } else if (permissionState === 'prompt' && this.isCameraOpening && !this.isCameraRunning) {
+                        this.#showCameraPermissionHint(profile);
+                    }
+                })
+                .catch(() => {
+                    // Safari โยน TypeError สำหรับ { name: 'camera' } — ใช้ Timer 120ms ด้านบนดูแลแทน
+                });
+        }
+    }
+
+    /**
+     * จำแนกกลุ่มข้อผิดพลาดจาก getUserMedia
+     * @param {Error} err
+     * @returns {'permission_denied'|'not_found'|'hardware_busy'|'unknown'}
+     */
+    #classifyCameraErrorReason(err) {
+        const name = err?.name || '';
+        if (err?.fromHardwareRetry) {
+            return 'hardware_busy';
+        }
+        if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+            return 'permission_denied';
+        }
+        if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+            return 'not_found';
+        }
+        if (name === 'NotReadableError' || name === 'AbortError' || name === 'TrackStartError') {
+            return 'hardware_busy';
+        }
+        return 'unknown';
+    }
+
+    /**
+     * สร้างรายการขั้นตอนเปิดสิทธิ์กล้องถาวรตามเบราว์เซอร์และ OS ที่ตรวจพบ
+     * @param {{ key: string, isAndroid: boolean }} profile
+     * @returns {string}
+     */
+    #getBrowserPermissionRecoveryStepsHtml(profile) {
+        switch (profile?.key) {
+            case 'brave_android':
+                return `
+                    <ol class="list-decimal pl-4 space-y-1.5 text-left text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <li>แตะไอคอน <b>ปรับแต่ง (ขีดสองขีด)</b> หรือ <b>แม่กุญแจ 🔒</b> ที่แถบ URL ด้านบน &rarr; <b>สิทธิ์ (Permissions)</b> &rarr; <b>กล้อง</b> &rarr; เลือก <b>อนุญาต / ตลอดไป</b></li>
+                        <li>แตะไอคอน <b>สิงโต Brave Shields</b> &rarr; ปิด <b>Forget me when I close this site</b> เพื่อให้จำทั้งสิทธิ์กล้องและ Session 7 วัน</li>
+                        <li>ตรวจสิทธิ์ระดับเครื่อง: <b>การตั้งค่า &gt; แอป &gt; Brave &gt; สิทธิ์ &gt; กล้อง</b> เลือก <b>อนุญาตขณะใช้งานแอปเท่านั้น</b></li>
+                    </ol>
+                `;
+            case 'chrome_android':
+                return `
+                    <ol class="list-decimal pl-4 space-y-1.5 text-left text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <li>แตะไอคอน <b>ปรับแต่ง (ขีดสองขีด)</b> หรือ <b>แม่กุญแจ 🔒</b> ที่แถบ URL ด้านบน &rarr; <b>สิทธิ์ (Permissions)</b> &rarr; <b>กล้อง</b> &rarr; เลือก <b>อนุญาตขณะเข้าชมเว็บไซต์</b></li>
+                        <li>ตรวจสิทธิ์ระดับเครื่อง: <b>การตั้งค่า &gt; แอป &gt; Chrome &gt; สิทธิ์ &gt; กล้อง</b> เลือก <b>อนุญาตขณะใช้งานแอปเท่านั้น</b></li>
+                    </ol>
+                `;
+            case 'safari_ios':
+                return `
+                    <ol class="list-decimal pl-4 space-y-1.5 text-left text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <li>แตะปุ่ม <b>aA</b> หรือ <b>ไอคอนเมนูหน้าเว็บ [สี่เหลี่ยมมีขีด]</b> ที่แถบ URL &rarr; <b>การตั้งค่าเว็บไซต์</b> &rarr; <b>กล้อง</b> &rarr; เลือก <b>อนุญาต</b></li>
+                        <li>ตรวจสิทธิ์ระบบ iOS: <b>การตั้งค่า &gt; แอป &gt; Safari &gt; กล้อง</b> แล้วรีเฟรชหน้าเว็บเพื่อลองใหม่อีกครั้ง</li>
+                    </ol>
+                `;
+            case 'chrome_ios':
+                return `
+                    <ol class="list-decimal pl-4 space-y-1.5 text-left text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <li>ไปที่ <b>การตั้งค่า iPhone/iPad &gt; แอป &gt; Chrome &gt; กล้อง</b> เปิดเป็น <b>เปิด</b></li>
+                        <li>แตะไอคอนปรับแต่ง/กล้องที่แถบ URL (<b>Page Info &gt; Permissions &gt; Camera</b>) เลือก <b>Always Allow</b> (หากยังถามซ้ำหลังปิดแอป แนะนำเปิดใช้งานผ่าน <b>Safari</b>)</li>
+                    </ol>
+                `;
+            default:
+                return `
+                    <ol class="list-decimal pl-4 space-y-1.5 text-left text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <li>แตะไอคอน <b>ปรับแต่ง (ขีดสองขีด)</b> หรือ <b>แม่กุญแจ 🔒</b> ที่แถบ URL ด้านบน &rarr; <b>สิทธิ์ / การตั้งค่าเว็บไซต์</b> &rarr; <b>กล้อง</b> &rarr; เลือก <b>อนุญาต (Allow)</b> (หรือ <b>ตลอดไป / อนุญาตขณะเข้าชมเว็บไซต์</b>)</li>
+                        ${profile?.isAndroid ? '<li>ตรวจสิทธิ์ระดับเครื่อง: <b>การตั้งค่า &gt; แอป &gt; สิทธิ์ &gt; กล้อง</b> เลือก <b>อนุญาตขณะใช้งานแอปเท่านั้น</b></li>' : ''}
+                    </ol>
+                `;
+        }
+    }
+
+    /**
+     * แสดงกล่องคำแนะนำการตั้งค่าสิทธิ์กล้องเฉพาะเบราว์เซอร์ พร้อมปุ่ม <label> แบบ Synchronous User Gesture สำหรับเลือกภาพสำรอง
+     * @param {{ reason: string, allowFallback: boolean }} options
+     */
+    async #showCameraGuidanceModal({ reason, allowFallback }) {
+        const profile = this.#detectCameraBrowserProfile();
+        let title = 'ไม่สามารถเปิดกล้องถ่ายรูปได้';
+        let bodyHtml = '';
+        let plainText = 'กรุณาอนุญาตการเข้าถึงกล้องบนเบราว์เซอร์เพื่อถ่ายภาพยืนยันตัวตน';
+
+        if (reason === 'permission_denied') {
+            title = 'กรุณาอนุญาตการใช้กล้อง';
+            plainText = `สิทธิ์การเข้าถึงกล้องบน ${profile.label} ถูกปิดไว้ กรุณาเปิดสิทธิ์กล้องแล้วลองใหม่อีกครั้ง`;
+            bodyHtml = `
+                <div class="space-y-3 text-left">
+                    <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1.5"></i>
+                        ระบบไม่ได้รับอนุญาตให้เข้าถึงกล้องบน <b>${profile.label}</b> กรุณาเปิดสิทธิ์ถาวรตามขั้นตอนด้านล่าง:
+                    </div>
+                    ${this.#getBrowserPermissionRecoveryStepsHtml(profile)}
+                </div>
+            `;
+        } else if (reason === 'not_found' || reason === 'unsupported') {
+            title = reason === 'unsupported' ? 'เบราว์เซอร์ไม่รองรับการเปิดกล้อง' : 'ไม่พบกล้องบนอุปกรณ์นี้';
+            plainText = 'ไม่พบอุปกรณ์กล้องที่พร้อมใช้งาน หรืออุปกรณ์/เบราว์เซอร์ไม่รองรับการเปิดกล้องโดยตรง';
+            bodyHtml = `
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 text-left leading-relaxed">
+                    ไม่พบอุปกรณ์กล้องที่ใช้งานได้ หรือเบราว์เซอร์/อุปกรณ์บล็อกการเข้าถึงฮาร์ดแวร์กล้อง กรุณาตรวจสอบอุปกรณ์หรือเปิดผ่านเบราว์เซอร์ที่รองรับ (Brave, Chrome หรือ Safari)
+                </div>
+            `;
+        } else if (reason === 'hardware_busy') {
+            title = 'กล้องกำลังถูกใช้งานอยู่';
+            plainText = 'ไม่สามารถเปิดกล้องได้เนื่องจากมีแอปอื่นใช้งานกล้องอยู่หรือการเชื่อมต่อถูกขัดจังหวะ กรุณาปิดแอปอื่นแล้วลองใหม่';
+            bodyHtml = `
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 text-left leading-relaxed">
+                    ฮาร์ดแวร์กล้องอาจถูกใช้งานโดยแอปอื่น (เช่น LINE, Zoom, Google Meet) หรือเพิ่งถูกระบบหยุดชั่วคราว กรุณาปิดแอปอื่นที่เปิดกล้องค้างไว้แล้วแตะลองใหม่อีกครั้ง
+                </div>
+            `;
+        } else {
+            bodyHtml = `
+                <div class="space-y-3 text-left">
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        ไม่สามารถเปิดกล้องได้ในขณะนี้ กรุณาตรวจสอบสิทธิ์การเข้าถึงกล้องและลองใหม่อีกครั้ง
+                    </div>
+                    ${this.#getBrowserPermissionRecoveryStepsHtml(profile)}
+                </div>
+            `;
+        }
+
+        if (allowFallback) {
+            bodyHtml += `
+                <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700/80">
+                    <label for="cameraFallbackFileInput" class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-gradient-to-tl from-[#00744B] to-emerald-500 shadow-soft-md hover:scale-102 active:opacity-85 transition cursor-pointer select-none">
+                        <i class="fa-solid fa-image"></i>
+                        <span>เลือกรูปภาพ / กล้องสำรอง</span>
+                    </label>
+                </div>
+            `;
+        }
+
+        if (window.Swal) {
+            const isDark = document.documentElement.classList.contains('dark');
+            const closeBtnClass = allowFallback
+                ? 'inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 border-0 rounded-xl cursor-pointer shadow-soft-xs text-xs ease-soft-in hover:scale-102 active:opacity-85'
+                : 'inline-block px-7 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-xl cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl from-amber-500 to-orange-400 hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white';
+
+            await window.Swal.fire({
+                title,
+                html: bodyHtml,
+                icon: 'warning',
+                confirmButtonText: allowFallback ? 'ปิดหน้าต่าง' : 'ตกลง',
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-3xl p-6 sm:p-7 shadow-2xl border border-amber-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    htmlContainer: 'text-xs sm:text-sm text-slate-600 dark:text-slate-300 m-0 pt-2 leading-relaxed',
+                    confirmButton: closeBtnClass,
+                    actions: 'flex justify-center mt-4'
+                },
+                background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                color: isDark ? '#F1F5F9' : '#0F172A'
+            });
+        } else {
+            await UIHelpers.alert(title, plainText, 'warning');
         }
     }
 
@@ -2579,7 +3043,10 @@ export class CheckinController {
             }
         });
 
-        document.getElementById('photoPreviewCard')?.addEventListener('click', () => this.#openFullscreenCamera());
+        document.getElementById('photoPreviewCard')?.addEventListener('click', (e) => {
+            if (e?.target?.closest?.('#cameraFallbackFileInput')) return;
+            this.#openFullscreenCamera();
+        });
         document.getElementById('btnCenterPhotoOverlay')?.addEventListener('click', (e) => {
             e.stopPropagation();
             this.#openFullscreenCamera();
@@ -2592,7 +3059,9 @@ export class CheckinController {
         document.getElementById('btnInFrameShutter')?.addEventListener('click', () => this.#captureAndCloseCamera());
         document.getElementById('btnStopCamera')?.addEventListener('click', () => this.#closeFullscreenCamera());
         document.getElementById('btnRetakePhoto')?.addEventListener('click', () => this.#openFullscreenCamera());
-        document.getElementById('cameraFallbackFileInput')?.addEventListener('change', (e) => {
+        const cameraFallbackInput = document.getElementById('cameraFallbackFileInput');
+        cameraFallbackInput?.addEventListener('click', (e) => e.stopPropagation());
+        cameraFallbackInput?.addEventListener('change', (e) => {
             const file = e.target.files?.[0];
             if (file) this.#handleFallbackFileSelected(file);
         });
@@ -2822,6 +3291,14 @@ export class CheckinController {
     }
 
     async #handleMainCheckin() {
+        const activeUser = AuthService.getCurrentUser(true);
+        if (!activeUser) {
+            await UIHelpers.alert('เซสชันหมดอายุ', 'กรุณาเข้าสู่ระบบใหม่อีกครั้งเพื่อดำเนินการต่อ', 'warning');
+            window.location.replace(UIHelpers.getRootBasePath());
+            return;
+        }
+        this.currentUser = activeUser;
+
         if (this.settings?.disable_normal_hours_checkin) {
             const stdInRef = UIHelpers.formatTime24(this.settings?.standard_check_in || '08:30');
             const stdOutRef = UIHelpers.formatTime24(this.settings?.standard_check_out || '16:30');
@@ -2869,7 +3346,6 @@ export class CheckinController {
                 return;
             }
         }
-        AuthService.getCurrentUser(true);
 
         if (this.settings.require_photo && !this.capturedPhotoDataUrl) {
             await UIHelpers.alert(
@@ -3845,7 +4321,14 @@ export class CheckinController {
     }
 
     async #handleSubmitSpecialRequest(closeModalCallback) {
-        AuthService.getCurrentUser(true);
+        const activeUser = AuthService.getCurrentUser(true);
+        if (!activeUser) {
+            if (typeof closeModalCallback === 'function') closeModalCallback();
+            await UIHelpers.alert('เซสชันหมดอายุ', 'กรุณาเข้าสู่ระบบใหม่อีกครั้งเพื่อดำเนินการต่อ', 'warning');
+            window.location.replace(UIHelpers.getRootBasePath());
+            return;
+        }
+        this.currentUser = activeUser;
 
         const workDate = document.getElementById('spWorkDate').value;
         const shiftIdx = parseInt(document.getElementById('spShiftSelect').value || '0', 10);

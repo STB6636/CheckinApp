@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-14T09:38:04.630Z",
-  "totalFilesScanned": 171,
-  "totalSymbolsIndexed": 860,
+  "generatedAt": "2026-11-16T05:01:21.830Z",
+  "totalFilesScanned": 172,
+  "totalSymbolsIndexed": 900,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7d8ca5616909fec8",
-      "totalLines": 214,
+      "fileHash": "f95d9c0cef8ad4e2",
+      "totalLines": 221,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -16,57 +16,57 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 107,
+          "endLine": 114,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L107"
+          "summary": "HTML DOM Section L3-L114"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 111,
-          "endLine": 111,
+          "startLine": 118,
+          "endLine": 118,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L111-L111"
+          "summary": "HTML DOM Section L118-L118"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 115,
-          "endLine": 115,
+          "startLine": 122,
+          "endLine": 122,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L115-L115"
+          "summary": "HTML DOM Section L122-L122"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 117,
-          "endLine": 205,
+          "startLine": 124,
+          "endLine": 212,
           "signature": "<main>",
-          "summary": "HTML DOM Section L117-L205"
+          "summary": "HTML DOM Section L124-L212"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 207,
-          "endLine": 207,
+          "startLine": 214,
+          "endLine": 214,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L207-L207"
+          "summary": "HTML DOM Section L214-L214"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 212,
-          "endLine": 212,
+          "startLine": 219,
+          "endLine": 219,
           "signature": "<script>",
-          "summary": "Bootstrap script L212-L212"
+          "summary": "Bootstrap script L219-L219"
         }
       ]
     },
     {
       "filePath": "assets/js/components/AppLayout.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "bdc5e9ac41d7d705",
-      "totalLines": 992,
+      "fileHash": "0bd13e26d6aa5aee",
+      "totalLines": 998,
       "importsCount": 7,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -85,9 +85,9 @@
           "name": "AppLayout",
           "kind": "class",
           "startLine": 14,
-          "endLine": 992,
+          "endLine": 998,
           "signature": "export class AppLayout",
-          "summary": "Class Definition (979 lines)"
+          "summary": "Class Definition (985 lines)"
         },
         {
           "name": "AppLayout.canViewUsersMenu",
@@ -189,24 +189,24 @@
           "name": "AppLayout.initAdminRealtimeSync",
           "kind": "static public method",
           "startLine": 763,
-          "endLine": 876,
+          "endLine": 882,
           "signature": "(currentUser) => any",
-          "summary": "static public method L763-L876 (114 lines)"
+          "summary": "static public method L763-L882 (120 lines)"
         },
         {
           "name": "AppLayout.#bindGlobalDelegatedEvents",
           "kind": "static private method",
-          "startLine": 878,
-          "endLine": 991,
+          "startLine": 884,
+          "endLine": 997,
           "signature": "() => any",
-          "summary": "static private method L878-L991 (114 lines)"
+          "summary": "static private method L884-L997 (114 lines)"
         }
       ]
     },
     {
       "filePath": "assets/js/components/SystemUpdateModal.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "277c182392a7ba13",
+      "fileHash": "34b29b1482d33e60",
       "totalLines": 468,
       "importsCount": 0,
       "importsPreview": [],
@@ -437,8 +437,8 @@
     {
       "filePath": "assets/js/controllers/CheckinController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "135313c0a5c4cc43",
-      "totalLines": 3984,
+      "fileHash": "9512a6b8942cc2e4",
+      "totalLines": 4467,
       "importsCount": 6,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -456,617 +456,721 @@
           "name": "CheckinController",
           "kind": "class",
           "startLine": 13,
-          "endLine": 886,
+          "endLine": 905,
           "signature": "export class CheckinController",
-          "summary": "Class Definition (874 lines)"
+          "summary": "Class Definition (893 lines)"
         },
         {
           "name": "CheckinController.constructor",
           "kind": "public constructor",
           "startLine": 14,
-          "endLine": 68,
+          "endLine": 71,
           "signature": "() => any",
-          "summary": "public constructor L14-L68 (55 lines)"
+          "summary": "public constructor L14-L71 (58 lines)"
         },
         {
           "name": "CheckinController.init",
           "kind": "public async method",
-          "startLine": 70,
-          "endLine": 127,
+          "startLine": 73,
+          "endLine": 146,
           "signature": "() => Promise<any>",
-          "summary": "public async method L70-L127 (58 lines)"
+          "summary": "public async method L73-L146 (74 lines)"
         },
         {
           "name": "CheckinController.#initRealtimeSettingsListener",
           "kind": "private method",
-          "startLine": 129,
-          "endLine": 191,
+          "startLine": 148,
+          "endLine": 210,
           "signature": "() => any",
-          "summary": "private method L129-L191 (63 lines)"
+          "summary": "private method L148-L210 (63 lines)"
         },
         {
           "name": "triggerDebouncedPersonalSync",
           "kind": "arrow_fn",
-          "startLine": 136,
-          "endLine": 144,
+          "startLine": 155,
+          "endLine": 163,
           "signature": "(payload) => inferred",
-          "summary": "Arrow Function L136-L144"
+          "summary": "Arrow Function L155-L163"
         },
         {
           "name": "CheckinController.#syncPersonalAttendanceSilent",
           "kind": "private async method",
-          "startLine": 193,
-          "endLine": 199,
+          "startLine": 212,
+          "endLine": 218,
           "signature": "() => Promise<any>",
-          "summary": "private async method L193-L199 (7 lines)"
+          "summary": "private async method L212-L218 (7 lines)"
         },
         {
           "name": "CheckinController.#syncSettingsHotReload",
           "kind": "private async method",
-          "startLine": 201,
-          "endLine": 222,
+          "startLine": 220,
+          "endLine": 241,
           "signature": "() => Promise<any>",
-          "summary": "private async method L201-L222 (22 lines)"
+          "summary": "private async method L220-L241 (22 lines)"
         },
         {
           "name": "CheckinController.#applySettingsHotReload",
           "kind": "private method",
-          "startLine": 224,
-          "endLine": 250,
+          "startLine": 243,
+          "endLine": 269,
           "signature": "(newSettings) => any",
-          "summary": "private method L224-L250 (27 lines)"
+          "summary": "private method L243-L269 (27 lines)"
         },
         {
           "name": "CheckinController.#applyDynamicWorkspaceLayout",
           "kind": "private method",
-          "startLine": 252,
-          "endLine": 283,
+          "startLine": 271,
+          "endLine": 302,
           "signature": "() => any",
-          "summary": "private method L252-L283 (32 lines)"
+          "summary": "private method L271-L302 (32 lines)"
         },
         {
           "name": "CheckinController.#updateThemeButtonUI",
           "kind": "private method",
-          "startLine": 285,
-          "endLine": 303,
+          "startLine": 304,
+          "endLine": 322,
           "signature": "() => any",
-          "summary": "private method L285-L303 (19 lines)"
+          "summary": "private method L304-L322 (19 lines)"
         },
         {
           "name": "CheckinController.#checkAndShowWelcomeToast",
           "kind": "private method",
-          "startLine": 305,
-          "endLine": 313,
+          "startLine": 324,
+          "endLine": 332,
           "signature": "() => any",
-          "summary": "private method L305-L313 (9 lines)"
+          "summary": "private method L324-L332 (9 lines)"
         },
         {
           "name": "CheckinController.#startLiveClock24",
           "kind": "private method",
-          "startLine": 315,
-          "endLine": 341,
+          "startLine": 334,
+          "endLine": 360,
           "signature": "() => any",
-          "summary": "private method L315-L341 (27 lines)"
+          "summary": "private method L334-L360 (27 lines)"
         },
         {
           "name": "updateClock",
           "kind": "arrow_fn",
-          "startLine": 316,
-          "endLine": 338,
+          "startLine": 335,
+          "endLine": 357,
           "signature": "() => inferred",
-          "summary": "Arrow Function L316-L338"
+          "summary": "Arrow Function L335-L357"
         },
         {
           "name": "CheckinController.#isShiftAlreadyRecordedToday",
           "kind": "private method",
-          "startLine": 343,
-          "endLine": 391,
+          "startLine": 362,
+          "endLine": 410,
           "signature": "(shift) => any",
-          "summary": "private method L343-L391 (49 lines)"
+          "summary": "private method L362-L410 (49 lines)"
         },
         {
           "name": "CheckinController.#isShiftActiveAtCurrentTime",
           "kind": "private method",
-          "startLine": 393,
-          "endLine": 428,
+          "startLine": 412,
+          "endLine": 447,
           "signature": "(shift, nowMin, allowStartMin) => any",
-          "summary": "private method L393-L428 (36 lines)"
+          "summary": "private method L412-L447 (36 lines)"
         },
         {
           "name": "CheckinController.#evaluateTimeWindowAndPopulateShifts",
           "kind": "private method",
-          "startLine": 430,
-          "endLine": 534,
+          "startLine": 449,
+          "endLine": 553,
           "signature": "() => any",
-          "summary": "private method L430-L534 (105 lines)"
+          "summary": "private method L449-L553 (105 lines)"
         },
         {
           "name": "CheckinController.#calculateHaversineMeters",
           "kind": "private method",
-          "startLine": 539,
-          "endLine": 551,
+          "startLine": 558,
+          "endLine": 570,
           "signature": "(lat1, lon1, lat2, lon2) => any",
           "summary": "คำนวณระยะทางแบบ Haversine (หน่วย: เมตร)"
         },
         {
           "name": "CheckinController.evaluateOnsiteGeofence",
           "kind": "public method",
-          "startLine": 559,
-          "endLine": 640,
+          "startLine": 578,
+          "endLine": 659,
           "signature": "(currentLat, currentLng) => any",
-          "summary": "public method L559-L640 (82 lines)"
+          "summary": "public method L578-L659 (82 lines)"
         },
         {
           "name": "CheckinController.#renderGeofenceStatusUI",
           "kind": "private method",
-          "startLine": 642,
-          "endLine": 712,
+          "startLine": 661,
+          "endLine": 731,
           "signature": "() => any",
-          "summary": "private method L642-L712 (71 lines)"
+          "summary": "private method L661-L731 (71 lines)"
         },
         {
           "name": "CheckinController.#initLocaV2ModeAndChips",
           "kind": "private method",
-          "startLine": 714,
-          "endLine": 716,
+          "startLine": 733,
+          "endLine": 735,
           "signature": "() => any",
-          "summary": "private method L714-L716 (3 lines)"
+          "summary": "private method L733-L735 (3 lines)"
         },
         {
           "name": "CheckinController.#initModeSwitcher",
           "kind": "private method",
-          "startLine": 718,
-          "endLine": 828,
+          "startLine": 737,
+          "endLine": 847,
           "signature": "() => any",
-          "summary": "private method L718-L828 (111 lines)"
+          "summary": "private method L737-L847 (111 lines)"
         },
         {
           "name": "setActiveOffsiteGps",
           "kind": "arrow_fn",
-          "startLine": 725,
-          "endLine": 734,
+          "startLine": 744,
+          "endLine": 753,
           "signature": "(source) => inferred",
-          "summary": "Arrow Function L725-L734"
+          "summary": "Arrow Function L744-L753"
         },
         {
           "name": "CheckinController.#initViewGpsMapModal",
           "kind": "private method",
-          "startLine": 830,
-          "endLine": 837,
+          "startLine": 849,
+          "endLine": 856,
           "signature": "() => any",
-          "summary": "private method L830-L837 (8 lines)"
+          "summary": "private method L849-L856 (8 lines)"
         },
         {
           "name": "CheckinController.#openViewGpsMapModal",
           "kind": "private method",
-          "startLine": 839,
-          "endLine": 885,
+          "startLine": 858,
+          "endLine": 904,
           "signature": "() => any",
-          "summary": "private method L839-L885 (47 lines)"
+          "summary": "private method L858-L904 (47 lines)"
         },
         {
           "name": "#goToStep",
           "kind": "private method",
-          "startLine": 888,
-          "endLine": 953,
+          "startLine": 907,
+          "endLine": 972,
           "signature": "(step) => any",
-          "summary": "private method L888-L953 (66 lines)"
+          "summary": "private method L907-L972 (66 lines)"
         },
         {
           "name": "#updateStep1Validation",
           "kind": "private method",
-          "startLine": 955,
-          "endLine": 990,
+          "startLine": 974,
+          "endLine": 1009,
           "signature": "() => any",
-          "summary": "private method L955-L990 (36 lines)"
+          "summary": "private method L974-L1009 (36 lines)"
         },
         {
           "name": "#openOffsiteMapModal",
           "kind": "private method",
-          "startLine": 992,
-          "endLine": 1087,
+          "startLine": 1011,
+          "endLine": 1106,
           "signature": "() => any",
-          "summary": "private method L992-L1087 (96 lines)"
+          "summary": "private method L1011-L1106 (96 lines)"
         },
         {
           "name": "#updateOffsiteModalMarker",
           "kind": "private async method",
-          "startLine": 1090,
-          "endLine": 1150,
+          "startLine": 1109,
+          "endLine": 1169,
           "signature": "(lat, lng, explicitName = null, extent = null) => Promise<any>",
-          "summary": "private async method L1090-L1150 (61 lines)"
+          "summary": "private async method L1109-L1169 (61 lines)"
         },
         {
           "name": "#initOffsiteModalGps",
           "kind": "private method",
-          "startLine": 1152,
-          "endLine": 1378,
+          "startLine": 1171,
+          "endLine": 1397,
           "signature": "() => any",
-          "summary": "private method L1152-L1378 (227 lines)"
+          "summary": "private method L1171-L1397 (227 lines)"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 1161,
-          "endLine": 1169,
+          "startLine": 1180,
+          "endLine": 1188,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L1161-L1169"
+          "summary": "Arrow Function L1180-L1188"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 1171,
-          "endLine": 1176,
+          "startLine": 1190,
+          "endLine": 1195,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1171-L1176"
+          "summary": "Arrow Function L1190-L1195"
         },
         {
           "name": "closeModal",
           "kind": "arrow_fn",
-          "startLine": 1178,
-          "endLine": 1181,
+          "startLine": 1197,
+          "endLine": 1200,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1178-L1181"
+          "summary": "Arrow Function L1197-L1200"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 1229,
-          "endLine": 1343,
+          "startLine": 1248,
+          "endLine": 1362,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1229-L1343"
+          "summary": "Arrow Function L1248-L1362"
         },
         {
           "name": "#renderUserAndSettingsInfo",
           "kind": "private method",
-          "startLine": 1382,
-          "endLine": 1513,
+          "startLine": 1401,
+          "endLine": 1532,
           "signature": "() => any",
-          "summary": "private method L1382-L1513 (132 lines)"
+          "summary": "private method L1401-L1532 (132 lines)"
         },
         {
           "name": "setElText",
           "kind": "arrow_fn",
-          "startLine": 1387,
-          "endLine": 1390,
+          "startLine": 1406,
+          "endLine": 1409,
           "signature": "(id, text) => inferred",
-          "summary": "Arrow Function L1387-L1390"
+          "summary": "Arrow Function L1406-L1409"
         },
         {
           "name": "#refreshAllAttendanceData",
           "kind": "private async method",
-          "startLine": 1515,
-          "endLine": 1532,
+          "startLine": 1534,
+          "endLine": 1551,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1515-L1532 (18 lines)"
+          "summary": "private async method L1534-L1551 (18 lines)"
         },
         {
           "name": "#updateStatusCardsAndMainButton",
           "kind": "private method",
-          "startLine": 1534,
-          "endLine": 1818,
+          "startLine": 1553,
+          "endLine": 1837,
           "signature": "() => any",
-          "summary": "private method L1534-L1818 (285 lines)"
+          "summary": "private method L1553-L1837 (285 lines)"
         },
         {
           "name": "applyGpsSearchingLock",
           "kind": "arrow_fn",
-          "startLine": 1561,
-          "endLine": 1571,
+          "startLine": 1580,
+          "endLine": 1590,
           "signature": "() => inferred",
-          "summary": "Arrow Function L1561-L1571"
+          "summary": "Arrow Function L1580-L1590"
         },
         {
           "name": "setShiftCardVisibility",
           "kind": "arrow_fn",
-          "startLine": 1573,
-          "endLine": 1582,
+          "startLine": 1592,
+          "endLine": 1601,
           "signature": "(visible) => inferred",
-          "summary": "Arrow Function L1573-L1582"
+          "summary": "Arrow Function L1592-L1601"
         },
         {
           "name": "#renderPersonalAttendanceTabs",
           "kind": "private method",
-          "startLine": 1820,
-          "endLine": 1863,
+          "startLine": 1839,
+          "endLine": 1882,
           "signature": "() => any",
-          "summary": "private method L1820-L1863 (44 lines)"
+          "summary": "private method L1839-L1882 (44 lines)"
         },
         {
           "name": "#buildHistoryRowHtml",
           "kind": "private method",
-          "startLine": 1865,
-          "endLine": 1885,
+          "startLine": 1884,
+          "endLine": 1904,
           "signature": "(item, rowNumber) => any",
-          "summary": "private method L1865-L1885 (21 lines)"
+          "summary": "private method L1884-L1904 (21 lines)"
         },
         {
           "name": "#renderSpecialRequestsHistoryTable",
           "kind": "private method",
-          "startLine": 1887,
-          "endLine": 1934,
+          "startLine": 1906,
+          "endLine": 1953,
           "signature": "() => any",
-          "summary": "private method L1887-L1934 (48 lines)"
+          "summary": "private method L1906-L1953 (48 lines)"
         },
         {
           "name": "#openFullscreenCamera",
           "kind": "private async method",
-          "startLine": 1936,
-          "endLine": 1992,
+          "startLine": 1958,
+          "endLine": 1960,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1936-L1992 (57 lines)"
+          "summary": "เปิดกล้องแบบเต็มหน้าจอเพื่อถ่ายภาพยืนยันตัวตน"
         },
         {
           "name": "#captureAndCloseCamera",
           "kind": "private method",
-          "startLine": 1994,
-          "endLine": 2034,
+          "startLine": 1962,
+          "endLine": 2002,
           "signature": "() => any",
-          "summary": "private method L1994-L2034 (41 lines)"
+          "summary": "private method L1962-L2002 (41 lines)"
         },
         {
           "name": "#closeFullscreenCamera",
           "kind": "private method",
-          "startLine": 2036,
-          "endLine": 2039,
+          "startLine": 2004,
+          "endLine": 2009,
           "signature": "() => any",
-          "summary": "private method L2036-L2039 (4 lines)"
+          "summary": "private method L2004-L2009 (6 lines)"
         },
         {
           "name": "#checkCameraHardware",
           "kind": "private async method",
-          "startLine": 2041,
-          "endLine": 2055,
+          "startLine": 2015,
+          "endLine": 2032,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2041-L2055 (15 lines)"
+          "summary": "private async method L2015-L2032 (18 lines)"
         },
         {
           "name": "#handleFallbackFileSelected",
           "kind": "private method",
-          "startLine": 2057,
-          "endLine": 2121,
+          "startLine": 2034,
+          "endLine": 2118,
           "signature": "(file) => any",
-          "summary": "private method L2057-L2121 (65 lines)"
+          "summary": "private method L2034-L2118 (85 lines)"
+        },
+        {
+          "name": "resetFileInput",
+          "kind": "arrow_fn",
+          "startLine": 2040,
+          "endLine": 2043,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L2040-L2043"
+        },
+        {
+          "name": "notifyReadError",
+          "kind": "arrow_fn",
+          "startLine": 2044,
+          "endLine": 2051,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L2044-L2051"
         },
         {
           "name": "#stopCameraHardwareStream",
           "kind": "private method",
-          "startLine": 2123,
-          "endLine": 2137,
+          "startLine": 2120,
+          "endLine": 2139,
           "signature": "() => any",
-          "summary": "private method L2123-L2137 (15 lines)"
+          "summary": "private method L2120-L2139 (20 lines)"
         },
         {
           "name": "#stopCameraAndShowStandby",
           "kind": "private method",
-          "startLine": 2139,
-          "endLine": 2165,
+          "startLine": 2141,
+          "endLine": 2169,
           "signature": "() => any",
-          "summary": "private method L2139-L2165 (27 lines)"
+          "summary": "private method L2141-L2169 (29 lines)"
         },
         {
           "name": "#openCameraOnDemand",
           "kind": "private async method",
-          "startLine": 2167,
-          "endLine": 2236,
+          "startLine": 2174,
+          "endLine": 2192,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2167-L2236 (70 lines)"
+          "summary": "เปิดกล้องอัตโนมัติเมื่อเข้าสู่ Step 2 (คงการอัปเดต DOM สำหรับโหมด On-Demand)"
+        },
+        {
+          "name": "#startCameraSession",
+          "kind": "private async method",
+          "startLine": 2199,
+          "endLine": 2325,
+          "signature": "({ showFullscreenModal = true } = {}) => Promise<any>",
+          "summary": "private async method L2199-L2325 (127 lines)"
+        },
+        {
+          "name": "#acquireCameraStreamWithRetry",
+          "kind": "private async method",
+          "startLine": 2333,
+          "endLine": 2384,
+          "signature": "(initialStreamPromise, sessionToken) => Promise<any>",
+          "summary": "private async method L2333-L2384 (52 lines)"
+        },
+        {
+          "name": "#bindCameraStreamLifecycle",
+          "kind": "private method",
+          "startLine": 2390,
+          "endLine": 2398,
+          "signature": "(stream) => any",
+          "summary": "private method L2390-L2398 (9 lines)"
+        },
+        {
+          "name": "#handleUnexpectedCameraStreamStop",
+          "kind": "private method",
+          "startLine": 2404,
+          "endLine": 2431,
+          "signature": "(message = '') => any",
+          "summary": "private method L2404-L2431 (28 lines)"
+        },
+        {
+          "name": "#detectCameraBrowserProfile",
+          "kind": "private method",
+          "startLine": 2437,
+          "endLine": 2465,
+          "signature": "() => any",
+          "summary": "private method L2437-L2465 (29 lines)"
+        },
+        {
+          "name": "#getCameraPermissionHintHtml",
+          "kind": "private method",
+          "startLine": 2472,
+          "endLine": 2485,
+          "signature": "(profile) => any",
+          "summary": "private method L2472-L2485 (14 lines)"
+        },
+        {
+          "name": "#hideCameraPermissionHint",
+          "kind": "private method",
+          "startLine": 2504,
+          "endLine": 2510,
+          "signature": "() => any",
+          "summary": "ซ่อนแบนเนอร์แนะนำสิทธิ์กล้องและยกเลิก Timer ที่ค้างอยู่"
+        },
+        {
+          "name": "#scheduleCameraPermissionHint",
+          "kind": "private method",
+          "startLine": 2516,
+          "endLine": 2545,
+          "signature": "(sessionToken = this.cameraSessionToken) => any",
+          "summary": "private method L2516-L2545 (30 lines)"
+        },
+        {
+          "name": "#classifyCameraErrorReason",
+          "kind": "private method",
+          "startLine": 2552,
+          "endLine": 2567,
+          "signature": "(err) => any",
+          "summary": "private method L2552-L2567 (16 lines)"
+        },
+        {
+          "name": "#getBrowserPermissionRecoveryStepsHtml",
+          "kind": "private method",
+          "startLine": 2574,
+          "endLine": 2613,
+          "signature": "(profile) => any",
+          "summary": "private method L2574-L2613 (40 lines)"
+        },
+        {
+          "name": "#showCameraGuidanceModal",
+          "kind": "private async method",
+          "startLine": 2619,
+          "endLine": 2700,
+          "signature": "({ reason, allowFallback }) => Promise<any>",
+          "summary": "private async method L2619-L2700 (82 lines)"
         },
         {
           "name": "#capturePhotoAndStopStream",
           "kind": "private method",
-          "startLine": 2238,
-          "endLine": 2270,
+          "startLine": 2702,
+          "endLine": 2734,
           "signature": "() => any",
-          "summary": "private method L2238-L2270 (33 lines)"
+          "summary": "private method L2702-L2734 (33 lines)"
         },
         {
           "name": "#resetPageAfterSave",
           "kind": "private async method",
-          "startLine": 2272,
-          "endLine": 2287,
+          "startLine": 2736,
+          "endLine": 2751,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2272-L2287 (16 lines)"
+          "summary": "private async method L2736-L2751 (16 lines)"
         },
         {
           "name": "#initGpsLocation",
           "kind": "private async method",
-          "startLine": 2295,
-          "endLine": 2452,
+          "startLine": 2759,
+          "endLine": 2916,
           "signature": "({ forceRefresh = false } = {}) => Promise<any>",
           "summary": "3. หากยังไม่พบ จะดึง ซอย / ซอยย่อย -> แสดง [\"ใกล้เคียง \" + ชื่อซอย]"
         },
         {
           "name": "#renderInlineGpsMap",
           "kind": "private method",
-          "startLine": 2454,
-          "endLine": 2520,
+          "startLine": 2918,
+          "endLine": 2984,
           "signature": "(lat, lng) => any",
-          "summary": "private method L2454-L2520 (67 lines)"
+          "summary": "private method L2918-L2984 (67 lines)"
         },
         {
           "name": "#bindEvents",
           "kind": "private method",
-          "startLine": 2523,
-          "endLine": 2822,
+          "startLine": 2987,
+          "endLine": 3291,
           "signature": "() => any",
-          "summary": "private method L2523-L2822 (300 lines)"
+          "summary": "private method L2987-L3291 (305 lines)"
         },
         {
           "name": "openSpecialModal",
           "kind": "arrow_fn",
-          "startLine": 2686,
-          "endLine": 2689,
+          "startLine": 3155,
+          "endLine": 3158,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2686-L2689"
+          "summary": "Arrow Function L3155-L3158"
         },
         {
           "name": "setDesktopActiveTab",
           "kind": "arrow_fn",
-          "startLine": 2726,
-          "endLine": 2745,
+          "startLine": 3195,
+          "endLine": 3214,
           "signature": "(activeName) => inferred",
-          "summary": "Arrow Function L2726-L2745"
+          "summary": "Arrow Function L3195-L3214"
         },
         {
           "name": "openMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2756,
-          "endLine": 2774,
+          "startLine": 3225,
+          "endLine": 3243,
           "signature": "() => inferred",
-          "summary": "Arrow Function L2756-L2774"
+          "summary": "Arrow Function L3225-L3243"
         },
         {
           "name": "closeMobileDrawer",
           "kind": "arrow_fn",
-          "startLine": 2776,
-          "endLine": 2803,
+          "startLine": 3245,
+          "endLine": 3272,
           "signature": "(targetTab = null) => inferred",
-          "summary": "Arrow Function L2776-L2803"
+          "summary": "Arrow Function L3245-L3272"
         },
         {
           "name": "#handleMainCheckin",
           "kind": "private async method",
-          "startLine": 2824,
-          "endLine": 3249,
+          "startLine": 3293,
+          "endLine": 3725,
           "signature": "() => Promise<any>",
-          "summary": "private async method L2824-L3249 (426 lines)"
+          "summary": "private async method L3293-L3725 (433 lines)"
         },
         {
           "name": "#openSpecialRequestModal",
           "kind": "private method",
-          "startLine": 3251,
-          "endLine": 3328,
+          "startLine": 3727,
+          "endLine": 3804,
           "signature": "() => any",
-          "summary": "private method L3251-L3328 (78 lines)"
+          "summary": "private method L3727-L3804 (78 lines)"
         },
         {
           "name": "#initModalSpecialRequest",
           "kind": "private method",
-          "startLine": 3330,
-          "endLine": 3382,
+          "startLine": 3806,
+          "endLine": 3858,
           "signature": "() => any",
-          "summary": "private method L3330-L3382 (53 lines)"
+          "summary": "private method L3806-L3858 (53 lines)"
         },
         {
           "name": "#initSpecialModalGps",
           "kind": "private method",
-          "startLine": 3384,
-          "endLine": 3510,
+          "startLine": 3860,
+          "endLine": 3986,
           "signature": "() => any",
-          "summary": "private method L3384-L3510 (127 lines)"
+          "summary": "private method L3860-L3986 (127 lines)"
         },
         {
           "name": "updateCustomPinAndLocation",
           "kind": "async_arrow_fn",
-          "startLine": 3396,
-          "endLine": 3467,
+          "startLine": 3872,
+          "endLine": 3943,
           "signature": "(lat, lng, flyTo = false, explicitName = null, extent = null) => inferred",
-          "summary": "Arrow Function L3396-L3467"
+          "summary": "Arrow Function L3872-L3943"
         },
         {
           "name": "setupMapIfAvailable",
           "kind": "arrow_fn",
-          "startLine": 3469,
-          "endLine": 3504,
+          "startLine": 3945,
+          "endLine": 3980,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3469-L3504"
+          "summary": "Arrow Function L3945-L3980"
         },
         {
           "name": "getDistanceInMeters",
           "kind": "arrow_fn",
-          "startLine": 3529,
-          "endLine": 3548,
+          "startLine": 4005,
+          "endLine": 4024,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L3529-L3548"
+          "summary": "Arrow Function L4005-L4024"
         },
         {
           "name": "calculateDistance",
           "kind": "arrow_fn",
-          "startLine": 3550,
-          "endLine": 3559,
+          "startLine": 4026,
+          "endLine": 4035,
           "signature": "(lat1, lon1, lat2, lon2) => inferred",
-          "summary": "Arrow Function L3550-L3559"
+          "summary": "Arrow Function L4026-L4035"
         },
         {
           "name": "getCategoryLabel",
           "kind": "arrow_fn",
-          "startLine": 3561,
-          "endLine": 3600,
+          "startLine": 4037,
+          "endLine": 4076,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3561-L3600"
+          "summary": "Arrow Function L4037-L4076"
         },
         {
           "name": "escapeHtml",
           "kind": "arrow_fn",
-          "startLine": 3602,
-          "endLine": 3610,
+          "startLine": 4078,
+          "endLine": 4086,
           "signature": "(str) => inferred",
-          "summary": "Arrow Function L3602-L3610"
+          "summary": "Arrow Function L4078-L4086"
         },
         {
           "name": "formatSubAddress",
           "kind": "arrow_fn",
-          "startLine": 3612,
-          "endLine": 3628,
+          "startLine": 4088,
+          "endLine": 4104,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3612-L3628"
+          "summary": "Arrow Function L4088-L4104"
         },
         {
           "name": "getMainName",
           "kind": "arrow_fn",
-          "startLine": 3630,
-          "endLine": 3638,
+          "startLine": 4106,
+          "endLine": 4114,
           "signature": "(item) => inferred",
-          "summary": "Arrow Function L3630-L3638"
+          "summary": "Arrow Function L4106-L4114"
         },
         {
           "name": "hideSearchResults",
           "kind": "arrow_fn",
-          "startLine": 3640,
-          "endLine": 3645,
+          "startLine": 4116,
+          "endLine": 4121,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3640-L3645"
+          "summary": "Arrow Function L4116-L4121"
         },
         {
           "name": "bindResultItemClicks",
           "kind": "arrow_fn",
-          "startLine": 3647,
-          "endLine": 3667,
+          "startLine": 4123,
+          "endLine": 4143,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3647-L3667"
+          "summary": "Arrow Function L4123-L4143"
         },
         {
           "name": "renderCoordsResult",
           "kind": "arrow_fn",
-          "startLine": 3669,
-          "endLine": 3693,
+          "startLine": 4145,
+          "endLine": 4169,
           "signature": "(lat, lng) => inferred",
-          "summary": "Arrow Function L3669-L3693"
+          "summary": "Arrow Function L4145-L4169"
         },
         {
           "name": "renderPlaceResults",
           "kind": "arrow_fn",
-          "startLine": 3695,
-          "endLine": 3741,
+          "startLine": 4171,
+          "endLine": 4217,
           "signature": "(items) => inferred",
-          "summary": "Arrow Function L3695-L3741"
+          "summary": "Arrow Function L4171-L4217"
         },
         {
           "name": "performSearch",
           "kind": "async_arrow_fn",
-          "startLine": 3746,
-          "endLine": 3807,
+          "startLine": 4222,
+          "endLine": 4283,
           "signature": "() => inferred",
-          "summary": "Arrow Function L3746-L3807"
+          "summary": "Arrow Function L4222-L4283"
         },
         {
           "name": "#handleSubmitSpecialRequest",
           "kind": "private async method",
-          "startLine": 3847,
-          "endLine": 3979,
+          "startLine": 4323,
+          "endLine": 4462,
           "signature": "(closeModalCallback) => Promise<any>",
-          "summary": "private async method L3847-L3979 (133 lines)"
+          "summary": "private async method L4323-L4462 (140 lines)"
         }
       ]
     },
@@ -3569,7 +3673,7 @@
     {
       "filePath": "assets/js/utils/DOMDiffHelper.js",
       "layer": "Application Module",
-      "fileHash": "8e724dbbd3949abc",
+      "fileHash": "cfa5908ccef75054",
       "totalLines": 164,
       "importsCount": 0,
       "importsPreview": [],
@@ -3646,8 +3750,8 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "0a275f6db2379152",
-      "totalLines": 1057,
+      "fileHash": "284d5abb348e46ff",
+      "totalLines": 1072,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3656,241 +3760,241 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 171,
+          "endLine": 178,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L171"
+          "summary": "HTML DOM Section L3-L178"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 252,
-          "endLine": 640,
+          "startLine": 259,
+          "endLine": 647,
           "signature": "<main>",
-          "summary": "HTML DOM Section L252-L640"
+          "summary": "HTML DOM Section L259-L647"
         },
         {
           "name": "<div#checkinWorkspaceWrapper>",
           "kind": "html_dom_section",
-          "startLine": 255,
-          "endLine": 498,
+          "startLine": 262,
+          "endLine": 505,
           "signature": "id=\"checkinWorkspaceWrapper\"",
-          "summary": "HTML DOM Section L255-L498"
+          "summary": "HTML DOM Section L262-L505"
         },
         {
           "name": "<div#photoPreviewCard>",
           "kind": "html_dom_section",
-          "startLine": 298,
-          "endLine": 319,
+          "startLine": 305,
+          "endLine": 326,
           "signature": "id=\"photoPreviewCard\"",
-          "summary": "HTML DOM Section L298-L319"
+          "summary": "HTML DOM Section L305-L326"
         },
         {
           "name": "<div#gpsSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 322,
-          "endLine": 359,
+          "startLine": 329,
+          "endLine": 366,
           "signature": "id=\"gpsSectionCard\"",
-          "summary": "HTML DOM Section L322-L359"
+          "summary": "HTML DOM Section L329-L366"
         },
         {
           "name": "<div#googleMapEmbedWrapper>",
           "kind": "html_dom_section",
-          "startLine": 356,
-          "endLine": 356,
+          "startLine": 363,
+          "endLine": 363,
           "signature": "id=\"googleMapEmbedWrapper\"",
-          "summary": "HTML DOM Section L356-L356"
+          "summary": "HTML DOM Section L363-L363"
         },
         {
           "name": "<div#onsiteGeofenceStatusCard>",
           "kind": "html_dom_section",
-          "startLine": 380,
-          "endLine": 391,
+          "startLine": 387,
+          "endLine": 398,
           "signature": "id=\"onsiteGeofenceStatusCard\"",
-          "summary": "HTML DOM Section L380-L391"
+          "summary": "HTML DOM Section L387-L398"
         },
         {
           "name": "<div#offsiteLocationSection>",
           "kind": "html_dom_section",
-          "startLine": 394,
-          "endLine": 430,
+          "startLine": 401,
+          "endLine": 437,
           "signature": "id=\"offsiteLocationSection\"",
-          "summary": "HTML DOM Section L394-L430"
+          "summary": "HTML DOM Section L401-L437"
         },
         {
           "name": "<div#offsiteRemarkChipsContainer>",
           "kind": "html_dom_section",
-          "startLine": 426,
-          "endLine": 426,
+          "startLine": 433,
+          "endLine": 433,
           "signature": "id=\"offsiteRemarkChipsContainer\"",
-          "summary": "HTML DOM Section L426-L426"
+          "summary": "HTML DOM Section L433-L433"
         },
         {
           "name": "<div#checkinActionCard>",
           "kind": "html_dom_section",
-          "startLine": 434,
-          "endLine": 467,
+          "startLine": 441,
+          "endLine": 474,
           "signature": "id=\"checkinActionCard\"",
-          "summary": "HTML DOM Section L434-L467"
+          "summary": "HTML DOM Section L441-L474"
         },
         {
           "name": "<div#shiftSelectorContainer>",
           "kind": "html_dom_section",
-          "startLine": 444,
-          "endLine": 449,
+          "startLine": 451,
+          "endLine": 456,
           "signature": "id=\"shiftSelectorContainer\"",
-          "summary": "HTML DOM Section L444-L449"
+          "summary": "HTML DOM Section L451-L456"
         },
         {
           "name": "<div#mainCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 451,
-          "endLine": 460,
+          "startLine": 458,
+          "endLine": 467,
           "signature": "id=\"mainCustomTimeContainer\"",
-          "summary": "HTML DOM Section L451-L460"
+          "summary": "HTML DOM Section L458-L467"
         },
         {
           "name": "<div#checkinStep1Container>",
           "kind": "html_dom_section",
-          "startLine": 480,
-          "endLine": 480,
+          "startLine": 487,
+          "endLine": 487,
           "signature": "id=\"checkinStep1Container\"",
-          "summary": "HTML DOM Section L480-L480"
+          "summary": "HTML DOM Section L487-L487"
         },
         {
           "name": "<div#checkinStep2Container>",
           "kind": "html_dom_section",
-          "startLine": 481,
-          "endLine": 481,
+          "startLine": 488,
+          "endLine": 488,
           "signature": "id=\"checkinStep2Container\"",
-          "summary": "HTML DOM Section L481-L481"
+          "summary": "HTML DOM Section L488-L488"
         },
         {
           "name": "<div#rightColumnWrapper>",
           "kind": "html_dom_section",
-          "startLine": 482,
-          "endLine": 482,
+          "startLine": 489,
+          "endLine": 489,
           "signature": "id=\"rightColumnWrapper\"",
-          "summary": "HTML DOM Section L482-L482"
+          "summary": "HTML DOM Section L489-L489"
         },
         {
           "name": "<div#cameraSectionCard>",
           "kind": "html_dom_section",
-          "startLine": 486,
-          "endLine": 486,
+          "startLine": 493,
+          "endLine": 493,
           "signature": "id=\"cameraSectionCard\"",
-          "summary": "HTML DOM Section L486-L486"
+          "summary": "HTML DOM Section L493-L493"
         },
         {
           "name": "<div#cameraStandbyOverlay>",
           "kind": "html_dom_section",
-          "startLine": 494,
-          "endLine": 494,
+          "startLine": 501,
+          "endLine": 501,
           "signature": "id=\"cameraStandbyOverlay\"",
-          "summary": "HTML DOM Section L494-L494"
+          "summary": "HTML DOM Section L501-L501"
         },
         {
           "name": "<div#desktopPanesContainer>",
           "kind": "html_dom_section",
-          "startLine": 501,
-          "endLine": 638,
+          "startLine": 508,
+          "endLine": 645,
           "signature": "id=\"desktopPanesContainer\"",
-          "summary": "HTML DOM Section L501-L638"
+          "summary": "HTML DOM Section L508-L645"
         },
         {
           "name": "<div#desktopHistoryWrapper>",
           "kind": "html_dom_section",
-          "startLine": 504,
-          "endLine": 593,
+          "startLine": 511,
+          "endLine": 600,
           "signature": "id=\"desktopHistoryWrapper\"",
-          "summary": "HTML DOM Section L504-L593"
+          "summary": "HTML DOM Section L511-L600"
         },
         {
           "name": "<div#todayHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 530,
-          "endLine": 547,
+          "startLine": 537,
+          "endLine": 554,
           "signature": "id=\"todayHistoryTabPanel\"",
-          "summary": "HTML DOM Section L530-L547"
+          "summary": "HTML DOM Section L537-L554"
         },
         {
           "name": "<div#pastHistoryTabPanel>",
           "kind": "html_dom_section",
-          "startLine": 550,
-          "endLine": 590,
+          "startLine": 557,
+          "endLine": 597,
           "signature": "id=\"pastHistoryTabPanel\"",
-          "summary": "HTML DOM Section L550-L590"
+          "summary": "HTML DOM Section L557-L597"
         },
         {
           "name": "<div#desktopSpecialWrapper>",
           "kind": "html_dom_section",
-          "startLine": 596,
-          "endLine": 636,
+          "startLine": 603,
+          "endLine": 643,
           "signature": "id=\"desktopSpecialWrapper\"",
-          "summary": "HTML DOM Section L596-L636"
+          "summary": "HTML DOM Section L603-L643"
         },
         {
           "name": "<div#mobileDrawerPanel>",
           "kind": "html_dom_section",
-          "startLine": 648,
-          "endLine": 738,
+          "startLine": 655,
+          "endLine": 745,
           "signature": "id=\"mobileDrawerPanel\"",
-          "summary": "HTML DOM Section L648-L738"
+          "summary": "HTML DOM Section L655-L745"
         },
         {
           "name": "<div#spCustomTimeContainer>",
           "kind": "html_dom_section",
-          "startLine": 771,
-          "endLine": 780,
+          "startLine": 778,
+          "endLine": 787,
           "signature": "id=\"spCustomTimeContainer\"",
-          "summary": "HTML DOM Section L771-L780"
+          "summary": "HTML DOM Section L778-L787"
         },
         {
           "name": "<div#spOnsiteSection>",
           "kind": "html_dom_section",
-          "startLine": 808,
-          "endLine": 815,
+          "startLine": 815,
+          "endLine": 822,
           "signature": "id=\"spOnsiteSection\"",
-          "summary": "HTML DOM Section L808-L815"
+          "summary": "HTML DOM Section L815-L822"
         },
         {
           "name": "<div#spOffsiteSection>",
           "kind": "html_dom_section",
-          "startLine": 818,
-          "endLine": 899,
+          "startLine": 825,
+          "endLine": 906,
           "signature": "id=\"spOffsiteSection\"",
-          "summary": "HTML DOM Section L818-L899"
+          "summary": "HTML DOM Section L825-L906"
         },
         {
           "name": "<div#spOffsiteReasonContainer>",
           "kind": "html_dom_section",
-          "startLine": 819,
-          "endLine": 826,
+          "startLine": 826,
+          "endLine": 833,
           "signature": "id=\"spOffsiteReasonContainer\"",
-          "summary": "HTML DOM Section L819-L826"
+          "summary": "HTML DOM Section L826-L833"
         },
         {
           "name": "<div#spSearchWrapper>",
           "kind": "html_dom_section",
-          "startLine": 868,
-          "endLine": 874,
+          "startLine": 875,
+          "endLine": 881,
           "signature": "id=\"spSearchWrapper\"",
-          "summary": "HTML DOM Section L868-L874"
+          "summary": "HTML DOM Section L875-L881"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 926,
-          "endLine": 926,
+          "startLine": 933,
+          "endLine": 933,
           "signature": "<script>",
-          "summary": "Bootstrap script L926-L926"
+          "summary": "Bootstrap script L933-L933"
         }
       ]
     },
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a039f59dab439bd5",
-      "totalLines": 271,
+      "fileHash": "80ac7572fa210dff",
+      "totalLines": 278,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -3899,57 +4003,57 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 108,
+          "endLine": 115,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L108"
+          "summary": "HTML DOM Section L3-L115"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 112,
-          "endLine": 112,
+          "startLine": 119,
+          "endLine": 119,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L112-L112"
+          "summary": "HTML DOM Section L119-L119"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 118,
-          "endLine": 118,
+          "startLine": 125,
+          "endLine": 125,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L118-L118"
+          "summary": "HTML DOM Section L125-L125"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 121,
-          "endLine": 260,
+          "startLine": 128,
+          "endLine": 267,
           "signature": "<main>",
-          "summary": "HTML DOM Section L121-L260"
+          "summary": "HTML DOM Section L128-L267"
         },
         {
           "name": "<div#mobileShortcutContainer>",
           "kind": "html_dom_section",
-          "startLine": 124,
-          "endLine": 124,
+          "startLine": 131,
+          "endLine": 131,
           "signature": "id=\"mobileShortcutContainer\"",
-          "summary": "HTML DOM Section L124-L124"
+          "summary": "HTML DOM Section L131-L131"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 263,
-          "endLine": 263,
+          "startLine": 270,
+          "endLine": 270,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L263-L263"
+          "summary": "HTML DOM Section L270-L270"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 269,
-          "endLine": 269,
+          "startLine": 276,
+          "endLine": 276,
           "signature": "<script>",
-          "summary": "Bootstrap script L269-L269"
+          "summary": "Bootstrap script L276-L276"
         }
       ]
     },
@@ -4085,8 +4189,8 @@
     {
       "filePath": "docs/manual/manual-user.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bde6d6d5d54045fb",
-      "totalLines": 1375,
+      "fileHash": "72db24cf3ec0b53b",
+      "totalLines": 1386,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -4111,25 +4215,25 @@
           "name": "<main>",
           "kind": "html_dom_section",
           "startLine": 170,
-          "endLine": 1135,
+          "endLine": 1146,
           "signature": "<main>",
-          "summary": "HTML DOM Section L170-L1135"
+          "summary": "HTML DOM Section L170-L1146"
         },
         {
           "name": "<div#mockupModal>",
           "kind": "html_dom_section",
-          "startLine": 1144,
-          "endLine": 1170,
+          "startLine": 1155,
+          "endLine": 1181,
           "signature": "id=\"mockupModal\"",
-          "summary": "HTML DOM Section L1144-L1170"
+          "summary": "HTML DOM Section L1155-L1181"
         },
         {
           "name": "<div#mockupModalPanel>",
           "kind": "html_dom_section",
-          "startLine": 1146,
-          "endLine": 1169,
+          "startLine": 1157,
+          "endLine": 1180,
           "signature": "id=\"mockupModalPanel\"",
-          "summary": "HTML DOM Section L1146-L1169"
+          "summary": "HTML DOM Section L1157-L1180"
         }
       ]
     },
@@ -4195,8 +4299,8 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "6f108c659b6b0b52",
-      "totalLines": 379,
+      "fileHash": "8f46aea0d70ef323",
+      "totalLines": 386,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -4205,57 +4309,57 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 140,
+          "endLine": 147,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L140"
+          "summary": "HTML DOM Section L3-L147"
         },
         {
           "name": "<div#mobileOrgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 165,
-          "endLine": 165,
+          "startLine": 172,
+          "endLine": 172,
           "signature": "id=\"mobileOrgLogoWrapper\"",
-          "summary": "HTML DOM Section L165-L165"
+          "summary": "HTML DOM Section L172-L172"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 172,
-          "endLine": 284,
+          "startLine": 179,
+          "endLine": 291,
           "signature": "<main>",
-          "summary": "HTML DOM Section L172-L284"
+          "summary": "HTML DOM Section L179-L291"
         },
         {
           "name": "<div#orgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 179,
-          "endLine": 181,
+          "startLine": 186,
+          "endLine": 188,
           "signature": "id=\"orgLogoWrapper\"",
-          "summary": "HTML DOM Section L179-L181"
+          "summary": "HTML DOM Section L186-L188"
         },
         {
           "name": "<form#loginForm>",
           "kind": "html_dom_section",
-          "startLine": 193,
-          "endLine": 281,
+          "startLine": 200,
+          "endLine": 288,
           "signature": "id=\"loginForm\"",
-          "summary": "HTML DOM Section L193-L281"
+          "summary": "HTML DOM Section L200-L288"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 377,
-          "endLine": 377,
+          "startLine": 384,
+          "endLine": 384,
           "signature": "<script>",
-          "summary": "Bootstrap script L377-L377"
+          "summary": "Bootstrap script L384-L384"
         }
       ]
     },
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bb17f4e2323d0514",
-      "totalLines": 675,
+      "fileHash": "bab0afab9e4966ad",
+      "totalLines": 682,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -4264,73 +4368,73 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 109,
+          "endLine": 116,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L109"
+          "summary": "HTML DOM Section L3-L116"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 113,
-          "endLine": 113,
+          "startLine": 120,
+          "endLine": 120,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L113-L113"
+          "summary": "HTML DOM Section L120-L120"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 117,
-          "endLine": 117,
+          "startLine": 124,
+          "endLine": 124,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L117-L117"
+          "summary": "HTML DOM Section L124-L124"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 119,
-          "endLine": 251,
+          "startLine": 126,
+          "endLine": 258,
           "signature": "<main>",
-          "summary": "HTML DOM Section L119-L251"
+          "summary": "HTML DOM Section L126-L258"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 253,
-          "endLine": 253,
+          "startLine": 260,
+          "endLine": 260,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L253-L253"
+          "summary": "HTML DOM Section L260-L260"
         },
         {
           "name": "<div#modalPersonnelForm>",
           "kind": "html_dom_section",
-          "startLine": 259,
-          "endLine": 370,
+          "startLine": 266,
+          "endLine": 377,
           "signature": "id=\"modalPersonnelForm\"",
-          "summary": "HTML DOM Section L259-L370"
+          "summary": "HTML DOM Section L266-L377"
         },
         {
           "name": "<div#bulkImportPreviewContainer>",
           "kind": "html_dom_section",
-          "startLine": 586,
-          "endLine": 627,
+          "startLine": 593,
+          "endLine": 634,
           "signature": "id=\"bulkImportPreviewContainer\"",
-          "summary": "HTML DOM Section L586-L627"
+          "summary": "HTML DOM Section L593-L634"
         },
         {
           "name": "<div#bulkImportProgressContainer>",
           "kind": "html_dom_section",
-          "startLine": 647,
-          "endLine": 655,
+          "startLine": 654,
+          "endLine": 662,
           "signature": "id=\"bulkImportProgressContainer\"",
-          "summary": "HTML DOM Section L647-L655"
+          "summary": "HTML DOM Section L654-L662"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 673,
-          "endLine": 673,
+          "startLine": 680,
+          "endLine": 680,
           "signature": "<script>",
-          "summary": "Bootstrap script L673-L673"
+          "summary": "Bootstrap script L680-L680"
         }
       ]
     },
@@ -5776,7 +5880,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-fix-staging-table-relations/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "e651c1facdf9b65e",
+      "fileHash": "7d44056a9bdb417a",
       "totalLines": 196,
       "importsCount": 0,
       "importsPreview": [],
@@ -5795,7 +5899,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-lean-ai-workflow/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9d34aa2596f0e230",
+      "fileHash": "bd26ac30913a5b32",
       "totalLines": 164,
       "importsCount": 0,
       "importsPreview": [],
@@ -5814,7 +5918,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "6b1f620d7c170f75",
+      "fileHash": "3aacfb4b78b96b32",
       "totalLines": 134,
       "importsCount": 0,
       "importsPreview": [],
@@ -5833,7 +5937,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/qa_loca_v2_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "14b1eb2263e07a22",
+      "fileHash": "ad9ead718c9dee87",
       "totalLines": 341,
       "importsCount": 3,
       "importsPreview": [
@@ -5888,7 +5992,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "e631e305ae8ce3f6",
+      "fileHash": "ef35adbb2d2d1565",
       "totalLines": 609,
       "importsCount": 0,
       "importsPreview": [],
@@ -5931,7 +6035,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/qa_zero_scroll_test.mjs",
       "layer": "Application Module",
-      "fileHash": "9f0b1bf20adac291",
+      "fileHash": "ba0df63fd43f1d5b",
       "totalLines": 260,
       "importsCount": 2,
       "importsPreview": [
@@ -5953,7 +6057,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-3to4-zero-scroll/qa_3to4_zero_scroll_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "fc6414843b654edd",
+      "fileHash": "784e708257ad7745",
       "totalLines": 246,
       "importsCount": 2,
       "importsPreview": [
@@ -5975,7 +6079,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-cockpit-split-layout/qa_cockpit_split_test.mjs",
       "layer": "Application Module",
-      "fileHash": "9e6968af8d9af300",
+      "fileHash": "ed864983a4037a3c",
       "totalLines": 327,
       "importsCount": 2,
       "importsPreview": [
@@ -5997,7 +6101,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "9216ce1451b4c319",
+      "fileHash": "c6df485d154a960c",
       "totalLines": 140,
       "importsCount": 2,
       "importsPreview": [
@@ -6019,7 +6123,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4c829ae3391757c8",
+      "fileHash": "c82916fd7a05fc2e",
       "totalLines": 352,
       "importsCount": 0,
       "importsPreview": [],
@@ -6070,7 +6174,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/qa_gps_symmetry_test.mjs",
       "layer": "Application Module",
-      "fileHash": "60c115de4404ece7",
+      "fileHash": "03d9d7ed698ed5e7",
       "totalLines": 221,
       "importsCount": 4,
       "importsPreview": [
@@ -6094,7 +6198,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "e82e2910ac332157",
+      "fileHash": "87418c6c3d0fa5a8",
       "totalLines": 697,
       "importsCount": 0,
       "importsPreview": [],
@@ -6209,7 +6313,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs",
       "layer": "Application Module",
-      "fileHash": "3693c8b1cd484c70",
+      "fileHash": "841b5ace65f0238a",
       "totalLines": 151,
       "importsCount": 2,
       "importsPreview": [
@@ -6231,7 +6335,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-polish/qa_loca_v2_polish_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "89ae60c5e5161039",
+      "fileHash": "9067a4ef8530d0ed",
       "totalLines": 99,
       "importsCount": 1,
       "importsPreview": [
@@ -6252,7 +6356,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "606754168b2a74b7",
+      "fileHash": "eb7b4899bbe550d6",
       "totalLines": 770,
       "importsCount": 0,
       "importsPreview": [],
@@ -6279,7 +6383,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "5d851a6619234635",
+      "fileHash": "bf683afec1a72744",
       "totalLines": 68,
       "importsCount": 1,
       "importsPreview": [
@@ -6291,7 +6395,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_dom_diff_unit_test.mjs",
       "layer": "Application Module",
-      "fileHash": "acfa5290bf0a566b",
+      "fileHash": "7cabe8b1b23895fa",
       "totalLines": 217,
       "importsCount": 1,
       "importsPreview": [
@@ -6448,7 +6552,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "add50985244b0508",
+      "fileHash": "38f23e696ded318b",
       "totalLines": 497,
       "importsCount": 0,
       "importsPreview": [],
@@ -6491,7 +6595,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3655adccd260bdbb",
+      "fileHash": "859782ae5f8429e2",
       "totalLines": 142,
       "importsCount": 0,
       "importsPreview": [],
@@ -6510,7 +6614,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "b824495242f833e1",
+      "fileHash": "875a992ddf90dcf2",
       "totalLines": 68,
       "importsCount": 1,
       "importsPreview": [
@@ -6522,7 +6626,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_functional_robustness_test.mjs",
       "layer": "Application Module",
-      "fileHash": "74863609ce346320",
+      "fileHash": "742111fb296344e2",
       "totalLines": 284,
       "importsCount": 2,
       "importsPreview": [
@@ -6584,7 +6688,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_app_layout.mjs",
       "layer": "Application Module",
-      "fileHash": "af394dfa47048c11",
+      "fileHash": "6a6d1a90b975d135",
       "totalLines": 184,
       "importsCount": 1,
       "importsPreview": [
@@ -6596,7 +6700,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_attendance_model.mjs",
       "layer": "Application Module",
-      "fileHash": "29a00a83689a1b4e",
+      "fileHash": "5cf78dd64cf632d0",
       "totalLines": 358,
       "importsCount": 1,
       "importsPreview": [
@@ -6608,7 +6712,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_checkin.mjs",
       "layer": "Application Module",
-      "fileHash": "e8327e01dc50f7b8",
+      "fileHash": "098682ffc77649e3",
       "totalLines": 134,
       "importsCount": 1,
       "importsPreview": [
@@ -6620,7 +6724,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_dashboard.mjs",
       "layer": "Application Module",
-      "fileHash": "3511cdabfa44b439",
+      "fileHash": "6f0116dd21203e09",
       "totalLines": 70,
       "importsCount": 1,
       "importsPreview": [
@@ -6632,7 +6736,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_reports.mjs",
       "layer": "Application Module",
-      "fileHash": "533841669eaabe54",
+      "fileHash": "07ef5eeaf087acf9",
       "totalLines": 121,
       "importsCount": 1,
       "importsPreview": [
@@ -6644,7 +6748,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/inspect_staging_schema.mjs",
       "layer": "Application Module",
-      "fileHash": "890e7ddac163ae28",
+      "fileHash": "34578b11310ad8cc",
       "totalLines": 133,
       "importsCount": 0,
       "importsPreview": [],
@@ -6671,7 +6775,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "fee2788fdca6c2a9",
+      "fileHash": "ab36a9c0cd2c55b6",
       "totalLines": 224,
       "importsCount": 0,
       "importsPreview": [],
@@ -6690,7 +6794,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "23aff4fbf439b149",
+      "fileHash": "172da6c29bc306dc",
       "totalLines": 74,
       "importsCount": 1,
       "importsPreview": [
@@ -6702,7 +6806,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_comprehensive_test.mjs",
       "layer": "Application Module",
-      "fileHash": "325da2bc88343839",
+      "fileHash": "d87d1929f093d2c1",
       "totalLines": 124,
       "importsCount": 2,
       "importsPreview": [
@@ -6715,7 +6819,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_live_persistence_test.mjs",
       "layer": "Application Module",
-      "fileHash": "bb4a4c22366868a4",
+      "fileHash": "ee29c199dd71d23c",
       "totalLines": 100,
       "importsCount": 3,
       "importsPreview": [
@@ -6786,7 +6890,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_rev2_verification_test.mjs",
       "layer": "Application Module",
-      "fileHash": "269a5ecd93113b12",
+      "fileHash": "5ceadf6f54684575",
       "totalLines": 88,
       "importsCount": 2,
       "importsPreview": [
@@ -6799,7 +6903,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_applayout_realtime_js.mjs",
       "layer": "Application Module",
-      "fileHash": "6bcf0bf88a14b49d",
+      "fileHash": "654bccafd3c3fc9e",
       "totalLines": 63,
       "importsCount": 2,
       "importsPreview": [
@@ -6861,7 +6965,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_broadcast_behavior.mjs",
       "layer": "Application Module",
-      "fileHash": "57e70cc0aab16715",
+      "fileHash": "f940ae6471ebbce7",
       "totalLines": 63,
       "importsCount": 2,
       "importsPreview": [
@@ -6874,7 +6978,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_daily_report_records.mjs",
       "layer": "Application Module",
-      "fileHash": "cdf44f23bd216aee",
+      "fileHash": "665cb702462272f8",
       "totalLines": 44,
       "importsCount": 2,
       "importsPreview": [
@@ -6887,7 +6991,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_live_ws_trigger.mjs",
       "layer": "Application Module",
-      "fileHash": "76bab416874b3723",
+      "fileHash": "5ec5d12d8a3a4298",
       "totalLines": 74,
       "importsCount": 0,
       "importsPreview": [],
@@ -6897,7 +7001,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_non_existent_table_sub.mjs",
       "layer": "Application Module",
-      "fileHash": "5611f5f4736629f7",
+      "fileHash": "bfcd14b107a75c1e",
       "totalLines": 33,
       "importsCount": 2,
       "importsPreview": [
@@ -6910,7 +7014,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_realtime_crud_live.mjs",
       "layer": "Application Module",
-      "fileHash": "5ac21cc7bec74cd3",
+      "fileHash": "a5971a764c73d573",
       "totalLines": 97,
       "importsCount": 2,
       "importsPreview": [
@@ -6923,7 +7027,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_checkin_flow.mjs",
       "layer": "Application Module",
-      "fileHash": "3efeffc7826c70eb",
+      "fileHash": "43af9bc5286ec09a",
       "totalLines": 28,
       "importsCount": 2,
       "importsPreview": [
@@ -6985,7 +7089,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_columns.mjs",
       "layer": "Application Module",
-      "fileHash": "f14b0fbcf7f0ac5b",
+      "fileHash": "62c84bd9c2f55431",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -7004,7 +7108,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_watermark.mjs",
       "layer": "Application Module",
-      "fileHash": "3ded696faf3aa959",
+      "fileHash": "50927bd4091763b9",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -7023,7 +7127,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_supabase_realtime_ws.mjs",
       "layer": "Application Module",
-      "fileHash": "1b025b94e40ff4a3",
+      "fileHash": "1d02d30f6bf46175",
       "totalLines": 58,
       "importsCount": 0,
       "importsPreview": [],
@@ -7033,7 +7137,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_debug.mjs",
       "layer": "Application Module",
-      "fileHash": "5e9e9ed971b8a676",
+      "fileHash": "2f31d06487c2a984",
       "totalLines": 41,
       "importsCount": 2,
       "importsPreview": [
@@ -7046,7 +7150,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_live.mjs",
       "layer": "Application Module",
-      "fileHash": "2d85a0963e44b71b",
+      "fileHash": "8b8ff6e6c281c1bd",
       "totalLines": 47,
       "importsCount": 0,
       "importsPreview": [],
@@ -7065,7 +7169,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_query.mjs",
       "layer": "Application Module",
-      "fileHash": "e703c363d5832497",
+      "fileHash": "08a3d9167cf2c55e",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -7084,7 +7188,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_safe.mjs",
       "layer": "Application Module",
-      "fileHash": "d055b9bd3d84c94b",
+      "fileHash": "fa42408d36be917b",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -7103,7 +7207,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_write_postgrest.mjs",
       "layer": "Application Module",
-      "fileHash": "aa3f997ef807db73",
+      "fileHash": "395d2623bcf39637",
       "totalLines": 27,
       "importsCount": 0,
       "importsPreview": [],
@@ -7122,7 +7226,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7224279609c12254",
+      "fileHash": "4089bfbc498cc6a7",
       "totalLines": 250,
       "importsCount": 0,
       "importsPreview": [],
@@ -7141,7 +7245,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs",
       "layer": "Application Module",
-      "fileHash": "2da3175d09e13e94",
+      "fileHash": "71b631730bc074b2",
       "totalLines": 492,
       "importsCount": 4,
       "importsPreview": [
@@ -7197,7 +7301,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/audit_cache_sync.mjs",
       "layer": "Application Module",
-      "fileHash": "42128d1382167564",
+      "fileHash": "33b4e39f15afc3e5",
       "totalLines": 50,
       "importsCount": 1,
       "importsPreview": [
@@ -7209,7 +7313,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "71e975bb092c4974",
+      "fileHash": "8c4b8fd2770a6869",
       "totalLines": 212,
       "importsCount": 0,
       "importsPreview": [],
@@ -7228,7 +7332,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_unit_mock_tests.mjs",
       "layer": "Application Module",
-      "fileHash": "fc45a29c7be67452",
+      "fileHash": "618a241232fe53e6",
       "totalLines": 430,
       "importsCount": 1,
       "importsPreview": [
@@ -7257,7 +7361,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_button_lock.mjs",
       "layer": "Application Module",
-      "fileHash": "a0f180444bed904e",
+      "fileHash": "4c5b9a0a06b4987b",
       "totalLines": 45,
       "importsCount": 2,
       "importsPreview": [
@@ -7279,7 +7383,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_places.mjs",
       "layer": "Application Module",
-      "fileHash": "96395561bf851fb6",
+      "fileHash": "4b5fd299d3159aeb",
       "totalLines": 194,
       "importsCount": 5,
       "importsPreview": [
@@ -7312,7 +7416,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "cdea2f0f97a5294c",
+      "fileHash": "b3250c98e3e18ed4",
       "totalLines": 248,
       "importsCount": 0,
       "importsPreview": [],
@@ -7331,7 +7435,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_adversarial_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "5ae72241f5e0e9d9",
+      "fileHash": "3a8e926f76937ffd",
       "totalLines": 107,
       "importsCount": 2,
       "importsPreview": [
@@ -7369,7 +7473,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_verify_gps_refresh_and_clock.mjs",
       "layer": "Application Module",
-      "fileHash": "d1bff993c36b03b7",
+      "fileHash": "771827f9e89f9565",
       "totalLines": 64,
       "importsCount": 3,
       "importsPreview": [
@@ -7400,7 +7504,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/test_full_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "b27a7f849f222305",
+      "fileHash": "1b1cd903588333db",
       "totalLines": 191,
       "importsCount": 3,
       "importsPreview": [
@@ -7439,7 +7543,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "5e32f2db1fb1eba9",
+      "fileHash": "482ae9522e98fa0b",
       "totalLines": 290,
       "importsCount": 0,
       "importsPreview": [],
@@ -7466,7 +7570,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "5eb039f430dddc70",
+      "fileHash": "bbe37b558bba82da",
       "totalLines": 66,
       "importsCount": 3,
       "importsPreview": [
@@ -7489,7 +7593,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs",
       "layer": "Application Module",
-      "fileHash": "10c726c567ab6c4b",
+      "fileHash": "aff2048a6ed002bd",
       "totalLines": 190,
       "importsCount": 3,
       "importsPreview": [
@@ -7520,7 +7624,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs",
       "layer": "Application Module",
-      "fileHash": "215fbed204e391b6",
+      "fileHash": "6b0e318bd230b7c5",
       "totalLines": 275,
       "importsCount": 3,
       "importsPreview": [
@@ -7559,7 +7663,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "2a2c16c6942ab063",
+      "fileHash": "21f532f6f2e96b0a",
       "totalLines": 258,
       "importsCount": 0,
       "importsPreview": [],
@@ -7578,7 +7682,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "5fe81e53e24d2be1",
+      "fileHash": "4fd5e25ecb67b95b",
       "totalLines": 281,
       "importsCount": 3,
       "importsPreview": [
@@ -7601,7 +7705,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "cc2c2683ab0f8b3e",
+      "fileHash": "e36b0752341bf8c7",
       "totalLines": 139,
       "importsCount": 3,
       "importsPreview": [
@@ -7624,7 +7728,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "609fc01074f988af",
+      "fileHash": "210b26a8c1603ab9",
       "totalLines": 42,
       "importsCount": 1,
       "importsPreview": [
@@ -7636,7 +7740,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs",
       "layer": "Application Module",
-      "fileHash": "c910c0f7f57b4555",
+      "fileHash": "8ceac785762c57bc",
       "totalLines": 152,
       "importsCount": 3,
       "importsPreview": [
@@ -7659,7 +7763,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs",
       "layer": "Application Module",
-      "fileHash": "31ecadf08a2b088b",
+      "fileHash": "ce02121fd6cbee88",
       "totalLines": 123,
       "importsCount": 3,
       "importsPreview": [
@@ -7673,7 +7777,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b7a2909b17765728",
+      "fileHash": "09dc9139f36c8556",
       "totalLines": 378,
       "importsCount": 0,
       "importsPreview": [],
@@ -7692,7 +7796,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/preflight_forward_search_simulation.mjs",
       "layer": "Application Module",
-      "fileHash": "21130928faee9378",
+      "fileHash": "573023b649fb4832",
       "totalLines": 64,
       "importsCount": 1,
       "importsPreview": [
@@ -7713,7 +7817,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/qa_audit_test_suite.mjs",
       "layer": "Application Module",
-      "fileHash": "cabf204e484c9bfd",
+      "fileHash": "9f8427e6aec77e01",
       "totalLines": 363,
       "importsCount": 2,
       "importsPreview": [
@@ -7743,7 +7847,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/verify_cache_sync.mjs",
       "layer": "Application Module",
-      "fileHash": "5918c0aafe77004d",
+      "fileHash": "16e79d04c52cc7f8",
       "totalLines": 29,
       "importsCount": 1,
       "importsPreview": [
@@ -7755,7 +7859,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3410ca95e5fe4dd6",
+      "fileHash": "82e9d84f5289d02e",
       "totalLines": 200,
       "importsCount": 0,
       "importsPreview": [],
@@ -7774,7 +7878,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/preflight_arcgis_simulation.mjs",
       "layer": "Application Module",
-      "fileHash": "bcfe866fd66c17a0",
+      "fileHash": "434dc204883e6319",
       "totalLines": 131,
       "importsCount": 1,
       "importsPreview": [
@@ -7811,7 +7915,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_arcgis.mjs",
       "layer": "Application Module",
-      "fileHash": "e49722e56b9b2b26",
+      "fileHash": "44f250e6f084eca4",
       "totalLines": 395,
       "importsCount": 2,
       "importsPreview": [
@@ -7857,7 +7961,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_e2e.mjs",
       "layer": "Application Module",
-      "fileHash": "ce0bd37aff0d4489",
+      "fileHash": "6e353677c22c5903",
       "totalLines": 92,
       "importsCount": 2,
       "importsPreview": [
@@ -7879,7 +7983,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ed635ba5111c1524",
+      "fileHash": "b85b5690967fefa7",
       "totalLines": 222,
       "importsCount": 0,
       "importsPreview": [],
@@ -7898,7 +8002,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "025f08c97ea8a6b1",
+      "fileHash": "15e72590d71fbc93",
       "totalLines": 35,
       "importsCount": 2,
       "importsPreview": [
@@ -7911,7 +8015,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs",
       "layer": "Application Module",
-      "fileHash": "08b4880c46b84008",
+      "fileHash": "05afa63faeeeff18",
       "totalLines": 162,
       "importsCount": 2,
       "importsPreview": [
@@ -7981,7 +8085,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "abe86103ffa1c1cb",
+      "fileHash": "7e1c6e0d00300ff3",
       "totalLines": 170,
       "importsCount": 0,
       "importsPreview": [],
@@ -8008,7 +8112,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/preflight_plan_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "f5ca59801d3ddb1d",
+      "fileHash": "2fee2287d6d2fbd6",
       "totalLines": 48,
       "importsCount": 2,
       "importsPreview": [
@@ -8030,7 +8134,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "c24e19e947c6e44b",
+      "fileHash": "a5c1a6776e47939c",
       "totalLines": 588,
       "importsCount": 3,
       "importsPreview": [
@@ -8061,7 +8165,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_adversarial_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "338cf68ff35eb6fe",
+      "fileHash": "ee99ddc0ecb52330",
       "totalLines": 225,
       "importsCount": 2,
       "importsPreview": [
@@ -8083,7 +8187,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_special_request_mode_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "a42192ac4a210695",
+      "fileHash": "e5bb15ed3728a226",
       "totalLines": 433,
       "importsCount": 3,
       "importsPreview": [
@@ -8130,7 +8234,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_deep_adversarial_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "52a3070a401c6fec",
+      "fileHash": "4562c61b56167fba",
       "totalLines": 456,
       "importsCount": 3,
       "importsPreview": [
@@ -8193,7 +8297,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_split_dropdowns_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "6de0056798b27d8b",
+      "fileHash": "0dfe8b171bf47e8f",
       "totalLines": 103,
       "importsCount": 4,
       "importsPreview": [
@@ -8208,7 +8312,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "433792dff37b5c3a",
+      "fileHash": "e433a99f8a02dcc7",
       "totalLines": 124,
       "importsCount": 0,
       "importsPreview": [],
@@ -8227,7 +8331,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs",
       "layer": "Application Module",
-      "fileHash": "8fdb352bdc5bac92",
+      "fileHash": "5618b32df35273b3",
       "totalLines": 280,
       "importsCount": 1,
       "importsPreview": [
@@ -8264,7 +8368,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs",
       "layer": "Application Module",
-      "fileHash": "366c3946e33e3d65",
+      "fileHash": "08b7a6ef3cad9055",
       "totalLines": 367,
       "importsCount": 1,
       "importsPreview": [
@@ -8283,10 +8387,245 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261116-fix-mobile-logout-session-camera/qa_fix_mobile_logout_session_camera.mjs",
+      "layer": "Application Module",
+      "fileHash": "d629aba93c0c1598",
+      "totalLines": 1681,
+      "importsCount": 7,
+      "importsPreview": [
+        "import fs from 'node:fs';",
+        "import path from 'node:path';",
+        "import vm from 'node:vm';",
+        "import crypto from 'node:crypto';",
+        "import assert from 'node:assert/strict';",
+        "import { execFileSync } from 'node:child_process';",
+        "import { pathToFileURL } from 'node:url';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runTest",
+          "kind": "function",
+          "startLine": 38,
+          "endLine": 49,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L38-L49"
+        },
+        {
+          "name": "runAsyncTest",
+          "kind": "async_function",
+          "startLine": 51,
+          "endLine": 62,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L51-L62"
+        },
+        {
+          "name": "makeMockStream",
+          "kind": "function",
+          "startLine": 64,
+          "endLine": 82,
+          "signature": "(harness, opts = {}) => inferred",
+          "summary": "Function L64-L82"
+        },
+        {
+          "name": "stop",
+          "kind": "public method",
+          "startLine": 69,
+          "endLine": 73,
+          "signature": "() => any",
+          "summary": "public method L69-L73 (5 lines)"
+        },
+        {
+          "name": "createSharedMockDb",
+          "kind": "function",
+          "startLine": 86,
+          "endLine": 137,
+          "signature": "() => inferred",
+          "summary": "Function L86-L137"
+        },
+        {
+          "name": "createChainableProxy",
+          "kind": "function",
+          "startLine": 87,
+          "endLine": 132,
+          "signature": "(table = '', op = 'select', isSingle = false) => inferred",
+          "summary": "Function L87-L132"
+        },
+        {
+          "name": "setupBrowserHarness",
+          "kind": "function",
+          "startLine": 142,
+          "endLine": 469,
+          "signature": "(options = {}) => inferred",
+          "summary": "Function L142-L469"
+        },
+        {
+          "name": "MockClassList",
+          "kind": "class",
+          "startLine": 151,
+          "endLine": 169,
+          "signature": "class MockClassList",
+          "summary": "Class Definition (19 lines)"
+        },
+        {
+          "name": "MockClassList.constructor",
+          "kind": "public constructor",
+          "startLine": 152,
+          "endLine": 154,
+          "signature": "(initial = []) => any",
+          "summary": "public constructor L152-L154 (3 lines)"
+        },
+        {
+          "name": "MockClassList.contains",
+          "kind": "public method",
+          "startLine": 155,
+          "endLine": 155,
+          "signature": "(c) => any",
+          "summary": "public method L155-L155 (1 lines)"
+        },
+        {
+          "name": "MockClassList.add",
+          "kind": "public method",
+          "startLine": 156,
+          "endLine": 156,
+          "signature": "(...cls) => any",
+          "summary": "public method L156-L156 (1 lines)"
+        },
+        {
+          "name": "MockClassList.remove",
+          "kind": "public method",
+          "startLine": 157,
+          "endLine": 157,
+          "signature": "(...cls) => any",
+          "summary": "public method L157-L157 (1 lines)"
+        },
+        {
+          "name": "MockClassList.toggle",
+          "kind": "public method",
+          "startLine": 158,
+          "endLine": 167,
+          "signature": "(c, force) => any",
+          "summary": "public method L158-L167 (10 lines)"
+        },
+        {
+          "name": "MockClassList.toString",
+          "kind": "public method",
+          "startLine": 168,
+          "endLine": 168,
+          "signature": "() => any",
+          "summary": "public method L168-L168 (1 lines)"
+        },
+        {
+          "name": "getOrCreateElem",
+          "kind": "function",
+          "startLine": 171,
+          "endLine": 269,
+          "signature": "(id, defaults = {}) => inferred",
+          "summary": "Function L171-L269"
+        },
+        {
+          "name": "cleanup",
+          "kind": "public method",
+          "startLine": 304,
+          "endLine": 307,
+          "signature": "() => any",
+          "summary": "public method L304-L307 (4 lines)"
+        },
+        {
+          "name": "addEventListener",
+          "kind": "public method",
+          "startLine": 354,
+          "endLine": 354,
+          "signature": "(t, fn) => any",
+          "summary": "public method L354-L354 (1 lines)"
+        },
+        {
+          "name": "removeEventListener",
+          "kind": "public method",
+          "startLine": 355,
+          "endLine": 355,
+          "signature": "() => any",
+          "summary": "public method L355-L355 (1 lines)"
+        },
+        {
+          "name": "dispatchEvent",
+          "kind": "public method",
+          "startLine": 356,
+          "endLine": 356,
+          "signature": "(evt) => any",
+          "summary": "public method L356-L356 (1 lines)"
+        },
+        {
+          "name": "constructor",
+          "kind": "public constructor",
+          "startLine": 395,
+          "endLine": 398,
+          "signature": "(type, init = {}) => any",
+          "summary": "public constructor L395-L398 (4 lines)"
+        },
+        {
+          "name": "addEventListener",
+          "kind": "public method",
+          "startLine": 407,
+          "endLine": 407,
+          "signature": "(t, fn) => any",
+          "summary": "public method L407-L407 (1 lines)"
+        },
+        {
+          "name": "removeEventListener",
+          "kind": "public method",
+          "startLine": 408,
+          "endLine": 408,
+          "signature": "() => any",
+          "summary": "public method L408-L408 (1 lines)"
+        },
+        {
+          "name": "readAsDataURL",
+          "kind": "public method",
+          "startLine": 417,
+          "endLine": 425,
+          "signature": "() => any",
+          "summary": "public method L417-L425 (9 lines)"
+        },
+        {
+          "name": "flushMicrotasks",
+          "kind": "async_function",
+          "startLine": 471,
+          "endLine": 473,
+          "signature": "(ms = 30) => inferred",
+          "summary": "Function L471-L473"
+        },
+        {
+          "name": "main",
+          "kind": "async_function",
+          "startLine": 475,
+          "endLine": 703,
+          "signature": "() => inferred",
+          "summary": "Function L475-L703"
+        },
+        {
+          "name": "walkAssets",
+          "kind": "arrow_fn",
+          "startLine": 502,
+          "endLine": 512,
+          "signature": "(dir, out = []) => inferred",
+          "summary": "Arrow Function L502-L512"
+        },
+        {
+          "name": "runPurgeScenario",
+          "kind": "async_arrow_fn",
+          "startLine": 564,
+          "endLine": 638,
+          "signature": "({ storedBuild, remoteBuildResponse }) => inferred",
+          "summary": "Arrow Function L564-L638"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "0ba553c0c260f661",
-      "totalLines": 529,
+      "fileHash": "f5664f3d64b440e2",
+      "totalLines": 536,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -8295,81 +8634,81 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 108,
+          "endLine": 115,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L108"
+          "summary": "HTML DOM Section L3-L115"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 112,
-          "endLine": 112,
+          "startLine": 119,
+          "endLine": 119,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L112-L112"
+          "summary": "HTML DOM Section L119-L119"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 116,
-          "endLine": 116,
+          "startLine": 123,
+          "endLine": 123,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L116-L116"
+          "summary": "HTML DOM Section L123-L123"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 118,
-          "endLine": 275,
+          "startLine": 125,
+          "endLine": 282,
           "signature": "<main>",
-          "summary": "HTML DOM Section L118-L275"
+          "summary": "HTML DOM Section L125-L282"
         },
         {
           "name": "<div#reportMobileShortcutContainer>",
           "kind": "html_dom_section",
-          "startLine": 120,
-          "endLine": 120,
+          "startLine": 127,
+          "endLine": 127,
           "signature": "id=\"reportMobileShortcutContainer\"",
-          "summary": "HTML DOM Section L120-L120"
+          "summary": "HTML DOM Section L127-L127"
         },
         {
           "name": "<div#statusTagsFilterContainer>",
           "kind": "html_dom_section",
-          "startLine": 266,
-          "endLine": 266,
+          "startLine": 273,
+          "endLine": 273,
           "signature": "id=\"statusTagsFilterContainer\"",
-          "summary": "HTML DOM Section L266-L266"
+          "summary": "HTML DOM Section L273-L273"
         },
         {
           "name": "<div#reportTablesMasterContainer>",
           "kind": "html_dom_section",
-          "startLine": 273,
-          "endLine": 273,
+          "startLine": 280,
+          "endLine": 280,
           "signature": "id=\"reportTablesMasterContainer\"",
-          "summary": "HTML DOM Section L273-L273"
+          "summary": "HTML DOM Section L280-L280"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 277,
-          "endLine": 277,
+          "startLine": 284,
+          "endLine": 284,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L277-L277"
+          "summary": "HTML DOM Section L284-L284"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 527,
-          "endLine": 527,
+          "startLine": 534,
+          "endLine": 534,
           "signature": "<script>",
-          "summary": "Bootstrap script L527-L527"
+          "summary": "Bootstrap script L534-L534"
         }
       ]
     },
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3057a1a0d08d6483",
-      "totalLines": 824,
+      "fileHash": "21366aa39bae7c95",
+      "totalLines": 831,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -8378,73 +8717,73 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 107,
+          "endLine": 114,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L107"
+          "summary": "HTML DOM Section L3-L114"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 111,
-          "endLine": 111,
+          "startLine": 118,
+          "endLine": 118,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L111-L111"
+          "summary": "HTML DOM Section L118-L118"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 115,
-          "endLine": 115,
+          "startLine": 122,
+          "endLine": 122,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L115-L115"
+          "summary": "HTML DOM Section L122-L122"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 117,
-          "endLine": 738,
+          "startLine": 124,
+          "endLine": 745,
           "signature": "<main>",
-          "summary": "HTML DOM Section L117-L738"
+          "summary": "HTML DOM Section L124-L745"
         },
         {
           "name": "<div#prefixListContainer>",
           "kind": "html_dom_section",
-          "startLine": 567,
-          "endLine": 567,
+          "startLine": 574,
+          "endLine": 574,
           "signature": "id=\"prefixListContainer\"",
-          "summary": "HTML DOM Section L567-L567"
+          "summary": "HTML DOM Section L574-L574"
         },
         {
           "name": "<div#offsiteJobTypeListContainer>",
           "kind": "html_dom_section",
-          "startLine": 584,
-          "endLine": 584,
+          "startLine": 591,
+          "endLine": 591,
           "signature": "id=\"offsiteJobTypeListContainer\"",
-          "summary": "HTML DOM Section L584-L584"
+          "summary": "HTML DOM Section L591-L591"
         },
         {
           "name": "<div#specialReasonListContainer>",
           "kind": "html_dom_section",
-          "startLine": 601,
-          "endLine": 601,
+          "startLine": 608,
+          "endLine": 608,
           "signature": "id=\"specialReasonListContainer\"",
-          "summary": "HTML DOM Section L601-L601"
+          "summary": "HTML DOM Section L608-L608"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 740,
-          "endLine": 740,
+          "startLine": 747,
+          "endLine": 747,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L740-L740"
+          "summary": "HTML DOM Section L747-L747"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 767,
-          "endLine": 767,
+          "startLine": 774,
+          "endLine": 774,
           "signature": "<script>",
-          "summary": "Bootstrap script L767-L767"
+          "summary": "Bootstrap script L774-L774"
         }
       ]
     },
@@ -8516,7 +8855,7 @@
     {
       "filePath": "sql/alter_v2_8_loca_v2_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "23fb13f6e2808d02",
+      "fileHash": "26b7337735cdd7a0",
       "totalLines": 78,
       "importsCount": 0,
       "importsPreview": [],
@@ -8567,7 +8906,7 @@
     {
       "filePath": "sql/create_staging_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "ff4ba4c7e236c571",
+      "fileHash": "848511e7669bd05d",
       "totalLines": 129,
       "importsCount": 0,
       "importsPreview": [],
@@ -8762,7 +9101,7 @@
     {
       "filePath": "sql/fix_staging_foreign_keys.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "7cb1070ec4983509",
+      "fileHash": "a30e70683a5f8c75",
       "totalLines": 24,
       "importsCount": 0,
       "importsPreview": [],
@@ -8821,7 +9160,7 @@
     {
       "filePath": "sql/migration_staging_split_dropdowns.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "5527b77210220b7c",
+      "fileHash": "b86ac35a324e0f5f",
       "totalLines": 68,
       "importsCount": 0,
       "importsPreview": [],
@@ -9011,8 +9350,8 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "530103f9a5b2d777",
-      "totalLines": 424,
+      "fileHash": "b31c4d11b795b451",
+      "totalLines": 431,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -9021,57 +9360,57 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 108,
+          "endLine": 115,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L108"
+          "summary": "HTML DOM Section L3-L115"
         },
         {
           "name": "<div#bmaSidebarContainer>",
           "kind": "html_dom_section",
-          "startLine": 112,
-          "endLine": 112,
+          "startLine": 119,
+          "endLine": 119,
           "signature": "id=\"bmaSidebarContainer\"",
-          "summary": "HTML DOM Section L112-L112"
+          "summary": "HTML DOM Section L119-L119"
         },
         {
           "name": "<div#bmaTopbarContainer>",
           "kind": "html_dom_section",
-          "startLine": 116,
-          "endLine": 116,
+          "startLine": 123,
+          "endLine": 123,
           "signature": "id=\"bmaTopbarContainer\"",
-          "summary": "HTML DOM Section L116-L116"
+          "summary": "HTML DOM Section L123-L123"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 118,
-          "endLine": 287,
+          "startLine": 125,
+          "endLine": 294,
           "signature": "<main>",
-          "summary": "HTML DOM Section L118-L287"
+          "summary": "HTML DOM Section L125-L294"
         },
         {
           "name": "<div#bmaFooterContainer>",
           "kind": "html_dom_section",
-          "startLine": 289,
-          "endLine": 289,
+          "startLine": 296,
+          "endLine": 296,
           "signature": "id=\"bmaFooterContainer\"",
-          "summary": "HTML DOM Section L289-L289"
+          "summary": "HTML DOM Section L296-L296"
         },
         {
           "name": "<div#modalUserAccountForm>",
           "kind": "html_dom_section",
-          "startLine": 295,
-          "endLine": 420,
+          "startLine": 302,
+          "endLine": 427,
           "signature": "id=\"modalUserAccountForm\"",
-          "summary": "HTML DOM Section L295-L420"
+          "summary": "HTML DOM Section L302-L427"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 422,
-          "endLine": 422,
+          "startLine": 429,
+          "endLine": 429,
           "signature": "<script>",
-          "summary": "Bootstrap script L422-L422"
+          "summary": "Bootstrap script L429-L429"
         }
       ]
     }

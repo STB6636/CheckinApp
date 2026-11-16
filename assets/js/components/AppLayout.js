@@ -869,7 +869,13 @@ export class AppLayout {
 
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
-                AppLayout.refreshNotificationBell(currentUser);
+                const activeUser = AuthService.getCurrentUser(true);
+                if (!activeUser) {
+                    window.location.replace(UIHelpers.getRootBasePath());
+                    return;
+                }
+                AppLayout.#currentUser = activeUser;
+                AppLayout.refreshNotificationBell(activeUser);
                 window.dispatchEvent(new CustomEvent('bma:realtime-sync'));
             }
         });

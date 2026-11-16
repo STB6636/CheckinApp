@@ -9,10 +9,17 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261114_63a734d6';
+            const CURRENT_APP_BUILD = '20261116_b9b109ff';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
-            const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                BUILD_STORAGE_KEY
+            ];
 
             // Clean up temporary cache-busting query param (?_cb=...) after forced reload
             try {
@@ -130,7 +137,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261114_63a734d6">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_b9b109ff">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -315,7 +322,7 @@
                     </div>
 
                     <!-- Fallback File Input for LINE / No Camera -->
-                    <input type="file" id="cameraFallbackFileInput" accept="image/*" class="hidden">
+                    <input type="file" id="cameraFallbackFileInput" accept="image/*" class="sr-only">
                 </div>
 
                 <!-- Right Column: GPS & Location Card -->
@@ -923,7 +930,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261114_63a734d6"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261116_b9b109ff"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
@@ -995,6 +1002,14 @@
             <button type="button" id="btnCloseFullscreenCamera" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition cursor-pointer" title="ปิดกล้อง">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
+        </div>
+
+        <!-- Non-Blocking Camera Permission Hint Banner -->
+        <div id="cameraPermissionHintBanner" class="hidden mx-auto mt-2 w-full max-w-sm shrink-0 pointer-events-none">
+            <div class="px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-amber-400/40 text-amber-100 text-[11px] leading-relaxed shadow-lg backdrop-blur-sm flex items-start gap-2">
+                <i class="fa-solid fa-shield-halved text-amber-400 mt-0.5 shrink-0"></i>
+                <span id="cameraPermissionHintText">กรุณากด <b>"อนุญาต"</b> เพื่อเปิดกล้อง (แนะนำเลือกอนุญาตถาวร/ขณะเข้าชมเว็บไซต์ เพื่อลดการถามซ้ำ)</span>
+            </div>
         </div>
 
         <!-- Camera Viewfinder with 3:4 Portrait Guide -->

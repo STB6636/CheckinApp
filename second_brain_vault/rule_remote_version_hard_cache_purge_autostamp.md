@@ -5,7 +5,7 @@ type: "rule"
 tags: ["cache-control", "version-json", "hard-cache-purge", "auto-stamp", "mandatory-rule", "github-pages"]
 related_flows: ["FLOW-01", "FLOW-02", "FLOW-03", "FLOW-04", "FLOW-05", "FLOW-06", "FLOW-07", "FLOW-08"]
 created_phase: "PIPE-20261109-remote-version-hard-cache-purge"
-last_updated: "2026-11-09"
+last_updated: "2026-11-16"
 ---
 
 # ระบบบังคับเคลียร์แคชอัตโนมัติ (`Remote version.json + Hard Cache Purge + Auto-Stamp`)
@@ -20,7 +20,7 @@ last_updated: "2026-11-09"
 2. **Unified Hard Cache Purge + Remote Poller ใน `<head>` ครบทั้ง 8 หน้า HTML**:
    - ตรวจสอบทั้ง `CURRENT_APP_BUILD` และยิง `fetch('./version.json?_t=' + Date.now(), { cache: 'no-store' })` ตอนโหลดหน้า, ตอน `pageshow` (BFCache), และตอน `visibilitychange`
    - เมื่อพบเวอร์ชันใหม่:
-     1. เก็บ `bma_auth_session_v2` และ `bma_theme_mode` ไว้ (ผู้ใช้ไม่หลุด Login)
+     1. เก็บ `bma_checkin_session_user_v2_7`, `bma_checkin_theme_mode_v2_7`, `bma_remember_me`, `bma_remember_username`, `bma_last_seen_update_build` และ `bma_app_build` (`BUILD_STORAGE_KEY`) ไว้ (รักษา Session 7 วัน, ธีม, จดจำชื่อผู้ใช้ และสถานะอ่าน Modal อัปเดต โดยไม่หลุด Login)
      2. ล้าง `window.caches` และยกเลิก Service Workers ทั้งหมด
      3. สั่ง `fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' })` เขียนทับ Disk Cache ของหน้า HTML
      4. Redirect ไปยัง `?_cb=<buildId>` (ป้องกัน Loop ด้วย `sessionStorage.getItem('bma_reloaded_build')`) แล้วลบ `_cb` ออกด้วย `history.replaceState` เมื่อโหลดหน้าใหม่เสร็จ

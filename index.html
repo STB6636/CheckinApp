@@ -9,10 +9,17 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261114_63a734d6';
+            const CURRENT_APP_BUILD = '20261116_b9b109ff';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
-            const PRESERVE_KEYS = ['bma_auth_session_v2', 'bma_theme_mode', BUILD_STORAGE_KEY];
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                BUILD_STORAGE_KEY
+            ];
 
             // Clean up temporary cache-busting query param (?_cb=...) after forced reload
             try {
@@ -103,7 +110,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261114_63a734d6">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_b9b109ff">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -374,6 +381,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/LoginController.js?v=20261114_63a734d6"></script>
+    <script type="module" src="assets/js/controllers/LoginController.js?v=20261116_b9b109ff"></script>
 </body>
 </html>
