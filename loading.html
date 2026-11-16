@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261116_c4c52e6f';
+            const CURRENT_APP_BUILD = '20261116_ea0302f2';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -109,7 +109,7 @@
         })();
     </script>
     <script>
-        // 0ms Inline Theme and Brand Pre-hydration
+        // 0ms Inline Theme Pre-hydration
         (function() {
             try {
                 const savedTheme = localStorage.getItem('bma_checkin_theme_mode_v2_7');
@@ -117,29 +117,6 @@
                     document.documentElement.classList.add('dark');
                 } else if (savedTheme === 'light') {
                     document.documentElement.classList.remove('dark');
-                }
-            } catch (_) {}
-
-            try {
-                const rawBrand = localStorage.getItem('bma_cached_brand_v2_7');
-                if (rawBrand) {
-                    const b = JSON.parse(rawBrand);
-                    if (b && typeof b === 'object') {
-                        const isSafe = (u) => /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(String(u || '').trim());
-                        if (b.logoUrl && isSafe(b.logoUrl)) {
-                            let normLogo = b.logoUrl;
-                            const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(b.logoUrl);
-                            if (isGoogleDrive) {
-                                const m = String(b.logoUrl).match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
-                                if (m && m[1]) normLogo = 'https://lh3.googleusercontent.com/d/' + m[1];
-                            }
-                            document.documentElement.style.setProperty('--logo-dept', "url('" + normLogo.replace(/['"\\]/g, '') + "')");
-                        }
-                        if (b.bmaLogoUrl && isSafe(b.bmaLogoUrl)) {
-                            document.documentElement.style.setProperty('--logo-bma', "url('" + b.bmaLogoUrl.replace(/['"\\]/g, '') + "')");
-                        }
-                        window.__bmaPreloadedBrand = b;
-                    }
                 }
             } catch (_) {}
         })();
@@ -152,8 +129,7 @@
         };
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_c4c52e6f">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_ea0302f2">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -182,125 +158,69 @@
         }
 
         :root {
-            --ld-size: 104px;
-            --logo-bma-fallback: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1OCIgZmlsbD0iIzAwNzQ0QiIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1MSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWRhc2hhcnJheT0iMywyIi8+CiAgPGNpcmNsZSBjeD0iNjAiIGN5PSI2MCIgcj0iNDYiIGZpbGw9IiMwMDVBM0EiLz4KICA8cGF0aCBkPSJNNjAgMjIgTDYzIDMyIEw2OSAzNCBMNjQgMzggTDY1IDQ0IEw2MCA0MSBMNTUgNDQgTDU2IDM4IEw1MSAzNCBMNTcgMzIgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxwYXRoIGQ9Ik01NyA0MiBDNTcgMzkgNjMgMzkgNjMgNDIgTDY0IDUwIEM2NiA1MiA2OCA1NSA2OCA1OSBMNTIgNTkgQzUyIDU1IDU0IDUyIDU2IDUwIFoiIGZpbGw9IiNGRkZGRkYiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjQwIiByPSIzLjUiIGZpbGw9IiNGNkRFNTEiLz4KICA8cGF0aCBkPSJNNjYgNDMgTDcyIDM4IE03MSAzNiBMNzMgNDAiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8cGF0aCBkPSJNNDIgNjYgQzQwIDYwIDQ2IDU0IDUyIDU2IEM1NCA1MyA2NiA1MyA2OCA1NiBDNzQgNTQgODAgNjAgNzggNjYgQzc3IDc0IDc0IDgxIDcyIDg3IEM3MCA5MSA2NiA5MSA2NiA4NSBDNjYgNzkgNjcgNzMgNjYgNjkgQzY1IDY3IDYzIDY2IDYwIDY2IEM1NyA2NiA1NSA2NyA1NCA2OSBDNTMgNzMgNTQgNzkgNTQgODUgQzU0IDkxIDUwIDkxIDQ4IDg3IEM0NiA4MSA0MyA3NCA0MiA2NiBaIiBmaWxsPSIjRkZGRkZGIi8+CiAgPHBhdGggZD0iTTQ3IDcwIEM0NCA3MiA0MCA3MCAzOCA2NiBDNDAgNjcgNDQgNjcgNDYgNjggTTczIDcwIEM3NiA3MiA4MCA3MCA4MiA2NiBDODAgNjcgNzYgNjcgNzQgNjgiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0zOCA5MCBDNDUgODYgNTIgODggNjAgODggQzY4IDg4IDc1IDg2IDgyIDkwIEM3NSA5NCA2OCA5NSA2MCA5NSBDNTIgOTUgNDUgOTQgMzggOTAgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxwYXRoIGQ9Ik00MiA5MCBRNjAgOTggNzggOTAgUTYwIDk0IDQyIDkwIFoiIGZpbGw9IiMwMDc0NEIiLz4KPC9zdmc+");
-            --logo-dept-fallback: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj4KICA8cGF0aCBkPSJNNjAgMTIgTDk2IDIyIEM5NiA2MiA4MiA5NCA2MCAxMDggQzM4IDk0IDI0IDYyIDI0IDIyIFoiIGZpbGw9IiMxMzJFMjIiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIzLjUiLz4KICA8cGF0aCBkPSJNNjAgMTggTDkxIDI2LjUgQzkxIDYwIDc4IDg5IDYwIDEwMSBDNDIgODkgMjkgNjAgMjkgMjYuNSBaIiBmaWxsPSIjMUI0RDM2IiBzdHJva2U9IiMwMEMwOEEiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPHBhdGggZD0iTTMzIDMwIFE2MCAyMiA4NyAzMCBMODUgMzggUTYwIDMxIDM1IDM4IFoiIGZpbGw9IiNGNkRFNTEiLz4KICA8dGV4dCB4PSI2MCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjciIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiMxMzJFMjIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkJBTkdLT0s8L3RleHQ+CiAgPGxpbmUgeDE9IjYwIiB5MT0iNDIiIHgyPSI2MCIgeTI9Ijg0IiBzdHJva2U9IiNGNkRFNTEiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBvbHlnb24gcG9pbnRzPSI2MCwzOSA1Nyw0NCA2Myw0NCIgZmlsbD0iI0Y2REU1MSIvPgogIDxsaW5lIHgxPSI1MyIgeTE9Ijg0IiB4Mj0iNjciIHkyPSI4NCIgc3Ryb2tlPSIjRjZERTUxIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPGxpbmUgeDE9IjQwIiB5MT0iNTIiIHgyPSI4MCIgeTI9IjUyIiBzdHJva2U9IiNGNkRFNTEiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8Y2lyY2xlIGN4PSI2MCIgY3k9IjUyIiByPSIzIiBmaWxsPSIjRkZGRkZGIi8+CiAgPGxpbmUgeDE9IjQwIiB5MT0iNTIiIHgyPSIzNSIgeTI9IjY1IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxsaW5lIHgxPSI0MCIgeTE9IjUyIiB4Mj0iNDUiIHkyPSI2NSIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjEiLz4KICA8cGF0aCBkPSJNMzMgNjUgUTQwIDcwIDQ3IDY1IFoiIGZpbGw9IiNGNkRFNTEiLz4KICA8bGluZSB4MT0iODAiIHkxPSI1MiIgeDI9Ijc1IiB5Mj0iNjUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPGxpbmUgeDE9IjgwIiB5MT0iNTIiIHgyPSI4NSIgeTI9IjY1IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMSIvPgogIDxwYXRoIGQ9Ik03MyA2NSBRODAgNzAgODcgNjUgWiIgZmlsbD0iI0Y2REU1MSIvPgogIDxjaXJjbGUgY3g9IjYwIiBjeT0iNzQiIHI9IjUiIGZpbGw9IiMwMDc0NEIiIHN0cm9rZT0iI0Y2REU1MSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8cG9seWdvbiBwb2ludHM9IjYwLDcwIDYxLjUsNzMgNjUsNzQgNjEuNSw3NSA2MCw3OCA1OC41LDc1IDU1LDc0IDU4LjUsNzMiIGZpbGw9IiNGNkRFNTEiLz4KPC9zdmc+");
-            --logo-bma: url('https://pr-bangkok.com/wp-content/uploads/2025/06/231116_BMA-Emblem_Edited_Green-600x600.png');
-            --logo-dept: url('https://upload.wikimedia.org/wikipedia/commons/3/35/Patch_of_Bangkok_City_Law_Enforcement_Department.png');
+            --ld-stage-size: 112px;
+            --ld-frame-size: 96px;
         }
 
-        /* 3D Flip Loader */
-        .loader {
+        /* Civic Orbital Halo + Intact Logo Badge */
+        .logo-stage {
             position: relative;
-            width: var(--ld-size, 104px);
-            height: var(--ld-size, 104px);
-            display: inline-block;
+            width: var(--ld-stage-size, 112px);
+            height: var(--ld-stage-size, 112px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex: none;
         }
-        .loader::before,
-        .loader::after {
-            content: '';
+
+        .halo-ring {
             position: absolute;
             inset: 0;
-            background-image: var(--logo-bma), var(--logo-bma-fallback);
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            transform-origin: center center;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            animation: logo-flip 2s infinite linear;
+            border-radius: 999px;
+            background: conic-gradient(from 0deg, rgba(0, 192, 138, 0.12), #00C08A, #F6DE51, rgba(0, 116, 75, 0.15), rgba(0, 192, 138, 0.12));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+            animation: halo-spin 1.8s linear infinite;
         }
-        .loader::before {
-            --clip-v: inset(0 50% 0 0);
-            --clip-h: inset(0 0 50% 0);
-            --tx-v: calc(var(--ld-size, 104px) * -0.16);
-            --ty-h: calc(var(--ld-size, 104px) * -0.16);
-            clip-path: var(--clip-v);
-            -webkit-clip-path: var(--clip-v);
-        }
-        .loader::after {
-            --clip-v: inset(0 0 0 50%);
-            --clip-h: inset(50% 0 0 0);
-            --tx-v: calc(var(--ld-size, 104px) * 0.16);
-            --ty-h: calc(var(--ld-size, 104px) * 0.16);
-            clip-path: var(--clip-v);
-            -webkit-clip-path: var(--clip-v);
+        @keyframes halo-spin {
+            to { transform: rotate(360deg); }
         }
 
-        @keyframes logo-flip {
-            0%, 2.5% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(0px, 0px) perspective(200px) rotateX(0deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
-            16.5% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(0deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
-            24.75% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(90deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
-            24.76% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(90deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            33% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(var(--tx-v), 0px) perspective(200px) rotateX(0deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            47.5%, 49.9% {
-                clip-path: var(--clip-v);
-                -webkit-clip-path: var(--clip-v);
-                transform: translate(0px, 0px) perspective(200px) rotateX(0deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            50%, 52.5% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, 0px) perspective(200px) rotateY(0deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            66.5% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(0deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            74.75% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(90deg);
-                background-image: var(--logo-dept), var(--logo-dept-fallback);
-            }
-            74.76% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(90deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
-            83% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, var(--ty-h)) perspective(200px) rotateY(0deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
-            97.5%, 100% {
-                clip-path: var(--clip-h);
-                -webkit-clip-path: var(--clip-h);
-                transform: translate(0px, 0px) perspective(200px) rotateY(0deg);
-                background-image: var(--logo-bma), var(--logo-bma-fallback);
-            }
+        .logo-frame {
+            width: var(--ld-frame-size, 96px);
+            height: var(--ld-frame-size, 96px);
+            border-radius: 1.25rem;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 116, 75, 0.06);
+            border: 1px solid rgba(0, 116, 75, 0.14);
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 116, 75, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+        html.dark .logo-frame {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(52, 211, 153, 0.22);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        #ldOrgLogo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            animation: gentle-pulse 2s ease-in-out infinite;
+        }
+        #ldOrgLogo.hidden,
+        #ldLogoFallback.hidden {
+            display: none !important;
+        }
+        @keyframes gentle-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         /* Card Container */
@@ -360,13 +280,17 @@
 
         @media (max-width: 640px) {
             :root {
-                --ld-size: 84px;
+                --ld-stage-size: 96px;
+                --ld-frame-size: 84px;
             }
         }
         @media (prefers-reduced-motion: reduce) {
-            .loader::before,
-            .loader::after {
-                animation-duration: 6s;
+            .halo-ring {
+                animation: none;
+                opacity: 0.6;
+            }
+            #ldOrgLogo {
+                animation: none;
             }
             .ld-bar > span {
                 animation-duration: 2.4s;
@@ -380,22 +304,103 @@
             <!-- Top Civic Accent Stripe -->
             <div class="login-card-header-gradient h-1.5 w-full absolute top-0 left-0"></div>
 
-            <!-- Dual-Logo 3D Flip Loader -->
-            <div class="loader my-3" id="ldFlipLoader" aria-label="กำลังโหลดระบบ"></div>
+            <!-- Single Intact Civic Logo Stage -->
+            <div id="ldLogoStage" class="logo-stage my-3" aria-label="กำลังโหลดระบบ">
+                <div class="halo-ring" aria-hidden="true"></div>
+                <div class="logo-frame">
+                    <img id="ldOrgLogo" src="https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc" alt="Organization Logo" decoding="async" fetchpriority="high" onerror="this.classList.add('hidden');document.getElementById('ldLogoFallback')?.classList.remove('hidden');">
+                    <div id="ldLogoFallback" class="hidden w-full h-full flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-3xl sm:text-4xl" aria-hidden="true">
+                        <i class="fa-solid fa-landmark"></i>
+                    </div>
+                </div>
+            </div>
 
             <!-- Organization & System Branding -->
-            <h1 id="ldOrgName" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-1">กรุงเทพมหานคร</h1>
-            <p id="ldBureauName" class="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">สำนักเทศกิจ</p>
-            <p id="ldSystemTitle" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">BMA e-Government Time Attendance System</p>
+            <h1 id="ldOrgName" class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 tracking-tight mt-1">สำนักเทศกิจ</h1>
+            <p id="ldBureauName" class="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5">สำนักงานตรวจและบังคับการ</p>
+            <p id="ldSystemTitle" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">ระบบลงเวลาปฏิบัติราชการ (สตบ.สนท.)</p>
             <script>
-                // 0ms instant text pre-hydration from cached brand
+                // 0ms instant text & logo pre-hydration from cached brand / settings
                 (function() {
+                    const DEFAULT_LOGO = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+                    const logoImg = document.getElementById('ldOrgLogo');
+                    const fallbackEl = document.getElementById('ldLogoFallback');
+
+                    // Bind safe onerror fallback immediately
+                    if (logoImg && fallbackEl) {
+                        logoImg.onerror = function() {
+                            logoImg.classList.add('hidden');
+                            fallbackEl.classList.remove('hidden');
+                        };
+                        if (logoImg.complete && logoImg.naturalWidth === 0 && logoImg.getAttribute('src')) {
+                            logoImg.classList.add('hidden');
+                            fallbackEl.classList.remove('hidden');
+                        }
+                    }
+
                     try {
-                        const b = window.__bmaPreloadedBrand;
-                        if (b && typeof b === 'object') {
-                            if (b.orgName) document.getElementById('ldOrgName').textContent = b.orgName;
-                            if (b.bureauName) document.getElementById('ldBureauName').textContent = b.bureauName;
-                            if (b.headerSystemTitle) document.getElementById('ldSystemTitle').textContent = b.headerSystemTitle;
+                        let brand = null;
+                        const rawBrand = localStorage.getItem('bma_cached_brand_v2_7');
+                        if (rawBrand) {
+                            try { brand = JSON.parse(rawBrand); } catch (_) {}
+                        }
+                        let sessionSettings = null;
+                        const rawSettings = sessionStorage.getItem('bma_checkin_cached_settings_v2_7');
+                        if (rawSettings) {
+                            try { sessionSettings = JSON.parse(rawSettings); } catch (_) {}
+                        }
+
+                        if (!brand || typeof brand !== 'object') {
+                            if (sessionSettings && typeof sessionSettings === 'object') {
+                                brand = {
+                                    orgName: sessionSettings.organization_name,
+                                    bureauName: sessionSettings.bureau_name,
+                                    headerSystemTitle: sessionSettings.header_system_title,
+                                    logoUrl: sessionSettings.logo_url
+                                };
+                            }
+                        } else if (sessionSettings && typeof sessionSettings === 'object') {
+                            if (!brand.logoUrl && sessionSettings.logo_url) brand.logoUrl = sessionSettings.logo_url;
+                            if (!brand.orgName && sessionSettings.organization_name) brand.orgName = sessionSettings.organization_name;
+                            if (!brand.bureauName && sessionSettings.bureau_name) brand.bureauName = sessionSettings.bureau_name;
+                            if (!brand.headerSystemTitle && sessionSettings.header_system_title) brand.headerSystemTitle = sessionSettings.header_system_title;
+                        }
+
+                        if (brand && typeof brand === 'object') {
+                            window.__bmaPreloadedBrand = brand;
+                            if (brand.orgName) {
+                                const el = document.getElementById('ldOrgName');
+                                if (el) el.textContent = brand.orgName;
+                            }
+                            if (brand.bureauName) {
+                                const el = document.getElementById('ldBureauName');
+                                if (el) el.textContent = brand.bureauName;
+                            }
+                            if (brand.headerSystemTitle) {
+                                const el = document.getElementById('ldSystemTitle');
+                                if (el) el.textContent = brand.headerSystemTitle;
+                            }
+
+                            const rawLogo = String(brand.logoUrl || '').trim();
+                            if (rawLogo && logoImg) {
+                                const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(rawLogo);
+                                if (isSafeProtocol) {
+                                    let resolvedUrl = rawLogo;
+                                    const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(rawLogo);
+                                    if (isGoogleDrive) {
+                                        const driveMatch = rawLogo.match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                                        if (driveMatch && driveMatch[1]) {
+                                            resolvedUrl = 'https://lh3.googleusercontent.com/d/' + driveMatch[1];
+                                        }
+                                    }
+                                    const sanitized = resolvedUrl.replace(/['"\\]/g, '');
+                                    if (sanitized && sanitized !== logoImg.getAttribute('src')) {
+                                        if (fallbackEl) fallbackEl.classList.add('hidden');
+                                        logoImg.classList.remove('hidden');
+                                        logoImg.src = sanitized;
+                                    }
+                                }
+                            }
                         }
                     } catch (_) {}
                 })();
@@ -437,6 +442,7 @@
             }
         });
     </script>
-    <script type="module" src="assets/js/controllers/LoadingController.js?v=20261116_c4c52e6f"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="assets/js/controllers/LoadingController.js?v=20261116_ea0302f2"></script>
 </body>
 </html>

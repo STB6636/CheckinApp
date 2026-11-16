@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-16T09:30:45.181Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `176` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `921`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-16T10:36:44.978Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `176` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `930`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8c9e3dd5fdc58a81` | **Total Lines:** `221` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `bf2d752ef9732bb6` | **Total Lines:** `221` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -210,48 +210,48 @@
 
 ## File: `assets/js/controllers/LoadingController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `2e0f15f882025b64` | **Total Lines:** `372` | **Imports:** `4` | **Exports:** `LoadingController`
+- **Hash:** `149d433961142d62` | **Total Lines:** `382` | **Imports:** `4` | **Exports:** `LoadingController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `LoadingController` | `class` | **L14 - L358** | `export class LoadingController` | Class Definition (345 lines) |
-| `LoadingController.constructor` | `public constructor` | **L25 - L27** | `() => any` | public constructor L25-L27 (3 lines) |
-| `LoadingController.init` | `public async method` | **L29 - L105** | `() => Promise<any>` | public async method L29-L105 (77 lines) |
-| `LoadingController.#bindFallbackEvents` | `private method` | **L107 - L117** | `() => any` | private method L107-L117 (11 lines) |
-| `LoadingController.#hydrateFromLocalBrandCache` | `private method` | **L119 - L148** | `() => any` | private method L119-L148 (30 lines) |
-| `LoadingController.#verifyAndPreloadData` | `private async method` | **L150 - L174** | `(sessionUser) => Promise<any>` | private async method L150-L174 (25 lines) |
-| `LoadingController.#fetchSettingsWithTimeout` | `private async method` | **L176 - L190** | `(timeoutMs) => Promise<any>` | private async method L176-L190 (15 lines) |
-| `LoadingController.#verifySessionWithTimeout` | `private async method` | **L192 - L206** | `(timeoutMs) => Promise<any>` | private async method L192-L206 (15 lines) |
-| `LoadingController.#applyLiveSettingsBranding` | `private method` | **L208 - L253** | `(settings) => any` | private method L208-L253 (46 lines) |
-| `LoadingController.#sanitizeAndApplyLogoCssVar` | `private async method` | **L255 - L315** | `(varName, rawUrl, fallbackUrl) => Promise<any>` | private async method L255-L315 (61 lines) |
-| `LoadingController.#setStepLabel` | `private method` | **L317 - L322** | `(text) => any` | private method L317-L322 (6 lines) |
-| `LoadingController.#armWatchdog` | `private method` | **L324 - L334** | `() => any` | private method L324-L334 (11 lines) |
-| `LoadingController.#clearWatchdog` | `private method` | **L336 - L341** | `() => any` | private method L336-L341 (6 lines) |
-| `LoadingController.#navigateToTarget` | `private async method` | **L343 - L357** | `(targetUrl) => Promise<any>` | private async method L343-L357 (15 lines) |
-| `bootLoadingController` | `function` | **L361 - L365** | `() => inferred` | Bootstrap Singleton |
+| `LoadingController` | `class` | **L14 - L368** | `export class LoadingController` | Class Definition (355 lines) |
+| `LoadingController.constructor` | `public constructor` | **L22 - L24** | `() => any` | public constructor L22-L24 (3 lines) |
+| `LoadingController.init` | `public async method` | **L26 - L102** | `() => Promise<any>` | public async method L26-L102 (77 lines) |
+| `LoadingController.#bindFallbackEvents` | `private method` | **L104 - L114** | `() => any` | private method L104-L114 (11 lines) |
+| `LoadingController.#hydrateFromLocalBrandCache` | `private method` | **L116 - L164** | `() => any` | private method L116-L164 (49 lines) |
+| `LoadingController.#verifyAndPreloadData` | `private async method` | **L166 - L190** | `(sessionUser) => Promise<any>` | private async method L166-L190 (25 lines) |
+| `LoadingController.#fetchSettingsWithTimeout` | `private async method` | **L192 - L206** | `(timeoutMs) => Promise<any>` | private async method L192-L206 (15 lines) |
+| `LoadingController.#verifySessionWithTimeout` | `private async method` | **L208 - L222** | `(timeoutMs) => Promise<any>` | private async method L208-L222 (15 lines) |
+| `LoadingController.#applyLiveSettingsBranding` | `private async method` | **L224 - L279** | `(settings) => Promise<any>` | private async method L224-L279 (56 lines) |
+| `LoadingController.#renderOrgLogo` | `private method` | **L281 - L325** | `(rawUrl) => any` | private method L281-L325 (45 lines) |
+| `LoadingController.#setStepLabel` | `private method` | **L327 - L332** | `(text) => any` | private method L327-L332 (6 lines) |
+| `LoadingController.#armWatchdog` | `private method` | **L334 - L344** | `() => any` | private method L334-L344 (11 lines) |
+| `LoadingController.#clearWatchdog` | `private method` | **L346 - L351** | `() => any` | private method L346-L351 (6 lines) |
+| `LoadingController.#navigateToTarget` | `private async method` | **L353 - L367** | `(targetUrl) => Promise<any>` | private async method L353-L367 (15 lines) |
+| `bootLoadingController` | `function` | **L371 - L375** | `() => inferred` | Bootstrap Singleton |
 
 ---
 
 ## File: `assets/js/controllers/LoginController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `1f54258e4a592633` | **Total Lines:** `305` | **Imports:** `5` | **Exports:** `LoginController`
+- **Hash:** `6de1b59043549b00` | **Total Lines:** `331` | **Imports:** `5` | **Exports:** `LoginController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `LoginController` | `class` | **L12 - L301** | `export class LoginController` | Class Definition (290 lines) |
+| `LoginController` | `class` | **L12 - L327** | `export class LoginController` | Class Definition (316 lines) |
 | `LoginController.constructor` | `public constructor` | **L13 - L16** | `() => any` | public constructor L13-L16 (4 lines) |
 | `LoginController.init` | `public async method` | **L18 - L36** | `() => Promise<any>` | public async method L18-L36 (19 lines) |
-| `LoginController.#loadOrganizationBranding` | `private async method` | **L38 - L72** | `() => Promise<any>` | private async method L38-L72 (35 lines) |
-| `LoginController.#updateThemeButtonUI` | `private method` | **L74 - L84** | `() => any` | private method L74-L84 (11 lines) |
-| `LoginController.#bindEvents` | `private method` | **L86 - L191** | `() => any` | private method L86-L191 (106 lines) |
-| `openChangeModal` | `arrow_fn` | **L127 - L136** | `() => inferred` | Arrow Function L127-L136 |
-| `validatePasswordMatch` | `arrow_fn` | **L143 - L165** | `() => inferred` | Arrow Function L143-L165 |
-| `openForgotModal` | `arrow_fn` | **L176 - L180** | `() => inferred` | Arrow Function L176-L180 |
-| `LoginController.#handleLogin` | `private async method` | **L193 - L214** | `(mode) => Promise<any>` | private async method L193-L214 (22 lines) |
-| `LoginController.#loadRememberedUser` | `private method` | **L216 - L236** | `() => any` | private method L216-L236 (21 lines) |
-| `LoginController.#persistRememberedUser` | `private method` | **L238 - L253** | `(username) => any` | private method L238-L253 (16 lines) |
-| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L255 - L279** | `(closeModalCallback) => Promise<any>` | private async method L255-L279 (25 lines) |
-| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L281 - L300** | `(closeModalCallback) => Promise<any>` | private async method L281-L300 (20 lines) |
+| `LoginController.#loadOrganizationBranding` | `private async method` | **L38 - L98** | `() => Promise<any>` | private async method L38-L98 (61 lines) |
+| `LoginController.#updateThemeButtonUI` | `private method` | **L100 - L110** | `() => any` | private method L100-L110 (11 lines) |
+| `LoginController.#bindEvents` | `private method` | **L112 - L217** | `() => any` | private method L112-L217 (106 lines) |
+| `openChangeModal` | `arrow_fn` | **L153 - L162** | `() => inferred` | Arrow Function L153-L162 |
+| `validatePasswordMatch` | `arrow_fn` | **L169 - L191** | `() => inferred` | Arrow Function L169-L191 |
+| `openForgotModal` | `arrow_fn` | **L202 - L206** | `() => inferred` | Arrow Function L202-L206 |
+| `LoginController.#handleLogin` | `private async method` | **L219 - L240** | `(mode) => Promise<any>` | private async method L219-L240 (22 lines) |
+| `LoginController.#loadRememberedUser` | `private method` | **L242 - L262** | `() => any` | private method L242-L262 (21 lines) |
+| `LoginController.#persistRememberedUser` | `private method` | **L264 - L279** | `(username) => any` | private method L264-L279 (16 lines) |
+| `LoginController.#handleChangePasswordSubmit` | `private async method` | **L281 - L305** | `(closeModalCallback) => Promise<any>` | private async method L281-L305 (25 lines) |
+| `LoginController.#handleForgotPasswordSubmit` | `private async method` | **L307 - L326** | `(closeModalCallback) => Promise<any>` | private async method L307-L326 (20 lines) |
 
 ---
 
@@ -341,11 +341,11 @@
 
 ## File: `assets/js/controllers/SettingsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `1a72884691614ab5` | **Total Lines:** `1617` | **Imports:** `4` | **Exports:** `SettingsController`
+- **Hash:** `fbf39cbdde25222d` | **Total Lines:** `1647` | **Imports:** `4` | **Exports:** `SettingsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `SettingsController` | `class` | **L11 - L1608** | `export class SettingsController` | Class Definition (1598 lines) |
+| `SettingsController` | `class` | **L11 - L1638** | `export class SettingsController` | Class Definition (1628 lines) |
 | `SettingsController.constructor` | `public constructor` | **L12 - L17** | `() => any` | public constructor L12-L17 (6 lines) |
 | `SettingsController.init` | `public async method` | **L19 - L37** | `() => Promise<any>` | public async method L19-L37 (19 lines) |
 | `SettingsController.#renderAllSettings` | `private method` | **L39 - L172** | `() => any` | private method L39-L172 (134 lines) |
@@ -366,24 +366,24 @@
 | `SettingsController.#openOfficialLocationModal` | `private method` | **L514 - L661** | `(editIndex = null) => any` | private method L514-L661 (148 lines) |
 | `updateMapLink` | `arrow_fn` | **L653 - L658** | `() => inferred` | Arrow Function L653-L658 |
 | `SettingsController.#collectMainAndColorFieldsIntoSettings` | `private method` | **L663 - L713** | `() => any` | private method L663-L713 (51 lines) |
-| `SettingsController.#persistSettings` | `private async method` | **L715 - L738** | `(showToastAlert = true) => Promise<any>` | private async method L715-L738 (24 lines) |
-| `SettingsController.#openModal` | `private method` | **L740 - L745** | `(title, bodyHtml, onSubmitCallback) => any` | private method L740-L745 (6 lines) |
-| `SettingsController.#closeModal` | `private method` | **L747 - L750** | `() => any` | private method L747-L750 (4 lines) |
-| `SettingsController.#buildMultiRowInputsHtml` | `private method` | **L752 - L771** | `(fieldLabel, placeholder) => any` | private method L752-L771 (20 lines) |
-| `SettingsController.#bindDynamicMultiRowEvents` | `private method` | **L773 - L801** | `(placeholder = 'ระบุข้อมูล...') => any` | private method L773-L801 (29 lines) |
-| `SettingsController.#getDynamicMultiRowValues` | `private method` | **L803 - L808** | `() => any` | private method L803-L808 (6 lines) |
-| `SettingsController.#bindEvents` | `private method` | **L810 - L1128** | `() => any` | private method L810-L1128 (319 lines) |
-| `SettingsController.#openShiftModal` | `private method` | **L1130 - L1221** | `(editIndex = null) => any` | private method L1130-L1221 (92 lines) |
-| `checkOvernightAuto` | `arrow_fn` | **L1211 - L1218** | `() => inferred` | Arrow Function L1211-L1218 |
-| `SettingsController.#openAddPositionStep1Modal` | `private method` | **L1223 - L1239** | `() => any` | private method L1223-L1239 (17 lines) |
-| `SettingsController.#openAddPositionStep2Modal` | `private method` | **L1241 - L1284** | `() => any` | private method L1241-L1284 (44 lines) |
-| `SettingsController.#openAddPositionStep3Modal` | `private method` | **L1286 - L1350** | `() => any` | private method L1286-L1350 (65 lines) |
-| `SettingsController.#openEditSinglePositionModal` | `private method` | **L1352 - L1375** | `(editIndex) => any` | private method L1352-L1375 (24 lines) |
-| `SettingsController.#openAddAffiliationStep1OrgModal` | `private method` | **L1377 - L1393** | `() => any` | private method L1377-L1393 (17 lines) |
-| `SettingsController.#openAddAffiliationStep2BureauModal` | `private method` | **L1395 - L1433** | `() => any` | private method L1395-L1433 (39 lines) |
-| `SettingsController.#openAddAffiliationStep3DivisionModal` | `private method` | **L1435 - L1491** | `() => any` | private method L1435-L1491 (57 lines) |
-| `SettingsController.#openAddAffiliationStep4GroupModal` | `private method` | **L1493 - L1577** | `() => any` | private method L1493-L1577 (85 lines) |
-| `SettingsController.#openEditSingleAffiliationModal` | `private method` | **L1579 - L1607** | `(editIndex) => any` | private method L1579-L1607 (29 lines) |
+| `SettingsController.#persistSettings` | `private async method` | **L715 - L768** | `(showToastAlert = true) => Promise<any>` | private async method L715-L768 (54 lines) |
+| `SettingsController.#openModal` | `private method` | **L770 - L775** | `(title, bodyHtml, onSubmitCallback) => any` | private method L770-L775 (6 lines) |
+| `SettingsController.#closeModal` | `private method` | **L777 - L780** | `() => any` | private method L777-L780 (4 lines) |
+| `SettingsController.#buildMultiRowInputsHtml` | `private method` | **L782 - L801** | `(fieldLabel, placeholder) => any` | private method L782-L801 (20 lines) |
+| `SettingsController.#bindDynamicMultiRowEvents` | `private method` | **L803 - L831** | `(placeholder = 'ระบุข้อมูล...') => any` | private method L803-L831 (29 lines) |
+| `SettingsController.#getDynamicMultiRowValues` | `private method` | **L833 - L838** | `() => any` | private method L833-L838 (6 lines) |
+| `SettingsController.#bindEvents` | `private method` | **L840 - L1158** | `() => any` | private method L840-L1158 (319 lines) |
+| `SettingsController.#openShiftModal` | `private method` | **L1160 - L1251** | `(editIndex = null) => any` | private method L1160-L1251 (92 lines) |
+| `checkOvernightAuto` | `arrow_fn` | **L1241 - L1248** | `() => inferred` | Arrow Function L1241-L1248 |
+| `SettingsController.#openAddPositionStep1Modal` | `private method` | **L1253 - L1269** | `() => any` | private method L1253-L1269 (17 lines) |
+| `SettingsController.#openAddPositionStep2Modal` | `private method` | **L1271 - L1314** | `() => any` | private method L1271-L1314 (44 lines) |
+| `SettingsController.#openAddPositionStep3Modal` | `private method` | **L1316 - L1380** | `() => any` | private method L1316-L1380 (65 lines) |
+| `SettingsController.#openEditSinglePositionModal` | `private method` | **L1382 - L1405** | `(editIndex) => any` | private method L1382-L1405 (24 lines) |
+| `SettingsController.#openAddAffiliationStep1OrgModal` | `private method` | **L1407 - L1423** | `() => any` | private method L1407-L1423 (17 lines) |
+| `SettingsController.#openAddAffiliationStep2BureauModal` | `private method` | **L1425 - L1463** | `() => any` | private method L1425-L1463 (39 lines) |
+| `SettingsController.#openAddAffiliationStep3DivisionModal` | `private method` | **L1465 - L1521** | `() => any` | private method L1465-L1521 (57 lines) |
+| `SettingsController.#openAddAffiliationStep4GroupModal` | `private method` | **L1523 - L1607** | `() => any` | private method L1523-L1607 (85 lines) |
+| `SettingsController.#openEditSingleAffiliationModal` | `private method` | **L1609 - L1637** | `(editIndex) => any` | private method L1609-L1637 (29 lines) |
 
 ---
 
@@ -637,7 +637,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `632fbce99f5dcb2c` | **Total Lines:** `1072` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ee8069b3fb9341c3` | **Total Lines:** `1072` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -675,7 +675,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8366d5c434e865df` | **Total Lines:** `278` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1eb871e102288211` | **Total Lines:** `278` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -759,7 +759,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `611bab74a3310d3d` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `0f325ea9c7c0fd7d` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -774,18 +774,18 @@
 
 ## File: `loading.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bd8d1eb374a10634` | **Total Lines:** `442` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5df0f6a3b6586cbe` | **Total Lines:** `448` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L376** | `<head>` | HTML DOM Section L3-L376 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L440 - L440** | `<script>` | Bootstrap script L440-L440 |
+| `<head>` | `html_dom_section` | **L3 - L300** | `<head>` | HTML DOM Section L3-L300 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L446 - L446** | `<script>` | Bootstrap script L446-L446 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7eb248a23dcb084f` | **Total Lines:** `682` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5ac0f733962cceda` | **Total Lines:** `682` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2279,19 +2279,28 @@
 
 ## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_runtime_deep_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `5a6beb6077644e56` | **Total Lines:** `294` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `38178ea0e866941a` | **Total Lines:** `526` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `assert` | `function` | **L18 - L27** | `(cond, desc) => inferred` | Function L18-L27 |
 | `sanitizeAndResolveLogo` | `function` | **L36 - L55** | `(rawUrl, fallbackUrl) => inferred` | Function L36-L55 |
 | `resolveTargetUrl` | `function` | **L264 - L270** | `(redirectUrl, sessionUser) => inferred` | Function L264-L270 |
+| `simulateHydrate` | `function` | **L294 - L324** | `(localStore, sessionStore) => inferred` | Function L294-L324 |
+| `MockClassList` | `class` | **L380 - L387** | `class MockClassList` | 8.5: DOM #renderOrgLogo stateful simulation (onerror preservation vs URL switch) |
+| `MockClassList.constructor` | `public constructor` | **L381 - L383** | `(classes = []) => any` | public constructor L381-L383 (3 lines) |
+| `MockClassList.add` | `public method` | **L384 - L384** | `(c) => any` | public method L384-L384 (1 lines) |
+| `MockClassList.remove` | `public method` | **L385 - L385** | `(c) => any` | public method L385-L385 (1 lines) |
+| `MockClassList.contains` | `public method` | **L386 - L386** | `(c) => any` | public method L386-L386 (1 lines) |
+| `getAttribute` | `public method` | **L392 - L392** | `(k) => any` | public method L392-L392 (1 lines) |
+| `simulateRenderOrgLogo` | `function` | **L403 - L424** | `(rawUrl, imgEl, fallbackEl) => inferred` | Function L403-L424 |
+| `simulateSyncBrand` | `function` | **L461 - L488** | `(settings) => inferred` | Function L461-L488 |
 
 ---
 
 ## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_test_suite.mjs`
 - **Layer:** Application Module
-- **Hash:** `89fc2f8f53bfee0a` | **Total Lines:** `372` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `7daab173e933aa12` | **Total Lines:** `431` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2301,7 +2310,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7ba41be645495164` | **Total Lines:** `536` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `97fba5510f16b8e0` | **Total Lines:** `536` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2319,7 +2328,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `6bb471c02b9c0264` | **Total Lines:** `831` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9efbe601f3b94581` | **Total Lines:** `831` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2468,7 +2477,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fdbd5733811cd12a` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `027f70241d773be6` | **Total Lines:** `431` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

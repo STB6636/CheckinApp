@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261116-loading-entry-screen"
+last_updated_phase: "PIPE-20261116-loading-settings-logo-fix"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -30,7 +30,7 @@ last_updated_phase: "PIPE-20261116-loading-entry-screen"
 - [[ADR_0029_split_dropdowns_and_special_request_official_locations]] — ADR-0029: สถาปัตยกรรมแยกตัวเลือก "ลักษณะงาน" นอกสถานที่ และ "เหตุผลลงเวลากรณีพิเศษ" พร้อมระบบเลือกสถานที่ราชการทางการสำหรับคำขอในสถานที่ (`FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`)
 - [[ADR_0030_approvals_two_line_remark_badge]] — ADR-0030: สถาปัตยกรรมป้ายหมายเหตุ 2 บรรทัดในตารางอนุมัติคำขอกรณีพิเศษ (แยกเหตุผลหลักบรรทัดที่ 1 และลักษณะงานนอกสถานที่บรรทัดที่ 2 พร้อมคงความเข้ากันได้กับ WFH และโหมด ONSITE) (`FLOW_APPROVALS_01`, `FLOW_SPECIAL_REQ_01`)
 - [[ADR_0031_mobile_logout_zindex_session_7day_and_cross_browser_camera]] — ADR-0031: การจัดลำดับชั้น Z-Index กล่องยืนยันออกจากระบบมือถือ (`.swal2-container: 99990`), การรักษา Session 7 วันข้ามการล้างแคช (`PRESERVE_KEYS`), และการปรับปรุงวงจรสิทธิ์กล้องข้าม 4 เบราว์เซอร์ (`FLOW_LAYOUT_01`, `FLOW_AUTH_01`, `FLOW_CHECKIN_01`, `FLOW_PHOTO_01`)
-- [[ADR_0032_standalone_boot_loading_screen_and_3d_dual_logo_flip]] — ADR-0032: สถาปัตยกรรมหน้าโหลดเข้าระบบแบบแยกไฟล์ (`loading.html` + `LoadingController.js`), เส้นทางเข้าใช้งาน 3 กรณี, และ Dual-Logo Split-Half 3D Flip (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0032_standalone_boot_loading_screen_and_3d_dual_logo_flip]] — ADR-0032: สถาปัตยกรรมหน้าโหลดเข้าระบบแบบแยกไฟล์ (`loading.html` + `LoadingController.js`), เส้นทางเข้าใช้งาน 3 กรณี, และ Intact Civic Logo Stage จาก `system_settings.logo_url` ตั้งแต่ 0ms (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

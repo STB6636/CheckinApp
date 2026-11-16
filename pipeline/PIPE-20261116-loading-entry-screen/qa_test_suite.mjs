@@ -138,39 +138,75 @@ assert(
     'loading.html: includes 0ms instant text pre-hydration for org branding before module loads'
 );
 
-// Check 3D Dual-Logo Split-Half Flip Loader & SVG Fallback
+// Check Single Intact Civic Logo Stage (#ldLogoStage) and default OFFICIAL_SETTINGS_LOGO
 assert(
-    loadingHtmlContent.includes('.loader') &&
-    loadingHtmlContent.includes('--logo-bma-fallback') &&
-    loadingHtmlContent.includes('--logo-dept-fallback'),
-    'loading.html: defines split-half dual-logo loader with inline SVG base64 fallbacks'
+    loadingHtmlContent.includes('id="ldLogoStage"') &&
+    loadingHtmlContent.includes('id="ldOrgLogo"') &&
+    loadingHtmlContent.includes('id="ldLogoFallback"'),
+    'loading.html: defines intact civic logo stage (#ldLogoStage) with #ldOrgLogo and #ldLogoFallback'
 );
 
+const OFFICIAL_SETTINGS_LOGO = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
 assert(
-    loadingHtmlContent.includes('@keyframes logo-flip') &&
-    loadingHtmlContent.includes('-webkit-clip-path'),
-    'loading.html: keyframes logo-flip includes WebKit vendor prefixes for iOS Safari compatibility'
+    loadingHtmlContent.includes(`src="${OFFICIAL_SETTINGS_LOGO}"`),
+    'loading.html: #ldOrgLogo src is set directly to OFFICIAL_SETTINGS_LOGO at 0ms'
 );
 
+// Zero wrong emblem / hardcoded old URLs
 assert(
-    loadingHtmlContent.includes('background-image: var(--logo-bma), var(--logo-bma-fallback)') &&
-    loadingHtmlContent.includes('background-image: var(--logo-dept), var(--logo-dept-fallback)'),
-    'loading.html: loader keyframes use CSS multiple backgrounds with SVG fallbacks'
+    !loadingHtmlContent.includes('pr-bangkok.com') &&
+    !loadingHtmlContent.includes('wikimedia.org') &&
+    !loadingHtmlContent.includes('--logo-bma') &&
+    !loadingHtmlContent.includes('--logo-dept') &&
+    !loadingHtmlContent.includes('@keyframes logo-flip'),
+    'loading.html: zero hardcoded pr-bangkok.com, wikimedia.org, CSS --logo-* vars, or logo-flip clipping'
 );
 
-// Mobile responsive symmetry check
+// Fallback icon check
+assert(
+    loadingHtmlContent.includes('fa-landmark') &&
+    loadingHtmlContent.includes('id="ldLogoFallback" class="hidden'),
+    'loading.html: #ldLogoFallback uses fa-landmark and is hidden by default (shown only on onerror)'
+);
+
+// Fallback CSS specificity & inline error handling
+assert(
+    loadingHtmlContent.includes('#ldOrgLogo.hidden') &&
+    loadingHtmlContent.includes('display: none !important;'),
+    'loading.html: defines #ldOrgLogo.hidden and #ldLogoFallback.hidden with display: none !important to prevent specificity leaks'
+);
+assert(
+    loadingHtmlContent.includes('id="ldOrgLogo"') &&
+    loadingHtmlContent.includes('onerror="this.classList.add(\'hidden\')'),
+    'loading.html: #ldOrgLogo contains inline onerror handler for instant failure capture before script execution'
+);
+
+// Initial Static Branding text
+assert(
+    loadingHtmlContent.includes('สำนักเทศกิจ') &&
+    loadingHtmlContent.includes('สำนักงานตรวจและบังคับการ') &&
+    loadingHtmlContent.includes('ระบบลงเวลาปฏิบัติราชการ (สตบ.สนท.)'),
+    'loading.html: initial static branding text matches live DB to prevent text FOUC on slow mobile'
+);
+
+// Supabase script moved down before LoadingController module
+const supabaseScriptIdx = loadingHtmlContent.indexOf('cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+const loadingCtrlScriptIdx = loadingHtmlContent.indexOf('assets/js/controllers/LoadingController.js');
+assert(
+    supabaseScriptIdx !== -1 && loadingCtrlScriptIdx !== -1 && supabaseScriptIdx < loadingCtrlScriptIdx,
+    'loading.html: parser-blocking @supabase/supabase-js is deferred to bottom of body before LoadingController.js'
+);
+
+// Mobile responsive sizing check
 const mobileMediaMatch = loadingHtmlContent.match(/@media\s*\(max-width:\s*640px\)\s*\{([^}]*\{[^}]*\}[^}]*)\}/);
 const mobileMediaBlock = mobileMediaMatch ? mobileMediaMatch[1] : '';
 assert(
-    mobileMediaBlock.includes('--ld-size: 84px;') &&
-    !mobileMediaBlock.includes('.loader::before') &&
-    !mobileMediaBlock.includes('.loader::after'),
-    'loading.html: mobile media query scales --ld-size without breaking split-half animation symmetry'
+    mobileMediaBlock.includes('--ld-frame-size: 84px;') || mobileMediaBlock.includes('84px'),
+    'loading.html: mobile media query scales logo frame to 84px'
 );
 
 // Check Status Chip, Progress Bar, and Watchdog Fallback UI
 assert(
-    loadingHtmlContent.includes('id="ldFlipLoader"') &&
     loadingHtmlContent.includes('id="ldSpinnerIcon"') &&
     loadingHtmlContent.includes('id="ldStepLabel"') &&
     loadingHtmlContent.includes('id="ldProgressInner"'),
@@ -208,7 +244,7 @@ const requiredMethods = [
     '#fetchSettingsWithTimeout',
     '#verifySessionWithTimeout',
     '#applyLiveSettingsBranding',
-    '#sanitizeAndApplyLogoCssVar',
+    '#renderOrgLogo',
     '#setStepLabel',
     '#armWatchdog',
     '#clearWatchdog',
@@ -218,11 +254,25 @@ for (const method of requiredMethods) {
     assert(loadingCtrlContent.includes(method), `LoadingController: implements method ${method}()`);
 }
 
-// SVG Fallback constants
+// OFFICIAL_SETTINGS_LOGO constant and zero legacy fallbacks
 assert(
-    loadingCtrlContent.includes('DEFAULT_BMA_FALLBACK_SVG') &&
-    loadingCtrlContent.includes('DEFAULT_DEPT_FALLBACK_SVG'),
-    'LoadingController: defines offline-resilient base64 SVG fallbacks'
+    loadingCtrlContent.includes("OFFICIAL_SETTINGS_LOGO = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc'"),
+    'LoadingController: defines OFFICIAL_SETTINGS_LOGO constant'
+);
+assert(
+    !loadingCtrlContent.includes('DEFAULT_BMA_FALLBACK_SVG') &&
+    !loadingCtrlContent.includes('DEFAULT_DEPT_FALLBACK_SVG') &&
+    !loadingCtrlContent.includes('pr-bangkok.com') &&
+    !loadingCtrlContent.includes('wikimedia.org'),
+    'LoadingController: zero legacy SVG fallbacks or external third-party logos'
+);
+assert(
+    !loadingCtrlContent.includes('bmaLogoUrl:'),
+    'LoadingController: does not write legacy bmaLogoUrl into brand cache'
+);
+assert(
+    loadingCtrlContent.includes('Config.STORAGE_KEYS.CACHED_SETTINGS'),
+    'LoadingController: reads Config.STORAGE_KEYS.CACHED_SETTINGS as hydration fallback'
 );
 
 // URL masking safety: capture entry mode BEFORE calling UIHelpers.initTheme()
@@ -335,6 +385,15 @@ assert(
     loginCtrlContent.includes("loading.html?entry=login") &&
     !loginCtrlContent.includes("await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000)"),
     'LoginController.#handleLogin(): immediately redirects on success to loading.html?entry=login without 2s delay'
+);
+
+// Brand cache sync in LoginController & SettingsController
+const settingsCtrlPath = path.join(WORKSPACE_ROOT, 'assets/js/controllers/SettingsController.js');
+const settingsCtrlContent = fs.readFileSync(settingsCtrlPath, 'utf8');
+assert(
+    loginCtrlContent.includes("localStorage.setItem('bma_cached_brand_v2_7'") &&
+    settingsCtrlContent.includes("localStorage.setItem('bma_cached_brand_v2_7'"),
+    'LoginController & SettingsController: both sync updated branding into bma_cached_brand_v2_7'
 );
 
 // -------------------------------------------------------------

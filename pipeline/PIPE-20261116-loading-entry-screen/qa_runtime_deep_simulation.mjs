@@ -286,6 +286,238 @@ console.log('\n--- Test Group 7: Target URL Loop Prevention Guard ---');
     );
 }
 
+// --- 8. 2-Tier Brand Cache Hydration & OnError Fallback Simulation ---
+console.log('\n--- Test Group 8: 2-Tier Brand Cache & OnError Fallback ---');
+{
+    const OFFICIAL_SETTINGS_LOGO = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+
+    function simulateHydrate(localStore, sessionStore) {
+        let brand = null;
+        const rawLocal = localStore['bma_cached_brand_v2_7'];
+        if (rawLocal) {
+            try { brand = JSON.parse(rawLocal); } catch (_) {}
+        }
+        let sessionSettings = null;
+        const rawSession = sessionStore['bma_checkin_cached_settings_v2_7'];
+        if (rawSession) {
+            try { sessionSettings = JSON.parse(rawSession); } catch (_) {}
+        }
+
+        if (!brand || typeof brand !== 'object') {
+            if (sessionSettings && typeof sessionSettings === 'object') {
+                brand = {
+                    orgName: sessionSettings.organization_name,
+                    bureauName: sessionSettings.bureau_name,
+                    headerSystemTitle: sessionSettings.header_system_title,
+                    logoUrl: sessionSettings.logo_url
+                };
+            }
+        } else if (sessionSettings && typeof sessionSettings === 'object') {
+            if (!brand.logoUrl && sessionSettings.logo_url) brand.logoUrl = sessionSettings.logo_url;
+            if (!brand.orgName && sessionSettings.organization_name) brand.orgName = sessionSettings.organization_name;
+            if (!brand.bureauName && sessionSettings.bureau_name) brand.bureauName = sessionSettings.bureau_name;
+            if (!brand.headerSystemTitle && sessionSettings.header_system_title) brand.headerSystemTitle = sessionSettings.header_system_title;
+        }
+
+        const resolvedLogo = (brand && brand.logoUrl) ? brand.logoUrl : OFFICIAL_SETTINGS_LOGO;
+        return { brand, resolvedLogo };
+    }
+
+    // 8.1: Both stores empty -> returns OFFICIAL_SETTINGS_LOGO
+    const resEmpty = simulateHydrate({}, {});
+    assert(
+        resEmpty.resolvedLogo === OFFICIAL_SETTINGS_LOGO,
+        'Brand hydration: falls back to OFFICIAL_SETTINGS_LOGO when stores are empty'
+    );
+
+    // 8.2: Session storage fallback when local storage empty
+    const resSession = simulateHydrate({}, {
+        'bma_checkin_cached_settings_v2_7': JSON.stringify({
+            organization_name: 'สำนักเทศกิจ',
+            logo_url: 'https://example.com/custom.png'
+        })
+    });
+    assert(
+        resSession.resolvedLogo === 'https://example.com/custom.png' && resSession.brand.orgName === 'สำนักเทศกิจ',
+        'Brand hydration: successfully falls back to sessionStorage cached settings'
+    );
+
+    // 8.3: Local storage priority
+    const resLocal = simulateHydrate({
+        'bma_cached_brand_v2_7': JSON.stringify({
+            orgName: 'หน่วยงานพิเศษ',
+            logoUrl: 'https://example.com/local.png'
+        })
+    }, {
+        'bma_checkin_cached_settings_v2_7': JSON.stringify({
+            organization_name: 'สำนักเทศกิจ',
+            logo_url: 'https://example.com/session.png'
+        })
+    });
+    assert(
+        resLocal.resolvedLogo === 'https://example.com/local.png',
+        'Brand hydration: localStorage takes priority over sessionStorage'
+    );
+
+    // 8.4: Legacy brand in localStorage (missing logoUrl) seamlessly falls back to sessionStorage logo_url
+    const resLegacyLocal = simulateHydrate({
+        'bma_cached_brand_v2_7': JSON.stringify({
+            orgName: 'หน่วยงานเดิม',
+            bmaLogoUrl: 'https://pr-bangkok.com/old.png'
+        })
+    }, {
+        'bma_checkin_cached_settings_v2_7': JSON.stringify({
+            organization_name: 'สำนักเทศกิจ',
+            logo_url: 'https://example.com/settings-logo.png'
+        })
+    });
+    assert(
+        resLegacyLocal.resolvedLogo === 'https://example.com/settings-logo.png' && resLegacyLocal.brand.orgName === 'หน่วยงานเดิม',
+        'Brand hydration: partial/legacy localStorage cleanly fills missing logoUrl from sessionStorage'
+    );
+
+    // 8.5: DOM #renderOrgLogo stateful simulation (onerror preservation vs URL switch)
+    class MockClassList {
+        constructor(classes = []) {
+            this.set = new Set(classes);
+        }
+        add(c) { this.set.add(c); }
+        remove(c) { this.set.delete(c); }
+        contains(c) { return this.set.has(c); }
+    }
+
+    const mockImg = {
+        _src: OFFICIAL_SETTINGS_LOGO,
+        classList: new MockClassList([]),
+        getAttribute(k) { return k === 'src' ? this._src : null; },
+        set src(v) { this._src = v; },
+        get src() { return this._src; },
+        complete: true,
+        naturalWidth: 100,
+        onerror: null
+    };
+    const mockFallback = {
+        classList: new MockClassList(['hidden'])
+    };
+
+    function simulateRenderOrgLogo(rawUrl, imgEl, fallbackEl) {
+        let targetUrl = String(rawUrl || '').trim();
+        const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(targetUrl);
+        if (!targetUrl || !isSafeProtocol) {
+            targetUrl = OFFICIAL_SETTINGS_LOGO;
+        }
+        const sanitizedUrl = targetUrl.replace(/['"\\]/g, '');
+
+        imgEl.onerror = () => {
+            imgEl.classList.add('hidden');
+            if (fallbackEl) fallbackEl.classList.remove('hidden');
+        };
+
+        const currentSrc = imgEl.getAttribute('src') || '';
+        if (currentSrc === sanitizedUrl) {
+            return;
+        }
+
+        if (fallbackEl) fallbackEl.classList.add('hidden');
+        imgEl.classList.remove('hidden');
+        imgEl.src = sanitizedUrl;
+    }
+
+    // Call with initial official logo
+    simulateRenderOrgLogo(OFFICIAL_SETTINGS_LOGO, mockImg, mockFallback);
+    assert(
+        mockImg.src === OFFICIAL_SETTINGS_LOGO && !mockImg.classList.contains('hidden') && mockFallback.classList.contains('hidden'),
+        'renderOrgLogo: initial official logo is visible and fallback is hidden'
+    );
+
+    // Simulate image error (network offline / bad image)
+    mockImg.onerror();
+    assert(
+        mockImg.classList.contains('hidden') && !mockFallback.classList.contains('hidden'),
+        'renderOrgLogo: onerror cleanly hides image and reveals fallback icon'
+    );
+
+    // Re-calling with SAME URL must NOT undo the fallback error state!
+    simulateRenderOrgLogo(OFFICIAL_SETTINGS_LOGO, mockImg, mockFallback);
+    assert(
+        mockImg.classList.contains('hidden') && !mockFallback.classList.contains('hidden'),
+        'renderOrgLogo: re-evaluating unchanged URL preserves error fallback without stomping'
+    );
+
+    // Switching to a NEW different URL unhides image and hides fallback
+    simulateRenderOrgLogo('https://example.com/new-logo.png', mockImg, mockFallback);
+    assert(
+        mockImg.src === 'https://example.com/new-logo.png' && !mockImg.classList.contains('hidden') && mockFallback.classList.contains('hidden'),
+        'renderOrgLogo: switching to brand-new valid URL resets fallback and loads new src'
+    );
+}
+
+// --- 9. LoginController & SettingsController Cache Sync Simulation ---
+console.log('\n--- Test Group 9: Login & Settings Brand Cache Sync ---');
+{
+    const OFFICIAL_SETTINGS_LOGO = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+    const mockStore = {};
+
+    function simulateSyncBrand(settings) {
+        const s = settings || {};
+        const orgName = s.organization_name || 'สำนักเทศกิจ';
+        const bureauName = s.bureau_name || 'สำนักงานตรวจและบังคับการ';
+        const headerTitle = s.header_system_title || 'ระบบลงเวลาปฏิบัติราชการ (สตบ.สนท.)';
+        let resolvedLogoUrl = '';
+        const rawLogo = String(s.logo_url || '').trim();
+        const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(rawLogo);
+        if (rawLogo && isSafeProtocol) {
+            const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(rawLogo);
+            if (isGoogleDrive) {
+                const m = rawLogo.match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                resolvedLogoUrl = m && m[1] ? `https://lh3.googleusercontent.com/d/${m[1]}` : rawLogo;
+            } else {
+                resolvedLogoUrl = rawLogo;
+            }
+        } else {
+            resolvedLogoUrl = OFFICIAL_SETTINGS_LOGO;
+        }
+
+        const brandPayload = {
+            orgName,
+            bureauName,
+            headerSystemTitle: headerTitle,
+            logoUrl: resolvedLogoUrl
+        };
+        mockStore['bma_cached_brand_v2_7'] = JSON.stringify(brandPayload);
+    }
+
+    // 9.1: Sync with empty logo_url -> saves OFFICIAL_SETTINGS_LOGO
+    simulateSyncBrand({ organization_name: 'กทม.' });
+    const saved1 = JSON.parse(mockStore['bma_cached_brand_v2_7']);
+    assert(
+        saved1.logoUrl === OFFICIAL_SETTINGS_LOGO && saved1.bmaLogoUrl === undefined,
+        'Brand sync: empty logo_url defaults to OFFICIAL_SETTINGS_LOGO with zero bmaLogoUrl'
+    );
+
+    // 9.2: Sync with Google Drive link -> normalized to lh3 thumbnail
+    simulateSyncBrand({
+        organization_name: 'กทม.',
+        logo_url: 'https://drive.google.com/file/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc/view'
+    });
+    const saved2 = JSON.parse(mockStore['bma_cached_brand_v2_7']);
+    assert(
+        saved2.logoUrl === OFFICIAL_SETTINGS_LOGO,
+        'Brand sync: Google Drive file/d/ link normalized cleanly to lh3 format'
+    );
+
+    // 9.3: Sync with malicious unsafe protocol -> defaults safely to OFFICIAL_SETTINGS_LOGO
+    simulateSyncBrand({
+        organization_name: 'กทม.',
+        logo_url: 'javascript:alert("XSS")'
+    });
+    const saved3 = JSON.parse(mockStore['bma_cached_brand_v2_7']);
+    assert(
+        saved3.logoUrl === OFFICIAL_SETTINGS_LOGO,
+        'Brand sync: unsafe protocol rejected and safely defaults to OFFICIAL_SETTINGS_LOGO'
+    );
+}
+
 console.log('\n====================================================================');
 console.log(`DEEP SIMULATION RESULTS: Total: ${deepTests} | Passed: ${deepPassed} | Failed: ${deepFailed}`);
 console.log('====================================================================');

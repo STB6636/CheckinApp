@@ -726,6 +726,36 @@ export class SettingsController {
                 this.settings = res.data;
             }
             this.#renderAllSettings();
+
+            // Sync brand cache for loading.html instant 0ms pre-hydration
+            try {
+                const s = this.settings || {};
+                const orgName = s.organization_name || 'สำนักเทศกิจ';
+                const bureauName = s.bureau_name || 'สำนักงานตรวจและบังคับการ';
+                const headerTitle = s.header_system_title || 'ระบบลงเวลาปฏิบัติราชการ (สตบ.สนท.)';
+                let resolvedLogoUrl = '';
+                const rawLogo = String(s.logo_url || '').trim();
+                const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(rawLogo);
+                if (rawLogo && isSafeProtocol) {
+                    const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(rawLogo);
+                    if (isGoogleDrive) {
+                        const m = rawLogo.match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                        resolvedLogoUrl = m && m[1] ? `https://lh3.googleusercontent.com/d/${m[1]}` : rawLogo;
+                    } else {
+                        resolvedLogoUrl = rawLogo;
+                    }
+                } else {
+                    resolvedLogoUrl = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+                }
+
+                const brandPayload = {
+                    orgName,
+                    bureauName,
+                    headerSystemTitle: headerTitle,
+                    logoUrl: resolvedLogoUrl
+                };
+                localStorage.setItem('bma_cached_brand_v2_7', JSON.stringify(brandPayload));
+            } catch (_) {}
             if (showToastAlert) {
                 await UIHelpers.showToast('บันทึกการตั้งค่าระบบเรียบร้อยแล้ว', 'success', 2500);
             }
