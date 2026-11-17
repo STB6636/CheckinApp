@@ -568,11 +568,24 @@ const settingsCtrlSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'assets/js/con
 const settingsHtmlSrc = fs.readFileSync(path.join(WORKSPACE_ROOT, 'settings.html'), 'utf8');
 const versionJson = JSON.parse(fs.readFileSync(path.join(WORKSPACE_ROOT, 'version.json'), 'utf8'));
 
-test('SettingsController preserves announcement_* in #collectMainAndColorFieldsIntoSettings & scopes/dedupes SPA bindings', () => {
+test('SettingsController preserves 8 popup announcement_* keys in #collectMainAndColorFieldsIntoSettings (collecting only announcement_drive_folder_id) & scopes/dedupes SPA bindings', () => {
     const collectStart = settingsCtrlSrc.indexOf('#collectMainAndColorFieldsIntoSettings()');
     const persistStart = settingsCtrlSrc.indexOf('async #persistSettings(');
     const collectBlock = settingsCtrlSrc.slice(collectStart, persistStart);
-    assert(!collectBlock.includes('this.settings.announcement_'), 'Tabs 1-6 collect method must NEVER mutate announcement_*');
+    assert(collectBlock.includes('this.settings.announcement_drive_folder_id'), 'Tab 1 collect method must collect announcement_drive_folder_id');
+    const forbiddenAnnouncementKeys = [
+        'announcement_enabled',
+        'announcement_mode',
+        'announcement_start_date',
+        'announcement_end_date',
+        'announcement_title',
+        'announcement_body',
+        'announcement_image_url',
+        'announcement_updated_at'
+    ];
+    for (const key of forbiddenAnnouncementKeys) {
+        assert(!collectBlock.includes(key), `Tabs 1-6 collect method must NEVER mutate ${key}`);
+    }
     assert(settingsCtrlSrc.includes('__bmaSettingsMainClickHandler'), 'Must deduplicate <main> click listener across SPA re-entry');
     assert(settingsCtrlSrc.includes('modalAnnouncementPreviewImgError'), 'Preview modal must include image error fallback');
     assert(settingsHtmlSrc.includes('data-tab-target="tab-panel-announcement"'));

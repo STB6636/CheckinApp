@@ -48,6 +48,10 @@ export class SettingsController {
         document.getElementById('setLogoUrlInput').value = this.settings.logo_url || '';
         document.getElementById('setGDriveScriptUrl').value = this.settings.google_drive_script_url || '';
         document.getElementById('setGDriveFolderId').value = this.settings.google_drive_folder_id || '';
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (annFolderEl) {
+            annFolderEl.value = String(this.settings.announcement_drive_folder_id || '');
+        }
 
         const logoBadge = document.getElementById('logoUrlVerifyBadge');
         if (logoBadge) {
@@ -70,6 +74,8 @@ export class SettingsController {
                 gdriveBadge.className = 'bma-badge bma-badge-warning text-[11px]';
             }
         }
+
+        this.#syncAnnouncementDriveFolderUI();
 
         document.getElementById('toggleRequirePhoto').checked = Boolean(this.settings.require_photo);
         const elAllowGallery = document.getElementById('toggleAllowGalleryFallback');
@@ -175,7 +181,73 @@ export class SettingsController {
         }
     }
 
+    #syncAnnouncementDriveFolderUI({ verifiedFolderName = null, verifyFailed = false } = {}) {
+        const scriptEl = document.getElementById('setGDriveScriptUrl');
+        const folderEl = document.getElementById('setAnnouncementDriveFolderId');
+        const scriptUrl = String((scriptEl ? scriptEl.value : this.settings?.google_drive_script_url) || '').trim();
+        const folderId = String((folderEl ? folderEl.value : this.settings?.announcement_drive_folder_id) || '').trim();
+
+        const folderBadge = document.getElementById('announcementFolderVerifyBadge');
+        if (folderBadge) {
+            if (verifyFailed) {
+                folderBadge.textContent = '✗ โฟลเดอร์ไม่ถูกต้อง';
+                folderBadge.className = 'bma-badge bma-badge-danger text-[11px]';
+            } else if (verifiedFolderName) {
+                folderBadge.textContent = `✓ ${verifiedFolderName}`;
+                folderBadge.className = 'bma-badge bma-badge-success text-[11px]';
+            } else if (folderId) {
+                folderBadge.textContent = 'ระบุโฟลเดอร์แล้ว';
+                folderBadge.className = 'bma-badge bma-badge-sky text-[11px]';
+            } else {
+                folderBadge.textContent = 'รอระบุโฟลเดอร์';
+                folderBadge.className = 'bma-badge bma-badge-warning text-[11px]';
+            }
+        }
+
+        const hintEl = document.getElementById('tab7AnnouncementFolderHint');
+        if (hintEl) {
+            const hasValidScript = Boolean(scriptUrl && scriptUrl.includes('script.google.com') && scriptUrl.includes('/exec'));
+            const safeFolder = UIHelpers.escapeHtml(folderId);
+            if (verifyFailed) {
+                hintEl.innerHTML = '<span class="text-rose-600 dark:text-rose-400 font-bold">✗ ตรวจสอบโฟลเดอร์รูปประกาศไม่ผ่าน</span> — กรุณาตรวจสอบสิทธิ์หรือรหัสโฟลเดอร์ใน <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (!hasValidScript && !folderId) {
+                hintEl.innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุ Apps Script URL และโฟลเดอร์รูปประกาศ</span> — ตั้งค่าได้ที่ <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (!hasValidScript) {
+                hintEl.innerHTML = `<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุ Google Apps Script Web App URL</span> — โฟลเดอร์ประกาศปัจจุบัน: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (ตั้งค่าใน <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            } else if (!folderId) {
+                hintEl.innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุโฟลเดอร์ Google Drive เก็บรูปประกาศ</span> — กดปุ่ม <b>"ไปตั้งค่าในแท็บ 1"</b> เพื่อระบุใน <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (verifiedFolderName) {
+                const safeName = UIHelpers.escapeHtml(verifiedFolderName);
+                hintEl.innerHTML = `<span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ พร้อมใช้งาน (${safeName})</span> — โฟลเดอร์: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (แก้ไขได้ที่ <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            } else {
+                hintEl.innerHTML = `<span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ ตั้งค่าแล้ว</span> — ใช้ Apps Script Web App ร่วมกับโฟลเดอร์รูปประกาศ: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (แก้ไขได้ที่ <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            }
+        }
+    }
+
+    #activateSettingsTab(targetId) {
+        if (!targetId) return;
+        document.querySelectorAll('.settings-tab-pane').forEach(panel => panel.classList.add('hidden'));
+        document.getElementById(targetId)?.classList.remove('hidden');
+        const tabNav = document.getElementById('settingsTabNav');
+        if (tabNav) {
+            tabNav.querySelectorAll('.settings-tab-btn').forEach(b => {
+                if (b.getAttribute('data-tab-target') === targetId) {
+                    b.classList.add('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
+                    b.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                } else {
+                    b.classList.remove('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
+                    b.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                }
+            });
+        }
+    }
+
     #renderAnnouncementTab() {
+        const folderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (folderEl) folderEl.value = String(this.settings.announcement_drive_folder_id || '');
+        this.#syncAnnouncementDriveFolderUI();
+
         const enabledEl = document.getElementById('setAnnouncementEnabled');
         if (!enabledEl) return;
 
@@ -185,7 +257,6 @@ export class SettingsController {
         const endEl = document.getElementById('setAnnouncementEndDate');
         const titleEl = document.getElementById('setAnnouncementTitle');
         const bodyEl = document.getElementById('setAnnouncementBody');
-        const folderEl = document.getElementById('setAnnouncementDriveFolderId');
         const imageUrlEl = document.getElementById('setAnnouncementImageUrl');
         const modeTextEl = document.getElementById('radioAnnouncementModeText');
         const modeImageEl = document.getElementById('radioAnnouncementModeImage');
@@ -194,23 +265,11 @@ export class SettingsController {
         if (endEl) endEl.value = String(this.settings.announcement_end_date || '');
         if (titleEl) titleEl.value = String(this.settings.announcement_title || '');
         if (bodyEl) bodyEl.value = String(this.settings.announcement_body || '');
-        if (folderEl) folderEl.value = String(this.settings.announcement_drive_folder_id || '');
         if (imageUrlEl) imageUrlEl.value = String(this.settings.announcement_image_url || '');
 
         const mode = this.settings.announcement_mode === 'image' ? 'image' : 'text';
         if (modeTextEl) modeTextEl.checked = (mode === 'text');
         if (modeImageEl) modeImageEl.checked = (mode === 'image');
-
-        const folderBadge = document.getElementById('announcementFolderVerifyBadge');
-        if (folderBadge) {
-            if (String(this.settings.announcement_drive_folder_id || '').trim()) {
-                folderBadge.textContent = 'ระบุโฟลเดอร์แล้ว';
-                folderBadge.className = 'bma-badge bma-badge-sky text-[11px]';
-            } else {
-                folderBadge.textContent = 'รอระบุโฟลเดอร์';
-                folderBadge.className = 'bma-badge bma-badge-warning text-[11px]';
-            }
-        }
 
         const imgBadge = document.getElementById('announcementImageVerifyBadge');
         if (imgBadge) {
@@ -238,6 +297,10 @@ export class SettingsController {
 
     #readAnnouncementFormDraft() {
         const mode = document.getElementById('radioAnnouncementModeImage')?.checked ? 'image' : 'text';
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        const announcementDriveFolderId = annFolderEl
+            ? String(annFolderEl.value || '').trim()
+            : String(this.settings?.announcement_drive_folder_id || '').trim();
         return {
             announcement_enabled: Boolean(document.getElementById('setAnnouncementEnabled')?.checked),
             announcement_mode: mode,
@@ -246,7 +309,7 @@ export class SettingsController {
             announcement_title: String(document.getElementById('setAnnouncementTitle')?.value || '').trim(),
             announcement_body: String(document.getElementById('setAnnouncementBody')?.value ?? ''),
             announcement_image_url: String(document.getElementById('setAnnouncementImageUrl')?.value || '').trim(),
-            announcement_drive_folder_id: String(document.getElementById('setAnnouncementDriveFolderId')?.value || '').trim(),
+            announcement_drive_folder_id: announcementDriveFolderId,
             announcement_updated_at: String(this.settings.announcement_updated_at || '')
         };
     }
@@ -901,6 +964,8 @@ export class SettingsController {
         if (scriptEl) this.settings.google_drive_script_url = scriptEl.value.trim();
         const folderEl = document.getElementById('setGDriveFolderId');
         if (folderEl) this.settings.google_drive_folder_id = folderEl.value.trim();
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (annFolderEl) this.settings.announcement_drive_folder_id = annFolderEl.value.trim();
         const reqPhotoEl = document.getElementById('toggleRequirePhoto');
         if (reqPhotoEl) this.settings.require_photo = Boolean(reqPhotoEl.checked);
         const allowGalleryEl = document.getElementById('toggleAllowGalleryFallback');
@@ -959,7 +1024,7 @@ export class SettingsController {
                 group_header: document.getElementById('setColorGroupHeader')?.value || '#007B3E'
             };
         }
-        // Notice: Strictly NEVER mutate announcement_* or announcement_updated_at here (Tabs 1-6 preserve existing announcement state)
+        // Notice: Strictly NEVER mutate the 8 popup announcement fields (enabled/mode/dates/title/body/image_url/updated_at) here (Tabs 1-6 preserve existing announcement popup state)
     }
 
     async #persistSettings(showToastAlert = true) {
@@ -1202,21 +1267,41 @@ export class SettingsController {
                 const btn = e.target.closest('.settings-tab-btn');
                 if (!btn) return;
                 e.preventDefault();
-                const targetId = btn.getAttribute('data-tab-target');
-                if (!targetId) return;
-                document.querySelectorAll('.settings-tab-pane').forEach(panel => panel.classList.add('hidden'));
-                document.getElementById(targetId)?.classList.remove('hidden');
-                tabNav.querySelectorAll('.settings-tab-btn').forEach(b => {
-                    if (b === btn) {
-                        b.classList.add('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
-                        b.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
-                    } else {
-                        b.classList.remove('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
-                        b.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
-                    }
-                });
+                this.#activateSettingsTab(btn.getAttribute('data-tab-target'));
             });
         }
+
+        document.querySelectorAll('[data-jump-tab]').forEach(jumpBtn => {
+            jumpBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetTabId = jumpBtn.getAttribute('data-jump-tab') || 'tab-panel-general';
+                const targetTabBtn = document.querySelector(`#settingsTabNav .settings-tab-btn[data-tab-target="${targetTabId}"]`);
+                if (targetTabBtn) {
+                    targetTabBtn.click();
+                }
+                if (document.getElementById(targetTabId)?.classList.contains('hidden')) {
+                    this.#activateSettingsTab(targetTabId);
+                }
+                if (targetTabId === 'tab-panel-general') {
+                    const annFolderInput = document.getElementById('setAnnouncementDriveFolderId');
+                    if (annFolderInput) {
+                        annFolderInput.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+                        try {
+                            annFolderInput.focus?.({ preventScroll: true });
+                        } catch (_) {
+                            annFolderInput.focus?.();
+                        }
+                    }
+                }
+            });
+        });
+
+        document.getElementById('setGDriveScriptUrl')?.addEventListener('input', () => {
+            this.#syncAnnouncementDriveFolderUI();
+        });
+        document.getElementById('setAnnouncementDriveFolderId')?.addEventListener('input', () => {
+            this.#syncAnnouncementDriveFolderUI();
+        });
 
         // Tab 7: ประกาศระบบ (scoped strictly inside #tab-panel-announcement & #modalAnnouncementPreview)
         document.getElementById('setAnnouncementEnabled')?.addEventListener('change', () => {
@@ -1256,12 +1341,13 @@ export class SettingsController {
         });
 
         document.getElementById('btnVerifyAnnouncementFolder')?.addEventListener('click', async () => {
-            const scriptUrl = (document.getElementById('setGDriveScriptUrl')?.value || this.settings.google_drive_script_url || '').trim();
-            const folderId = (document.getElementById('setAnnouncementDriveFolderId')?.value || '').trim();
-            const badge = document.getElementById('announcementFolderVerifyBadge');
+            const scriptEl = document.getElementById('setGDriveScriptUrl');
+            const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+            const scriptUrl = String(scriptEl ? scriptEl.value : (this.settings.google_drive_script_url || '')).trim();
+            const folderId = String(annFolderEl ? annFolderEl.value : (this.settings.announcement_drive_folder_id || '')).trim();
 
-            if (!scriptUrl || !scriptUrl.includes('script.google.com')) {
-                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 (ข้อมูลหน่วยงาน & ระบบ) ก่อนตรวจสอบโฟลเดอร์ประกาศ', 'warning');
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
+                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ด้านบน ก่อนตรวจสอบโฟลเดอร์ประกาศ', 'warning');
                 return;
             }
             if (!folderId) {
@@ -1274,16 +1360,10 @@ export class SettingsController {
             UIHelpers.hideLoading();
 
             if (res.success) {
-                if (badge) {
-                    badge.textContent = `✓ ${res.folderName || 'พร้อมใช้งาน'}`;
-                    badge.className = 'bma-badge bma-badge-success text-[11px]';
-                }
+                this.#syncAnnouncementDriveFolderUI({ verifiedFolderName: res.folderName || 'พร้อมใช้งาน' });
                 await UIHelpers.alert('ตรวจสอบโฟลเดอร์ประกาศสำเร็จ', res.message, 'success');
             } else {
-                if (badge) {
-                    badge.textContent = '✗ โฟลเดอร์ไม่ถูกต้อง';
-                    badge.className = 'bma-badge bma-badge-danger text-[11px]';
-                }
+                this.#syncAnnouncementDriveFolderUI({ verifyFailed: true });
                 await UIHelpers.alert('ไม่สามารถเข้าถึงโฟลเดอร์ได้', res.message, 'warning');
             }
         });
@@ -1308,16 +1388,18 @@ export class SettingsController {
                 return;
             }
 
-            const scriptUrl = (document.getElementById('setGDriveScriptUrl')?.value || this.settings.google_drive_script_url || '').trim();
-            const folderId = (document.getElementById('setAnnouncementDriveFolderId')?.value || '').trim();
-            if (!scriptUrl || !scriptUrl.includes('script.google.com')) {
+            const scriptEl = document.getElementById('setGDriveScriptUrl');
+            const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+            const scriptUrl = String(scriptEl ? scriptEl.value : (this.settings.google_drive_script_url || '')).trim();
+            const folderId = String(annFolderEl ? annFolderEl.value : (this.settings.announcement_drive_folder_id || '')).trim();
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
                 e.target.value = '';
-                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 ก่อนอัปโหลดรูปภาพ', 'warning');
+                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 (ข้อมูลหน่วยงาน & ระบบ) ก่อนอัปโหลดรูปภาพ', 'warning');
                 return;
             }
             if (!folderId) {
                 e.target.value = '';
-                await UIHelpers.alert('กรุณาระบุโฟลเดอร์ประกาศ', 'กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศก่อนอัปโหลดรูปภาพ', 'warning');
+                await UIHelpers.alert('กรุณาระบุโฟลเดอร์ประกาศ', 'กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศในแท็บ 1 (ข้อมูลหน่วยงาน & ระบบ) > การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ" ก่อนอัปโหลดรูปภาพ', 'warning');
                 return;
             }
 

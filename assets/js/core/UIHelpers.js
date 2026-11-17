@@ -434,11 +434,11 @@ export class UIHelpers {
         const fileExt = extMap[detectedMime] || 'jpg';
 
         if (strictFolder) {
-            if (!scriptUrl || !scriptUrl.includes('script.google.com')) {
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
                 throw new Error('กรุณาตั้งค่าลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 ก่อนอัปโหลดรูปภาพ');
             }
             if (!cleanFolderId) {
-                throw new Error('กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศก่อนอัปโหลด');
+                throw new Error('กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศในแท็บ 1 ก่อนอัปโหลด');
             }
         }
 

@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-17T09:27:16.754Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `179` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1047`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-17T10:46:47.711Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `180` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1113`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `1d60f301f897b650` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `137988ed146bd101` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -348,58 +348,60 @@
 
 ## File: `assets/js/controllers/SettingsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `49d901960f6c873d` | **Total Lines:** `2136` | **Imports:** `5` | **Exports:** `SettingsController`
+- **Hash:** `2d353ab81e86be84` | **Total Lines:** `2218` | **Imports:** `5` | **Exports:** `SettingsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `SettingsController` | `class` | **L12 - L2127** | `export class SettingsController` | Class Definition (2116 lines) |
+| `SettingsController` | `class` | **L12 - L2209** | `export class SettingsController` | Class Definition (2198 lines) |
 | `SettingsController.constructor` | `public constructor` | **L13 - L18** | `() => any` | public constructor L13-L18 (6 lines) |
 | `SettingsController.init` | `public async method` | **L20 - L38** | `() => Promise<any>` | public async method L20-L38 (19 lines) |
-| `SettingsController.#renderAllSettings` | `private method` | **L40 - L148** | `() => any` | private method L40-L148 (109 lines) |
-| `SettingsController.#syncEarlyWindowVisibility` | `private method` | **L150 - L162** | `() => any` | private method L150-L162 (13 lines) |
-| `SettingsController.#syncRadiusVisibility` | `private method` | **L164 - L176** | `() => any` | private method L164-L176 (13 lines) |
-| `SettingsController.#renderAnnouncementTab` | `private method` | **L178 - L229** | `() => any` | private method L178-L229 (52 lines) |
-| `SettingsController.#syncAnnouncementModePanels` | `private method` | **L231 - L237** | `() => any` | private method L231-L237 (7 lines) |
-| `SettingsController.#readAnnouncementFormDraft` | `private method` | **L239 - L252** | `() => any` | private method L239-L252 (14 lines) |
-| `SettingsController.#updateAnnouncementStatusBadge` | `private method` | **L254 - L278** | `() => any` | private method L254-L278 (25 lines) |
-| `SettingsController.#updateAnnouncementImagePreview` | `private method` | **L280 - L292** | `(rawUrl) => any` | private method L280-L292 (13 lines) |
-| `SettingsController.#openAnnouncementPreviewModal` | `private method` | **L294 - L359** | `() => any` | private method L294-L359 (66 lines) |
-| `SettingsController.#closeAnnouncementPreviewModal` | `private method` | **L361 - L363** | `() => any` | private method L361-L363 (3 lines) |
-| `SettingsController.#saveAnnouncementTab` | `private async method` | **L365 - L398** | `() => Promise<any>` | private async method L365-L398 (34 lines) |
-| `SettingsController.#updateColorPreviewBadges` | `private method` | **L400 - L416** | `() => any` | private method L400-L416 (17 lines) |
-| `SettingsController.#syncCheckinModeUI` | `private method` | **L421 - L452** | `(isSingleClick) => any` | ย่อข้อความป้าย Tag ให้เหลือแค่ "รูปแบบพิเศษ" หรือ "รูปแบบปกติ" เพื่อไม่ให้ล้นจอหรือเบียดข้อความในมือถือ |
-| `SettingsController.#updateLogoPreview` | `private method` | **L454 - L462** | `(url) => any` | private method L454-L462 (9 lines) |
-| `SettingsController.#buildSortButtonsHtml` | `private method` | **L464 - L477** | `(category, index, totalLength) => any` | private method L464-L477 (14 lines) |
-| `SettingsController.#renderPrefixes` | `private method` | **L479 - L499** | `() => any` | private method L479-L499 (21 lines) |
-| `SettingsController.#renderRemarks` | `private method` | **L501 - L521** | `() => any` | private method L501-L521 (21 lines) |
-| `SettingsController.#renderOffsiteJobTypes` | `private method` | **L523 - L546** | `() => any` | private method L523-L546 (24 lines) |
-| `SettingsController.#renderSpecialReasons` | `private method` | **L548 - L571** | `() => any` | private method L548-L571 (24 lines) |
-| `SettingsController.#renderShifts` | `private method` | **L573 - L625** | `() => any` | private method L573-L625 (53 lines) |
-| `SettingsController.#renderPositions` | `private method` | **L627 - L648** | `() => any` | private method L627-L648 (22 lines) |
-| `SettingsController.#renderAffiliations` | `private method` | **L650 - L672** | `() => any` | private method L650-L672 (23 lines) |
-| `SettingsController.#renderOfficialLocations` | `private method` | **L674 - L738** | `() => any` | private method L674-L738 (65 lines) |
-| `SettingsController.#openOfficialLocationModal` | `private method` | **L740 - L887** | `(editIndex = null) => any` | private method L740-L887 (148 lines) |
-| `updateMapLink` | `arrow_fn` | **L879 - L884** | `() => inferred` | Arrow Function L879-L884 |
-| `SettingsController.#collectMainAndColorFieldsIntoSettings` | `private method` | **L889 - L963** | `() => any` | private method L889-L963 (75 lines) |
-| `SettingsController.#persistSettings` | `private async method` | **L965 - L1018** | `(showToastAlert = true) => Promise<any>` | private async method L965-L1018 (54 lines) |
-| `SettingsController.#openModal` | `private method` | **L1020 - L1025** | `(title, bodyHtml, onSubmitCallback) => any` | private method L1020-L1025 (6 lines) |
-| `SettingsController.#closeModal` | `private method` | **L1027 - L1030** | `() => any` | private method L1027-L1030 (4 lines) |
-| `SettingsController.#buildMultiRowInputsHtml` | `private method` | **L1032 - L1051** | `(fieldLabel, placeholder) => any` | private method L1032-L1051 (20 lines) |
-| `SettingsController.#bindDynamicMultiRowEvents` | `private method` | **L1053 - L1081** | `(placeholder = 'ระบุข้อมูล...') => any` | private method L1053-L1081 (29 lines) |
-| `SettingsController.#getDynamicMultiRowValues` | `private method` | **L1083 - L1088** | `() => any` | private method L1083-L1088 (6 lines) |
-| `SettingsController.#bindEvents` | `private method` | **L1090 - L1647** | `() => any` | private method L1090-L1647 (558 lines) |
-| `mainClickHandler` | `async_arrow_fn` | **L1525 - L1643** | `(e) => inferred` | Arrow Function L1525-L1643 |
-| `SettingsController.#openShiftModal` | `private method` | **L1649 - L1740** | `(editIndex = null) => any` | private method L1649-L1740 (92 lines) |
-| `checkOvernightAuto` | `arrow_fn` | **L1730 - L1737** | `() => inferred` | Arrow Function L1730-L1737 |
-| `SettingsController.#openAddPositionStep1Modal` | `private method` | **L1742 - L1758** | `() => any` | private method L1742-L1758 (17 lines) |
-| `SettingsController.#openAddPositionStep2Modal` | `private method` | **L1760 - L1803** | `() => any` | private method L1760-L1803 (44 lines) |
-| `SettingsController.#openAddPositionStep3Modal` | `private method` | **L1805 - L1869** | `() => any` | private method L1805-L1869 (65 lines) |
-| `SettingsController.#openEditSinglePositionModal` | `private method` | **L1871 - L1894** | `(editIndex) => any` | private method L1871-L1894 (24 lines) |
-| `SettingsController.#openAddAffiliationStep1OrgModal` | `private method` | **L1896 - L1912** | `() => any` | private method L1896-L1912 (17 lines) |
-| `SettingsController.#openAddAffiliationStep2BureauModal` | `private method` | **L1914 - L1952** | `() => any` | private method L1914-L1952 (39 lines) |
-| `SettingsController.#openAddAffiliationStep3DivisionModal` | `private method` | **L1954 - L2010** | `() => any` | private method L1954-L2010 (57 lines) |
-| `SettingsController.#openAddAffiliationStep4GroupModal` | `private method` | **L2012 - L2096** | `() => any` | private method L2012-L2096 (85 lines) |
-| `SettingsController.#openEditSingleAffiliationModal` | `private method` | **L2098 - L2126** | `(editIndex) => any` | private method L2098-L2126 (29 lines) |
+| `SettingsController.#renderAllSettings` | `private method` | **L40 - L154** | `() => any` | private method L40-L154 (115 lines) |
+| `SettingsController.#syncEarlyWindowVisibility` | `private method` | **L156 - L168** | `() => any` | private method L156-L168 (13 lines) |
+| `SettingsController.#syncRadiusVisibility` | `private method` | **L170 - L182** | `() => any` | private method L170-L182 (13 lines) |
+| `SettingsController.#syncAnnouncementDriveFolderUI` | `private method` | **L184 - L226** | `({ verifiedFolderName = null, verifyFailed = false } = {}) => any` | private method L184-L226 (43 lines) |
+| `SettingsController.#activateSettingsTab` | `private method` | **L228 - L244** | `(targetId) => any` | private method L228-L244 (17 lines) |
+| `SettingsController.#renderAnnouncementTab` | `private method` | **L246 - L288** | `() => any` | private method L246-L288 (43 lines) |
+| `SettingsController.#syncAnnouncementModePanels` | `private method` | **L290 - L296** | `() => any` | private method L290-L296 (7 lines) |
+| `SettingsController.#readAnnouncementFormDraft` | `private method` | **L298 - L315** | `() => any` | private method L298-L315 (18 lines) |
+| `SettingsController.#updateAnnouncementStatusBadge` | `private method` | **L317 - L341** | `() => any` | private method L317-L341 (25 lines) |
+| `SettingsController.#updateAnnouncementImagePreview` | `private method` | **L343 - L355** | `(rawUrl) => any` | private method L343-L355 (13 lines) |
+| `SettingsController.#openAnnouncementPreviewModal` | `private method` | **L357 - L422** | `() => any` | private method L357-L422 (66 lines) |
+| `SettingsController.#closeAnnouncementPreviewModal` | `private method` | **L424 - L426** | `() => any` | private method L424-L426 (3 lines) |
+| `SettingsController.#saveAnnouncementTab` | `private async method` | **L428 - L461** | `() => Promise<any>` | private async method L428-L461 (34 lines) |
+| `SettingsController.#updateColorPreviewBadges` | `private method` | **L463 - L479** | `() => any` | private method L463-L479 (17 lines) |
+| `SettingsController.#syncCheckinModeUI` | `private method` | **L484 - L515** | `(isSingleClick) => any` | ย่อข้อความป้าย Tag ให้เหลือแค่ "รูปแบบพิเศษ" หรือ "รูปแบบปกติ" เพื่อไม่ให้ล้นจอหรือเบียดข้อความในมือถือ |
+| `SettingsController.#updateLogoPreview` | `private method` | **L517 - L525** | `(url) => any` | private method L517-L525 (9 lines) |
+| `SettingsController.#buildSortButtonsHtml` | `private method` | **L527 - L540** | `(category, index, totalLength) => any` | private method L527-L540 (14 lines) |
+| `SettingsController.#renderPrefixes` | `private method` | **L542 - L562** | `() => any` | private method L542-L562 (21 lines) |
+| `SettingsController.#renderRemarks` | `private method` | **L564 - L584** | `() => any` | private method L564-L584 (21 lines) |
+| `SettingsController.#renderOffsiteJobTypes` | `private method` | **L586 - L609** | `() => any` | private method L586-L609 (24 lines) |
+| `SettingsController.#renderSpecialReasons` | `private method` | **L611 - L634** | `() => any` | private method L611-L634 (24 lines) |
+| `SettingsController.#renderShifts` | `private method` | **L636 - L688** | `() => any` | private method L636-L688 (53 lines) |
+| `SettingsController.#renderPositions` | `private method` | **L690 - L711** | `() => any` | private method L690-L711 (22 lines) |
+| `SettingsController.#renderAffiliations` | `private method` | **L713 - L735** | `() => any` | private method L713-L735 (23 lines) |
+| `SettingsController.#renderOfficialLocations` | `private method` | **L737 - L801** | `() => any` | private method L737-L801 (65 lines) |
+| `SettingsController.#openOfficialLocationModal` | `private method` | **L803 - L950** | `(editIndex = null) => any` | private method L803-L950 (148 lines) |
+| `updateMapLink` | `arrow_fn` | **L942 - L947** | `() => inferred` | Arrow Function L942-L947 |
+| `SettingsController.#collectMainAndColorFieldsIntoSettings` | `private method` | **L952 - L1028** | `() => any` | private method L952-L1028 (77 lines) |
+| `SettingsController.#persistSettings` | `private async method` | **L1030 - L1083** | `(showToastAlert = true) => Promise<any>` | private async method L1030-L1083 (54 lines) |
+| `SettingsController.#openModal` | `private method` | **L1085 - L1090** | `(title, bodyHtml, onSubmitCallback) => any` | private method L1085-L1090 (6 lines) |
+| `SettingsController.#closeModal` | `private method` | **L1092 - L1095** | `() => any` | private method L1092-L1095 (4 lines) |
+| `SettingsController.#buildMultiRowInputsHtml` | `private method` | **L1097 - L1116** | `(fieldLabel, placeholder) => any` | private method L1097-L1116 (20 lines) |
+| `SettingsController.#bindDynamicMultiRowEvents` | `private method` | **L1118 - L1146** | `(placeholder = 'ระบุข้อมูล...') => any` | private method L1118-L1146 (29 lines) |
+| `SettingsController.#getDynamicMultiRowValues` | `private method` | **L1148 - L1153** | `() => any` | private method L1148-L1153 (6 lines) |
+| `SettingsController.#bindEvents` | `private method` | **L1155 - L1729** | `() => any` | private method L1155-L1729 (575 lines) |
+| `mainClickHandler` | `async_arrow_fn` | **L1607 - L1725** | `(e) => inferred` | Arrow Function L1607-L1725 |
+| `SettingsController.#openShiftModal` | `private method` | **L1731 - L1822** | `(editIndex = null) => any` | private method L1731-L1822 (92 lines) |
+| `checkOvernightAuto` | `arrow_fn` | **L1812 - L1819** | `() => inferred` | Arrow Function L1812-L1819 |
+| `SettingsController.#openAddPositionStep1Modal` | `private method` | **L1824 - L1840** | `() => any` | private method L1824-L1840 (17 lines) |
+| `SettingsController.#openAddPositionStep2Modal` | `private method` | **L1842 - L1885** | `() => any` | private method L1842-L1885 (44 lines) |
+| `SettingsController.#openAddPositionStep3Modal` | `private method` | **L1887 - L1951** | `() => any` | private method L1887-L1951 (65 lines) |
+| `SettingsController.#openEditSinglePositionModal` | `private method` | **L1953 - L1976** | `(editIndex) => any` | private method L1953-L1976 (24 lines) |
+| `SettingsController.#openAddAffiliationStep1OrgModal` | `private method` | **L1978 - L1994** | `() => any` | private method L1978-L1994 (17 lines) |
+| `SettingsController.#openAddAffiliationStep2BureauModal` | `private method` | **L1996 - L2034** | `() => any` | private method L1996-L2034 (39 lines) |
+| `SettingsController.#openAddAffiliationStep3DivisionModal` | `private method` | **L2036 - L2092** | `() => any` | private method L2036-L2092 (57 lines) |
+| `SettingsController.#openAddAffiliationStep4GroupModal` | `private method` | **L2094 - L2178** | `() => any` | private method L2094-L2178 (85 lines) |
+| `SettingsController.#openEditSingleAffiliationModal` | `private method` | **L2180 - L2208** | `(editIndex) => any` | private method L2180-L2208 (29 lines) |
 
 ---
 
@@ -484,7 +486,7 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `06138958fed742e9` | **Total Lines:** `1272` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `29b06e280c7d276f` | **Total Lines:** `1272` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -654,7 +656,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `47fb14b7a7f96a17` | **Total Lines:** `1073` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `d6d1368444fc532a` | **Total Lines:** `1073` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -692,7 +694,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8c726583a02ff5fc` | **Total Lines:** `279` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `d4dacd5873efcfe1` | **Total Lines:** `279` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -733,15 +735,15 @@
 
 ## File: `docs/manual/manual-superadmin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bfe3b266371b0ded` | **Total Lines:** `1542` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6dbef44223ecb34f` | **Total Lines:** `1574` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L57** | `<head>` | HTML DOM Section L3-L57 |
 | `<div#mobileTocPanel>` | `html_dom_section` | **L96 - L107** | `id="mobileTocPanel"` | HTML DOM Section L96-L107 |
-| `<main>` | `html_dom_section` | **L173 - L1290** | `<main>` | HTML DOM Section L173-L1290 |
-| `<div#mockupModal>` | `html_dom_section` | **L1299 - L1325** | `id="mockupModal"` | HTML DOM Section L1299-L1325 |
-| `<div#mockupModalPanel>` | `html_dom_section` | **L1301 - L1324** | `id="mockupModalPanel"` | HTML DOM Section L1301-L1324 |
+| `<main>` | `html_dom_section` | **L173 - L1322** | `<main>` | HTML DOM Section L173-L1322 |
+| `<div#mockupModal>` | `html_dom_section` | **L1331 - L1357** | `id="mockupModal"` | HTML DOM Section L1331-L1357 |
+| `<div#mockupModalPanel>` | `html_dom_section` | **L1333 - L1356** | `id="mockupModalPanel"` | HTML DOM Section L1333-L1356 |
 
 ---
 
@@ -776,7 +778,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `868277b03db47d5e` | **Total Lines:** `432` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `45a8b560ead8a3d0` | **Total Lines:** `432` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -791,7 +793,7 @@
 
 ## File: `loading.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `98c40bfea4fdf354` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fdf893e2309c3d2c` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -802,7 +804,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `2289e4fea5329887` | **Total Lines:** `683` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `8e09c44394525167` | **Total Lines:** `683` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2325,6 +2327,79 @@
 
 ---
 
+## File: `pipeline/PIPE-20261117-move-announcement-drive-folder-to-tab1/qa_tab1_announcement_folder_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `d57e5ddd76c57aee` | **Total Lines:** `893` | **Imports:** `4` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `test` | `function` | **L13 - L22** | `(name, fn) => inferred` | Function L13-L22 |
+| `testAsync` | `async_function` | **L24 - L33** | `(name, fn) => inferred` | Function L24-L33 |
+| `MockStorage` | `class` | **L38 - L44** | `class MockStorage` | ============================================================================ |
+| `MockStorage.constructor` | `public constructor` | **L39 - L39** | `() => any` | public constructor L39-L39 (1 lines) |
+| `MockStorage.getItem` | `public method` | **L40 - L40** | `(k) => any` | public method L40-L40 (1 lines) |
+| `MockStorage.setItem` | `public method` | **L41 - L41** | `(k, v) => any` | public method L41-L41 (1 lines) |
+| `MockStorage.removeItem` | `public method` | **L42 - L42** | `(k) => any` | public method L42-L42 (1 lines) |
+| `MockStorage.clear` | `public method` | **L43 - L43** | `() => any` | public method L43-L43 (1 lines) |
+| `MockClassList` | `class` | **L46 - L67** | `class MockClassList` | Class Definition (22 lines) |
+| `MockClassList.constructor` | `public constructor` | **L47 - L47** | `(el) => any` | public constructor L47-L47 (1 lines) |
+| `MockClassList._tokens` | `public method` | **L48 - L48** | `() => any` | public method L48-L48 (1 lines) |
+| `MockClassList._save` | `public method` | **L49 - L49** | `(tokens) => any` | public method L49-L49 (1 lines) |
+| `MockClassList.add` | `public method` | **L50 - L54** | `(...cls) => any` | public method L50-L54 (5 lines) |
+| `MockClassList.remove` | `public method` | **L55 - L58** | `(...cls) => any` | public method L55-L58 (4 lines) |
+| `MockClassList.contains` | `public method` | **L59 - L59** | `(c) => any` | public method L59-L59 (1 lines) |
+| `MockClassList.toggle` | `public method` | **L60 - L66** | `(c, force) => any` | public method L60-L66 (7 lines) |
+| `parseAttributes` | `function` | **L69 - L77** | `(attrStr) => inferred` | Function L69-L77 |
+| `parseHtmlIntoChildren` | `function` | **L79 - L130** | `(parent, html) => inferred` | Function L79-L130 |
+| `collectText` | `function` | **L132 - L136** | `(el) => inferred` | Function L132-L136 |
+| `matchesSimpleSelector` | `function` | **L138 - L171** | `(el, part) => inferred` | Function L138-L171 |
+| `querySelectorAllInTree` | `function` | **L173 - L198** | `(root, selector) => inferred` | Function L173-L198 |
+| `walk` | `function` | **L177 - L194** | `(node, ancestors) => inferred` | Function L177-L194 |
+| `findByIdInTree` | `function` | **L200 - L207** | `(root, id) => inferred` | Function L200-L207 |
+| `createMockElement` | `function` | **L209 - L310** | `(tag = 'div', id = '') => inferred` | Function L209-L310 |
+| `setAttribute` | `public method` | **L244 - L248** | `(k, v) => any` | public method L244-L248 (5 lines) |
+| `getAttribute` | `public method` | **L249 - L253** | `(k) => any` | public method L249-L253 (5 lines) |
+| `appendChild` | `public method` | **L254 - L258** | `(child) => any` | public method L254-L258 (5 lines) |
+| `removeChild` | `public method` | **L259 - L262** | `(child) => any` | public method L259-L262 (4 lines) |
+| `remove` | `public method` | **L263 - L263** | `() => any` | public method L263-L263 (1 lines) |
+| `addEventListener` | `public method` | **L264 - L264** | `(ev, fn) => any` | public method L264-L264 (1 lines) |
+| `removeEventListener` | `public method` | **L265 - L268** | `(ev, fn) => any` | public method L265-L268 (4 lines) |
+| `dispatchEventAsync` | `public async method` | **L269 - L280** | `(ev) => Promise<any>` | public async method L269-L280 (12 lines) |
+| `dispatchEvent` | `public method` | **L281 - L290** | `(ev) => any` | public method L281-L290 (10 lines) |
+| `click` | `public method` | **L291 - L294** | `() => any` | public method L291-L294 (4 lines) |
+| `focus` | `public method` | **L295 - L295** | `(opts = undefined) => any` | public method L295-L295 (1 lines) |
+| `scrollIntoView` | `public method` | **L296 - L296** | `() => any` | public method L296-L296 (1 lines) |
+| `querySelector` | `public method` | **L297 - L297** | `(sel) => any` | public method L297-L297 (1 lines) |
+| `querySelectorAll` | `public method` | **L298 - L298** | `(sel) => any` | public method L298-L298 (1 lines) |
+| `closest` | `public method` | **L299 - L306** | `(sel) => any` | public method L299-L306 (8 lines) |
+| `makeQueryChain` | `function` | **L368 - L414** | `(table) => inferred` | Function L368-L414 |
+| `select` | `public method` | **L371 - L371** | `() => any` | public method L371-L371 (1 lines) |
+| `eq` | `public method` | **L372 - L372** | `() => any` | public method L372-L372 (1 lines) |
+| `neq` | `public method` | **L373 - L373** | `() => any` | public method L373-L373 (1 lines) |
+| `in` | `public method` | **L374 - L374** | `() => any` | public method L374-L374 (1 lines) |
+| `order` | `public method` | **L375 - L375** | `() => any` | public method L375-L375 (1 lines) |
+| `limit` | `public method` | **L376 - L376** | `() => any` | public method L376-L376 (1 lines) |
+| `maybeSingle` | `public method` | **L377 - L377** | `() => any` | public method L377-L377 (1 lines) |
+| `single` | `public method` | **L378 - L378** | `() => any` | public method L378-L378 (1 lines) |
+| `update` | `public method` | **L379 - L385** | `(patch) => any` | public method L379-L385 (7 lines) |
+| `upsert` | `public method` | **L386 - L392** | `(patch) => any` | public method L386-L392 (7 lines) |
+| `then` | `public method` | **L393 - L411** | `(resolve) => any` | public method L393-L411 (19 lines) |
+| `from` | `public method` | **L417 - L417** | `(table) => any` | public method L417-L417 (1 lines) |
+| `channel` | `public method` | **L418 - L421** | `() => any` | public method L418-L421 (4 lines) |
+| `addEventListener` | `public method` | **L432 - L432** | `() => any` | public method L432-L432 (1 lines) |
+| `removeEventListener` | `public method` | **L433 - L433** | `() => any` | public method L433-L433 (1 lines) |
+| `dispatchEvent` | `public method` | **L434 - L434** | `() => any` | public method L434-L434 (1 lines) |
+| `createElement` | `public method` | **L441 - L441** | `(tag) => any` | public method L441-L441 (1 lines) |
+| `getElementById` | `public method` | **L442 - L442** | `(id) => any` | public method L442-L442 (1 lines) |
+| `getElementsByTagName` | `public method` | **L443 - L443** | `() => any` | public method L443-L443 (1 lines) |
+| `querySelector` | `public method` | **L444 - L444** | `(sel) => any` | public method L444-L444 (1 lines) |
+| `querySelectorAll` | `public method` | **L445 - L445** | `(sel) => any` | public method L445-L445 (1 lines) |
+| `addEventListener` | `public method` | **L446 - L446** | `() => any` | public method L446-L446 (1 lines) |
+| `removeEventListener` | `public method` | **L447 - L447** | `() => any` | public method L447-L447 (1 lines) |
+| `mountRealSettingsDom` | `function` | **L549 - L555** | `() => inferred` | Function L549-L555 |
+
+---
+
 ## File: `pipeline/PIPE-20261117-sidebar-active-state-and-realtime-settings-fix/qa_sidebar_active_sync_test.mjs`
 - **Layer:** Application Module
 - **Hash:** `e5d19958621a7251` | **Total Lines:** `1017` | **Imports:** `4` | **Exports:** `None`
@@ -2403,7 +2478,7 @@
 
 ## File: `pipeline/PIPE-20261117-system-announcement-and-v2-10-sync/qa_v2_10_announcement_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `70afb7f889f79cd0` | **Total Lines:** `627` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `d669838bd3068fcc` | **Total Lines:** `640` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2439,7 +2514,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `670507571a0e5317` | **Total Lines:** `537` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `754a1ce407fdb21f` | **Total Lines:** `537` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2457,20 +2532,20 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c69976b81c7a0685` | **Total Lines:** `1065` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c7e0f0e93d4897c2` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L115** | `<head>` | HTML DOM Section L3-L115 |
 | `<div#bmaSidebarContainer>` | `html_dom_section` | **L119 - L119** | `id="bmaSidebarContainer"` | HTML DOM Section L119-L119 |
 | `<div#bmaTopbarContainer>` | `html_dom_section` | **L123 - L123** | `id="bmaTopbarContainer"` | HTML DOM Section L123-L123 |
-| `<main>` | `html_dom_section` | **L125 - L954** | `<main>` | HTML DOM Section L125-L954 |
-| `<div#prefixListContainer>` | `html_dom_section` | **L579 - L579** | `id="prefixListContainer"` | HTML DOM Section L579-L579 |
-| `<div#offsiteJobTypeListContainer>` | `html_dom_section` | **L596 - L596** | `id="offsiteJobTypeListContainer"` | HTML DOM Section L596-L596 |
-| `<div#specialReasonListContainer>` | `html_dom_section` | **L613 - L613** | `id="specialReasonListContainer"` | HTML DOM Section L613-L613 |
-| `<div#bmaFooterContainer>` | `html_dom_section` | **L956 - L956** | `id="bmaFooterContainer"` | HTML DOM Section L956-L956 |
-| `<div#modalAnnouncementPreview>` | `html_dom_section` | **L984 - L1006** | `id="modalAnnouncementPreview"` | HTML DOM Section L984-L1006 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L1008 - L1008** | `<script>` | Bootstrap script L1008-L1008 |
+| `<main>` | `html_dom_section` | **L125 - L971** | `<main>` | HTML DOM Section L125-L971 |
+| `<div#prefixListContainer>` | `html_dom_section` | **L597 - L597** | `id="prefixListContainer"` | HTML DOM Section L597-L597 |
+| `<div#offsiteJobTypeListContainer>` | `html_dom_section` | **L614 - L614** | `id="offsiteJobTypeListContainer"` | HTML DOM Section L614-L614 |
+| `<div#specialReasonListContainer>` | `html_dom_section` | **L631 - L631** | `id="specialReasonListContainer"` | HTML DOM Section L631-L631 |
+| `<div#bmaFooterContainer>` | `html_dom_section` | **L973 - L973** | `id="bmaFooterContainer"` | HTML DOM Section L973-L973 |
+| `<div#modalAnnouncementPreview>` | `html_dom_section` | **L1001 - L1023** | `id="modalAnnouncementPreview"` | HTML DOM Section L1001-L1023 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L1025 - L1025** | `<script>` | Bootstrap script L1025-L1025 |
 
 ---
 
@@ -2621,7 +2696,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e08ec5f75f1737ad` | **Total Lines:** `432` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5cf67f44f2798806` | **Total Lines:** `432` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

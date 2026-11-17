@@ -233,7 +233,7 @@
                                 <i class="fa-solid fa-cloud-arrow-up"></i>
                                 <span>4. เชื่อมต่อ Google Drive และ Apps Script</span>
                             </span>
-                            <p class="text-slate-500">กำหนด URL ของ Web App และ Drive Folder ID สำหรับรับภาพถ่ายลงเวลาปฏิบัติราชการ</p>
+                            <p class="text-slate-500">กำหนด URL ของ Web App และ Drive Folder ID ทั้งสำหรับเก็บรูปถ่ายลงเวลาและเก็บรูปประกาศระบบในแท็บ 1</p>
                         </div>
                     </div>
                 </div>
@@ -324,6 +324,35 @@
                                         </button>
                                     </div>
                                 </div>
+                                <!-- จัดเก็บไฟล์รูปถ่าย & รูปประกาศใน Google Drive -->
+                                <div class="sm:col-span-2 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-extrabold text-slate-800 dark:text-white flex items-center gap-1.5">
+                                            <i class="fa-brands fa-google-drive text-[#00744B]"></i>
+                                            <span>จัดเก็บไฟล์รูปถ่ายใน Google Drive (รูปลงเวลา + รูปประกาศ)</span>
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 font-bold text-[10px]">ใช้ Apps Script ร่วมกัน</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                        <div class="sm:col-span-2 space-y-1">
+                                            <span class="font-bold text-slate-600 dark:text-slate-300 text-[11px] block">Google Apps Script Web App URL (ใช้ร่วมกันทั้งระบบ):</span>
+                                            <input type="text" value="https://script.google.com/macros/s/AKfycb.../exec" readonly class="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                                        </div>
+                                        <div class="space-y-1">
+                                            <span class="font-bold text-slate-600 dark:text-slate-300 text-[11px] block">Google Drive Folder ID (เก็บรูปถ่ายลงเวลา):</span>
+                                            <input type="text" value="1CheckinPhotoFolderID..." readonly class="w-full p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                                        </div>
+                                        <div class="space-y-1">
+                                            <span class="font-bold text-slate-600 dark:text-slate-300 text-[11px] block">โฟลเดอร์ Google Drive เก็บรูปประกาศ *:</span>
+                                            <div class="flex gap-1.5">
+                                                <input type="text" value="1AnnouncementPosterFolderID..." readonly class="flex-1 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-mono text-[11px]" />
+                                                <button type="button" class="mockup-btn px-2.5 py-1.5 rounded-xl bg-sky-600 text-white font-bold text-[11px] hover:bg-sky-700 cursor-pointer shrink-0" data-title="ตรวจสอบโฟลเดอร์รูปประกาศ" data-desc="ในการใช้งานจริง ระบบจะตรวจสิทธิ์การเข้าถึงโฟลเดอร์เก็บรูปประกาศร่วมกับ Apps Script Web App URL ด้านบนแบบ strictFolder เพื่อป้องกันไฟล์ตกหล่นไปโฟลเดอร์ลงเวลา">
+                                                    ตรวจโฟลเดอร์
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -396,7 +425,7 @@
                         </div>
 
                         <div class="pt-2 flex justify-end">
-                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกแท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกทั้งชื่อหน่วยงาน ตราสัญลักษณ์ URL Google Drive และสวิตช์ควบคุมฟังก์ชันลงเวลาระดับระบบทั้งหมดพร้อมกัน">
+                            <button type="button" class="mockup-btn px-4 py-2 rounded-xl bg-[#480080] text-white font-bold text-xs hover:bg-[#380063] shadow-md cursor-pointer" data-title="บันทึกแท็บที่ 1: ข้อมูลหน่วยงาน &amp; ระบบ" data-desc="ในการใช้งานจริง ปุ่มนี้จะบันทึกทั้งชื่อหน่วยงาน ตราสัญลักษณ์ URL Google Drive (ทั้งโฟลเดอร์รูปถ่ายลงเวลาและโฟลเดอร์รูปประกาศ) และสวิตช์ควบคุมฟังก์ชันลงเวลาระดับระบบทั้งหมดพร้อมกัน โดยไม่รีเซ็ตประวัติการกดรับทราบประกาศเดิม">
                                 <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกแท็บที่ 1
                             </button>
                         </div>
@@ -579,9 +608,12 @@
                                 <b class="text-slate-800 dark:text-white block"><i class="fa-solid fa-align-left text-[#00744B] mr-1"></i>โหมดเขียนข้อความเอง</b>
                                 <p class="text-[11px] text-slate-500">กำหนด Head &amp; Body พร้อมจัดรูปแบบบรรทัด - , • , 1. เป็นการ์ดไฮไลต์สวยอัตโนมัติ</p>
                             </div>
-                            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
-                                <b class="text-slate-800 dark:text-white block"><i class="fa-regular fa-image text-teal-600 mr-1"></i>โหมดรูปภาพแนวมือถือ</b>
-                                <p class="text-[11px] text-slate-500">อัปโหลดลงโฟลเดอร์ Google Drive เฉพาะ (1080×1350 หรือ 1080×1920 px) แสดงแทนตัวหนังสือ</p>
+                            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <b class="text-slate-800 dark:text-white block"><i class="fa-regular fa-image text-teal-600 mr-1"></i>โหมดรูปภาพแนวมือถือ</b>
+                                    <button type="button" class="mockup-btn px-2 py-1 rounded-lg bg-sky-50 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300 border border-sky-200 dark:border-sky-800 font-bold text-[10px] cursor-pointer" data-title="ไปตั้งค่าโฟลเดอร์รูปประกาศในแท็บ 1" data-desc="โฟลเดอร์ Google Drive เก็บรูปประกาศถูกย้ายไปรวมไว้ที่ แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด &quot;ข้อมูลหน่วยงาน และข้อความระบบ&quot; ปุ่มนี้จะสลับหน้าจอไปแท็บ 1 ให้อัตโนมัติ">ไปตั้งค่าในแท็บ 1</button>
+                                </div>
+                                <p class="text-[11px] text-slate-500">อัปโหลดลงโฟลเดอร์ Google Drive เฉพาะที่ตั้งค่าไว้ในแท็บ 1 (1080×1350 หรือ 1080×1920 px) แสดงแทนตัวหนังสือ</p>
                             </div>
                         </div>
                         <div class="pt-1 flex justify-end gap-2">
@@ -637,7 +669,7 @@
                             <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-1">
                                 <strong class="text-slate-800 dark:text-white block text-sm">3. รูปโลโก้ &amp; Google Drive:</strong>
                                 <p class="text-slate-500 text-xs">
-                                    อัปโหลดไฟล์ภาพหรือระบุ URL พร้อมปุ่มทดสอบโหลดรูปภาพ และกำหนด Web App URL ของ Google Apps Script เพื่อจัดเก็บภาพถ่ายใบหน้าลง Google Drive
+                                    อัปโหลดไฟล์ภาพหรือระบุ URL พร้อมปุ่มทดสอบโหลดรูปภาพ และกำหนด Web App URL ของ Google Apps Script ร่วมกับ Folder ID ทั้งสำหรับเก็บรูปถ่ายลงเวลาและเก็บรูปประกาศระบบไว้ในแท็บ 1 ครบจบในจุดเดียว
                                 </p>
                             </div>
                         </div>
@@ -881,15 +913,15 @@
                         <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2.5">
                             <div class="font-bold text-slate-800 dark:text-white flex items-center gap-2 text-sm">
                                 <i class="fa-solid fa-brands fa-google-drive text-[#0971CE]"></i>
-                                <span>การเชื่อมต่อ Google Drive เก็บภาพถ่าย</span>
+                                <span>การเชื่อมต่อ Google Drive เก็บภาพถ่ายและรูปประกาศ</span>
                             </div>
                             <div class="space-y-2 text-xs text-slate-500">
                                 <p>
-                                    ระบบใช้ <b>Google Apps Script Web App</b> เป็นสะพานรับภาพถ่ายแบบ Base64 และแปลงเป็นไฟล์ <code class="font-mono">.jpg</code> จัดเก็บลงโฟลเดอร์ Google Drive ของหน่วยงานโดยอัตโนมัติ
+                                    ระบบใช้ <b>Google Apps Script Web App</b> (ตั้งค่าในแท็บ 1) เป็นสะพานรับภาพถ่ายแบบ Base64 และแปลงเป็นไฟล์จัดเก็บลงโฟลเดอร์ Google Drive ของหน่วยงานโดยแยก Folder ID ชัดเจนระหว่างโฟลเดอร์รูปถ่ายลงเวลากับโฟลเดอร์รูปประกาศระบบ
                                 </p>
                                 <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                     <span class="font-mono text-[11px] text-purple-600 dark:text-purple-400 block font-bold">Google Apps Script Web App:</span>
-                                    <span class="text-[10px]">ตั้งค่า Deploy เป็น "Anyone" เพื่อให้เว็บบราวเซอร์ส่งรูปได้โดยตรง</span>
+                                    <span class="text-[10px]">ตั้งค่า Deploy เป็น "Anyone" เพื่อให้เว็บบราวเซอร์ส่งรูปได้โดยตรงทั้งสองโฟลเดอร์</span>
                                 </div>
                             </div>
                         </div>
@@ -1106,11 +1138,11 @@
                         </div>
                         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
                             <b class="text-slate-800 dark:text-white block"><i class="fa-regular fa-image text-teal-600 mr-1"></i>2. รูปแบบอัปโหลดรูป / ลิงก์รูป (Mobile Image Mode):</b>
-                            <p class="text-slate-500 leading-relaxed">แสดงรูปภาพแทนตัวหนังสือ รองรับขนาดแนวตั้งสำหรับมือถือ <b>1080×1350 px (4:5)</b> หรือ <b>1080×1920 px (9:16)</b> (PNG/JPG/WebP ≤ 5 MB) พร้อมระบุและตรวจสิทธิ์โฟลเดอร์ Google Drive เฉพาะ</p>
+                            <p class="text-slate-500 leading-relaxed">แสดงรูปภาพแทนตัวหนังสือ รองรับขนาดแนวตั้งสำหรับมือถือ <b>1080×1350 px (4:5)</b> หรือ <b>1080×1920 px (9:16)</b> (PNG/JPG/WebP ≤ 5 MB) โดยกำหนดและตรวจสิทธิ์โฟลเดอร์ Google Drive เก็บรูปประกาศได้ใน <b>แท็บที่ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b> (และมีปุ่มลัดจากแท็บ 7 กระโดดไปแท็บ 1 ทันที)</p>
                         </div>
                     </div>
                     <div class="p-4 rounded-2xl bg-purple-50/70 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/50 text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-                        <b>การควบคุมช่วงวันที่ &amp; การนับครั้งเดียว:</b> กำหนดวันเริ่มต้น–สิ้นสุดตามเวลาไทย (UTC+7) หรือเว้นวันสิ้นสุดว่างเพื่อแสดงต่อเนื่อง เมื่อกดปุ่ม <b>"บันทึกการตั้งค่าประกาศระบบ"</b> ในแท็บ 7 ระบบจะอัปเดต <code class="font-mono">announcement_updated_at</code> ให้ผู้ใช้ทุกคนเห็นประกาศใหม่อีก 1 ครั้ง (การบันทึกแท็บ 1–6 จะไม่ทำให้ประกาศเดิมเด้งซ้ำ)
+                        <b>การควบคุมช่วงวันที่ &amp; การนับครั้งเดียว:</b> กำหนดวันเริ่มต้น–สิ้นสุดตามเวลาไทย (UTC+7) หรือเว้นวันสิ้นสุดว่างเพื่อแสดงต่อเนื่อง เมื่อกดปุ่ม <b>"บันทึกการตั้งค่าประกาศระบบ"</b> ในแท็บ 7 ระบบจะอัปเดต <code class="font-mono">announcement_updated_at</code> ให้ผู้ใช้ทุกคนเห็นประกาศใหม่อีก 1 ครั้ง (การบันทึกแท็บ 1–6 รวมถึงการเปลี่ยนโฟลเดอร์รูปประกาศในแท็บ 1 จะไม่แก้ <code class="font-mono">announcement_updated_at</code> และไม่ทำให้ประกาศเดิมเด้งซ้ำ)
                     </div>
                 </div>
             </section>
