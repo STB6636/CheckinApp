@@ -15,8 +15,10 @@ import { SystemUpdateModal } from './SystemUpdateModal.js';
 export class AppLayout {
     static #isLayoutMounted = false;
     static #isGlobalEventsBound = false;
+    static #isSettingsListenerBound = false;
     static #isRealtimeSyncInitialized = false;
     static #hasCheckedAnnouncement = false;
+    static #currentActivePage = 'dashboard';
     static #currentUser = null;
     static #settings = null;
     static #lastPendingSpecialCount = null;
@@ -99,6 +101,7 @@ export class AppLayout {
             document.body.appendChild(modalsContainer);
         }
 
+        AppLayout.#currentActivePage = activePage || AppLayout.#currentActivePage;
         AppLayout.#currentUser = currentUser;
         AppLayout.#settings = await SettingsModel.getSettings(false);
 
@@ -111,13 +114,25 @@ export class AppLayout {
             AppLayout.#bindGlobalDelegatedEvents();
             AppLayout.#isLayoutMounted = true;
 
-            window.addEventListener('bma:settings-updated', (e) => {
-                AppLayout.#settings = e.detail;
-                const currentActive = document.querySelector('#bmaSidebarDrawer a.active')?.dataset?.navId || activePage;
-                AppLayout.#renderSidebar(currentUser, AppLayout.#settings, currentActive);
-                AppLayout.#renderFooter(AppLayout.#settings);
-                AppLayout.refreshNotificationBell(currentUser);
-            });
+            if (!AppLayout.#isSettingsListenerBound) {
+                AppLayout.#isSettingsListenerBound = true;
+                window.addEventListener('bma:settings-updated', (e) => {
+                    const incoming = (e.detail && typeof e.detail === 'object')
+                        ? Object.fromEntries(Object.entries(e.detail).filter(([, v]) => v !== undefined))
+                        : {};
+                    AppLayout.#settings = {
+                        ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                        ...incoming
+                    };
+                    const currentActive = AppLayout.#currentActivePage
+                        || document.querySelector('#bmaSidebarDrawer a.active')?.dataset?.navId
+                        || activePage;
+                    const activeUser = AppLayout.#currentUser || currentUser;
+                    AppLayout.#renderSidebar(activeUser, AppLayout.#settings, currentActive);
+                    AppLayout.#renderMobileBottomNav(activeUser, currentActive);
+                    AppLayout.#renderFooter(AppLayout.#settings);
+                });
+            }
         } else {
             AppLayout.#updateActiveNavState(activePage, pageTitle, pageSubtitle);
         }
@@ -152,6 +167,7 @@ export class AppLayout {
     }
 
     static #updateActiveNavState(activePage, pageTitle, pageSubtitle) {
+        AppLayout.#currentActivePage = activePage || AppLayout.#currentActivePage;
         const titleEl = document.getElementById('topbarPageTitle');
         const subEl = document.getElementById('topbarPageSubtitle');
         if (titleEl && pageTitle) titleEl.textContent = pageTitle;
@@ -426,13 +442,18 @@ export class AppLayout {
                         <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">เมนูระบบบริหารจัดการ</div>
                         ${visibleMenus.map(item => {
                             const isActive = activePage === item.id;
+                            const badgeCount = item.badgeId === 'sidebarSpecialBadge'
+                                ? Number(AppLayout.#lastPendingSpecialCount || 0)
+                                : (item.badgeId === 'sidebarResetBadge'
+                                    ? Number(AppLayout.#lastPendingResetCount || 0)
+                                    : 0);
                             return `
-                                <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
+                                <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40 active' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
                                     <div class="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">
                                         <i class="fa-solid ${item.icon}"></i>
                                     </div>
                                     <span class="flex-1 truncate">${item.label}</span>
-                                    ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
+                                    ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white shadow">${badgeCount}</span>` : ''}
                                 </a>
                             `;
                         }).join('')}
@@ -661,22 +682,33 @@ export class AppLayout {
                     }
                     AppLayout.#lastAttendanceWatermark = watermark.attendanceSignature;
 
-                    if (AppLayout.#lastSettingsWatermark !== null && AppLayout.#lastSettingsWatermark !== watermark.settingsSignature) {
+                    const prevSettingsWatermark = AppLayout.#lastSettingsWatermark;
+                    AppLayout.#lastSettingsWatermark = watermark.settingsSignature;
+                    if (prevSettingsWatermark !== null && prevSettingsWatermark !== watermark.settingsSignature) {
                         sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
-                        if (watermark.settingsRow) {
-                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: watermark.settingsRow }));
+                        let freshSettings = null;
+                        try {
+                            freshSettings = await SettingsModel.getSettings(true);
+                        } catch (settingsErr) {
+                            console.warn('Hydrate settings from watermark failed, using safe merge fallback:', settingsErr);
+                            freshSettings = {
+                                ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                ...(watermark.settingsRow || {})
+                            };
+                        }
+                        if (freshSettings) {
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
                         }
                         window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
                             detail: {
                                 table: 'system_settings',
                                 action: 'watermark_sync',
-                                record: watermark.settingsRow,
+                                record: freshSettings || watermark.settingsRow,
                                 actor: currentUser?.full_name || 'Admin',
                                 timestamp: Date.now()
                             }
                         }));
                     }
-                    AppLayout.#lastSettingsWatermark = watermark.settingsSignature;
                 }
             } catch (wErr) {
                 console.warn('Sync watermark check error:', wErr);
@@ -826,18 +858,28 @@ export class AppLayout {
                             }
                         }));
                     })
-                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, (payload) => {
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, async (payload) => {
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
                         const actor = currentUser?.full_name || 'Admin';
+                        let freshSettings = null;
                         if (record) {
-                            sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(record));
-                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: record }));
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            try {
+                                freshSettings = await SettingsModel.getSettings(true);
+                            } catch (settingsErr) {
+                                console.warn('Hydrate settings on postgres_changes failed, using safe merge fallback:', settingsErr);
+                                freshSettings = {
+                                    ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                    ...record
+                                };
+                            }
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
                         }
                         window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
                             detail: {
                                 table: 'system_settings',
-                                record: record,
+                                record: freshSettings || record,
                                 action: action,
                                 actor: actor,
                                 timestamp: Date.now(),
@@ -850,12 +892,22 @@ export class AppLayout {
                     });
 
                 client.channel('bma_global_realtime_bus')
-                    .on('broadcast', { event: '*' }, (e) => {
+                    .on('broadcast', { event: '*' }, async (e) => {
                         if (e.event === 'settings_updated') {
                             sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
-                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: e.payload }));
+                            let freshSettings = null;
+                            try {
+                                freshSettings = await SettingsModel.getSettings(true);
+                            } catch (settingsErr) {
+                                console.warn('Hydrate settings on broadcast failed, using safe merge fallback:', settingsErr);
+                                freshSettings = {
+                                    ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                    ...(e.payload || {})
+                                };
+                            }
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
                             window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
-                                detail: { table: 'system_settings', action: 'broadcast_sync', timestamp: Date.now() }
+                                detail: { table: 'system_settings', record: freshSettings, action: 'broadcast_sync', timestamp: Date.now() }
                             }));
                         } else if (e.event === 'attendance_updated') {
                             AppLayout.refreshNotificationBell(currentUser);

@@ -89,20 +89,7 @@ export class SettingsController {
         }
         if (filterRealtimeEl) {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
-            const earlyWindowContainer = document.getElementById('containerEarlyShiftWindow');
-            const syncEarlyWindowVisibility = () => {
-                if (earlyWindowContainer) {
-                    if (filterRealtimeEl.checked) {
-                        earlyWindowContainer.classList.remove('opacity-40', 'pointer-events-none');
-                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = false;
-                    } else {
-                        earlyWindowContainer.classList.add('opacity-40', 'pointer-events-none');
-                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = true;
-                    }
-                }
-            };
-            syncEarlyWindowVisibility();
-            filterRealtimeEl.addEventListener('change', syncEarlyWindowVisibility);
+            this.#syncEarlyWindowVisibility();
         }
 
         const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
@@ -117,20 +104,7 @@ export class SettingsController {
         const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
         if (elRandGps) {
             elRandGps.checked = Boolean(this.settings.randomize_gps_checkout);
-            const elRadiusContainer = document.getElementById('containerRandomizeGpsRadius');
-            const syncRadiusVisibility = () => {
-                if (elRadiusContainer) {
-                    if (elRandGps.checked) {
-                        elRadiusContainer.classList.remove('opacity-40', 'pointer-events-none');
-                        if (elRadius) elRadius.disabled = false;
-                    } else {
-                        elRadiusContainer.classList.add('opacity-40', 'pointer-events-none');
-                        if (elRadius) elRadius.disabled = true;
-                    }
-                }
-            };
-            syncRadiusVisibility();
-            elRandGps.addEventListener('change', syncRadiusVisibility);
+            this.#syncRadiusVisibility();
         }
 
         const isSingleClick = Boolean(this.settings.single_click_checkin);
@@ -171,6 +145,34 @@ export class SettingsController {
         this.#renderAffiliations();
         this.#renderOfficialLocations();
         this.#renderAnnouncementTab();
+    }
+
+    #syncEarlyWindowVisibility() {
+        const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
+        const earlyShiftWindowEl = document.getElementById('setEarlyShiftWindowMinutes');
+        const earlyWindowContainer = document.getElementById('containerEarlyShiftWindow');
+        if (!earlyWindowContainer || !filterRealtimeEl) return;
+        if (filterRealtimeEl.checked) {
+            earlyWindowContainer.classList.remove('opacity-40', 'pointer-events-none');
+            if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = false;
+        } else {
+            earlyWindowContainer.classList.add('opacity-40', 'pointer-events-none');
+            if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = true;
+        }
+    }
+
+    #syncRadiusVisibility() {
+        const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
+        const elRadius = document.getElementById('setRandomizeGpsRadius');
+        const elRadiusContainer = document.getElementById('containerRandomizeGpsRadius');
+        if (!elRadiusContainer || !elRandGps) return;
+        if (elRandGps.checked) {
+            elRadiusContainer.classList.remove('opacity-40', 'pointer-events-none');
+            if (elRadius) elRadius.disabled = false;
+        } else {
+            elRadiusContainer.classList.add('opacity-40', 'pointer-events-none');
+            if (elRadius) elRadius.disabled = true;
+        }
     }
 
     #renderAnnouncementTab() {
@@ -1170,10 +1172,12 @@ export class SettingsController {
 
         document.getElementById('toggleFilterShiftsByRealtime')?.addEventListener('change', (e) => {
             this.settings.filter_shifts_by_realtime = Boolean(e.target.checked);
+            this.#syncEarlyWindowVisibility();
         });
 
         document.getElementById('toggleRandomizeGpsCheckout')?.addEventListener('change', (e) => {
             this.settings.randomize_gps_checkout = Boolean(e.target.checked);
+            this.#syncRadiusVisibility();
         });
 
         document.querySelectorAll('input[name="checkinRecordingMode"]').forEach(radio => {
