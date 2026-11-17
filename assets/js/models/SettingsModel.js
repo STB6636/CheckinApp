@@ -42,7 +42,7 @@ export class SettingsModel {
             if (cached) {
                 try {
                     const parsed = JSON.parse(cached);
-                    if (parsed && typeof parsed === 'object') {
+                    if (parsed && typeof parsed === 'object' && typeof parsed.announcement_enabled === 'boolean') {
                         if (!Array.isArray(parsed.offsite_job_types) || parsed.offsite_job_types.length === 0) {
                             try {
                                 const local = JSON.parse(localStorage.getItem('bma_offsite_job_types') || '[]');
@@ -88,10 +88,18 @@ export class SettingsModel {
             return structuredClone(Config.DEFAULT_SETTINGS);
         }
 
+        const rawColors = (data.category_colors && typeof data.category_colors === 'object') ? data.category_colors : {};
+        const announcementFallback = (rawColors._announcement && typeof rawColors._announcement === 'object')
+            ? rawColors._announcement
+            : null;
         const mergedColors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
-            ...(data.category_colors || {})
+            ...rawColors
         };
+        delete mergedColors._announcement;
+
+        const hasAnnouncementCols = typeof data.announcement_enabled === 'boolean' || data.announcement_updated_at !== undefined;
+        const annSource = hasAnnouncementCols ? data : (announcementFallback || {});
 
         const rawShifts = Array.isArray(data.work_shifts) && data.work_shifts.length > 0
             ? data.work_shifts
@@ -203,7 +211,16 @@ export class SettingsModel {
                     ? JSON.parse(localStorage.getItem('bma_official_locations_v2') || '[]')
                     : Config.DEFAULT_SETTINGS.official_locations),
             work_shifts: normalizedShifts,
-            category_colors: mergedColors
+            category_colors: mergedColors,
+            announcement_enabled: Boolean(annSource.announcement_enabled ?? Config.DEFAULT_SETTINGS.announcement_enabled),
+            announcement_mode: annSource.announcement_mode === 'image' ? 'image' : 'text',
+            announcement_start_date: String(annSource.announcement_start_date ?? ''),
+            announcement_end_date: String(annSource.announcement_end_date ?? ''),
+            announcement_title: String(annSource.announcement_title ?? ''),
+            announcement_body: String(annSource.announcement_body ?? ''),
+            announcement_image_url: String(annSource.announcement_image_url ?? ''),
+            announcement_drive_folder_id: String(annSource.announcement_drive_folder_id ?? ''),
+            announcement_updated_at: String(annSource.announcement_updated_at ?? '')
         };
 
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(merged));
@@ -213,9 +230,22 @@ export class SettingsModel {
     static async updateSettings(payload) {
         const db = DatabaseService.getInstance().client;
         const enforceGeofenceFlag = Boolean(payload.enforce_geofence_radius !== false);
+        const cleanInputColors = { ...(payload.category_colors || Config.DEFAULT_SETTINGS.category_colors) };
+        delete cleanInputColors._announcement;
         const mergedCategoryColors = {
-            ...(payload.category_colors || Config.DEFAULT_SETTINGS.category_colors),
+            ...cleanInputColors,
             enforce_geofence_radius: enforceGeofenceFlag
+        };
+        const announcementPayload = {
+            announcement_enabled: Boolean(payload.announcement_enabled),
+            announcement_mode: payload.announcement_mode === 'image' ? 'image' : 'text',
+            announcement_start_date: String(payload.announcement_start_date || '').trim(),
+            announcement_end_date: String(payload.announcement_end_date || '').trim(),
+            announcement_title: String(payload.announcement_title || '').trim(),
+            announcement_body: String(payload.announcement_body ?? ''),
+            announcement_image_url: String(payload.announcement_image_url || '').trim(),
+            announcement_drive_folder_id: String(payload.announcement_drive_folder_id || '').trim(),
+            announcement_updated_at: String(payload.announcement_updated_at || '').trim()
         };
         const updateData = {
             id: 1,
@@ -253,6 +283,7 @@ export class SettingsModel {
             work_shifts: payload.work_shifts || [],
             enforce_geofence_radius: enforceGeofenceFlag,
             category_colors: mergedCategoryColors,
+            ...announcementPayload,
             updated_at: new Date().toISOString()
         };
 
@@ -264,11 +295,20 @@ export class SettingsModel {
 
         if (error) {
             const fallbackUpdateData = { ...updateData };
-            let maxRetries = 6;
-            while (error && maxRetries > 0 && (error.code === '42703' || String(error.message || '').includes('column') || String(error.message || '').includes('does not exist'))) {
+            let maxRetries = 25;
+            const isMissingColErr = (err) => {
+                if (!err) return false;
+                const msg = `${err.message || ''} ${err.details || ''} ${err.hint || ''}`;
+                return err.code === 'PGRST204'
+                    || err.code === '42703'
+                    || msg.includes('column')
+                    || msg.includes('does not exist')
+                    || msg.includes('schema cache');
+            };
+            while (error && maxRetries > 0 && isMissingColErr(error)) {
                 maxRetries--;
                 let strippedAny = false;
-                const errMsg = String(error.message || '');
+                const errMsg = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`;
                 const knownOptionalColumns = [
                     'offsite_job_types',
                     'special_request_reasons',
@@ -278,18 +318,35 @@ export class SettingsModel {
                     'disable_normal_hours_checkin',
                     'randomize_gps_radius_meters',
                     'randomize_gps_checkout',
-                    'early_shift_window_minutes'
+                    'early_shift_window_minutes',
+                    'announcement_enabled',
+                    'announcement_mode',
+                    'announcement_start_date',
+                    'announcement_end_date',
+                    'announcement_title',
+                    'announcement_body',
+                    'announcement_image_url',
+                    'announcement_drive_folder_id',
+                    'announcement_updated_at'
                 ];
                 for (const col of knownOptionalColumns) {
                     if (errMsg.includes(col) && col in fallbackUpdateData) {
                         delete fallbackUpdateData[col];
+                        if (col.startsWith('announcement_')) {
+                            fallbackUpdateData.category_colors = {
+                                ...mergedCategoryColors,
+                                _announcement: announcementPayload
+                            };
+                        }
                         strippedAny = true;
                     }
                 }
                 if (errMsg.includes('enforce_geofence_radius') || error.code === '42703') {
                     if ('enforce_geofence_radius' in fallbackUpdateData) {
                         delete fallbackUpdateData.enforce_geofence_radius;
-                        fallbackUpdateData.category_colors = mergedCategoryColors;
+                        fallbackUpdateData.category_colors = {
+                            ...(fallbackUpdateData.category_colors || mergedCategoryColors)
+                        };
                         strippedAny = true;
                     }
                 }
@@ -306,7 +363,8 @@ export class SettingsModel {
 
         try {
             DatabaseService.getInstance().broadcastRealtimeEvent('settings_updated', {
-                enforce_geofence_radius: enforceGeofenceFlag
+                enforce_geofence_radius: enforceGeofenceFlag,
+                announcement_updated_at: announcementPayload.announcement_updated_at
             });
         } catch (e) {}
 
@@ -330,9 +388,16 @@ export class SettingsModel {
         try { localStorage.setItem('bma_offsite_job_types', JSON.stringify(offsiteJobTypesVal)); } catch (e) {}
         const specialReasonsVal = Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons;
         try { localStorage.setItem('bma_special_request_reasons', JSON.stringify(specialReasonsVal)); } catch (e) {}
+        const normalizedSavedColors = {
+            ...Config.DEFAULT_SETTINGS.category_colors,
+            ...(data?.category_colors && typeof data.category_colors === 'object' ? data.category_colors : mergedCategoryColors)
+        };
+        delete normalizedSavedColors._announcement;
+
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
+            category_colors: normalizedSavedColors,
             allow_gallery_fallback: typeof data?.allow_gallery_fallback === 'boolean'
                 ? data.allow_gallery_fallback
                 : allowGalleryVal,
@@ -362,7 +427,34 @@ export class SettingsModel {
                 : offsiteJobTypesVal,
             special_request_reasons: Array.isArray(data?.special_request_reasons)
                 ? data.special_request_reasons
-                : specialReasonsVal
+                : specialReasonsVal,
+            announcement_enabled: typeof data?.announcement_enabled === 'boolean'
+                ? data.announcement_enabled
+                : announcementPayload.announcement_enabled,
+            announcement_mode: data?.announcement_mode !== undefined
+                ? (data.announcement_mode === 'image' ? 'image' : 'text')
+                : announcementPayload.announcement_mode,
+            announcement_start_date: data?.announcement_start_date !== undefined
+                ? String(data.announcement_start_date || '')
+                : announcementPayload.announcement_start_date,
+            announcement_end_date: data?.announcement_end_date !== undefined
+                ? String(data.announcement_end_date || '')
+                : announcementPayload.announcement_end_date,
+            announcement_title: data?.announcement_title !== undefined
+                ? String(data.announcement_title || '')
+                : announcementPayload.announcement_title,
+            announcement_body: data?.announcement_body !== undefined
+                ? String(data.announcement_body ?? '')
+                : announcementPayload.announcement_body,
+            announcement_image_url: data?.announcement_image_url !== undefined
+                ? String(data.announcement_image_url || '')
+                : announcementPayload.announcement_image_url,
+            announcement_drive_folder_id: data?.announcement_drive_folder_id !== undefined
+                ? String(data.announcement_drive_folder_id || '')
+                : announcementPayload.announcement_drive_folder_id,
+            announcement_updated_at: data?.announcement_updated_at !== undefined
+                ? String(data.announcement_updated_at || '')
+                : announcementPayload.announcement_updated_at
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));

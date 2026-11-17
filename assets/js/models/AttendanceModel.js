@@ -333,7 +333,7 @@ export class AttendanceModel {
                 signal: controller.signal,
                 headers: {
                     'Accept': 'application/json, application/osm3s+json, */*',
-                    'User-Agent': 'BMA-CheckinApp-Mobile/2.7 (Bangkok Metropolitan Administration)',
+                    'User-Agent': 'BMA-CheckinApp-Mobile/2.10 (Bangkok Metropolitan Administration)',
                     ...customHeaders
                 }
             });
@@ -1123,7 +1123,7 @@ export class AttendanceModel {
 
         try {
             const data = await AttendanceModel.#fetchWithFastTimeout(url, 2200, {
-                'User-Agent': 'CheckinApp-BMA/2.0'
+                'User-Agent': 'CheckinApp-BMA/2.10'
             });
             if (!data || !Array.isArray(data) || data.length === 0) {
                 return [];

@@ -7,7 +7,8 @@
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : 'verify';
   var folderId = (e && e.parameter && e.parameter.folderId) ? e.parameter.folderId : '';
-  return handleVerifyFolder(folderId);
+  var strictFolder = (e && e.parameter && e.parameter.strictFolder === 'true');
+  return handleVerifyFolder(folderId, strictFolder);
 }
 
 function doPost(e) {
@@ -15,9 +16,10 @@ function doPost(e) {
     var payload = JSON.parse(e.postData.contents);
     var action = payload.action || 'upload';
     var folderId = payload.folderId || '';
+    var strictFolder = payload.strictFolder === true;
 
     if (action === 'verify') {
-      return handleVerifyFolder(folderId);
+      return handleVerifyFolder(folderId, strictFolder);
     }
 
     if (action === 'upload') {
@@ -25,8 +27,8 @@ function doPost(e) {
       var fileName = payload.fileName || ('Checkin_' + new Date().getTime() + '.jpg');
       var mimeType = payload.mimeType || 'image/jpeg';
 
-      var folder = getOrCreateTargetFolder(folderId);
-      var cleanBase64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
+      var folder = getOrCreateTargetFolder(folderId, strictFolder);
+      var cleanBase64 = base64Data.replace(/^data:image\/[a-zA-Z0-9+.-]+;base64,/, '');
       var decodedBytes = Utilities.base64Decode(cleanBase64);
       var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
 
@@ -34,7 +36,13 @@ function doPost(e) {
       try {
         file = folder.createFile(blob);
       } catch (createErr) {
-        var fallbackFolder = getOrCreateTargetFolder('');
+        if (strictFolder) {
+          return createJsonResponse({
+            success: false,
+            message: 'ไม่สามารถบันทึกไฟล์ในโฟลเดอร์ Google Drive ที่ระบุได้: ' + createErr.toString()
+          });
+        }
+        var fallbackFolder = getOrCreateTargetFolder('', false);
         file = fallbackFolder.createFile(blob);
       }
 
@@ -66,9 +74,9 @@ function doPost(e) {
   }
 }
 
-function handleVerifyFolder(folderId) {
+function handleVerifyFolder(folderId, strictFolder) {
   try {
-    var folder = getOrCreateTargetFolder(folderId);
+    var folder = getOrCreateTargetFolder(folderId, Boolean(strictFolder));
     return createJsonResponse({
       success: true,
       folderId: folder.getId(),
@@ -84,9 +92,16 @@ function handleVerifyFolder(folderId) {
   }
 }
 
-function getOrCreateTargetFolder(folderId) {
-  if (folderId && folderId.trim() !== '') {
-    var cleanId = extractFolderIdFromInput(folderId.trim());
+function getOrCreateTargetFolder(folderId, strictFolder) {
+  var cleanInput = folderId ? String(folderId).trim() : '';
+  if (strictFolder && !cleanInput) {
+    throw new Error('กรุณาระบุรหัสหรือลิงก์โฟลเดอร์ Google Drive ก่อนใช้งาน (โหมด strictFolder)');
+  }
+  if (cleanInput !== '') {
+    var cleanId = extractFolderIdFromInput(cleanInput);
+    if (strictFolder && (!cleanId || cleanId.length < 10)) {
+      throw new Error('รูปแบบรหัสโฟลเดอร์ Google Drive ไม่ถูกต้อง');
+    }
     return DriveApp.getFolderById(cleanId);
   }
   var defaultFolderName = 'BMA_Checkin_Photos';

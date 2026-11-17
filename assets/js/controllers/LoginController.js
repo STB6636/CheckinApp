@@ -33,6 +33,9 @@ export class LoginController {
             this.#loadOrganizationBranding(),
             SystemUpdateModal.init({ targetBadgeSlot: '#loginVersionBadgeSlot' })
         ]);
+        if (this.settings) {
+            SystemUpdateModal.checkAndShowAnnouncement(this.settings);
+        }
     }
 
     async #loadOrganizationBranding() {

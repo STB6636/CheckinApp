@@ -351,21 +351,31 @@ export class UIHelpers {
         });
     }
 
-    static async verifyGoogleDriveLink(scriptUrl, folderId = '') {
+    static async verifyGoogleDriveLink(scriptUrl, folderId = '', options = {}) {
         const cleanUrl = String(scriptUrl || '').trim();
+        const strictFolder = Boolean(options && options.strictFolder);
+        const cleanFolderId = String(folderId || '').trim();
+
         if (!cleanUrl) {
             return { success: false, message: 'กรุณากรอกลิงก์ Google Drive / Apps Script Web App ก่อนกดตรวจสอบ' };
         }
 
+        if (strictFolder && !cleanFolderId) {
+            return { success: false, message: 'กรุณาระบุรหัสหรือลิงก์โฟลเดอร์ Google Drive ก่อนกดตรวจสอบ' };
+        }
+
         if (cleanUrl.includes('script.google.com') && cleanUrl.includes('/exec')) {
             try {
-                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(folderId || '')}`;
+                const strictParam = strictFolder ? '&strictFolder=true' : '';
+                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(cleanFolderId)}${strictParam}`;
                 const res = await fetch(verifyEndpoint, { method: 'GET', redirect: 'follow' });
                 const data = await res.json();
                 if (data && data.success) {
                     return {
                         success: true,
+                        folderId: data.folderId || cleanFolderId,
                         folderName: data.folderName || 'BMA_Checkin_Photos',
+                        folderUrl: data.folderUrl || '',
                         message: data.message || 'ตรวจสอบลิงก์สำเร็จ พร้อมจัดเก็บไฟล์รูปถ่ายใน Google Drive'
                     };
                 }
@@ -376,6 +386,13 @@ export class UIHelpers {
                     message: 'ไม่สามารถเชื่อมต่อกับ Google Apps Script ได้ กรุณาตรวจสอบว่าตั้งค่าสิทธิ์ Web App เป็น Anyone แล้ว'
                 };
             }
+        }
+
+        if (strictFolder && (!cleanUrl.includes('script.google.com') || !cleanUrl.includes('/exec'))) {
+            return {
+                success: false,
+                message: 'กรุณาระบุลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 เพื่อตรวจสอบและอัปโหลดไฟล์เข้าโฟลเดอร์ประกาศ'
+            };
         }
 
         if (cleanUrl.includes('drive.google.com')) {
@@ -395,15 +412,38 @@ export class UIHelpers {
         };
     }
 
-    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings) {
+    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings, options = {}) {
         if (!base64DataUrl) return '';
         if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
 
         const scriptUrl = String(settings?.google_drive_script_url || '').trim();
-        const cleanFolderId = String(settings?.google_drive_folder_id || '').trim();
+        const hasFolderOverride = options && Object.prototype.hasOwnProperty.call(options, 'folderId');
+        const cleanFolderId = String(hasFolderOverride ? options.folderId : (settings?.google_drive_folder_id || '')).trim();
+        const strictFolder = Boolean(options && options.strictFolder);
+
+        const mimeMatch = String(base64DataUrl).match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+        const detectedMime = String(options?.mimeType || (mimeMatch ? mimeMatch[1] : 'image/jpeg')).toLowerCase();
+        const extMap = {
+            'image/png': 'png',
+            'image/webp': 'webp',
+            'image/gif': 'gif',
+            'image/svg+xml': 'svg',
+            'image/jpeg': 'jpg',
+            'image/jpg': 'jpg'
+        };
+        const fileExt = extMap[detectedMime] || 'jpg';
+
+        if (strictFolder) {
+            if (!scriptUrl || !scriptUrl.includes('script.google.com')) {
+                throw new Error('กรุณาตั้งค่าลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 ก่อนอัปโหลดรูปภาพ');
+            }
+            if (!cleanFolderId) {
+                throw new Error('กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศก่อนอัปโหลด');
+            }
+        }
 
         if (scriptUrl && scriptUrl.includes('script.google.com')) {
-            const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
+            const fileName = String(options?.fileName || `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.${fileExt}`);
 
             // Attempt 1: Upload to configured folderId
             try {
@@ -414,8 +454,9 @@ export class UIHelpers {
                     body: JSON.stringify({
                         action: 'upload',
                         folderId: cleanFolderId,
+                        strictFolder,
                         fileName,
-                        mimeType: 'image/jpeg',
+                        mimeType: detectedMime,
                         base64Data: base64DataUrl
                     })
                 });
@@ -423,12 +464,18 @@ export class UIHelpers {
                 if (result && result.success && result.url) {
                     return result.url;
                 }
+                if (strictFolder) {
+                    throw new Error(result?.message || 'ไม่สามารถอัปโหลดรูปภาพไปยังโฟลเดอร์ Google Drive ที่ระบุได้');
+                }
             } catch (err) {
+                if (strictFolder) {
+                    throw err instanceof Error ? err : new Error('อัปโหลดรูปภาพไปยัง Google Drive ไม่สำเร็จ');
+                }
                 console.warn('Google Drive upload attempt 1 failed:', err);
             }
 
-            // Attempt 2: If cleanFolderId was non-empty and failed, retry with default folder ('')
-            if (cleanFolderId) {
+            // Attempt 2: If cleanFolderId was non-empty and failed (non-strict check-in flow), retry with default folder ('')
+            if (cleanFolderId && !strictFolder) {
                 try {
                     const fallbackResponse = await fetch(scriptUrl, {
                         method: 'POST',
@@ -438,7 +485,7 @@ export class UIHelpers {
                             action: 'upload',
                             folderId: '',
                             fileName,
-                            mimeType: 'image/jpeg',
+                            mimeType: detectedMime,
                             base64Data: base64DataUrl
                         })
                     });
@@ -452,10 +499,10 @@ export class UIHelpers {
             }
         }
 
-        if (scriptUrl && scriptUrl.includes('drive.google.com')) {
+        if (scriptUrl && scriptUrl.includes('drive.google.com') && !strictFolder) {
             const match = scriptUrl.match(/[-\w]{25,}/);
             const fid = match ? match[0] : 'drive_folder';
-            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.jpg')}`;
+            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.' + fileExt)}`;
         }
 
         return base64DataUrl;

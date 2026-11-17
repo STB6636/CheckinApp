@@ -1,6 +1,6 @@
 /**
  * @file assets/js/core/Config.js
- * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.7
+ * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ v2.10.0
  */
 
 export class Config {
@@ -17,7 +17,8 @@ export class Config {
         WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7',
         OFFICIAL_LOCATIONS: 'bma_official_locations_v2',
         REMEMBER_ME: 'bma_remember_me',
-        REMEMBER_USERNAME: 'bma_remember_username'
+        REMEMBER_USERNAME: 'bma_remember_username',
+        LAST_SEEN_ANNOUNCEMENT: 'bma_last_seen_announcement_id'
     };
 
     static OFFICIAL_STATUSES = [
@@ -52,6 +53,15 @@ export class Config {
         early_shift_window_minutes: 30,
         google_drive_script_url: '',
         google_drive_folder_id: '',
+        announcement_enabled: false,
+        announcement_mode: 'text',
+        announcement_start_date: '',
+        announcement_end_date: '',
+        announcement_title: '',
+        announcement_body: '',
+        announcement_image_url: '',
+        announcement_drive_folder_id: '',
+        announcement_updated_at: '',
         prefixes: ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'],
         positions: [
             { type: 'ประเภททั่วไป', title: 'เจ้าพนักงานเทศกิจ', level: 'ปฏิบัติงาน' },

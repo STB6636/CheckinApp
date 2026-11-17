@@ -189,7 +189,7 @@
                     ครอบคลุมการตรวจสอบภาพรวมสถิติรายวัน การพิจารณาอนุมัติคำขอพิเศษ (เดี่ยวและกลุ่ม) การออกรายงานราชการ PDF และ Excel การจัดการทะเบียนประวัติบุคลากร และการอนุมัติรีเซ็ตรหัสผ่านตามมาตรฐานความปลอดภัยข้อมูล
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 29 ตุลาคม 2569 (V2.7+)</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 17 พฤศจิกายน 2569 (V2.10.0)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-[#0971CE]"></i> รองรับการแบ่งสิทธิ์ตามโครงสร้าง กทม.</span>
                 </div>
@@ -527,14 +527,24 @@
                         </div>
                     </div>
 
-                    <!-- Group By Options -->
-                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-xs">
-                        <strong class="text-slate-800 dark:text-white block mb-1">
-                            <i class="fa-solid fa-layer-group text-[#0971CE] mr-1"></i>ตัวเลือกการจัดกลุ่มตาราง (Group By):
-                        </strong>
-                        <p class="text-slate-500">
-                            สามารถสลับมุมมองระหว่าง <i>"มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย"</i> หรือ <i>"มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน"</i> เพื่อให้สอดคล้องกับโครงสร้างการบังคับบัญชาของหน่วยงาน
-                        </p>
+                    <!-- Group By & Realtime Concurrency -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
+                            <strong class="text-slate-800 dark:text-white block mb-1">
+                                <i class="fa-solid fa-layer-group text-[#0971CE] mr-1"></i>ตัวเลือกการจัดกลุ่ม &amp; ป้ายหมายเหตุ 2 บรรทัด:
+                            </strong>
+                            <p class="text-slate-500 leading-relaxed">
+                                สลับมุมมองได้ทั้ง <i>"สำนักงาน/กอง &gt; ส่วน/ฝ่าย"</i> และ <i>"สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน"</i> พร้อมป้ายหมายเหตุ 2 บรรทัดแยกชัดเจนระหว่าง <span class="font-bold text-emerald-700 dark:text-emerald-300">[ในสถานที่]</span> และ <span class="font-bold text-sky-700 dark:text-sky-300">[นอกสถานที่]</span>
+                            </p>
+                        </div>
+                        <div class="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/60">
+                            <strong class="text-indigo-900 dark:text-indigo-200 block mb-1">
+                                <i class="fa-solid fa-arrows-rotate text-indigo-600 dark:text-indigo-400 mr-1"></i>Tri-layer Realtime Sync &amp; ป้องกันอนุมัติชนกัน:
+                            </strong>
+                            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                                ข้อมูลคำขอใหม่และการตัดสินอัปเดตข้ามเครื่องอัตโนมัติ (Broadcast + Postgres Changes + Watermark Poll) หากผู้ดูแลคนอื่นกดอนุมัติ/ปฏิเสธรายการเดียวกันก่อน ระบบจะล็อกแถวพร้อมแจ้งเตือนทันทีเพื่อป้องกันการกดซ้ำ
+                            </p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -629,23 +639,23 @@
                             </div>
                         </div>
 
-                        <!-- 4. GPS Columns -->
-                        <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-2">
+                        <!-- 4. GPS Columns & 2-Line Location -->
+                        <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 space-y-2.5">
                             <strong class="text-emerald-950 dark:text-emerald-200 block text-sm font-bold flex items-center gap-2">
                                 <i class="fa-solid fa-map-location-dot text-[#00744B]"></i>
-                                <span>4. ตารางรายงานแยก 2 คอลัมน์พิกัด GPS (พิกัดเข้างาน และ พิกัดออกงาน):</span>
+                                <span>4. ตารางรายงานแสดงสถานที่ 2 บรรทัด, หมายเหตุ [ในสถานที่]/[นอกสถานที่] และซ่อน GPS อัตโนมัติ:</span>
                             </strong>
                             <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
-                                เพื่อความโปร่งใสและถูกต้องตามข้อเท็จจริง ตารางรายงานจะแยกคอลัมน์พิกัด GPS ออกจากกันชัดเจนเป็น 2 คอลัมน์:
+                                เพื่อความกระชับอ่านง่ายบนทุกหน้าจอและกระดาษพิมพ์ ตารางรายงานจะแสดงข้อมูลสถานที่แบบ <b>2 บรรทัด (ไม่แสดงตัวเลข Lat/Lng รกตาในตารางหลัก)</b> และซ่อนคอลัมน์ GPS อัตโนมัติเมื่อ SuperAdmin ปิดบังคับการจับพิกัด (<code class="font-mono">require_gps = false</code>):
                             </p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/60 space-y-1">
-                                    <b class="text-[#00744B] dark:text-emerald-300 block font-bold">คอลัมน์: พิกัด GPS เข้างาน</b>
-                                    <span class="text-slate-500 text-[11px] block">แสดงชื่อสถานที่จุดเช็กอินเข้างาน พร้อมพิกัดละติจูด ลองจิจูดจริง (เช่น 13.733790° N, 100.468261° E) และปุ่มกดเปิด Google Maps ทันที</span>
+                                    <b class="text-[#00744B] dark:text-emerald-300 block font-bold">คอลัมน์: สถานที่เข้างาน / ออกงาน (2 บรรทัด)</b>
+                                    <span class="text-slate-500 text-[11px] block">บรรทัด 1: ป้ายโหมด [ในสถานที่]/[นอกสถานที่] พร้อมระยะทางจากสถานที่ราชการ &bull; บรรทัด 2: ชื่อสถานที่สำคัญ (คลิกแถวเพื่อดูพิกัด Lat/Lng และแผนที่เต็มใน Resume Profile)</span>
                                 </div>
                                 <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-200 dark:border-emerald-700/60 space-y-1">
-                                    <b class="text-[#0971CE] dark:text-sky-300 block font-bold">คอลัมน์: พิกัด GPS ออกงาน</b>
-                                    <span class="text-slate-500 text-[11px] block">แสดงชื่อสถานที่จุดเช็กอินออกงาน (ในโหมดลงเวลาพิเศษ ระบบจะแสดงพิกัดที่สุ่มรอบจุดเข้างานในรัศมีที่กำหนด เช่น 20 เมตร พร้อมสถานที่ใกล้เคียง)</span>
+                                    <b class="text-[#0971CE] dark:text-sky-300 block font-bold">Realtime Differential Sync (ครบ 5 หน้า Admin)</b>
+                                    <span class="text-slate-500 text-[11px] block">Dashboard, Approvals, Reports, Personnel และ Users ซิงค์ข้อมูลอัตโนมัติแบบเรียลไทม์โดยไม่กระพริบหน้าจอ</span>
                                 </div>
                             </div>
                         </div>
@@ -711,7 +721,7 @@
                                 <span>1. พิมพ์ / ส่งออก PDF ในแท็บใหม่</span>
                             </div>
                             <p class="text-xs text-slate-500 leading-relaxed">
-                                กดปุ่ม <b>"พิมพ์/ส่งออก PDF"</b> ระบบจะเปิดแท็บเบราว์เซอร์ใหม่ จัดหน้าเอกสารราชการที่มีตราครุฑ/โลโก้ กทม. ชื่อหน่วยงาน ตารางสรุปเวลา และช่องลงนามผู้มีอำนาจ พร้อมเปิดหน้าต่าง Print อัตโนมัติ (เลือก Save as PDF ได้)
+                                กดปุ่ม <b>"พิมพ์/ส่งออก PDF"</b> ระบบจะเปิดแท็บเบราว์เซอร์ใหม่ จัดหน้าเอกสารราชการที่มีโลโก้หน่วยงาน ชื่อหน่วยงาน ช่วงวันที่ และตารางสรุปเวลาแบบ <b>ต่อเนื่องไม่เว้นช่วงหน้ากระดาษว่าง</b> (หัวตารางซ้ำอัตโนมัติเมื่อขึ้นหน้าใหม่ ไม่ตัดแถวกลางบรรทัด) พร้อมช่องลงนามผู้รับรอง
                             </p>
                             <button type="button" class="mockup-btn px-3.5 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 cursor-pointer" data-title="จำลอง: ปุ่มพิมพ์/ส่งออก PDF" data-desc="ในการใช้งานจริง ปุ่มนี้จะสร้างหน้าเอกสารแบบฟอร์มราชการ กทม. พร้อมหัวตราครุฑและช่องลงนามผู้บังคับบัญชาในแท็บใหม่">
                                 <i class="fa-solid fa-file-pdf mr-1"></i>ทดสอบปุ่มพิมพ์ PDF ราชการ
@@ -1105,7 +1115,7 @@
             <i class="fa-solid fa-landmark text-[#0971CE]"></i>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร</span>
         </div>
-        <p>คู่มือการใช้งานสำหรับผู้ดูแลระบบ (Admin Manual — Bureau &amp; Division Level) • ฉบับ 27 ตุลาคม 2569</p>
+        <p>คู่มือการใช้งานสำหรับผู้ดูแลระบบ (Admin Manual — Bureau &amp; Division Level) • ฉบับ 17 พฤศจิกายน 2569 (V2.10.0)</p>
     </footer>
 
     <!-- Interactive Scripts: Theme, Mobile TOC, Scrollspy, Back to Top, FAQ Accordion, Mockup Alerts -->

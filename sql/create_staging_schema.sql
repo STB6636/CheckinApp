@@ -55,6 +55,18 @@ ALTER TABLE staging.system_settings
 ADD COLUMN IF NOT EXISTS special_request_reasons JSONB NOT NULL 
 DEFAULT '["ลืมลงเวลาปฏิบัติราชการ", "โทรศัพท์/อุปกรณ์ขัดข้อง", "ระบบอินเทอร์เน็ตขัดข้อง", "ปฏิบัติงานภารกิจเร่งด่วน", "อื่นๆ"]'::jsonb;
 
+-- เพิ่มคอลัมน์ระบบประกาศระบบ 9 คอลัมน์ (v2.10.0)
+ALTER TABLE staging.system_settings
+ADD COLUMN IF NOT EXISTS announcement_enabled BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS announcement_mode TEXT DEFAULT 'text',
+ADD COLUMN IF NOT EXISTS announcement_start_date TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_end_date TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_title TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_body TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_image_url TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_drive_folder_id TEXT DEFAULT '',
+ADD COLUMN IF NOT EXISTS announcement_updated_at TEXT DEFAULT '';
+
 -- 5. เพิ่มคอลัมน์ใหม่สำหรับบันทึกโหมดและระยะทางใน staging.attendance_logs
 ALTER TABLE staging.attendance_logs 
 ADD COLUMN IF NOT EXISTS location_mode TEXT NOT NULL DEFAULT 'ONSITE';

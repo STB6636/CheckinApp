@@ -14,10 +14,10 @@ Use this skill whenever:
 ## Core Architecture
 1. **Deterministic Auto-Stamper (`.ai_map/vscode_ast_mapper.mjs` -> `syncFrontendCacheVersion()`)**:
    - Normalizes frontend file contents (stripping existing `CURRENT_APP_BUILD` and `?v=...` tokens) and computes a composite SHA-256 `contentHash`.
-   - When `contentHash` changes, writes root `version.json` (`{ buildId, contentHash, updatedAt }`) and stamps `CURRENT_APP_BUILD = '<buildId>'` and `?v=<buildId>` across all 8 HTML entry pages (`index.html`, `checkin.html`, `dashboard.html`, `approvals.html`, `reports.html`, `personnel.html`, `settings.html`, `users.html`).
+   - When `contentHash` changes, writes root `version.json` (`{ buildId, contentHash, updatedAt }`) and stamps `CURRENT_APP_BUILD = '<buildId>'` and `?v=<buildId>` across all 9 HTML entry pages (`index.html`, `loading.html`, `checkin.html`, `dashboard.html`, `approvals.html`, `reports.html`, `personnel.html`, `settings.html`, `users.html`).
    - 100% idempotent when run repeatedly without code changes.
-2. **Client-Side Hard Cache Purge & Remote Poller (`<head>` of all 8 HTML pages)**:
-   - Preserves `bma_checkin_session_user_v2_7`, `bma_checkin_theme_mode_v2_7`, `bma_remember_me`, `bma_remember_username`, `bma_last_seen_update_build`, and `bma_app_build` (`BUILD_STORAGE_KEY`) so users stay logged in for the 7-day sliding session during an update (while purging stale settings caches).
+2. **Client-Side Hard Cache Purge & Remote Poller (`<head>` of all 9 HTML pages)**:
+   - Preserves `bma_checkin_session_user_v2_7`, `bma_checkin_theme_mode_v2_7`, `bma_remember_me`, `bma_remember_username`, `bma_last_seen_update_build`, `bma_last_seen_announcement_id`, and `bma_app_build` (`BUILD_STORAGE_KEY`) so users stay logged in for the 7-day sliding session during an update (while purging stale settings caches).
    - Checks both inline `CURRENT_APP_BUILD` and remote `./version.json?_t=${Date.now()}` (`cache: 'no-store'`) on page load, `pageshow` (BFCache), and `visibilitychange`.
    - On mismatch: clears `window.caches`, unregisters Service Workers, overwrites disk cache via `fetch(window.location.pathname, { cache: 'reload' })`, and redirects to `?_cb=<buildId>` (guarded by `sessionStorage`), cleaning up `_cb` via `history.replaceState` after reload.
 

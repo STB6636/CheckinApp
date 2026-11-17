@@ -10,11 +10,13 @@ import { SettingsModel } from '../models/SettingsModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { UserModel } from '../models/UserModel.js';
 import { DatabaseService } from '../core/DatabaseService.js';
+import { SystemUpdateModal } from './SystemUpdateModal.js';
 
 export class AppLayout {
     static #isLayoutMounted = false;
     static #isGlobalEventsBound = false;
     static #isRealtimeSyncInitialized = false;
+    static #hasCheckedAnnouncement = false;
     static #currentUser = null;
     static #settings = null;
     static #lastPendingSpecialCount = null;
@@ -127,6 +129,13 @@ export class AppLayout {
         }, 50);
 
         AppLayout.initAdminRealtimeSync(currentUser);
+
+        if (!AppLayout.#hasCheckedAnnouncement && AppLayout.#settings) {
+            AppLayout.#hasCheckedAnnouncement = true;
+            setTimeout(() => {
+                SystemUpdateModal.checkAndShowAnnouncement(AppLayout.#settings);
+            }, 150);
+        }
 
         return { currentUser, settings: AppLayout.#settings };
     }

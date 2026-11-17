@@ -1,6 +1,6 @@
 # สารบัญกระบวนการทำงานของเว็บแอปพลิเคชัน (Web App End-to-End Process Flow Map)
 
-- **โปรเจกต์ (Project):** ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App V2.1–V2.7 — OOP Architecture)
+- **โปรเจกต์ (Project):** ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App V2.1–v2.10.0 — OOP Architecture)
 - **ซิงค์ร่วมกับดัชนี (Synced With):** `.ai_map/01_FILE_FUNCTION_INDEX.md` และ `.ai_map/CODE_INDEX.json`
 - **กฎการใช้งานสำหรับ AI (`agent_09_code_mapper` & Subagents):** ใช้แผนผังนี้เพื่อระบุ `Flow ID` และสายการเรียกใช้งานข้ามไฟล์ (Call Chain) จากนั้นดึงเฉพาะช่วงบรรทัด `[Lines L_start-L_end]` ที่ต้องการอ่านหรือแก้ไขเท่านั้น
 

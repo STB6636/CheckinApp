@@ -9,6 +9,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { DatabaseService } from '../core/DatabaseService.js';
+import { SystemUpdateModal } from '../components/SystemUpdateModal.js';
 
 export class CheckinController {
     constructor() {
@@ -96,6 +97,12 @@ export class CheckinController {
             console.error('CheckinController initialization error:', err);
         } finally {
             UIHelpers.hideLoading();
+        }
+
+        if (this.settings) {
+            setTimeout(() => {
+                SystemUpdateModal.checkAndShowAnnouncement(this.settings);
+            }, 150);
         }
 
         if (this.settings.require_photo) {

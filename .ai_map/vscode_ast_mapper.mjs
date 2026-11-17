@@ -476,7 +476,7 @@ function walkFrontendAssets(dirPath, assetList = []) {
 }
 
 /**
- * สร้าง buildId และ Stamp แคชเวอร์ชัน (?v=...) ลงใน HTML 8 หน้าหลัก และ version.json
+ * สร้าง buildId และ Stamp แคชเวอร์ชัน (?v=...) ลงใน HTML 9 หน้าหลัก (รวม loading.html) และ version.json
  * รับประกัน 100% Idempotency ด้วยการ Normalization ค่า buildId ออกก่อน Hash
  */
 function syncFrontendCacheVersion() {

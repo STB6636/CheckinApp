@@ -10,7 +10,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 export class UserModel {
     /**
      * ดึงรายการบัญชีผู้ใช้งานทั้งหมดตามสิทธิ์และขอบเขตการมองเห็นของผู้ดูแลระบบ
-     * กฎ V2.1: Admin จะไม่เห็นบัญชีระดับ SuperAdmin และเห็นเฉพาะบุคลากรในขอบเขตของตน
+     * กฎ v2.10.0: Admin จะไม่เห็นบัญชีระดับ SuperAdmin และเห็นเฉพาะบุคลากรในขอบเขตของตน
      * @param {Object} currentUser ผู้ใช้ที่ล็อกอินอยู่
      * @returns {Promise<Array<Object>>}
      */

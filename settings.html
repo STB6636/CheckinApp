@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261116_ea0302f2';
+            const CURRENT_APP_BUILD = '20261117_d723e0d9';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -18,6 +18,7 @@
                 'bma_remember_me',
                 'bma_remember_username',
                 'bma_last_seen_update_build',
+                'bma_last_seen_announcement_id',
                 BUILD_STORAGE_KEY
             ];
 
@@ -110,7 +111,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261116_ea0302f2">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261117_d723e0d9">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -148,6 +149,10 @@
                 <button type="button" class="settings-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700" data-tab-target="tab-panel-locations">
                     <i class="fa-solid fa-map-location-dot"></i>
                     <span>6. สถานที่และรัศมี</span>
+                </button>
+                <button type="button" class="settings-tab-btn px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700" data-tab-target="tab-panel-announcement">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>7. ประกาศระบบ</span>
                 </button>
             </div>
 
@@ -742,6 +747,210 @@
                 </div>
             </div>
 
+            <!-- Tab Pane 7: ประกาศระบบ (System Announcement v2.10.0) -->
+            <div id="tab-panel-announcement" class="settings-tab-pane hidden space-y-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 overflow-hidden">
+                    <div class="p-6 bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-lg text-[#F6DE51] shadow-sm">
+                                <i class="fa-solid fa-bullhorn"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-base sm:text-lg font-extrabold tracking-wide text-white">จัดการประกาศระบบ (System Announcement)</h3>
+                                <p class="text-xs text-emerald-100/90 font-medium mt-0.5">แสดงป๊อปอัปแจ้งข่าวสาร 1 ครั้งต่อรอบประกาศ ทั้งหน้าเข้าสู่ระบบและผู้ใช้งาน Session 7 วัน</p>
+                            </div>
+                        </div>
+                        <span id="announcementLiveStatusBadge" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/15 border border-white/25 text-white shrink-0">
+                            <i class="fa-solid fa-circle text-[8px]"></i>
+                            <span>ปิดใช้งาน</span>
+                        </span>
+                    </div>
+
+                    <div class="p-5 sm:p-6 space-y-6">
+                        <!-- แถว 1: สวิตช์เปิด-ปิด และช่วงวันที่ -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                            <div class="lg:col-span-5 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between gap-4">
+                                <div>
+                                    <label for="setAnnouncementEnabled" class="block text-sm font-extrabold text-slate-800 dark:text-white cursor-pointer">เปิดแสดงประกาศระบบอัตโนมัติ</label>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">เมื่อเปิดใช้งาน ระบบจะเด้งประกาศให้ผู้ใช้กดรับทราบ 1 ครั้งต่อรอบการบันทึก</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="setAnnouncementEnabled" class="sr-only peer">
+                                    <div class="w-12 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                                </label>
+                            </div>
+
+                            <div class="lg:col-span-7 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-700/60 space-y-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200">
+                                        <i class="fa-regular fa-calendar-days mr-1 text-[#00744B]"></i> ช่วงวันที่แสดงประกาศ (เวลาไทย UTC+7)
+                                    </span>
+                                    <button type="button" id="btnClearAnnouncementEndDate" class="text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer">
+                                        <i class="fa-solid fa-eraser mr-1"></i>ล้างวันสิ้นสุด (แสดงต่อเนื่อง)
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="setAnnouncementStartDate" class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">วันที่เริ่มต้น (เว้นว่าง = ทันที)</label>
+                                        <input type="date" id="setAnnouncementStartDate" class="bma-input text-xs rounded-xl">
+                                    </div>
+                                    <div>
+                                        <label for="setAnnouncementEndDate" class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">วันที่สิ้นสุด (เว้นว่าง = ต่อเนื่อง)</label>
+                                        <input type="date" id="setAnnouncementEndDate" class="bma-input text-xs rounded-xl">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- แถว 2: เลือกรูปแบบประกาศ -->
+                        <div class="space-y-2.5">
+                            <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-300">รูปแบบการแสดงประกาศระบบ</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="announcementMode" value="text" id="radioAnnouncementModeText" class="sr-only peer" checked>
+                                    <div class="p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 peer-checked:border-[#00744B] peer-checked:bg-emerald-50/70 dark:peer-checked:bg-emerald-950/30 transition flex items-center gap-3">
+                                        <span class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-[#00744B] dark:text-emerald-300 flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-align-left"></i>
+                                        </span>
+                                        <div>
+                                            <div class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white">เขียนข้อความเอง</div>
+                                            <div class="text-[11px] text-slate-500 dark:text-slate-400">กำหนดหัวข้อและเนื้อหา พร้อมจัดรูปแบบการ์ดอัตโนมัติ</div>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="announcementMode" value="image" id="radioAnnouncementModeImage" class="sr-only peer">
+                                    <div class="p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 peer-checked:border-[#00744B] peer-checked:bg-emerald-50/70 dark:peer-checked:bg-emerald-950/30 transition flex items-center gap-3">
+                                        <span class="w-9 h-9 rounded-xl bg-teal-100 dark:bg-teal-900/60 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
+                                            <i class="fa-regular fa-image"></i>
+                                        </span>
+                                        <div>
+                                            <div class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-white">อัปโหลดรูป / ลิงก์รูป</div>
+                                            <div class="text-[11px] text-slate-500 dark:text-slate-400">แสดงรูปภาพโปสเตอร์แทนตัวหนังสือ (เหมาะกับมือถือ)</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Panel A: เขียนข้อความเอง -->
+                        <div id="announcementPanelText" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 space-y-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+                                <div class="flex items-center gap-2 text-xs font-extrabold text-slate-800 dark:text-white">
+                                    <i class="fa-solid fa-bullhorn text-[#00744B]"></i>
+                                    <span>เนื้อหาประกาศแบบข้อความ</span>
+                                </div>
+                                <button type="button" id="btnFillAnnouncementTemplate" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-100 dark:bg-emerald-900/50 text-[#00744B] dark:text-emerald-300 hover:bg-emerald-200 transition cursor-pointer">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>ใส่เทมเพลตประกาศ v2.10.0</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <label for="setAnnouncementTitle" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                                    <i class="fa-solid fa-bullhorn mr-1 text-[#00744B]"></i>หัวข้อประกาศ (Head)
+                                </label>
+                                <input type="text" id="setAnnouncementTitle" class="bma-input text-sm font-bold rounded-xl" placeholder="เช่น แจ้งปรับปรุง ระบบลงเวลาปฏิบัติราชการ (สตบ.)">
+                            </div>
+
+                            <div>
+                                <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+                                    <label for="setAnnouncementBody" class="block text-xs font-bold text-slate-700 dark:text-slate-300">รายละเอียดประกาศ (Body)</label>
+                                    <span class="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">ขึ้นต้นด้วย -, •, * หรือ 1. เพื่อจัดเป็นการ์ดไฮไลต์อัตโนมัติ</span>
+                                </div>
+                                <textarea id="setAnnouncementBody" rows="6" class="bma-input text-xs sm:text-sm rounded-xl leading-relaxed" placeholder="- รายละเอียดข้อที่ 1&#10;- รายละเอียดข้อที่ 2"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Panel B: อัปโหลดรูป / ลิงก์รูป -->
+                        <div id="announcementPanelImage" class="hidden p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-700/60 space-y-4">
+                            <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-200 text-xs flex items-start gap-2.5">
+                                <i class="fa-solid fa-mobile-screen-button text-base mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"></i>
+                                <div>
+                                    <div class="font-extrabold">แนะนำขนาดภาพแนวตั้งสำหรับมือถือ: 1080 × 1350 px (4:5) หรือ 1080 × 1920 px (9:16)</div>
+                                    <div class="text-[11px] opacity-90 mt-0.5">รองรับไฟล์ PNG, JPG, WebP ขนาดไม่เกิน 5 MB • รูปภาพจะแสดงแทนตัวหนังสือในป๊อปอัปประกาศ</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                                <div class="lg:col-span-7 space-y-4">
+                                    <!-- โฟลเดอร์ Google Drive เก็บรูปประกาศ -->
+                                    <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <label for="setAnnouncementDriveFolderId" class="block text-xs font-extrabold text-slate-700 dark:text-slate-200">
+                                                <i class="fa-brands fa-google-drive mr-1 text-emerald-600"></i>โฟลเดอร์ Google Drive เก็บรูปประกาศ *
+                                            </label>
+                                            <span id="announcementFolderVerifyBadge" class="bma-badge bma-badge-sky text-[11px]">รอตรวจสอบ</span>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row gap-2">
+                                            <input type="text" id="setAnnouncementDriveFolderId" class="bma-input text-xs rounded-xl flex-1" placeholder="วาง Folder ID หรือลิงก์โฟลเดอร์ Google Drive (ห้ามเว้นว่าง)">
+                                            <button type="button" id="btnVerifyAnnouncementFolder" class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-600 hover:bg-sky-700 text-white transition shrink-0 cursor-pointer flex items-center justify-center gap-1.5">
+                                                <i class="fa-solid fa-folder-check"></i>
+                                                <span>ตรวจสอบโฟลเดอร์</span>
+                                            </button>
+                                        </div>
+                                        <p class="text-[11px] text-slate-500 dark:text-slate-400">ใช้ลิงก์ Apps Script Web App จากแท็บ 1 ร่วมกับโฟลเดอร์ประกาศนี้ (ระบบบังคับตรวจสอบโฟลเดอร์เฉพาะ ไม่ตกหล่นไปโฟลเดอร์ลงเวลา)</p>
+                                    </div>
+
+                                    <!-- อัปโหลดไฟล์รูปภาพ -->
+                                    <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                                        <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-200">อัปโหลดไฟล์รูปภาพประกาศขึ้น Google Drive</label>
+                                        <input type="file" id="setAnnouncementImageFile" accept="image/png,image/jpeg,image/webp" class="hidden">
+                                        <div class="flex flex-wrap items-center gap-2.5">
+                                            <button type="button" id="btnTriggerAnnouncementUpload" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white transition shadow-sm cursor-pointer">
+                                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                                <span>เลือกไฟล์รูปและอัปโหลด (PNG / JPG / WebP)</span>
+                                            </button>
+                                            <span id="announcementUploadStatus" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- ลิงก์รูปภาพประกาศ -->
+                                    <div class="p-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <label for="setAnnouncementImageUrl" class="block text-xs font-extrabold text-slate-700 dark:text-slate-200">ลิงก์รูปภาพประกาศ (Direct URL / Google Drive URL)</label>
+                                            <span id="announcementImageVerifyBadge" class="bma-badge bma-badge-sky text-[11px]">พร้อมตรวจสอบ</span>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row gap-2">
+                                            <input type="url" id="setAnnouncementImageUrl" class="bma-input text-xs rounded-xl flex-1" placeholder="https://lh3.googleusercontent.com/d/...">
+                                            <button type="button" id="btnVerifyAnnouncementImage" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition shrink-0 cursor-pointer">
+                                                <i class="fa-solid fa-magnifying-glass mr-1"></i>ตรวจลิงก์รูป
+                                            </button>
+                                            <button type="button" id="btnClearAnnouncementImage" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 transition shrink-0 cursor-pointer">
+                                                ล้างรูป
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- กรอบตัวอย่างแนวมือถือ (Mobile 9:16 / 4:5 Preview Card) -->
+                                <div class="lg:col-span-5 flex flex-col items-center">
+                                    <div class="w-full max-w-[260px] rounded-[28px] border-4 border-slate-800 dark:border-slate-600 bg-slate-900 p-2 shadow-xl">
+                                        <div class="w-16 h-1.5 bg-slate-700 rounded-full mx-auto mb-2"></div>
+                                        <div id="announcementImagePreviewBox" class="w-full aspect-[4/5] rounded-2xl bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center overflow-hidden text-slate-400 p-2">
+                                            <i class="fa-regular fa-image text-3xl mb-1.5 opacity-60"></i>
+                                            <span class="text-[11px] text-center">ตัวอย่างภาพประกาศบนหน้าจอมือถือ (4:5 / 9:16)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ปุ่มคำสั่งแท็บ 7 -->
+                        <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+                            <button type="button" id="btnPreviewAnnouncement" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-300 dark:border-slate-600 transition cursor-pointer">
+                                <i class="fa-solid fa-eye"></i>
+                                <span>ดูตัวอย่างป๊อปอัปจริง (Preview)</span>
+                            </button>
+                            <button type="button" id="btnSaveAnnouncementSettings" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>บันทึกการตั้งค่าประกาศระบบ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
 
         <div id="bmaFooterContainer"></div>
@@ -771,7 +980,32 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261116_ea0302f2"></script>
+    <!-- Modal ตัวอย่างป๊อปอัปประกาศระบบ (วางนอก <main> เพื่อรองรับ SPA Relocation ใน AppLayout.js) -->
+    <div id="modalAnnouncementPreview" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs">
+        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[92dvh]">
+            <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] p-4 sm:p-5 text-white relative shrink-0 text-center">
+                <button type="button" id="btnCloseAnnouncementPreviewModal" class="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition cursor-pointer" title="ปิดตัวอย่าง">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-400/25 border border-amber-300/50 text-[#F6DE51] text-[10px] font-bold mb-1.5">
+                    <i class="fa-solid fa-eye"></i> โหมดตัวอย่าง (ไม่บันทึกการรับทราบ)
+                </span>
+                <div id="modalAnnouncementPreviewIconWrap" class="mx-auto w-11 h-11 rounded-2xl bg-white/15 text-[#F6DE51] flex items-center justify-center text-lg mb-2 border border-white/20">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <h3 id="modalAnnouncementPreviewTitle" class="text-base sm:text-lg font-black text-white leading-snug px-4">ประกาศจากระบบ</h3>
+                <p id="modalAnnouncementPreviewDates" class="text-[11px] text-emerald-100/90 mt-1 hidden"></p>
+            </div>
+            <div id="modalAnnouncementPreviewBody" class="p-4 sm:p-5 overflow-y-auto flex-1 text-slate-800 dark:text-slate-100"></div>
+            <div class="p-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-center shrink-0">
+                <button type="button" id="btnAckAnnouncementPreviewModal" class="w-full max-w-[260px] py-2.5 px-6 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#00351B] to-[#00744B] hover:brightness-110 transition shadow-md cursor-pointer">
+                    <i class="fa-solid fa-circle-check mr-1"></i> ปิดตัวอย่างประกาศ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261117_d723e0d9"></script>
 
     <!-- Robust Redundant Click Handler for Settings Tab Navigation -->
     <script>
