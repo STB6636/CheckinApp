@@ -149,6 +149,48 @@ export class UIHelpers {
         return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${shortYear}`;
     }
 
+    /**
+     * จัดรูปแบบวันที่ภาษาไทยแบบเดือนย่อและปี พ.ศ. 4 หลัก (เช่น 17 พ.ย. 2569)
+     * @param {string} dateStr
+     * @returns {string}
+     */
+    static formatThaiShortDateFullYear(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                return `${day} ${UIHelpers.THAI_MONTHS_SHORT[monthIdx]} ${yearAD + 543}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
+    /**
+     * เลื่อนวันที่รูปแบบ ISO (YYYY-MM-DD) ด้วย UTC เพื่อป้องกันการคลาดเคลื่อนจาก Timezone/DST
+     * @param {string} dateStr
+     * @param {number} [deltaDays=0]
+     * @returns {string}
+     */
+    static shiftDateISO(dateStr, deltaDays = 0) {
+        if (!dateStr) return '';
+        const match = String(dateStr).trim().slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return String(dateStr);
+        const year = parseInt(match[1], 10);
+        const month = parseInt(match[2], 10);
+        const day = parseInt(match[3], 10);
+        const dt = new Date(Date.UTC(year, month - 1, day + (Number(deltaDays) || 0)));
+        if (isNaN(dt.getTime())) return String(dateStr);
+        const yy = String(dt.getUTCFullYear()).padStart(4, '0');
+        const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getUTCDate()).padStart(2, '0');
+        return `${yy}-${mm}-${dd}`;
+    }
+
     static formatThaiFullDate(dateStr) {
         if (!dateStr) return '-';
         const parts = String(dateStr).slice(0, 10).split('-');

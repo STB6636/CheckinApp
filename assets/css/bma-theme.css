@@ -1524,6 +1524,11 @@ div[id^="modal"].fixed.inset-0:not(.hidden),
     }
 }
 
+#mobileDrawerHistoryMount .bma-checkin-table-card {
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
 /* ============================================================================
  * Shimmer Skeleton Loader (Plan V2.18)
  * ============================================================================ */

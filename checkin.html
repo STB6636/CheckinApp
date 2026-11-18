@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261117_3f505c30';
+            const CURRENT_APP_BUILD = '20261118_069d6bc8';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -138,7 +138,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261117_3f505c30">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_069d6bc8">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -510,7 +510,7 @@
 
             <!-- 2. Personal Attendance History Card (Desktop Tab 2) -->
             <div id="desktopHistoryWrapper" class="hidden">
-                <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                <div class="bma-checkin-table-card relative bg-slate-100/80 lg:bg-white dark:bg-slate-900/60 lg:dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
                     <div class="-mt-4 mx-3 sm:mx-6 rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
@@ -526,7 +526,7 @@
                             <button type="button" id="btnTabTodayHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-white text-[#00744B] shadow-xs cursor-pointer">
                                 <i class="fa-solid fa-calendar-day mr-1"></i>วันปัจจุบัน (<span id="todayHistoryCountBadge">0</span>)
                             </button>
-                            <button type="button" id="btnTabPastHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition text-white hover:bg-white/10 cursor-pointer">
+                            <button type="button" id="btnTabPastHistory" class="py-1.5 px-3.5 rounded-lg text-xs font-bold transition text-white/90 hover:bg-white/15 cursor-pointer">
                                 <i class="fa-solid fa-clock-rotate-left mr-1"></i>ย้อนหลัง (<span id="pastHistoryCountBadge">0</span>)
                             </button>
                         </div>
@@ -536,21 +536,24 @@
                     <div class="p-3 sm:p-6">
                         <!-- Panel วันปัจจุบัน -->
                         <div id="todayHistoryTabPanel" class="space-y-4">
-                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                                <table class="bma-table text-sm w-full text-left">
-                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                        <tr>
-                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                            <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
-                                            <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
-                                            <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
-                                            <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
-                                            <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
-                                            <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="todayPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                                </table>
+                            <div id="todayPersonalCardsContainer" class="lg:hidden space-y-3"></div>
+                            <div class="hidden lg:block">
+                                <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                    <table class="bma-table text-sm w-full text-left">
+                                        <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                            <tr>
+                                                <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                                <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
+                                                <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
+                                                <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
+                                                <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
+                                                <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
+                                                <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="todayPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
@@ -570,21 +573,24 @@
                                 <span id="pastPageInfoText" class="font-bold text-slate-500 dark:text-slate-400">หน้า 1 / 1</span>
                             </div>
 
-                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                                <table class="bma-table text-sm w-full text-left">
-                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                        <tr>
-                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                            <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
-                                            <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
-                                            <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
-                                            <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
-                                            <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
-                                            <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="pastPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                                </table>
+                            <div id="pastPersonalCardsContainer" class="lg:hidden space-y-3"></div>
+                            <div class="hidden lg:block">
+                                <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                    <table class="bma-table text-sm w-full text-left">
+                                        <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                            <tr>
+                                                <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                                <th class="min-w-[120px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
+                                                <th class="min-w-[160px] py-3.5 px-3">ช่วงเวลา / กะ</th>
+                                                <th class="w-28 text-center py-3.5 px-3">เวลาเข้า</th>
+                                                <th class="w-28 text-center py-3.5 px-3">เวลาเลิกงาน</th>
+                                                <th class="min-w-[180px] py-3.5 px-3">สถานที่ลงเวลา</th>
+                                                <th class="w-32 text-center py-3.5 px-3">สถานะ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pastPersonalTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             <div class="flex items-center justify-between pt-2">
@@ -602,7 +608,7 @@
 
             <!-- 3. Special Requests History Card (Desktop Tab 3) -->
             <div id="desktopSpecialWrapper" class="hidden">
-                <div class="bma-checkin-table-card relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+                <div class="bma-checkin-table-card relative bg-slate-100/80 lg:bg-white dark:bg-slate-900/60 lg:dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
                     <div class="-mt-4 mx-3 sm:mx-6 rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-[#480080] via-[#5B1099] to-[#7C3AED] text-white shadow-lg shadow-purple-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-lg shadow-inner">
@@ -614,30 +620,33 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2 self-start sm:self-auto">
-                            <button type="button" id="btnOpenSpecialFromDesktopTab" onclick="document.getElementById('modalSpecialRequest')?.classList.remove('hidden')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white flex items-center gap-1.5 transition cursor-pointer">
+                            <button type="button" id="btnOpenSpecialFromDesktopTab" class="hidden lg:inline-flex px-3 py-1.5 rounded-xl text-xs font-bold bg-white/20 hover:bg-white/30 text-white items-center gap-1.5 transition cursor-pointer">
                                 <i class="fa-solid fa-plus"></i>
-                                <span>+ ยื่นขอลงเวลาใหม่</span>
+                                <span>ยื่นขอลงเวลาใหม่</span>
                             </button>
                             <span id="specialRequestTotalBadge" class="bma-badge bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">0 รายการ</span>
                         </div>
                     </div>
 
                     <div class="p-3 sm:p-6">
-                        <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                            <table class="bma-table text-sm w-full text-left">
-                                <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                    <tr>
-                                        <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                        <th class="min-w-[120px] py-3.5 px-3">วันที่ขอลงเวลา</th>
-                                        <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
-                                        <th class="w-36 text-center py-3.5 px-3">เวลาเข้า - เลิกงาน</th>
-                                        <th class="min-w-[180px] py-3.5 px-3">หมายเหตุ / เหตุผล</th>
-                                        <th class="w-32 text-center py-3.5 px-3">สถานะคำขอ</th>
-                                        <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="personalSpecialRequestsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                            </table>
+                        <div id="personalSpecialRequestsCardsContainer" class="lg:hidden space-y-3"></div>
+                        <div class="hidden lg:block">
+                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                <table class="bma-table text-sm w-full text-left">
+                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                        <tr>
+                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                            <th class="min-w-[120px] py-3.5 px-3">วันที่ขอลงเวลา</th>
+                                            <th class="min-w-[180px] py-3.5 px-3">ช่วงเวลาปฏิบัติงาน</th>
+                                            <th class="w-36 text-center py-3.5 px-3">เวลาเข้า - เลิกงาน</th>
+                                            <th class="min-w-[180px] py-3.5 px-3">หมายเหตุ / เหตุผล</th>
+                                            <th class="w-32 text-center py-3.5 px-3">สถานะคำขอ</th>
+                                            <th class="w-32 text-center py-3.5 px-3">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="personalSpecialRequestsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -654,15 +663,15 @@
 
         <!-- Off-canvas Drawer Panel -->
         <div id="mobileDrawerPanel" class="absolute inset-y-0 right-0 max-w-full w-full sm:w-[580px] bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col z-20 overflow-hidden transform translate-x-full transition-transform duration-300 ease-in-out">
-            <!-- Brand Header -->
+            <!-- User Profile Header -->
             <div class="p-4 bg-gradient-to-r from-[#00351B] to-[#00744B] text-white flex items-center justify-between shrink-0 shadow-md">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-sm shadow-inner shrink-0">
-                        <i class="fa-solid fa-landmark"></i>
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 border border-white/25 flex items-center justify-center text-base shadow-inner shrink-0">
+                        <i class="fa-solid fa-user"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="font-extrabold text-sm sm:text-base leading-tight truncate">ระบบลงเวลาปฏิบัติราชการ</h3>
-                        <p class="text-[11px] text-emerald-200/90 font-medium truncate">กรุงเทพมหานคร • สำนักเทศกิจ</p>
+                        <h3 id="drawerUserFullName" class="font-extrabold text-sm sm:text-base leading-tight truncate text-white">กำลังโหลดข้อมูล...</h3>
+                        <p id="drawerUserPosition" class="text-[11px] text-emerald-100/95 font-medium truncate mt-0.5">-</p>
                     </div>
                 </div>
                 <button type="button" id="btnCloseMobileDrawer" class="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center cursor-pointer transition shrink-0">
@@ -670,41 +679,29 @@
                 </button>
             </div>
 
-            <!-- User Info Capsule -->
-            <div class="mx-4 mt-3 p-3 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 shadow-xs shrink-0">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white text-xs bg-gradient-to-tr from-[#00744B] to-[#00C08A] shadow-md shrink-0">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p id="drawerUserFullName" class="text-xs font-bold truncate text-slate-800 dark:text-white">กำลังโหลดข้อมูล...</p>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span id="drawerUserRole" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                                ผู้ใช้งาน
-                            </span>
-                            <span id="drawerUserAffiliation" class="text-[10px] text-slate-500 dark:text-slate-400 truncate"></span>
-                        </div>
-                    </div>
-                </div>
+            <!-- Preserved hidden user meta IDs for adr_004 & QA DOM ID invariance -->
+            <div class="hidden" aria-hidden="true">
+                <span id="drawerUserRole">ผู้ใช้งาน</span>
+                <span id="drawerUserAffiliation"></span>
             </div>
 
             <!-- Navigation List -->
-            <div class="px-4 pt-3 shrink-0">
+            <div class="px-4 pt-3 pb-2 shrink-0">
                 <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5 px-1">เมนูการใช้งาน</div>
                 <div class="grid grid-cols-2 gap-2">
-                    <button type="button" id="btnDrawerNavCheckin" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-xs cursor-pointer transition">
+                    <button type="button" id="btnDrawerNavCheckin" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
                         <i class="fa-solid fa-fingerprint"></i>
                         <span>ลงเวลาปฏิบัติงาน</span>
                     </button>
-                    <button type="button" id="btnDrawerNavHistory" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition">
+                    <button type="button" id="btnDrawerNavHistory" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40 cursor-pointer transition">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                         <span>ประวัติการลงเวลา</span>
                     </button>
-                    <button type="button" id="btnDrawerNavSpecial" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition">
+                    <button type="button" id="btnDrawerNavSpecial" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
                         <i class="fa-solid fa-file-signature"></i>
                         <span>คำขอพิเศษ</span>
                     </button>
-                    <a id="drawerLinkAdminDashboard" href="dashboard.html" class="hidden flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer transition no-underline">
+                    <a id="drawerLinkAdminDashboard" href="dashboard.html" class="hidden flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition no-underline">
                         <i class="fa-solid fa-gauge-high text-emerald-600 dark:text-emerald-400"></i>
                         <span>ระบบผู้ดูแล</span>
                     </a>
@@ -712,9 +709,9 @@
             </div>
 
             <!-- Drawer Scrollable Content -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-4">
-                <!-- Quick Action: ยื่นขอลงเวลากรณีพิเศษ -->
-                <div class="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/40 space-y-2 shadow-xs">
+            <div id="mobileDrawerBodyScroll" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Quick Action: ยื่นขอลงเวลากรณีพิเศษ (Visible only in Special SPA view) -->
+                <div id="drawerSpecialQuickAction" class="hidden p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/40 space-y-2 shadow-xs">
                     <div class="text-xs font-extrabold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
                         <i class="fa-solid fa-calendar-plus text-indigo-600 dark:text-indigo-400"></i>
                         <span>ยื่นขอลงเวลากรณีพิเศษ</span>
@@ -726,6 +723,21 @@
                         <i class="fa-solid fa-plus"></i>
                         <span>กรอกแบบคำขอลงเวลากรณีพิเศษ</span>
                     </button>
+                </div>
+
+                <!-- AJAX SPA Shimmer Loading Skeleton -->
+                <div id="drawerSpaShimmer" class="hidden space-y-3">
+                    <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-4 space-y-2.5">
+                        <div class="h-4 w-2/3 rounded-lg bma-skeleton-shimmer"></div>
+                        <div class="h-3 w-full rounded-lg bma-skeleton-shimmer"></div>
+                        <div class="h-3 w-5/6 rounded-lg bma-skeleton-shimmer"></div>
+                        <div class="h-3 w-1/2 rounded-lg bma-skeleton-shimmer"></div>
+                    </div>
+                    <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-4 space-y-2.5">
+                        <div class="h-4 w-1/2 rounded-lg bma-skeleton-shimmer"></div>
+                        <div class="h-3 w-full rounded-lg bma-skeleton-shimmer"></div>
+                        <div class="h-3 w-4/5 rounded-lg bma-skeleton-shimmer"></div>
+                    </div>
                 </div>
 
                 <!-- Dynamic Mount Container for History Cards in Drawer -->
@@ -931,7 +943,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261117_3f505c30"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261118_069d6bc8"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">

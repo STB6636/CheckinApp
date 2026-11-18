@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261117-move-announcement-drive-folder-to-tab1"
+last_updated_phase: "PIPE-20261118-mobile-cards-and-drawer-spa-redesign"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -34,6 +34,7 @@ last_updated_phase: "PIPE-20261117-move-announcement-drive-folder-to-tab1"
 - [[ADR_0033_db_driven_system_announcement_tab7_and_v2_10_sync]] — ADR-0033: สถาปัตยกรรมประกาศระบบจากฐานข้อมูล (`Tab 7: ประกาศระบบ`), Strict Google Drive Upload (`DriveUploadBridge.gs`), SQL Migration (`staging` + แก้ Drift 5 จุด `public`), และการอัปเดตเวอร์ชัน `v2.10.0` พร้อมคู่มือ 4 ไฟล์ (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`)
 - [[ADR_0034_sidebar_active_state_watermark_reentrancy_and_spa_hygiene]] — ADR-0034: แก้ปัญหา Sidebar กระโดดกลับ "ภาพรวม" หลังบันทึกตั้งค่าระบบ (Authoritative `#currentActivePage`, `.active` + Badge Preservation ใน `#renderSidebar`, ตัดวงจร Re-entrancy `refreshNotificationBell`, และ Full Settings Hydration) (`FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`, `FLOW_APPROVALS_01`)
 - [[ADR_0035_tab1_announcement_drive_folder_relocation_and_sync_invariance]] — ADR-0035: ย้ายช่องโฟลเดอร์ Google Drive เก็บรูปประกาศ (`#setAnnouncementDriveFolderId`) ไปแท็บ 1 (`ข้อมูลหน่วยงาน และข้อความระบบ`), รักษา `announcement_updated_at` Invariance, และปุ่มลัด + สถานะในแท็บ 7 (`FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0036_mobile_card_lists_and_drawer_ajax_spa]] — ADR-0036: การ์ดประวัติการลงเวลาและคำขอพิเศษมุมมองมือถือ (`< lg`), การคำนวณกะข้ามวัน +1 วัน, เมนูแฮมเบอเกอร์ Head/Body และ AJAX SPA แยกหน้าพร้อมสลับสีปุ่ม BMA + รักษา DOM ID `adr_004` (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

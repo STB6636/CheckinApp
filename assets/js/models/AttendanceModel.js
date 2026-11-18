@@ -1587,24 +1587,143 @@ export class AttendanceModel {
         return await AttendanceModel.getTodayRegularRecordForUser(personnelId, userId, todayIso);
     }
 
+    /**
+     * ประเมินสถานะการเข้างานและออกงานแยกกันสำหรับการ์ดมือถือตามโทนสี BMA
+     * @param {Object|null} log
+     * @param {Object|null} settings
+     * @returns {{ checkIn: Object, checkOut: Object, isOvernight: boolean }}
+     */
+    static evaluateSplitAttendanceStatus(log, settings) {
+        const colors = {
+            normal: '#00744B',
+            overtime: '#0971CE',
+            late: '#D97706',
+            absent_duty: '#EA580C',
+            no_checkin: '#E11D48'
+        };
+
+        const makeStatus = (key, label) => ({
+            status_key: key,
+            status_label: label,
+            color: colors[key] || colors.normal
+        });
+
+        if (!log) {
+            return {
+                checkIn: makeStatus('no_checkin', 'ไม่ลงเวลา'),
+                checkOut: makeStatus('no_checkin', 'ไม่ลงเวลา'),
+                isOvernight: false
+            };
+        }
+
+        const matchingShift = (settings?.work_shifts || []).find(s =>
+            s.name === log.shift_name || SettingsModel.formatShiftDisplayText(s) === log.shift_name
+        );
+
+        const shiftRangeMatch = String(log.shift_name || '').match(/\((\d{1,2}[:.]\d{2})\s*-\s*(\d{1,2}[:.]\d{2})\)/);
+        const stdStart = matchingShift?.check_in || shiftRangeMatch?.[1] || settings?.standard_check_in || '08:30';
+        const stdEnd = matchingShift?.check_out || shiftRangeMatch?.[2] || settings?.standard_check_out || '16:30';
+        const lateThreshold = Number(settings?.late_threshold_minutes ?? 30);
+
+        const startMin = UIHelpers.timeToMinutes(stdStart);
+        const endMin = UIHelpers.timeToMinutes(stdEnd);
+        const checkInMin = log.check_in_time ? UIHelpers.timeToMinutes(log.check_in_time) : -1;
+        const checkOutMin = log.check_out_time ? UIHelpers.timeToMinutes(log.check_out_time) : -1;
+
+        const isOvernight = Boolean(
+            matchingShift?.is_overnight ||
+            String(log.shift_name || '').includes('ข้ามวัน') ||
+            (startMin >= 0 && endMin >= 0 && endMin < startMin) ||
+            (checkInMin >= 0 && checkOutMin >= 0 && checkOutMin < checkInMin)
+        );
+
+        const isOvertime = Boolean(
+            log.is_overtime ||
+            matchingShift?.is_overtime ||
+            log.status === 'ปฏิบัติงานนอกเวลา' ||
+            log.status === 'ปฏิบัติงานนอกเวลาราชการ'
+        );
+
+        if (isOvertime) {
+            return {
+                checkIn: checkInMin < 0
+                    ? makeStatus('no_checkin', 'ไม่ลงเวลา')
+                    : makeStatus('overtime', 'ปฏิบัติงานนอกเวลา'),
+                checkOut: checkOutMin < 0
+                    ? makeStatus('no_checkin', 'ไม่ลงเวลา')
+                    : makeStatus('overtime', 'ปฏิบัติงานนอกเวลา'),
+                isOvernight
+            };
+        }
+
+        if (log.is_special_request) {
+            if (log.approval_status === 'rejected') {
+                return {
+                    checkIn: makeStatus('absent_duty', 'ขาดราชการ'),
+                    checkOut: makeStatus('absent_duty', 'ขาดราชการ'),
+                    isOvernight
+                };
+            }
+            return {
+                checkIn: checkInMin < 0 ? makeStatus('no_checkin', 'ไม่ลงเวลา') : makeStatus('normal', 'ปฏิบัติงานปกติ'),
+                checkOut: checkOutMin < 0 ? makeStatus('no_checkin', 'ไม่ลงเวลา') : makeStatus('normal', 'ปฏิบัติงานปกติ'),
+                isOvernight
+            };
+        }
+
+        let checkIn;
+        if (checkInMin < 0) {
+            checkIn = makeStatus('no_checkin', 'ไม่ลงเวลา');
+        } else if (startMin >= 0 && checkInMin > startMin + lateThreshold) {
+            checkIn = makeStatus('absent_duty', 'ขาดราชการ');
+        } else if (startMin >= 0 && checkInMin > startMin) {
+            checkIn = makeStatus('late', 'มาสาย');
+        } else if (log.status === 'ขาดราชการ' && checkOutMin < 0) {
+            checkIn = makeStatus('absent_duty', 'ขาดราชการ');
+        } else {
+            checkIn = makeStatus('normal', 'ปฏิบัติงานปกติ');
+        }
+
+        let checkOut;
+        if (checkOutMin < 0) {
+            checkOut = makeStatus('no_checkin', 'ไม่ลงเวลา');
+        } else if (!isOvernight && endMin >= 0 && checkOutMin < endMin) {
+            checkOut = makeStatus('absent_duty', 'ขาดราชการ');
+        } else {
+            checkOut = makeStatus('normal', 'ปฏิบัติงานปกติ');
+        }
+
+        return { checkIn, checkOut, isOvernight };
+    }
+
     static async getPersonalAttendanceHistory(personnelId, userId, limit = 35) {
         const db = DatabaseService.getInstance().client;
         const settings = await SettingsModel.getSettings(false);
+        const selectExtended = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason, is_overtime, is_special_request, approval_status, created_at';
+        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at';
 
-        let query = db
-            .from('attendance_logs')
-            .select('id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at')
-            .order('work_date', { ascending: false })
-            .order('created_at', { ascending: false })
-            .limit(limit);
+        const buildQuery = (columns) => {
+            let q = db
+                .from('attendance_logs')
+                .select(columns)
+                .order('work_date', { ascending: false })
+                .order('created_at', { ascending: false })
+                .limit(limit);
 
-        if (personnelId) {
-            query = query.eq('personnel_id', personnelId);
-        } else if (userId) {
-            query = query.eq('user_id', userId);
+            if (personnelId) {
+                q = q.eq('personnel_id', personnelId);
+            } else if (userId) {
+                q = q.eq('user_id', userId);
+            }
+            return q;
+        };
+
+        let { data, error } = await buildQuery(selectExtended);
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('does not exist'))) {
+            const fallbackRes = await buildQuery(selectFallback);
+            data = fallbackRes.data;
+            error = fallbackRes.error;
         }
-
-        const { data, error } = await query;
         if (error) {
             console.error('Error fetching personal history:', error);
             return [];
@@ -1614,21 +1733,25 @@ export class AttendanceModel {
 
         return activeLogs.map(log => {
             const evalStatus = AttendanceModel.evaluateOfficialStatus(log, settings);
+            const splitStatus = AttendanceModel.evaluateSplitAttendanceStatus(log, settings);
             return {
                 ...log,
                 check_in_time: UIHelpers.formatTime24(log.check_in_time),
                 check_out_time: UIHelpers.formatTime24(log.check_out_time),
                 status_key: evalStatus.status_key,
                 status_label: evalStatus.status_label,
-                row_color: evalStatus.row_color
+                row_color: evalStatus.row_color,
+                check_in_status: splitStatus.checkIn,
+                check_out_status: splitStatus.checkOut,
+                is_overnight: splitStatus.isOvernight
             };
         });
     }
 
     static async getPersonalSpecialRequests(personnelId, userId) {
         const db = DatabaseService.getInstance().client;
-        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_in_lat, check_in_lng, status, remark, location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason, is_overtime, is_special_request, approval_status, created_at';
-        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, status, remark, is_overtime, is_special_request, approval_status, created_at';
+        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, check_in_lat, check_in_lng, check_out_lat, check_out_lng, status, remark, location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason, is_overtime, is_special_request, approval_status, created_at';
+        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, is_overtime, is_special_request, approval_status, created_at';
 
         let query = db
             .from('attendance_logs')
@@ -1644,7 +1767,7 @@ export class AttendanceModel {
         }
 
         let { data, error } = await query;
-        if (error && (error.message?.includes('column') || error.code === '42703' || error.message?.includes('does not exist'))) {
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('does not exist'))) {
             let fallbackQuery = db
                 .from('attendance_logs')
                 .select(selectFallback)

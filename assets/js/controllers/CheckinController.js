@@ -32,6 +32,9 @@ export class CheckinController {
         this.locationResolvePromise = null;
         this.activeRegularRecord = null;
         this.availableShiftsForCurrentWindow = [];
+        this.activeDesktopTab = 'checkin';
+        this.activeDrawerView = 'history';
+        this._drawerFetchSeq = 0;
         this.activeHistoryTab = 'today';
         this.todayHistoryList = [];
         this.pastHistoryList = [];
@@ -1444,8 +1447,21 @@ export class CheckinController {
         setElText('drawerUserFullName', this.currentUser.full_name);
         setElText('drawerUserRole', this.currentUser.role);
         if (p) {
+            const drawerPos = UIHelpers.formatPosition(
+                p.position_title,
+                p.position_level,
+                p.position_type,
+                p.position_full
+            );
+            setElText('drawerUserPosition', drawerPos && drawerPos !== '-' ? drawerPos : (this.currentUser.role || 'ผู้ใช้งาน'));
             setElText('drawerUserAffiliation', `${p.organization || ''} • ${p.bureau || ''}`);
         } else {
+            const roleLabelMap = {
+                SuperAdmin: 'ผู้ดูแลระบบสูงสุด (SuperAdmin)',
+                Admin: 'ผู้ดูแลระบบหน่วยงาน (Admin)',
+                User: 'ผู้ใช้งานทั่วไป'
+            };
+            setElText('drawerUserPosition', roleLabelMap[this.currentUser.role] || this.currentUser.role || 'ผู้ใช้งาน');
             setElText('drawerUserAffiliation', `${org} • ${this.currentUser.scope_bureau || bureau}`);
         }
 
@@ -1850,6 +1866,7 @@ export class CheckinController {
         if (pastCountEl) pastCountEl.textContent = String(this.pastHistoryList.length);
 
         const todayTbody = document.getElementById('todayPersonalTableBody');
+        const todayCards = document.getElementById('todayPersonalCardsContainer');
         if (todayTbody) {
             if (this.todayHistoryList.length === 0) {
                 todayTbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">วันนี้ยังไม่มีรายการลงเวลาปฏิบัติราชการ</td></tr>`;
@@ -1857,8 +1874,16 @@ export class CheckinController {
                 todayTbody.innerHTML = this.todayHistoryList.map((item, idx) => this.#buildHistoryRowHtml(item, idx + 1)).join('');
             }
         }
+        if (todayCards) {
+            if (this.todayHistoryList.length === 0) {
+                todayCards.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">วันนี้ยังไม่มีรายการลงเวลาปฏิบัติราชการ</div>`;
+            } else {
+                todayCards.innerHTML = this.todayHistoryList.map(item => this.#buildHistoryCardHtml(item)).join('');
+            }
+        }
 
         const pastTbody = document.getElementById('pastPersonalTableBody');
+        const pastCards = document.getElementById('pastPersonalCardsContainer');
         const pageInfoEl = document.getElementById('pastPageInfoText');
         const btnPrev = document.getElementById('btnPastPrevPage');
         const btnNext = document.getElementById('btnPastNextPage');
@@ -1886,77 +1911,294 @@ export class CheckinController {
                 ).join('');
             }
         }
+        if (pastCards) {
+            if (pagedPastItems.length === 0) {
+                pastCards.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่พบประวัติการลงเวลาย้อนหลัง</div>`;
+            } else {
+                pastCards.innerHTML = pagedPastItems.map(item => this.#buildHistoryCardHtml(item)).join('');
+            }
+        }
     }
 
     #buildHistoryRowHtml(item, rowNumber) {
-        const displayRemark = item.offsite_reason || item.remark || '';
+        const locMode = item.location_mode || (item.offsite_reason ? 'OFFSITE' : 'ONSITE');
+        const displayRemark = (locMode === 'OFFSITE' && item.offsite_reason)
+            ? item.offsite_reason
+            : (item.remark || '');
         return `
             <tr>
                 <td class="text-center font-semibold">${rowNumber}</td>
                 <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(item.work_date)}</td>
                 <td>
-                    <div class="font-semibold bma-text-main">${item.shift_name || '-'}</div>
-                    ${displayRemark ? `<div class="text-xs bma-text-sub">${displayRemark}</div>` : ''}
+                    <div class="font-semibold bma-text-main">${UIHelpers.escapeHtml(item.shift_name || '-')}</div>
+                    ${displayRemark ? `<div class="text-xs bma-text-sub">${UIHelpers.escapeHtml(displayRemark)}</div>` : ''}
                 </td>
                 <td class="text-center font-mono font-bold">${item.check_in_time ? item.check_in_time + ' น.' : '-'}</td>
                 <td class="text-center font-mono font-bold">${item.check_out_time ? item.check_out_time + ' น.' : '-'}</td>
-                <td class="text-xs font-medium">${item.check_in_location || '-'}</td>
+                <td class="text-xs font-medium">${UIHelpers.escapeHtml(item.check_in_location || '-')}</td>
                 <td class="text-center">
                     <span class="bma-badge text-white shadow-xs" style="background-color: ${item.row_color};">
-                        ${item.status_label}
+                        ${UIHelpers.escapeHtml(item.status_label)}
                     </span>
                 </td>
             </tr>
         `;
     }
 
+    #getStatusTextClass(statusKey) {
+        const classMap = {
+            normal: 'text-[#00744B] dark:text-emerald-400',
+            approved: 'text-[#00744B] dark:text-emerald-400',
+            overtime: 'text-[#0971CE] dark:text-sky-400',
+            late: 'text-[#D97706] dark:text-amber-400',
+            pending: 'text-[#D97706] dark:text-amber-400',
+            absent_duty: 'text-[#EA580C] dark:text-orange-400',
+            no_checkin: 'text-[#E11D48] dark:text-rose-400',
+            rejected: 'text-[#E11D48] dark:text-rose-400'
+        };
+        return classMap[statusKey] || 'text-[#00744B] dark:text-emerald-400';
+    }
+
+    #buildHistoryCardHtml(item) {
+        const split = (item.check_in_status && item.check_out_status)
+            ? {
+                checkIn: item.check_in_status,
+                checkOut: item.check_out_status,
+                isOvernight: Boolean(item.is_overnight)
+            }
+            : AttendanceModel.evaluateSplitAttendanceStatus(item, this.settings);
+
+        const inDateText = UIHelpers.formatThaiShortDateFullYear(item.work_date);
+        const safeInTime = item.check_in_time ? UIHelpers.escapeHtml(item.check_in_time) : '';
+        const inTimeText = safeInTime
+            ? `${inDateText} ${safeInTime} น.`
+            : '-';
+
+        const inMin = item.check_in_time ? UIHelpers.timeToMinutes(item.check_in_time) : -1;
+        const outMin = item.check_out_time ? UIHelpers.timeToMinutes(item.check_out_time) : -1;
+        const isOvernightOut = Boolean(
+            item.check_out_time && (
+                split.isOvernight ||
+                String(item.shift_name || '').includes('ข้ามวัน') ||
+                (inMin >= 0 && outMin >= 0 && outMin < inMin)
+            )
+        );
+        const outIsoDate = isOvernightOut ? UIHelpers.shiftDateISO(item.work_date, 1) : item.work_date;
+        const outDateText = UIHelpers.formatThaiShortDateFullYear(outIsoDate);
+        const safeOutTime = item.check_out_time ? UIHelpers.escapeHtml(item.check_out_time) : '';
+        const outTimeText = safeOutTime
+            ? `${outDateText} ${safeOutTime} น.${isOvernightOut ? ' <span class="text-[10px] font-bold text-sky-600 dark:text-sky-400">(+1 วัน)</span>' : ''}`
+            : '<span class="text-slate-500 dark:text-slate-400 font-semibold">ยังไม่ได้ลงเวลาออกงาน</span>';
+
+        const checkInLoc = UIHelpers.escapeHtml(item.check_in_location || '-');
+        const checkOutLoc = UIHelpers.escapeHtml(item.check_out_location || '-');
+
+        const locMode = item.location_mode || (item.offsite_reason ? 'OFFSITE' : 'ONSITE');
+        const isOffsite = locMode === 'OFFSITE';
+        let displayRemark = '';
+        if (isOffsite && item.offsite_reason) {
+            displayRemark = (item.remark && item.remark !== item.offsite_reason && item.remark !== 'ในสถานที่')
+                ? `${item.remark} (${item.offsite_reason})`
+                : item.offsite_reason;
+        } else if (item.remark && item.remark !== 'ในสถานที่') {
+            displayRemark = item.remark;
+        }
+
+        const checkInColorClass = this.#getStatusTextClass(split.checkIn.status_key);
+        const checkOutColorClass = this.#getStatusTextClass(split.checkOut.status_key);
+
+        return `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs">
+                <div class="flex items-start justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ช่วงเวลา</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right leading-snug">${UIHelpers.escapeHtml(item.shift_name || '-')}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${inTimeText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัด</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${checkInLoc}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">สถานะเข้างาน</span>
+                    <span class="font-extrabold text-right ${checkInColorClass}">${UIHelpers.escapeHtml(split.checkIn.status_label)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 pt-1.5 border-t border-slate-100/80 dark:border-slate-700/50">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${outTimeText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัด</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${checkOutLoc}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">สถานะออกงาน</span>
+                    <span class="font-extrabold text-right ${checkOutColorClass}">${UIHelpers.escapeHtml(split.checkOut.status_label)}</span>
+                </div>
+                ${displayRemark ? `
+                <div class="flex items-start justify-between gap-3 pt-1.5 border-t border-slate-100/80 dark:border-slate-700/50">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">หมายเหตุ</span>
+                    <span class="font-medium text-slate-600 dark:text-slate-300 text-right break-words">${UIHelpers.escapeHtml(displayRemark)}</span>
+                </div>` : ''}
+            </div>
+        `;
+    }
+
     #renderSpecialRequestsHistoryTable() {
         const tbody = document.getElementById('personalSpecialRequestsTableBody');
+        const cardsContainer = document.getElementById('personalSpecialRequestsCardsContainer');
         const totalBadge = document.getElementById('specialRequestTotalBadge');
         if (totalBadge) totalBadge.textContent = `${this.specialRequestsList.length} รายการ`;
-        if (!tbody) return;
 
         if (this.specialRequestsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ยังไม่มีประวัติการขอลงเวลากรณีพิเศษ</td></tr>`;
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 bma-text-sub">ยังไม่มีประวัติการขอลงเวลากรณีพิเศษ</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">ยังไม่มีประวัติการขอลงเวลากรณีพิเศษ</div>`;
+            }
             return;
         }
 
-        tbody.innerHTML = this.specialRequestsList.map((req, idx) => {
-            let statusBadgeHtml = '';
-            let actionHtml = `<span class="text-xs bma-text-muted">ดำเนินการแล้ว</span>`;
+        if (tbody) {
+            tbody.innerHTML = this.specialRequestsList.map((req, idx) => {
+                let statusBadgeHtml = '';
+                let actionHtml = `<span class="text-xs bma-text-muted">ดำเนินการแล้ว</span>`;
 
-            if (req.approval_status === 'pending') {
-                statusBadgeHtml = `<span class="bma-badge bma-badge-warning"><i class="fa-regular fa-hourglass-half"></i> รออนุมัติ</span>`;
-                actionHtml = `
-                    <button type="button" data-action="delete-special-req" data-id="${req.id}" data-date="${UIHelpers.formatThaiShortDate(req.work_date)}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-600 border-rose-500/40 hover:bg-rose-500/10">
+                if (req.approval_status === 'pending') {
+                    statusBadgeHtml = `<span class="bma-badge bma-badge-warning"><i class="fa-regular fa-hourglass-half"></i> รออนุมัติ</span>`;
+                    actionHtml = `
+                        <button type="button" data-action="delete-special-req" data-id="${UIHelpers.escapeHtml(req.id)}" data-date="${UIHelpers.escapeHtml(UIHelpers.formatThaiShortDate(req.work_date))}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-600 border-rose-500/40 hover:bg-rose-500/10">
+                            <i class="fa-solid fa-trash-can"></i> ลบคำขอ
+                        </button>
+                    `;
+                } else if (req.approval_status === 'approved') {
+                    statusBadgeHtml = `<span class="bma-badge bma-badge-success"><i class="fa-solid fa-circle-check"></i> อนุมัติแล้ว</span>`;
+                } else {
+                    statusBadgeHtml = `<span class="bma-badge bma-badge-danger"><i class="fa-solid fa-circle-xmark"></i> ปฏิเสธคำขอ</span>`;
+                }
+
+                const safeInTime = UIHelpers.escapeHtml(req.check_in_time || '-');
+                const safeOutTime = UIHelpers.escapeHtml(req.check_out_time || '-');
+                const timeRange = `${safeInTime} - ${safeOutTime} น.`;
+
+                const locMode = req.location_mode || (req.offsite_reason ? 'OFFSITE' : 'ONSITE');
+                const isOffsite = locMode === 'OFFSITE';
+                let remarkDisplay = req.remark || '-';
+                if (isOffsite && req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
+                    remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
+                }
+
+                return `
+                    <tr>
+                        <td class="text-center font-semibold">${idx + 1}</td>
+                        <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</td>
+                        <td class="font-semibold bma-text-main">${UIHelpers.escapeHtml(req.shift_name || '-')}</td>
+                        <td class="text-center font-mono font-bold whitespace-nowrap">${timeRange}</td>
+                        <td><span class="bma-badge bma-badge-indigo">${UIHelpers.escapeHtml(remarkDisplay)}</span></td>
+                        <td class="text-center">${statusBadgeHtml}</td>
+                        <td class="text-center whitespace-nowrap">${actionHtml}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        if (cardsContainer) {
+            cardsContainer.innerHTML = this.specialRequestsList.map(req => this.#buildSpecialRequestCardHtml(req)).join('');
+        }
+    }
+
+    #buildSpecialRequestCardHtml(req) {
+        const locMode = req.location_mode || (req.offsite_reason ? 'OFFSITE' : 'ONSITE');
+        const isOffsite = locMode === 'OFFSITE';
+        const modeBadgeHtml = isOffsite
+            ? `<span class="inline-block px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`
+            : `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-[#00744B] dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`;
+
+        let remarkDisplay = req.remark || '-';
+        if (isOffsite && req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
+            remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
+        }
+
+        const inMin = req.check_in_time ? UIHelpers.timeToMinutes(req.check_in_time) : -1;
+        const outMin = req.check_out_time ? UIHelpers.timeToMinutes(req.check_out_time) : -1;
+        const isOvernightOut = Boolean(
+            req.check_out_time && (
+                req.is_overnight ||
+                String(req.shift_name || '').includes('ข้ามวัน') ||
+                (inMin >= 0 && outMin >= 0 && outMin < inMin)
+            )
+        );
+        const inDateText = UIHelpers.formatThaiShortDateFullYear(req.work_date);
+        const safeInTime = req.check_in_time ? UIHelpers.escapeHtml(req.check_in_time) : '';
+        const inTimeText = safeInTime ? `${inDateText} ${safeInTime} น.` : '-';
+        const outIsoDate = isOvernightOut ? UIHelpers.shiftDateISO(req.work_date, 1) : req.work_date;
+        const outDateText = UIHelpers.formatThaiShortDateFullYear(outIsoDate);
+        const safeOutTime = req.check_out_time ? UIHelpers.escapeHtml(req.check_out_time) : '';
+        const outTimeText = safeOutTime
+            ? `${outDateText} ${safeOutTime} น.${isOvernightOut ? ' <span class="text-[10px] font-bold text-sky-600 dark:text-sky-400">(+1 วัน)</span>' : ''}`
+            : '-';
+
+        const checkInLoc = UIHelpers.escapeHtml(req.check_in_location || '-');
+        const checkOutLoc = UIHelpers.escapeHtml(req.check_out_location || req.check_in_location || '-');
+
+        let statusText = 'ปฏิเสธคำขอ';
+        let statusKey = 'rejected';
+        let actionFooterHtml = '';
+
+        if (req.approval_status === 'pending') {
+            statusText = 'รออนุมัติ';
+            statusKey = 'pending';
+            actionFooterHtml = `
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium">จัดการคำขอ</span>
+                    <button type="button" data-action="delete-special-req" data-id="${UIHelpers.escapeHtml(req.id)}" data-date="${UIHelpers.escapeHtml(UIHelpers.formatThaiShortDateFullYear(req.work_date))}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 hover:bg-rose-100 transition cursor-pointer">
                         <i class="fa-solid fa-trash-can"></i> ลบคำขอ
                     </button>
-                `;
-            } else if (req.approval_status === 'approved') {
-                statusBadgeHtml = `<span class="bma-badge bma-badge-success"><i class="fa-solid fa-circle-check"></i> อนุมัติแล้ว</span>`;
-            } else {
-                statusBadgeHtml = `<span class="bma-badge bma-badge-danger"><i class="fa-solid fa-circle-xmark"></i> ปฏิเสธคำขอ</span>`;
-            }
-
-            const timeRange = `${req.check_in_time || '-'} - ${req.check_out_time || '-'} น.`;
-
-            let remarkDisplay = req.remark || '-';
-            if (req.offsite_reason && req.offsite_reason !== req.remark && req.offsite_reason !== '-' && !String(req.remark || '').includes(req.offsite_reason)) {
-                remarkDisplay = `${req.remark || 'กรณีพิเศษ'} (${req.offsite_reason})`;
-            }
-
-            return `
-                <tr>
-                    <td class="text-center font-semibold">${idx + 1}</td>
-                    <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</td>
-                    <td class="font-semibold bma-text-main">${req.shift_name || '-'}</td>
-                    <td class="text-center font-mono font-bold whitespace-nowrap">${timeRange}</td>
-                    <td><span class="bma-badge bma-badge-indigo">${remarkDisplay}</span></td>
-                    <td class="text-center">${statusBadgeHtml}</td>
-                    <td class="text-center whitespace-nowrap">${actionHtml}</td>
-                </tr>
+                </div>
             `;
-        }).join('');
+        } else if (req.approval_status === 'approved') {
+            statusText = 'อนุมัติแล้ว';
+            statusKey = 'approved';
+        }
+
+        const statusColorClass = this.#getStatusTextClass(statusKey);
+
+        return `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs">
+                <div class="flex items-start justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ช่วงเวลา</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right leading-snug">${UIHelpers.escapeHtml(req.shift_name || '-')}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${inTimeText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัด</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${modeBadgeHtml}${checkInLoc}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 pt-1.5 border-t border-slate-100/80 dark:border-slate-700/50">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${outTimeText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัด</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${checkOutLoc}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 pt-1.5 border-t border-slate-100/80 dark:border-slate-700/50">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เหตุผล / หมายเหตุ</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(remarkDisplay)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">สถานะคำขอ</span>
+                    <span class="font-extrabold text-right ${statusColorClass}">${statusText}</span>
+                </div>
+                ${actionFooterHtml}
+            </div>
+        `;
     }
 
     /**
@@ -3087,33 +3329,45 @@ export class CheckinController {
         const todayPanel = document.getElementById('todayHistoryTabPanel');
         const pastPanel = document.getElementById('pastHistoryTabPanel');
 
+        const activeHistoryTabClass = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-white text-[#00744B] shadow-xs cursor-pointer';
+        const inactiveHistoryTabClass = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition text-white/90 hover:bg-white/15 cursor-pointer';
+
+        const resetDrawerScrollTop = () => {
+            const drawerScroll = document.getElementById('mobileDrawerBodyScroll');
+            if (drawerScroll) drawerScroll.scrollTop = 0;
+        };
+
         btnTabToday?.addEventListener('click', () => {
             this.activeHistoryTab = 'today';
-            btnTabToday.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer';
-            btnTabPast.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer';
+            btnTabToday.className = activeHistoryTabClass;
+            btnTabPast.className = inactiveHistoryTabClass;
             todayPanel?.classList.remove('hidden');
             pastPanel?.classList.add('hidden');
+            resetDrawerScrollTop();
         });
 
         btnTabPast?.addEventListener('click', () => {
             this.activeHistoryTab = 'past';
-            btnTabPast.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bg-[#007B3E] text-white shadow-xs cursor-pointer';
-            btnTabToday.className = 'py-1.5 px-3.5 rounded-lg text-xs font-bold transition bma-text-sub hover:bg-black/5 cursor-pointer';
+            btnTabPast.className = activeHistoryTabClass;
+            btnTabToday.className = inactiveHistoryTabClass;
             todayPanel?.classList.add('hidden');
             pastPanel?.classList.remove('hidden');
             this.#renderPersonalAttendanceTabs();
+            resetDrawerScrollTop();
         });
 
         document.getElementById('selectPastPageSize')?.addEventListener('change', (e) => {
             this.pastPageSize = parseInt(e.target.value, 10) || 10;
             this.pastCurrentPage = 1;
             this.#renderPersonalAttendanceTabs();
+            resetDrawerScrollTop();
         });
 
         document.getElementById('btnPastPrevPage')?.addEventListener('click', () => {
             if (this.pastCurrentPage > 1) {
                 this.pastCurrentPage--;
                 this.#renderPersonalAttendanceTabs();
+                resetDrawerScrollTop();
             }
         });
 
@@ -3122,10 +3376,11 @@ export class CheckinController {
             if (this.pastCurrentPage < totalPages) {
                 this.pastCurrentPage++;
                 this.#renderPersonalAttendanceTabs();
+                resetDrawerScrollTop();
             }
         });
 
-        document.getElementById('personalSpecialRequestsTableBody')?.addEventListener('click', async (e) => {
+        const handleSpecialRequestActionClick = async (e) => {
             const btn = e.target.closest('button[data-action="delete-special-req"]');
             if (!btn) return;
             const logId = btn.dataset.id;
@@ -3154,7 +3409,10 @@ export class CheckinController {
                     await UIHelpers.alert('ไม่สามารถลบคำขอได้', res.message, 'error');
                 }
             }
-        });
+        };
+
+        document.getElementById('personalSpecialRequestsTableBody')?.addEventListener('click', handleSpecialRequestActionClick);
+        document.getElementById('personalSpecialRequestsCardsContainer')?.addEventListener('click', handleSpecialRequestActionClick);
 
         const modalSpecial = document.getElementById('modalSpecialRequest');
         const closeSpecialModal = () => modalSpecial?.classList.add('hidden');
@@ -3200,6 +3458,7 @@ export class CheckinController {
         const desktopPanes = document.getElementById('desktopPanesContainer');
 
         const setDesktopActiveTab = (activeName) => {
+            this.activeDesktopTab = activeName;
             const activeClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00744B] text-white flex items-center gap-2 shadow-xs transition cursor-pointer';
             const inactiveClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer';
 
@@ -3224,18 +3483,94 @@ export class CheckinController {
         tabHistory?.addEventListener('click', () => setDesktopActiveTab('history'));
         tabSpecial?.addEventListener('click', () => setDesktopActiveTab('special'));
 
-        // Mobile Hamburger Off-canvas Slide Drawer
+        // Mobile Hamburger Off-canvas Slide Drawer (AJAX SPA Controller)
         const drawerPanel = document.getElementById('mobileDrawerPanel');
         const drawerBackdrop = document.getElementById('btnMobileHistoryDrawerBackdrop');
+        const drawerScroll = document.getElementById('mobileDrawerBodyScroll');
+        const drawerSpecialQuick = document.getElementById('drawerSpecialQuickAction');
+        const drawerShimmer = document.getElementById('drawerSpaShimmer');
+        const btnNavCheckin = document.getElementById('btnDrawerNavCheckin');
+        const btnNavHistory = document.getElementById('btnDrawerNavHistory');
+        const btnNavSpecial = document.getElementById('btnDrawerNavSpecial');
+        const linkNavAdmin = document.getElementById('drawerLinkAdminDashboard');
         let isDrawerClosing = false;
+
+        const setDrawerActiveNav = (viewKey) => {
+            const activePill = 'flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40 cursor-pointer transition';
+            const inactivePill = 'flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition';
+
+            if (btnNavCheckin) btnNavCheckin.className = viewKey === 'checkin' ? activePill : inactivePill;
+            if (btnNavHistory) btnNavHistory.className = viewKey === 'history' ? activePill : inactivePill;
+            if (btnNavSpecial) btnNavSpecial.className = viewKey === 'special' ? activePill : inactivePill;
+            if (linkNavAdmin) {
+                const keepHidden = linkNavAdmin.classList.contains('hidden');
+                linkNavAdmin.className = `${keepHidden ? 'hidden ' : ''}${viewKey === 'admin' ? activePill : inactivePill} no-underline`;
+            }
+        };
+
+        const switchDrawerView = async (viewKey, { fetchFresh = true } = {}) => {
+            const resolvedView = viewKey === 'special' ? 'special' : 'history';
+            this.activeDrawerView = resolvedView;
+            setDrawerActiveNav(resolvedView);
+
+            if (drawerScroll) drawerScroll.scrollTop = 0;
+            drawerSpecialQuick?.classList.toggle('hidden', resolvedView !== 'special');
+
+            if (resolvedView === 'history') {
+                this.#renderPersonalAttendanceTabs();
+            } else {
+                this.#renderSpecialRequestsHistoryTable();
+            }
+
+            if (!fetchFresh) {
+                drawerShimmer?.classList.add('hidden');
+                paneHistory?.classList.toggle('hidden', resolvedView !== 'history');
+                paneSpecial?.classList.toggle('hidden', resolvedView !== 'special');
+                return;
+            }
+
+            const seq = ++this._drawerFetchSeq;
+            drawerShimmer?.classList.remove('hidden');
+            paneHistory?.classList.add('hidden');
+            paneSpecial?.classList.add('hidden');
+
+            try {
+                if (resolvedView === 'history') {
+                    const todayIso = UIHelpers.getTodayISO();
+                    const allHistory = await AttendanceModel.getPersonalAttendanceHistory(
+                        this.currentUser?.personnel_id,
+                        this.currentUser?.id,
+                        35
+                    );
+                    if (seq !== this._drawerFetchSeq) return;
+                    this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
+                    this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso).slice(0, 30);
+                    this.#renderPersonalAttendanceTabs();
+                } else {
+                    const specialRequests = await AttendanceModel.getPersonalSpecialRequests(
+                        this.currentUser?.personnel_id,
+                        this.currentUser?.id
+                    );
+                    if (seq !== this._drawerFetchSeq) return;
+                    this.specialRequestsList = specialRequests;
+                    this.#renderSpecialRequestsHistoryTable();
+                }
+            } catch (err) {
+                console.error('Drawer SPA fetch error:', err);
+            } finally {
+                if (seq === this._drawerFetchSeq) {
+                    drawerShimmer?.classList.add('hidden');
+                    paneHistory?.classList.toggle('hidden', resolvedView !== 'history');
+                    paneSpecial?.classList.toggle('hidden', resolvedView !== 'special');
+                }
+            }
+        };
 
         const openMobileDrawer = () => {
             if (isDrawerClosing) return;
             if (drawerMount && paneHistory && paneSpecial) {
                 drawerMount.appendChild(paneHistory);
                 drawerMount.appendChild(paneSpecial);
-                paneHistory.classList.remove('hidden');
-                paneSpecial.classList.remove('hidden');
             }
             drawer?.classList.remove('hidden');
             document.getElementById('inlineGpsLeafletMap')?.classList.add('invisible');
@@ -3245,13 +3580,15 @@ export class CheckinController {
                 drawerPanel?.classList.remove('translate-x-full');
                 drawerPanel?.classList.add('translate-x-0');
             });
-            this.#renderPersonalAttendanceTabs();
-            this.#renderSpecialRequestsHistoryTable();
+            const initialView = this.activeDrawerView === 'special' ? 'special' : 'history';
+            void switchDrawerView(initialView, { fetchFresh: true });
         };
 
         const closeMobileDrawer = (targetTab = null) => {
             if (isDrawerClosing) return;
             isDrawerClosing = true;
+            this._drawerFetchSeq++;
+            drawerShimmer?.classList.add('hidden');
 
             drawerBackdrop?.classList.remove('opacity-100');
             drawerBackdrop?.classList.add('opacity-0');
@@ -3269,10 +3606,10 @@ export class CheckinController {
                 if (targetTab) {
                     setDesktopActiveTab(targetTab);
                 } else {
-                    const isHistoryActive = tabHistory?.classList.contains('bg-[#00744B]');
-                    const isSpecialActive = tabSpecial?.classList.contains('bg-[#00744B]');
-                    paneHistory?.classList.toggle('hidden', !isHistoryActive);
-                    paneSpecial?.classList.toggle('hidden', !isSpecialActive);
+                    const activeDesktop = this.activeDesktopTab || 'checkin';
+                    paneCheckin?.classList.toggle('hidden', activeDesktop !== 'checkin');
+                    paneHistory?.classList.toggle('hidden', activeDesktop !== 'history');
+                    paneSpecial?.classList.toggle('hidden', activeDesktop !== 'special');
                 }
                 isDrawerClosing = false;
             }, 300);
@@ -3282,16 +3619,18 @@ export class CheckinController {
         document.getElementById('btnCloseMobileDrawer')?.addEventListener('click', () => closeMobileDrawer());
         document.getElementById('btnMobileHistoryDrawerBackdrop')?.addEventListener('click', () => closeMobileDrawer());
 
-        document.getElementById('btnDrawerNavCheckin')?.addEventListener('click', () => closeMobileDrawer('checkin'));
-        document.getElementById('btnDrawerNavHistory')?.addEventListener('click', () => {
-            if (paneHistory) {
-                paneHistory.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+        btnNavCheckin?.addEventListener('click', () => {
+            setDrawerActiveNav('checkin');
+            closeMobileDrawer('checkin');
         });
-        document.getElementById('btnDrawerNavSpecial')?.addEventListener('click', () => {
-            if (paneSpecial) {
-                paneSpecial.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+        btnNavHistory?.addEventListener('click', () => {
+            void switchDrawerView('history', { fetchFresh: true });
+        });
+        btnNavSpecial?.addEventListener('click', () => {
+            void switchDrawerView('special', { fetchFresh: true });
+        });
+        linkNavAdmin?.addEventListener('click', () => {
+            setDrawerActiveNav('admin');
         });
 
         document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', openSpecialModal);
