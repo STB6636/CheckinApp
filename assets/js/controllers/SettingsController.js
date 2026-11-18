@@ -419,10 +419,12 @@ export class SettingsController {
         }
 
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeAnnouncementPreviewModal() {
         document.getElementById('modalAnnouncementPreview')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async #saveAnnouncementTab() {
@@ -1083,15 +1085,18 @@ export class SettingsController {
     }
 
     #openModal(title, bodyHtml, onSubmitCallback) {
+        const modal = document.getElementById('modalSettingsItem');
         document.getElementById('modalSettingsTitle').textContent = title;
         document.getElementById('modalSettingsBody').innerHTML = bodyHtml;
         this.activeModalHandler = onSubmitCallback;
-        document.getElementById('modalSettingsItem').classList.remove('hidden');
+        modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
-        document.getElementById('modalSettingsItem').classList.add('hidden');
+        document.getElementById('modalSettingsItem')?.classList.add('hidden');
         this.activeModalHandler = null;
+        UIHelpers.syncBodyModalLock();
     }
 
     #buildMultiRowInputsHtml(fieldLabel, placeholder) {
@@ -1495,10 +1500,8 @@ export class SettingsController {
         document.getElementById('btnAckAnnouncementPreviewModal')?.addEventListener('click', () => {
             this.#closeAnnouncementPreviewModal();
         });
-        document.getElementById('modalAnnouncementPreview')?.addEventListener('click', (e) => {
-            if (e.target && e.target.id === 'modalAnnouncementPreview') {
-                this.#closeAnnouncementPreviewModal();
-            }
+        UIHelpers.bindModalDismiss(document.getElementById('modalAnnouncementPreview'), () => {
+            this.#closeAnnouncementPreviewModal();
         });
 
         document.getElementById('btnSaveAnnouncementSettings')?.addEventListener('click', async () => {
@@ -1507,6 +1510,7 @@ export class SettingsController {
 
         document.getElementById('btnCloseSettingsModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelSettingsModal')?.addEventListener('click', () => this.#closeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalSettingsItem'), () => this.#closeModal());
 
         document.getElementById('formSettingsItem')?.addEventListener('submit', async (e) => {
             e.preventDefault();

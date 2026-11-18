@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_d72b67f4';
+            const CURRENT_APP_BUILD = '20261118_a554aa4b';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -111,7 +111,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_d72b67f4">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_a554aa4b">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -976,17 +976,17 @@
     <div id="bmaMobileBottomNav"></div>
 
     <!-- Modal สำหรับเพิ่ม/แก้ไข ข้อมูลในหน้าตั้งค่าระบบ -->
-    <div id="modalSettingsItem" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-        <div class="w-full max-w-xl bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl my-8 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 id="modalSettingsTitle" class="text-lg font-extrabold text-slate-800 dark:text-white">จัดการข้อมูล</h3>
-                <button type="button" id="btnCloseSettingsModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+    <div id="modalSettingsItem" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-xl my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+                <h3 id="modalSettingsTitle" class="text-base sm:text-lg font-extrabold text-slate-800 dark:text-white truncate">จัดการข้อมูล</h3>
+                <button type="button" id="btnCloseSettingsModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            <form id="formSettingsItem" class="space-y-4">
-                <div id="modalSettingsBody" class="space-y-3.5 max-h-[65vh] overflow-y-auto pr-1"></div>
-                <div class="pt-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
+            <form id="formSettingsItem" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div id="modalSettingsBody" class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-3.5"></div>
+                <div class="shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/50">
                     <button type="button" id="btnCancelSettingsModal" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
                     <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -998,8 +998,8 @@
     </div>
 
     <!-- Modal ตัวอย่างป๊อปอัปประกาศระบบ (วางนอก <main> เพื่อรองรับ SPA Relocation ใน AppLayout.js) -->
-    <div id="modalAnnouncementPreview" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs">
-        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[92dvh]">
+    <div id="modalAnnouncementPreview" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/65 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[92dvh]">
             <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] p-4 sm:p-5 text-white relative shrink-0 text-center">
                 <button type="button" id="btnCloseAnnouncementPreviewModal" class="absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition cursor-pointer" title="ปิดตัวอย่าง">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -1013,7 +1013,7 @@
                 <h3 id="modalAnnouncementPreviewTitle" class="text-base sm:text-lg font-black text-white leading-snug px-4">ประกาศจากระบบ</h3>
                 <p id="modalAnnouncementPreviewDates" class="text-[11px] text-emerald-100/90 mt-1 hidden"></p>
             </div>
-            <div id="modalAnnouncementPreviewBody" class="p-4 sm:p-5 overflow-y-auto flex-1 text-slate-800 dark:text-slate-100"></div>
+            <div id="modalAnnouncementPreviewBody" class="p-4 sm:p-5 overflow-y-auto overscroll-contain flex-1 min-h-0 text-slate-800 dark:text-slate-100"></div>
             <div class="p-3.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-center shrink-0">
                 <button type="button" id="btnAckAnnouncementPreviewModal" class="w-full max-w-[260px] py-2.5 px-6 rounded-full font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#00351B] to-[#00744B] hover:brightness-110 transition shadow-md cursor-pointer">
                     <i class="fa-solid fa-circle-check mr-1"></i> ปิดตัวอย่างประกาศ
@@ -1022,7 +1022,7 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261118_d72b67f4"></script>
+    <script type="module" src="assets/js/controllers/SettingsController.js?v=20261118_a554aa4b"></script>
 
     <!-- Robust Redundant Click Handler for Settings Tab Navigation -->
     <script>

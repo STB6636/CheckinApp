@@ -1265,6 +1265,7 @@ ${this.canManageRecords ? `
         if (wgEl) wgEl.textContent = rec.work_group || '-';
 
         document.getElementById('modalPersonnelResumeProfile')?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(document.getElementById('modalPersonnelResumeProfile'));
     }
 
     #closeResumeModal() {
@@ -1277,6 +1278,7 @@ ${this.canManageRecords ? `
             this.currentPhotoBlobUrlOut = null;
         }
         document.getElementById('modalPersonnelResumeProfile')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     #openModal(rec = null) {
@@ -1311,10 +1313,12 @@ ${this.canManageRecords ? `
         document.getElementById('repRemarkInput').value = rec?.remark || '';
 
         modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
         document.getElementById('modalReportAttendance')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async syncReportsSilent(deltaDetail = null) {
@@ -1578,9 +1582,11 @@ ${this.canManageRecords ? `
         document.getElementById('btnOpenAddReportRecord')?.addEventListener('click', () => this.#openModal(null));
         document.getElementById('btnCloseReportModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelReportModal')?.addEventListener('click', () => this.#closeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalReportAttendance'), () => this.#closeModal());
 
         document.getElementById('btnCloseResumeModalTop')?.addEventListener('click', () => this.#closeResumeModal());
         document.getElementById('btnCloseResumeModalBottom')?.addEventListener('click', () => this.#closeResumeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelResumeProfile'), () => this.#closeResumeModal());
 
         document.getElementById('formReportAttendance')?.addEventListener('submit', async (e) => {
             e.preventDefault();

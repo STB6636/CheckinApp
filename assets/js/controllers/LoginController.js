@@ -162,12 +162,17 @@ export class LoginController {
             document.getElementById('cpMatchStatus').classList.add('hidden');
             document.getElementById('btnSubmitChangePwd').disabled = true;
             modalChange?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modalChange);
         };
-        const closeChangeModal = () => modalChange?.classList.add('hidden');
+        const closeChangeModal = () => {
+            modalChange?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
 
         document.getElementById('btnOpenChangePwdModal')?.addEventListener('click', openChangeModal);
         document.getElementById('btnCloseChangePwdModal')?.addEventListener('click', closeChangeModal);
         document.getElementById('btnCancelChangePwd')?.addEventListener('click', closeChangeModal);
+        UIHelpers.bindModalDismiss(modalChange, closeChangeModal);
 
         const validatePasswordMatch = () => {
             const newPwd = document.getElementById('cpNewPassword').value;
@@ -206,12 +211,17 @@ export class LoginController {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
             document.getElementById('fpNationalId').value = /^\d{1,13}$/.test(currentTypedUser) ? currentTypedUser : '';
             modalForgot?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modalForgot);
         };
-        const closeForgotModal = () => modalForgot?.classList.add('hidden');
+        const closeForgotModal = () => {
+            modalForgot?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
 
         document.getElementById('btnOpenForgotPwdModal')?.addEventListener('click', openForgotModal);
         document.getElementById('btnCloseForgotPwdModal')?.addEventListener('click', closeForgotModal);
         document.getElementById('btnCancelForgotPwd')?.addEventListener('click', closeForgotModal);
+        UIHelpers.bindModalDismiss(modalForgot, closeForgotModal);
 
         document.getElementById('formForgotPassword')?.addEventListener('submit', async (e) => {
             e.preventDefault();

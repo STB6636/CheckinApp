@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_d72b67f4';
+            const CURRENT_APP_BUILD = '20261118_a554aa4b';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -112,7 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_d72b67f4">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_a554aa4b">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -341,21 +341,22 @@
     <div id="bmaMobileBottomNav"></div>
 
     <!-- Modal เพิ่ม/แก้ไขบัญชีผู้ใช้งาน -->
-    <div id="modalUserAccountForm" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-        <div class="w-full max-w-xl bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl my-8 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 id="modalUserTitle" class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2.5">
-                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center text-sm shadow-xs">
+    <div id="modalUserAccountForm" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-xl my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+                <h3 id="modalUserTitle" class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2.5 min-w-0">
+                    <span class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-[#480080] flex items-center justify-center text-sm shadow-xs shrink-0">
                         <i class="fa-solid fa-user-shield"></i>
                     </span>
-                    <span>เพิ่มบัญชีผู้ใช้งานและผูกข้อมูลบุคลากร</span>
+                    <span class="truncate">เพิ่มบัญชีผู้ใช้งานและผูกข้อมูลบุคลากร</span>
                 </h3>
-                <button type="button" id="btnCloseUserModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <button type="button" id="btnCloseUserModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <form id="formUserAccount" class="space-y-4">
+            <form id="formUserAccount" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-4">
                 <input type="hidden" id="usrAccountId">
 
                 <!-- 1. ค้นหาและเลือกบุคลากรเพื่อผูกบัญชี -->
@@ -456,8 +457,9 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
-                <div class="pt-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
+                <div class="shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/50">
                     <button type="button" id="btnCancelUserModal" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
                     <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -468,6 +470,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/UsersController.js?v=20261118_d72b67f4"></script>
+    <script type="module" src="assets/js/controllers/UsersController.js?v=20261118_a554aa4b"></script>
 </body>
 </html>

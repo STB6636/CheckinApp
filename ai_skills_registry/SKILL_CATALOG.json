@@ -84,6 +84,18 @@
       ],
       "trigger_conditions": "ใช้เมื่อต้องแปลงพิกัด GPS เป็นชื่อสถานที่ มุ่งเน้นการให้ความสำคัญกับสถานที่สำคัญ/สถานที่ราชการ/ร้านค้าก่อนชื่อซอยเสมอ รองรับ In-Memory Official Locations (Tier 0 0ms), Overpass Mirror Racing (Promise.any), และการป้องกัน Cache Poisoning เมื่อเครือข่ายขัดข้อง",
       "skill_file_path": "./ai_skills_registry/skills/multi_tier_resilient_reverse_geocoding/SKILL.md"
+    },
+    {
+      "skill_id": "viewport_bounded_3zone_modal_lifecycle",
+      "name": "Viewport-Bounded 3-Zone Responsive Modal Lifecycle Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องสร้าง ปรับปรุง หรือตรวจสอบความสมบูรณ์ของ Modal/Dialog บนมือถือให้ปลอดภัยจากการตัดขอบบน-ล่าง (Negative-Y Flex Overflow), ใช้ 100dvh + my-auto + Sticky Header/Footer 3 ส่วน, รักษาลำดับชั้น Z-Index (z-[9990] / z-[9999] / .swal2-container 99990), และซิงก์สถานะ bma-modal-open + scrollTop=0 + backdrop/ESC ข้ามหน้า SPA",
+      "skill_file_path": "./ai_skills_registry/skills/viewport_bounded_3zone_modal_lifecycle/SKILL.md"
     }
   ]
 }

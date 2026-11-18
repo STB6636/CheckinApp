@@ -765,10 +765,12 @@ export class UsersController {
 
         this.#toggleAdminScopeUI();
         modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
         document.getElementById('modalUserAccountForm')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async syncUsersSilent(deltaDetail = null) {
@@ -941,6 +943,7 @@ export class UsersController {
         document.getElementById('btnOpenAddUserModal')?.addEventListener('click', () => this.#openModal(null));
         document.getElementById('btnCloseUserModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelUserModal')?.addEventListener('click', () => this.#closeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalUserAccountForm'), () => this.#closeModal());
 
         document.getElementById('usrPersonnelSearchFilter')?.addEventListener('input', (e) => {
             const currentSelected = document.getElementById('usrPersonnelSelect').value;

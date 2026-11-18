@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_d72b67f4';
+            const CURRENT_APP_BUILD = '20261118_a554aa4b';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -156,7 +156,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_d72b67f4">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_a554aa4b">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -354,9 +354,9 @@
          ====================================================================== -->
 
     <!-- Modal 1: เปลี่ยนรหัสผ่าน -->
-    <div id="modalChangePassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-700">
+    <div id="modalChangePassword" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 relative flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-700">
                 <h3 class="text-base font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-key text-[#00744B]"></i>
                     <span>เปลี่ยนรหัสผ่านด้วยตนเอง</span>
@@ -366,7 +366,8 @@
                 </button>
             </div>
 
-            <form id="formChangePassword" class="space-y-3.5">
+            <form id="formChangePassword" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-3.5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ชื่อบัญชี (Username) *</label>
                     <input type="text" id="cpUsername" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#00744B]" required>
@@ -384,8 +385,9 @@
                     <input type="password" id="cpConfirmPassword" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#00744B]" minlength="6" required>
                 </div>
                 <div id="cpMatchStatus" class="text-xs font-bold min-h-[1.25rem]"></div>
+                </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
+                <div class="shrink-0 px-5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/40">
                     <button type="button" id="btnCancelChangePwd" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">ยกเลิก</button>
                     <button type="submit" id="btnSubmitChangePwd" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md shadow-emerald-700/30 hover:brightness-105 cursor-pointer">
                         <i class="fa-solid fa-floppy-disk mr-1"></i>บันทึกรหัสผ่านใหม่
@@ -396,9 +398,9 @@
     </div>
 
     <!-- Modal 2: ลืมรหัสผ่าน -->
-    <div id="modalForgotPassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-700">
+    <div id="modalForgotPassword" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 relative flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-700">
                 <h3 class="text-base font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-circle-question text-amber-500"></i>
                     <span>ขอรีเซ็ตรหัสผ่าน</span>
@@ -408,7 +410,8 @@
                 </button>
             </div>
 
-            <form id="formForgotPassword" class="space-y-4">
+            <form id="formForgotPassword" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-4">
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     กรุณากรอกเลขประจำตัวประชาชน 13 หลัก ระบบจะส่งคำขอไปยังผู้ดูแลระบบเพื่อรีเซ็ตรหัสผ่านเริ่มต้น (6 ตัวท้าย)
                 </p>
@@ -416,8 +419,9 @@
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เลขประจำตัวประชาชน 13 หลัก *</label>
                     <input type="text" id="fpNationalId" maxlength="13" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-mono tracking-widest text-center font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00744B]" placeholder="XXXXXXXXXXXXX" required>
                 </div>
+                </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
+                <div class="shrink-0 px-5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/40">
                     <button type="button" id="btnCancelForgotPwd" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">ยกเลิก</button>
                     <button type="submit" id="btnSubmitForgotPwd" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md shadow-emerald-700/30 hover:brightness-105 cursor-pointer">
                         <i class="fa-solid fa-paper-plane mr-1"></i>ส่งคำขอรีเซ็ต
@@ -427,6 +431,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/LoginController.js?v=20261118_d72b67f4"></script>
+    <script type="module" src="assets/js/controllers/LoginController.js?v=20261118_a554aa4b"></script>
 </body>
 </html>

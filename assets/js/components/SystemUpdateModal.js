@@ -479,7 +479,7 @@ export class SystemUpdateModal {
 
         const modalDiv = document.createElement('div');
         modalDiv.id = this.MODAL_CONTAINER_ID;
-        modalDiv.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs select-none bma-modal-backdrop-anim';
+        modalDiv.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-sm overflow-y-auto select-none bma-modal-backdrop-anim';
         modalDiv.setAttribute('role', 'dialog');
         modalDiv.setAttribute('aria-modal', 'true');
         modalDiv.setAttribute('aria-labelledby', 'bmaUpdateModalTitle');
@@ -492,7 +492,7 @@ export class SystemUpdateModal {
 
         if (mode === 'image') {
             modalDiv.innerHTML = `
-                <div id="bmaUpdateModalCard" class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[92dvh] bma-modal-card-anim">
+                <div id="bmaUpdateModalCard" class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[92dvh] bma-modal-card-anim">
                     <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] px-5 py-3.5 text-white relative shrink-0 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-2.5 min-w-0">
                             <span class="w-8 h-8 rounded-xl bg-white/15 text-[#F6DE51] flex items-center justify-center shrink-0 border border-white/20">
@@ -514,9 +514,9 @@ export class SystemUpdateModal {
                         </button>
                     </div>
 
-                    <div class="p-3 sm:p-4 overflow-y-auto flex-1 bg-slate-100 dark:bg-slate-900/70 flex items-center justify-center">
+                    <div class="p-3 sm:p-4 overflow-y-auto overscroll-contain flex-1 min-h-0 bg-slate-100 dark:bg-slate-900/70 flex flex-col">
                         ${safeImageUrl ? `
-                            <div class="w-full flex flex-col items-center justify-center">
+                            <div class="w-full flex flex-col items-center justify-center my-auto">
                                 <img
                                     id="bmaAnnouncementModalImg"
                                     src="${this.#escapeHtml(safeImageUrl)}"
@@ -552,7 +552,7 @@ export class SystemUpdateModal {
         } else {
             const bodyHtml = this.formatAnnouncementBodyHtml(settings.announcement_body);
             modalDiv.innerHTML = `
-                <div id="bmaUpdateModalCard" class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[90dvh] bma-modal-card-anim">
+                <div id="bmaUpdateModalCard" class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[90dvh] bma-modal-card-anim">
                     <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] p-5 text-white text-center relative shrink-0">
                         <button
                             id="btnModalCloseTopX"
@@ -572,7 +572,7 @@ export class SystemUpdateModal {
                         ${dateSubtitle ? `<p class="text-[11px] text-emerald-100/90 font-medium mt-1">${dateSubtitle}</p>` : ''}
                     </div>
 
-                    <div class="p-5 overflow-y-auto flex-1 text-slate-800 dark:text-slate-100">
+                    <div class="p-5 overflow-y-auto overscroll-contain flex-1 min-h-0 text-slate-800 dark:text-slate-100">
                         ${bodyHtml}
                     </div>
 
@@ -688,7 +688,7 @@ export class SystemUpdateModal {
 
         const modalDiv = document.createElement('div');
         modalDiv.id = this.MODAL_CONTAINER_ID;
-        modalDiv.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs select-none bma-modal-backdrop-anim';
+        modalDiv.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto select-none bma-modal-backdrop-anim';
         modalDiv.setAttribute('role', 'dialog');
         modalDiv.setAttribute('aria-modal', 'true');
         modalDiv.setAttribute('aria-labelledby', 'bmaUpdateModalTitle');
@@ -737,7 +737,7 @@ export class SystemUpdateModal {
         }).join('');
 
         modalDiv.innerHTML = `
-            <div id="bmaUpdateModalCard" class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[90vh] bma-modal-card-anim">
+            <div id="bmaUpdateModalCard" class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden relative flex flex-col max-h-[90dvh] bma-modal-card-anim">
                 <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] p-5 text-white text-center relative shrink-0">
                     <button
                         id="btnModalCloseTopX"
@@ -758,7 +758,7 @@ export class SystemUpdateModal {
                     </p>
                 </div>
 
-                <div class="p-5 overflow-y-auto space-y-3 flex-1 text-slate-800 dark:text-slate-100 text-xs">
+                <div class="p-5 overflow-y-auto overscroll-contain space-y-3 flex-1 min-h-0 text-slate-800 dark:text-slate-100 text-xs">
                     <div class="text-slate-500 dark:text-slate-400 font-medium text-[11px] pb-1 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                         <span>รายละเอียดฟังก์ชันและประสิทธิภาพที่ได้รับการปรับปรุง:</span>
                         <span class="font-mono text-[10px] text-slate-400 dark:text-slate-500">${buildId ? `Build ${buildId}` : ''}</span>
@@ -815,13 +815,20 @@ export class SystemUpdateModal {
             this.#escKeyHandler = null;
         }
 
-        if (typeof document !== 'undefined' && document.body?.classList?.remove) {
-            document.body.classList.remove('bma-modal-open');
-        }
-
         const modalDiv = document.getElementById(this.MODAL_CONTAINER_ID);
         if (modalDiv && modalDiv.parentNode) {
             modalDiv.parentNode.removeChild(modalDiv);
+        }
+
+        if (typeof document !== 'undefined' && document.body?.classList?.remove) {
+            const hasOtherModal = typeof document.querySelectorAll === 'function'
+                ? Array.from(document.querySelectorAll('.fixed.inset-0:not(.hidden)')).some(
+                    (el) => el && el.id !== 'bmaSidebarBackdrop' && !(typeof el.closest === 'function' && el.closest('.hidden')) && !el.classList?.contains?.('invisible')
+                )
+                : false;
+            if (!hasOtherModal) {
+                document.body.classList.remove('bma-modal-open');
+            }
         }
     }
 

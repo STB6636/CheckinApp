@@ -1508,6 +1508,11 @@ div[id^="modal"].fixed.inset-0:not(.hidden),
     display: block !important;
 }
 
+body.bma-modal-open {
+    overflow: hidden !important;
+    overscroll-behavior: contain;
+}
+
 /* ============================================================================
  * Checkin Floating Header Table Cards Spacing Contract (Plan V2.15)
  * ป้องกันการชนกันของ Floating Header (-mt-6) กับกล่องลงเวลาด้านบน (สุทธิ 32px / 40px)
@@ -1611,23 +1616,6 @@ html.dark .cell-health-error {
 .peer:focus-visible ~ .bma-toggle-track {
     outline: 2px solid #00744B;
     outline-offset: 2px;
-}
-
-/* ============================================================================
- * Zero-Scroll Executive Resume Profile Modal Contract (Plan V2.22)
- * Height constrained to <= 520px, guaranteed zero vertical scrolling on standard viewports
- * ============================================================================ */
-#modalPersonnelResumeProfile > div {
-    max-height: calc(100vh - 2rem);
-    display: flex;
-    flex-direction: column;
-}
-
-@media (min-height: 600px) {
-    #modalPersonnelResumeProfile > div {
-        max-height: calc(100vh - 2.5rem);
-        overflow: hidden;
-    }
 }
 
 /* ============================================================================

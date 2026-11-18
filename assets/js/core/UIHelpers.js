@@ -1311,4 +1311,99 @@ export class UIHelpers {
         printWindow.document.write(htmlDocument);
         printWindow.document.close();
     }
+
+    /**
+     * ซิงค์สถานะล็อกสกรอลล์พื้นหลัง (body.bma-modal-open) ตาม Modal ที่กำลังเปิดอยู่
+     */
+    static syncBodyModalLock() {
+        if (typeof document === 'undefined' || !document.body || !document.body.classList) return false;
+        const overlays = typeof document.querySelectorAll === 'function'
+            ? document.querySelectorAll('.fixed.inset-0:not(.hidden)')
+            : [];
+        let hasOpenModal = false;
+        for (const el of overlays) {
+            if (!el || el.id === 'bmaSidebarBackdrop') continue;
+            if (typeof el.closest === 'function' && el.closest('.hidden')) continue;
+            if (el.classList?.contains?.('invisible') || el.classList?.contains?.('pointer-events-none')) continue;
+            const style = typeof window !== 'undefined' && typeof window.getComputedStyle === 'function' ? window.getComputedStyle(el) : null;
+            if (style && (style.display === 'none' || style.visibility === 'hidden')) continue;
+            hasOpenModal = true;
+            break;
+        }
+        if (typeof document.body.classList.toggle === 'function') {
+            document.body.classList.toggle('bma-modal-open', hasOpenModal);
+        } else if (hasOpenModal) {
+            document.body.classList.add?.('bma-modal-open');
+        } else {
+            document.body.classList.remove?.('bma-modal-open');
+        }
+        return hasOpenModal;
+    }
+
+    /**
+     * รีเซ็ตตำแหน่งสกรอลล์ของ Modal และ Container ภายในก่อนแสดงผล พร้อมล็อกสกรอลล์พื้นหลัง
+     * @param {HTMLElement|null} modalEl
+     */
+    static prepareModalOpen(modalEl) {
+        if (modalEl) {
+            modalEl.scrollTop = 0;
+            if (typeof modalEl.querySelectorAll === 'function') {
+                modalEl.querySelectorAll('.overflow-y-auto, .overflow-auto').forEach((scrollEl) => {
+                    scrollEl.scrollTop = 0;
+                });
+            }
+        }
+        UIHelpers.syncBodyModalLock();
+    }
+
+    /**
+     * ผูก Event ปิด Modal แบบ Idempotent (Backdrop click, ปุ่ม ESC, และเลื่อน Input หนีคีย์บอร์ดมือถือ)
+     * @param {HTMLElement|null} modalEl
+     * @param {Function} closeCallback
+     */
+    static bindModalDismiss(modalEl, closeCallback) {
+        if (!modalEl || typeof closeCallback !== 'function') return;
+        if (!modalEl.dataset) modalEl.dataset = {};
+        if (modalEl.dataset.bmaDismissBound === '1') return;
+        modalEl.dataset.bmaDismissBound = '1';
+
+        if (typeof modalEl.addEventListener === 'function') {
+            modalEl.addEventListener('click', (e) => {
+                if (e.target === modalEl) {
+                    closeCallback();
+                }
+            });
+
+            modalEl.addEventListener('focusin', (e) => {
+                const field = e.target?.closest?.('input, select, textarea');
+                if (!field || typeof window === 'undefined' || window.innerWidth >= 1024) return;
+                setTimeout(() => {
+                    if (document.activeElement === field && typeof field.scrollIntoView === 'function') {
+                        field.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    }
+                }, 260);
+            });
+        }
+
+        if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+            const onEsc = (e) => {
+                if (modalEl.isConnected === false) {
+                    document.removeEventListener?.('keydown', onEsc);
+                    return;
+                }
+                if (e.key !== 'Escape') return;
+                if (modalEl.classList?.contains?.('hidden')) return;
+                if (typeof document.querySelector === 'function' && document.querySelector('.swal2-popup:not(.swal2-toast)')) return;
+                const openModals = typeof document.querySelectorAll === 'function'
+                    ? Array.from(document.querySelectorAll('.fixed.inset-0:not(.hidden)')).filter(
+                        (el) => el.id !== 'bmaSidebarBackdrop' && !(typeof el.closest === 'function' && el.closest('.hidden')) && !el.classList?.contains?.('invisible')
+                    )
+                    : [];
+                const topModal = openModals[openModals.length - 1];
+                if (topModal && topModal !== modalEl) return;
+                closeCallback();
+            };
+            document.addEventListener('keydown', onEsc);
+        }
+    }
 }

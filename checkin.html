@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_d72b67f4';
+            const CURRENT_APP_BUILD = '20261118_a554aa4b';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -138,7 +138,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_d72b67f4">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_a554aa4b">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -319,7 +319,7 @@
 
                     <!-- Status Badge on Bottom -->
                     <div class="absolute bottom-1.5 inset-x-1.5 text-center pointer-events-none">
-                        <span id="photoStatusBadgeText" class="inline-block px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[9px] sm:text-[10px] text-white font-medium truncate max-w-full">แตะเพื่อถ่ายรูป</span>
+                        <span id="photoStatusBadgeText" class="inline-block px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-[9px] sm:text-[10px] text-white font-medium truncate max-w-full">แตะเพื่อถ่ายรูป</span>
                     </div>
 
                     <!-- Fallback File Input for LINE / No Camera -->
@@ -659,7 +659,7 @@
     <!-- Mobile Hamburger History Drawer (Off-Canvas) -->
     <div id="mobileHistoryDrawer" class="fixed inset-0 z-[9999] hidden">
         <!-- Backdrop -->
-        <div id="btnMobileHistoryDrawerBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 opacity-0 cursor-pointer"></div>
+        <div id="btnMobileHistoryDrawerBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 cursor-pointer"></div>
 
         <!-- Off-canvas Drawer Panel -->
         <div id="mobileDrawerPanel" class="absolute inset-y-0 right-0 max-w-full w-full sm:w-[580px] bg-slate-50 dark:bg-slate-900 shadow-2xl flex flex-col z-20 overflow-hidden transform translate-x-full transition-transform duration-300 ease-in-out">
@@ -709,7 +709,7 @@
             </div>
 
             <!-- Drawer Scrollable Content -->
-            <div id="mobileDrawerBodyScroll" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div id="mobileDrawerBodyScroll" class="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 space-y-4">
                 <!-- Quick Action: ยื่นขอลงเวลากรณีพิเศษ (Visible only in Special SPA view) -->
                 <div id="drawerSpecialQuickAction" class="hidden p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/40 space-y-2 shadow-xs">
                     <div class="text-xs font-extrabold text-indigo-900 dark:text-indigo-200 flex items-center gap-1.5">
@@ -759,21 +759,22 @@
     </div>
 
     <!-- Modal ขอลงเวลากรณีพิเศษ -->
-    <div id="modalSpecialRequest" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center text-sm shadow-xs">
+    <div id="modalSpecialRequest" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-lg my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+                <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 min-w-0">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center text-sm shadow-xs shrink-0">
                         <i class="fa-solid fa-file-signature"></i>
                     </span>
-                    <span>แบบคำขอลงเวลากรณีพิเศษ</span>
+                    <span class="truncate">แบบคำขอลงเวลากรณีพิเศษ</span>
                 </h3>
-                <button type="button" id="btnCloseSpecialModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <button type="button" id="btnCloseSpecialModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <form id="formSpecialRequest" class="space-y-4">
+            <form id="formSpecialRequest" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-4">
                 <div class="p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/60 dark:border-indigo-800/40 text-xs text-indigo-900 dark:text-indigo-200 leading-relaxed">
                     ระบบจะบันทึกทั้ง <b>เวลาเข้างาน</b> และ <b>เวลาเลิกงาน</b> ให้อัตโนมัติตามช่วงเวลาที่เลือก และแสดงสถานะการพิจารณาในตารางประวัติการขอลงเวลากรณีพิเศษ
                 </div>
@@ -918,12 +919,13 @@
                         </div>
                     </div>
                 </div>
+                </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" id="btnCancelSpecialModal" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
+                <div class="shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 border-t border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/50 flex items-center justify-end gap-2">
+                    <button type="button" id="btnCancelSpecialModal" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
                         ยกเลิก
                     </button>
-                    <button type="submit" id="btnSubmitSpecialModal" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg shadow-emerald-900/30 transition cursor-pointer">
+                    <button type="submit" id="btnSubmitSpecialModal" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg shadow-emerald-900/30 transition cursor-pointer">
                         ส่งคำขอลงเวลากรณีพิเศษ
                     </button>
                 </div>
@@ -932,7 +934,7 @@
     </div>
 
     <!-- Minimal Civic Footer -->
-    <footer class="mt-auto py-2.5 px-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs text-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200/60 dark:border-slate-800">
+    <footer class="mt-auto py-2.5 px-6 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm text-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-200/60 dark:border-slate-800">
         <div>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ • </span>
             <span id="footerCheckinOrg" class="font-bold text-slate-800 dark:text-white">กรุงเทพมหานคร</span>
@@ -943,23 +945,23 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261118_d72b67f4"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261118_a554aa4b"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
-    <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-sm shadow-xs">
+    <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-lg my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+                <h3 class="text-sm sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 min-w-0">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center text-sm shadow-xs shrink-0">
                         <i class="fa-solid fa-map-location-dot"></i>
                     </span>
-                    <span>ค้นหา/ปักหมุดสถานที่ปฏิบัติงานนอกสถานที่</span>
+                    <span class="truncate">ค้นหา/ปักหมุดสถานที่ปฏิบัติงานนอกสถานที่</span>
                 </h3>
-                <button type="button" id="btnCloseOffsiteMapModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <button type="button" id="btnCloseOffsiteMapModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div class="space-y-3">
+            <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-3">
                 <!-- Search Box -->
                 <div class="flex gap-1.5 relative z-20">
                     <div class="relative flex-1">
@@ -991,16 +993,16 @@
                         ลากหมุดหรือคลิกบนแผนที่เพื่อเลือกตำแหน่ง
                     </div>
                 </div>
+                </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-200/80 dark:border-slate-700/80">
-                    <button type="button" id="btnCancelOffsiteMapModal" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
+                <div class="shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2 border-t border-slate-200/80 dark:border-slate-700/80 bg-slate-50/90 dark:bg-slate-900/50">
+                    <button type="button" id="btnCancelOffsiteMapModal" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition cursor-pointer">
                         ยกเลิก
                     </button>
-                    <button type="button" id="btnConfirmOffsiteCustomLocation" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg transition cursor-pointer">
+                    <button type="button" id="btnConfirmOffsiteCustomLocation" class="px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-lg transition cursor-pointer">
                         ยืนยันตำแหน่งนี้
                     </button>
                 </div>
-            </div>
         </div>
     </div>
 
@@ -1030,7 +1032,7 @@
             <div class="w-full max-w-sm camera-portrait-3-4 rounded-3xl overflow-hidden border-2 border-emerald-400/80 bg-slate-900 relative shadow-2xl flex items-center justify-center">
                 <video id="cameraVideoStream" class="w-full h-full object-cover -scale-x-100" autoplay playsinline muted></video>
                 <div class="absolute inset-0 border-2 border-dashed border-emerald-400/40 rounded-3xl pointer-events-none"></div>
-                <div class="absolute bottom-3 px-3 py-1 rounded-full bg-black/60 text-[11px] text-emerald-200 font-bold backdrop-blur-xs pointer-events-none">
+                <div class="absolute bottom-3 px-3 py-1 rounded-full bg-black/60 text-[11px] text-emerald-200 font-bold backdrop-blur-sm pointer-events-none">
                     จัดใบหน้าให้อยู่ในกรอบ
                 </div>
             </div>
@@ -1049,9 +1051,9 @@
 
 
     <!-- Modal ดูแผนที่ตามพิกัด Leaflet -->
-    <div id="modalViewGpsMap" class="fixed inset-0 z-[9999] hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
-        <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl p-4 sm:p-5 space-y-3 shadow-2xl max-h-[90%] flex flex-col border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2.5">
+    <div id="modalViewGpsMap" class="fixed inset-0 z-[9999] hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-3 overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-lg my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div class="shrink-0 flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-4 sm:px-5 py-3">
                 <span class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white flex items-center gap-1.5">
                     <i class="fa-solid fa-map-location-dot text-[#0971CE]"></i>
                     <span>แผนที่ตำแหน่งพิกัด (Leaflet Map)</span>
@@ -1061,6 +1063,7 @@
                 </button>
             </div>
 
+            <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-5 space-y-3">
             <!-- Leaflet Map Container -->
             <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 h-64 sm:h-72 w-full bg-slate-100 dark:bg-slate-900 relative shadow-inner">
                 <div id="viewGpsLeafletMap" class="w-full h-full z-0"></div>
@@ -1073,10 +1076,13 @@
                 </div>
                 <div id="viewGpsModalDistanceInfo" class="text-[11px] text-slate-500 dark:text-slate-400">กำลังคำนวณระยะห่าง...</div>
             </div>
+            </div>
 
+            <div class="shrink-0 px-4 sm:px-5 py-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/50">
             <button type="button" id="btnConfirmCloseViewGpsMap" class="w-full py-2.5 rounded-xl bg-[#00744B] hover:bg-[#005B3A] text-white font-bold text-xs shadow-md transition cursor-pointer">
                 ปิดหน้าต่างแผนที่
             </button>
+            </div>
         </div>
     </div>
 

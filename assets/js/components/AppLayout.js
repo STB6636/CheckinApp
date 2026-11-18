@@ -345,6 +345,7 @@ export class AppLayout {
             newModals.forEach(modal => {
                 modalsContainer.appendChild(modal.cloneNode(true));
             });
+            UIHelpers.syncBodyModalLock();
 
             // 8.3 ปรับปรุง History State และ Root Masking
             if (pushHistory) {
@@ -401,7 +402,7 @@ export class AppLayout {
                 : `ส่วน/ฝ่าย: ${currentUser.scope_division || currentUser.scope_bureau}`);
 
         sidebarEl.innerHTML = `
-            <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
+            <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
 
             <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 bg-[#111827] dark:bg-[#0B132B] z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between shadow-2xl border-r border-slate-800">
                 <div>

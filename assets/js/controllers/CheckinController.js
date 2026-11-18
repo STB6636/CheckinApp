@@ -857,18 +857,21 @@ export class CheckinController {
     }
 
     #initViewGpsMapModal() {
-        document.getElementById('btnCloseViewGpsMapModal')?.addEventListener('click', () => {
-            document.getElementById('modalViewGpsMap')?.classList.add('hidden');
-        });
-        document.getElementById('btnConfirmCloseViewGpsMap')?.addEventListener('click', () => {
-            document.getElementById('modalViewGpsMap')?.classList.add('hidden');
-        });
+        const modal = document.getElementById('modalViewGpsMap');
+        const closeViewGpsMapModal = () => {
+            modal?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
+        document.getElementById('btnCloseViewGpsMapModal')?.addEventListener('click', closeViewGpsMapModal);
+        document.getElementById('btnConfirmCloseViewGpsMap')?.addEventListener('click', closeViewGpsMapModal);
+        UIHelpers.bindModalDismiss(modal, closeViewGpsMapModal);
     }
 
     #openViewGpsMapModal() {
         const modal = document.getElementById('modalViewGpsMap');
         if (!modal) return;
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
 
         const lat = this.gpsData?.lat || 13.7563;
         const lng = this.gpsData?.lng || 100.5018;
@@ -1022,6 +1025,7 @@ export class CheckinController {
         const modal = document.getElementById('modalOffsiteMapSearch');
         if (!modal) return;
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
 
         const initialLat = this.offsiteCustomGps.lat ?? this.gpsData.lat ?? 13.7563;
         const initialLng = this.offsiteCustomGps.lng ?? this.gpsData.lng ?? 100.5018;
@@ -1207,10 +1211,12 @@ export class CheckinController {
         const closeModal = () => {
             modal?.classList.add('hidden');
             hideSearchResults();
+            UIHelpers.syncBodyModalLock();
         };
 
         btnClose?.addEventListener('click', closeModal);
         btnCancel?.addEventListener('click', closeModal);
+        UIHelpers.bindModalDismiss(modal, closeModal);
 
         btnConfirm?.addEventListener('click', () => {
             if (this.tempOffsiteLocation) {
@@ -2248,6 +2254,7 @@ export class CheckinController {
         }
 
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     #closeFullscreenCamera() {
@@ -2255,6 +2262,7 @@ export class CheckinController {
         this.isCameraOpening = false;
         this.#stopCameraHardwareStream();
         document.getElementById('modalFullscreenCamera')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     /**
@@ -2491,6 +2499,7 @@ export class CheckinController {
             }
         } else {
             modal?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modal);
         }
 
         const primaryConstraints = {
@@ -2554,6 +2563,7 @@ export class CheckinController {
 
             if (showFullscreenModal) {
                 modal?.classList.add('hidden');
+                UIHelpers.syncBodyModalLock();
             } else {
                 const standbyOverlay = document.getElementById('cameraStandbyOverlay');
                 const msgEl = document.getElementById('cameraStatusMessage');
@@ -2657,6 +2667,7 @@ export class CheckinController {
         const wasModalOpen = Boolean(modal && !modal.classList.contains('hidden'));
         this.#stopCameraHardwareStream();
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
 
         const video = document.getElementById('cameraVideoStream');
         const standbyOverlay = document.getElementById('cameraStandbyOverlay');
@@ -3415,17 +3426,22 @@ export class CheckinController {
         document.getElementById('personalSpecialRequestsCardsContainer')?.addEventListener('click', handleSpecialRequestActionClick);
 
         const modalSpecial = document.getElementById('modalSpecialRequest');
-        const closeSpecialModal = () => modalSpecial?.classList.add('hidden');
+        const closeSpecialModal = () => {
+            modalSpecial?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
 
         const openSpecialModal = () => {
             this.#openSpecialRequestModal();
             modalSpecial?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modalSpecial);
         };
 
         document.getElementById('btnOpenSpecialRequestModal')?.addEventListener('click', openSpecialModal);
         document.getElementById('btnOpenSpecialFromDesktopTab')?.addEventListener('click', openSpecialModal);
         document.getElementById('btnCloseSpecialModal')?.addEventListener('click', closeSpecialModal);
         document.getElementById('btnCancelSpecialModal')?.addEventListener('click', closeSpecialModal);
+        UIHelpers.bindModalDismiss(modalSpecial, closeSpecialModal);
 
         this.#initSpecialModalGps();
         this.#initModalSpecialRequest();
@@ -3573,6 +3589,7 @@ export class CheckinController {
                 drawerMount.appendChild(paneSpecial);
             }
             drawer?.classList.remove('hidden');
+            UIHelpers.syncBodyModalLock();
             document.getElementById('inlineGpsLeafletMap')?.classList.add('invisible');
             requestAnimationFrame(() => {
                 drawerBackdrop?.classList.remove('opacity-0');
@@ -3597,6 +3614,7 @@ export class CheckinController {
 
             setTimeout(() => {
                 drawer?.classList.add('hidden');
+                UIHelpers.syncBodyModalLock();
                 document.getElementById('inlineGpsLeafletMap')?.classList.remove('invisible');
                 this.inlineGpsMap?.invalidateSize();
                 if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {

@@ -532,12 +532,14 @@ export class PersonnelController {
         }
 
         modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
         this.currentEditingPersonnelId = null;
         document.getElementById('personnelCollisionAlert')?.remove();
         document.getElementById('modalPersonnelForm')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async syncPersonnelSilent(deltaDetail = null) {
@@ -775,17 +777,16 @@ export class PersonnelController {
         document.getElementById('personnelTableBody')?.addEventListener('click', handlePersonnelContainerClick);
         document.getElementById('personnelCardsContainer')?.addEventListener('click', handlePersonnelContainerClick);
 
-        // Event listeners ปิด Resume Profile Modal
+        // Event listeners ปิด Resume Profile Modal & Unified Modal Dismiss
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelForm'), () => this.#closeModal());
         document.getElementById('btnClosePersonnelResumeModal')?.addEventListener('click', () => {
             this.#closePersonnelResumeModal();
         });
         document.getElementById('btnClosePersonnelResumeModalBottom')?.addEventListener('click', () => {
             this.#closePersonnelResumeModal();
         });
-        document.getElementById('modalPersonnelResumeProfile')?.addEventListener('click', (e) => {
-            if (e.target.id === 'modalPersonnelResumeProfile') {
-                this.#closePersonnelResumeModal();
-            }
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelResumeProfile'), () => {
+            this.#closePersonnelResumeModal();
         });
 
         // Event listeners ระบบ Smart Bulk Import Modal
@@ -793,6 +794,9 @@ export class PersonnelController {
             this.#closeBulkImportModal();
         });
         document.getElementById('btnCancelBulkImport')?.addEventListener('click', () => {
+            this.#closeBulkImportModal();
+        });
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelBulkImport'), () => {
             this.#closeBulkImportModal();
         });
         document.getElementById('btnDownloadImportTemplate')?.addEventListener('click', () => {
@@ -1012,11 +1016,13 @@ export class PersonnelController {
         }
 
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closePersonnelResumeModal() {
         const modal = document.getElementById('modalPersonnelResumeProfile');
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async #handleSavePersonnel() {
@@ -1191,6 +1197,7 @@ export class PersonnelController {
         if (confirmBtn) confirmBtn.disabled = true;
 
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
 
         if (initialFile) {
             this.#processBulkImportFile(initialFile);
@@ -1201,6 +1208,7 @@ export class PersonnelController {
         if (this.isProcessingBulkImport) return;
         const modal = document.getElementById('modalPersonnelBulkImport');
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
         const inputFile = document.getElementById('inputBulkPersonnelFile');
         if (inputFile) inputFile.value = '';
         const inputImport = document.getElementById('inputImportPersonnelExcel');
