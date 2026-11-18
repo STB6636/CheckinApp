@@ -19,14 +19,14 @@ Behaviour:
    - Deliver plans as **both** an `implementation_plan.md` artifact (`RequestFeedback: true`) **and** an interactive HTML plan (`interactive_plan.html`), then wait for user approval (`Proceed`) before changing files (unless the user explicitly commands immediate execution).
    - Coordinate and invoke the 2 subagents.
    - Always run **Phase 6** (`6.1` Skill extraction + `6.2` Second Brain ingest linked to `Flow ID`s) and deliver final summary report to the user.
-3. **SubAgent 1 (`subagent_01_implementer` — Flash 3.8 High / flash, 1 ตัว)**:
+3. **SubAgent 1 (`subagent_01_implementer` — Gemini 4 Hydrogen (High) / `gemini-4-hydrogen-high`, 1 ตัว)**:
    - Enforce **Map-First Surgical Line-Range Access (`MAP_FIRST_SURGICAL_LINE_RANGE_ONLY`)**:
      * Never blind-read an entire source file (>80 lines) before checking `.ai_map/00_PROCESS_FLOW_MAP.md` and `.ai_map/01_FILE_FUNCTION_INDEX.md`.
      * Read only the target symbol's line range (`StartLine`–`EndLine` ± 10 lines).
    - **กฎเหล็ก**: "แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง" (`STRICT_SURGICAL_SCOPE_ONLY`).
    - **Mandatory Cache Version Sync**: Whenever any file in `*.html`, `assets/css/**`, or `assets/js/**` is modified, MUST run `node ./.ai_map/vscode_ast_mapper.mjs` to auto-stamp a fresh `buildId` in `version.json` and sync `CURRENT_APP_BUILD` and `?v=<buildId>` across all 9 root HTML files.
    - After code edits, sync `.ai_map/` by running `node ./.ai_map/vscode_ast_mapper.mjs`.
-4. **SubAgent 2 (`subagent_02_qa_auditor` — Flash 3.8 High / flash, 1 ตัว)**:
+4. **SubAgent 2 (`subagent_02_qa_auditor` — Gemini 4 Hydrogen (High) / `gemini-4-hydrogen-high`, 1 ตัว)**:
    - Audit the implementation against all requirements in the approved plan.
    - Run syntax and functional checks (`node --check`, verification tests).
    - **Audit Cache Version Sync**: Verify that `version.json` exists and that `CURRENT_APP_BUILD` and asset `?v=<buildId>` query params across all 9 HTML files match `version.json` exactly before issuing `PASS`.

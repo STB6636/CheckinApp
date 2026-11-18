@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_069d6bc8';
+            const CURRENT_APP_BUILD = '20261118_d72b67f4';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -112,7 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_069d6bc8">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_d72b67f4">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -200,7 +200,7 @@
             </div>
 
             <!-- Material Dashboard PRO - Floating Emerald Header Table Card -->
-            <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+            <div class="relative bg-slate-100/80 lg:bg-white dark:bg-slate-900/60 lg:dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
                 <!-- Floating Emerald Header (Offset -mt-6) -->
                 <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
@@ -221,7 +221,7 @@
                 <!-- Card Body -->
                 <div class="p-4 sm:p-6 space-y-4">
                     <!-- Pagination & Size Select Bar -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 text-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-white/90 lg:bg-slate-50 dark:bg-slate-800/80 lg:dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 text-xs">
                         <div class="flex items-center gap-2">
                             <label for="dashboardPageSizeSelect" class="font-bold text-slate-700 dark:text-slate-300">แสดงรายการต่อหน้า:</label>
                             <select id="dashboardPageSizeSelect" class="bma-select w-auto py-1 px-3 text-xs font-bold rounded-lg border-slate-300 dark:border-slate-600">
@@ -232,7 +232,7 @@
                             </select>
                         </div>
 
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                             <button type="button" id="btnDashboardPrevPage" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shadow-xs">
                                 <i class="fa-solid fa-chevron-left"></i>
                                 <span>ก่อนหน้า</span>
@@ -245,22 +245,27 @@
                         </div>
                     </div>
 
-                    <!-- Modern Responsive Table -->
-                    <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
-                        <table class="bma-table text-sm w-full text-left">
-                            <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                <tr>
-                                    <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
-                                    <th class="min-w-[180px] py-3.5 px-3 whitespace-nowrap">ชื่อ-นามสกุล</th>
-                                    <th class="min-w-[200px] py-3.5 px-3">ตำแหน่ง</th>
-                                    <th class="min-w-[210px] py-3.5 px-3">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
-                                    <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาเข้างาน</th>
-                                    <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาออกงาน</th>
-                                    <th class="w-40 text-center py-3.5 px-3 whitespace-nowrap">สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dashboardRecentTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
-                        </table>
+                    <!-- Mobile Card-List (< lg) -->
+                    <div id="dashboardRecentCardsContainer" class="lg:hidden space-y-3"></div>
+
+                    <!-- Modern Responsive Table (Desktop >= lg) -->
+                    <div class="hidden lg:block">
+                        <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                            <table class="bma-table text-sm w-full text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                        <th class="min-w-[180px] py-3.5 px-3 whitespace-nowrap">ชื่อ-นามสกุล</th>
+                                        <th class="min-w-[200px] py-3.5 px-3">ตำแหน่ง</th>
+                                        <th class="min-w-[210px] py-3.5 px-3">สังกัด (สำนักงาน/กอง &gt; ส่วน/ฝ่าย)</th>
+                                        <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาเข้างาน</th>
+                                        <th class="w-28 text-center py-3.5 px-3 whitespace-nowrap">เวลาออกงาน</th>
+                                        <th class="w-40 text-center py-3.5 px-3 whitespace-nowrap">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardRecentTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -274,6 +279,6 @@
     <!-- Mobile Bottom Navigation Bar -->
     <div id="bmaMobileBottomNav"></div>
 
-    <script type="module" src="assets/js/controllers/DashboardController.js?v=20261118_069d6bc8"></script>
+    <script type="module" src="assets/js/controllers/DashboardController.js?v=20261118_d72b67f4"></script>
 </body>
 </html>

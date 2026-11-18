@@ -549,12 +549,13 @@ export class AppLayout {
         const mobileNavEl = document.getElementById('bmaMobileBottomNav');
         if (!mobileNavEl) return;
 
+        const canSeeUsers = AppLayout.canViewUsersMenu(currentUser);
         const items = [
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', show: true },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-lines', label: 'รายงาน', show: true },
-            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติเวลา', show: true },
+            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติเวลา', show: true, badgeId: 'mobileNavSpecialBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-address-book', label: 'บุคลากร', show: true },
-            { id: 'users', href: 'users.html', icon: 'fa-user-shield', label: 'บัญชีผู้ใช้', show: AppLayout.canViewUsersMenu(currentUser) },
+            { id: 'users', href: 'users.html', icon: 'fa-user-shield', label: 'บัญชีผู้ใช้', show: canSeeUsers, badgeId: 'mobileNavResetBadge' },
             { id: 'settings', href: 'settings.html', icon: 'fa-gear', label: 'ตั้งค่า', show: currentUser.role === 'SuperAdmin' }
         ].filter(i => i.show);
 
@@ -562,10 +563,16 @@ export class AppLayout {
             <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-2 py-1.5 flex items-center justify-around shadow-lg">
                 ${items.map(item => {
                     const isActive = activePage === item.id;
+                    const badgeCount = item.badgeId === 'mobileNavSpecialBadge'
+                        ? Number(AppLayout.#lastPendingSpecialCount || 0)
+                        : (item.badgeId === 'mobileNavResetBadge' && canSeeUsers
+                            ? Number(AppLayout.#lastPendingResetCount || 0)
+                            : 0);
                     return `
-                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
+                        <a href="${item.href}" data-nav-id="${item.id}" class="relative flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
                             <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
                             <span>${item.label}</span>
+                            ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}absolute top-0 right-0 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow">${badgeCount}</span>` : ''}
                         </a>
                     `;
                 }).join('')}
@@ -717,6 +724,8 @@ export class AppLayout {
             const topBellBadge = document.getElementById('topBellBadgeCount');
             const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
             const sidebarResetBadge = document.getElementById('sidebarResetBadge');
+            const mobileNavSpecialBadge = document.getElementById('mobileNavSpecialBadge');
+            const mobileNavResetBadge = document.getElementById('mobileNavResetBadge');
             const summaryTag = document.getElementById('notificationSummaryTag');
             const listContainer = document.getElementById('notificationListContainer');
 
@@ -729,8 +738,16 @@ export class AppLayout {
                 sidebarSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
             }
             if (sidebarResetBadge) {
-                sidebarResetBadge.textContent = String(pendingResets.length);
-                sidebarResetBadge.classList.toggle('hidden', pendingResets.length === 0);
+                sidebarResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
+                sidebarResetBadge.classList.toggle('hidden', !canSeeUsers || pendingResets.length === 0);
+            }
+            if (mobileNavSpecialBadge) {
+                mobileNavSpecialBadge.textContent = String(pendingSpecial.length);
+                mobileNavSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
+            }
+            if (mobileNavResetBadge) {
+                mobileNavResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
+                mobileNavResetBadge.classList.toggle('hidden', !canSeeUsers || pendingResets.length === 0);
             }
             if (summaryTag) {
                 summaryTag.textContent = `${totalCount} รายการ`;
@@ -779,9 +796,9 @@ export class AppLayout {
                         `;
                     }
 
-                    if (pendingResets.length > 0) {
+                    if (canSeeUsers && pendingResets.length > 0) {
                         itemsHtml += `
-                            <a href="users.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
+                            <a href="users.html?tab=password-resets" data-users-deep-link="tab-panel-password-resets" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
                                 <div class="flex items-center justify-between">
                                     <span class="font-extrabold bma-text-main text-xs">
                                         <i class="fa-solid fa-key text-rose-500 mr-1.5"></i>คำขอลืมรหัสผ่าน (รีเซ็ตรหัส)
@@ -1038,6 +1055,11 @@ export class AppLayout {
                 if (anchor.target === '_blank') return;
                 const href = anchor.getAttribute('href') || '';
                 if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+                const usersDeepLink = anchor.dataset?.usersDeepLink;
+                if (usersDeepLink) {
+                    sessionStorage.setItem('bma_users_active_tab', usersDeepLink);
+                    window.dispatchEvent(new CustomEvent('bma:users-switch-tab', { detail: { tabId: usersDeepLink } }));
+                }
                 const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
                 if (AppLayout.PAGE_ROUTES[cleanFile]) {
                     e.preventDefault();

@@ -250,8 +250,12 @@ export class PersonnelController {
 
     async loadPersonnelData() {
         const tbody = document.getElementById('personnelTableBody');
+        const cardsContainer = document.getElementById('personnelCardsContainer');
         if (tbody) {
             tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 6);
+        }
+        if (cardsContainer) {
+            cardsContainer.innerHTML = this.#renderMobileCardsSkeleton(3);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบุคลากร...');
@@ -259,15 +263,34 @@ export class PersonnelController {
             this.personnelList = await PersonnelModel.getAll(this.currentUser);
             this.#populateHierarchicalOrgFilter();
             this.#renderGroupedTable();
+        } catch (err) {
+            console.error('Load personnel error:', err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการโหลดข้อมูลบุคลากร</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800/60 p-6 text-center text-xs font-bold text-rose-600 dark:text-rose-400 shadow-xs">เกิดข้อผิดพลาดในการโหลดข้อมูลบุคลากร</div>`;
+            }
         } finally {
             UIHelpers.hideLoading();
         }
     }
 
+    #renderMobileCardsSkeleton(count = 3) {
+        return Array.from({ length: count }, () => `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-4 space-y-2.5">
+                <div class="h-4 w-2/3 rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-full rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-1/2 rounded-lg bma-skeleton-shimmer"></div>
+            </div>
+        `).join('');
+    }
+
     #renderGroupedTable() {
         const tbody = document.getElementById('personnelTableBody');
+        const cardsContainer = document.getElementById('personnelCardsContainer');
         const totalBadge = document.getElementById('personnelTotalCountBadge');
-        if (!tbody) return;
+        if (!tbody && !cardsContainer) return;
 
         const keyword = this.searchKeyword.toLowerCase().trim();
         const filtered = this.personnelList.filter(p => {
@@ -288,13 +311,20 @@ export class PersonnelController {
         if (totalBadge) totalBadge.textContent = String(filtered.length);
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่พบข้อมูลบุคลากรที่ค้นหา</div>`;
+            }
             return;
         }
 
         const grouped = PersonnelModel.groupPersonnel(filtered, this.groupViewMode);
         let html = '';
+        let cardsHtml = '';
         let runningNo = 1;
+        let cardRunningNo = 1;
 
         for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
             for (const [divisionName, content] of Object.entries(divisionsObj)) {
@@ -304,6 +334,11 @@ export class PersonnelController {
                             <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
                         </td>
                     </tr>
+                `;
+                cardsHtml += `
+                    <div class="rounded-xl px-3.5 py-2 font-bold text-xs shadow-xs border-l-4" style="background-color: ${this.headerColor}18; color: ${this.headerColor}; border-left-color: ${this.headerColor};">
+                        <i class="fa-solid fa-building-user mr-1.5"></i>${UIHelpers.escapeHtml(bureauName)} &gt; ${UIHelpers.escapeHtml(divisionName)}
+                    </div>
                 `;
 
                 if (this.groupViewMode === 'group') {
@@ -315,19 +350,87 @@ export class PersonnelController {
                                 </td>
                             </tr>
                         `;
+                        cardsHtml += `
+                            <div class="px-3 py-1.5 rounded-lg bg-slate-200/70 dark:bg-slate-800/70 font-semibold text-[11px] bma-text-main">
+                                <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600 dark:text-emerald-400"></i>กลุ่มงาน: ${UIHelpers.escapeHtml(groupName)} (${members.length} คน)
+                            </div>
+                        `;
                         for (const person of members) {
                             html += this.#buildPersonRowHtml(person, runningNo++);
+                            cardsHtml += this.#buildPersonCardHtml(person, cardRunningNo++);
                         }
                     }
                 } else {
                     for (const person of content) {
                         html += this.#buildPersonRowHtml(person, runningNo++);
+                        cardsHtml += this.#buildPersonCardHtml(person, cardRunningNo++);
                     }
                 }
             }
         }
 
-        tbody.innerHTML = html;
+        if (tbody) tbody.innerHTML = html;
+        if (cardsContainer) cardsContainer.innerHTML = cardsHtml;
+    }
+
+    #buildPersonCardHtml(person, indexNo) {
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+        const posFull = UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type);
+        const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
+        const workGroupText = (!person.work_group || person.work_group.trim() === 'ไม่มี') ? '-' : person.work_group;
+        const safeId = UIHelpers.escapeHtml(person.id);
+        const safeName = UIHelpers.escapeHtml(fullName);
+
+        const roleBadgeOrBtnHtml = person.has_account === false
+            ? `
+                <button type="button" data-action="auto-create-account" data-id="${safeId}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 transition-all cursor-pointer shrink-0" title="คลิกเพื่อสร้างบัญชีผู้ใช้งานอัตโนมัติ">
+                    <i class="fa-solid fa-user-plus text-[10px]"></i>
+                    <span>+ สร้างบัญชี</span>
+                </button>
+            `
+            : `<span class="bma-badge ${roleMeta.badgeClass} text-[10px] shrink-0">${UIHelpers.escapeHtml(roleMeta.label)}</span>`;
+
+        const dotClass = person.has_account === false ? 'bg-amber-400' : (roleMeta.dotClass || 'bg-emerald-400');
+
+        const deleteBtnHtml = this.canDeletePersonnel
+            ? `
+                <button type="button" data-action="delete-personnel" data-id="${safeId}" data-name="${safeName}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 transition cursor-pointer">
+                    <i class="fa-solid fa-trash"></i> ลบ
+                </button>
+            `
+            : '';
+
+        return `
+            <div data-card-item="true" data-card-id="${safeId}" data-person-id="${safeId}" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs cursor-pointer transition">
+                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="w-2.5 h-2.5 rounded-full shrink-0 ${dotClass}"></span>
+                        <span class="font-extrabold text-slate-800 dark:text-slate-100 truncate">${safeName}</span>
+                    </div>
+                    ${roleBadgeOrBtnHtml}
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ตำแหน่ง</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">
+                        ${UIHelpers.escapeHtml(posFull)}${person.position_type ? ` <span class="block text-[11px] text-slate-500 dark:text-slate-400 font-normal">${UIHelpers.escapeHtml(person.position_type)}</span>` : ''}
+                    </span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">กลุ่มงาน</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(workGroupText)}</span>
+                </div>
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium"><i class="fa-regular fa-id-card mr-1"></i>แตะการ์ดดูประวัติ</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" data-action="edit-personnel" data-id="${safeId}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 hover:bg-sky-100 transition cursor-pointer">
+                            <i class="fa-solid fa-pen"></i> แก้ไข
+                        </button>
+                        ${deleteBtnHtml}
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     #buildPersonRowHtml(person, indexNo) {
@@ -461,8 +564,9 @@ export class PersonnelController {
             this.personnelList = freshList;
 
             const tbody = document.getElementById('personnelTableBody');
+            const cardsContainer = document.getElementById('personnelCardsContainer');
+            const freshMap = new Map(freshList.map(p => [String(p.id), p]));
             if (tbody) {
-                const freshMap = new Map(freshList.map(p => [String(p.id), p]));
                 const existingRows = Array.from(tbody.querySelectorAll('tr[data-person-id]'));
                 for (const row of existingRows) {
                     const id = row.getAttribute('data-person-id');
@@ -473,6 +577,18 @@ export class PersonnelController {
                     }
                 }
                 DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+            }
+            if (cardsContainer) {
+                const existingCards = Array.from(cardsContainer.querySelectorAll('[data-person-id]'));
+                for (const card of existingCards) {
+                    const id = card.getAttribute('data-person-id');
+                    if (!freshMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(card, 600, () => {
+                            DOMDiffHelper.reindexCardSequence(cardsContainer, '[data-card-item]', '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexCardSequence(cardsContainer, '[data-card-item]', '.seq-num');
             }
         } catch (err) {
             console.warn('[PersonnelController] syncPersonnelSilent error:', err);
@@ -601,9 +717,10 @@ export class PersonnelController {
             this.#processBulkImportFile(file);
         });
 
-        document.getElementById('personnelTableBody')?.addEventListener('click', async (e) => {
+        const handlePersonnelContainerClick = async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (btn) {
+                e.stopPropagation();
                 const action = btn.dataset.action;
                 const id = btn.dataset.id;
 
@@ -644,16 +761,19 @@ export class PersonnelController {
                 return;
             }
 
-            // คลิกที่แถวบุคลากรเพื่อเปิด Resume Profile Modal
-            const row = e.target.closest('tr[data-person-id]');
-            if (row) {
-                const personId = row.dataset.personId;
+            // คลิกที่แถวหรือการ์ดบุคลากรเพื่อเปิด Resume Profile Modal
+            const rowOrCard = e.target.closest('tr[data-person-id], [data-card-item][data-person-id]');
+            if (rowOrCard) {
+                const personId = rowOrCard.dataset.personId;
                 const person = this.personnelList.find(p => p.id === personId);
                 if (person) {
                     this.#openPersonnelResumeModal(person);
                 }
             }
-        });
+        };
+
+        document.getElementById('personnelTableBody')?.addEventListener('click', handlePersonnelContainerClick);
+        document.getElementById('personnelCardsContainer')?.addEventListener('click', handlePersonnelContainerClick);
 
         // Event listeners ปิด Resume Profile Modal
         document.getElementById('btnClosePersonnelResumeModal')?.addEventListener('click', () => {

@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261118-mobile-cards-and-drawer-spa-redesign"
+last_updated_phase: "PIPE-20261118-admin-mobile-cards-and-users-tabs"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -35,6 +35,7 @@ last_updated_phase: "PIPE-20261118-mobile-cards-and-drawer-spa-redesign"
 - [[ADR_0034_sidebar_active_state_watermark_reentrancy_and_spa_hygiene]] — ADR-0034: แก้ปัญหา Sidebar กระโดดกลับ "ภาพรวม" หลังบันทึกตั้งค่าระบบ (Authoritative `#currentActivePage`, `.active` + Badge Preservation ใน `#renderSidebar`, ตัดวงจร Re-entrancy `refreshNotificationBell`, และ Full Settings Hydration) (`FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`, `FLOW_APPROVALS_01`)
 - [[ADR_0035_tab1_announcement_drive_folder_relocation_and_sync_invariance]] — ADR-0035: ย้ายช่องโฟลเดอร์ Google Drive เก็บรูปประกาศ (`#setAnnouncementDriveFolderId`) ไปแท็บ 1 (`ข้อมูลหน่วยงาน และข้อความระบบ`), รักษา `announcement_updated_at` Invariance, และปุ่มลัด + สถานะในแท็บ 7 (`FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
 - [[ADR_0036_mobile_card_lists_and_drawer_ajax_spa]] — ADR-0036: การ์ดประวัติการลงเวลาและคำขอพิเศษมุมมองมือถือ (`< lg`), การคำนวณกะข้ามวัน +1 วัน, เมนูแฮมเบอเกอร์ Head/Body และ AJAX SPA แยกหน้าพร้อมสลับสีปุ่ม BMA + รักษา DOM ID `adr_004` (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
+- [[ADR_0037_admin_mobile_cards_users_2tab_rbac_badges_and_hydrogen_high]] — ADR-0037: การ์ดมุมมองมือถือ 5 หน้าผู้ดูแลระบบ, จัดการบัญชีผู้ใช้งาน 2 แท็บ + Count Badges (Sidebar/Bottom Nav/Tabs) พร้อม RBAC Guard และปรับมาตรฐานโมเดล SubAgents เป็น Gemini 4 Hydrogen (High) (`FLOW_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_LAYOUT_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

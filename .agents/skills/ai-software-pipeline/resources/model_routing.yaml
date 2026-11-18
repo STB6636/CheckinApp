@@ -2,7 +2,8 @@ workflow_name: "Lean_AI_Software_Engineering_Pipeline"
 version: "3.5.0"
 
 global_constraints:
-  minimum_model_version: "Flash 3.8 High"
+  minimum_model_version: "Gemini 4 Hydrogen (High)"
+  minimum_model_id: "gemini-4-hydrogen-high"
   fallback_behavior: "reject_if_below_minimum_model"
   communication_format: "Structured_Markdown_and_JSON_Handoff"
   code_completeness_policy: "NO_PLACEHOLDERS_IN_TARGET_SCOPE"
@@ -14,7 +15,8 @@ agents:
   orchestrator:
     id: "agent_00_orchestrator"
     role: "Master Technical Orchestrator & Knowledge Manager"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     temperature: 0.1
     top_p: 0.9
     max_output_tokens: 16384
@@ -28,7 +30,8 @@ agents:
   subagent_implementer:
     id: "subagent_01_implementer"
     role: "Surgical Implementer & AST Codebase Map Syncer"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     temperature: 0.1
     top_p: 0.8
     max_output_tokens: 65536
@@ -41,7 +44,8 @@ agents:
   subagent_qa_auditor:
     id: "subagent_02_qa_auditor"
     role: "QA Auditor & Branch Main Diff Specialist"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     temperature: 0.1
     top_p: 0.8
     max_output_tokens: 32768

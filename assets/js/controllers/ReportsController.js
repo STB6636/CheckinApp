@@ -453,7 +453,17 @@ export class ReportsController {
         return null;
     }
 
-    #resolveReportRemark(rec, { forExcel = false } = {}) {
+    #escapeHtml(val) {
+        if (val === null || val === undefined) return '';
+        return String(val)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    #resolveReportRemark(rec, { forExcel = false, forPrint = false } = {}) {
         if (!rec || !rec.log_id) return '-';
 
         const SUPPRESSED_STATUS_REMARKS = new Set([
@@ -484,9 +494,16 @@ export class ReportsController {
                 return combinedReason ? `กรณีพิเศษ\n${combinedReason}` : 'กรณีพิเศษ';
             }
 
-            return combinedReason
-                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5" style="font-size: 10px; color: #475569;">${combinedReason}</div>`
-                : `<span class="font-bold text-slate-800 dark:text-slate-200" style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span>`;
+            const safeCombined = this.#escapeHtml(combinedReason);
+            if (forPrint) {
+                return safeCombined
+                    ? `<div><span style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div style="font-size: 10px; color: #475569;">${safeCombined}</div>`
+                    : `<span style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span>`;
+            }
+
+            return safeCombined
+                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">${safeCombined}</div>`
+                : `<span class="font-bold text-slate-800 dark:text-slate-200">กรณีพิเศษ</span>`;
         }
 
         const inMode = rec.location_mode || this.#resolveLocationMode(rec, 'check_in');
@@ -497,11 +514,11 @@ export class ReportsController {
         if (inMode === 'OFFSITE') {
             const rawOffsite = (rec.offsite_reason || '').trim();
             if (rawOffsite && rawOffsite !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawOffsite)) {
-                return rawOffsite;
+                return forExcel ? rawOffsite : this.#escapeHtml(rawOffsite);
             }
             const rawRemark = (rec.remark || '').trim();
             if (rawRemark && rawRemark !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawRemark)) {
-                return rawRemark;
+                return forExcel ? rawRemark : this.#escapeHtml(rawRemark);
             }
             return 'ปฏิบัติงานนอกสถานที่';
         }
@@ -676,6 +693,8 @@ export class ReportsController {
                             </tr>
         `;
 
+        const mobileCardsHtml = this.#buildGroupedCardsForTag(tagRecords, groupHeaderColor);
+
         return `
             <div class="bma-card p-5 space-y-3" style="border-top: 4px solid ${statusColor};">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b bma-border">
@@ -695,16 +714,151 @@ export class ReportsController {
                     </span>
                 </div>
 
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            ${theadWebHtml}
-                        </thead>
-                        <tbody>
-                            ${tableRowsHtml}
-                        </tbody>
-                    </table>
+                <!-- Mobile Card-List (< lg) -->
+                <div class="lg:hidden space-y-3 bg-slate-100/80 dark:bg-slate-900/60 p-3 rounded-2xl">
+                    ${mobileCardsHtml}
                 </div>
+
+                <!-- Desktop Table (>= lg) -->
+                <div class="hidden lg:block">
+                    <div class="bma-table-container">
+                        <table class="bma-table text-sm">
+                            <thead>
+                                ${theadWebHtml}
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    #buildGroupedCardsForTag(tagRecords, groupHeaderColor) {
+        if (!tagRecords || tagRecords.length === 0) {
+            return `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีข้อมูลบุคลากรในสถานะนี้</div>`;
+        }
+
+        const grouped = PersonnelModel.groupPersonnel(tagRecords, this.groupViewMode);
+        let cardsHtml = '';
+        let runningNo = 1;
+
+        for (const [bureauName, divisionsObj] of Object.entries(grouped || {})) {
+            for (const [divisionName, content] of Object.entries(divisionsObj || {})) {
+                cardsHtml += `
+                    <div class="rounded-xl px-3.5 py-2 font-bold text-xs shadow-xs border-l-4" style="background-color: ${groupHeaderColor}18; color: ${groupHeaderColor}; border-left-color: ${groupHeaderColor};">
+                        <i class="fa-solid fa-building-user mr-1.5"></i>${this.#escapeHtml(bureauName || '-')} &gt; ${this.#escapeHtml(divisionName || '-')}
+                    </div>
+                `;
+
+                if (this.groupViewMode === 'group') {
+                    for (const [groupName, members] of Object.entries(content || {})) {
+                        const memberList = Array.isArray(members) ? members : [];
+                        cardsHtml += `
+                            <div class="px-3 py-1.5 rounded-lg bg-emerald-950/5 dark:bg-slate-800/70 font-semibold text-[11px] bma-text-main">
+                                กลุ่มงาน: ${this.#escapeHtml(groupName || '-')} (${memberList.length} รายการ)
+                            </div>
+                        `;
+                        for (const rec of memberList) {
+                            if (rec) {
+                                cardsHtml += this.#buildReportCardHtml(rec, runningNo++);
+                            }
+                        }
+                    }
+                } else {
+                    const contentList = Array.isArray(content) ? content : [];
+                    for (const rec of contentList) {
+                        if (rec) {
+                            cardsHtml += this.#buildReportCardHtml(rec, runningNo++);
+                        }
+                    }
+                }
+            }
+        }
+
+        return cardsHtml;
+    }
+
+    #buildReportCardHtml(rec, indexNo) {
+        if (!rec) return '';
+
+        const showGps = Boolean(this.settings?.require_gps);
+        const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
+        const remarkDisplay = this.#resolveReportRemark(rec, { forPrint: false });
+        const fullName = this.#escapeHtml(rec.full_name || '-');
+        const rowUid = this.#escapeHtml(rec.row_uid || '');
+        const rowId = this.#escapeHtml(rec.log_id || rec.row_uid || '');
+
+        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        const inLocName = this.#escapeHtml(this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '')));
+
+        const outMode = this.#resolveLocationMode(rec, 'check_out');
+        const outRawLoc = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        const outLocName = this.#escapeHtml(this.#formatLocationName(outRawLoc));
+
+        const renderModeLoc = (mode, locText) => {
+            if (!mode) return '<span class="text-slate-500 dark:text-slate-400">-</span>';
+            const badge = mode === 'ONSITE'
+                ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+            const safeLoc = (locText && locText !== '-') ? locText : '-';
+            return `${badge}${safeLoc}`;
+        };
+
+        const canEdit = this.canManageRecords && AuthService.canEditAttendanceRecord(this.currentUser, rec);
+        const canDelete = this.canManageRecords && AuthService.canDeleteAttendanceRecord(this.currentUser, rec) && rec.log_id;
+        const actionFooter = (canEdit || canDelete) ? `
+            <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-end gap-2 no-print">
+                ${canEdit ? `
+                    <button type="button" data-action="edit-record" data-row-uid="${rowUid}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 hover:bg-sky-100 transition cursor-pointer">
+                        <i class="fa-solid fa-pen"></i> แก้ไข
+                    </button>
+                ` : ''}
+                ${canDelete ? `
+                    <button type="button" data-action="delete-record" data-logid="${this.#escapeHtml(rec.log_id)}" data-name="${fullName}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 transition cursor-pointer">
+                        <i class="fa-solid fa-trash"></i> ลบ
+                    </button>
+                ` : ''}
+            </div>
+        ` : '';
+
+        return `
+            <div class="report-person-card rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs cursor-pointer transition" data-row-uid="${rowUid}" data-row-id="${rowId}">
+                <div class="flex items-start justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="font-extrabold text-slate-800 dark:text-slate-100 truncate">${fullName}</span>
+                    </div>
+                    <i class="fa-regular fa-id-badge text-sm text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"></i>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ตำแหน่ง</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${this.#escapeHtml(posDisplay)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
+                    <span data-field="check-in" class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_in_time ? this.#escapeHtml(rec.check_in_time) + ' น.' : '-'}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>
+                    <span data-field="check-out" class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_out_time ? this.#escapeHtml(rec.check_out_time) + ' น.' : '-'}</span>
+                </div>
+                ${showGps ? `
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัดเข้างาน</span>
+                    <span data-field="in-loc" class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${renderModeLoc(inMode, inLocName)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัดออกงาน</span>
+                    <span data-field="out-loc" class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${renderModeLoc(outMode, outLocName)}</span>
+                </div>` : ''}
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">หมายเหตุ</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-200 text-right break-words">${remarkDisplay}</span>
+                </div>
+                ${actionFooter}
             </div>
         `;
     }
@@ -767,17 +921,17 @@ export class ReportsController {
         if (!rec) return '';
 
         const showGps = Boolean(this.settings?.require_gps);
-        const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
-        const remarkDisplay = this.#resolveReportRemark(rec);
-        const fullName = rec.full_name || '-';
-        const rowUid = rec.row_uid || '';
+        const posDisplay = this.#escapeHtml(rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-');
+        const remarkDisplay = this.#resolveReportRemark(rec, { forPrint: Boolean(forPrintPdf) });
+        const fullName = this.#escapeHtml(rec.full_name || '-');
+        const rowUid = this.#escapeHtml(rec.row_uid || '');
 
         const inMode = this.#resolveLocationMode(rec, 'check_in');
-        const inLocName = this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : ''));
+        const inLocName = this.#escapeHtml(this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '')));
 
         const outMode = this.#resolveLocationMode(rec, 'check_out');
         const outRawLoc = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
-        const outLocName = this.#formatLocationName(outRawLoc);
+        const outLocName = this.#escapeHtml(this.#formatLocationName(outRawLoc));
 
         if (forPrintPdf) {
             const gpsPrintCells = showGps ? `
@@ -1223,8 +1377,8 @@ ${this.canManageRecords ? `
                 this.#renderSeparateTablesBySelectedTags(false);
                 window.scrollTo({ top: prevScrollY, behavior: 'instant' });
 
-                // ไฮไลต์แถวของบุคคลที่สถานะเปลี่ยนข้ามตาราง
-                const rows = masterContainer.querySelectorAll('tr.report-person-row');
+                // ไฮไลต์แถวและ์การ์ดของบุคคลที่สถานะเปลี่ยนข้ามตาราง
+                const rows = masterContainer.querySelectorAll('tr.report-person-row, .report-person-card');
                 for (const row of rows) {
                     const uid = row.getAttribute('data-row-uid');
                     const logId = row.getAttribute('data-row-id');
@@ -1278,14 +1432,14 @@ ${this.canManageRecords ? `
                             if (cells[5] && updated.check_in_location) {
                                 const inLocDiv = cells[5].querySelector('div');
                                 if (inLocDiv && !inLocDiv.textContent.includes(updated.check_in_location)) {
-                                    inLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${updated.check_in_location}`;
+                                    inLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${this.#escapeHtml(updated.check_in_location)}`;
                                     isUpdated = true;
                                 }
                             }
                             if (cells[6] && updated.check_out_location) {
                                 const outLocDiv = cells[6].querySelector('div');
                                 if (outLocDiv && !outLocDiv.textContent.includes(updated.check_out_location)) {
-                                    outLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${updated.check_out_location}`;
+                                    outLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${this.#escapeHtml(updated.check_out_location)}`;
                                     isUpdated = true;
                                 }
                             }
@@ -1293,6 +1447,55 @@ ${this.canManageRecords ? `
 
                         if (isUpdated) {
                             DOMDiffHelper.highlightRowUpdate(row);
+                        }
+                    }
+                }
+
+                const visibleCards = masterContainer.querySelectorAll('.report-person-card');
+                for (const card of visibleCards) {
+                    const uid = card.getAttribute('data-row-uid');
+                    const logId = card.getAttribute('data-row-id');
+                    const updated = freshMap.get(uid) || freshMap.get(logId);
+                    if (updated) {
+                        let cardUpdated = false;
+                        const inEl = card.querySelector('[data-field="check-in"]');
+                        if (inEl) {
+                            const newIn = updated.check_in_time ? `${updated.check_in_time} น.` : '-';
+                            if (inEl.textContent.trim() !== newIn) {
+                                inEl.textContent = newIn;
+                                cardUpdated = true;
+                            }
+                        }
+                        const outEl = card.querySelector('[data-field="check-out"]');
+                        if (outEl) {
+                            const newOut = updated.check_out_time ? `${updated.check_out_time} น.` : '-';
+                            if (outEl.textContent.trim() !== newOut) {
+                                outEl.textContent = newOut;
+                                cardUpdated = true;
+                            }
+                        }
+                        if (showGps) {
+                            const inLocEl = card.querySelector('[data-field="in-loc"]');
+                            if (inLocEl && updated.check_in_location && !inLocEl.textContent.includes(updated.check_in_location)) {
+                                const inMode = this.#resolveLocationMode(updated, 'check_in');
+                                const badge = inMode === 'ONSITE'
+                                    ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                                    : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+                                inLocEl.innerHTML = `${badge}${this.#escapeHtml(this.#formatLocationName(updated.check_in_location))}`;
+                                cardUpdated = true;
+                            }
+                            const outLocEl = card.querySelector('[data-field="out-loc"]');
+                            if (outLocEl && updated.check_out_location && !outLocEl.textContent.includes(updated.check_out_location)) {
+                                const outMode = this.#resolveLocationMode(updated, 'check_out');
+                                const badge = outMode === 'ONSITE'
+                                    ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                                    : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+                                outLocEl.innerHTML = `${badge}${this.#escapeHtml(this.#formatLocationName(updated.check_out_location))}`;
+                                cardUpdated = true;
+                            }
+                        }
+                        if (cardUpdated) {
+                            DOMDiffHelper.highlightRowUpdate(card);
                         }
                     }
                 }
@@ -1527,6 +1730,12 @@ ${this.canManageRecords ? `
             const personRow = e.target.closest('tr.report-person-row');
             if (personRow && personRow.dataset.rowUid) {
                 this.#openResumeProfileForSpecificRow(personRow.dataset.rowUid);
+                return;
+            }
+
+            const personCard = e.target.closest('.report-person-card');
+            if (personCard && personCard.dataset.rowUid) {
+                this.#openResumeProfileForSpecificRow(personCard.dataset.rowUid);
             }
         });
     }

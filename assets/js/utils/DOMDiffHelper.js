@@ -83,6 +83,91 @@ export class DOMDiffHelper {
     }
 
     /**
+     * คำนวณและปรับปรุงลำดับตัวเลข (1, 2, 3...) ของการ์ดมุมมองมือถือใหม่โดยไม่ทำลาย DOM
+     * @param {HTMLElement} container - คอนเทนเนอร์การ์ด (*CardsContainer)
+     * @param {string} [cardSelector='[data-card-item]'] - selector ระบุแต่ละการ์ด
+     * @param {string} [seqSelector='.seq-num'] - selector สำหรับระบุตัวเลขลำดับ
+     * @param {number} [startIndex=1] - เลขเริ่มต้น
+     */
+    static reindexCardSequence(container, cardSelector = '[data-card-item]', seqSelector = '.seq-num', startIndex = 1) {
+        if (!container) return;
+        const visibleCards = Array.from(container.querySelectorAll(cardSelector)).filter(card => {
+            return !card.classList.contains('row-leave-fade') && !card.classList.contains('hidden') && card.style.display !== 'none';
+        });
+
+        let currentIdx = startIndex;
+        for (const card of visibleCards) {
+            const seqEl = card.querySelector(seqSelector);
+            if (seqEl) {
+                seqEl.textContent = String(currentIdx);
+                currentIdx++;
+            }
+        }
+    }
+
+    /**
+     * ล็อกการ์ดมุมมองมือถือและแสดงแบนเนอร์เมื่อมีผู้ดูแลระบบท่านอื่นดำเนินการไปแล้ว
+     * @param {HTMLElement} cardEl - การ์ดที่ต้องการล็อก
+     * @param {string} [adminName='ผู้ดูแลระบบ'] - ชื่อผู้ดูแลระบบที่ดำเนินการ
+     * @param {string} [actionText='อนุมัติแล้ว'] - ข้อความการกระทำ
+     */
+    static lockCardForConcurrentAdmin(cardEl, adminName = 'ผู้ดูแลระบบ', actionText = 'อนุมัติแล้ว') {
+        if (!cardEl) return;
+        cardEl.classList.add('row-locked-highlight');
+
+        cardEl.querySelectorAll('button, input, select, a').forEach(el => {
+            el.disabled = true;
+            el.classList.add('pointer-events-none', 'opacity-60');
+        });
+
+        const escapeSafe = (v) => String(v ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const bannerHtml = `
+            <span class="px-2.5 py-1 rounded-lg bg-sky-100 dark:bg-sky-900/50 text-sky-800 dark:text-sky-200 border border-sky-300 dark:border-sky-700/70 text-[11px] font-bold inline-flex items-center justify-center gap-1.5 w-full">
+                <i class="fa-solid fa-lock text-[10px]"></i> ${escapeSafe(actionText)} โดย ${escapeSafe(adminName)}
+            </span>
+        `;
+
+        const actionContainer = cardEl.querySelector('[data-card-actions]') || cardEl.querySelector('.card-actions');
+        if (actionContainer) {
+            actionContainer.innerHTML = bannerHtml;
+        } else {
+            cardEl.insertAdjacentHTML('beforeend', `<div data-card-actions class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70">${bannerHtml}</div>`);
+        }
+    }
+
+    /**
+     * แทรกการ์ดใหม่ด้านบนสุดของคอนเทนเนอร์การ์ดมือถือพร้อม Effect Pulse
+     * @param {HTMLElement} container - คอนเทนเนอร์การ์ด
+     * @param {string} cardHtml - โค้ด HTML ของการ์ด
+     * @param {string} [highlightClass='row-enter-highlight'] - CSS class ทำแอนิเมชัน
+     * @returns {HTMLElement|null}
+     */
+    static prependCardWithAnimation(container, cardHtml, highlightClass = 'row-enter-highlight') {
+        if (!container || !cardHtml) return null;
+
+        const emptyPlaceholder = container.querySelector('[data-card-empty]');
+        if (emptyPlaceholder) {
+            emptyPlaceholder.remove();
+        }
+
+        container.insertAdjacentHTML('afterbegin', cardHtml);
+        const newCard = container.firstElementChild;
+        if (newCard && highlightClass) {
+            newCard.classList.add(highlightClass);
+            setTimeout(() => {
+                newCard.classList.remove(highlightClass);
+            }, 2600);
+        }
+        return newCard;
+    }
+
+    /**
      * ค่อยๆ เลื่อนจางแถวออก (Fade-out slide) แล้วลบออกจาก DOM
      * @param {HTMLElement} rowEl - แถว <tr> ที่ต้องการลบ
      * @param {number} durationMs - ระยะเวลา Transition มิลลิวินาที (ค่าเริ่มต้น 600)

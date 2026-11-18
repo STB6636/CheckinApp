@@ -2,7 +2,7 @@
 name: ai-software-pipeline
 description: >-
   Self-evolving lean multi-agent software engineering pipeline (Lean 2-SubAgent + 1-Orchestrator Architecture:
-  Orchestrator + SubAgent 1 Flash 3.8 High Implementer + SubAgent 2 Flash 3.8 High QA & Main-Diff Auditor +
+  Orchestrator + SubAgent 1 Gemini 4 Hydrogen (High) Implementer + SubAgent 2 Gemini 4 Hydrogen (High) QA & Main-Diff Auditor +
   Second Brain / LLM-Wiki + Skill Registry + VS Code Surgical Context & Codebase Mapping Pipeline, closed loop).
   MUST be used automatically whenever the user asks to edit, fix, improve, refactor, add/build a feature,
   or create a plan for this project (Thai: แก้ไข, แก้, ปรับปรุง, ปรับ, เพิ่ม, สร้าง, พัฒนา, ออกแบบ, สร้างแผน, วางแผน;
@@ -22,7 +22,7 @@ Before anything else, read:
 
 ## System Constraints
 
-1. **Minimum Model:** `Flash 3.8 High` for Orchestrator and both SubAgents (`subagent_01_implementer`, `subagent_02_qa_auditor`) — **never use `flash_lite`**.
+1. **Minimum Model:** `Gemini 4 Hydrogen (High)` (`gemini-4-hydrogen-high`) for Orchestrator and both SubAgents (`subagent_01_implementer`, `subagent_02_qa_auditor`) — **never use `flash_lite`**.
 2. **Knowledge Priority:** `Active Skills (SKILL.md)` → `Second Brain Notes (ADR & Pitfalls)` → `Codebase Map (.ai_map/)` → `Default Model Knowledge`.
 3. **Token-Saving & Surgical Policies:**
    - **Map-First Surgical Access (`MAP_FIRST_SURGICAL_LINE_RANGE_ONLY`):** Strictly forbidden to read an entire source file longer than 80 lines without first consulting `.ai_map/00_PROCESS_FLOW_MAP.md` and `.ai_map/01_FILE_FUNCTION_INDEX.md`. Read only the targeted line range (`StartLine`–`EndLine` ± 10 lines).
@@ -35,9 +35,9 @@ Before anything else, read:
 
 | Role | Agent ID | Model | Responsibilities |
 |:--|:--|:--|:--|
-| **Master Orchestrator** | `agent_00_orchestrator` (You / Main Agent) | `Flash 3.8 High` | Executes Phase 0 directly (Second Brain, Skills, Codebase Map locator); delivers Dual Plan (`implementation_plan.md` + `interactive_plan.html`) and waits for approval; coordinates the 2 SubAgents; executes Phase 6 knowledge sync and final reporting. |
-| **SubAgent 1 — Surgical Implementer** | `subagent_01_implementer` | `Flash 3.8 High` (1 ตัว) | Reads only target line ranges; edits ONLY code within the approved plan scope (`STRICT_SURGICAL_SCOPE_ONLY`); runs `node ./.ai_map/vscode_ast_mapper.mjs` to sync `.ai_map/`. |
-| **SubAgent 2 — QA & Main-Diff Auditor** | `subagent_02_qa_auditor` | `Flash 3.8 High` (1 ตัว) | Audits implementation against all plan items; runs syntax (`node --check`) and test verifications; audits `git diff main` to guarantee compatibility and zero untouched/unrelated modifications. |
+| **Master Orchestrator** | `agent_00_orchestrator` (You / Main Agent) | `Gemini 4 Hydrogen (High)` | Executes Phase 0 directly (Second Brain, Skills, Codebase Map locator); delivers Dual Plan (`implementation_plan.md` + `interactive_plan.html`) and waits for approval; coordinates the 2 SubAgents; executes Phase 6 knowledge sync and final reporting. |
+| **SubAgent 1 — Surgical Implementer** | `subagent_01_implementer` | `Gemini 4 Hydrogen (High)` (`gemini-4-hydrogen-high`, 1 ตัว) | Reads only target line ranges; edits ONLY code within the approved plan scope (`STRICT_SURGICAL_SCOPE_ONLY`); runs `node ./.ai_map/vscode_ast_mapper.mjs` to sync `.ai_map/`. |
+| **SubAgent 2 — QA & Main-Diff Auditor** | `subagent_02_qa_auditor` | `Gemini 4 Hydrogen (High)` (`gemini-4-hydrogen-high`, 1 ตัว) | Audits implementation against all plan items; runs syntax (`node --check`) and test verifications; audits `git diff main` to guarantee compatibility and zero untouched/unrelated modifications. |
 
 ## Storage Architecture (Project Root)
 
@@ -76,7 +76,7 @@ Rule: Announce the chosen mode and reason in one line. Do not trigger for pure q
 
 ## Step C — Stage 2: Surgical Implementation (`subagent_01_implementer`)
 
-1. Orchestrator invokes `subagent_01_implementer` (Flash 3.8 High, 1 instance) with target file paths and line ranges.
+1. Orchestrator invokes `subagent_01_implementer` (`Gemini 4 Hydrogen (High)` / `gemini-4-hydrogen-high`, 1 instance) with target file paths and line ranges.
 2. Implementer reads strictly within `recommended_read_window` (`[startLine - 10, endLine + 10]`).
 3. Implementer modifies code strictly adhering to **`STRICT_SURGICAL_SCOPE_ONLY`** ("แก้ไขเฉพาะส่วนที่ต้องแก้ไข, ไม่แก้ไขส่วนที่ไม่เกี่ยวข้อง").
 4. **Mandatory Cache Version Sync & Codebase AST Update**: Implementer runs `node ./.ai_map/vscode_ast_mapper.mjs`. This script automatically creates/updates `version.json` with a deterministic content SHA-256 `buildId`, stamps `CURRENT_APP_BUILD` and `?v=<buildId>` across all 9 root HTML entry files, and recalculates line ranges for `.ai_map/`.
@@ -84,7 +84,7 @@ Rule: Announce the chosen mode and reason in one line. Do not trigger for pure q
 
 ## Step D — Stage 3: QA & Branch Main Diff Audit (`subagent_02_qa_auditor`)
 
-1. Orchestrator invokes `subagent_02_qa_auditor` (Flash 3.8 High, 1 instance).
+1. Orchestrator invokes `subagent_02_qa_auditor` (`Gemini 4 Hydrogen (High)` / `gemini-4-hydrogen-high`, 1 instance).
 2. QA Auditor checks every item in the approved implementation plan.
 3. QA Auditor performs syntax checks (`node --check`) and executes verification tests.
 4. QA Auditor inspects `git diff main` to verify branch compatibility and confirm zero unintended alterations outside the approved scope.

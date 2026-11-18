@@ -22,6 +22,7 @@ export class UsersController {
         this.selectedDivisionFilter = 'all';
         this.selectedWorkGroupFilter = 'all';
         this.groupViewMode = 'division';
+        this.activeUsersTab = 'tab-panel-users';
         this.isSuperAdmin = false;
         this.isAdminBureau = false;
         this.headerColor = '#6F42C1';
@@ -65,7 +66,51 @@ export class UsersController {
         this.#initHierarchicalOrgFilter();
         this.#populateScopeDropdowns();
         this.#bindEvents();
+
+        const urlParams = new URLSearchParams(window.location?.search || '');
+        const pendingTab = sessionStorage.getItem('bma_users_active_tab')
+            || (urlParams.get('tab') === 'password-resets' ? 'tab-panel-password-resets' : null);
+        if (pendingTab) {
+            sessionStorage.removeItem('bma_users_active_tab');
+            this.#switchUsersTab(pendingTab);
+        } else {
+            this.#switchUsersTab('tab-panel-users');
+        }
+
         await this.loadUsersAndPersonnel();
+    }
+
+    #switchUsersTab(targetTabId) {
+        const tabId = targetTabId === 'tab-panel-password-resets'
+            ? 'tab-panel-password-resets'
+            : 'tab-panel-users';
+        this.activeUsersTab = tabId;
+
+        document.querySelectorAll('.users-tab-pane').forEach(panel => {
+            panel.classList.toggle('hidden', panel.id !== tabId);
+        });
+
+        document.querySelectorAll('.users-tab-btn, [data-users-tab-target]').forEach(btn => {
+            const btnTarget = btn.getAttribute('data-users-tab-target');
+            const isActive = btnTarget === tabId;
+            btn.classList.toggle('active', isActive);
+
+            const activeBgClass = btnTarget === 'tab-panel-password-resets' ? 'bg-[#D97706]' : 'bg-[#480080]';
+            btn.classList.remove('bg-[#480080]', 'bg-[#D97706]', 'text-white', 'shadow-md', 'bg-slate-100', 'dark:bg-slate-700/60', 'text-slate-700', 'dark:text-slate-200', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
+            if (isActive) {
+                btn.classList.add(activeBgClass, 'text-white', 'shadow-md');
+            } else {
+                btn.classList.add('bg-slate-100', 'dark:bg-slate-700/60', 'text-slate-700', 'dark:text-slate-200', 'hover:bg-slate-200', 'dark:hover:bg-slate-700');
+            }
+        });
+
+        const usersTotalBadge = document.getElementById('usersTotalTabBadge');
+        if (usersTotalBadge) {
+            const isTab1Active = tabId === 'tab-panel-users';
+            usersTotalBadge.className = isTab1Active
+                ? 'px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-white/25 text-white'
+                : 'px-2 py-0.5 text-[10px] font-extrabold rounded-full bg-[#480080]/15 text-[#480080] dark:bg-purple-500/20 dark:text-purple-300';
+        }
     }
 
     #initHierarchicalOrgFilter() {
@@ -253,12 +298,20 @@ export class UsersController {
     async loadUsersAndPersonnel() {
         const tbody = document.getElementById('usersTableBody');
         const resetTbody = document.getElementById('passwordResetTableBody');
+        const usersCards = document.getElementById('usersCardsContainer');
+        const resetCards = document.getElementById('passwordResetCardsContainer');
         const colCount = this.canEditOrDeleteUsers ? 6 : 5;
         if (tbody) {
             tbody.innerHTML = UIHelpers.renderTableSkeleton(5, colCount);
         }
         if (resetTbody) {
             resetTbody.innerHTML = UIHelpers.renderTableSkeleton(3, 6);
+        }
+        if (usersCards) {
+            usersCards.innerHTML = this.#renderMobileCardsSkeleton(3);
+        }
+        if (resetCards) {
+            resetCards.innerHTML = this.#renderMobileCardsSkeleton(2);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบัญชีผู้ใช้งาน...');
@@ -273,9 +326,30 @@ export class UsersController {
             this.#populateHierarchicalOrgFilter();
             this.#renderUsersTable();
             await AppLayout.refreshNotificationBell(this.currentUser);
+        } catch (err) {
+            console.error('Load users error:', err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="${colCount}" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการโหลดข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
+            }
+            if (usersCards) {
+                usersCards.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800/60 p-6 text-center text-xs font-bold text-rose-600 dark:text-rose-400 shadow-xs">เกิดข้อผิดพลาดในการโหลดข้อมูลบัญชีผู้ใช้งาน</div>`;
+            }
+            if (resetCards) {
+                resetCards.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800/60 p-6 text-center text-xs font-bold text-rose-600 dark:text-rose-400 shadow-xs">เกิดข้อผิดพลาดในการโหลดคำขอเปลี่ยนรหัสผ่าน</div>`;
+            }
         } finally {
             UIHelpers.hideLoading();
         }
+    }
+
+    #renderMobileCardsSkeleton(count = 3) {
+        return Array.from({ length: count }, () => `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-4 space-y-2.5">
+                <div class="h-4 w-2/3 rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-full rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-1/2 rounded-lg bma-skeleton-shimmer"></div>
+            </div>
+        `).join('');
     }
 
     #renderPersonnelSelectOptions(filterText = '', selectedPersonnelId = '') {
@@ -377,25 +451,146 @@ export class UsersController {
         `;
     }
 
+    #getUserScopeDescription(u) {
+        if (u.role === 'SuperAdmin') return 'ทุกหน่วยงาน / ทุกสังกัด';
+        if (u.role === 'Admin') {
+            return u.visibility_level === 'bureau'
+                ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
+                : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
+        }
+        return 'เฉพาะบันทึกเวลาตนเอง';
+    }
+
+    #buildUserCardHtml(u, indexNo) {
+        const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+        const scopeDesc = this.#getUserScopeDescription(u);
+        const safeId = UIHelpers.escapeHtml(u.id);
+        const safeName = UIHelpers.escapeHtml(u.full_name || '-');
+        const nationalIdText = UIHelpers.escapeHtml(u.national_id || u.personnel?.national_id || '-');
+
+        const actionFooterHtml = this.canEditOrDeleteUsers
+            ? `
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-end gap-2">
+                    <button type="button" data-action="edit-user" data-id="${safeId}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 hover:bg-sky-100 transition cursor-pointer">
+                        <i class="fa-solid fa-pen"></i> แก้ไข
+                    </button>
+                    <button type="button" data-action="delete-user" data-id="${safeId}" data-name="${safeName}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 transition cursor-pointer">
+                        <i class="fa-solid fa-trash"></i> ลบ
+                    </button>
+                </div>
+            `
+            : '';
+
+        return `
+            <div data-card-item="true" data-card-id="${safeId}" class="rounded-2xl bg-white dark:bg-slate-800 border ${u.password_reset_requested ? 'border-amber-300 dark:border-amber-700/70' : 'border-slate-200/90 dark:border-slate-700/80'} p-4 shadow-xs space-y-2 text-xs">
+                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="font-mono font-extrabold text-slate-800 dark:text-slate-100 truncate">${UIHelpers.escapeHtml(u.username)}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        ${u.password_reset_requested ? `<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 text-[10px] font-bold">ขอรีเซ็ต</span>` : ''}
+                        <span class="bma-badge ${roleMeta.badgeClass} text-[10px]">${UIHelpers.escapeHtml(u.role)}</span>
+                    </div>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ชื่อ-นามสกุล</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right break-words">${safeName}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เลขบัตร</span>
+                    <span class="font-mono font-semibold text-slate-700 dark:text-slate-200 text-right">${nationalIdText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ขอบเขต</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(scopeDesc)}</span>
+                </div>
+                ${actionFooterHtml}
+            </div>
+        `;
+    }
+
+    #buildResetCardHtml(u, indexNo) {
+        const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
+        const scopeDesc = this.#getUserScopeDescription(u);
+        const safeId = UIHelpers.escapeHtml(u.id);
+        const safeName = UIHelpers.escapeHtml(u.full_name || '-');
+        const nationalIdText = UIHelpers.escapeHtml(u.national_id || u.personnel?.national_id || '-');
+
+        return `
+            <div data-card-item="true" data-card-id="${safeId}" class="rounded-2xl bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-800/60 p-4 shadow-xs space-y-2 text-xs">
+                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="font-mono font-extrabold text-slate-800 dark:text-slate-100 truncate">${UIHelpers.escapeHtml(u.username)}</span>
+                    </div>
+                    <span class="bma-badge ${roleMeta.badgeClass} text-[10px] shrink-0">${UIHelpers.escapeHtml(u.role)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ชื่อ-นามสกุล</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right break-words">${safeName}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เลขบัตร</span>
+                    <span class="font-mono font-semibold text-slate-700 dark:text-slate-200 text-right">${nationalIdText}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ขอบเขต</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(scopeDesc)}</span>
+                </div>
+                <div data-card-actions="true" class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center gap-2">
+                    <button type="button" data-action="approve-reset" data-id="${safeId}" data-name="${safeName}" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-xs inline-flex items-center justify-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-check"></i> อนุมัติ
+                    </button>
+                    <button type="button" data-action="reject-reset" data-id="${safeId}" data-name="${safeName}" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 inline-flex items-center justify-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i> ไม่อนุมัติ
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    #updateTabCountBadges(totalUsersCount, pendingResetCount) {
+        const usersTabBadge = document.getElementById('usersTotalTabBadge');
+        const resetTabBadge = document.getElementById('pendingResetTabBadge');
+        const badgeResetCount = document.getElementById('pendingResetCountBadge');
+        if (usersTabBadge) {
+            usersTabBadge.textContent = String(totalUsersCount);
+        }
+        if (resetTabBadge) {
+            resetTabBadge.textContent = String(pendingResetCount);
+            resetTabBadge.classList.toggle('hidden', pendingResetCount === 0);
+        }
+        if (badgeResetCount) {
+            badgeResetCount.textContent = String(pendingResetCount);
+        }
+    }
+
     #renderUsersTable() {
         this.#toggleManageColumnHeader();
         const tbody = document.getElementById('usersTableBody');
         const resetTbody = document.getElementById('passwordResetTableBody');
-        const badgeResetCount = document.getElementById('pendingResetCountBadge');
-        if (!tbody) return;
+        const usersCards = document.getElementById('usersCardsContainer');
+        const resetCards = document.getElementById('passwordResetCardsContainer');
+        if (!tbody && !usersCards) return;
 
         const colSpan = this.canEditOrDeleteUsers ? 6 : 5;
-        const keyword = (document.getElementById('searchUserInput')?.value || '').toLowerCase().trim();
-        const roleFilter = document.getElementById('filterUserRole')?.value || 'all';
         const filtered = this.#getFilteredUsers();
 
-        // 1. ตารางหลัก: บัญชีผู้ใช้งาน (Main Users Table - 6 คอลัมน์ หรือ 5 คอลัมน์เมื่อซ่อนจัดการ)
+        // 1. ตารางหลัก & การ์ดมือถือแท็บ 1: บัญชีผู้ใช้งาน
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบัญชีผู้ใช้งาน</td></tr>`;
+            }
+            if (usersCards) {
+                usersCards.innerHTML = `<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่พบข้อมูลบัญชีผู้ใช้งาน</div>`;
+            }
         } else {
             const grouped = PersonnelModel.groupPersonnel(filtered, this.groupViewMode);
             let html = '';
+            let cardsHtml = '';
             let runningNo = 1;
+            let cardRunningNo = 1;
 
             for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
                 for (const [divisionName, content] of Object.entries(divisionsObj)) {
@@ -405,6 +600,11 @@ export class UsersController {
                                 <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
                             </td>
                         </tr>
+                    `;
+                    cardsHtml += `
+                        <div class="rounded-xl px-3.5 py-2 font-bold text-xs shadow-xs border-l-4" style="background-color: ${this.headerColor}18; color: ${this.headerColor}; border-left-color: ${this.headerColor};">
+                            <i class="fa-solid fa-building-user mr-1.5"></i>${UIHelpers.escapeHtml(bureauName)} &gt; ${UIHelpers.escapeHtml(divisionName)}
+                        </div>
                     `;
 
                     if (this.groupViewMode === 'group') {
@@ -416,65 +616,63 @@ export class UsersController {
                                     </td>
                                 </tr>
                             `;
+                            cardsHtml += `
+                                <div class="px-3 py-1.5 rounded-lg bg-slate-200/70 dark:bg-slate-800/70 font-semibold text-[11px] bma-text-main">
+                                    <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600 dark:text-emerald-400"></i>กลุ่มงาน: ${UIHelpers.escapeHtml(groupName)} (${members.length} บัญชี)
+                                </div>
+                            `;
                             for (const user of members) {
                                 html += this.#buildUserRowHtml(user, runningNo++);
+                                cardsHtml += this.#buildUserCardHtml(user, cardRunningNo++);
                             }
                         }
                     } else {
                         for (const user of content) {
                             html += this.#buildUserRowHtml(user, runningNo++);
+                            cardsHtml += this.#buildUserCardHtml(user, cardRunningNo++);
                         }
                     }
                 }
             }
-            tbody.innerHTML = html;
+            if (tbody) tbody.innerHTML = html;
+            if (usersCards) usersCards.innerHTML = cardsHtml;
         }
 
-        // 2. ตารางที่ 2: คำขอรีเซ็ตรหัสผ่าน (Password Reset Requests Table - 6 คอลัมน์)
-        const totalPendingResets = this.usersList.filter(u => u.password_reset_requested);
-        if (badgeResetCount) {
-            badgeResetCount.textContent = String(totalPendingResets.length);
-        }
+        // 2. แท็บ 2: คำขอรีเซ็ตรหัสผ่าน (แยกตัวกรองอิสระด้วย #searchPasswordResetInput)
+        const totalPendingResets = (this.usersList || []).filter(u => u.password_reset_requested);
+        this.#updateTabCountBadges((this.usersList || []).length, totalPendingResets.length);
+
+        const resetKeyword = (document.getElementById('searchPasswordResetInput')?.value || '').toLowerCase().trim();
+        const filteredResets = totalPendingResets.filter(u => {
+            if (!resetKeyword) return true;
+            const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.personnel?.bureau || u.scope_bureau || ''} ${u.personnel?.division || u.scope_division || ''}`.toLowerCase();
+            return text.includes(resetKeyword);
+        });
 
         if (resetTbody) {
-            const filteredResets = totalPendingResets.filter(u => {
-                if (roleFilter !== 'all' && u.role !== roleFilter) return false;
-                if (!keyword) return true;
-                const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.scope_bureau || ''} ${u.scope_division || ''}`.toLowerCase();
-                return text.includes(keyword);
-            });
-
             if (filteredResets.length === 0) {
                 resetTbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>`;
             } else {
                 resetTbody.innerHTML = filteredResets.map((u, idx) => {
                     const roleMeta = PersonnelModel.getRolePastelMeta(u.role);
-
-                    let scopeDesc = 'เฉพาะบันทึกเวลาตนเอง';
-                    if (u.role === 'SuperAdmin') {
-                        scopeDesc = 'ทุกหน่วยงาน / ทุกสังกัด';
-                    } else if (u.role === 'Admin') {
-                        scopeDesc = u.visibility_level === 'bureau'
-                            ? `ระดับสำนักงาน/กอง: ${u.scope_bureau || '-'}`
-                            : `ระดับส่วน/ฝ่าย: ${u.scope_division || '-'}`;
-                    }
+                    const scopeDesc = this.#getUserScopeDescription(u);
 
                     return `
                         <tr class="bg-amber-50/20 dark:bg-amber-950/10" data-row-id="${u.id}">
                             <td class="text-center font-semibold seq-num">${idx + 1}</td>
-                            <td class="font-mono font-bold bma-text-main">${u.username}</td>
+                            <td class="font-mono font-bold bma-text-main">${UIHelpers.escapeHtml(u.username)}</td>
                             <td>
-                                <div class="font-bold bma-text-main whitespace-nowrap">${u.full_name}</div>
-                                <div class="text-xs bma-text-sub">เลขบัตร: ${u.national_id || u.personnel?.national_id || '-'}</div>
+                                <div class="font-bold bma-text-main whitespace-nowrap">${UIHelpers.escapeHtml(u.full_name)}</div>
+                                <div class="text-xs bma-text-sub">เลขบัตร: ${UIHelpers.escapeHtml(u.national_id || u.personnel?.national_id || '-')}</div>
                             </td>
-                            <td><span class="bma-badge ${roleMeta.badgeClass}">${u.role}</span></td>
-                            <td class="text-xs bma-text-sub">${scopeDesc}</td>
+                            <td><span class="bma-badge ${roleMeta.badgeClass}">${UIHelpers.escapeHtml(u.role)}</span></td>
+                            <td class="text-xs bma-text-sub">${UIHelpers.escapeHtml(scopeDesc)}</td>
                             <td class="text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
-                                    <button type="button" data-action="approve-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-primary py-1 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm" title="อนุมัติรีเซ็ตรหัสผ่าน">
+                                    <button type="button" data-action="approve-reset" data-id="${UIHelpers.escapeHtml(u.id)}" data-name="${UIHelpers.escapeHtml(u.full_name)}" class="btn-bma-primary py-1 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm" title="อนุมัติรีเซ็ตรหัสผ่าน">
                                         <i class="fa-solid fa-check"></i> อนุมัติ
                                     </button>
-                                    <button type="button" data-action="reject-reset" data-id="${u.id}" data-name="${u.full_name}" class="btn-bma-outline py-1 px-3 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-rose-300 dark:border-rose-800 rounded-lg" title="ไม่อนุมัติ">
+                                    <button type="button" data-action="reject-reset" data-id="${UIHelpers.escapeHtml(u.id)}" data-name="${UIHelpers.escapeHtml(u.full_name)}" class="btn-bma-outline py-1 px-3 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-rose-300 dark:border-rose-800 rounded-lg" title="ไม่อนุมัติ">
                                         <i class="fa-solid fa-xmark"></i> ไม่อนุมัติ
                                     </button>
                                 </div>
@@ -482,6 +680,14 @@ export class UsersController {
                         </tr>
                     `;
                 }).join('');
+            }
+        }
+
+        if (resetCards) {
+            if (filteredResets.length === 0) {
+                resetCards.innerHTML = `<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีคำขอเปลี่ยนรหัสผ่าน</div>`;
+            } else {
+                resetCards.innerHTML = filteredResets.map((u, idx) => this.#buildResetCardHtml(u, idx + 1)).join('');
             }
         }
     }
@@ -569,16 +775,31 @@ export class UsersController {
         // Multi-admin concurrency guard สำหรับคำขอรีเซ็ตรหัสผ่าน
         if (deltaDetail?.actor && this.currentUser && deltaDetail.actor !== this.currentUser.full_name && deltaDetail.record?.id) {
             const targetId = String(deltaDetail.record.id || deltaDetail.record.user_id || '');
+            const actionText = deltaDetail.action === 'approved' ? 'รีเซ็ตรหัสแล้ว' : (deltaDetail.action === 'rejected' ? 'ไม่อนุมัติ' : 'ดำเนินการแล้ว');
+
             const resetTbody = document.getElementById('passwordResetTableBody');
             if (resetTbody) {
                 const rowEl = resetTbody.querySelector(`tr[data-row-id="${targetId}"]`);
                 if (rowEl) {
-                    const actionText = deltaDetail.action === 'approved' ? 'รีเซ็ตรหัสแล้ว' : (deltaDetail.action === 'rejected' ? 'ไม่อนุมัติ' : 'ดำเนินการแล้ว');
                     DOMDiffHelper.lockRowForConcurrentAdmin(rowEl, deltaDetail.actor, actionText);
                     DOMDiffHelper.removeRowWithFade(rowEl, 2500, () => {
                         DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
                         if (resetTbody.children.length === 0) {
                             resetTbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>';
+                        }
+                    });
+                }
+            }
+
+            const resetCards = document.getElementById('passwordResetCardsContainer');
+            if (resetCards) {
+                const cardEl = resetCards.querySelector(`[data-card-id="${targetId}"]`);
+                if (cardEl) {
+                    DOMDiffHelper.lockCardForConcurrentAdmin(cardEl, deltaDetail.actor, actionText);
+                    DOMDiffHelper.removeRowWithFade(cardEl, 2500, () => {
+                        DOMDiffHelper.reindexCardSequence(resetCards, '[data-card-item]', '.seq-num');
+                        if (resetCards.children.length === 0) {
+                            resetCards.innerHTML = '<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีคำขอเปลี่ยนรหัสผ่าน</div>';
                         }
                     });
                 }
@@ -594,26 +815,92 @@ export class UsersController {
             this.usersList = users;
             this.personnelList = personnel;
 
+            const pendingResets = users.filter(u => u.password_reset_requested);
+            this.#updateTabCountBadges(users.length, pendingResets.length);
+
+            const resetKeyword = (document.getElementById('searchPasswordResetInput')?.value || '').toLowerCase().trim();
+            const filteredResets = pendingResets.filter(u => {
+                if (!resetKeyword) return true;
+                const text = `${u.username} ${u.full_name} ${u.national_id || ''} ${u.personnel?.bureau || u.scope_bureau || ''} ${u.personnel?.division || u.scope_division || ''}`.toLowerCase();
+                return text.includes(resetKeyword);
+            });
+            const resetMap = new Map(filteredResets.map(u => [String(u.id), u]));
+
             // Diff ตาราง passwordResetTableBody
             const resetTbody = document.getElementById('passwordResetTableBody');
             if (resetTbody) {
-                const resetMap = new Map(users.filter(u => u.password_reset_requested).map(u => [String(u.id), u]));
                 const existingResetRows = Array.from(resetTbody.querySelectorAll('tr[data-row-id]'));
                 for (const row of existingResetRows) {
                     const id = row.getAttribute('data-row-id');
                     if (!resetMap.has(id)) {
                         DOMDiffHelper.removeRowWithFade(row, 600, () => {
                             DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
+                            if (resetTbody.querySelectorAll('tr[data-row-id]').length === 0) {
+                                resetTbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>';
+                            }
                         });
                     }
+                }
+                if (filteredResets.length === 0 && existingResetRows.length === 0) {
+                    resetTbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่มีคำขอเปลี่ยนรหัสผ่าน</td></tr>';
                 }
                 DOMDiffHelper.reindexTableSequence(resetTbody, '.seq-num');
             }
 
-            // Diff ตาราง usersTableBody
+            // Diff การ์ด passwordResetCardsContainer
+            const resetCards = document.getElementById('passwordResetCardsContainer');
+            if (resetCards) {
+                const existingResetCards = Array.from(resetCards.querySelectorAll('[data-card-id]'));
+                const existingCardIds = new Set(existingResetCards.map(c => c.getAttribute('data-card-id')));
+                for (const card of existingResetCards) {
+                    const id = card.getAttribute('data-card-id');
+                    if (!resetMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(card, 600, () => {
+                            DOMDiffHelper.reindexCardSequence(resetCards, '[data-card-item]', '.seq-num');
+                            if (resetCards.querySelectorAll('[data-card-id]').length === 0) {
+                                resetCards.innerHTML = '<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีคำขอเปลี่ยนรหัสผ่าน</div>';
+                            }
+                        });
+                    }
+                }
+                for (const u of filteredResets) {
+                    if (!existingCardIds.has(String(u.id))) {
+                        DOMDiffHelper.prependCardWithAnimation(resetCards, this.#buildResetCardHtml(u, 1));
+                    }
+                }
+                if (filteredResets.length === 0 && existingResetCards.length === 0) {
+                    resetCards.innerHTML = '<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีคำขอเปลี่ยนรหัสผ่าน</div>';
+                }
+                DOMDiffHelper.reindexCardSequence(resetCards, '[data-card-item]', '.seq-num');
+            }
+
+            // Diff ตาราง usersTableBody และ การ์ด usersCardsContainer
+            const userMap = new Map(users.map(u => [String(u.id), u]));
             const usersTbody = document.getElementById('usersTableBody');
             if (usersTbody) {
+                const existingUserRows = Array.from(usersTbody.querySelectorAll('tr[data-row-id]'));
+                for (const row of existingUserRows) {
+                    const id = row.getAttribute('data-row-id');
+                    if (!userMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(row, 600, () => {
+                            DOMDiffHelper.reindexTableSequence(usersTbody, '.seq-num');
+                        });
+                    }
+                }
                 DOMDiffHelper.reindexTableSequence(usersTbody, '.seq-num');
+            }
+            const usersCards = document.getElementById('usersCardsContainer');
+            if (usersCards) {
+                const existingUserCards = Array.from(usersCards.querySelectorAll('[data-card-id]'));
+                for (const card of existingUserCards) {
+                    const id = card.getAttribute('data-card-id');
+                    if (!userMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(card, 600, () => {
+                            DOMDiffHelper.reindexCardSequence(usersCards, '[data-card-item]', '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexCardSequence(usersCards, '[data-card-item]', '.seq-num');
             }
 
             await AppLayout.refreshNotificationBell(this.currentUser);
@@ -629,7 +916,21 @@ export class UsersController {
         window.addEventListener('bma:realtime-sync', () => {
             this.syncUsersSilent();
         });
+        window.addEventListener('bma:users-switch-tab', (e) => {
+            if (e.detail?.tabId) {
+                this.#switchUsersTab(e.detail.tabId);
+            }
+        });
+        document.getElementById('usersTabNav')?.addEventListener('click', (e) => {
+            const btn = e.target.closest('.users-tab-btn, [data-users-tab-target]');
+            if (!btn) return;
+            const targetId = btn.getAttribute('data-users-tab-target');
+            if (targetId) {
+                this.#switchUsersTab(targetId);
+            }
+        });
         document.getElementById('searchUserInput')?.addEventListener('input', () => this.#renderUsersTable());
+        document.getElementById('searchPasswordResetInput')?.addEventListener('input', () => this.#renderUsersTable());
         document.getElementById('filterUserRole')?.addEventListener('change', () => this.#renderUsersTable());
         document.getElementById('filterResetRequest')?.addEventListener('change', () => this.#renderUsersTable());
         document.getElementById('selectUserGroupBy')?.addEventListener('change', (e) => {
@@ -737,7 +1038,7 @@ export class UsersController {
                 );
                 if (confirmed) {
                     UIHelpers.showLoading('กำลังรีเซ็ตรหัสผ่านเป็นเลข 6 ตัวท้ายบัตรประชาชน...');
-                    const res = await UserModel.processPasswordResetRequest(id, true);
+                    const res = await UserModel.processPasswordResetRequest(id, true, this.currentUser);
                     UIHelpers.hideLoading();
                     await this.loadUsersAndPersonnel();
                     await UIHelpers.alert(res.success ? 'อนุมัติสำเร็จ' : 'ไม่สามารถอนุมัติได้', res.message, res.success ? 'success' : 'error');
@@ -751,10 +1052,10 @@ export class UsersController {
                 );
                 if (confirmed) {
                     UIHelpers.showLoading('กำลังบันทึกผลการไม่อนุมัติ...');
-                    const res = await UserModel.processPasswordResetRequest(id, false);
+                    const res = await UserModel.processPasswordResetRequest(id, false, this.currentUser);
                     UIHelpers.hideLoading();
                     await this.loadUsersAndPersonnel();
-                    await UIHelpers.alert('ดำเนินการเรียบร้อย', res.message, 'info');
+                    await UIHelpers.alert(res.success ? 'ดำเนินการเรียบร้อย' : 'ไม่สามารถดำเนินการได้', res.message, res.success ? 'info' : 'error');
                 }
             } else if (action === 'edit-user') {
                 if (!this.canEditOrDeleteUsers) return;
@@ -784,6 +1085,8 @@ export class UsersController {
 
         document.getElementById('usersTableBody')?.addEventListener('click', handleTableActionClick);
         document.getElementById('passwordResetTableBody')?.addEventListener('click', handleTableActionClick);
+        document.getElementById('usersCardsContainer')?.addEventListener('click', handleTableActionClick);
+        document.getElementById('passwordResetCardsContainer')?.addEventListener('click', handleTableActionClick);
     }
 
     async #handleSaveUserAccount() {

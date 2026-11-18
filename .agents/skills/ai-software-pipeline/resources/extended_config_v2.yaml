@@ -2,7 +2,8 @@ workflow_name: "Lean_AI_Software_Engineering_Pipeline"
 version: "3.5.0_Lean_Architecture"
 
 global_constraints:
-  minimum_model_version: "Flash 3.8 High"
+  minimum_model_version: "Gemini 4 Hydrogen (High)"
+  minimum_model_id: "gemini-4-hydrogen-high"
   fallback_behavior: "reject_if_below_minimum_model"
   communication_format: "Structured_Markdown_and_JSON_Handoff"
   code_completeness_policy: "NO_PLACEHOLDERS_IN_TARGET_SCOPE"
@@ -26,7 +27,8 @@ agents:
   orchestrator:
     id: "agent_00_orchestrator"
     role: "Master Technical Orchestrator & Knowledge Manager"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     execution_stages:
       - "Stage_1_PreFlight_Context_Retrieval_and_Dual_Plan_Delivery"
       - "Stage_4_PostFlight_Knowledge_Ingestion_and_Final_Report"
@@ -34,13 +36,15 @@ agents:
   subagent_implementer:
     id: "subagent_01_implementer"
     role: "Surgical Implementer & AST Codebase Map Syncer"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     execution_stages:
       - "Stage_2_Surgical_Code_Implementation_and_Map_Sync"
 
   subagent_qa_auditor:
     id: "subagent_02_qa_auditor"
     role: "QA Auditor & Branch Main Diff Specialist"
-    model: "Flash 3.8 High"
+    model: "Gemini 4 Hydrogen (High)"
+    model_id: "gemini-4-hydrogen-high"
     execution_stages:
       - "Stage_3_QA_Verification_and_Branch_Main_Diff_Audit"
