@@ -599,37 +599,30 @@ export class TimeCorrectionsController {
         let confirmed = false;
         let rejectReason = '';
 
-        if (!isApproved && typeof Swal !== 'undefined') {
-            const swalRes = await Swal.fire({
-                title: `ยืนยันการ${label}คำขอแก้ไขเวลา`,
-                html: `
-                    <div class="text-left text-xs space-y-2.5">
-                        <p class="text-slate-600 dark:text-slate-300">คุณต้องการไม่อนุมัติคำขอแก้ไขเวลาจำนวน <b>${ids.length}</b> รายการใช่หรือไม่?</p>
-                        <div>
-                            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1">เหตุผลที่ไม่อนุมัติ (ไม่บังคับ)</label>
-                            <textarea id="swalCorrectionRejectReasonInput" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500" placeholder="ระบุเหตุผลประกอบการพิจารณา หรือเว้นว่างเพื่อกดส่งได้ทันที..."></textarea>
-                        </div>
-                    </div>
-                `,
+        if (!isApproved) {
+            const modalRes = await UIHelpers.confirmWithInput(`ยืนยันการ${label}คำขอแก้ไขเวลา`, {
                 icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'ยืนยันไม่อนุมัติ',
+                infoIcon: 'fa-circle-exclamation',
+                infoIconClass: 'text-rose-500',
+                infoHtml: `คุณต้องการไม่อนุมัติคำขอแก้ไขเวลาจำนวน <b>${ids.length}</b> รายการใช่หรือไม่?`,
+                inputId: 'swalCorrectionRejectReasonInput',
+                inputLabel: 'เหตุผลที่ไม่อนุมัติ (ไม่บังคับ)',
+                inputPlaceholder: 'ระบุเหตุผลประกอบการพิจารณา หรือเว้นว่างเพื่อกดส่งได้ทันที...',
+                confirmText: 'ยืนยันไม่อนุมัติ',
+                confirmIcon: '<i class="fa-solid fa-xmark mr-1.5"></i>',
+                confirmGradient: 'from-rose-600 to-red-500',
                 cancelButtonText: 'ยกเลิก',
-                confirmButtonColor: '#E11D48',
-                reverseButtons: true,
-                preConfirm: () => {
-                    const input = document.getElementById('swalCorrectionRejectReasonInput');
-                    return input ? input.value.trim() : '';
-                }
+                popupClass: 'rounded-2xl p-5 shadow-2xl border border-rose-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                focusRingClass: 'focus:ring-rose-500'
             });
-            confirmed = Boolean(swalRes.isConfirmed);
-            rejectReason = String(swalRes.value || '').trim();
+            confirmed = modalRes.isConfirmed;
+            rejectReason = modalRes.value;
         } else {
             confirmed = await UIHelpers.confirm(
                 `ยืนยันการ${label}คำขอแก้ไขเวลา`,
                 `คุณต้องการ${label}รายการคำขอแก้ไขเวลาจำนวน ${ids.length} รายการใช่หรือไม่?`,
                 `ยืนยัน${label}`,
-                isApproved ? 'question' : 'warning'
+                'question'
             );
         }
 

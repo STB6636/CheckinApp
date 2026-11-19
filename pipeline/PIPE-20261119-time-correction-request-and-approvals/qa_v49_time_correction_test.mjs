@@ -297,7 +297,7 @@ async function main() {
     });
 
     console.log('\n▶️ Suite 2: Executive RBAC Matrix (AuthService.canApproveTimeCorrection)');
-    runTest('Enforces User, Admin (5 executive titles vs non-exec vs self), and SuperAdmin approval matrix', () => {
+    runTest('Enforces User, Admin (6 executive titles vs non-exec vs self), and SuperAdmin approval matrix', () => {
         const userReq = { id: 'req-u', user_id: 'u1', personnel_id: 'p1', bureau: 'สำนักเทศกิจ', division: 'ส่วน A', requester_role: 'User' };
         const adminReq = { id: 'req-a', user_id: 'u-admin1', personnel_id: 'p-admin1', bureau: 'สำนักเทศกิจ', division: 'ส่วน A', requester_role: 'Admin' };
         const superReq = { id: 'req-s', user_id: 'u-sa', personnel_id: 'p-sa', bureau: 'สำนักเทศกิจ', division: 'ส่วน A', requester_role: 'SuperAdmin' };
@@ -340,11 +340,12 @@ async function main() {
         assert.strictEqual(selfRes.allowed, false);
         assert.strictEqual(selfRes.reason, 'คำขอของตนเอง (รอผู้บริหาร/SuperAdmin)');
 
-        // Out-of-scope executive Admin blocked
+        // Out-of-scope executive Admin blocked on Admin & SuperAdmin
         assert.strictEqual(AuthService.canApproveTimeCorrection(outOfScopeExecAdmin, adminReq).allowed, false);
+        assert.strictEqual(AuthService.canApproveTimeCorrection(outOfScopeExecAdmin, superReq).allowed, false);
 
-        // All 5 executive titles allowed on other Admin within scope
-        const execTitles = ['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย'];
+        // All 6 executive titles allowed on other Admin and SuperAdmin within scope (V50 Rev 2)
+        const execTitles = ['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการ', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย'];
         for (const title of execTitles) {
             const execAdmin = {
                 id: 'u-exec', personnel_id: 'p-exec', role: 'Admin', visibility_level: 'bureau',
@@ -354,7 +355,12 @@ async function main() {
             assert.strictEqual(
                 AuthService.canApproveTimeCorrection(execAdmin, adminReq).allowed,
                 true,
-                `Executive title '${title}' must be allowed`
+                `Executive title '${title}' must be allowed for Admin requests`
+            );
+            assert.strictEqual(
+                AuthService.canApproveTimeCorrection(execAdmin, superReq).allowed,
+                true,
+                `Executive title '${title}' must be allowed for SuperAdmin requests`
             );
         }
     });

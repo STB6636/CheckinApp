@@ -31,5 +31,4 @@ Use this skill whenever implementing or extending an approval workflow that corr
 4. **Double-Layer Executive RBAC (`AuthService.canApproveTimeCorrection`)**
    - Enforce identically at BOTH UI (hide checkbox & disable action buttons with explicit Thai status badge) and Model/Bulk mutation (`processTimeCorrectionsBulk`):
      - `User` requester → `SuperAdmin` or in-scope `Admin`.
-     - `Admin` requester → `SuperAdmin` OR non-self in-scope `Admin` with `position_type === 'ประเภทผู้บริหาร'` AND `position_title` in `['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย']`.
-     - `SuperAdmin` requester → `SuperAdmin` only.
+     - `Admin` or `SuperAdmin` requester → `SuperAdmin` (any position) OR non-self in-scope `Admin` (`division`/`bureau`) with `position_type === 'ประเภทผู้บริหาร'` AND `position_title` in `['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการ', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย']`.

@@ -336,8 +336,14 @@ export class CheckinController {
         const welcomeName = sessionStorage.getItem(Config.STORAGE_KEYS.WELCOME_TOAST);
         if (welcomeName) {
             sessionStorage.removeItem(Config.STORAGE_KEYS.WELCOME_TOAST);
+            const prefixes = this.settings?.prefixes || null;
+            const source = (this.currentUser?.personnel?.first_name && welcomeName === this.currentUser.full_name)
+                ? this.currentUser
+                : welcomeName;
+            const cleanName = UIHelpers.formatWelcomeDisplayName(source, prefixes);
+            const toastMsg = cleanName ? `ยินดีต้อนรับคุณ${cleanName}` : 'ยินดีต้อนรับเข้าสู่ระบบ';
             setTimeout(() => {
-                UIHelpers.showToast(`ยินดีต้อนรับคุณ ${welcomeName}`, 'success', 2800);
+                UIHelpers.showToast(toastMsg, 'success', 2800);
             }, 250);
         }
     }
@@ -2446,45 +2452,24 @@ export class CheckinController {
                 ? `เวลาเข้า ${target.check_in_time || '-'} &rarr; ${preview.newCheckIn} น.`
                 : `เวลาออก ${target.check_out_time || '-'} &rarr; ${preview.newCheckOut} น.`);
 
-        let isConfirmed = false;
-        let optionalReason = '';
-
-        if (typeof Swal !== 'undefined') {
-            const swalRes = await Swal.fire({
-                title: 'ยืนยันส่งคำขอแก้ไขเวลา',
-                html: `
-                    <div class="text-left text-xs space-y-2.5">
-                        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-slate-700 dark:text-slate-200">
-                            <div><b>วันที่:</b> ${UIHelpers.escapeHtml(dateLabel)}</div>
-                            <div class="mt-0.5"><b>ปรับแก้เป็นเวลากะปกติ:</b> ${timeSummary}</div>
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1">เหตุผลการขอแก้ไขเวลา (ไม่บังคับ)</label>
-                            <textarea id="swalCorrectionReasonInput" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#00744B]" placeholder="ระบุเหตุผลเพิ่มเติม หรือเว้นว่างเพื่อกดส่งได้ทันที..."></textarea>
-                        </div>
-                    </div>
-                `,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'ส่งคำขอแก้ไขเวลา',
-                cancelButtonText: 'ยกเลิก',
-                confirmButtonColor: '#00744B',
-                reverseButtons: true,
-                preConfirm: () => {
-                    const input = document.getElementById('swalCorrectionReasonInput');
-                    return input ? input.value.trim() : '';
-                }
-            });
-            isConfirmed = Boolean(swalRes.isConfirmed);
-            optionalReason = String(swalRes.value || '').trim();
-        } else {
-            isConfirmed = await UIHelpers.confirm(
-                'ยืนยันส่งคำขอแก้ไขเวลา',
-                `ต้องการส่งคำขอแก้ไขเวลาของวันที่ ${dateLabel} ใช่หรือไม่?`,
-                'ส่งคำขอแก้ไขเวลา',
-                'question'
-            );
-        }
+        const { isConfirmed, value: optionalReason } = await UIHelpers.confirmWithInput('ยืนยันส่งคำขอแก้ไขเวลา', {
+            icon: 'question',
+            infoIcon: 'fa-clock-rotate-left',
+            infoIconClass: 'text-[#00744B] dark:text-emerald-400',
+            infoHtml: `
+                <div><b>วันที่:</b> ${UIHelpers.escapeHtml(dateLabel)}</div>
+                <div class="mt-0.5"><b>ปรับแก้เป็นเวลากะปกติ:</b> ${timeSummary}</div>
+            `,
+            inputId: 'swalCorrectionReasonInput',
+            inputLabel: 'เหตุผลการขอแก้ไขเวลา (ไม่บังคับ)',
+            inputPlaceholder: 'ระบุเหตุผลเพิ่มเติม หรือเว้นว่างเพื่อกดส่งได้ทันที...',
+            confirmText: 'ส่งคำขอแก้ไขเวลา',
+            confirmIcon: '<i class="fa-solid fa-paper-plane mr-1.5"></i>',
+            confirmGradient: 'from-[#00744B] to-emerald-500',
+            cancelButtonText: 'ยกเลิก',
+            popupClass: 'rounded-2xl p-5 shadow-2xl border border-emerald-500/20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+            focusRingClass: 'focus:ring-[#00744B]'
+        });
 
         if (!isConfirmed) return;
 

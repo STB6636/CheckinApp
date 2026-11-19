@@ -45,11 +45,15 @@ related:
   - Phantom-Pending Cleanup: `saveAdminAttendanceRecord` เคลียร์ `correction_status = 'pending'` เมื่อ Admin แก้เวลาใน `reports.html` จนเป็น `'ปฏิบัติงานปกติ'`
   - Watermark Sync: `getTodaySyncWatermark` รวมแถว `correction_status <> 'none'` ล่าสุดไม่จำกัดเฉพาะวันปัจจุบัน
 
-### 2.3 Double-Layer Executive RBAC (`AuthService.canApproveTimeCorrection`)
+### 2.3 Double-Layer Executive RBAC (`AuthService.canApproveTimeCorrection` — Updated V50)
 บังคับตรวจ 2 ชั้น (UI Checkbox/Action Gate ใน `TimeCorrectionsController.js` + Server/Model Gate ใน `AttendanceModel.processTimeCorrectionsBulk`):
 - **ผู้ขอเป็น `User`:** `SuperAdmin` หรือ `Admin` (ระดับกอง/ฝ่าย ในขอบเขต `canViewRecordByScope`) อนุมัติได้
-- **ผู้ขอเป็น `Admin` (ระดับกอง/ฝ่าย):** อนุญาตเฉพาะ **`SuperAdmin`** หรือ **`Admin` ในขอบเขต (ที่ไม่ใช่เจ้าตัว)** ที่ `position_type === 'ประเภทผู้บริหาร'` **และ** `position_title` อยู่ใน 5 ตำแหน่ง: `['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย']`
-- **ผู้ขอเป็น `SuperAdmin`:** อนุมัติได้เฉพาะ `SuperAdmin`
+- **ผู้ขอเป็น `Admin` หรือ `SuperAdmin`:** อนุญาตเฉพาะ **`SuperAdmin` (ไม่จำกัดประเภทตำแหน่ง)** หรือ **`Admin` ในขอบเขต (`ส่วน/ฝ่าย` หรือ `สำนักงาน/กอง`, ไม่ใช่เจ้าตัว)** ที่ `position_type === 'ประเภทผู้บริหาร'` **และ** `position_title` อยู่ใน 6 ตำแหน่ง: `['ผู้อำนวยการส่วน', 'ผู้อำนวยการกอง', 'เลขานุการ', 'เลขานุการสำนัก', 'หัวหน้ากลุ่มงาน', 'หัวหน้าฝ่าย']`
+
+### 2.3.1 V50 UI/UX Refinements (`PIPE-20261119-v50-toast-swal-superadmin-rbac`)
+- **Dynamic Prefix-Free Welcome Toast (`UIHelpers.formatWelcomeDisplayName`):** ใช้ `personnel.first_name + last_name` เป็นอันดับแรก และ fallback ตัดคำนำหน้าแบบ Dynamic จาก `system_settings.prefixes` (เรียงยาว→สั้น, ไม่ Hardcode) แสดงผลเป็น `ยินดีต้อนรับคุณ<ชื่อ นามสกุล>`
+- **Soft UI Confirm-With-Input (`UIHelpers.confirmWithInput`):** มาตรฐาน SweetAlert2 พร้อมช่องกรอกเหตุผลแบบ Optional (`buttonsStyling: false`, `rounded-2xl`, `backdrop-blur-md`, ปุ่ม Gradient + ไอคอน) ใช้ร่วมกันทั้ง Popup `"ยืนยันส่งคำขอแก้ไขเวลา"` (`CheckinController.js`) และ Popup `"ยืนยันการไม่อนุมัติคำขอแก้ไขเวลา"` (`TimeCorrectionsController.js`)
+- **Mobile Shortcut Label:** ปรับ `"อนุมัติแก้ไขเวลา"` → `"อนุมัติแก้เวลา"` ใน `AppLayout.getMobileShortcutGridHtml` เพื่อไม่ให้ตัดคำ `...` บนมือถือ
 
 ### 2.4 Symmetrical Hamburger Drawer Layout & Retirement of `#btnDrawerNavCheckin` (`checkin.html` & `CheckinController.js`)
 - ลบปุ่ม `"ลงเวลาปฏิบัติงาน"` และ DOM ID `#btnDrawerNavCheckin` ออกถาวร (ไม่ใช่ชุด 30 ID ของ `adr_004`; อัปเดต whitelist ใน `qa_mobile_cards_drawer_spa_test.mjs`) พร้อมคงกล่องซ่อน `#drawerUserRole` / `#drawerUserAffiliation`

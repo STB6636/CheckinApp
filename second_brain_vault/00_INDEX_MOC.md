@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261119-time-correction-request-and-approvals"
+last_updated_phase: "PIPE-20261119-v50-toast-swal-superadmin-rbac"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)

@@ -166,9 +166,14 @@ export class AppLayout {
         const welcomeName = sessionStorage.getItem(Config.STORAGE_KEYS.WELCOME_TOAST);
         if (welcomeName) {
             sessionStorage.removeItem(Config.STORAGE_KEYS.WELCOME_TOAST);
-            const displayName = welcomeName || currentUser?.full_name || '';
+            const prefixes = AppLayout.#settings?.prefixes || null;
+            const source = (currentUser?.personnel?.first_name && welcomeName === currentUser.full_name)
+                ? currentUser
+                : (welcomeName || currentUser || '');
+            const cleanName = UIHelpers.formatWelcomeDisplayName(source, prefixes);
+            const toastMsg = cleanName ? `ยินดีต้อนรับคุณ${cleanName}` : 'ยินดีต้อนรับเข้าสู่ระบบ';
             setTimeout(() => {
-                UIHelpers.showToast(`ยินดีต้อนรับคุณ ${displayName}`, 'success', 2800);
+                UIHelpers.showToast(toastMsg, 'success', 2800);
             }, 200);
         }
     }
@@ -600,7 +605,7 @@ export class AppLayout {
             { href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', bg: 'linear-gradient(135deg, #0284C7, #38BDF8)', show: true },
             { href: 'reports.html', icon: 'fa-file-pdf', label: 'รายงาน PDF', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติพิเศษ', bg: 'linear-gradient(135deg, #4F46E5, #8B5CF6)', show: true },
-            { href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้ไขเวลา', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
+            { href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้เวลา', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'personnel.html', icon: 'fa-users', label: 'บุคลากร', bg: 'linear-gradient(135deg, #005B2E, #059669)', show: true },
             { href: 'users.html', icon: 'fa-key', label: 'บัญชีผู้ใช้', bg: 'linear-gradient(135deg, #BE123C, #F43F5E)', show: AppLayout.canViewUsersMenu(currentUser) },
             { href: 'settings.html', icon: 'fa-sliders', label: 'ตั้งค่าระบบ', bg: 'linear-gradient(135deg, #EA580C, #FB923C)', show: currentUser?.role === 'SuperAdmin' }

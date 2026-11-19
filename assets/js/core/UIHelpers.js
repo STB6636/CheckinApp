@@ -97,6 +97,70 @@ export class UIHelpers {
         return currentMode;
     }
 
+    static formatWelcomeDisplayName(userOrName, prefixes = null) {
+        if (!userOrName) return '';
+
+        if (typeof userOrName === 'object') {
+            const firstName = String(userOrName.personnel?.first_name ?? userOrName.first_name ?? '').trim();
+            const lastName = String(userOrName.personnel?.last_name ?? userOrName.last_name ?? '').trim();
+            if (firstName) {
+                return `${firstName}${lastName ? ` ${lastName}` : ''}`.trim();
+            }
+        }
+
+        const rawName = String(
+            typeof userOrName === 'string'
+                ? userOrName
+                : (userOrName.full_name || userOrName.name || '')
+        ).trim();
+        if (!rawName) return '';
+
+        let dynamicPrefixes = Array.isArray(prefixes) ? prefixes : null;
+        if (!dynamicPrefixes) {
+            const stores = [
+                typeof sessionStorage !== 'undefined' ? sessionStorage : null,
+                typeof localStorage !== 'undefined' ? localStorage : null
+            ].filter(Boolean);
+            for (const store of stores) {
+                try {
+                    const cachedRaw = store.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                    if (cachedRaw) {
+                        const cached = JSON.parse(cachedRaw);
+                        if (Array.isArray(cached?.prefixes)) {
+                            dynamicPrefixes = cached.prefixes;
+                            break;
+                        }
+                    }
+                } catch {
+                    // ignore invalid cached settings JSON
+                }
+            }
+        }
+        if (!dynamicPrefixes) {
+            dynamicPrefixes = Array.isArray(Config.DEFAULT_SETTINGS?.prefixes) ? Config.DEFAULT_SETTINGS.prefixes : [];
+        }
+
+        const candidates = new Set(
+            dynamicPrefixes
+                .map(p => String(p || '').trim())
+                .filter(Boolean)
+        );
+        if (typeof userOrName === 'object') {
+            const userPrefix = String(userOrName.personnel?.prefix || userOrName.prefix || '').trim();
+            if (userPrefix) candidates.add(userPrefix);
+        }
+
+        const sortedPrefixes = [...candidates].sort((a, b) => b.length - a.length);
+        for (const prefix of sortedPrefixes) {
+            const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const re = new RegExp(`^${escaped}\\s*`);
+            if (re.test(rawName)) {
+                return rawName.replace(re, '').trim();
+            }
+        }
+        return rawName;
+    }
+
     static showToast(message, type = 'success', durationMs = 2600) {
         return new Promise((resolve) => {
             let wrapper = document.getElementById('bmaToastWrapper');
@@ -754,6 +818,82 @@ export class UIHelpers {
         }
         const fallbackMsg = options.infoNote ? `${title}\n${text}\n\nหมายเหตุ: ${options.infoNote}` : `${title}\n${text}`;
         return window.confirm(fallbackMsg);
+    }
+
+    static async confirmWithInput(title, options = {}) {
+        const isDark = document.documentElement.classList.contains('dark');
+        const swalApi = (typeof window !== 'undefined' && window.Swal) || (typeof Swal !== 'undefined' ? Swal : null);
+        const icon = options.icon || 'question';
+        const confirmText = options.confirmText || 'ยืนยัน';
+        const confirmIcon = options.confirmIcon !== undefined
+            ? options.confirmIcon
+            : '<i class="fa-solid fa-check mr-1.5"></i>';
+        const confirmGradient = options.confirmGradient
+            || (icon === 'error' || icon === 'warning' ? 'from-rose-600 to-red-500' : 'from-[#00744B] to-emerald-500');
+
+        if (swalApi) {
+            const safeInputId = UIHelpers.escapeHtml(options.inputId || 'swalConfirmWithInputField');
+            const safePlaceholder = UIHelpers.escapeHtml(options.inputPlaceholder || '');
+            const focusRing = options.focusRingClass || (icon === 'warning' || icon === 'error' ? 'focus:ring-rose-500' : 'focus:ring-[#00744B]');
+            const infoBoxHtml = options.infoHtml
+                ? `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2.5 text-left leading-relaxed">
+                        <i class="fa-solid ${UIHelpers.escapeHtml(options.infoIcon || 'fa-circle-info')} mt-0.5 shrink-0 ${options.infoIconClass || 'text-[#00744B] dark:text-emerald-400'} text-sm"></i>
+                        <div class="min-w-0 flex-1">${options.infoHtml}</div>
+                    </div>
+                `
+                : '';
+            const textHtml = options.text
+                ? `<p class="text-sm text-slate-600 dark:text-slate-300 mb-1 text-center">${UIHelpers.escapeHtml(options.text)}</p>`
+                : '';
+            const labelHtml = options.inputLabel
+                ? `<label for="${safeInputId}" class="block font-bold text-xs text-slate-700 dark:text-slate-200 mb-1.5 text-left">${UIHelpers.escapeHtml(options.inputLabel)}</label>`
+                : '';
+
+            const html = `
+                <div class="text-sm text-slate-600 dark:text-slate-300 mt-1 space-y-3 text-left">
+                    ${textHtml}
+                    ${infoBoxHtml}
+                    <div>
+                        ${labelHtml}
+                        <textarea id="${safeInputId}" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 ${focusRing} transition" placeholder="${safePlaceholder}"></textarea>
+                    </div>
+                </div>
+            `;
+
+            const result = await swalApi.fire({
+                title,
+                html,
+                icon,
+                showCancelButton: true,
+                buttonsStyling: false,
+                reverseButtons: true,
+                confirmButtonText: `${confirmIcon}${confirmText}`,
+                cancelButtonText: options.cancelButtonText || 'ยกเลิก',
+                customClass: {
+                    popup: options.popupClass || 'rounded-2xl p-5 shadow-2xl border border-slate-200/80 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    htmlContainer: 'text-sm text-slate-600 dark:text-slate-300 m-0 pt-1',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: `inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl ${confirmGradient} hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white`,
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                },
+                background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                color: isDark ? '#F1F5F9' : '#0F172A',
+                preConfirm: () => {
+                    const inputEl = document.getElementById(options.inputId || 'swalConfirmWithInputField');
+                    return inputEl ? String(inputEl.value || '').trim() : '';
+                }
+            });
+
+            return {
+                isConfirmed: Boolean(result.isConfirmed),
+                value: String(result.value || '').trim()
+            };
+        }
+
+        const fallbackConfirmed = await UIHelpers.confirm(title, options.text || '', confirmText, icon, options);
+        return { isConfirmed: fallbackConfirmed, value: '' };
     }
 
     static validateThaiNationalId(id, strictCheckDigit = false) {
