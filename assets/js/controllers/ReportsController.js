@@ -1291,6 +1291,114 @@ ${this.canManageRecords ? `
         UIHelpers.syncBodyModalLock();
     }
 
+    #normalizeModalTimeValue(val) {
+        if (val === null || val === undefined) return '';
+        const str = String(val).trim();
+        if (!str || str === '-' || str === '--:--') return '';
+        const hmsMatch = str.match(/^([01]?\d|2[0-3])[:.]([0-5]\d):[0-5]\d$/);
+        if (hmsMatch) {
+            return `${String(hmsMatch[1]).padStart(2, '0')}:${hmsMatch[2]}`;
+        }
+        return str;
+    }
+
+    #syncCheckoutControlState(isEditExisting = null) {
+        const hasLogId = isEditExisting !== null
+            ? Boolean(isEditExisting)
+            : Boolean(document.getElementById('repLogId')?.value);
+        const checkoutVal = this.#normalizeModalTimeValue(document.getElementById('repCheckoutTime')?.value);
+        const btnClear = document.getElementById('btnClearCheckout');
+        const hintBanner = document.getElementById('repCheckoutHintBanner');
+
+        if (btnClear) {
+            btnClear.classList.toggle('hidden', !checkoutVal);
+        }
+        if (hintBanner) {
+            hintBanner.classList.toggle('hidden', !(hasLogId && !checkoutVal));
+        }
+    }
+
+    #syncDuplicateWarningBanner() {
+        const banner = document.getElementById('repDuplicateWarningBanner');
+        const textEl = document.getElementById('repDuplicateWarningText');
+        if (!banner) return;
+
+        const hasLogId = Boolean(document.getElementById('repLogId')?.value);
+        if (hasLogId) {
+            banner.classList.add('hidden');
+            return;
+        }
+
+        const personnelId = document.getElementById('repPersonnelSelect')?.value;
+        const workDate = document.getElementById('repWorkDate')?.value;
+        const statusVal = document.getElementById('repStatusSelect')?.value;
+        const isOvertime = statusVal === 'ปฏิบัติงานนอกเวลา';
+
+        if (!personnelId || !workDate || isOvertime) {
+            banner.classList.add('hidden');
+            return;
+        }
+
+        const existing = (this.records || []).find(r =>
+            r.log_id &&
+            String(r.personnel_id) === String(personnelId) &&
+            String(r.work_date) === String(workDate) &&
+            !r.is_overtime &&
+            r.status_label !== 'ปฏิบัติงานนอกเวลา'
+        );
+
+        if (existing) {
+            const inTxt = this.#normalizeModalTimeValue(existing.check_in_time) || '-';
+            const outTxt = this.#normalizeModalTimeValue(existing.check_out_time) || 'ยังไม่ลงออก';
+            if (textEl) {
+                textEl.textContent = `บุคลากรรายนี้มีบันทึกเวลาปกติในวันที่เลือกอยู่แล้ว (เข้า ${inTxt} น. / ออก ${outTxt}) ระบบจะยึดการลงเวลาของผู้ใช้เป็นหลัก`;
+            }
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    }
+
+    #bindReportModalHelperEvents() {
+        const btnQuickFill = document.getElementById('btnQuickFillCheckout');
+        if (btnQuickFill && btnQuickFill.dataset.v51Bound !== 'true') {
+            btnQuickFill.dataset.v51Bound = 'true';
+            btnQuickFill.addEventListener('click', () => {
+                const checkoutInput = document.getElementById('repCheckoutTime');
+                if (checkoutInput) {
+                    checkoutInput.value = this.settings?.standard_check_out || '16:30';
+                }
+                this.#syncCheckoutControlState();
+            });
+        }
+
+        const btnClear = document.getElementById('btnClearCheckout');
+        if (btnClear && btnClear.dataset.v51Bound !== 'true') {
+            btnClear.dataset.v51Bound = 'true';
+            btnClear.addEventListener('click', () => {
+                const checkoutInput = document.getElementById('repCheckoutTime');
+                if (checkoutInput) {
+                    checkoutInput.value = '';
+                }
+                this.#syncCheckoutControlState();
+            });
+        }
+
+        const checkoutInput = document.getElementById('repCheckoutTime');
+        if (checkoutInput && checkoutInput.dataset.v51Bound !== 'true') {
+            checkoutInput.dataset.v51Bound = 'true';
+            checkoutInput.addEventListener('input', () => this.#syncCheckoutControlState());
+        }
+
+        for (const id of ['repPersonnelSelect', 'repWorkDate', 'repStatusSelect']) {
+            const el = document.getElementById(id);
+            if (el && el.dataset.v51Bound !== 'true') {
+                el.dataset.v51Bound = 'true';
+                el.addEventListener('change', () => this.#syncDuplicateWarningBanner());
+            }
+        }
+    }
+
     #openModal(rec = null) {
         if (!rec && !this.canAddRecord) {
             UIHelpers.alert('ไม่มีสิทธิ์เข้าถึง', 'ผู้ดูแลระบบระดับส่วน/ฝ่าย ไม่มีสิทธิ์เพิ่มข้อมูลการลงเวลา', 'warning');
@@ -1307,20 +1415,50 @@ ${this.canManageRecords ? `
             }
         }
         this.#populatePersonnelDropdown();
+        this.#bindReportModalHelperEvents();
+
         const modal = document.getElementById('modalReportAttendance');
         const defaultDate = document.getElementById('reportSingleDateInput')?.value || UIHelpers.getTodayISO();
+        const isEditExisting = Boolean(rec?.log_id);
+
+        const titleSpan = document.getElementById('repTitleText') || document.querySelector('#modalReportTitle span:last-child');
+        if (titleSpan) {
+            titleSpan.textContent = isEditExisting ? 'แก้ไขเวลาปฏิบัติราชการ' : 'เพิ่มบันทึกเวลาปฏิบัติราชการ';
+        }
+        document.getElementById('repEditModeBadge')?.classList.toggle('hidden', !isEditExisting);
 
         document.getElementById('repLogId').value = rec?.log_id || '';
-        if (rec?.personnel_id) {
-            document.getElementById('repPersonnelSelect').value = rec.personnel_id;
+        const personnelSelect = document.getElementById('repPersonnelSelect');
+        if (personnelSelect) {
+            if (rec?.personnel_id) {
+                personnelSelect.value = rec.personnel_id;
+            }
+            personnelSelect.disabled = isEditExisting;
+            personnelSelect.classList.toggle('opacity-60', isEditExisting);
+            personnelSelect.classList.toggle('cursor-not-allowed', isEditExisting);
         }
-        document.getElementById('repWorkDate').value = rec?.work_date || defaultDate;
-        document.getElementById('repCheckinTime').value = rec?.check_in_time || this.settings.standard_check_in || '08:30';
-        document.getElementById('repCheckoutTime').value = rec?.check_out_time || this.settings.standard_check_out || '16:30';
+
+        const workDateInput = document.getElementById('repWorkDate');
+        if (workDateInput) {
+            workDateInput.value = rec?.work_date || defaultDate;
+            workDateInput.disabled = isEditExisting;
+            workDateInput.classList.toggle('opacity-60', isEditExisting);
+            workDateInput.classList.toggle('cursor-not-allowed', isEditExisting);
+        }
+
+        document.getElementById('repCheckinTime').value = isEditExisting
+            ? this.#normalizeModalTimeValue(rec.check_in_time)
+            : (this.settings?.standard_check_in || '08:30');
+        document.getElementById('repCheckoutTime').value = isEditExisting
+            ? this.#normalizeModalTimeValue(rec.check_out_time)
+            : '';
         document.getElementById('repStatusSelect').value = rec?.status_label && rec.status_label !== 'ไม่ลงเวลา'
             ? rec.status_label
             : 'ปฏิบัติงานปกติ';
         document.getElementById('repRemarkInput').value = rec?.remark || '';
+
+        this.#syncCheckoutControlState(isEditExisting);
+        this.#syncDuplicateWarningBanner();
 
         modal?.classList.remove('hidden');
         UIHelpers.prepareModalOpen(modal);
@@ -1619,6 +1757,7 @@ ${this.canManageRecords ? `
             e.preventDefault();
             await this.#handleSaveReportRecord();
         });
+        this.#bindReportModalHelperEvents();
 
         document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
             const tableHtml = this.#renderSeparateTablesBySelectedTags(true);
@@ -1786,13 +1925,44 @@ ${this.canManageRecords ? `
             return;
         }
 
+        const rawCheckIn = this.#normalizeModalTimeValue(document.getElementById('repCheckinTime').value);
+        const rawCheckOut = this.#normalizeModalTimeValue(document.getElementById('repCheckoutTime').value);
+        const timeRegex = /^(?:[01]?\d|2[0-3])[:.]([0-5]\d)$/;
+
+        if (!rawCheckIn || !timeRegex.test(rawCheckIn)) {
+            await UIHelpers.alert('รูปแบบเวลาไม่ถูกต้อง', 'กรุณาระบุเวลาเข้างานเป็นรูปแบบ 24 ชม. ที่ถูกต้อง (เช่น 08:30)', 'warning');
+            return;
+        }
+        if (rawCheckOut && !timeRegex.test(rawCheckOut)) {
+            await UIHelpers.alert('รูปแบบเวลาไม่ถูกต้อง', 'กรุณาระบุเวลาเลิกงานเป็นรูปแบบ 24 ชม. ที่ถูกต้อง (เช่น 16:30) หรือเว้นว่างไว้หากยังไม่ลงเวลาออก', 'warning');
+            return;
+        }
+
+        const checkInFormatted = UIHelpers.formatTime24(rawCheckIn);
+        const checkOutFormatted = rawCheckOut ? UIHelpers.formatTime24(rawCheckOut) : null;
+        const statusVal = document.getElementById('repStatusSelect').value;
+
+        if (checkOutFormatted && statusVal !== 'ปฏิบัติงานนอกเวลา') {
+            const inMin = UIHelpers.timeToMinutes(checkInFormatted);
+            const outMin = UIHelpers.timeToMinutes(checkOutFormatted);
+            if (inMin >= 0 && outMin >= 0 && outMin <= inMin) {
+                const confirmOrder = await UIHelpers.confirm(
+                    'ตรวจสอบลำดับเวลาเข้า-ออกงาน',
+                    `เวลาเลิกงาน (${checkOutFormatted} น.) น้อยกว่าหรือเท่ากับเวลาเข้างาน (${checkInFormatted} น.) ในกะปกติ ต้องการบันทึกข้อมูลนี้ต่อหรือไม่?`,
+                    'ยืนยันบันทึกข้อมูล',
+                    'warning'
+                );
+                if (!confirmOrder) return;
+            }
+        }
+
         const payload = {
             log_id: document.getElementById('repLogId').value || null,
             personnel_id: selectedPersonnelId,
             work_date: document.getElementById('repWorkDate').value,
-            check_in_time: UIHelpers.formatTime24(document.getElementById('repCheckinTime').value),
-            check_out_time: UIHelpers.formatTime24(document.getElementById('repCheckoutTime').value),
-            status: document.getElementById('repStatusSelect').value,
+            check_in_time: checkInFormatted,
+            check_out_time: checkOutFormatted,
+            status: statusVal,
             remark: document.getElementById('repRemarkInput').value
         };
 
@@ -1801,6 +1971,12 @@ ${this.canManageRecords ? `
             const res = await AttendanceModel.saveAdminAttendanceRecord(payload);
             UIHelpers.hideLoading();
             if (!res.success) {
+                if (res.duplicate) {
+                    this.#closeModal();
+                    await this.loadReportData();
+                    await UIHelpers.alert('พบข้อมูลการลงเวลาอยู่แล้ว', res.message, 'warning');
+                    return;
+                }
                 await UIHelpers.alert('บันทึกไม่สำเร็จ', res.message, 'error');
                 return;
             }

@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-19T07:10:31.281Z",
-  "totalFilesScanned": 189,
-  "totalSymbolsIndexed": 1268,
+  "generatedAt": "2026-11-19T08:46:16.135Z",
+  "totalFilesScanned": 190,
+  "totalSymbolsIndexed": 1281,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "44c3eb05f05665a9",
+      "fileHash": "43c0968555d6d866",
       "totalLines": 239,
       "importsCount": 0,
       "importsPreview": [],
@@ -2159,8 +2159,8 @@
     {
       "filePath": "assets/js/controllers/ReportsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "10e4087ade1468a9",
-      "totalLines": 1824,
+      "fileHash": "a57672798b895c84",
+      "totalLines": 2000,
       "importsCount": 8,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -2180,9 +2180,9 @@
           "name": "ReportsController",
           "kind": "class",
           "startLine": 15,
-          "endLine": 1815,
+          "endLine": 1991,
           "signature": "export class ReportsController",
-          "summary": "Class Definition (1801 lines)"
+          "summary": "Class Definition (1977 lines)"
         },
         {
           "name": "ReportsController.constructor",
@@ -2425,52 +2425,84 @@
           "summary": "private method L1281-L1292 (12 lines)"
         },
         {
-          "name": "ReportsController.#openModal",
+          "name": "ReportsController.#normalizeModalTimeValue",
           "kind": "private method",
           "startLine": 1294,
-          "endLine": 1327,
+          "endLine": 1303,
+          "signature": "(val) => any",
+          "summary": "private method L1294-L1303 (10 lines)"
+        },
+        {
+          "name": "ReportsController.#syncCheckoutControlState",
+          "kind": "private method",
+          "startLine": 1305,
+          "endLine": 1319,
+          "signature": "(isEditExisting = null) => any",
+          "summary": "private method L1305-L1319 (15 lines)"
+        },
+        {
+          "name": "ReportsController.#syncDuplicateWarningBanner",
+          "kind": "private method",
+          "startLine": 1321,
+          "endLine": 1360,
+          "signature": "() => any",
+          "summary": "private method L1321-L1360 (40 lines)"
+        },
+        {
+          "name": "ReportsController.#bindReportModalHelperEvents",
+          "kind": "private method",
+          "startLine": 1362,
+          "endLine": 1400,
+          "signature": "() => any",
+          "summary": "private method L1362-L1400 (39 lines)"
+        },
+        {
+          "name": "ReportsController.#openModal",
+          "kind": "private method",
+          "startLine": 1402,
+          "endLine": 1465,
           "signature": "(rec = null) => any",
-          "summary": "private method L1294-L1327 (34 lines)"
+          "summary": "private method L1402-L1465 (64 lines)"
         },
         {
           "name": "ReportsController.#closeModal",
           "kind": "private method",
-          "startLine": 1329,
-          "endLine": 1332,
+          "startLine": 1467,
+          "endLine": 1470,
           "signature": "() => any",
-          "summary": "private method L1329-L1332 (4 lines)"
+          "summary": "private method L1467-L1470 (4 lines)"
         },
         {
           "name": "ReportsController.syncReportsSilent",
           "kind": "public async method",
-          "startLine": 1334,
-          "endLine": 1537,
+          "startLine": 1472,
+          "endLine": 1675,
           "signature": "(deltaDetail = null) => Promise<any>",
-          "summary": "public async method L1334-L1537 (204 lines)"
+          "summary": "public async method L1472-L1675 (204 lines)"
         },
         {
           "name": "ReportsController.#bindEvents",
           "kind": "private method",
-          "startLine": 1539,
-          "endLine": 1774,
+          "startLine": 1677,
+          "endLine": 1913,
           "signature": "() => any",
-          "summary": "private method L1539-L1774 (236 lines)"
+          "summary": "private method L1677-L1913 (237 lines)"
         },
         {
           "name": "triggerDebouncedReportSync",
           "kind": "arrow_fn",
-          "startLine": 1540,
-          "endLine": 1545,
+          "startLine": 1678,
+          "endLine": 1683,
           "signature": "(detail) => inferred",
-          "summary": "Arrow Function L1540-L1545"
+          "summary": "Arrow Function L1678-L1683"
         },
         {
           "name": "ReportsController.#handleSaveReportRecord",
           "kind": "private async method",
-          "startLine": 1776,
-          "endLine": 1814,
+          "startLine": 1915,
+          "endLine": 1990,
           "signature": "() => Promise<any>",
-          "summary": "private async method L1776-L1814 (39 lines)"
+          "summary": "private async method L1915-L1990 (76 lines)"
         }
       ]
     },
@@ -3875,8 +3907,8 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "14fee057af0a04c0",
-      "totalLines": 3400,
+      "fileHash": "dbb1be9681748edc",
+      "totalLines": 3464,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -3893,9 +3925,9 @@
           "name": "AttendanceModel",
           "kind": "class",
           "startLine": 12,
-          "endLine": 3400,
+          "endLine": 3464,
           "signature": "export class AttendanceModel",
-          "summary": "Class Definition (3389 lines)"
+          "summary": "Class Definition (3453 lines)"
         },
         {
           "name": "AttendanceModel.clearLocationCache",
@@ -4277,33 +4309,33 @@
           "name": "AttendanceModel.saveAdminAttendanceRecord",
           "kind": "static public async method",
           "startLine": 3161,
-          "endLine": 3266,
+          "endLine": 3330,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L3161-L3266 (106 lines)"
+          "summary": "static public async method L3161-L3330 (170 lines)"
         },
         {
           "name": "AttendanceModel.deleteAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 3268,
-          "endLine": 3286,
+          "startLine": 3332,
+          "endLine": 3350,
           "signature": "(logId) => Promise<any>",
-          "summary": "static public async method L3268-L3286 (19 lines)"
+          "summary": "static public async method L3332-L3350 (19 lines)"
         },
         {
           "name": "AttendanceModel.calculateDashboardMetrics",
           "kind": "static public method",
-          "startLine": 3288,
-          "endLine": 3351,
+          "startLine": 3352,
+          "endLine": 3415,
           "signature": "(dailyRecords) => any",
-          "summary": "static public method L3288-L3351 (64 lines)"
+          "summary": "static public method L3352-L3415 (64 lines)"
         },
         {
           "name": "AttendanceModel.getTodaySyncWatermark",
           "kind": "static public async method",
-          "startLine": 3357,
-          "endLine": 3399,
+          "startLine": 3421,
+          "endLine": 3463,
           "signature": "() => Promise<any>",
-          "summary": "static public async method L3357-L3399 (43 lines)"
+          "summary": "static public async method L3421-L3463 (43 lines)"
         }
       ]
     },
@@ -4734,7 +4766,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7cc16ead80a43d7f",
+      "fileHash": "b3ca66ca1380346c",
       "totalLines": 1138,
       "importsCount": 0,
       "importsPreview": [],
@@ -5017,7 +5049,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "664471d3f3bf03a9",
+      "fileHash": "0886d8a9d58b4e1e",
       "totalLines": 284,
       "importsCount": 0,
       "importsPreview": [],
@@ -5119,7 +5151,7 @@
     {
       "filePath": "docs/manual/manual-admin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "124339e6b9e3fba2",
+      "fileHash": "b4ff69ac53546dca",
       "totalLines": 1318,
       "importsCount": 0,
       "importsPreview": [],
@@ -5331,7 +5363,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "746e095d1a60a43b",
+      "fileHash": "9026bb75c5d3b6c4",
       "totalLines": 436,
       "importsCount": 0,
       "importsPreview": [],
@@ -5390,7 +5422,7 @@
     {
       "filePath": "loading.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3302f0b5fc142000",
+      "fileHash": "146ad4601ce4e7b1",
       "totalLines": 449,
       "importsCount": 0,
       "importsPreview": [],
@@ -5417,7 +5449,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "0dfc519f213219c8",
+      "fileHash": "2529033f93f98cf1",
       "totalLines": 694,
       "importsCount": 0,
       "importsPreview": [],
@@ -11624,10 +11656,99 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261119-v51-reports-edit-modal-checkout-logic/qa_v51_reports_edit_modal_test.mjs",
+      "layer": "Application Module",
+      "fileHash": "6c4d9153c9cb798e",
+      "totalLines": 583,
+      "importsCount": 5,
+      "importsPreview": [
+        "import assert from 'node:assert';",
+        "import fs from 'node:fs';",
+        "import http from 'node:http';",
+        "import path from 'node:path';",
+        "import { pathToFileURL } from 'node:url';"
+      ],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "runTest",
+          "kind": "function",
+          "startLine": 35,
+          "endLine": 45,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L35-L45"
+        },
+        {
+          "name": "runAsyncTest",
+          "kind": "async_function",
+          "startLine": 47,
+          "endLine": 57,
+          "signature": "(name, fn) => inferred",
+          "summary": "Function L47-L57"
+        },
+        {
+          "name": "createMockSupabaseDb",
+          "kind": "function",
+          "startLine": 59,
+          "endLine": 105,
+          "signature": "(seedTables = {}) => inferred",
+          "summary": "Function L59-L105"
+        },
+        {
+          "name": "makeBuilder",
+          "kind": "arrow_fn",
+          "startLine": 65,
+          "endLine": 98,
+          "signature": "(tableName) => inferred",
+          "summary": "Arrow Function L65-L98"
+        },
+        {
+          "name": "exec",
+          "kind": "async_arrow_fn",
+          "startLine": 71,
+          "endLine": 89,
+          "signature": "() => inferred",
+          "summary": "Arrow Function L71-L89"
+        },
+        {
+          "name": "createDomStubs",
+          "kind": "function",
+          "startLine": 107,
+          "endLine": 144,
+          "signature": "() => inferred",
+          "summary": "Function L107-L144"
+        },
+        {
+          "name": "startStaticServer",
+          "kind": "function",
+          "startLine": 146,
+          "endLine": 583,
+          "signature": "() => inferred",
+          "summary": "Function L146-L583"
+        },
+        {
+          "name": "main",
+          "kind": "async_function",
+          "startLine": 186,
+          "endLine": 577,
+          "signature": "() => inferred",
+          "summary": "Function L186-L577"
+        },
+        {
+          "name": "setupRoutes",
+          "kind": "async_arrow_fn",
+          "startLine": 420,
+          "endLine": 449,
+          "signature": "(page) => inferred",
+          "summary": "Arrow Function L420-L449"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a147b0d58713c174",
-      "totalLines": 539,
+      "fileHash": "a32cbe66d88261e1",
+      "totalLines": 556,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -11699,17 +11820,17 @@
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 537,
-          "endLine": 537,
+          "startLine": 554,
+          "endLine": 554,
           "signature": "<script>",
-          "summary": "Bootstrap script L537-L537"
+          "summary": "Bootstrap script L554-L554"
         }
       ]
     },
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "77f53876212cfd88",
+      "fileHash": "0e457f573a95f6d4",
       "totalLines": 1082,
       "importsCount": 0,
       "importsPreview": [],
@@ -12465,7 +12586,7 @@
     {
       "filePath": "time-corrections.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7e31f2f96ef10bb4",
+      "fileHash": "ef3d3c449bb2fba1",
       "totalLines": 240,
       "importsCount": 0,
       "importsPreview": [],
@@ -12532,7 +12653,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "d4b0cfd2488872be",
+      "fileHash": "9c5bad2e20c5bd88",
       "totalLines": 475,
       "importsCount": 0,
       "importsPreview": [],

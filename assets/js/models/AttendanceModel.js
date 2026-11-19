@@ -3174,20 +3174,40 @@ export class AttendanceModel {
         };
 
         const canonicalStatus = payload.status === 'ปฏิบัติงานนอกเวลาราชการ' ? 'ปฏิบัติงานนอกเวลา' : (payload.status || 'ปฏิบัติงานปกติ');
+        const cleanCheckIn = payload.check_in_time && String(payload.check_in_time).trim() !== '-'
+            ? UIHelpers.formatTime24(payload.check_in_time)
+            : null;
+        const cleanCheckOut = payload.check_out_time && String(payload.check_out_time).trim() !== '-'
+            ? UIHelpers.formatTime24(payload.check_out_time)
+            : null;
+
         const recordData = {
             personnel_id: payload.personnel_id,
             work_date: payload.work_date,
-            shift_name: payload.shift_name || (isOvertime ? 'ปฏิบัติงานนอกเวลา' : 'เวลาราชการปกติ (08:30 - 16:30)'),
-            check_in_time: payload.check_in_time ? UIHelpers.formatTime24(payload.check_in_time) : null,
-            check_out_time: payload.check_out_time ? UIHelpers.formatTime24(payload.check_out_time) : null,
+            check_in_time: cleanCheckIn || null,
+            check_out_time: cleanCheckOut || null,
             status: canonicalStatus,
             remark: payload.remark || '',
             row_color: payload.row_color || statusColorMap[payload.status] || '#007B3E',
             is_overtime: isOvertime,
-            is_special_request: Boolean(payload.is_special_request),
-            approval_status: payload.approval_status || 'approved',
             updated_at: new Date().toISOString()
         };
+
+        if (payload.log_id) {
+            if (payload.shift_name !== undefined && payload.shift_name !== null && payload.shift_name !== '') {
+                recordData.shift_name = payload.shift_name;
+            }
+            if (payload.is_special_request !== undefined) {
+                recordData.is_special_request = Boolean(payload.is_special_request);
+            }
+            if (payload.approval_status !== undefined && payload.approval_status !== null && payload.approval_status !== '') {
+                recordData.approval_status = payload.approval_status;
+            }
+        } else {
+            recordData.shift_name = payload.shift_name || (isOvertime ? 'ปฏิบัติงานนอกเวลา' : 'เวลาราชการปกติ (08:30 - 16:30)');
+            recordData.is_special_request = Boolean(payload.is_special_request);
+            recordData.approval_status = payload.approval_status || 'approved';
+        }
 
         if (payload.location_mode) recordData.location_mode = payload.location_mode;
         if (payload.offsite_reason) recordData.offsite_reason = payload.offsite_reason;
@@ -3235,6 +3255,50 @@ export class AttendanceModel {
             } catch (_) {}
             return { success: true, message: 'อัปเดตข้อมูลการลงเวลาเรียบร้อยแล้ว' };
         } else {
+            const { data: existingRows, error: dupCheckErr } = await db
+                .from('attendance_logs')
+                .select('id, personnel_id, work_date, check_in_time, check_out_time, status, is_overtime, shift_name')
+                .eq('personnel_id', payload.personnel_id)
+                .eq('work_date', payload.work_date);
+
+            if (!dupCheckErr && Array.isArray(existingRows) && existingRows.length > 0) {
+                if (!isOvertime) {
+                    const existingRegular = existingRows.find(
+                        row => !row.is_overtime && row.status !== 'ปฏิบัติงานนอกเวลา'
+                    );
+                    if (existingRegular) {
+                        const inTxt = existingRegular.check_in_time
+                            ? `${UIHelpers.formatTime24(existingRegular.check_in_time)} น.`
+                            : '-';
+                        const outTxt = existingRegular.check_out_time
+                            ? `${UIHelpers.formatTime24(existingRegular.check_out_time)} น.`
+                            : 'ยังไม่ลงออก';
+                        return {
+                            success: false,
+                            duplicate: true,
+                            existingRecord: existingRegular,
+                            message: `บุคลากรรายนี้ได้ลงเวลาปฏิบัติราชการในวันที่เลือกไว้แล้ว (เข้า ${inTxt} / ออก ${outTxt}) ระบบยึดข้อมูลการลงเวลาของผู้ใช้เป็นหลัก หากต้องการปรับปรุงกรุณาแก้ไขจากรายการที่มีอยู่แทน`
+                        };
+                    }
+                } else {
+                    const existingOt = existingRows.find(row => {
+                        const rowIsOt = Boolean(row.is_overtime || row.status === 'ปฏิบัติงานนอกเวลา');
+                        if (!rowIsOt) return false;
+                        const rIn = row.check_in_time ? UIHelpers.formatTime24(row.check_in_time) : '';
+                        const rOut = row.check_out_time ? UIHelpers.formatTime24(row.check_out_time) : '';
+                        return rIn === (recordData.check_in_time || '') && rOut === (recordData.check_out_time || '');
+                    });
+                    if (existingOt) {
+                        return {
+                            success: false,
+                            duplicate: true,
+                            existingRecord: existingOt,
+                            message: 'พบข้อมูลการปฏิบัติงานนอกเวลา (OT) ในช่วงเวลาเดียวกันนี้อยู่แล้ว กรุณาแก้ไขจากรายการที่มีอยู่แทน'
+                        };
+                    }
+                }
+            }
+
             if (!recordData.location_mode) recordData.location_mode = 'ONSITE';
             let { error } = await db
                 .from('attendance_logs')

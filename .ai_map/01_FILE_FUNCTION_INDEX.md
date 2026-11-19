@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-19T07:10:31.281Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `189` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1268`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-19T08:46:16.135Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `190` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1281`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `44c3eb05f05665a9` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `43c0968555d6d866` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -338,11 +338,11 @@
 
 ## File: `assets/js/controllers/ReportsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `10e4087ade1468a9` | **Total Lines:** `1824` | **Imports:** `8` | **Exports:** `ReportsController`
+- **Hash:** `a57672798b895c84` | **Total Lines:** `2000` | **Imports:** `8` | **Exports:** `ReportsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `ReportsController` | `class` | **L15 - L1815** | `export class ReportsController` | Class Definition (1801 lines) |
+| `ReportsController` | `class` | **L15 - L1991** | `export class ReportsController` | Class Definition (1977 lines) |
 | `ReportsController.constructor` | `public constructor` | **L16 - L30** | `() => any` | public constructor L16-L30 (15 lines) |
 | `ReportsController.init` | `public async method` | **L32 - L73** | `() => Promise<any>` | public async method L32-L73 (42 lines) |
 | `ReportsController.#initHierarchicalOrgFilter` | `private method` | **L75 - L110** | `() => any` | private method L75-L110 (36 lines) |
@@ -373,12 +373,16 @@
 | `setupPhotoBox` | `arrow_fn` | **L1128 - L1171** | `(boxId, linkId, photo, fallbackMsg, isOut = false) => inferred` | Arrow Function L1128-L1171 |
 | `setupGpsAndMap` | `arrow_fn` | **L1225 - L1255** | `(coordsId, linkId, iframeId, placeholderId, locNameId, lat, lng, locName, fallbackMsg) => inferred` | Arrow Function L1225-L1255 |
 | `ReportsController.#closeResumeModal` | `private method` | **L1281 - L1292** | `() => any` | private method L1281-L1292 (12 lines) |
-| `ReportsController.#openModal` | `private method` | **L1294 - L1327** | `(rec = null) => any` | private method L1294-L1327 (34 lines) |
-| `ReportsController.#closeModal` | `private method` | **L1329 - L1332** | `() => any` | private method L1329-L1332 (4 lines) |
-| `ReportsController.syncReportsSilent` | `public async method` | **L1334 - L1537** | `(deltaDetail = null) => Promise<any>` | public async method L1334-L1537 (204 lines) |
-| `ReportsController.#bindEvents` | `private method` | **L1539 - L1774** | `() => any` | private method L1539-L1774 (236 lines) |
-| `triggerDebouncedReportSync` | `arrow_fn` | **L1540 - L1545** | `(detail) => inferred` | Arrow Function L1540-L1545 |
-| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1776 - L1814** | `() => Promise<any>` | private async method L1776-L1814 (39 lines) |
+| `ReportsController.#normalizeModalTimeValue` | `private method` | **L1294 - L1303** | `(val) => any` | private method L1294-L1303 (10 lines) |
+| `ReportsController.#syncCheckoutControlState` | `private method` | **L1305 - L1319** | `(isEditExisting = null) => any` | private method L1305-L1319 (15 lines) |
+| `ReportsController.#syncDuplicateWarningBanner` | `private method` | **L1321 - L1360** | `() => any` | private method L1321-L1360 (40 lines) |
+| `ReportsController.#bindReportModalHelperEvents` | `private method` | **L1362 - L1400** | `() => any` | private method L1362-L1400 (39 lines) |
+| `ReportsController.#openModal` | `private method` | **L1402 - L1465** | `(rec = null) => any` | private method L1402-L1465 (64 lines) |
+| `ReportsController.#closeModal` | `private method` | **L1467 - L1470** | `() => any` | private method L1467-L1470 (4 lines) |
+| `ReportsController.syncReportsSilent` | `public async method` | **L1472 - L1675** | `(deltaDetail = null) => Promise<any>` | public async method L1472-L1675 (204 lines) |
+| `ReportsController.#bindEvents` | `private method` | **L1677 - L1913** | `() => any` | private method L1677-L1913 (237 lines) |
+| `triggerDebouncedReportSync` | `arrow_fn` | **L1678 - L1683** | `(detail) => inferred` | Arrow Function L1678-L1683 |
+| `ReportsController.#handleSaveReportRecord` | `private async method` | **L1915 - L1990** | `() => Promise<any>` | private async method L1915-L1990 (76 lines) |
 
 ---
 
@@ -607,11 +611,11 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `14fee057af0a04c0` | **Total Lines:** `3400` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `dbb1be9681748edc` | **Total Lines:** `3464` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AttendanceModel` | `class` | **L12 - L3400** | `export class AttendanceModel` | Class Definition (3389 lines) |
+| `AttendanceModel` | `class` | **L12 - L3464** | `export class AttendanceModel` | Class Definition (3453 lines) |
 | `AttendanceModel.clearLocationCache` | `static public method` | **L16 - L18** | `() => any` | static public method L16-L18 (3 lines) |
 | `AttendanceModel.#calculateDistanceMeters` | `static private method` | **L20 - L31** | `(lat1, lon1, lat2, lon2) => any` | static private method L20-L31 (12 lines) |
 | `AttendanceModel.#minutesToTime24` | `static private method` | **L33 - L38** | `(totalMinutes) => any` | static private method L33-L38 (6 lines) |
@@ -659,10 +663,10 @@
 | `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L3032 - L3103** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L3032-L3103 (72 lines) |
 | `AttendanceModel.#formatReportRow` | `static private method` | **L3105 - L3155** | `(person, log, workDate, evalStatus) => any` | static private method L3105-L3155 (51 lines) |
 | `AttendanceModel.getDailyReportRecords` | `static public async method` | **L3157 - L3159** | `(workDate, currentUser) => Promise<any>` | static public async method L3157-L3159 (3 lines) |
-| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L3161 - L3266** | `(payload) => Promise<any>` | static public async method L3161-L3266 (106 lines) |
-| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L3268 - L3286** | `(logId) => Promise<any>` | static public async method L3268-L3286 (19 lines) |
-| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L3288 - L3351** | `(dailyRecords) => any` | static public method L3288-L3351 (64 lines) |
-| `AttendanceModel.getTodaySyncWatermark` | `static public async method` | **L3357 - L3399** | `() => Promise<any>` | static public async method L3357-L3399 (43 lines) |
+| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L3161 - L3330** | `(payload) => Promise<any>` | static public async method L3161-L3330 (170 lines) |
+| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L3332 - L3350** | `(logId) => Promise<any>` | static public async method L3332-L3350 (19 lines) |
+| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L3352 - L3415** | `(dailyRecords) => any` | static public method L3352-L3415 (64 lines) |
+| `AttendanceModel.getTodaySyncWatermark` | `static public async method` | **L3421 - L3463** | `() => Promise<any>` | static public async method L3421-L3463 (43 lines) |
 
 ---
 
@@ -749,7 +753,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7cc16ead80a43d7f` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b3ca66ca1380346c` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -792,7 +796,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `664471d3f3bf03a9` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `0886d8a9d58b4e1e` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -820,7 +824,7 @@
 
 ## File: `docs/manual/manual-admin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `124339e6b9e3fba2` | **Total Lines:** `1318` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b4ff69ac53546dca` | **Total Lines:** `1318` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -877,7 +881,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `746e095d1a60a43b` | **Total Lines:** `436` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9026bb75c5d3b6c4` | **Total Lines:** `436` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -892,7 +896,7 @@
 
 ## File: `loading.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3302f0b5fc142000` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `146ad4601ce4e7b1` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -903,7 +907,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `0dfc519f213219c8` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `2529033f93f98cf1` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2708,9 +2712,27 @@
 
 ---
 
+## File: `pipeline/PIPE-20261119-v51-reports-edit-modal-checkout-logic/qa_v51_reports_edit_modal_test.mjs`
+- **Layer:** Application Module
+- **Hash:** `6c4d9153c9cb798e` | **Total Lines:** `583` | **Imports:** `5` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `runTest` | `function` | **L35 - L45** | `(name, fn) => inferred` | Function L35-L45 |
+| `runAsyncTest` | `async_function` | **L47 - L57** | `(name, fn) => inferred` | Function L47-L57 |
+| `createMockSupabaseDb` | `function` | **L59 - L105** | `(seedTables = {}) => inferred` | Function L59-L105 |
+| `makeBuilder` | `arrow_fn` | **L65 - L98** | `(tableName) => inferred` | Arrow Function L65-L98 |
+| `exec` | `async_arrow_fn` | **L71 - L89** | `() => inferred` | Arrow Function L71-L89 |
+| `createDomStubs` | `function` | **L107 - L144** | `() => inferred` | Function L107-L144 |
+| `startStaticServer` | `function` | **L146 - L583** | `() => inferred` | Function L146-L583 |
+| `main` | `async_function` | **L186 - L577** | `() => inferred` | Function L186-L577 |
+| `setupRoutes` | `async_arrow_fn` | **L420 - L449** | `(page) => inferred` | Arrow Function L420-L449 |
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `a147b0d58713c174` | **Total Lines:** `539` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a32cbe66d88261e1` | **Total Lines:** `556` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2722,13 +2744,13 @@
 | `<div#statusTagsFilterContainer>` | `html_dom_section` | **L274 - L274** | `id="statusTagsFilterContainer"` | HTML DOM Section L274-L274 |
 | `<div#reportTablesMasterContainer>` | `html_dom_section` | **L281 - L281** | `id="reportTablesMasterContainer"` | HTML DOM Section L281-L281 |
 | `<div#bmaFooterContainer>` | `html_dom_section` | **L285 - L285** | `id="bmaFooterContainer"` | HTML DOM Section L285-L285 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L537 - L537** | `<script>` | Bootstrap script L537-L537 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L554 - L554** | `<script>` | Bootstrap script L554-L554 |
 
 ---
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `77f53876212cfd88` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `0e457f573a95f6d4` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2914,7 +2936,7 @@
 
 ## File: `time-corrections.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7e31f2f96ef10bb4` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ef3d3c449bb2fba1` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2930,7 +2952,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `d4b0cfd2488872be` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9c5bad2e20c5bd88` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

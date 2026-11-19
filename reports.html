@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261119_b752d4a8';
+            const CURRENT_APP_BUILD = '20261119_98c821d6';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -112,7 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261119_b752d4a8">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261119_98c821d6">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -295,7 +295,8 @@
                     <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0971CE] flex items-center justify-center text-sm shadow-xs shrink-0">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </span>
-                    <span class="truncate">บันทึก/แก้ไขเวลาปฏิบัติราชการ</span>
+                    <span id="repTitleText" class="truncate">บันทึก/แก้ไขเวลาปฏิบัติราชการ</span>
+                    <span id="repEditModeBadge" class="hidden shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">แก้ไขบันทึกเดิม</span>
                 </h3>
                 <button type="button" id="btnCloseReportModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -316,15 +317,31 @@
                     <input type="date" id="repWorkDate" class="bma-input text-sm rounded-xl" required>
                 </div>
 
+                <div id="repDuplicateWarningBanner" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-[11px] font-semibold text-amber-800 dark:text-amber-200 flex items-start gap-2 leading-relaxed">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"></i>
+                    <span id="repDuplicateWarningText">บุคลากรรายนี้มีบันทึกเวลาปฏิบัติราชการในวันที่เลือกอยู่แล้ว ระบบจะยึดข้อมูลการลงเวลาของผู้ใช้เป็นหลัก</span>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเข้างาน (24 ชม.) *</label>
                         <input type="text" id="repCheckinTime" class="bma-input text-sm font-mono text-center rounded-xl" value="08:30" placeholder="08:30" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเลิกงาน (24 ชม.)</label>
-                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
+                        <div class="flex items-center justify-between gap-1 mb-1">
+                            <label for="repCheckoutTime" class="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">เวลาเลิกงาน (24 ชม.)</label>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <button type="button" id="btnQuickFillCheckout" class="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-[#00744B] dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 transition cursor-pointer" title="เติมเวลาเลิกงานตามกะมาตรฐาน">ตามกะ</button>
+                                <button type="button" id="btnClearCheckout" class="hidden px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 transition cursor-pointer" title="ล้างเวลาเลิกงานเป็นว่าง">ล้าง</button>
+                            </div>
+                        </div>
+                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center rounded-xl" placeholder="ยังไม่ลงเวลาออก">
                     </div>
+                </div>
+
+                <div id="repCheckoutHintBanner" class="hidden p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 text-[11px] font-medium text-sky-800 dark:text-sky-200 flex items-start gap-2 leading-relaxed">
+                    <i class="fa-solid fa-circle-info mt-0.5 shrink-0 text-sky-600 dark:text-sky-400"></i>
+                    <span>บุคลากรรายนี้ยังไม่ได้ลงเวลาออกงาน — เว้นว่างไว้หากยังไม่ต้องการบันทึกเวลาเลิกงาน (หรือกดปุ่ม ตามกะ)</span>
                 </div>
 
                 <div>
@@ -534,6 +551,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/ReportsController.js?v=20261119_b752d4a8"></script>
+    <script type="module" src="assets/js/controllers/ReportsController.js?v=20261119_98c821d6"></script>
 </body>
 </html>
