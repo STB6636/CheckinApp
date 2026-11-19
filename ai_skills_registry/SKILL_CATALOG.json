@@ -58,7 +58,7 @@
         "subagent_01_implementer",
         "subagent_02_qa_auditor"
       ],
-      "trigger_conditions": "บังคับใช้ทุกครั้งที่มีการแก้ไขไฟล์ Frontend (*.html, assets/css/**, assets/js/**) เพื่อ Auto-stamp version.json และ ?v=<buildId> ครบทั้ง 9 หน้าหลักผ่าน node ./.ai_map/vscode_ast_mapper.mjs และบังคับเคลียร์แคชฝั่งผู้ใช้โดยอัตโนมัติ",
+      "trigger_conditions": "บังคับใช้ทุกครั้งที่มีการแก้ไขไฟล์ Frontend (*.html, assets/css/**, assets/js/**) เพื่อ Auto-stamp version.json และ ?v=<buildId> ครบทั้ง 10 หน้าหลักผ่าน node ./.ai_map/vscode_ast_mapper.mjs และบังคับเคลียร์แคชฝั่งผู้ใช้โดยอัตโนมัติ",
       "skill_file_path": "./ai_skills_registry/skills/remote_version_hard_cache_purge/SKILL.md"
     },
     {
@@ -96,6 +96,18 @@
       ],
       "trigger_conditions": "ใช้เมื่อต้องสร้าง ปรับปรุง หรือตรวจสอบความสมบูรณ์ของ Modal/Dialog บนมือถือให้ปลอดภัยจากการตัดขอบบน-ล่าง (Negative-Y Flex Overflow), ใช้ 100dvh + my-auto + Sticky Header/Footer 3 ส่วน, รักษาลำดับชั้น Z-Index (z-[9990] / z-[9999] / .swal2-container 99990), และซิงก์สถานะ bma-modal-open + scrollTop=0 + backdrop/ESC ข้ามหน้า SPA",
       "skill_file_path": "./ai_skills_registry/skills/viewport_bounded_3zone_modal_lifecycle/SKILL.md"
+    },
+    {
+      "skill_id": "leg_selective_correction_and_executive_rbac",
+      "name": "Leg-Selective Attendance Correction, Idempotent Remark Suffix & Double-Layer Executive RBAC Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องออกแบบหรือแก้ไขระบบคำขอแก้ไขเวลาเข้า-ออกงานที่ปรับเฉพาะขาที่ผิดปกติ (มาสาย/ขาดราชการ), คงหมายเหตุเดิมพร้อมต่อท้าย (แก้ไขเวลา) แบบ Idempotent, รักษา Nullish Snapshot 2 รอบ, และบังคับใช้สิทธิ์อนุมัติผู้บริหาร 2 ชั้น (UI + Model)",
+      "skill_file_path": "./ai_skills_registry/skills/leg_selective_correction_and_executive_rbac/SKILL.md"
     }
   ]
 }

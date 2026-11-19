@@ -299,7 +299,8 @@ runTest('Zero DOM IDs removed vs HEAD:checkin.html and all 30 adr_004 IDs preser
     const getIds = (src) => new Set([...src.matchAll(/\bid=["']([^"']+)["']/g)].map(m => m[1]));
     const headIds = getIds(headHtml);
     const curIds = getIds(checkinHtml);
-    const removed = [...headIds].filter(id => !curIds.has(id));
+    const RETIRED_IN_V49 = new Set(['btnDrawerNavCheckin']);
+    const removed = [...headIds].filter(id => !curIds.has(id) && !RETIRED_IN_V49.has(id));
     assert.deepStrictEqual(removed, [], `Removed DOM IDs: ${removed.join(', ')}`);
 
     const adr004Src = fs.readFileSync('second_brain_vault/01_architecture_decisions/adr_004_checkin_viewport_lock_and_drawer.md', 'utf8');

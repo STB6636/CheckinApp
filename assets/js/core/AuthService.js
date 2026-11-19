@@ -361,6 +361,70 @@ export class AuthService {
         return false;
     }
 
+    static EXECUTIVE_APPROVER_POSITION_TITLES = [
+        'ผู้อำนวยการส่วน',
+        'ผู้อำนวยการกอง',
+        'เลขานุการสำนัก',
+        'หัวหน้ากลุ่มงาน',
+        'หัวหน้าฝ่าย'
+    ];
+
+    /**
+     * ตรวจสอบสิทธิ์การอนุมัติ/ไม่อนุมัติคำขอแก้ไขเวลา (Double-Layer Executive RBAC)
+     * - คำขอของ User: SuperAdmin หรือ Admin ในขอบเขตสังกัดที่รับผิดชอบ
+     * - คำขอของ Admin: SuperAdmin หรือ Admin ในขอบเขต (ที่ไม่ใช่เจ้าตัว) ที่เป็นประเภทผู้บริหาร + 5 ตำแหน่งที่กำหนด
+     * - คำขอของ SuperAdmin: SuperAdmin เท่านั้น
+     * @param {Object} currentUser
+     * @param {Object} targetRequest
+     * @returns {{ allowed: boolean, reason: string }}
+     */
+    static canApproveTimeCorrection(currentUser, targetRequest) {
+        if (!currentUser || !targetRequest) {
+            return { allowed: false, reason: 'ไม่มีสิทธิ์ดำเนินการ' };
+        }
+        if (currentUser.role === 'SuperAdmin') {
+            return { allowed: true, reason: '' };
+        }
+        if (currentUser.role !== 'Admin') {
+            return { allowed: false, reason: 'สงวนสิทธิ์อนุมัติเฉพาะผู้บริหาร / SuperAdmin' };
+        }
+
+        const scopeTarget = {
+            bureau: targetRequest.bureau ?? targetRequest.personnel?.bureau,
+            division: targetRequest.division ?? targetRequest.personnel?.division
+        };
+        if (!AuthService.canViewRecordByScope(currentUser, scopeTarget)) {
+            return { allowed: false, reason: 'อยู่นอกขอบเขตสังกัดที่รับผิดชอบ' };
+        }
+
+        const requesterRole = String(
+            targetRequest.requester_role || targetRequest.account_role || targetRequest.user_role || 'User'
+        ).trim().toLowerCase();
+
+        if (requesterRole === 'superadmin') {
+            return { allowed: false, reason: 'สงวนสิทธิ์อนุมัติเฉพาะ SuperAdmin' };
+        }
+
+        if (requesterRole === 'admin') {
+            const isSameUser = Boolean(
+                (currentUser.id && targetRequest.user_id && String(currentUser.id) === String(targetRequest.user_id)) ||
+                (currentUser.personnel_id && targetRequest.personnel_id && String(currentUser.personnel_id) === String(targetRequest.personnel_id))
+            );
+            if (isSameUser) {
+                return { allowed: false, reason: 'คำขอของตนเอง (รอผู้บริหาร/SuperAdmin)' };
+            }
+            const posType = String(currentUser.personnel?.position_type || currentUser.position_type || '').trim();
+            const posTitle = String(currentUser.personnel?.position_title || currentUser.position_title || '').trim();
+            const isExec = posType === 'ประเภทผู้บริหาร' && AuthService.EXECUTIVE_APPROVER_POSITION_TITLES.includes(posTitle);
+            if (!isExec) {
+                return { allowed: false, reason: 'สงวนสิทธิ์อนุมัติเฉพาะผู้บริหาร / SuperAdmin' };
+            }
+            return { allowed: true, reason: '' };
+        }
+
+        return { allowed: true, reason: '' };
+    }
+
     static canDeleteAttendanceRecord(currentUser, record = null) {
         if (!currentUser) return false;
         // เฉพาะ SuperAdmin เท่านั้นที่สามารถลบข้อมูลการลงเวลาได้

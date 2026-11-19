@@ -1,6 +1,6 @@
 # สารบัญกระบวนการทำงานของเว็บแอปพลิเคชัน (Web App End-to-End Process Flow Map)
 
-- **โปรเจกต์ (Project):** ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App V2.1–v2.10.0 — OOP Architecture)
+- **โปรเจกต์ (Project):** ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร (BMA Check-in App V2.1–v2.11.0 — OOP Architecture)
 - **ซิงค์ร่วมกับดัชนี (Synced With):** `.ai_map/01_FILE_FUNCTION_INDEX.md` และ `.ai_map/CODE_INDEX.json`
 - **กฎการใช้งานสำหรับ AI (`agent_09_code_mapper` & Subagents):** ใช้แผนผังนี้เพื่อระบุ `Flow ID` และสายการเรียกใช้งานข้ามไฟล์ (Call Chain) จากนั้นดึงเฉพาะช่วงบรรทัด `[Lines L_start-L_end]` ที่ต้องการอ่านหรือแก้ไขเท่านั้น
 
@@ -144,3 +144,14 @@
   3. `[Frontend Controller]` `assets/js/controllers/UsersController.js` -> `UsersController.#toggleAdminScopeUI()` **[Lines 268-284]** & `UsersController.#handleSaveUserAccount()` **[Lines 501-543]** : กำหนดระดับสิทธิ์ (`SuperAdmin`, `Admin`, `User`) และขอบเขตการดูแลของ `Admin` (`admin_scope_bureau`, `admin_scope_division`)
   4. `[Data Model Layer]` `assets/js/models/UserModel.js` -> `UserModel.getAll()` **[Lines 17-54]**, `UserModel.create()` **[Lines 72-134]**, `UserModel.update()` **[Lines 143-195]**, `UserModel.delete()` **[Lines 203-227]**, `UserModel.processPasswordResetRequest(userId, isApproved)` **[Lines 236-301]** : จัดการข้อมูลตาราง `user_accounts` และอนุมัติรีเซ็ตรหัสผ่านเป็นเลข 6 หลักท้ายของบัตรประชาชน (`UIHelpers.getLast6DigitsFromNationalId()` **[Lines 571-575]**)
 
+---
+
+## 13. กระบวนการ: การขอแก้ไขเวลาเข้า-ออกงาน และการพิจารณาอนุมัติแก้ไขเวลาด้วยสิทธิ์ผู้บริหาร (Time Correction Request & Executive RBAC Approval Flow)
+- **Flow ID:** `FLOW_TIME_CORRECTION_01`
+- **ลำดับการเรียกใช้งานข้ามไฟล์ (Call Chain & Line Pointers):**
+  1. `[Frontend HTML View & SPA Drawer]` `checkin.html` (`#tabDesktopCorrection`, `#desktopCorrectionWrapper`, `#mobileDrawerNavGrid` **[Lines 732-756]**) -> `assets/js/controllers/CheckinController.js` : แสดงรายการลงเวลาปกติที่ `[มาสาย, ขาดราชการ]` (ตัด `ไม่ลงเวลา` ออก), Badge แจ้งเตือน `#drawerCorrectionBadge` / `#tabDesktopCorrectionBadge`, Drawer Layout สมมาตร (`SuperAdmin`+`Admin` 2×2 / `User` `row-span-2`), และส่งคำขอพร้อมเหตุผลแบบ Optional
+  2. `[Core Executive RBAC]` `assets/js/core/AuthService.js` -> `AuthService.EXECUTIVE_APPROVER_POSITION_TITLES` & `AuthService.canApproveTimeCorrection(currentUser, targetRequest)` **[Lines 364-434]** : ตรวจสิทธิ์ 2 ชั้น (คำขอของ `User` → `SuperAdmin`/`Admin` ในขอบเขต; คำขอของ `Admin` → เฉพาะ `SuperAdmin` หรือ `Admin` ในขอบเขตที่ไม่ใช่เจ้าตัวและเป็น `ประเภทผู้บริหาร` + 5 ตำแหน่งที่กำหนด; คำขอของ `SuperAdmin` → `SuperAdmin` เท่านั้น)
+  3. `[Data Model Layer]` `assets/js/models/AttendanceModel.js` -> `#resolveShiftTimesForLog()`, `#buildCorrectedRemark()`, `#computeCorrectionTarget()`, `getPersonalTimeCorrectionLogs()`, `submitTimeCorrectionRequest()`, `getTimeCorrectionRequests()`, `processTimeCorrectionsBulk()`, `submitCheckinOrCheckout()` (mid-day early-checkout reset), `saveAdminAttendanceRecord()` (phantom-pending clear), `getTodaySyncWatermark()` : แก้เฉพาะขาที่ `late`/`absent_duty`, ต่อท้าย `(แก้ไขเวลา)` แบบ Idempotent, รักษา Nullish `??` Audit Snapshot 2 รอบ, และรองรับ `42703` Fallback
+  4. `[Admin Approval View & Controller]` `time-corrections.html` -> `assets/js/controllers/TimeCorrectionsController.js` & `assets/js/components/AppLayout.js` (`PAGE_ROUTES`, Sidebar, 7-item 360px Bottom Nav, Shortcut Grid, Notification Bell, `initAdminRealtimeSync`) : พิจารณาอนุมัติ/ไม่อนุมัติแบบรายบุคคล & Bulk พร้อม Preview เวลาเดิม→เวลาใหม่, ป้องกันอนุมัติชนกันด้วย `actor_id` + `actor_name` และล้าง Listener ด้วย `AbortController`
+  5. `[Live Propagation]` `assets/js/controllers/ReportsController.js` (`#resolveReportRemark`, `syncReportsSilent`) & `assets/js/controllers/DashboardController.js` (`#syncRecentTableDifferentially`) : แสดงหมายเหตุ `ขอแก้ไขเวลา` / `<remark เดิม> (แก้ไขเวลา)` ครบทั้ง Web/Mobile Card/Print PDF/Excel และอัปเดตเวลาเข้างานบน Dashboard แบบเรียลไทม์
+  6. `[Database Schema]` `sql/alter_v2_11_time_correction_staging.sql` & `sql/alter_v2_11_time_correction_public.sql` : เพิ่ม 9 คอลัมน์ `correction_*`, FK `fk_*_attendance_correction_reviewer`, Partial Index `idx_*_attendance_correction_status`, `GRANT`s และ `NOTIFY pgrst, 'reload schema'`

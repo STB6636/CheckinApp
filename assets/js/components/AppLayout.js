@@ -22,6 +22,7 @@ export class AppLayout {
     static #currentUser = null;
     static #settings = null;
     static #lastPendingSpecialCount = null;
+    static #lastPendingCorrectionCount = null;
     static #lastPendingResetCount = null;
     static #lastAttendanceWatermark = null;
     static #lastSettingsWatermark = null;
@@ -44,6 +45,12 @@ export class AppLayout {
             pageTitle: 'อนุมัติลงเวลาปฏิบัติราชการกรณีพิเศษ',
             controllerPath: '../controllers/ApprovalsController.js',
             controllerClass: 'ApprovalsController'
+        },
+        'time-corrections.html': {
+            activePage: 'time-corrections',
+            pageTitle: 'อนุมัติแก้ไขเวลาเข้า-ออกงาน',
+            controllerPath: '../controllers/TimeCorrectionsController.js',
+            controllerClass: 'TimeCorrectionsController'
         },
         'personnel.html': {
             activePage: 'personnel',
@@ -388,6 +395,7 @@ export class AppLayout {
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', show: true },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-invoice', label: 'รายงานการลงเวลา', show: true },
             { id: 'approvals', href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติลงเวลากรณีพิเศษ', show: true, badgeId: 'sidebarSpecialBadge' },
+            { id: 'time-corrections', href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้ไขเวลา', show: true, badgeId: 'sidebarCorrectionBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-id-card-clip', label: 'จัดการข้อมูลบุคลากร', show: true },
             { id: 'users', href: 'users.html', icon: 'fa-users-gear', label: 'จัดการบัญชีผู้ใช้งาน', show: AppLayout.canViewUsersMenu(currentUser), badgeId: 'sidebarResetBadge' },
             { id: 'settings', href: 'settings.html', icon: 'fa-sliders', label: 'ตั้งค่าระบบ', show: currentUser.role === 'SuperAdmin' }
@@ -445,9 +453,11 @@ export class AppLayout {
                             const isActive = activePage === item.id;
                             const badgeCount = item.badgeId === 'sidebarSpecialBadge'
                                 ? Number(AppLayout.#lastPendingSpecialCount || 0)
-                                : (item.badgeId === 'sidebarResetBadge'
-                                    ? Number(AppLayout.#lastPendingResetCount || 0)
-                                    : 0);
+                                : (item.badgeId === 'sidebarCorrectionBadge'
+                                    ? Number(AppLayout.#lastPendingCorrectionCount || 0)
+                                    : (item.badgeId === 'sidebarResetBadge'
+                                        ? Number(AppLayout.#lastPendingResetCount || 0)
+                                        : 0));
                             return `
                                 <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40 active' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
                                     <div class="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">
@@ -554,26 +564,29 @@ export class AppLayout {
         const items = [
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', show: true },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-lines', label: 'รายงาน', show: true },
-            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติเวลา', show: true, badgeId: 'mobileNavSpecialBadge' },
+            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติพิเศษ', show: true, badgeId: 'mobileNavSpecialBadge' },
+            { id: 'time-corrections', href: 'time-corrections.html', icon: 'fa-user-clock', label: 'แก้เวลา', show: true, badgeId: 'mobileNavCorrectionBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-address-book', label: 'บุคลากร', show: true },
             { id: 'users', href: 'users.html', icon: 'fa-user-shield', label: 'บัญชีผู้ใช้', show: canSeeUsers, badgeId: 'mobileNavResetBadge' },
             { id: 'settings', href: 'settings.html', icon: 'fa-gear', label: 'ตั้งค่า', show: currentUser.role === 'SuperAdmin' }
         ].filter(i => i.show);
 
         mobileNavEl.innerHTML = `
-            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-2 py-1.5 flex items-center justify-around shadow-lg">
+            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-1.5 py-1.5 flex items-center justify-between sm:justify-around gap-0.5 overflow-x-auto no-scrollbar shadow-lg">
                 ${items.map(item => {
                     const isActive = activePage === item.id;
                     const badgeCount = item.badgeId === 'mobileNavSpecialBadge'
                         ? Number(AppLayout.#lastPendingSpecialCount || 0)
-                        : (item.badgeId === 'mobileNavResetBadge' && canSeeUsers
-                            ? Number(AppLayout.#lastPendingResetCount || 0)
-                            : 0);
+                        : (item.badgeId === 'mobileNavCorrectionBadge'
+                            ? Number(AppLayout.#lastPendingCorrectionCount || 0)
+                            : (item.badgeId === 'mobileNavResetBadge' && canSeeUsers
+                                ? Number(AppLayout.#lastPendingResetCount || 0)
+                                : 0));
                     return `
-                        <a href="${item.href}" data-nav-id="${item.id}" class="relative flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
+                        <a href="${item.href}" data-nav-id="${item.id}" class="relative shrink-0 min-w-[54px] flex-1 flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
                             <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
                             <span>${item.label}</span>
-                            ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}absolute top-0 right-0 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow">${badgeCount}</span>` : ''}
+                            ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}absolute top-0 right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow">${badgeCount}</span>` : ''}
                         </a>
                     `;
                 }).join('')}
@@ -587,6 +600,7 @@ export class AppLayout {
             { href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', bg: 'linear-gradient(135deg, #0284C7, #38BDF8)', show: true },
             { href: 'reports.html', icon: 'fa-file-pdf', label: 'รายงาน PDF', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติพิเศษ', bg: 'linear-gradient(135deg, #4F46E5, #8B5CF6)', show: true },
+            { href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้ไขเวลา', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'personnel.html', icon: 'fa-users', label: 'บุคลากร', bg: 'linear-gradient(135deg, #005B2E, #059669)', show: true },
             { href: 'users.html', icon: 'fa-key', label: 'บัญชีผู้ใช้', bg: 'linear-gradient(135deg, #BE123C, #F43F5E)', show: AppLayout.canViewUsersMenu(currentUser) },
             { href: 'settings.html', icon: 'fa-sliders', label: 'ตั้งค่าระบบ', bg: 'linear-gradient(135deg, #EA580C, #FB923C)', show: currentUser?.role === 'SuperAdmin' }
@@ -639,12 +653,13 @@ export class AppLayout {
 
         try {
             const canSeeUsers = AppLayout.canViewUsersMenu(currentUser);
-            const [pendingSpecial, pendingResets] = await Promise.all([
+            const [pendingSpecial, pendingCorrections, pendingResets] = await Promise.all([
                 AttendanceModel.getSpecialRequests(currentUser, 'pending'),
+                AttendanceModel.getTimeCorrectionRequests(currentUser, 'pending'),
                 canSeeUsers ? UserModel.getPendingPasswordResetRequests(currentUser) : Promise.resolve([])
             ]);
 
-            const totalCount = pendingSpecial.length + pendingResets.length;
+            const totalCount = pendingSpecial.length + pendingCorrections.length + pendingResets.length;
 
             if (AppLayout.#lastPendingSpecialCount !== null && AppLayout.#lastPendingSpecialCount !== pendingSpecial.length) {
                 window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
@@ -656,6 +671,19 @@ export class AppLayout {
                         timestamp: Date.now(),
                         oldCount: AppLayout.#lastPendingSpecialCount,
                         newCount: pendingSpecial.length
+                    }
+                }));
+            }
+            if (AppLayout.#lastPendingCorrectionCount !== null && AppLayout.#lastPendingCorrectionCount !== pendingCorrections.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'attendance_logs',
+                        record: null,
+                        action: 'correction_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingCorrectionCount,
+                        newCount: pendingCorrections.length
                     }
                 }));
             }
@@ -673,6 +701,7 @@ export class AppLayout {
                 }));
             }
             AppLayout.#lastPendingSpecialCount = pendingSpecial.length;
+            AppLayout.#lastPendingCorrectionCount = pendingCorrections.length;
             AppLayout.#lastPendingResetCount = pendingResets.length;
 
             try {
@@ -724,8 +753,10 @@ export class AppLayout {
 
             const topBellBadge = document.getElementById('topBellBadgeCount');
             const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
+            const sidebarCorrectionBadge = document.getElementById('sidebarCorrectionBadge');
             const sidebarResetBadge = document.getElementById('sidebarResetBadge');
             const mobileNavSpecialBadge = document.getElementById('mobileNavSpecialBadge');
+            const mobileNavCorrectionBadge = document.getElementById('mobileNavCorrectionBadge');
             const mobileNavResetBadge = document.getElementById('mobileNavResetBadge');
             const summaryTag = document.getElementById('notificationSummaryTag');
             const listContainer = document.getElementById('notificationListContainer');
@@ -738,6 +769,10 @@ export class AppLayout {
                 sidebarSpecialBadge.textContent = String(pendingSpecial.length);
                 sidebarSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
             }
+            if (sidebarCorrectionBadge) {
+                sidebarCorrectionBadge.textContent = String(pendingCorrections.length);
+                sidebarCorrectionBadge.classList.toggle('hidden', pendingCorrections.length === 0);
+            }
             if (sidebarResetBadge) {
                 sidebarResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
                 sidebarResetBadge.classList.toggle('hidden', !canSeeUsers || pendingResets.length === 0);
@@ -745,6 +780,10 @@ export class AppLayout {
             if (mobileNavSpecialBadge) {
                 mobileNavSpecialBadge.textContent = String(pendingSpecial.length);
                 mobileNavSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
+            }
+            if (mobileNavCorrectionBadge) {
+                mobileNavCorrectionBadge.textContent = String(pendingCorrections.length);
+                mobileNavCorrectionBadge.classList.toggle('hidden', pendingCorrections.length === 0);
             }
             if (mobileNavResetBadge) {
                 mobileNavResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
@@ -797,6 +836,38 @@ export class AppLayout {
                         `;
                     }
 
+                    if (pendingCorrections.length > 0) {
+                        const previewCorr = pendingCorrections.slice(0, 4).map(req => {
+                            const p = req.personnel || {};
+                            const fullName = p.first_name ? `${p.prefix}${p.first_name} ${p.last_name}` : 'บุคลากร';
+                            const division = p.division || p.bureau || '';
+                            return `
+                                <div class="text-xs py-1.5 border-t bma-border flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="font-bold bma-text-main block truncate">${fullName}</span>
+                                        <span class="text-[11px] bma-text-sub block truncate">${division} • ${req.correction_request_reason || 'ขอแก้ไขเวลาเข้า-ออกงาน'}</span>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-amber-600 whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</span>
+                                </div>
+                            `;
+                        }).join('');
+
+                        itemsHtml += `
+                            <a href="time-corrections.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-amber-500/5">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="font-extrabold bma-text-main text-xs">
+                                        <i class="fa-solid fa-user-clock text-amber-600 mr-1.5"></i>ขออนุมัติแก้ไขเวลาเข้า-ออกงาน
+                                    </span>
+                                    <span class="bma-badge bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">${pendingCorrections.length} รายการ</span>
+                                </div>
+                                ${previewCorr}
+                                <p class="text-[11px] font-bold text-center mt-2 pt-1.5 border-t bma-border" style="color: var(--bma-primary);">
+                                    คลิกเพื่อไปหน้าอนุมัติแก้ไขเวลา &rarr;
+                                </p>
+                            </a>
+                        `;
+                    }
+
                     if (canSeeUsers && pendingResets.length > 0) {
                         itemsHtml += `
                             <a href="users.html?tab=password-resets" data-users-deep-link="tab-panel-password-resets" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
@@ -832,12 +903,14 @@ export class AppLayout {
                         AppLayout.refreshNotificationBell(currentUser);
                         const record = payload.new || payload.old || null;
                         const action = (payload.eventType || 'sync').toLowerCase();
-                        const actor = record?.approved_by || record?.updated_by || currentUser?.full_name || 'Admin';
+                        const actorId = record?.correction_reviewed_by || record?.approved_by || record?.updated_by || null;
+                        const actor = record?.correction_reviewed_by || record?.approved_by || record?.updated_by || currentUser?.full_name || 'Admin';
                         window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
                             detail: {
                                 table: 'attendance_logs',
                                 record: record,
                                 action: action,
+                                actor_id: actorId,
                                 actor: actor,
                                 timestamp: Date.now(),
                                 payload: payload
@@ -930,7 +1003,14 @@ export class AppLayout {
                         } else if (e.event === 'attendance_updated') {
                             AppLayout.refreshNotificationBell(currentUser);
                             window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
-                                detail: { table: 'attendance_logs', action: 'broadcast_sync', timestamp: Date.now() }
+                                detail: {
+                                    table: 'attendance_logs',
+                                    action: e.payload?.action || 'broadcast_sync',
+                                    actor_id: e.payload?.actor_id || null,
+                                    actor: e.payload?.actor_name || e.payload?.actor || null,
+                                    record: e.payload?.id ? { id: e.payload.id } : null,
+                                    timestamp: Date.now()
+                                }
                             }));
                         }
                     })

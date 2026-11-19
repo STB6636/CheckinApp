@@ -447,6 +447,7 @@ const ROOT_HTML_ENTRIES = [
   'checkin.html',
   'dashboard.html',
   'approvals.html',
+  'time-corrections.html',
   'reports.html',
   'personnel.html',
   'settings.html',

@@ -41,6 +41,7 @@ export class CheckinController {
         this.pastPageSize = 10;
         this.pastCurrentPage = 1;
         this.specialRequestsList = [];
+        this.timeCorrectionList = [];
         this.lastEvaluatedMinute = -1;
         this.specialModalGps = {
             mode: 'current',
@@ -1448,6 +1449,7 @@ export class CheckinController {
             }
             document.getElementById('drawerLinkAdminDashboard')?.classList.remove('hidden');
         }
+        this.#syncDrawerNavRoleLayout?.(this.activeDrawerView || 'history');
 
         const p = this.currentUser.personnel;
         setElText('drawerUserFullName', this.currentUser.full_name);
@@ -1562,21 +1564,25 @@ export class CheckinController {
 
     async #refreshAllAttendanceData() {
         const todayIso = UIHelpers.getTodayISO();
-        const [activeReg, allHistory, specialRequests] = await Promise.all([
+        const [activeReg, allHistory, specialRequests, timeCorrections] = await Promise.all([
             AttendanceModel.getActiveRegularRecordForCheckout(this.currentUser.personnel_id, this.currentUser.id, this.settings),
             AttendanceModel.getPersonalAttendanceHistory(this.currentUser.personnel_id, this.currentUser.id, 35),
-            AttendanceModel.getPersonalSpecialRequests(this.currentUser.personnel_id, this.currentUser.id)
+            AttendanceModel.getPersonalSpecialRequests(this.currentUser.personnel_id, this.currentUser.id),
+            AttendanceModel.getPersonalTimeCorrectionLogs(this.currentUser.personnel_id, this.currentUser.id, this.settings)
         ]);
 
         this.activeRegularRecord = activeReg;
         this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
         this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso).slice(0, 30);
         this.specialRequestsList = specialRequests;
+        this.timeCorrectionList = timeCorrections || [];
 
         this.#evaluateTimeWindowAndPopulateShifts();
         this.#updateStatusCardsAndMainButton();
         this.#renderPersonalAttendanceTabs();
         this.#renderSpecialRequestsHistoryTable();
+        this.#renderPersonalTimeCorrectionList();
+        this.#updateTimeCorrectionBadges();
     }
 
     #updateStatusCardsAndMainButton() {
@@ -1928,9 +1934,15 @@ export class CheckinController {
 
     #buildHistoryRowHtml(item, rowNumber) {
         const locMode = item.location_mode || (item.offsite_reason ? 'OFFSITE' : 'ONSITE');
-        const displayRemark = (locMode === 'OFFSITE' && item.offsite_reason)
-            ? item.offsite_reason
-            : (item.remark || '');
+        const rawRemark = String(item.remark || '').trim();
+        let displayRemark = '';
+        if (rawRemark === 'ขอแก้ไขเวลา' || rawRemark.endsWith('(แก้ไขเวลา)')) {
+            displayRemark = rawRemark;
+        } else if (locMode === 'OFFSITE' && item.offsite_reason) {
+            displayRemark = item.offsite_reason;
+        } else if (rawRemark && rawRemark !== 'ในสถานที่') {
+            displayRemark = rawRemark;
+        }
         return `
             <tr>
                 <td class="text-center font-semibold">${rowNumber}</td>
@@ -2001,13 +2013,16 @@ export class CheckinController {
 
         const locMode = item.location_mode || (item.offsite_reason ? 'OFFSITE' : 'ONSITE');
         const isOffsite = locMode === 'OFFSITE';
+        const rawRemark = String(item.remark || '').trim();
         let displayRemark = '';
-        if (isOffsite && item.offsite_reason) {
-            displayRemark = (item.remark && item.remark !== item.offsite_reason && item.remark !== 'ในสถานที่')
-                ? `${item.remark} (${item.offsite_reason})`
+        if (rawRemark === 'ขอแก้ไขเวลา' || rawRemark.endsWith('(แก้ไขเวลา)')) {
+            displayRemark = rawRemark;
+        } else if (isOffsite && item.offsite_reason) {
+            displayRemark = (rawRemark && rawRemark !== item.offsite_reason && rawRemark !== 'ในสถานที่')
+                ? `${rawRemark} (${item.offsite_reason})`
                 : item.offsite_reason;
-        } else if (item.remark && item.remark !== 'ในสถานที่') {
-            displayRemark = item.remark;
+        } else if (rawRemark && rawRemark !== 'ในสถานที่') {
+            displayRemark = rawRemark;
         }
 
         const checkInColorClass = this.#getStatusTextClass(split.checkIn.status_key);
@@ -2205,6 +2220,288 @@ export class CheckinController {
                 ${actionFooterHtml}
             </div>
         `;
+    }
+
+    /**
+     * จัด Layout เมนู Drawer แบบสมมาตรตามบทบาท (Admin/SuperAdmin = 2x2; User = ซ้าย 2 ปุ่มบน-ล่าง, ขวา History row-span-2)
+     * @param {string} viewKey
+     */
+    #syncDrawerNavRoleLayout(viewKey = 'history') {
+        const btnNavSpecial = document.getElementById('btnDrawerNavSpecial');
+        const btnNavHistory = document.getElementById('btnDrawerNavHistory');
+        const btnNavCorrection = document.getElementById('btnDrawerNavCorrection');
+        const linkNavAdmin = document.getElementById('drawerLinkAdminDashboard');
+        const isAdminRole = ['SuperAdmin', 'Admin'].includes(this.currentUser?.role);
+
+        const activeBase = 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40';
+        const inactiveBase = 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700';
+
+        if (btnNavSpecial) {
+            btnNavSpecial.className = `flex items-center gap-2 p-2.5 h-full rounded-xl text-xs font-bold ${viewKey === 'special' ? activeBase : inactiveBase} cursor-pointer transition`;
+        }
+        if (btnNavCorrection) {
+            btnNavCorrection.className = `flex items-center justify-between gap-1.5 p-2.5 h-full rounded-xl text-xs font-bold ${viewKey === 'correction' ? activeBase : inactiveBase} cursor-pointer transition`;
+        }
+        if (btnNavHistory) {
+            const symClass = isAdminRole
+                ? 'flex items-center gap-2 p-2.5 h-full'
+                : 'row-span-2 flex flex-col justify-center items-center text-center gap-1.5 p-3 h-full';
+            btnNavHistory.className = `${symClass} rounded-xl text-xs font-bold ${viewKey === 'history' ? activeBase : inactiveBase} cursor-pointer transition`;
+            const histIcon = typeof btnNavHistory.querySelector === 'function' ? btnNavHistory.querySelector('i') : null;
+            if (histIcon) {
+                histIcon.classList.toggle('text-lg', !isAdminRole);
+            }
+        }
+        if (linkNavAdmin) {
+            linkNavAdmin.className = `${isAdminRole ? '' : 'hidden '}flex items-center gap-2 p-2.5 h-full rounded-xl text-xs font-bold ${viewKey === 'admin' ? activeBase : inactiveBase} cursor-pointer transition no-underline`;
+        }
+    }
+
+    #updateTimeCorrectionBadges() {
+        const actionableCount = (this.timeCorrectionList || []).filter(
+            item => !item.correction_status || item.correction_status === 'none' || item.correction_status === 'rejected'
+        ).length;
+        const badgeIds = ['drawerCorrectionBadge', 'tabDesktopCorrectionBadge'];
+        badgeIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (actionableCount > 0) {
+                el.textContent = actionableCount > 99 ? '99+' : String(actionableCount);
+                el.classList.remove('hidden');
+            } else {
+                el.textContent = '0';
+                el.classList.add('hidden');
+            }
+        });
+    }
+
+    #renderPersonalTimeCorrectionList() {
+        const list = this.timeCorrectionList || [];
+        const totalBadge = document.getElementById('timeCorrectionTotalBadge');
+        if (totalBadge) totalBadge.textContent = `${list.length} รายการ`;
+
+        const tbody = document.getElementById('personalTimeCorrectionTableBody');
+        const cardsContainer = document.getElementById('personalTimeCorrectionCardsContainer');
+
+        if (list.length === 0) {
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">ไม่มีรายการขอแก้ไขเวลา (ไม่มีประวัติมาสายหรือขาดราชการที่รอดำเนินการ)</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีรายการขอแก้ไขเวลา (ไม่มีประวัติมาสายหรือขาดราชการที่รอดำเนินการ)</div>`;
+            }
+            return;
+        }
+
+        if (tbody) {
+            tbody.innerHTML = list.map((item, idx) => this.#buildTimeCorrectionRowHtml(item, idx + 1)).join('');
+        }
+        if (cardsContainer) {
+            cardsContainer.innerHTML = list.map(item => this.#buildTimeCorrectionCardHtml(item)).join('');
+        }
+    }
+
+    #buildTimeCorrectionRowHtml(item, rowNumber) {
+        const cStatus = item.correction_status || 'none';
+        const preview = item.preview || {};
+        const inKey = item.check_in_status?.status_key || 'normal';
+        const outKey = item.check_out_status?.status_key || 'no_checkin';
+
+        const origInText = item.check_in_time ? `${UIHelpers.escapeHtml(item.check_in_time)} น.` : '-';
+        const origOutText = item.check_out_time ? `${UIHelpers.escapeHtml(item.check_out_time)} น.` : 'ไม่ออกงาน';
+        const targetInText = preview.newCheckIn ? `${UIHelpers.escapeHtml(preview.newCheckIn)} น.` : '-';
+        const targetOutText = preview.newCheckOut ? `${UIHelpers.escapeHtml(preview.newCheckOut)} น.` : '-';
+
+        const inAnomBadge = ['late', 'absent_duty'].includes(inKey)
+            ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold text-white ml-1" style="background:${item.check_in_status.color}">${UIHelpers.escapeHtml(item.check_in_status.status_label)}</span>`
+            : '';
+        const outAnomBadge = ['late', 'absent_duty'].includes(outKey)
+            ? `<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold text-white ml-1" style="background:${item.check_out_status.color}">${UIHelpers.escapeHtml(item.check_out_status.status_label)}</span>`
+            : '';
+
+        let statusHtml = '';
+        let actionHtml = '';
+        if (cStatus === 'pending') {
+            statusHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-300/60"><i class="fa-solid fa-hourglass-half"></i> อยู่ระหว่างรออนุมัติ</span>`;
+            actionHtml = `<span class="text-[11px] text-slate-400 font-semibold">รอผู้ดูแลพิจารณา</span>`;
+        } else if (cStatus === 'rejected') {
+            const rejReason = item.correction_reject_reason
+                ? `<div class="text-[11px] text-rose-600 dark:text-rose-400 mt-1 break-words">เหตุผล: ${UIHelpers.escapeHtml(item.correction_reject_reason)}</div>`
+                : '';
+            statusHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-300/60"><i class="fa-solid fa-circle-xmark"></i> ไม่อนุมัติ</span>${rejReason}`;
+            actionHtml = `<button type="button" data-action="request-time-correction" data-id="${UIHelpers.escapeHtml(item.id)}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs transition cursor-pointer"><i class="fa-solid fa-rotate-right"></i> ขอแก้ไขเวลาอีกครั้ง</button>`;
+        } else {
+            const label = ['late', 'absent_duty'].includes(inKey) ? item.check_in_status.status_label : item.check_out_status.status_label;
+            const color = ['late', 'absent_duty'].includes(inKey) ? item.check_in_status.color : item.check_out_status.color;
+            statusHtml = `<span class="bma-badge text-white shadow-xs" style="background:${color};">${UIHelpers.escapeHtml(label)}</span>`;
+            actionHtml = `<button type="button" data-action="request-time-correction" data-id="${UIHelpers.escapeHtml(item.id)}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-xs transition cursor-pointer"><i class="fa-solid fa-user-clock"></i> ขอแก้ไขเวลา</button>`;
+        }
+
+        const reasonNote = item.correction_request_reason
+            ? `<div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">เหตุผล: ${UIHelpers.escapeHtml(item.correction_request_reason)}</div>`
+            : '';
+
+        return `
+            <tr>
+                <td class="text-center font-semibold">${rowNumber}</td>
+                <td class="font-bold whitespace-nowrap">${UIHelpers.formatThaiShortDateFullYear(item.work_date)}</td>
+                <td>
+                    <div class="font-semibold bma-text-main">${UIHelpers.escapeHtml(item.shift_name || '-')}</div>
+                    ${reasonNote}
+                </td>
+                <td class="text-center text-xs">
+                    <div class="font-mono"><span class="text-slate-500">เข้า:</span> <span class="font-bold">${origInText}</span>${inAnomBadge}${preview.checkInNeedsFix ? ` <span class="text-[#00744B] dark:text-emerald-400 font-bold">&rarr; ${targetInText}</span>` : ''}</div>
+                    <div class="font-mono mt-0.5"><span class="text-slate-500">ออก:</span> <span class="font-bold">${origOutText}</span>${outAnomBadge}${preview.checkOutNeedsFix ? ` <span class="text-[#00744B] dark:text-emerald-400 font-bold">&rarr; ${targetOutText}</span>` : ''}</div>
+                </td>
+                <td class="text-center">${statusHtml}</td>
+                <td class="text-center">${actionHtml}</td>
+            </tr>
+        `;
+    }
+
+    #buildTimeCorrectionCardHtml(item) {
+        const cStatus = item.correction_status || 'none';
+        const preview = item.preview || {};
+        const inKey = item.check_in_status?.status_key || 'normal';
+        const outKey = item.check_out_status?.status_key || 'no_checkin';
+
+        const origInText = item.check_in_time ? `${UIHelpers.escapeHtml(item.check_in_time)} น.` : '-';
+        const origOutText = item.check_out_time ? `${UIHelpers.escapeHtml(item.check_out_time)} น.` : 'ยังไม่ออกงาน';
+        const targetInText = preview.newCheckIn ? `${UIHelpers.escapeHtml(preview.newCheckIn)} น.` : '-';
+        const targetOutText = preview.newCheckOut ? `${UIHelpers.escapeHtml(preview.newCheckOut)} น.` : '-';
+
+        const inColorClass = this.#getStatusTextClass(inKey);
+        const outColorClass = this.#getStatusTextClass(outKey);
+
+        let statusLineHtml = '';
+        let actionFooterHtml = '';
+        if (cStatus === 'pending') {
+            statusLineHtml = `<span class="font-extrabold text-amber-600 dark:text-amber-400">อยู่ระหว่างรออนุมัติ</span>`;
+        } else if (cStatus === 'rejected') {
+            const rejReason = item.correction_reject_reason
+                ? `<div class="text-[11px] text-rose-600 dark:text-rose-400 pt-1">เหตุผลผู้ดูแล: ${UIHelpers.escapeHtml(item.correction_reject_reason)}</div>`
+                : '';
+            statusLineHtml = `<span class="font-extrabold text-rose-600 dark:text-rose-400">ไม่อนุมัติ</span>`;
+            actionFooterHtml = `
+                ${rejReason}
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70">
+                    <button type="button" data-action="request-time-correction" data-id="${UIHelpers.escapeHtml(item.id)}" class="w-full py-2 px-3 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-rotate-right"></i> <span>ขอแก้ไขเวลาอีกครั้ง</span>
+                    </button>
+                </div>
+            `;
+        } else {
+            const anomLabel = ['late', 'absent_duty'].includes(inKey) ? item.check_in_status.status_label : item.check_out_status.status_label;
+            const anomColor = this.#getStatusTextClass(['late', 'absent_duty'].includes(inKey) ? inKey : outKey);
+            statusLineHtml = `<span class="font-extrabold ${anomColor}">${UIHelpers.escapeHtml(anomLabel)}</span>`;
+            actionFooterHtml = `
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70">
+                    <button type="button" data-action="request-time-correction" data-id="${UIHelpers.escapeHtml(item.id)}" class="w-full py-2 px-3 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-user-clock"></i> <span>ขอแก้ไขเวลา</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs">
+                <div class="flex items-start justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-700/70">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">วันที่ปฏิบัติงาน</span>
+                    <span class="font-extrabold text-slate-800 dark:text-slate-100 text-right">${UIHelpers.formatThaiShortDateFullYear(item.work_date)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ช่วงเวลา</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200 text-right">${UIHelpers.escapeHtml(item.shift_name || '-')}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
+                    <span class="font-mono font-bold text-right"><span class="${inColorClass}">${origInText}</span>${preview.checkInNeedsFix ? ` <span class="text-[#00744B] dark:text-emerald-400">&rarr; ${targetInText}</span>` : ''}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>
+                    <span class="font-mono font-bold text-right"><span class="${outColorClass}">${origOutText}</span>${preview.checkOutNeedsFix ? ` <span class="text-[#00744B] dark:text-emerald-400">&rarr; ${targetOutText}</span>` : ''}</span>
+                </div>
+                ${item.correction_request_reason ? `
+                    <div class="flex items-start justify-between gap-3">
+                        <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เหตุผลที่ขอ</span>
+                        <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(item.correction_request_reason)}</span>
+                    </div>
+                ` : ''}
+                <div class="flex items-center justify-between gap-3 pt-1">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">สถานะ</span>
+                    ${statusLineHtml}
+                </div>
+                ${actionFooterHtml}
+            </div>
+        `;
+    }
+
+    async #handleSubmitTimeCorrectionFromUser(logId) {
+        const target = (this.timeCorrectionList || []).find(item => String(item.id) === String(logId));
+        const dateLabel = target ? UIHelpers.formatThaiShortDateFullYear(target.work_date) : '';
+        const preview = target?.preview || {};
+        const timeSummary = preview.checkInNeedsFix && preview.checkOutNeedsFix
+            ? `เข้า ${target.check_in_time || '-'} &rarr; ${preview.newCheckIn} / ออก ${target.check_out_time || '-'} &rarr; ${preview.newCheckOut}`
+            : (preview.checkInNeedsFix
+                ? `เวลาเข้า ${target.check_in_time || '-'} &rarr; ${preview.newCheckIn} น.`
+                : `เวลาออก ${target.check_out_time || '-'} &rarr; ${preview.newCheckOut} น.`);
+
+        let isConfirmed = false;
+        let optionalReason = '';
+
+        if (typeof Swal !== 'undefined') {
+            const swalRes = await Swal.fire({
+                title: 'ยืนยันส่งคำขอแก้ไขเวลา',
+                html: `
+                    <div class="text-left text-xs space-y-2.5">
+                        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 text-slate-700 dark:text-slate-200">
+                            <div><b>วันที่:</b> ${UIHelpers.escapeHtml(dateLabel)}</div>
+                            <div class="mt-0.5"><b>ปรับแก้เป็นเวลากะปกติ:</b> ${timeSummary}</div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1">เหตุผลการขอแก้ไขเวลา (ไม่บังคับ)</label>
+                            <textarea id="swalCorrectionReasonInput" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#00744B]" placeholder="ระบุเหตุผลเพิ่มเติม หรือเว้นว่างเพื่อกดส่งได้ทันที..."></textarea>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'ส่งคำขอแก้ไขเวลา',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#00744B',
+                reverseButtons: true,
+                preConfirm: () => {
+                    const input = document.getElementById('swalCorrectionReasonInput');
+                    return input ? input.value.trim() : '';
+                }
+            });
+            isConfirmed = Boolean(swalRes.isConfirmed);
+            optionalReason = String(swalRes.value || '').trim();
+        } else {
+            isConfirmed = await UIHelpers.confirm(
+                'ยืนยันส่งคำขอแก้ไขเวลา',
+                `ต้องการส่งคำขอแก้ไขเวลาของวันที่ ${dateLabel} ใช่หรือไม่?`,
+                'ส่งคำขอแก้ไขเวลา',
+                'question'
+            );
+        }
+
+        if (!isConfirmed) return;
+
+        UIHelpers.showLoading('กำลังส่งคำขอแก้ไขเวลา...');
+        try {
+            const res = await AttendanceModel.submitTimeCorrectionRequest(logId, this.currentUser, optionalReason);
+            UIHelpers.hideLoading();
+            if (res.success) {
+                await this.#refreshAllAttendanceData();
+                await UIHelpers.showToast(res.message, 'success', 2800);
+            } else {
+                await UIHelpers.alert('ส่งคำขอไม่สำเร็จ', res.message, 'error');
+            }
+        } catch (err) {
+            UIHelpers.hideLoading();
+            await UIHelpers.alert('เกิดข้อผิดพลาด', err.message, 'error');
+        }
     }
 
     /**
@@ -3466,9 +3763,11 @@ export class CheckinController {
         const tabCheckin = document.getElementById('tabDesktopCheckin');
         const tabHistory = document.getElementById('tabDesktopHistory');
         const tabSpecial = document.getElementById('tabDesktopSpecial');
+        const tabCorrection = document.getElementById('tabDesktopCorrection');
         const paneCheckin = document.getElementById('checkinWorkspaceWrapper');
         const paneHistory = document.getElementById('desktopHistoryWrapper');
         const paneSpecial = document.getElementById('desktopSpecialWrapper');
+        const paneCorrection = document.getElementById('desktopCorrectionWrapper');
         const drawer = document.getElementById('mobileHistoryDrawer');
         const drawerMount = document.getElementById('mobileDrawerHistoryMount');
         const desktopPanes = document.getElementById('desktopPanesContainer');
@@ -3478,26 +3777,31 @@ export class CheckinController {
             const activeClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-[#00744B] text-white flex items-center gap-2 shadow-xs transition cursor-pointer';
             const inactiveClass = 'px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer';
 
-            if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {
-                desktopPanes.appendChild(paneHistory);
-                desktopPanes.appendChild(paneSpecial);
+            if (desktopPanes && drawerMount) {
+                if (paneHistory && drawerMount.contains(paneHistory)) desktopPanes.appendChild(paneHistory);
+                if (paneSpecial && drawerMount.contains(paneSpecial)) desktopPanes.appendChild(paneSpecial);
+                if (paneCorrection && drawerMount.contains(paneCorrection)) desktopPanes.appendChild(paneCorrection);
             }
 
             if (tabCheckin) tabCheckin.className = activeName === 'checkin' ? activeClass : inactiveClass;
             if (tabHistory) tabHistory.className = activeName === 'history' ? activeClass : inactiveClass;
             if (tabSpecial) tabSpecial.className = activeName === 'special' ? activeClass : inactiveClass;
+            if (tabCorrection) tabCorrection.className = activeName === 'correction' ? activeClass : inactiveClass;
 
             paneCheckin?.classList.toggle('hidden', activeName !== 'checkin');
             paneHistory?.classList.toggle('hidden', activeName !== 'history');
             paneSpecial?.classList.toggle('hidden', activeName !== 'special');
+            paneCorrection?.classList.toggle('hidden', activeName !== 'correction');
 
             if (activeName === 'history') this.#renderPersonalAttendanceTabs();
             if (activeName === 'special') this.#renderSpecialRequestsHistoryTable();
+            if (activeName === 'correction') this.#renderPersonalTimeCorrectionList();
         };
 
         tabCheckin?.addEventListener('click', () => setDesktopActiveTab('checkin'));
         tabHistory?.addEventListener('click', () => setDesktopActiveTab('history'));
         tabSpecial?.addEventListener('click', () => setDesktopActiveTab('special'));
+        tabCorrection?.addEventListener('click', () => setDesktopActiveTab('correction'));
 
         // Mobile Hamburger Off-canvas Slide Drawer (AJAX SPA Controller)
         const drawerPanel = document.getElementById('mobileDrawerPanel');
@@ -3505,27 +3809,20 @@ export class CheckinController {
         const drawerScroll = document.getElementById('mobileDrawerBodyScroll');
         const drawerSpecialQuick = document.getElementById('drawerSpecialQuickAction');
         const drawerShimmer = document.getElementById('drawerSpaShimmer');
-        const btnNavCheckin = document.getElementById('btnDrawerNavCheckin');
         const btnNavHistory = document.getElementById('btnDrawerNavHistory');
         const btnNavSpecial = document.getElementById('btnDrawerNavSpecial');
+        const btnNavCorrection = document.getElementById('btnDrawerNavCorrection');
         const linkNavAdmin = document.getElementById('drawerLinkAdminDashboard');
         let isDrawerClosing = false;
 
         const setDrawerActiveNav = (viewKey) => {
-            const activePill = 'flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40 cursor-pointer transition';
-            const inactivePill = 'flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition';
-
-            if (btnNavCheckin) btnNavCheckin.className = viewKey === 'checkin' ? activePill : inactivePill;
-            if (btnNavHistory) btnNavHistory.className = viewKey === 'history' ? activePill : inactivePill;
-            if (btnNavSpecial) btnNavSpecial.className = viewKey === 'special' ? activePill : inactivePill;
-            if (linkNavAdmin) {
-                const keepHidden = linkNavAdmin.classList.contains('hidden');
-                linkNavAdmin.className = `${keepHidden ? 'hidden ' : ''}${viewKey === 'admin' ? activePill : inactivePill} no-underline`;
-            }
+            this.#syncDrawerNavRoleLayout(viewKey);
         };
 
         const switchDrawerView = async (viewKey, { fetchFresh = true } = {}) => {
-            const resolvedView = viewKey === 'special' ? 'special' : 'history';
+            const resolvedView = viewKey === 'special'
+                ? 'special'
+                : (viewKey === 'correction' ? 'correction' : 'history');
             this.activeDrawerView = resolvedView;
             setDrawerActiveNav(resolvedView);
 
@@ -3534,14 +3831,17 @@ export class CheckinController {
 
             if (resolvedView === 'history') {
                 this.#renderPersonalAttendanceTabs();
-            } else {
+            } else if (resolvedView === 'special') {
                 this.#renderSpecialRequestsHistoryTable();
+            } else {
+                this.#renderPersonalTimeCorrectionList();
             }
 
             if (!fetchFresh) {
                 drawerShimmer?.classList.add('hidden');
                 paneHistory?.classList.toggle('hidden', resolvedView !== 'history');
                 paneSpecial?.classList.toggle('hidden', resolvedView !== 'special');
+                paneCorrection?.classList.toggle('hidden', resolvedView !== 'correction');
                 return;
             }
 
@@ -3549,6 +3849,7 @@ export class CheckinController {
             drawerShimmer?.classList.remove('hidden');
             paneHistory?.classList.add('hidden');
             paneSpecial?.classList.add('hidden');
+            paneCorrection?.classList.add('hidden');
 
             try {
                 if (resolvedView === 'history') {
@@ -3562,7 +3863,7 @@ export class CheckinController {
                     this.todayHistoryList = allHistory.filter(item => item.work_date === todayIso);
                     this.pastHistoryList = allHistory.filter(item => item.work_date !== todayIso).slice(0, 30);
                     this.#renderPersonalAttendanceTabs();
-                } else {
+                } else if (resolvedView === 'special') {
                     const specialRequests = await AttendanceModel.getPersonalSpecialRequests(
                         this.currentUser?.personnel_id,
                         this.currentUser?.id
@@ -3570,6 +3871,16 @@ export class CheckinController {
                     if (seq !== this._drawerFetchSeq) return;
                     this.specialRequestsList = specialRequests;
                     this.#renderSpecialRequestsHistoryTable();
+                } else {
+                    const timeCorrections = await AttendanceModel.getPersonalTimeCorrectionLogs(
+                        this.currentUser?.personnel_id,
+                        this.currentUser?.id,
+                        this.settings
+                    );
+                    if (seq !== this._drawerFetchSeq) return;
+                    this.timeCorrectionList = timeCorrections || [];
+                    this.#renderPersonalTimeCorrectionList();
+                    this.#updateTimeCorrectionBadges();
                 }
             } catch (err) {
                 console.error('Drawer SPA fetch error:', err);
@@ -3578,15 +3889,17 @@ export class CheckinController {
                     drawerShimmer?.classList.add('hidden');
                     paneHistory?.classList.toggle('hidden', resolvedView !== 'history');
                     paneSpecial?.classList.toggle('hidden', resolvedView !== 'special');
+                    paneCorrection?.classList.toggle('hidden', resolvedView !== 'correction');
                 }
             }
         };
 
         const openMobileDrawer = () => {
             if (isDrawerClosing) return;
-            if (drawerMount && paneHistory && paneSpecial) {
-                drawerMount.appendChild(paneHistory);
-                drawerMount.appendChild(paneSpecial);
+            if (drawerMount) {
+                if (paneHistory) drawerMount.appendChild(paneHistory);
+                if (paneSpecial) drawerMount.appendChild(paneSpecial);
+                if (paneCorrection) drawerMount.appendChild(paneCorrection);
             }
             drawer?.classList.remove('hidden');
             UIHelpers.syncBodyModalLock();
@@ -3597,7 +3910,9 @@ export class CheckinController {
                 drawerPanel?.classList.remove('translate-x-full');
                 drawerPanel?.classList.add('translate-x-0');
             });
-            const initialView = this.activeDrawerView === 'special' ? 'special' : 'history';
+            const initialView = this.activeDrawerView === 'special'
+                ? 'special'
+                : (this.activeDrawerView === 'correction' ? 'correction' : 'history');
             void switchDrawerView(initialView, { fetchFresh: true });
         };
 
@@ -3617,9 +3932,10 @@ export class CheckinController {
                 UIHelpers.syncBodyModalLock();
                 document.getElementById('inlineGpsLeafletMap')?.classList.remove('invisible');
                 this.inlineGpsMap?.invalidateSize();
-                if (desktopPanes && paneHistory && paneSpecial && drawerMount && drawerMount.contains(paneHistory)) {
-                    desktopPanes.appendChild(paneHistory);
-                    desktopPanes.appendChild(paneSpecial);
+                if (desktopPanes && drawerMount) {
+                    if (paneHistory && drawerMount.contains(paneHistory)) desktopPanes.appendChild(paneHistory);
+                    if (paneSpecial && drawerMount.contains(paneSpecial)) desktopPanes.appendChild(paneSpecial);
+                    if (paneCorrection && drawerMount.contains(paneCorrection)) desktopPanes.appendChild(paneCorrection);
                 }
                 if (targetTab) {
                     setDesktopActiveTab(targetTab);
@@ -3628,6 +3944,7 @@ export class CheckinController {
                     paneCheckin?.classList.toggle('hidden', activeDesktop !== 'checkin');
                     paneHistory?.classList.toggle('hidden', activeDesktop !== 'history');
                     paneSpecial?.classList.toggle('hidden', activeDesktop !== 'special');
+                    paneCorrection?.classList.toggle('hidden', activeDesktop !== 'correction');
                 }
                 isDrawerClosing = false;
             }, 300);
@@ -3637,19 +3954,29 @@ export class CheckinController {
         document.getElementById('btnCloseMobileDrawer')?.addEventListener('click', () => closeMobileDrawer());
         document.getElementById('btnMobileHistoryDrawerBackdrop')?.addEventListener('click', () => closeMobileDrawer());
 
-        btnNavCheckin?.addEventListener('click', () => {
-            setDrawerActiveNav('checkin');
-            closeMobileDrawer('checkin');
-        });
         btnNavHistory?.addEventListener('click', () => {
             void switchDrawerView('history', { fetchFresh: true });
         });
         btnNavSpecial?.addEventListener('click', () => {
             void switchDrawerView('special', { fetchFresh: true });
         });
+        btnNavCorrection?.addEventListener('click', () => {
+            void switchDrawerView('correction', { fetchFresh: true });
+        });
         linkNavAdmin?.addEventListener('click', () => {
             setDrawerActiveNav('admin');
         });
+
+        const handleTimeCorrectionClick = async (e) => {
+            const btn = e.target.closest('button[data-action="request-time-correction"]');
+            if (!btn) return;
+            const logId = btn.dataset.id;
+            if (logId) {
+                await this.#handleSubmitTimeCorrectionFromUser(logId);
+            }
+        };
+        document.getElementById('personalTimeCorrectionTableBody')?.addEventListener('click', handleTimeCorrectionClick);
+        document.getElementById('personalTimeCorrectionCardsContainer')?.addEventListener('click', handleTimeCorrectionClick);
 
         document.getElementById('btnOpenSpecialRequestDrawer')?.addEventListener('click', openSpecialModal);
     }

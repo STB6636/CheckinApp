@@ -12,7 +12,7 @@ export class UIHelpers {
 
     static VIEW_PAGE_STORAGE_KEY = 'bma_checkin_active_view_page_v2_9';
 
-    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|personnel|users|settings)(\.html)?\/?$/i;
+    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|time-corrections|personnel|users|settings)(\.html)?\/?$/i;
 
     static THAI_MONTHS_SHORT = [
         'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',

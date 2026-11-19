@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <script>
         (function() {
-            const CURRENT_APP_BUILD = '20261118_a554aa4b';
+            const CURRENT_APP_BUILD = '20261119_68ea3c41';
             const BUILD_STORAGE_KEY = 'bma_app_build';
             const RELOAD_GUARD_KEY = 'bma_reloaded_build';
             const PRESERVE_KEYS = [
@@ -138,7 +138,7 @@
     <!-- Leaflet Map CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261118_a554aa4b">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261119_68ea3c41">
     <style>
         html, body {
             -webkit-text-size-adjust: 100% !important;
@@ -251,6 +251,11 @@
             <button type="button" id="tabDesktopSpecial" class="px-4 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer">
                 <i class="fa-solid fa-file-signature"></i>
                 <span>ประวัติการขอลงเวลากรณีพิเศษ</span>
+            </button>
+            <button type="button" id="tabDesktopCorrection" class="px-4 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-user-clock"></i>
+                <span>แก้ไขเวลา</span>
+                <span id="tabDesktopCorrectionBadge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-extrabold inline-flex items-center justify-center">0</span>
             </button>
             <a id="tabDesktopManual" href="docs/manual/index.html" target="_blank" class="px-4 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-2 transition cursor-pointer no-underline"><i class="fa-solid fa-book-open"></i><span>คู่มือการใช้งาน</span></a>
         </div>
@@ -652,6 +657,45 @@
                 </div>
             </div>
 
+            <!-- 4. Personal Time Correction Tab / Drawer View -->
+            <div id="desktopCorrectionWrapper" class="hidden space-y-6 pt-2">
+                <div class="bma-card bma-checkin-table-card p-0 overflow-visible mt-8">
+                    <div class="-mt-6 mx-4 sm:mx-6 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-[#00351B] via-[#005B2E] to-[#00744B] text-white shadow-lg flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-white/15 border border-white/25 flex items-center justify-center text-base text-[#F6DE51] shrink-0 shadow-inner">
+                                <i class="fa-solid fa-user-clock"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <h3 class="text-sm sm:text-base font-extrabold text-white leading-tight truncate">รายการขอแก้ไขเวลาปฏิบัติราชการ</h3>
+                                <p class="text-[11px] text-emerald-100/90 truncate">เฉพาะบันทึกเวลาปกติที่มีสถานะมาสายหรือขาดราชการ (ไม่รวมไม่ลงเวลา)</p>
+                            </div>
+                        </div>
+                        <span id="timeCorrectionTotalBadge" class="px-3 py-1 rounded-full bg-white/20 border border-white/25 text-white text-xs font-extrabold shrink-0">0 รายการ</span>
+                    </div>
+
+                    <div class="p-3 sm:p-6">
+                        <div id="personalTimeCorrectionCardsContainer" class="lg:hidden space-y-3"></div>
+                        <div class="hidden lg:block">
+                            <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                                <table class="bma-table text-sm w-full text-left">
+                                    <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                        <tr>
+                                            <th class="w-14 text-center py-3.5 px-3">ลำดับ</th>
+                                            <th class="min-w-[115px] py-3.5 px-3">วันที่ปฏิบัติงาน</th>
+                                            <th class="min-w-[170px] py-3.5 px-3">ช่วงเวลา / เหตุผล</th>
+                                            <th class="min-w-[180px] text-center py-3.5 px-3">เวลาเดิม &rarr; หลังอนุมัติ</th>
+                                            <th class="w-40 text-center py-3.5 px-3">สถานะ</th>
+                                            <th class="w-40 text-center py-3.5 px-3">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="personalTimeCorrectionTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </main>
@@ -688,22 +732,25 @@
             <!-- Navigation List -->
             <div class="px-4 pt-3 pb-2 shrink-0">
                 <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5 px-1">เมนูการใช้งาน</div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" id="btnDrawerNavCheckin" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
-                        <i class="fa-solid fa-fingerprint"></i>
-                        <span>ลงเวลาปฏิบัติงาน</span>
+                <div id="mobileDrawerNavGrid" class="grid grid-cols-2 grid-rows-2 gap-2 items-stretch">
+                    <button type="button" id="btnDrawerNavSpecial" class="flex items-center gap-2 p-2.5 h-full rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
+                        <i class="fa-solid fa-file-signature shrink-0"></i>
+                        <span class="truncate">คำขอพิเศษ</span>
                     </button>
-                    <button type="button" id="btnDrawerNavHistory" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40 cursor-pointer transition">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                        <span>ประวัติการลงเวลา</span>
+                    <button type="button" id="btnDrawerNavHistory" class="flex items-center gap-2 p-2.5 h-full rounded-xl text-xs font-bold bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-md shadow-emerald-900/20 border border-emerald-500/40 cursor-pointer transition">
+                        <i class="fa-solid fa-clock-rotate-left shrink-0"></i>
+                        <span class="truncate">ประวัติการลงเวลา</span>
                     </button>
-                    <button type="button" id="btnDrawerNavSpecial" class="flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
-                        <i class="fa-solid fa-file-signature"></i>
-                        <span>คำขอพิเศษ</span>
+                    <button type="button" id="btnDrawerNavCorrection" class="flex items-center justify-between gap-1.5 p-2.5 h-full rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition">
+                        <span class="flex items-center gap-2 min-w-0">
+                            <i class="fa-solid fa-user-clock shrink-0"></i>
+                            <span class="truncate">แก้ไขเวลา</span>
+                        </span>
+                        <span id="drawerCorrectionBadge" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-extrabold inline-flex items-center justify-center shrink-0">0</span>
                     </button>
-                    <a id="drawerLinkAdminDashboard" href="dashboard.html" class="hidden flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition no-underline">
-                        <i class="fa-solid fa-gauge-high text-emerald-600 dark:text-emerald-400"></i>
-                        <span>ระบบผู้ดูแล</span>
+                    <a id="drawerLinkAdminDashboard" href="dashboard.html" class="hidden flex items-center gap-2 p-2.5 h-full rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition no-underline">
+                        <i class="fa-solid fa-gauge-high text-emerald-600 dark:text-emerald-400 shrink-0"></i>
+                        <span class="truncate">ระบบผู้ดูแล</span>
                     </a>
                 </div>
             </div>
@@ -945,7 +992,7 @@
     </footer>
 
     <!-- Bootstrap Controller Script -->
-    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261118_a554aa4b"></script>
+    <script type="module" src="assets/js/controllers/CheckinController.js?v=20261119_68ea3c41"></script>
     <!-- Modal ค้นหา/ปักหมุดพิกัดสำหรับนอกสถานที่ -->
     <div id="modalOffsiteMapSearch" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
         <div class="w-full max-w-lg my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">

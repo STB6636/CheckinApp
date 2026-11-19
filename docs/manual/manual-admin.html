@@ -189,7 +189,7 @@
                     ครอบคลุมการตรวจสอบภาพรวมสถิติรายวัน การพิจารณาอนุมัติคำขอพิเศษ (เดี่ยวและกลุ่ม) การออกรายงานราชการ PDF และ Excel การจัดการทะเบียนประวัติบุคลากร และการอนุมัติรีเซ็ตรหัสผ่านตามมาตรฐานความปลอดภัยข้อมูล
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 17 พฤศจิกายน 2569 (V2.10.0)</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#0971CE]"></i> ปรับปรุงล่าสุด: 19 พฤศจิกายน 2569 (V2.11.0)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-[#0971CE]"></i> รองรับการแบ่งสิทธิ์ตามโครงสร้าง กทม.</span>
                 </div>
@@ -363,20 +363,27 @@
                                         </tr>
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
                                             <td class="py-2.5 px-3 text-center font-bold">4</td>
+                                            <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-user-clock mr-1.5 text-emerald-600"></i>อนุมัติแก้ไขเวลา</td>
+                                            <td class="py-2.5 px-3 font-mono text-slate-500">time-corrections.html</td>
+                                            <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">กอง &amp; ฝ่าย</span></td>
+                                            <td class="py-2.5 px-4 text-slate-600 dark:text-slate-300">พิจารณาคำขอแก้ไขเวลา (มาสาย/ขาดราชการ) แบบรายคน &amp; Bulk; กรณีคำขอของ Admin อนุมัติได้เฉพาะ SuperAdmin หรือ Admin ประเภทผู้บริหาร (5 ตำแหน่ง)</td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                            <td class="py-2.5 px-3 text-center font-bold">5</td>
                                             <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-id-card-clip mr-1.5 text-emerald-500"></i>จัดการข้อมูลบุคลากร</td>
                                             <td class="py-2.5 px-3 font-mono text-slate-500">personnel.html</td>
                                             <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">กอง &amp; ฝ่าย</span></td>
                                             <td class="py-2.5 px-4 text-slate-600 dark:text-slate-300">ทะเบียนประวัติบุคลากร, นำเข้า Excel 3 แผ่นงาน, สร้างบัญชีด่วน</td>
                                         </tr>
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                            <td class="py-2.5 px-3 text-center font-bold">5</td>
+                                            <td class="py-2.5 px-3 text-center font-bold">6</td>
                                             <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-users-gear mr-1.5 text-purple-500"></i>จัดการบัญชีผู้ใช้งาน</td>
                                             <td class="py-2.5 px-3 font-mono text-slate-500">users.html</td>
                                             <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">✨เฉพาะกอง</span></td>
                                             <td class="py-2.5 px-4 text-slate-600 dark:text-slate-300">จัดการบัญชีผู้ใช้, กำหนด Scope และอนุมัติรีเซ็ตรหัสผ่าน (ซ่อนสำหรับ Admin ฝ่าย)</td>
                                         </tr>
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
-                                            <td class="py-2.5 px-3 text-center font-bold">6</td>
+                                            <td class="py-2.5 px-3 text-center font-bold">7</td>
                                             <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-camera-retro mr-1.5 text-emerald-500"></i>ไปหน้าลงเวลาปฏิบัติราชการ</td>
                                             <td class="py-2.5 px-3 font-mono text-slate-500">checkin.html</td>
                                             <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">กอง &amp; ฝ่าย</span></td>
@@ -545,6 +552,18 @@
                                 ข้อมูลคำขอใหม่และการตัดสินอัปเดตข้ามเครื่องอัตโนมัติ (Broadcast + Postgres Changes + Watermark Poll) หากผู้ดูแลคนอื่นกดอนุมัติ/ปฏิเสธรายการเดียวกันก่อน ระบบจะล็อกแถวพร้อมแจ้งเตือนทันทีเพื่อป้องกันการกดซ้ำ
                             </p>
                         </div>
+                    </div>
+
+                    <!-- Time Correction Approvals (V2.11.0) -->
+                    <div class="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-2 text-xs">
+                        <strong class="text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-clock text-[#00744B] dark:text-emerald-400"></i>
+                            <span>การพิจารณา "อนุมัติแก้ไขเวลา" (<code class="font-mono">time-corrections.html</code> — V2.11.0):</span>
+                        </strong>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300 leading-relaxed">
+                            <li>รองรับคำขอแก้ไขเวลาที่สถานะเข้างานหรือออกงานเป็น <b>มาสาย</b> หรือ <b>ขาดราชการ</b> โดยแสดงเทียบ <b>เวลาเดิม &rarr; เวลาหลังอนุมัติ</b> (แก้เฉพาะขาที่ผิดปกติ คงเวลาปกติไว้ และอัปเดตหมายเหตุเป็น <b>"ขอแก้ไขเวลา"</b> หรือต่อท้าย <b>"(แก้ไขเวลา)"</b> หากมีหมายเหตุเดิม)</li>
+                            <li><b>กฎสิทธิ์ผู้บริหาร (Executive RBAC):</b> คำขอของ <b>User</b> ทั่วไปสามารถอนุมัติได้โดย Admin ในขอบเขตและ SuperAdmin; แต่หากผู้ขอเป็น <b>Admin (ระดับกอง/ฝ่าย)</b> ระบบสงวนสิทธิ์ให้อนุมัติได้เฉพาะ <b>SuperAdmin</b> หรือ <b>Admin ในขอบเขต (ที่ไม่ใช่เจ้าตัว)</b> ที่มีประเภทตำแหน่ง <b>"ประเภทผู้บริหาร"</b> และตำแหน่งในสายงาน <b>ผู้อำนวยการส่วน, ผู้อำนวยการกอง, เลขานุการสำนัก, หัวหน้ากลุ่มงาน หรือ หัวหน้าฝ่าย</b> เท่านั้น</li>
+                        </ul>
                     </div>
                 </div>
             </section>

@@ -466,6 +466,16 @@ export class ReportsController {
     #resolveReportRemark(rec, { forExcel = false, forPrint = false } = {}) {
         if (!rec || !rec.log_id) return '-';
 
+        const rawRemarkCheck = String(rec.remark || '').trim();
+        if (rawRemarkCheck === 'ขอแก้ไขเวลา' || rawRemarkCheck.endsWith('(แก้ไขเวลา)')) {
+            if (forExcel) return rawRemarkCheck;
+            const safeCorr = this.#escapeHtml(rawRemarkCheck);
+            if (forPrint) {
+                return `<span style="font-weight: 700; color: #00744B;">${safeCorr}</span>`;
+            }
+            return `<span class="font-bold text-[#00744B] dark:text-emerald-400">${safeCorr}</span>`;
+        }
+
         const SUPPRESSED_STATUS_REMARKS = new Set([
             'ปฏิบัติงานปกติ',
             'มาสาย',
@@ -856,7 +866,7 @@ export class ReportsController {
                 </div>` : ''}
                 <div class="flex items-start justify-between gap-3 py-0.5">
                     <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">หมายเหตุ</span>
-                    <span class="font-medium text-slate-700 dark:text-slate-200 text-right break-words">${remarkDisplay}</span>
+                    <span data-field="remark" class="font-medium text-slate-700 dark:text-slate-200 text-right break-words">${remarkDisplay}</span>
                 </div>
                 ${actionFooter}
             </div>
@@ -1018,7 +1028,7 @@ export class ReportsController {
                 <td class="${timeColClass}">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
                 <td class="${timeColClass}">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
                 ${gpsWebCells}
-                <td class="${showGps ? 'min-w-[130px]' : 'min-w-[180px]'} text-xs text-slate-600 dark:text-slate-300">
+                <td data-field="remark" class="${showGps ? 'min-w-[130px]' : 'min-w-[180px]'} text-xs text-slate-600 dark:text-slate-300">
                     ${remarkDisplay}
                 </td>
 ${this.canManageRecords ? `
@@ -1449,6 +1459,15 @@ ${this.canManageRecords ? `
                             }
                         }
 
+                        const remarkTd = row.querySelector('td[data-field="remark"]');
+                        if (remarkTd) {
+                            const nextRemarkHtml = this.#resolveReportRemark(updated, { forPrint: false }).trim();
+                            if (remarkTd.innerHTML.trim() !== nextRemarkHtml) {
+                                remarkTd.innerHTML = nextRemarkHtml;
+                                isUpdated = true;
+                            }
+                        }
+
                         if (isUpdated) {
                             DOMDiffHelper.highlightRowUpdate(row);
                         }
@@ -1495,6 +1514,14 @@ ${this.canManageRecords ? `
                                     ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
                                     : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
                                 outLocEl.innerHTML = `${badge}${this.#escapeHtml(this.#formatLocationName(updated.check_out_location))}`;
+                                cardUpdated = true;
+                            }
+                        }
+                        const remarkEl = card.querySelector('[data-field="remark"]');
+                        if (remarkEl) {
+                            const nextRemarkHtml = this.#resolveReportRemark(updated, { forPrint: false }).trim();
+                            if (remarkEl.innerHTML.trim() !== nextRemarkHtml) {
+                                remarkEl.innerHTML = nextRemarkHtml;
                                 cardUpdated = true;
                             }
                         }

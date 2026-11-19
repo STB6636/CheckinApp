@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Force Browser Revalidation & Auto Cache-Busting (Remote version.json + Hard Cache Purge) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        (function() {
+            const CURRENT_APP_BUILD = '20261119_68ea3c41';
+            const BUILD_STORAGE_KEY = 'bma_app_build';
+            const RELOAD_GUARD_KEY = 'bma_reloaded_build';
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                'bma_last_seen_announcement_id',
+                BUILD_STORAGE_KEY
+            ];
+
+            // Clean up temporary cache-busting query param (?_cb=...) after forced reload
+            try {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('_cb')) {
+                    url.searchParams.delete('_cb');
+                    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+                }
+            } catch (_) {}
+
+            async function performHardCachePurge(targetBuild) {
+                try {
+                    if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                    sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
+
+                    Object.keys(localStorage).forEach((key) => {
+                        if (!PRESERVE_KEYS.includes(key)) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                    if ('caches' in window) {
+                        const names = await window.caches.keys();
+                        await Promise.all(names.map((n) => window.caches.delete(n)));
+                    }
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map((r) => r.unregister()));
+                    }
+                    try {
+                        await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                    } catch (_) {}
+
+                    const nextUrl = new URL(window.location.href);
+                    nextUrl.searchParams.set('_cb', targetBuild);
+                    window.location.replace(nextUrl.toString());
+                } catch (err) {
+                    console.warn('[CacheBuster] Hard purge error:', err);
+                }
+            }
+
+            try {
+                const prevBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+                if (prevBuild && prevBuild !== CURRENT_APP_BUILD) {
+                    performHardCachePurge(CURRENT_APP_BUILD);
+                    return;
+                }
+                if (!prevBuild) {
+                    localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_APP_BUILD);
+                }
+            } catch (_) {}
+
+            async function checkRemoteVersion() {
+                try {
+                    const res = await fetch('./version.json?_t=' + Date.now(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const remoteBuild = data && data.buildId ? String(data.buildId).trim() : '';
+                    if (!remoteBuild) return;
+                    const localBuild = localStorage.getItem(BUILD_STORAGE_KEY) || CURRENT_APP_BUILD;
+                    if (remoteBuild !== localBuild || remoteBuild !== CURRENT_APP_BUILD) {
+                        await performHardCachePurge(remoteBuild);
+                    }
+                } catch (_) {}
+            }
+
+            checkRemoteVersion();
+            window.addEventListener('pageshow', (e) => { if (e.persisted) checkRemoteVersion(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkRemoteVersion();
+            });
+        })();
+    </script>
+    <title>อนุมัติแก้ไขเวลาเข้า-ออกงาน - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261119_68ea3c41">
+</head>
+<body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
+
+    <!-- Dark Slate Sidebar -->
+    <div id="bmaSidebarContainer"></div>
+
+    <div class="lg:pl-72 flex-1 flex flex-col min-h-screen">
+        <!-- Glassmorphic Topbar -->
+        <div id="bmaTopbarContainer"></div>
+
+        <main class="flex-1 p-4 lg:p-8 space-y-7">
+
+            <!-- Material Dashboard PRO - Master Floating Header Card -->
+            <div class="relative bg-slate-100/80 lg:bg-white dark:bg-slate-900/60 lg:dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/60 mt-8 mb-6">
+
+                <!-- Floating Emerald Header (Offset -mt-6) -->
+                <div class="-mt-6 mx-4 sm:mx-6 rounded-2xl p-5 bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white shadow-lg shadow-emerald-900/30 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-xl shadow-inner shrink-0">
+                            <i class="fa-solid fa-user-clock"></i>
+                        </div>
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h2 class="text-base sm:text-lg font-extrabold tracking-wide text-white">รายการขออนุมัติแก้ไขเวลาเข้า-ออกงาน</h2>
+                                <span id="timeCorrectionsPendingCountBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-white/25 text-white border border-white/30">0 รออนุมัติ</span>
+                            </div>
+                            <p class="text-xs text-emerald-100/90 font-medium mt-0.5">ตรวจสอบและอนุมัติคำขอแก้ไขเวลาของบุคลากรตามขอบเขตและสายบังคับบัญชา</p>
+                        </div>
+                    </div>
+
+                    <!-- Bulk Actions & Refresh Pill Buttons -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button type="button" id="btnBulkApproveCorrections" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white text-[#00744B] hover:bg-emerald-50 transition shadow-md cursor-pointer">
+                            <i class="fa-solid fa-check-double"></i>
+                            <span>อนุมัติที่เลือก (<span id="selectedBulkCorrectionCount" class="font-extrabold">0</span>)</span>
+                        </button>
+
+                        <button type="button" id="btnBulkRejectCorrections" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-rose-500/80 hover:bg-rose-600 text-white border border-rose-300/40 backdrop-blur-md transition shadow-md cursor-pointer">
+                            <i class="fa-solid fa-ban"></i>
+                            <span>ไม่อนุมัติที่เลือก</span>
+                        </button>
+
+                        <button type="button" id="btnRefreshTimeCorrections" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-white/15 hover:bg-white/25 text-white backdrop-blur-md border border-white/20 transition shadow-sm cursor-pointer">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>รีเฟรช</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-4 sm:p-6 space-y-5">
+
+                    <!-- Segmented Filter Bar -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 p-3.5 rounded-xl bg-white/90 lg:bg-slate-50 dark:bg-slate-800/80 lg:dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 items-center">
+                        <div class="md:col-span-5">
+                            <label for="selectCorrectionStatusFilter" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">
+                                <i class="fa-solid fa-filter mr-1 text-[#00744B]"></i>สถานะคำขอ:
+                            </label>
+                            <select id="selectCorrectionStatusFilter" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
+                                <option value="pending" selected>รออนุมัติ (Pending)</option>
+                                <option value="approved">อนุมัติแล้ว (Approved)</option>
+                                <option value="rejected">ไม่อนุมัติ (Rejected)</option>
+                                <option value="all">แสดงทั้งหมด</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-7">
+                            <label for="selectCorrectionGroupBy" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">
+                                <i class="fa-solid fa-layer-group mr-1 text-[#00744B]"></i>มุมมองการจัดกลุ่มตาราง (Group By):
+                            </label>
+                            <select id="selectCorrectionGroupBy" class="bma-select w-full py-2 px-3 text-xs font-semibold rounded-xl border-slate-300 dark:border-slate-600">
+                                <option value="division" selected>มุมมองที่ 1: สำนักงาน/กอง &gt; ส่วน/ฝ่าย</option>
+                                <option value="group">มุมมองที่ 2: สำนักงาน/กอง &gt; ส่วน/ฝ่าย &gt; กลุ่มงาน</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Select-All Bar (< lg) -->
+                    <div id="correctionsSelectAllMobileBar" class="lg:hidden flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-xs shadow-xs">
+                        <label for="chkSelectAllCorrectionsMobile" class="inline-flex items-center gap-2 font-bold text-slate-700 dark:text-slate-200 cursor-pointer">
+                            <input type="checkbox" id="chkSelectAllCorrectionsMobile" class="w-4 h-4 accent-[#00744B] rounded cursor-pointer">
+                            <span>เลือกคำขอที่มีสิทธิ์อนุมัติทั้งหมด</span>
+                        </label>
+                        <span id="correctionsMobilePendingHint" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"></span>
+                    </div>
+
+                    <!-- Mobile Card-List (< lg) -->
+                    <div id="timeCorrectionsCardsContainer" class="lg:hidden space-y-3"></div>
+
+                    <!-- Modern Responsive Table (Desktop >= lg) -->
+                    <div class="hidden lg:block">
+                        <div class="bma-table-container rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/60">
+                            <table class="bma-table text-sm w-full text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-xs uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th class="w-12 text-center py-3.5 px-3">
+                                            <input type="checkbox" id="chkSelectAllCorrections" class="w-4 h-4 accent-[#00744B] rounded cursor-pointer" title="เลือกทั้งหมด">
+                                        </th>
+                                        <th class="w-12 text-center py-3.5 px-3">ลำดับ</th>
+                                        <th class="min-w-[170px] py-3.5 px-3">ชื่อ-นามสกุล</th>
+                                        <th class="min-w-[155px] py-3.5 px-3">ตำแหน่ง</th>
+                                        <th class="min-w-[140px] py-3.5 px-3">วันที่ / ช่วงเวลา</th>
+                                        <th class="min-w-[185px] py-3.5 px-3">เวลาเดิม &rarr; หลังอนุมัติ</th>
+                                        <th class="min-w-[160px] py-3.5 px-3">หมายเหตุ / เหตุผล</th>
+                                        <th class="w-32 text-center py-3.5 px-3">คำสั่ง</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timeCorrectionsTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/60"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+        <div id="bmaFooterContainer"></div>
+    </div>
+
+    <div id="bmaMobileBottomNav"></div>
+
+    <script type="module" src="assets/js/controllers/TimeCorrectionsController.js?v=20261119_68ea3c41"></script>
+</body>
+</html>

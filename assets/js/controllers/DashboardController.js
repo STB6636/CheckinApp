@@ -277,6 +277,13 @@ export class DashboardController {
                     if (rowEl) {
                         const cells = rowEl.querySelectorAll('td');
                         let isUpdated = false;
+                        if (cells[4]) {
+                            const newIn = rec.check_in_time ? rec.check_in_time + ' น.' : '-';
+                            if (cells[4].textContent.trim() !== newIn) {
+                                cells[4].textContent = newIn;
+                                isUpdated = true;
+                            }
+                        }
                         if (cells[5]) {
                             const newOut = rec.check_out_time ? rec.check_out_time + ' น.' : '-';
                             if (cells[5].textContent.trim() !== newOut) {
@@ -323,6 +330,14 @@ export class DashboardController {
                     const cardEl = cardsContainer.querySelector(`[data-card-id="${rec.log_id}"]`);
                     if (cardEl) {
                         let cardUpdated = false;
+                        const inEl = cardEl.querySelector('[data-field="check-in"]');
+                        if (inEl) {
+                            const newIn = rec.check_in_time ? `${rec.check_in_time} น.` : '-';
+                            if (inEl.textContent.trim() !== newIn) {
+                                inEl.textContent = newIn;
+                                cardUpdated = true;
+                            }
+                        }
                         const outEl = cardEl.querySelector('[data-field="check-out"]');
                         if (outEl) {
                             const newOut = rec.check_out_time ? `${rec.check_out_time} น.` : '-';
@@ -516,7 +531,7 @@ export class DashboardController {
                 </div>
                 <div class="flex items-center justify-between gap-3 py-0.5">
                     <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
-                    <span class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_in_time ? UIHelpers.escapeHtml(rec.check_in_time) + ' น.' : '-'}</span>
+                    <span data-field="check-in" class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_in_time ? UIHelpers.escapeHtml(rec.check_in_time) + ' น.' : '-'}</span>
                 </div>
                 <div class="flex items-center justify-between gap-3 py-0.5">
                     <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>

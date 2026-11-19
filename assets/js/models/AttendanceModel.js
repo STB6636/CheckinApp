@@ -1424,6 +1424,41 @@ export class AttendanceModel {
         };
     }
 
+    /**
+     * ระบุเวลามาตรฐานประจำกะและตรวจสอบกะข้ามวันแบบ Unified
+     * (1) ค้นหาใน settings.work_shifts (!s.is_custom) -> (2) Regex ชื่อกะพร้อม formatTime24 -> (3) standard_check_in/out
+     * @param {Object|null} log
+     * @param {Object|null} settings
+     * @returns {{ stdStart: string, stdEnd: string, startMin: number, endMin: number, matchingShift: Object|null, isOvernight: boolean }}
+     */
+    static #resolveShiftTimesForLog(log, settings) {
+        const shiftName = String(log?.shift_name || '');
+        const matchingShift = (settings?.work_shifts || []).find(s =>
+            !s.is_custom && (s.name === shiftName || SettingsModel.formatShiftDisplayText(s) === shiftName)
+        ) || null;
+
+        const shiftRangeMatch = shiftName.match(/\((\d{1,2}[:.]\d{2})\s*-\s*(\d{1,2}[:.]\d{2})\)/);
+        const rawStart = matchingShift?.check_in || (shiftRangeMatch ? shiftRangeMatch[1].replace('.', ':') : '') || settings?.standard_check_in || '08:30';
+        const rawEnd = matchingShift?.check_out || (shiftRangeMatch ? shiftRangeMatch[2].replace('.', ':') : '') || settings?.standard_check_out || '16:30';
+
+        const stdStart = UIHelpers.formatTime24(rawStart) || '08:30';
+        const stdEnd = UIHelpers.formatTime24(rawEnd) || '16:30';
+        const startMin = UIHelpers.timeToMinutes(stdStart);
+        const endMin = UIHelpers.timeToMinutes(stdEnd);
+
+        const checkInMin = log?.check_in_time ? UIHelpers.timeToMinutes(log.check_in_time) : -1;
+        const checkOutMin = log?.check_out_time ? UIHelpers.timeToMinutes(log.check_out_time) : -1;
+
+        const isOvernight = Boolean(
+            matchingShift?.is_overnight ||
+            shiftName.includes('ข้ามวัน') ||
+            (startMin >= 0 && endMin >= 0 && endMin < startMin) ||
+            (checkInMin >= 0 && checkOutMin >= 0 && checkOutMin < checkInMin)
+        );
+
+        return { stdStart, stdEnd, startMin, endMin, matchingShift, isOvernight };
+    }
+
     static evaluateOfficialStatus(log, settings) {
         const colors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
@@ -1438,9 +1473,7 @@ export class AttendanceModel {
             };
         }
 
-        const matchingShift = (settings?.work_shifts || []).find(s =>
-            s.name === log.shift_name || SettingsModel.formatShiftDisplayText(s) === log.shift_name
-        );
+        const { startMin, endMin, matchingShift, isOvernight } = AttendanceModel.#resolveShiftTimesForLog(log, settings);
 
         if (
             log.is_overtime ||
@@ -1478,12 +1511,8 @@ export class AttendanceModel {
             };
         }
 
-        const stdStart = matchingShift?.check_in || settings?.standard_check_in || '08:30';
-        const stdEnd = matchingShift?.check_out || settings?.standard_check_out || '16:30';
         const lateThreshold = Number(settings?.late_threshold_minutes ?? 30);
 
-        const startMin = UIHelpers.timeToMinutes(stdStart);
-        const endMin = UIHelpers.timeToMinutes(stdEnd);
         const checkInMin = UIHelpers.timeToMinutes(log.check_in_time);
         const checkOutMin = log.check_out_time ? UIHelpers.timeToMinutes(log.check_out_time) : -1;
 
@@ -1503,7 +1532,6 @@ export class AttendanceModel {
             };
         }
 
-        const isOvernight = Boolean(matchingShift?.is_overnight || endMin < startMin);
         if (!isOvernight && checkOutMin !== -1 && checkOutMin < endMin) {
             return {
                 status_key: 'absent_duty',
@@ -1616,26 +1644,11 @@ export class AttendanceModel {
             };
         }
 
-        const matchingShift = (settings?.work_shifts || []).find(s =>
-            s.name === log.shift_name || SettingsModel.formatShiftDisplayText(s) === log.shift_name
-        );
-
-        const shiftRangeMatch = String(log.shift_name || '').match(/\((\d{1,2}[:.]\d{2})\s*-\s*(\d{1,2}[:.]\d{2})\)/);
-        const stdStart = matchingShift?.check_in || shiftRangeMatch?.[1] || settings?.standard_check_in || '08:30';
-        const stdEnd = matchingShift?.check_out || shiftRangeMatch?.[2] || settings?.standard_check_out || '16:30';
+        const { startMin, endMin, matchingShift, isOvernight } = AttendanceModel.#resolveShiftTimesForLog(log, settings);
         const lateThreshold = Number(settings?.late_threshold_minutes ?? 30);
 
-        const startMin = UIHelpers.timeToMinutes(stdStart);
-        const endMin = UIHelpers.timeToMinutes(stdEnd);
         const checkInMin = log.check_in_time ? UIHelpers.timeToMinutes(log.check_in_time) : -1;
         const checkOutMin = log.check_out_time ? UIHelpers.timeToMinutes(log.check_out_time) : -1;
-
-        const isOvernight = Boolean(
-            matchingShift?.is_overnight ||
-            String(log.shift_name || '').includes('ข้ามวัน') ||
-            (startMin >= 0 && endMin >= 0 && endMin < startMin) ||
-            (checkInMin >= 0 && checkOutMin >= 0 && checkOutMin < checkInMin)
-        );
 
         const isOvertime = Boolean(
             log.is_overtime ||
@@ -1900,6 +1913,17 @@ export class AttendanceModel {
                 check_out_location_mode: payload.check_out_location_mode || payload.location_mode || 'ONSITE',
                 check_out_offsite_reason: payload.check_out_offsite_reason || null
             };
+            if (activeRegularRecord.correction_status === 'approved' && evalOut.status_key === 'absent_duty') {
+                updateOut.correction_status = 'none';
+                updateOut.correction_requested_at = null;
+                updateOut.correction_request_reason = null;
+                updateOut.correction_reviewed_by = null;
+                updateOut.correction_reviewed_at = null;
+                updateOut.correction_reject_reason = null;
+                updateOut.correction_original_check_in = activeRegularRecord.correction_original_check_in ?? activeRegularRecord.check_in_time;
+                updateOut.correction_original_check_out = effectiveCheckOutTime;
+                updateOut.correction_original_status = activeRegularRecord.correction_original_status ?? evalOut.status_label;
+            }
             if (payload.check_out_distance_from_official_meters !== undefined && payload.check_out_distance_from_official_meters !== null) {
                 updateOut.check_out_distance_from_official_meters = Number(payload.check_out_distance_from_official_meters);
             } else if (payload.distance_from_official_meters !== undefined && payload.distance_from_official_meters !== null) {
@@ -1917,6 +1941,15 @@ export class AttendanceModel {
                 delete updateOut.check_out_location_mode;
                 delete updateOut.check_out_distance_from_official_meters;
                 delete updateOut.check_out_offsite_reason;
+                delete updateOut.correction_status;
+                delete updateOut.correction_requested_at;
+                delete updateOut.correction_request_reason;
+                delete updateOut.correction_reviewed_by;
+                delete updateOut.correction_reviewed_at;
+                delete updateOut.correction_reject_reason;
+                delete updateOut.correction_original_check_in;
+                delete updateOut.correction_original_check_out;
+                delete updateOut.correction_original_status;
                 const retry = await db
                     .from('attendance_logs')
                     .update(updateOut)
@@ -2510,6 +2543,473 @@ export class AttendanceModel {
         };
     }
 
+    /**
+     * สร้างหมายเหตุหลังอนุมัติแก้ไขเวลาแบบคงหมายเหตุเดิมและกันซ้ำ (Idempotent)
+     * - ไม่มีหมายเหตุเดิม / เป็นค่าว่างหรือสถานะ -> 'ขอแก้ไขเวลา'
+     * - มีหมายเหตุเดิม (เช่น 'ประชุม') -> 'ประชุม (แก้ไขเวลา)'
+     * @param {Object} log
+     * @returns {string}
+     */
+    static #buildCorrectedRemark(log) {
+        const SUPPRESSED = new Set([
+            '', '-', 'ในสถานที่', 'ปฏิบัติงานปกติ', 'มาสาย', 'ขาดราชการ',
+            'ไม่ลงเวลา', 'ปฏิบัติงานนอกเวลา', 'ปฏิบัติงานนอกเวลาราชการ'
+        ]);
+        const rawRemark = String(log?.remark || '').trim();
+        if (rawRemark === 'ขอแก้ไขเวลา' || rawRemark.endsWith('(แก้ไขเวลา)')) {
+            return rawRemark;
+        }
+        const isMeaningful = (val) => {
+            const s = String(val || '').trim();
+            return Boolean(s && !SUPPRESSED.has(s));
+        };
+
+        let prior = '';
+        if (isMeaningful(rawRemark)) {
+            prior = rawRemark;
+        } else if (String(log?.location_mode || '').toUpperCase() === 'OFFSITE' && isMeaningful(log?.offsite_reason)) {
+            prior = String(log.offsite_reason).trim();
+        }
+
+        if (!prior) {
+            return 'ขอแก้ไขเวลา';
+        }
+        if (prior === 'ขอแก้ไขเวลา' || prior.endsWith('(แก้ไขเวลา)')) {
+            return prior;
+        }
+        return `${prior} (แก้ไขเวลา)`;
+    }
+
+    /**
+     * คำนวณเวลา/สถานะ/หมายเหตุเป้าหมายหลังอนุมัติแก้ไขเวลา (แก้ไขเฉพาะขาที่ [มาสาย/ขาดราชการ])
+     * @param {Object} log
+     * @param {Object} settings
+     * @returns {{ newCheckIn: string|null, newCheckOut: string|null, newStatusLabel: string, newRowColor: string, newRemark: string, checkInNeedsFix: boolean, checkOutNeedsFix: boolean, stdStart: string, stdEnd: string, splitStatus: Object }}
+     */
+    static #computeCorrectionTarget(log, settings) {
+        const { stdStart, stdEnd } = AttendanceModel.#resolveShiftTimesForLog(log, settings);
+        const splitStatus = AttendanceModel.evaluateSplitAttendanceStatus(log, settings);
+
+        const checkInNeedsFix = Boolean(
+            ['late', 'absent_duty'].includes(splitStatus.checkIn?.status_key) ||
+            (log?.status === 'ขาดราชการ' && !log?.check_out_time)
+        );
+        const checkOutNeedsFix = Boolean(
+            ['late', 'absent_duty'].includes(splitStatus.checkOut?.status_key)
+        );
+
+        const origIn = log?.check_in_time ? UIHelpers.formatTime24(log.check_in_time) : null;
+        const origOut = log?.check_out_time ? UIHelpers.formatTime24(log.check_out_time) : null;
+
+        const newCheckIn = checkInNeedsFix ? stdStart : origIn;
+        const newCheckOut = checkOutNeedsFix ? stdEnd : origOut;
+
+        const evalResult = AttendanceModel.evaluateOfficialStatus({
+            ...log,
+            check_in_time: newCheckIn,
+            check_out_time: newCheckOut,
+            status: 'กำลังประเมิน'
+        }, settings);
+
+        return {
+            newCheckIn,
+            newCheckOut,
+            newStatusLabel: evalResult.status_label,
+            newRowColor: evalResult.row_color,
+            newRemark: AttendanceModel.#buildCorrectedRemark(log),
+            checkInNeedsFix,
+            checkOutNeedsFix,
+            stdStart,
+            stdEnd,
+            splitStatus
+        };
+    }
+
+    /**
+     * ดึงรายการบันทึกเวลาปกติที่มีสถานะขาเข้า/ออกเป็น [มาสาย, ขาดราชการ] และยังไม่ถูกอนุมัติแก้ไขเวลา
+     * (ไม่ติดเพดาน limit(35) และไม่รวมสถานะ "ไม่ลงเวลา")
+     */
+    static async getPersonalTimeCorrectionLogs(personnelId, userId, settingsOverride = null) {
+        const db = DatabaseService.getInstance().client;
+        if (!db) return [];
+        const settings = settingsOverride || await SettingsModel.getSettings(false);
+        const selectExtended = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, location_mode, offsite_reason, is_overtime, is_special_request, approval_status, correction_status, correction_requested_at, correction_request_reason, correction_reviewed_by, correction_reviewed_at, correction_reject_reason, correction_original_check_in, correction_original_check_out, correction_original_status, created_at';
+        const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_location, check_out_location, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at';
+
+        const buildQuery = (columns) => {
+            let q = db
+                .from('attendance_logs')
+                .select(columns)
+                .order('work_date', { ascending: false })
+                .order('created_at', { ascending: false });
+            if (personnelId) {
+                q = q.eq('personnel_id', personnelId);
+            } else if (userId) {
+                q = q.eq('user_id', userId);
+            }
+            return q;
+        };
+
+        let { data, error } = await buildQuery(selectExtended);
+        if (error && (error.message?.includes('column') || error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('does not exist'))) {
+            const fb = await buildQuery(selectFallback);
+            data = fb.data;
+            error = fb.error;
+        }
+        if (error) {
+            console.error('Error fetching personal time correction logs:', error);
+            return [];
+        }
+
+        const results = [];
+        for (const log of (data || [])) {
+            if (log.is_special_request) continue;
+            if (log.is_overtime || log.status === 'ปฏิบัติงานนอกเวลา' || log.status === 'ปฏิบัติงานนอกเวลาราชการ') continue;
+            const cStatus = log.correction_status || 'none';
+            if (cStatus === 'approved') continue;
+
+            const splitStatus = AttendanceModel.evaluateSplitAttendanceStatus(log, settings);
+            const inKey = splitStatus.checkIn?.status_key;
+            const outKey = splitStatus.checkOut?.status_key;
+            const hasCorrectableLeg = ['late', 'absent_duty'].includes(inKey) || ['late', 'absent_duty'].includes(outKey);
+            if (!hasCorrectableLeg) continue;
+
+            const preview = AttendanceModel.#computeCorrectionTarget(log, settings);
+            results.push({
+                ...log,
+                correction_status: cStatus,
+                check_in_time: log.check_in_time ? UIHelpers.formatTime24(log.check_in_time) : null,
+                check_out_time: log.check_out_time ? UIHelpers.formatTime24(log.check_out_time) : null,
+                check_in_status: splitStatus.checkIn,
+                check_out_status: splitStatus.checkOut,
+                is_overnight: splitStatus.isOvernight,
+                preview
+            });
+        }
+        return results;
+    }
+
+    /**
+     * ผู้ใช้งานส่งคำขอแก้ไขเวลาเข้า-ออกงานสำหรับรายการที่ระบุ (เหตุผล Optional)
+     */
+    static async submitTimeCorrectionRequest(logId, currentUser, reason = '') {
+        if (!logId) {
+            return { success: false, message: 'ไม่พบรหัสรายการลงเวลา' };
+        }
+        const db = DatabaseService.getInstance().client;
+        const { data: target, error: findErr } = await db
+            .from('attendance_logs')
+            .select('id, personnel_id, user_id, check_in_time, check_out_time, status, correction_status, correction_original_check_in, correction_original_check_out, correction_original_status')
+            .eq('id', logId)
+            .maybeSingle();
+
+        if (findErr) {
+            if (findErr.code === '42703' || findErr.code === 'PGRST204' || findErr.message?.includes('column')) {
+                return { success: false, message: 'ฐานข้อมูลยังไม่ได้อัปเดตคอลัมน์ระบบขอแก้ไขเวลา (กรุณารัน sql/alter_v2_11_time_correction_staging.sql)' };
+            }
+            return { success: false, message: 'ไม่สามารถตรวจสอบข้อมูลรายการได้: ' + findErr.message };
+        }
+        if (!target) {
+            return { success: false, message: 'ไม่พบบันทึกเวลาที่ต้องการขอแก้ไข' };
+        }
+
+        if (currentUser) {
+            const ownsByPersonnel = currentUser.personnel_id && target.personnel_id && String(currentUser.personnel_id) === String(target.personnel_id);
+            const ownsByUser = currentUser.id && target.user_id && String(currentUser.id) === String(target.user_id);
+            if (!ownsByPersonnel && !ownsByUser) {
+                return { success: false, message: 'คุณไม่มีสิทธิ์ขอแก้ไขเวลารายการของผู้อื่น' };
+            }
+        }
+
+        if (target.correction_status === 'pending') {
+            return { success: false, message: 'รายการนี้ถูกส่งคำขอแก้ไขเวลาไว้แล้วและอยู่ระหว่างรออนุมัติ' };
+        }
+        if (target.correction_status === 'approved') {
+            return { success: false, message: 'รายการนี้ได้รับการอนุมัติแก้ไขเวลาแล้ว' };
+        }
+
+        const nowIso = new Date().toISOString();
+        const cleanReason = String(reason || '').trim();
+        const updatePayload = {
+            correction_status: 'pending',
+            correction_requested_at: nowIso,
+            correction_request_reason: cleanReason || null,
+            correction_reject_reason: null,
+            correction_original_check_in: target.correction_original_check_in ?? target.check_in_time ?? null,
+            correction_original_check_out: target.correction_original_check_out ?? target.check_out_time ?? null,
+            correction_original_status: target.correction_original_status ?? target.status ?? null,
+            updated_at: nowIso
+        };
+
+        const { data: updated, error: updateErr } = await db
+            .from('attendance_logs')
+            .update(updatePayload)
+            .eq('id', logId)
+            .select()
+            .single();
+
+        if (updateErr) {
+            return { success: false, message: 'ไม่สามารถส่งคำขอแก้ไขเวลาได้: ' + updateErr.message };
+        }
+
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'submit_time_correction',
+                id: logId,
+                personnel_id: target.personnel_id || null,
+                actor_id: currentUser?.id || null,
+                actor_name: currentUser?.full_name || null,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
+
+        return {
+            success: true,
+            data: updated,
+            message: 'ส่งคำขอแก้ไขเวลาเรียบร้อยแล้ว อยู่ระหว่างรอผู้ดูแลระบบพิจารณาอนุมัติ'
+        };
+    }
+
+    /**
+     * ดึงรายการคำขอแก้ไขเวลาสำหรับผู้ดูแลระบบ พร้อมข้อมูลผู้ขอ (Role) และสิทธิ์การอนุมัติ
+     */
+    static async getTimeCorrectionRequests(currentUser, statusFilter = 'pending') {
+        const db = DatabaseService.getInstance().client;
+        if (!db) return [];
+        const settings = await SettingsModel.getSettings(false);
+        const selectStr = `
+            id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
+            check_in_location, check_out_location, status, remark, row_color,
+            location_mode, offsite_reason, is_overtime, is_special_request,
+            correction_status, correction_requested_at, correction_request_reason,
+            correction_reviewed_by, correction_reviewed_at, correction_reject_reason,
+            correction_original_check_in, correction_original_check_out, correction_original_status,
+            created_at, updated_at,
+            personnel:personnel_id (
+                id, national_id, prefix, first_name, last_name,
+                position_type, position_title, position_level,
+                organization, bureau, division, work_group
+            )
+        `;
+
+        let query = db
+            .from('attendance_logs')
+            .select(selectStr)
+            .order('correction_requested_at', { ascending: false })
+            .order('work_date', { ascending: false });
+
+        if (statusFilter && statusFilter !== 'all') {
+            query = query.eq('correction_status', statusFilter);
+        } else {
+            query = query.in('correction_status', ['pending', 'approved', 'rejected']);
+        }
+
+        const [{ data, error }, accountsRes] = await Promise.all([
+            query,
+            db.from('user_accounts').select('id, personnel_id, role, visibility_level')
+        ]);
+
+        if (error) {
+            if (error.code === '42703' || error.code === 'PGRST204' || error.message?.includes('column')) {
+                return [];
+            }
+            console.error('Error fetching time correction requests:', error);
+            return [];
+        }
+
+        const roleByUserId = new Map();
+        const roleByPersonnelId = new Map();
+        for (const acc of (accountsRes?.data || [])) {
+            if (acc.id) roleByUserId.set(String(acc.id), acc);
+            if (acc.personnel_id) roleByPersonnelId.set(String(acc.personnel_id), acc);
+        }
+
+        const enriched = (data || []).map(item => {
+            const p = item.personnel || {};
+            const acc = (item.user_id && roleByUserId.get(String(item.user_id)))
+                || (item.personnel_id && roleByPersonnelId.get(String(item.personnel_id)))
+                || null;
+            const requesterRole = acc?.role || 'User';
+
+            const preview = AttendanceModel.#computeCorrectionTarget({
+                ...item,
+                check_in_time: item.correction_status === 'approved' && item.correction_original_check_in
+                    ? item.correction_original_check_in
+                    : item.check_in_time,
+                check_out_time: item.correction_status === 'approved' && item.correction_original_check_out
+                    ? item.correction_original_check_out
+                    : item.check_out_time,
+                status: item.correction_status === 'approved' && item.correction_original_status
+                    ? item.correction_original_status
+                    : item.status
+            }, settings);
+
+            const reqObj = {
+                ...item,
+                bureau: p.bureau || '',
+                division: p.division || '',
+                requester_role: requesterRole,
+                requester_visibility_level: acc?.visibility_level || 'none',
+                check_in_time: item.check_in_time ? UIHelpers.formatTime24(item.check_in_time) : null,
+                check_out_time: item.check_out_time ? UIHelpers.formatTime24(item.check_out_time) : null,
+                correction_original_check_in: item.correction_original_check_in ? UIHelpers.formatTime24(item.correction_original_check_in) : null,
+                correction_original_check_out: item.correction_original_check_out ? UIHelpers.formatTime24(item.correction_original_check_out) : null,
+                preview
+            };
+            reqObj.approvalPermission = AuthService.canApproveTimeCorrection(currentUser, reqObj);
+            return reqObj;
+        });
+
+        if (!currentUser || currentUser.role === 'SuperAdmin') {
+            return enriched;
+        }
+
+        return enriched.filter(item => {
+            const p = item.personnel || {};
+            return AuthService.canViewRecordByScope(currentUser, {
+                bureau: p.bureau || '',
+                division: p.division || ''
+            });
+        });
+    }
+
+    /**
+     * พิจารณาอนุมัติหรือไม่อนุมัติคำขอแก้ไขเวลาแบบเดี่ยว/หมู่ พร้อม Double-Layer Executive RBAC และ Concurrency Guard
+     * @param {string[]} logIds
+     * @param {boolean|string} isApprovedOrDecision
+     * @param {Object} currentUser
+     * @param {string} [rejectReason='']
+     */
+    static async processTimeCorrectionsBulk(logIds, isApprovedOrDecision, currentUser, rejectReason = '') {
+        if (!Array.isArray(logIds) || logIds.length === 0) {
+            return { success: false, count: 0, message: 'กรุณาเลือกรายการที่ต้องการดำเนินการอย่างน้อย 1 รายการ' };
+        }
+
+        const isApproved = isApprovedOrDecision === true || isApprovedOrDecision === 'approved';
+        const db = DatabaseService.getInstance().client;
+        const selectTarget = `
+            id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time,
+            status, remark, row_color, location_mode, offsite_reason,
+            is_overtime, is_special_request, correction_status,
+            correction_original_check_in, correction_original_check_out, correction_original_status,
+            personnel:personnel_id (
+                id, bureau, division, position_type, position_title
+            )
+        `;
+
+        const [{ data: targetLogs, error: checkError }, accountsRes] = await Promise.all([
+            db.from('attendance_logs').select(selectTarget).in('id', logIds),
+            db.from('user_accounts').select('id, personnel_id, role, visibility_level')
+        ]);
+
+        if (checkError) {
+            return { success: false, message: 'ไม่สามารถตรวจสอบสถานะคำขอได้: ' + checkError.message };
+        }
+
+        const pendingLogs = (targetLogs || []).filter(l => l.correction_status === 'pending');
+        if (pendingLogs.length === 0) {
+            return { success: false, conflict: true, message: 'คำขอนี้ได้รับการดำเนินการโดยผู้ดูแลระบบท่านอื่นแล้ว' };
+        }
+
+        const roleByUserId = new Map();
+        const roleByPersonnelId = new Map();
+        for (const acc of (accountsRes?.data || [])) {
+            if (acc.id) roleByUserId.set(String(acc.id), acc);
+            if (acc.personnel_id) roleByPersonnelId.set(String(acc.personnel_id), acc);
+        }
+
+        const authorizedLogs = [];
+        let firstDenialReason = '';
+        for (const log of pendingLogs) {
+            const p = log.personnel || {};
+            const acc = (log.user_id && roleByUserId.get(String(log.user_id)))
+                || (log.personnel_id && roleByPersonnelId.get(String(log.personnel_id)))
+                || null;
+            const enriched = {
+                ...log,
+                bureau: p.bureau || '',
+                division: p.division || '',
+                requester_role: acc?.role || 'User'
+            };
+            const perm = AuthService.canApproveTimeCorrection(currentUser, enriched);
+            if (perm.allowed) {
+                authorizedLogs.push(enriched);
+            } else if (!firstDenialReason) {
+                firstDenialReason = perm.reason;
+            }
+        }
+
+        if (authorizedLogs.length === 0) {
+            return {
+                success: false,
+                forbidden: true,
+                count: 0,
+                message: firstDenialReason || 'คุณไม่มีสิทธิ์พิจารณาคำขอแก้ไขเวลารายการที่เลือก'
+            };
+        }
+
+        const settings = await SettingsModel.getSettings(false);
+        const nowIso = new Date().toISOString();
+        const cleanRejectReason = String(rejectReason || '').trim();
+        let updatedCount = 0;
+
+        for (const item of authorizedLogs) {
+            let updateFields;
+            if (isApproved) {
+                const target = AttendanceModel.#computeCorrectionTarget(item, settings);
+                updateFields = {
+                    check_in_time: target.newCheckIn,
+                    check_out_time: target.newCheckOut,
+                    status: target.newStatusLabel,
+                    row_color: target.newRowColor,
+                    remark: target.newRemark,
+                    correction_status: 'approved',
+                    correction_reviewed_by: currentUser?.id || null,
+                    correction_reviewed_at: nowIso,
+                    correction_reject_reason: null,
+                    correction_original_check_in: item.correction_original_check_in ?? item.check_in_time ?? null,
+                    correction_original_check_out: item.correction_original_check_out ?? item.check_out_time ?? null,
+                    correction_original_status: item.correction_original_status ?? item.status ?? null,
+                    updated_at: nowIso
+                };
+            } else {
+                updateFields = {
+                    correction_status: 'rejected',
+                    correction_reviewed_by: currentUser?.id || null,
+                    correction_reviewed_at: nowIso,
+                    correction_reject_reason: cleanRejectReason || null,
+                    updated_at: nowIso
+                };
+            }
+
+            const { error } = await db
+                .from('attendance_logs')
+                .update(updateFields)
+                .eq('id', item.id)
+                .eq('correction_status', 'pending');
+
+            if (!error) updatedCount++;
+        }
+
+        const actionLabel = isApproved ? 'อนุมัติ' : 'ไม่อนุมัติ';
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('attendance_updated', {
+                action: 'bulk_time_correction',
+                decision: isApproved ? 'approved' : 'rejected',
+                count: updatedCount,
+                actor_id: currentUser?.id || null,
+                actor_name: currentUser?.full_name || null,
+                timestamp: Date.now()
+            });
+        } catch (_) {}
+
+        return {
+            success: updatedCount > 0,
+            count: updatedCount,
+            message: `${actionLabel}คำขอแก้ไขเวลาจำนวน ${updatedCount} รายการเรียบร้อยแล้ว`
+        };
+    }
+
     static getDatesBetween(startDate, endDate) {
         const dates = [];
         const start = new Date(startDate);
@@ -2535,7 +3035,7 @@ export class AttendanceModel {
         const effectiveEnd = endDate && endDate >= startDate ? endDate : startDate;
         const dateList = AttendanceModel.getDatesBetween(startDate, effectiveEnd);
 
-        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, location_mode, offsite_reason, check_out_location_mode, check_out_distance_from_official_meters, check_out_offsite_reason, created_at, updated_at';
+        const selectWithLocMode = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, correction_status, location_mode, offsite_reason, check_out_location_mode, check_out_distance_from_official_meters, check_out_offsite_reason, created_at, updated_at';
         const selectFallback = 'id, personnel_id, user_id, work_date, shift_name, check_in_time, check_out_time, check_in_lat, check_in_lng, check_in_location, check_out_lat, check_out_lng, check_out_location, check_in_photo, check_out_photo, status, remark, row_color, is_overtime, is_special_request, approval_status, created_at, updated_at';
 
         let [personnelRes, logsRes] = await Promise.all([
@@ -2649,7 +3149,8 @@ export class AttendanceModel {
             row_color: evalStatus.row_color,
             is_overtime: Boolean(log?.is_overtime || evalStatus.status_key === 'overtime'),
             is_special_request: Boolean(log?.is_special_request),
-            approval_status: log?.approval_status || 'none'
+            approval_status: log?.approval_status || 'none',
+            correction_status: log?.correction_status || 'none'
         };
     }
 
@@ -2694,6 +3195,14 @@ export class AttendanceModel {
         if (payload.check_out_offsite_reason) recordData.check_out_offsite_reason = payload.check_out_offsite_reason;
 
         if (payload.log_id) {
+            if (canonicalStatus === 'ปฏิบัติงานปกติ') {
+                const remStr = String(recordData.remark || '').trim();
+                const isCorrectionRemark = remStr === 'ขอแก้ไขเวลา' || remStr.endsWith('(แก้ไขเวลา)');
+                if (!isCorrectionRemark) {
+                    recordData.correction_status = 'none';
+                    recordData.correction_reject_reason = null;
+                }
+            }
             let { error } = await db
                 .from('attendance_logs')
                 .update(recordData)
@@ -2704,6 +3213,8 @@ export class AttendanceModel {
                 delete recordData.check_out_location_mode;
                 delete recordData.check_out_offsite_reason;
                 delete recordData.location_mode;
+                delete recordData.correction_status;
+                delete recordData.correction_reject_reason;
                 const retry = await db
                     .from('attendance_logs')
                     .update(recordData)
@@ -2848,12 +3359,17 @@ export class AttendanceModel {
             const db = DatabaseService.getInstance().client;
             const todayStr = UIHelpers.getTodayISO();
 
-            const [logsRes, settingsRes] = await Promise.all([
+            const [logsRes, corrRes, settingsRes] = await Promise.all([
                 db.from('attendance_logs')
                     .select('id, status, check_in_time, check_out_time, approval_status, updated_at')
                     .eq('work_date', todayStr)
                     .order('updated_at', { ascending: false })
                     .limit(50),
+                db.from('attendance_logs')
+                    .select('id, correction_status, status, check_in_time, check_out_time, updated_at')
+                    .neq('correction_status', 'none')
+                    .order('updated_at', { ascending: false })
+                    .limit(25),
                 db.from('system_settings')
                     .select('id, updated_at, enforce_geofence_radius, require_gps, require_photo, category_colors')
                     .eq('id', 1)
@@ -2861,7 +3377,10 @@ export class AttendanceModel {
             ]);
 
             const logs = logsRes.data || [];
-            const attendanceSignature = logs.map(l => `${l.id}:${l.status}:${l.check_in_time || ''}:${l.check_out_time || ''}:${l.approval_status || ''}:${l.updated_at || ''}`).join('|');
+            const corrLogs = !corrRes?.error ? (corrRes?.data || []) : [];
+            const todaySig = logs.map(l => `${l.id}:${l.status}:${l.check_in_time || ''}:${l.check_out_time || ''}:${l.approval_status || ''}:${l.updated_at || ''}`).join('|');
+            const corrSig = corrLogs.map(c => `${c.id}:${c.correction_status || ''}:${c.status || ''}:${c.check_in_time || ''}:${c.check_out_time || ''}:${c.updated_at || ''}`).join('|');
+            const attendanceSignature = `${todaySig}||${corrSig}`;
 
             const sRow = settingsRes.data || null;
             const settingsSignature = sRow

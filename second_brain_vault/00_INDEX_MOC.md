@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261118-admin-mobile-modals-clipping-fix"
+last_updated_phase: "PIPE-20261119-time-correction-request-and-approvals"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -37,6 +37,7 @@ last_updated_phase: "PIPE-20261118-admin-mobile-modals-clipping-fix"
 - [[ADR_0036_mobile_card_lists_and_drawer_ajax_spa]] — ADR-0036: การ์ดประวัติการลงเวลาและคำขอพิเศษมุมมองมือถือ (`< lg`), การคำนวณกะข้ามวัน +1 วัน, เมนูแฮมเบอเกอร์ Head/Body และ AJAX SPA แยกหน้าพร้อมสลับสีปุ่ม BMA + รักษา DOM ID `adr_004` (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
 - [[ADR_0037_admin_mobile_cards_users_2tab_rbac_badges_and_hydrogen_high]] — ADR-0037: การ์ดมุมมองมือถือ 5 หน้าผู้ดูแลระบบ, จัดการบัญชีผู้ใช้งาน 2 แท็บ + Count Badges (Sidebar/Bottom Nav/Tabs) พร้อม RBAC Guard และปรับมาตรฐานโมเดล SubAgents เป็น Gemini 4 Hydrogen (High) (`FLOW_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_LAYOUT_01`)
 - [[ADR_0038_mobile_modals_dvh_3zone_scroll_and_z9990_hierarchy]] — ADR-0038: สถาปัตยกรรม Modal มือถือมาตรฐาน 3 ส่วนด้วย `100dvh` + `my-auto` (แก้ตัดขอบบน-ล่าง & Negative-Y Overflow), ลำดับชั้น `z-[9990]`/`z-[9999]`/`99990`, `backdrop-blur-sm` และ `UIHelpers` Modal Lifecycle (`FLOW_LAYOUT_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_REPORTS_01`, `FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0039_Time_Correction_Request_And_Executive_RBAC]] — ADR-0039: ระบบขอแก้ไขเวลาเข้า-ออกงาน (`time-corrections.html`), กฎคำนวณแก้เฉพาะขาผิดปกติ + หมายเหตุ `(แก้ไขเวลา)`, Double-Layer Executive RBAC (5 ตำแหน่งผู้บริหารสำหรับคำขอของ Admin), Drawer Layout สมมาตร 2×2 / `row-span-2`, และ Cache Sync 10 หน้า HTML (`FLOW_TIME_CORRECTION_01`, `FLOW_CHECKIN_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_REPORTS_01`, `FLOW_DASHBOARD_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
@@ -87,3 +88,4 @@ last_updated_phase: "PIPE-20261118-admin-mobile-modals-clipping-fix"
 - [[remote_version_hard_cache_purge]] — Remote version.json + Hard Cache Purge + Auto-Stamp Pipeline Pattern (`v1.0.0`)
 - [[multi_tier_resilient_reverse_geocoding]] — Multi-Tier Resilient Reverse Geocoding & POI Resolution Pattern (`v1.0.0`)
 - [[viewport_bounded_3zone_modal_lifecycle]] — Viewport-Bounded 3-Zone Responsive Modal Lifecycle Pattern (`v1.0.0`)
+- [[leg_selective_correction_and_executive_rbac]] — Leg-Selective Attendance Correction, Idempotent Remark Suffix & Double-Layer Executive RBAC Pattern (`v1.0.0`)
