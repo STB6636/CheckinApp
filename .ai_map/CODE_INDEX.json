@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-21T06:53:46.695Z",
-  "totalFilesScanned": 192,
-  "totalSymbolsIndexed": 1288,
+  "generatedAt": "2026-11-21T07:38:12.984Z",
+  "totalFilesScanned": 193,
+  "totalSymbolsIndexed": 1290,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ed3e9ddd54758b6c",
+      "fileHash": "245ffca07844c091",
       "totalLines": 239,
       "importsCount": 0,
       "importsPreview": [],
@@ -1567,7 +1567,7 @@
     {
       "filePath": "assets/js/controllers/LoadingController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "183384a514fd3c0f",
+      "fileHash": "29229ef40887ae2b",
       "totalLines": 382,
       "importsCount": 4,
       "importsPreview": [
@@ -1705,7 +1705,7 @@
     {
       "filePath": "assets/js/controllers/LoginController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "ef6e24c8c43c4917",
+      "fileHash": "ff0f69e93a380333",
       "totalLines": 344,
       "importsCount": 5,
       "importsPreview": [
@@ -3564,8 +3564,8 @@
     {
       "filePath": "assets/js/core/UIHelpers.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "568b6adc4cc9f18e",
-      "totalLines": 1549,
+      "fileHash": "49581bb9192a0422",
+      "totalLines": 1574,
       "importsCount": 1,
       "importsPreview": [
         "import { Config } from './Config.js';"
@@ -3578,329 +3578,337 @@
           "name": "UIHelpers",
           "kind": "class",
           "startLine": 8,
-          "endLine": 1549,
+          "endLine": 71,
           "signature": "export class UIHelpers",
-          "summary": "Class Definition (1542 lines)"
+          "summary": "Class Definition (64 lines)"
         },
         {
           "name": "UIHelpers.escapeHtml",
           "kind": "static public method",
-          "startLine": 27,
-          "endLine": 35,
+          "startLine": 29,
+          "endLine": 37,
           "signature": "(str) => any",
-          "summary": "static public method L27-L35 (9 lines)"
+          "summary": "static public method L29-L37 (9 lines)"
         },
         {
           "name": "UIHelpers.getRootBasePath",
           "kind": "static public method",
-          "startLine": 37,
-          "endLine": 46,
+          "startLine": 39,
+          "endLine": 49,
           "signature": "() => any",
-          "summary": "static public method L37-L46 (10 lines)"
+          "summary": "static public method L39-L49 (11 lines)"
         },
         {
-          "name": "UIHelpers.maskUrlToRoot",
+          "name": "UIHelpers.resolveAppUrl",
           "kind": "static public method",
-          "startLine": 48,
-          "endLine": 71,
-          "signature": "(explicitPageName = '') => any",
-          "summary": "static public method L48-L71 (24 lines)"
+          "startLine": 51,
+          "endLine": 55,
+          "signature": "(targetPath = '') => any",
+          "summary": "static public method L51-L55 (5 lines)"
         },
         {
-          "name": "UIHelpers.initTheme",
+          "name": "maskUrlToRoot",
           "kind": "static public method",
           "startLine": 73,
-          "endLine": 90,
-          "signature": "() => any",
-          "summary": "static public method L73-L90 (18 lines)"
+          "endLine": 96,
+          "signature": "(explicitPageName = '') => any",
+          "summary": "static public method L73-L96 (24 lines)"
         },
         {
-          "name": "UIHelpers.toggleTheme",
+          "name": "initTheme",
           "kind": "static public method",
-          "startLine": 92,
-          "endLine": 98,
+          "startLine": 98,
+          "endLine": 115,
           "signature": "() => any",
-          "summary": "static public method L92-L98 (7 lines)"
+          "summary": "static public method L98-L115 (18 lines)"
         },
         {
-          "name": "UIHelpers.formatWelcomeDisplayName",
+          "name": "toggleTheme",
           "kind": "static public method",
-          "startLine": 100,
-          "endLine": 162,
+          "startLine": 117,
+          "endLine": 123,
+          "signature": "() => any",
+          "summary": "static public method L117-L123 (7 lines)"
+        },
+        {
+          "name": "formatWelcomeDisplayName",
+          "kind": "static public method",
+          "startLine": 125,
+          "endLine": 187,
           "signature": "(userOrName, prefixes = null) => any",
-          "summary": "static public method L100-L162 (63 lines)"
+          "summary": "static public method L125-L187 (63 lines)"
         },
         {
-          "name": "UIHelpers.showToast",
+          "name": "showToast",
           "kind": "static public method",
-          "startLine": 164,
-          "endLine": 196,
+          "startLine": 189,
+          "endLine": 221,
           "signature": "(message, type = 'success', durationMs = 2600) => any",
-          "summary": "static public method L164-L196 (33 lines)"
+          "summary": "static public method L189-L221 (33 lines)"
         },
         {
-          "name": "UIHelpers.formatThaiShortDate",
+          "name": "formatThaiShortDate",
           "kind": "static public method",
-          "startLine": 198,
-          "endLine": 214,
+          "startLine": 223,
+          "endLine": 239,
           "signature": "(dateStr) => any",
-          "summary": "static public method L198-L214 (17 lines)"
+          "summary": "static public method L223-L239 (17 lines)"
         },
         {
-          "name": "UIHelpers.formatThaiShortDateFullYear",
+          "name": "formatThaiShortDateFullYear",
           "kind": "static public method",
-          "startLine": 221,
-          "endLine": 235,
+          "startLine": 246,
+          "endLine": 260,
           "signature": "(dateStr) => any",
-          "summary": "static public method L221-L235 (15 lines)"
+          "summary": "static public method L246-L260 (15 lines)"
         },
         {
-          "name": "UIHelpers.shiftDateISO",
+          "name": "shiftDateISO",
           "kind": "static public method",
-          "startLine": 243,
-          "endLine": 256,
+          "startLine": 268,
+          "endLine": 281,
           "signature": "(dateStr, deltaDays = 0) => any",
-          "summary": "static public method L243-L256 (14 lines)"
+          "summary": "static public method L268-L281 (14 lines)"
         },
         {
-          "name": "UIHelpers.formatThaiFullDate",
+          "name": "formatThaiFullDate",
           "kind": "static public method",
-          "startLine": 258,
-          "endLine": 273,
+          "startLine": 283,
+          "endLine": 298,
           "signature": "(dateStr) => any",
-          "summary": "static public method L258-L273 (16 lines)"
+          "summary": "static public method L283-L298 (16 lines)"
         },
         {
-          "name": "UIHelpers.formatThaiDate",
+          "name": "formatThaiDate",
           "kind": "static public method",
-          "startLine": 275,
-          "endLine": 277,
+          "startLine": 300,
+          "endLine": 302,
           "signature": "(dateStr) => any",
-          "summary": "static public method L275-L277 (3 lines)"
+          "summary": "static public method L300-L302 (3 lines)"
         },
         {
-          "name": "UIHelpers.formatTime24",
+          "name": "formatTime24",
           "kind": "static public method",
-          "startLine": 279,
-          "endLine": 287,
-          "signature": "(timeStr) => any",
-          "summary": "static public method L279-L287 (9 lines)"
-        },
-        {
-          "name": "UIHelpers.timeToMinutes",
-          "kind": "static public method",
-          "startLine": 289,
-          "endLine": 295,
-          "signature": "(timeStr) => any",
-          "summary": "static public method L289-L295 (7 lines)"
-        },
-        {
-          "name": "UIHelpers.getTodayISO",
-          "kind": "static public method",
-          "startLine": 297,
-          "endLine": 301,
-          "signature": "() => any",
-          "summary": "static public method L297-L301 (5 lines)"
-        },
-        {
-          "name": "UIHelpers.getTodayDateString",
-          "kind": "static public method",
-          "startLine": 303,
-          "endLine": 305,
-          "signature": "() => any",
-          "summary": "static public method L303-L305 (3 lines)"
-        },
-        {
-          "name": "UIHelpers.getCurrentTimeHHMM",
-          "kind": "static public method",
-          "startLine": 307,
+          "startLine": 304,
           "endLine": 312,
-          "signature": "() => any",
-          "summary": "static public method L307-L312 (6 lines)"
+          "signature": "(timeStr) => any",
+          "summary": "static public method L304-L312 (9 lines)"
         },
         {
-          "name": "UIHelpers.formatPosition",
+          "name": "timeToMinutes",
           "kind": "static public method",
-          "startLine": 326,
-          "endLine": 362,
+          "startLine": 314,
+          "endLine": 320,
+          "signature": "(timeStr) => any",
+          "summary": "static public method L314-L320 (7 lines)"
+        },
+        {
+          "name": "getTodayISO",
+          "kind": "static public method",
+          "startLine": 322,
+          "endLine": 326,
+          "signature": "() => any",
+          "summary": "static public method L322-L326 (5 lines)"
+        },
+        {
+          "name": "getTodayDateString",
+          "kind": "static public method",
+          "startLine": 328,
+          "endLine": 330,
+          "signature": "() => any",
+          "summary": "static public method L328-L330 (3 lines)"
+        },
+        {
+          "name": "getCurrentTimeHHMM",
+          "kind": "static public method",
+          "startLine": 332,
+          "endLine": 337,
+          "signature": "() => any",
+          "summary": "static public method L332-L337 (6 lines)"
+        },
+        {
+          "name": "formatPosition",
+          "kind": "static public method",
+          "startLine": 351,
+          "endLine": 387,
           "signature": "(title = '', level = '', positionType = '', fullFallback = '') => any",
-          "summary": "static public method L326-L362 (37 lines)"
+          "summary": "static public method L351-L387 (37 lines)"
         },
         {
-          "name": "UIHelpers.capturePortrait3x4FromVideo",
+          "name": "capturePortrait3x4FromVideo",
           "kind": "static public method",
-          "startLine": 364,
-          "endLine": 398,
+          "startLine": 389,
+          "endLine": 423,
           "signature": "(videoEl, canvasEl) => any",
-          "summary": "static public method L364-L398 (35 lines)"
+          "summary": "static public method L389-L423 (35 lines)"
         },
         {
-          "name": "UIHelpers.verifyImageUrl",
+          "name": "verifyImageUrl",
           "kind": "static public method",
-          "startLine": 400,
-          "endLine": 458,
+          "startLine": 425,
+          "endLine": 483,
           "signature": "(rawUrl) => any",
-          "summary": "static public method L400-L458 (59 lines)"
+          "summary": "static public method L425-L483 (59 lines)"
         },
         {
-          "name": "UIHelpers.verifyGoogleDriveLink",
+          "name": "verifyGoogleDriveLink",
           "kind": "static public async method",
-          "startLine": 460,
-          "endLine": 519,
+          "startLine": 485,
+          "endLine": 544,
           "signature": "(scriptUrl, folderId = '', options = {}) => Promise<any>",
-          "summary": "static public async method L460-L519 (60 lines)"
+          "summary": "static public async method L485-L544 (60 lines)"
         },
         {
-          "name": "UIHelpers.uploadPhotoToGoogleDrive",
+          "name": "uploadPhotoToGoogleDrive",
           "kind": "static public async method",
-          "startLine": 521,
-          "endLine": 615,
+          "startLine": 546,
+          "endLine": 640,
           "signature": "(base64DataUrl, fileNamePrefix, settings, options = {}) => Promise<any>",
-          "summary": "static public async method L521-L615 (95 lines)"
+          "summary": "static public async method L546-L640 (95 lines)"
         },
         {
-          "name": "UIHelpers.showLoading",
+          "name": "showLoading",
           "kind": "static public method",
-          "startLine": 622,
-          "endLine": 684,
+          "startLine": 647,
+          "endLine": 709,
           "signature": "(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any",
-          "summary": "static public method L622-L684 (63 lines)"
+          "summary": "static public method L647-L709 (63 lines)"
         },
         {
-          "name": "UIHelpers.#updateProgressDOM",
+          "name": "#updateProgressDOM",
           "kind": "static private method",
-          "startLine": 686,
-          "endLine": 693,
+          "startLine": 711,
+          "endLine": 718,
           "signature": "(percent) => any",
-          "summary": "static private method L686-L693 (8 lines)"
+          "summary": "static private method L711-L718 (8 lines)"
         },
         {
-          "name": "UIHelpers.hideLoading",
+          "name": "hideLoading",
           "kind": "static public method",
-          "startLine": 695,
-          "endLine": 720,
+          "startLine": 720,
+          "endLine": 745,
           "signature": "() => any",
-          "summary": "static public method L695-L720 (26 lines)"
+          "summary": "static public method L720-L745 (26 lines)"
         },
         {
-          "name": "UIHelpers.renderTableSkeleton",
+          "name": "renderTableSkeleton",
           "kind": "static public method",
-          "startLine": 722,
-          "endLine": 732,
+          "startLine": 747,
+          "endLine": 757,
           "signature": "(rows = 5, cols = 6) => any",
-          "summary": "static public method L722-L732 (11 lines)"
+          "summary": "static public method L747-L757 (11 lines)"
         },
         {
-          "name": "UIHelpers.alert",
+          "name": "alert",
           "kind": "static public async method",
-          "startLine": 734,
-          "endLine": 769,
+          "startLine": 759,
+          "endLine": 794,
           "signature": "(title, text = '', icon = 'success') => Promise<any>",
-          "summary": "static public async method L734-L769 (36 lines)"
+          "summary": "static public async method L759-L794 (36 lines)"
         },
         {
-          "name": "UIHelpers.confirm",
+          "name": "confirm",
           "kind": "static public async method",
-          "startLine": 771,
-          "endLine": 821,
+          "startLine": 796,
+          "endLine": 846,
           "signature": "(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>",
-          "summary": "static public async method L771-L821 (51 lines)"
+          "summary": "static public async method L796-L846 (51 lines)"
         },
         {
-          "name": "UIHelpers.confirmWithInput",
+          "name": "confirmWithInput",
           "kind": "static public async method",
-          "startLine": 823,
-          "endLine": 897,
+          "startLine": 848,
+          "endLine": 922,
           "signature": "(title, options = {}) => Promise<any>",
-          "summary": "static public async method L823-L897 (75 lines)"
+          "summary": "static public async method L848-L922 (75 lines)"
         },
         {
-          "name": "UIHelpers.validateThaiNationalId",
+          "name": "validateThaiNationalId",
           "kind": "static public method",
-          "startLine": 899,
-          "endLine": 918,
+          "startLine": 924,
+          "endLine": 943,
           "signature": "(id, strictCheckDigit = false) => any",
-          "summary": "static public method L899-L918 (20 lines)"
+          "summary": "static public method L924-L943 (20 lines)"
         },
         {
-          "name": "UIHelpers.getLast6DigitsFromNationalId",
+          "name": "getLast6DigitsFromNationalId",
           "kind": "static public method",
-          "startLine": 920,
-          "endLine": 924,
+          "startLine": 945,
+          "endLine": 949,
           "signature": "(nationalId) => any",
-          "summary": "static public method L920-L924 (5 lines)"
+          "summary": "static public method L945-L949 (5 lines)"
         },
         {
-          "name": "UIHelpers.exportToExcelUTF8",
+          "name": "exportToExcelUTF8",
           "kind": "static public method",
-          "startLine": 926,
-          "endLine": 951,
+          "startLine": 951,
+          "endLine": 976,
           "signature": "(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any",
-          "summary": "static public method L926-L951 (26 lines)"
+          "summary": "static public method L951-L976 (26 lines)"
         },
         {
-          "name": "UIHelpers.exportMultiSheetExcel",
+          "name": "exportMultiSheetExcel",
           "kind": "static public method",
-          "startLine": 958,
-          "endLine": 978,
+          "startLine": 983,
+          "endLine": 1003,
           "signature": "(sheets, fileName = 'export_data') => any",
-          "summary": "static public method L958-L978 (21 lines)"
+          "summary": "static public method L983-L1003 (21 lines)"
         },
         {
-          "name": "UIHelpers.exportTemplateWithValidationsExcel",
+          "name": "exportTemplateWithValidationsExcel",
           "kind": "static public async method",
-          "startLine": 987,
-          "endLine": 1250,
+          "startLine": 1012,
+          "endLine": 1275,
           "signature": "({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>",
-          "summary": "static public async method L987-L1250 (264 lines)"
+          "summary": "static public async method L1012-L1275 (264 lines)"
         },
         {
-          "name": "UIHelpers.parseExcelFileUTF8",
+          "name": "parseExcelFileUTF8",
           "kind": "static public method",
-          "startLine": 1252,
-          "endLine": 1274,
+          "startLine": 1277,
+          "endLine": 1299,
           "signature": "(file) => any",
-          "summary": "static public method L1252-L1274 (23 lines)"
+          "summary": "static public method L1277-L1299 (23 lines)"
         },
         {
-          "name": "UIHelpers.printReportInNewTab",
+          "name": "printReportInNewTab",
           "kind": "static public method",
-          "startLine": 1276,
-          "endLine": 1453,
+          "startLine": 1301,
+          "endLine": 1478,
           "signature": "({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any",
-          "summary": "static public method L1276-L1453 (178 lines)"
+          "summary": "static public method L1301-L1478 (178 lines)"
         },
         {
-          "name": "UIHelpers.syncBodyModalLock",
+          "name": "syncBodyModalLock",
           "kind": "static public method",
-          "startLine": 1458,
-          "endLine": 1481,
+          "startLine": 1483,
+          "endLine": 1506,
           "signature": "() => any",
           "summary": "ซิงค์สถานะล็อกสกรอลล์พื้นหลัง (body.bma-modal-open) ตาม Modal ที่กำลังเปิดอยู่"
         },
         {
-          "name": "UIHelpers.prepareModalOpen",
+          "name": "prepareModalOpen",
           "kind": "static public method",
-          "startLine": 1487,
-          "endLine": 1497,
+          "startLine": 1512,
+          "endLine": 1522,
           "signature": "(modalEl) => any",
-          "summary": "static public method L1487-L1497 (11 lines)"
+          "summary": "static public method L1512-L1522 (11 lines)"
         },
         {
-          "name": "UIHelpers.bindModalDismiss",
+          "name": "bindModalDismiss",
           "kind": "static public method",
-          "startLine": 1504,
-          "endLine": 1548,
+          "startLine": 1529,
+          "endLine": 1573,
           "signature": "(modalEl, closeCallback) => any",
-          "summary": "static public method L1504-L1548 (45 lines)"
+          "summary": "static public method L1529-L1573 (45 lines)"
         },
         {
           "name": "onEsc",
           "kind": "arrow_fn",
-          "startLine": 1529,
-          "endLine": 1545,
+          "startLine": 1554,
+          "endLine": 1570,
           "signature": "(e) => inferred",
-          "summary": "Arrow Function L1529-L1545"
+          "summary": "Arrow Function L1554-L1570"
         }
       ]
     },
@@ -4766,7 +4774,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "66433c83e45f3ba3",
+      "fileHash": "3b4bd8f2060af925",
       "totalLines": 1138,
       "importsCount": 0,
       "importsPreview": [],
@@ -5049,7 +5057,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "728a25f35bfb0f1a",
+      "fileHash": "3dac652d3d5fee8a",
       "totalLines": 284,
       "importsCount": 0,
       "importsPreview": [],
@@ -5363,8 +5371,8 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "277a6706c7b60771",
-      "totalLines": 436,
+      "fileHash": "a7db1e6d5c5ea64a",
+      "totalLines": 449,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -5373,57 +5381,57 @@
           "name": "<head>",
           "kind": "html_dom_section",
           "startLine": 3,
-          "endLine": 193,
+          "endLine": 206,
           "signature": "<head>",
-          "summary": "HTML DOM Section L3-L193"
+          "summary": "HTML DOM Section L3-L206"
         },
         {
           "name": "<div#mobileOrgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 218,
-          "endLine": 218,
+          "startLine": 231,
+          "endLine": 231,
           "signature": "id=\"mobileOrgLogoWrapper\"",
-          "summary": "HTML DOM Section L218-L218"
+          "summary": "HTML DOM Section L231-L231"
         },
         {
           "name": "<main>",
           "kind": "html_dom_section",
-          "startLine": 225,
-          "endLine": 337,
+          "startLine": 238,
+          "endLine": 350,
           "signature": "<main>",
-          "summary": "HTML DOM Section L225-L337"
+          "summary": "HTML DOM Section L238-L350"
         },
         {
           "name": "<div#orgLogoWrapper>",
           "kind": "html_dom_section",
-          "startLine": 232,
-          "endLine": 234,
+          "startLine": 245,
+          "endLine": 247,
           "signature": "id=\"orgLogoWrapper\"",
-          "summary": "HTML DOM Section L232-L234"
+          "summary": "HTML DOM Section L245-L247"
         },
         {
           "name": "<form#loginForm>",
           "kind": "html_dom_section",
-          "startLine": 246,
-          "endLine": 334,
+          "startLine": 259,
+          "endLine": 347,
           "signature": "id=\"loginForm\"",
-          "summary": "HTML DOM Section L246-L334"
+          "summary": "HTML DOM Section L259-L347"
         },
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 434,
-          "endLine": 434,
+          "startLine": 447,
+          "endLine": 447,
           "signature": "<script>",
-          "summary": "Bootstrap script L434-L434"
+          "summary": "Bootstrap script L447-L447"
         }
       ]
     },
     {
       "filePath": "loading.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "1a0eaeec35e2026e",
-      "totalLines": 449,
+      "fileHash": "c52c9daa98def3fb",
+      "totalLines": 456,
       "importsCount": 0,
       "importsPreview": [],
       "exports": [],
@@ -5439,17 +5447,17 @@
         {
           "name": "<script type=\"module\"> (Page Bootstrap)",
           "kind": "html_module_script",
-          "startLine": 447,
-          "endLine": 447,
+          "startLine": 454,
+          "endLine": 454,
           "signature": "<script>",
-          "summary": "Bootstrap script L447-L447"
+          "summary": "Bootstrap script L454-L454"
         }
       ]
     },
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "55a0e067311a057f",
+      "fileHash": "027aa99bd96d04a2",
       "totalLines": 694,
       "importsCount": 0,
       "importsPreview": [],
@@ -9411,7 +9419,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "433792dff37b5c3a",
+      "fileHash": "e433a99f8a02dcc7",
       "totalLines": 124,
       "importsCount": 0,
       "importsPreview": [],
@@ -9430,7 +9438,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs",
       "layer": "Application Module",
-      "fileHash": "8fdb352bdc5bac92",
+      "fileHash": "5618b32df35273b3",
       "totalLines": 280,
       "importsCount": 1,
       "importsPreview": [
@@ -9467,7 +9475,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs",
       "layer": "Application Module",
-      "fileHash": "366c3946e33e3d65",
+      "fileHash": "08b7a6ef3cad9055",
       "totalLines": 367,
       "importsCount": 1,
       "importsPreview": [
@@ -11745,9 +11753,28 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261121-fix-cloudflare-loading-path-loop/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "6aba11578525726e",
+      "totalLines": 70,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
       "filePath": "pipeline/PIPE-20261121-switch-schema-staging-to-public/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "268ced14c626dfa1",
+      "fileHash": "20d04ae30ed39a07",
       "totalLines": 141,
       "importsCount": 0,
       "importsPreview": [],
@@ -11766,7 +11793,7 @@
     {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "f6046855af6cb951",
+      "fileHash": "4a2d0e6c0c07f9c2",
       "totalLines": 556,
       "importsCount": 0,
       "importsPreview": [],
@@ -11849,7 +11876,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "07f93b8a77bcc014",
+      "fileHash": "e6d6481a7b0ec6bb",
       "totalLines": 1082,
       "importsCount": 0,
       "importsPreview": [],
@@ -12415,7 +12442,7 @@
     {
       "filePath": "sql/migration_public_full_loca_v2_sync.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "50b726c0edf0ff4e",
+      "fileHash": "61d4c20a8539c4fc",
       "totalLines": 271,
       "importsCount": 0,
       "importsPreview": [],
@@ -12664,7 +12691,7 @@
     {
       "filePath": "time-corrections.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "fccd476079c13aab",
+      "fileHash": "485a3ac403b93672",
       "totalLines": 240,
       "importsCount": 0,
       "importsPreview": [],
@@ -12731,7 +12758,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "34a86bccff5c4766",
+      "fileHash": "fd250365a3e5aacf",
       "totalLines": 475,
       "importsCount": 0,
       "importsPreview": [],

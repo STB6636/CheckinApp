@@ -22,7 +22,7 @@ export class LoginController {
         // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าโหลดเพื่อตรวจสอบสถานะก่อนเข้าสู่ระบบ
         const existingSessionUser = AuthService.getCurrentUser(true);
         if (existingSessionUser) {
-            window.location.replace('loading.html?entry=session');
+            window.location.replace(UIHelpers.resolveAppUrl('loading.html?entry=session'));
             return;
         }
 
@@ -245,7 +245,7 @@ export class LoginController {
 
             this.#persistRememberedUser(username);
 
-            window.location.replace('loading.html?entry=login');
+            window.location.replace(UIHelpers.resolveAppUrl('loading.html?entry=login'));
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);
