@@ -6,7 +6,7 @@
 export class Config {
     static SUPABASE_URL = 'https://yicatrqogmcncfpqdyra.supabase.co';
     static SUPABASE_ANON_KEY = 'sb_publishable_eF5hCLSrg74gre5UXNtVgw_UsPRbPZl';
-    static SUPABASE_SCHEMA = 'staging';
+    static SUPABASE_SCHEMA = 'public';
     static PROJECT_REF = 'yicatrqogmcncfpqdyra';
     static GITHUB_REPO = 'https://github.com/STB6636/CheckinApp.git';
 

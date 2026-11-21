@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-19T08:46:16.135Z",
-  "totalFilesScanned": 190,
-  "totalSymbolsIndexed": 1281,
+  "generatedAt": "2026-11-21T06:53:46.695Z",
+  "totalFilesScanned": 192,
+  "totalSymbolsIndexed": 1288,
   "files": [
     {
       "filePath": "approvals.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "43c0968555d6d866",
+      "fileHash": "ed3e9ddd54758b6c",
       "totalLines": 239,
       "importsCount": 0,
       "importsPreview": [],
@@ -215,7 +215,7 @@
     {
       "filePath": "assets/js/components/SystemUpdateModal.js",
       "layer": "Shared UI Component Layer",
-      "fileHash": "4af5dd89ce3ec22b",
+      "fileHash": "45a9ae58f0ebd7e0",
       "totalLines": 843,
       "importsCount": 0,
       "importsPreview": [],
@@ -1567,7 +1567,7 @@
     {
       "filePath": "assets/js/controllers/LoadingController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "149d433961142d62",
+      "fileHash": "183384a514fd3c0f",
       "totalLines": 382,
       "importsCount": 4,
       "importsPreview": [
@@ -2928,7 +2928,7 @@
     {
       "filePath": "assets/js/controllers/TimeCorrectionsController.js",
       "layer": "Frontend Page Controller Layer (OOP)",
-      "fileHash": "3b4d80be1d7cb810",
+      "fileHash": "784a66c954707996",
       "totalLines": 658,
       "importsCount": 5,
       "importsPreview": [
@@ -3472,7 +3472,7 @@
     {
       "filePath": "assets/js/core/Config.js",
       "layer": "Core Service & Infrastructure Layer",
-      "fileHash": "8bc325eb9be74dcf",
+      "fileHash": "ff0185683072090d",
       "totalLines": 124,
       "importsCount": 0,
       "importsPreview": [],
@@ -3907,8 +3907,8 @@
     {
       "filePath": "assets/js/models/AttendanceModel.js",
       "layer": "Data Model & Supabase Repository Layer",
-      "fileHash": "dbb1be9681748edc",
-      "totalLines": 3464,
+      "fileHash": "4eadb2cd3e6e143c",
+      "totalLines": 3467,
       "importsCount": 5,
       "importsPreview": [
         "import { Config } from '../core/Config.js';",
@@ -3925,9 +3925,9 @@
           "name": "AttendanceModel",
           "kind": "class",
           "startLine": 12,
-          "endLine": 3464,
+          "endLine": 3467,
           "signature": "export class AttendanceModel",
-          "summary": "Class Definition (3453 lines)"
+          "summary": "Class Definition (3456 lines)"
         },
         {
           "name": "AttendanceModel.clearLocationCache",
@@ -4253,89 +4253,89 @@
           "name": "AttendanceModel.submitTimeCorrectionRequest",
           "kind": "static public async method",
           "startLine": 2695,
-          "endLine": 2771,
+          "endLine": 2774,
           "signature": "(logId, currentUser, reason = '') => Promise<any>",
           "summary": "ผู้ใช้งานส่งคำขอแก้ไขเวลาเข้า-ออกงานสำหรับรายการที่ระบุ (เหตุผล Optional)"
         },
         {
           "name": "AttendanceModel.getTimeCorrectionRequests",
           "kind": "static public async method",
-          "startLine": 2776,
-          "endLine": 2874,
+          "startLine": 2779,
+          "endLine": 2877,
           "signature": "(currentUser, statusFilter = 'pending') => Promise<any>",
           "summary": "ดึงรายการคำขอแก้ไขเวลาสำหรับผู้ดูแลระบบ พร้อมข้อมูลผู้ขอ (Role) และสิทธิ์การอนุมัติ"
         },
         {
           "name": "AttendanceModel.processTimeCorrectionsBulk",
           "kind": "static public async method",
-          "startLine": 2883,
-          "endLine": 3011,
+          "startLine": 2886,
+          "endLine": 3014,
           "signature": "(logIds, isApprovedOrDecision, currentUser, rejectReason = '') => Promise<any>",
-          "summary": "static public async method L2883-L3011 (129 lines)"
+          "summary": "static public async method L2886-L3014 (129 lines)"
         },
         {
           "name": "AttendanceModel.getDatesBetween",
           "kind": "static public method",
-          "startLine": 3013,
-          "endLine": 3030,
+          "startLine": 3016,
+          "endLine": 3033,
           "signature": "(startDate, endDate) => any",
-          "summary": "static public method L3013-L3030 (18 lines)"
+          "summary": "static public method L3016-L3033 (18 lines)"
         },
         {
           "name": "AttendanceModel.getReportRecordsByDateRange",
           "kind": "static public async method",
-          "startLine": 3032,
-          "endLine": 3103,
+          "startLine": 3035,
+          "endLine": 3106,
           "signature": "(startDate, endDate, currentUser) => Promise<any>",
-          "summary": "static public async method L3032-L3103 (72 lines)"
+          "summary": "static public async method L3035-L3106 (72 lines)"
         },
         {
           "name": "AttendanceModel.#formatReportRow",
           "kind": "static private method",
-          "startLine": 3105,
-          "endLine": 3155,
+          "startLine": 3108,
+          "endLine": 3158,
           "signature": "(person, log, workDate, evalStatus) => any",
-          "summary": "static private method L3105-L3155 (51 lines)"
+          "summary": "static private method L3108-L3158 (51 lines)"
         },
         {
           "name": "AttendanceModel.getDailyReportRecords",
           "kind": "static public async method",
-          "startLine": 3157,
-          "endLine": 3159,
+          "startLine": 3160,
+          "endLine": 3162,
           "signature": "(workDate, currentUser) => Promise<any>",
-          "summary": "static public async method L3157-L3159 (3 lines)"
+          "summary": "static public async method L3160-L3162 (3 lines)"
         },
         {
           "name": "AttendanceModel.saveAdminAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 3161,
-          "endLine": 3330,
+          "startLine": 3164,
+          "endLine": 3333,
           "signature": "(payload) => Promise<any>",
-          "summary": "static public async method L3161-L3330 (170 lines)"
+          "summary": "static public async method L3164-L3333 (170 lines)"
         },
         {
           "name": "AttendanceModel.deleteAttendanceRecord",
           "kind": "static public async method",
-          "startLine": 3332,
-          "endLine": 3350,
+          "startLine": 3335,
+          "endLine": 3353,
           "signature": "(logId) => Promise<any>",
-          "summary": "static public async method L3332-L3350 (19 lines)"
+          "summary": "static public async method L3335-L3353 (19 lines)"
         },
         {
           "name": "AttendanceModel.calculateDashboardMetrics",
           "kind": "static public method",
-          "startLine": 3352,
-          "endLine": 3415,
+          "startLine": 3355,
+          "endLine": 3418,
           "signature": "(dailyRecords) => any",
-          "summary": "static public method L3352-L3415 (64 lines)"
+          "summary": "static public method L3355-L3418 (64 lines)"
         },
         {
           "name": "AttendanceModel.getTodaySyncWatermark",
           "kind": "static public async method",
-          "startLine": 3421,
-          "endLine": 3463,
+          "startLine": 3424,
+          "endLine": 3466,
           "signature": "() => Promise<any>",
-          "summary": "static public async method L3421-L3463 (43 lines)"
+          "summary": "static public async method L3424-L3466 (43 lines)"
         }
       ]
     },
@@ -4665,7 +4665,7 @@
     {
       "filePath": "assets/js/utils/DOMDiffHelper.js",
       "layer": "Application Module",
-      "fileHash": "10662234de402079",
+      "fileHash": "6621993ebcb20d51",
       "totalLines": 249,
       "importsCount": 0,
       "importsPreview": [],
@@ -4766,7 +4766,7 @@
     {
       "filePath": "checkin.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b3ca66ca1380346c",
+      "fileHash": "66433c83e45f3ba3",
       "totalLines": 1138,
       "importsCount": 0,
       "importsPreview": [],
@@ -5049,7 +5049,7 @@
     {
       "filePath": "dashboard.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "0886d8a9d58b4e1e",
+      "fileHash": "728a25f35bfb0f1a",
       "totalLines": 284,
       "importsCount": 0,
       "importsPreview": [],
@@ -5363,7 +5363,7 @@
     {
       "filePath": "index.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9026bb75c5d3b6c4",
+      "fileHash": "277a6706c7b60771",
       "totalLines": 436,
       "importsCount": 0,
       "importsPreview": [],
@@ -5422,7 +5422,7 @@
     {
       "filePath": "loading.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "146ad4601ce4e7b1",
+      "fileHash": "1a0eaeec35e2026e",
       "totalLines": 449,
       "importsCount": 0,
       "importsPreview": [],
@@ -5449,7 +5449,7 @@
     {
       "filePath": "personnel.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "2529033f93f98cf1",
+      "fileHash": "55a0e067311a057f",
       "totalLines": 694,
       "importsCount": 0,
       "importsPreview": [],
@@ -6979,7 +6979,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-fix-staging-table-relations/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7d44056a9bdb417a",
+      "fileHash": "e651c1facdf9b65e",
       "totalLines": 196,
       "importsCount": 0,
       "importsPreview": [],
@@ -6998,7 +6998,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-lean-ai-workflow/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "bd26ac30913a5b32",
+      "fileHash": "9d34aa2596f0e230",
       "totalLines": 164,
       "importsCount": 0,
       "importsPreview": [],
@@ -7017,7 +7017,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "3aacfb4b78b96b32",
+      "fileHash": "6b1f620d7c170f75",
       "totalLines": 134,
       "importsCount": 0,
       "importsPreview": [],
@@ -7036,7 +7036,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/qa_loca_v2_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "ad9ead718c9dee87",
+      "fileHash": "14b1eb2263e07a22",
       "totalLines": 341,
       "importsCount": 3,
       "importsPreview": [
@@ -7091,7 +7091,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ef35adbb2d2d1565",
+      "fileHash": "e631e305ae8ce3f6",
       "totalLines": 609,
       "importsCount": 0,
       "importsPreview": [],
@@ -7134,7 +7134,7 @@
     {
       "filePath": "pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/qa_zero_scroll_test.mjs",
       "layer": "Application Module",
-      "fileHash": "ba0df63fd43f1d5b",
+      "fileHash": "9f0b1bf20adac291",
       "totalLines": 260,
       "importsCount": 2,
       "importsPreview": [
@@ -7156,7 +7156,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-3to4-zero-scroll/qa_3to4_zero_scroll_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "784e708257ad7745",
+      "fileHash": "fc6414843b654edd",
       "totalLines": 246,
       "importsCount": 2,
       "importsPreview": [
@@ -7178,7 +7178,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-cockpit-split-layout/qa_cockpit_split_test.mjs",
       "layer": "Application Module",
-      "fileHash": "ed864983a4037a3c",
+      "fileHash": "9e6968af8d9af300",
       "totalLines": 327,
       "importsCount": 2,
       "importsPreview": [
@@ -7200,7 +7200,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "c6df485d154a960c",
+      "fileHash": "9216ce1451b4c319",
       "totalLines": 140,
       "importsCount": 2,
       "importsPreview": [
@@ -7222,7 +7222,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "c82916fd7a05fc2e",
+      "fileHash": "4c829ae3391757c8",
       "totalLines": 352,
       "importsCount": 0,
       "importsPreview": [],
@@ -7273,7 +7273,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/qa_gps_symmetry_test.mjs",
       "layer": "Application Module",
-      "fileHash": "03d9d7ed698ed5e7",
+      "fileHash": "60c115de4404ece7",
       "totalLines": 221,
       "importsCount": 4,
       "importsPreview": [
@@ -7297,7 +7297,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "87418c6c3d0fa5a8",
+      "fileHash": "e82e2910ac332157",
       "totalLines": 697,
       "importsCount": 0,
       "importsPreview": [],
@@ -7412,7 +7412,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs",
       "layer": "Application Module",
-      "fileHash": "841b5ace65f0238a",
+      "fileHash": "3693c8b1cd484c70",
       "totalLines": 151,
       "importsCount": 2,
       "importsPreview": [
@@ -7434,7 +7434,7 @@
     {
       "filePath": "pipeline/PIPE-20261105-loca-v2-polish/qa_loca_v2_polish_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "9067a4ef8530d0ed",
+      "fileHash": "89ae60c5e5161039",
       "totalLines": 99,
       "importsCount": 1,
       "importsPreview": [
@@ -7455,7 +7455,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "eb7b4899bbe550d6",
+      "fileHash": "606754168b2a74b7",
       "totalLines": 770,
       "importsCount": 0,
       "importsPreview": [],
@@ -7482,7 +7482,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "bf683afec1a72744",
+      "fileHash": "5d851a6619234635",
       "totalLines": 68,
       "importsCount": 1,
       "importsPreview": [
@@ -7494,7 +7494,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_dom_diff_unit_test.mjs",
       "layer": "Application Module",
-      "fileHash": "7cabe8b1b23895fa",
+      "fileHash": "acfa5290bf0a566b",
       "totalLines": 217,
       "importsCount": 1,
       "importsPreview": [
@@ -7651,7 +7651,7 @@
     {
       "filePath": "pipeline/PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "38f23e696ded318b",
+      "fileHash": "add50985244b0508",
       "totalLines": 497,
       "importsCount": 0,
       "importsPreview": [],
@@ -7694,7 +7694,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "859782ae5f8429e2",
+      "fileHash": "3655adccd260bdbb",
       "totalLines": 142,
       "importsCount": 0,
       "importsPreview": [],
@@ -7713,7 +7713,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "875a992ddf90dcf2",
+      "fileHash": "b824495242f833e1",
       "totalLines": 68,
       "importsCount": 1,
       "importsPreview": [
@@ -7725,7 +7725,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_functional_robustness_test.mjs",
       "layer": "Application Module",
-      "fileHash": "742111fb296344e2",
+      "fileHash": "74863609ce346320",
       "totalLines": 284,
       "importsCount": 2,
       "importsPreview": [
@@ -7787,7 +7787,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_app_layout.mjs",
       "layer": "Application Module",
-      "fileHash": "6a6d1a90b975d135",
+      "fileHash": "af394dfa47048c11",
       "totalLines": 184,
       "importsCount": 1,
       "importsPreview": [
@@ -7799,7 +7799,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_attendance_model.mjs",
       "layer": "Application Module",
-      "fileHash": "5cf78dd64cf632d0",
+      "fileHash": "29a00a83689a1b4e",
       "totalLines": 358,
       "importsCount": 1,
       "importsPreview": [
@@ -7811,7 +7811,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_checkin.mjs",
       "layer": "Application Module",
-      "fileHash": "098682ffc77649e3",
+      "fileHash": "e8327e01dc50f7b8",
       "totalLines": 134,
       "importsCount": 1,
       "importsPreview": [
@@ -7823,7 +7823,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_dashboard.mjs",
       "layer": "Application Module",
-      "fileHash": "6f0116dd21203e09",
+      "fileHash": "3511cdabfa44b439",
       "totalLines": 70,
       "importsCount": 1,
       "importsPreview": [
@@ -7835,7 +7835,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_reports.mjs",
       "layer": "Application Module",
-      "fileHash": "07ef5eeaf087acf9",
+      "fileHash": "533841669eaabe54",
       "totalLines": 121,
       "importsCount": 1,
       "importsPreview": [
@@ -7847,7 +7847,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/inspect_staging_schema.mjs",
       "layer": "Application Module",
-      "fileHash": "34578b11310ad8cc",
+      "fileHash": "890e7ddac163ae28",
       "totalLines": 133,
       "importsCount": 0,
       "importsPreview": [],
@@ -7874,7 +7874,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ab36a9c0cd2c55b6",
+      "fileHash": "fee2788fdca6c2a9",
       "totalLines": 224,
       "importsCount": 0,
       "importsPreview": [],
@@ -7893,7 +7893,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_cache_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "172da6c29bc306dc",
+      "fileHash": "23aff4fbf439b149",
       "totalLines": 74,
       "importsCount": 1,
       "importsPreview": [
@@ -7905,7 +7905,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_comprehensive_test.mjs",
       "layer": "Application Module",
-      "fileHash": "d87d1929f093d2c1",
+      "fileHash": "325da2bc88343839",
       "totalLines": 124,
       "importsCount": 2,
       "importsPreview": [
@@ -7918,7 +7918,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_live_persistence_test.mjs",
       "layer": "Application Module",
-      "fileHash": "ee29c199dd71d23c",
+      "fileHash": "bb4a4c22366868a4",
       "totalLines": 100,
       "importsCount": 3,
       "importsPreview": [
@@ -7989,7 +7989,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_rev2_verification_test.mjs",
       "layer": "Application Module",
-      "fileHash": "5ceadf6f54684575",
+      "fileHash": "269a5ecd93113b12",
       "totalLines": 88,
       "importsCount": 2,
       "importsPreview": [
@@ -8002,7 +8002,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_applayout_realtime_js.mjs",
       "layer": "Application Module",
-      "fileHash": "654bccafd3c3fc9e",
+      "fileHash": "6bcf0bf88a14b49d",
       "totalLines": 63,
       "importsCount": 2,
       "importsPreview": [
@@ -8064,7 +8064,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_broadcast_behavior.mjs",
       "layer": "Application Module",
-      "fileHash": "f940ae6471ebbce7",
+      "fileHash": "57e70cc0aab16715",
       "totalLines": 63,
       "importsCount": 2,
       "importsPreview": [
@@ -8077,7 +8077,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_daily_report_records.mjs",
       "layer": "Application Module",
-      "fileHash": "665cb702462272f8",
+      "fileHash": "cdf44f23bd216aee",
       "totalLines": 44,
       "importsCount": 2,
       "importsPreview": [
@@ -8090,7 +8090,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_live_ws_trigger.mjs",
       "layer": "Application Module",
-      "fileHash": "5ec5d12d8a3a4298",
+      "fileHash": "76bab416874b3723",
       "totalLines": 74,
       "importsCount": 0,
       "importsPreview": [],
@@ -8100,7 +8100,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_non_existent_table_sub.mjs",
       "layer": "Application Module",
-      "fileHash": "bfcd14b107a75c1e",
+      "fileHash": "5611f5f4736629f7",
       "totalLines": 33,
       "importsCount": 2,
       "importsPreview": [
@@ -8113,7 +8113,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_realtime_crud_live.mjs",
       "layer": "Application Module",
-      "fileHash": "a5971a764c73d573",
+      "fileHash": "5ac21cc7bec74cd3",
       "totalLines": 97,
       "importsCount": 2,
       "importsPreview": [
@@ -8126,7 +8126,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_checkin_flow.mjs",
       "layer": "Application Module",
-      "fileHash": "43af9bc5286ec09a",
+      "fileHash": "3efeffc7826c70eb",
       "totalLines": 28,
       "importsCount": 2,
       "importsPreview": [
@@ -8188,7 +8188,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_columns.mjs",
       "layer": "Application Module",
-      "fileHash": "62c84bd9c2f55431",
+      "fileHash": "f14b0fbcf7f0ac5b",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -8207,7 +8207,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_watermark.mjs",
       "layer": "Application Module",
-      "fileHash": "50927bd4091763b9",
+      "fileHash": "3ded696faf3aa959",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -8226,7 +8226,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_supabase_realtime_ws.mjs",
       "layer": "Application Module",
-      "fileHash": "1d02d30f6bf46175",
+      "fileHash": "1b025b94e40ff4a3",
       "totalLines": 58,
       "importsCount": 0,
       "importsPreview": [],
@@ -8236,7 +8236,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_debug.mjs",
       "layer": "Application Module",
-      "fileHash": "2f31d06487c2a984",
+      "fileHash": "5e9e9ed971b8a676",
       "totalLines": 41,
       "importsCount": 2,
       "importsPreview": [
@@ -8249,7 +8249,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_live.mjs",
       "layer": "Application Module",
-      "fileHash": "8b8ff6e6c281c1bd",
+      "fileHash": "2d85a0963e44b71b",
       "totalLines": 47,
       "importsCount": 0,
       "importsPreview": [],
@@ -8268,7 +8268,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_query.mjs",
       "layer": "Application Module",
-      "fileHash": "08a3d9167cf2c55e",
+      "fileHash": "e703c363d5832497",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -8287,7 +8287,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_safe.mjs",
       "layer": "Application Module",
-      "fileHash": "fa42408d36be917b",
+      "fileHash": "d055b9bd3d84c94b",
       "totalLines": 19,
       "importsCount": 0,
       "importsPreview": [],
@@ -8306,7 +8306,7 @@
     {
       "filePath": "pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_write_postgrest.mjs",
       "layer": "Application Module",
-      "fileHash": "395d2623bcf39637",
+      "fileHash": "aa3f997ef807db73",
       "totalLines": 27,
       "importsCount": 0,
       "importsPreview": [],
@@ -8325,7 +8325,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "4089bfbc498cc6a7",
+      "fileHash": "7224279609c12254",
       "totalLines": 250,
       "importsCount": 0,
       "importsPreview": [],
@@ -8344,7 +8344,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs",
       "layer": "Application Module",
-      "fileHash": "71b631730bc074b2",
+      "fileHash": "2da3175d09e13e94",
       "totalLines": 492,
       "importsCount": 4,
       "importsPreview": [
@@ -8400,7 +8400,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/audit_cache_sync.mjs",
       "layer": "Application Module",
-      "fileHash": "33b4e39f15afc3e5",
+      "fileHash": "42128d1382167564",
       "totalLines": 50,
       "importsCount": 1,
       "importsPreview": [
@@ -8412,7 +8412,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "8c4b8fd2770a6869",
+      "fileHash": "71e975bb092c4974",
       "totalLines": 212,
       "importsCount": 0,
       "importsPreview": [],
@@ -8431,7 +8431,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_unit_mock_tests.mjs",
       "layer": "Application Module",
-      "fileHash": "618a241232fe53e6",
+      "fileHash": "fc45a29c7be67452",
       "totalLines": 430,
       "importsCount": 1,
       "importsPreview": [
@@ -8460,7 +8460,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_button_lock.mjs",
       "layer": "Application Module",
-      "fileHash": "4c5b9a0a06b4987b",
+      "fileHash": "a0f180444bed904e",
       "totalLines": 45,
       "importsCount": 2,
       "importsPreview": [
@@ -8482,7 +8482,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_places.mjs",
       "layer": "Application Module",
-      "fileHash": "4b5fd299d3159aeb",
+      "fileHash": "96395561bf851fb6",
       "totalLines": 194,
       "importsCount": 5,
       "importsPreview": [
@@ -8515,7 +8515,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b3250c98e3e18ed4",
+      "fileHash": "cdea2f0f97a5294c",
       "totalLines": 248,
       "importsCount": 0,
       "importsPreview": [],
@@ -8534,7 +8534,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_adversarial_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "3a8e926f76937ffd",
+      "fileHash": "5ae72241f5e0e9d9",
       "totalLines": 107,
       "importsCount": 2,
       "importsPreview": [
@@ -8572,7 +8572,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_verify_gps_refresh_and_clock.mjs",
       "layer": "Application Module",
-      "fileHash": "771827f9e89f9565",
+      "fileHash": "d1bff993c36b03b7",
       "totalLines": 64,
       "importsCount": 3,
       "importsPreview": [
@@ -8603,7 +8603,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/test_full_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "1b1cd903588333db",
+      "fileHash": "b27a7f849f222305",
       "totalLines": 191,
       "importsCount": 3,
       "importsPreview": [
@@ -8642,7 +8642,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "482ae9522e98fa0b",
+      "fileHash": "5e32f2db1fb1eba9",
       "totalLines": 290,
       "importsCount": 0,
       "importsPreview": [],
@@ -8669,7 +8669,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "bbe37b558bba82da",
+      "fileHash": "5eb039f430dddc70",
       "totalLines": 66,
       "importsCount": 3,
       "importsPreview": [
@@ -8692,7 +8692,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs",
       "layer": "Application Module",
-      "fileHash": "aff2048a6ed002bd",
+      "fileHash": "10c726c567ab6c4b",
       "totalLines": 190,
       "importsCount": 3,
       "importsPreview": [
@@ -8723,7 +8723,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs",
       "layer": "Application Module",
-      "fileHash": "6b0e318bd230b7c5",
+      "fileHash": "215fbed204e391b6",
       "totalLines": 275,
       "importsCount": 3,
       "importsPreview": [
@@ -8762,7 +8762,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "21f532f6f2e96b0a",
+      "fileHash": "2a2c16c6942ab063",
       "totalLines": 258,
       "importsCount": 0,
       "importsPreview": [],
@@ -8781,7 +8781,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "4fd5e25ecb67b95b",
+      "fileHash": "5fe81e53e24d2be1",
       "totalLines": 281,
       "importsCount": 3,
       "importsPreview": [
@@ -8804,7 +8804,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "e36b0752341bf8c7",
+      "fileHash": "cc2c2683ab0f8b3e",
       "totalLines": 139,
       "importsCount": 3,
       "importsPreview": [
@@ -8827,7 +8827,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "210b26a8c1603ab9",
+      "fileHash": "609fc01074f988af",
       "totalLines": 42,
       "importsCount": 1,
       "importsPreview": [
@@ -8839,7 +8839,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs",
       "layer": "Application Module",
-      "fileHash": "8ceac785762c57bc",
+      "fileHash": "c910c0f7f57b4555",
       "totalLines": 152,
       "importsCount": 3,
       "importsPreview": [
@@ -8862,7 +8862,7 @@
     {
       "filePath": "pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs",
       "layer": "Application Module",
-      "fileHash": "ce02121fd6cbee88",
+      "fileHash": "31ecadf08a2b088b",
       "totalLines": 123,
       "importsCount": 3,
       "importsPreview": [
@@ -8876,7 +8876,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "09dc9139f36c8556",
+      "fileHash": "b7a2909b17765728",
       "totalLines": 378,
       "importsCount": 0,
       "importsPreview": [],
@@ -8895,7 +8895,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/preflight_forward_search_simulation.mjs",
       "layer": "Application Module",
-      "fileHash": "573023b649fb4832",
+      "fileHash": "21130928faee9378",
       "totalLines": 64,
       "importsCount": 1,
       "importsPreview": [
@@ -8916,7 +8916,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/qa_audit_test_suite.mjs",
       "layer": "Application Module",
-      "fileHash": "9f8427e6aec77e01",
+      "fileHash": "cabf204e484c9bfd",
       "totalLines": 363,
       "importsCount": 2,
       "importsPreview": [
@@ -8946,7 +8946,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-forward-search-modals/verify_cache_sync.mjs",
       "layer": "Application Module",
-      "fileHash": "16e79d04c52cc7f8",
+      "fileHash": "5918c0aafe77004d",
       "totalLines": 29,
       "importsCount": 1,
       "importsPreview": [
@@ -8958,7 +8958,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "82e9d84f5289d02e",
+      "fileHash": "3410ca95e5fe4dd6",
       "totalLines": 200,
       "importsCount": 0,
       "importsPreview": [],
@@ -8977,7 +8977,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/preflight_arcgis_simulation.mjs",
       "layer": "Application Module",
-      "fileHash": "434dc204883e6319",
+      "fileHash": "bcfe866fd66c17a0",
       "totalLines": 131,
       "importsCount": 1,
       "importsPreview": [
@@ -9014,7 +9014,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_arcgis.mjs",
       "layer": "Application Module",
-      "fileHash": "44f250e6f084eca4",
+      "fileHash": "e49722e56b9b2b26",
       "totalLines": 395,
       "importsCount": 2,
       "importsPreview": [
@@ -9060,7 +9060,7 @@
     {
       "filePath": "pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_e2e.mjs",
       "layer": "Application Module",
-      "fileHash": "6e353677c22c5903",
+      "fileHash": "ce0bd37aff0d4489",
       "totalLines": 92,
       "importsCount": 2,
       "importsPreview": [
@@ -9082,7 +9082,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "b85b5690967fefa7",
+      "fileHash": "ed635ba5111c1524",
       "totalLines": 222,
       "importsCount": 0,
       "importsPreview": [],
@@ -9101,7 +9101,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "15e72590d71fbc93",
+      "fileHash": "025f08c97ea8a6b1",
       "totalLines": 35,
       "importsCount": 2,
       "importsPreview": [
@@ -9114,7 +9114,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs",
       "layer": "Application Module",
-      "fileHash": "05afa63faeeeff18",
+      "fileHash": "08b4880c46b84008",
       "totalLines": 162,
       "importsCount": 2,
       "importsPreview": [
@@ -9184,7 +9184,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "7e1c6e0d00300ff3",
+      "fileHash": "abe86103ffa1c1cb",
       "totalLines": 170,
       "importsCount": 0,
       "importsPreview": [],
@@ -9211,7 +9211,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/preflight_plan_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "2fee2287d6d2fbd6",
+      "fileHash": "f5ca59801d3ddb1d",
       "totalLines": 48,
       "importsCount": 2,
       "importsPreview": [
@@ -9233,7 +9233,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "a5c1a6776e47939c",
+      "fileHash": "c24e19e947c6e44b",
       "totalLines": 588,
       "importsCount": 3,
       "importsPreview": [
@@ -9264,7 +9264,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_adversarial_deep_audit.mjs",
       "layer": "Application Module",
-      "fileHash": "ee99ddc0ecb52330",
+      "fileHash": "338cf68ff35eb6fe",
       "totalLines": 225,
       "importsCount": 2,
       "importsPreview": [
@@ -9286,7 +9286,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_special_request_mode_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "e5bb15ed3728a226",
+      "fileHash": "a42192ac4a210695",
       "totalLines": 433,
       "importsCount": 3,
       "importsPreview": [
@@ -9333,7 +9333,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_deep_adversarial_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "4562c61b56167fba",
+      "fileHash": "52a3070a401c6fec",
       "totalLines": 456,
       "importsCount": 3,
       "importsPreview": [
@@ -9396,7 +9396,7 @@
     {
       "filePath": "pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_split_dropdowns_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "0dfe8b171bf47e8f",
+      "fileHash": "6de0056798b27d8b",
       "totalLines": 103,
       "importsCount": 4,
       "importsPreview": [
@@ -9411,7 +9411,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "e433a99f8a02dcc7",
+      "fileHash": "433792dff37b5c3a",
       "totalLines": 124,
       "importsCount": 0,
       "importsPreview": [],
@@ -9430,7 +9430,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs",
       "layer": "Application Module",
-      "fileHash": "5618b32df35273b3",
+      "fileHash": "8fdb352bdc5bac92",
       "totalLines": 280,
       "importsCount": 1,
       "importsPreview": [
@@ -9467,7 +9467,7 @@
     {
       "filePath": "pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs",
       "layer": "Application Module",
-      "fileHash": "08b7a6ef3cad9055",
+      "fileHash": "366c3946e33e3d65",
       "totalLines": 367,
       "importsCount": 1,
       "importsPreview": [
@@ -9723,7 +9723,7 @@
     {
       "filePath": "pipeline/PIPE-20261116-loading-entry-screen/qa_runtime_deep_simulation.mjs",
       "layer": "Application Module",
-      "fileHash": "38178ea0e866941a",
+      "fileHash": "040ed8a0d6803c11",
       "totalLines": 526,
       "importsCount": 3,
       "importsPreview": [
@@ -9834,7 +9834,7 @@
     {
       "filePath": "pipeline/PIPE-20261116-loading-entry-screen/qa_test_suite.mjs",
       "layer": "Application Module",
-      "fileHash": "7daab173e933aa12",
+      "fileHash": "82461bd7b1e780c4",
       "totalLines": 431,
       "importsCount": 3,
       "importsPreview": [
@@ -9857,7 +9857,7 @@
     {
       "filePath": "pipeline/PIPE-20261117-move-announcement-drive-folder-to-tab1/qa_tab1_announcement_folder_test.mjs",
       "layer": "Application Module",
-      "fileHash": "d57e5ddd76c57aee",
+      "fileHash": "45f50ca499476e24",
       "totalLines": 893,
       "importsCount": 4,
       "importsPreview": [
@@ -10385,7 +10385,7 @@
     {
       "filePath": "pipeline/PIPE-20261117-sidebar-active-state-and-realtime-settings-fix/qa_sidebar_active_sync_test.mjs",
       "layer": "Application Module",
-      "fileHash": "e5d19958621a7251",
+      "fileHash": "82fa3fd976103a6e",
       "totalLines": 1017,
       "importsCount": 4,
       "importsPreview": [
@@ -10937,7 +10937,7 @@
     {
       "filePath": "pipeline/PIPE-20261117-system-announcement-and-v2-10-sync/qa_v2_10_announcement_verification.mjs",
       "layer": "Application Module",
-      "fileHash": "d669838bd3068fcc",
+      "fileHash": "a4defc3f17e38ea2",
       "totalLines": 640,
       "importsCount": 4,
       "importsPreview": [
@@ -11169,7 +11169,7 @@
     {
       "filePath": "pipeline/PIPE-20261118-admin-mobile-cards-and-users-tabs/qa_admin_mobile_cards_users_tabs_test.mjs",
       "layer": "Application Module",
-      "fileHash": "345c986f95dba2c2",
+      "fileHash": "e0346faedb8cdbbb",
       "totalLines": 598,
       "importsCount": 2,
       "importsPreview": [
@@ -11311,7 +11311,7 @@
     {
       "filePath": "pipeline/PIPE-20261118-admin-mobile-modals-clipping-fix/qa_v48_mobile_modals_test.mjs",
       "layer": "Application Module",
-      "fileHash": "d1f5bda826731db1",
+      "fileHash": "c7ea68f17b732e98",
       "totalLines": 602,
       "importsCount": 5,
       "importsPreview": [
@@ -11400,7 +11400,7 @@
     {
       "filePath": "pipeline/PIPE-20261118-mobile-cards-and-drawer-spa-redesign/qa_mobile_cards_drawer_spa_test.mjs",
       "layer": "Application Module",
-      "fileHash": "56e5aae88d606770",
+      "fileHash": "d57e493a0ce15f25",
       "totalLines": 774,
       "importsCount": 4,
       "importsPreview": [
@@ -11512,7 +11512,7 @@
     {
       "filePath": "pipeline/PIPE-20261119-time-correction-request-and-approvals/qa_v49_time_correction_test.mjs",
       "layer": "Application Module",
-      "fileHash": "f7d1c70a1746bbfb",
+      "fileHash": "fae2b8fbc0ace87b",
       "totalLines": 885,
       "importsCount": 5,
       "importsPreview": [
@@ -11601,7 +11601,7 @@
     {
       "filePath": "pipeline/PIPE-20261119-v50-toast-swal-superadmin-rbac/qa_v50_verification_test.mjs",
       "layer": "Application Module",
-      "fileHash": "910cd4aba74fdeee",
+      "fileHash": "8cbf6d56fdfe2e50",
       "totalLines": 604,
       "importsCount": 5,
       "importsPreview": [
@@ -11658,7 +11658,7 @@
     {
       "filePath": "pipeline/PIPE-20261119-v51-reports-edit-modal-checkout-logic/qa_v51_reports_edit_modal_test.mjs",
       "layer": "Application Module",
-      "fileHash": "6c4d9153c9cb798e",
+      "fileHash": "3756509412e6d52e",
       "totalLines": 583,
       "importsCount": 5,
       "importsPreview": [
@@ -11745,9 +11745,28 @@
       ]
     },
     {
+      "filePath": "pipeline/PIPE-20261121-switch-schema-staging-to-public/interactive_plan.html",
+      "layer": "Frontend HTML View & Entry Point",
+      "fileHash": "268ced14c626dfa1",
+      "totalLines": 141,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "<head>",
+          "kind": "html_dom_section",
+          "startLine": 3,
+          "endLine": 12,
+          "signature": "<head>",
+          "summary": "HTML DOM Section L3-L12"
+        }
+      ]
+    },
+    {
       "filePath": "reports.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "a32cbe66d88261e1",
+      "fileHash": "f6046855af6cb951",
       "totalLines": 556,
       "importsCount": 0,
       "importsPreview": [],
@@ -11830,7 +11849,7 @@
     {
       "filePath": "settings.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "0e457f573a95f6d4",
+      "fileHash": "07f93b8a77bcc014",
       "totalLines": 1082,
       "importsCount": 0,
       "importsPreview": [],
@@ -11921,7 +11940,7 @@
     {
       "filePath": "sql/alter_v2_10_announcement_staging.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "1f0bcb3718339863",
+      "fileHash": "ab47d4e6f050b61a",
       "totalLines": 63,
       "importsCount": 0,
       "importsPreview": [],
@@ -11940,7 +11959,7 @@
     {
       "filePath": "sql/alter_v2_11_time_correction_public.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "22724403b295709c",
+      "fileHash": "494bf1b811c48072",
       "totalLines": 54,
       "importsCount": 0,
       "importsPreview": [],
@@ -11967,7 +11986,7 @@
     {
       "filePath": "sql/alter_v2_11_time_correction_staging.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "70414da5b3f7a82a",
+      "fileHash": "f973b3d7356a2de7",
       "totalLines": 54,
       "importsCount": 0,
       "importsPreview": [],
@@ -12059,7 +12078,7 @@
     {
       "filePath": "sql/alter_v2_8_loca_v2_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "e0c7e01341941957",
+      "fileHash": "e1b5b4c5676a2511",
       "totalLines": 121,
       "importsCount": 0,
       "importsPreview": [],
@@ -12134,7 +12153,7 @@
     {
       "filePath": "sql/create_staging_schema.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "d554844dc50576ab",
+      "fileHash": "5e551ecafde42c07",
       "totalLines": 141,
       "importsCount": 0,
       "importsPreview": [],
@@ -12337,7 +12356,7 @@
     {
       "filePath": "sql/fix_staging_foreign_keys.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "a30e70683a5f8c75",
+      "fileHash": "7cb1070ec4983509",
       "totalLines": 24,
       "importsCount": 0,
       "importsPreview": [],
@@ -12394,9 +12413,68 @@
       ]
     },
     {
+      "filePath": "sql/migration_public_full_loca_v2_sync.sql",
+      "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
+      "fileHash": "50b726c0edf0ff4e",
+      "totalLines": 271,
+      "importsCount": 0,
+      "importsPreview": [],
+      "exports": [],
+      "symbols": [
+        {
+          "name": "ALTER public.system_settings (L13)",
+          "kind": "sql_alter",
+          "startLine": 13,
+          "endLine": 16,
+          "signature": "ALTER TABLE public.system_settings",
+          "summary": "Schema Alteration L13-L16"
+        },
+        {
+          "name": "ALTER public.system_settings (L30)",
+          "kind": "sql_alter",
+          "startLine": 30,
+          "endLine": 34,
+          "signature": "ALTER TABLE public.system_settings",
+          "summary": "Schema Alteration L30-L34"
+        },
+        {
+          "name": "ALTER public.system_settings (L37)",
+          "kind": "sql_alter",
+          "startLine": 37,
+          "endLine": 46,
+          "signature": "ALTER TABLE public.system_settings",
+          "summary": "Schema Alteration L37-L46"
+        },
+        {
+          "name": "ALTER public.attendance_logs (L80)",
+          "kind": "sql_alter",
+          "startLine": 80,
+          "endLine": 86,
+          "signature": "ALTER TABLE public.attendance_logs",
+          "summary": "Schema Alteration L80-L86"
+        },
+        {
+          "name": "ALTER public.attendance_logs (L89)",
+          "kind": "sql_alter",
+          "startLine": 89,
+          "endLine": 100,
+          "signature": "ALTER TABLE public.attendance_logs",
+          "summary": "Schema Alteration L89-L100"
+        },
+        {
+          "name": "ALTER public.attendance_logs (L114)",
+          "kind": "sql_alter",
+          "startLine": 114,
+          "endLine": 117,
+          "signature": "ALTER TABLE public.attendance_logs",
+          "summary": "Schema Alteration L114-L117"
+        }
+      ]
+    },
+    {
       "filePath": "sql/migration_staging_split_dropdowns.sql",
       "layer": "Database Schema & Migration Layer (PostgreSQL/Supabase)",
-      "fileHash": "b86ac35a324e0f5f",
+      "fileHash": "5527b77210220b7c",
       "totalLines": 68,
       "importsCount": 0,
       "importsPreview": [],
@@ -12586,7 +12664,7 @@
     {
       "filePath": "time-corrections.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "ef3d3c449bb2fba1",
+      "fileHash": "fccd476079c13aab",
       "totalLines": 240,
       "importsCount": 0,
       "importsPreview": [],
@@ -12653,7 +12731,7 @@
     {
       "filePath": "users.html",
       "layer": "Frontend HTML View & Entry Point",
-      "fileHash": "9c5bad2e20c5bd88",
+      "fileHash": "34a86bccff5c4766",
       "totalLines": 475,
       "importsCount": 0,
       "importsPreview": [],

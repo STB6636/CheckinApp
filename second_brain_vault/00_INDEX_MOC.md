@@ -2,7 +2,7 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261119-v51-reports-edit-modal-checkout-logic"
+last_updated_phase: "PIPE-20261121-switch-schema-staging-to-public"
 ---
 
 # 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
@@ -39,6 +39,7 @@ last_updated_phase: "PIPE-20261119-v51-reports-edit-modal-checkout-logic"
 - [[ADR_0038_mobile_modals_dvh_3zone_scroll_and_z9990_hierarchy]] — ADR-0038: สถาปัตยกรรม Modal มือถือมาตรฐาน 3 ส่วนด้วย `100dvh` + `my-auto` (แก้ตัดขอบบน-ล่าง & Negative-Y Overflow), ลำดับชั้น `z-[9990]`/`z-[9999]`/`99990`, `backdrop-blur-sm` และ `UIHelpers` Modal Lifecycle (`FLOW_LAYOUT_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_REPORTS_01`, `FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_CHECKIN_01`)
 - [[ADR_0039_Time_Correction_Request_And_Executive_RBAC]] — ADR-0039: ระบบขอแก้ไขเวลาเข้า-ออกงาน (`time-corrections.html`), กฎคำนวณแก้เฉพาะขาผิดปกติ + หมายเหตุ `(แก้ไขเวลา)`, Double-Layer Executive RBAC (5 ตำแหน่งผู้บริหารสำหรับคำขอของ Admin), Drawer Layout สมมาตร 2×2 / `row-span-2`, และ Cache Sync 10 หน้า HTML (`FLOW_TIME_CORRECTION_01`, `FLOW_CHECKIN_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_REPORTS_01`, `FLOW_DASHBOARD_01`)
 - [[ADR_0040_Reports_Edit_Modal_Checkout_Logic_And_User_Priority_Guard]] — ADR-0040: ออกแบบ Logic ใหม่ฟอร์มบันทึก/แก้ไขเวลา (`reports.html`) ป้องกันเติม 16:30 อัตโนมัติ, Disabled บุคลากร+วันที่ตอนแก้ไข, ปุ่มลัดตามกะ/ล้าง, รักษา `shift_name`/`is_special_request` บน UPDATE และ User-Priority Duplicate Guard (`FLOW_REPORTS_01`, `FLOW_TIME_CORRECTION_01`)
+- [[ADR_0041_switch_active_schema_staging_to_public_and_unified_sql]] — ADR-0041: เปลี่ยน Active Schema จาก `staging` เป็น `public` (`Config.SUPABASE_SCHEMA`), ปรับข้อความ SQL Hint แบบ Dynamic และรวมสคริปต์ Migration `sql/migration_public_full_loca_v2_sync.sql` ครบ `v2.8–v2.11` พร้อมป้องกันข้อมูลเก่า 691 แถวด้วย `DEFAULT NULL` (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_CHECKIN_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_TIME_CORRECTION_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)

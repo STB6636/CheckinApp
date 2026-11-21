@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-19T08:46:16.135Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `190` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1281`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-21T06:53:46.695Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `192` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1288`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `43c0968555d6d866` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ed3e9ddd54758b6c` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -48,7 +48,7 @@
 
 ## File: `assets/js/components/SystemUpdateModal.js`
 - **Layer:** Shared UI Component Layer
-- **Hash:** `4af5dd89ce3ec22b` | **Total Lines:** `843` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
+- **Hash:** `45a9ae58f0ebd7e0` | **Total Lines:** `843` | **Imports:** `0` | **Exports:** `SystemUpdateModal`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -244,7 +244,7 @@
 
 ## File: `assets/js/controllers/LoadingController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `149d433961142d62` | **Total Lines:** `382` | **Imports:** `4` | **Exports:** `LoadingController`
+- **Hash:** `183384a514fd3c0f` | **Total Lines:** `382` | **Imports:** `4` | **Exports:** `LoadingController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -447,7 +447,7 @@
 
 ## File: `assets/js/controllers/TimeCorrectionsController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `3b4d80be1d7cb810` | **Total Lines:** `658` | **Imports:** `5` | **Exports:** `TimeCorrectionsController`
+- **Hash:** `784a66c954707996` | **Total Lines:** `658` | **Imports:** `5` | **Exports:** `TimeCorrectionsController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -535,7 +535,7 @@
 
 ## File: `assets/js/core/Config.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `8bc325eb9be74dcf` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `Config`
+- **Hash:** `ff0185683072090d` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `Config`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -611,11 +611,11 @@
 
 ## File: `assets/js/models/AttendanceModel.js`
 - **Layer:** Data Model & Supabase Repository Layer
-- **Hash:** `dbb1be9681748edc` | **Total Lines:** `3464` | **Imports:** `5` | **Exports:** `AttendanceModel`
+- **Hash:** `4eadb2cd3e6e143c` | **Total Lines:** `3467` | **Imports:** `5` | **Exports:** `AttendanceModel`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `AttendanceModel` | `class` | **L12 - L3464** | `export class AttendanceModel` | Class Definition (3453 lines) |
+| `AttendanceModel` | `class` | **L12 - L3467** | `export class AttendanceModel` | Class Definition (3456 lines) |
 | `AttendanceModel.clearLocationCache` | `static public method` | **L16 - L18** | `() => any` | static public method L16-L18 (3 lines) |
 | `AttendanceModel.#calculateDistanceMeters` | `static private method` | **L20 - L31** | `(lat1, lon1, lat2, lon2) => any` | static private method L20-L31 (12 lines) |
 | `AttendanceModel.#minutesToTime24` | `static private method` | **L33 - L38** | `(totalMinutes) => any` | static private method L33-L38 (6 lines) |
@@ -656,17 +656,17 @@
 | `AttendanceModel.#computeCorrectionTarget` | `static private method` | **L2589 - L2626** | `(log, settings) => any` | static private method L2589-L2626 (38 lines) |
 | `AttendanceModel.getPersonalTimeCorrectionLogs` | `static public async method` | **L2632 - L2690** | `(personnelId, userId, settingsOverride = null) => Promise<any>` | (ไม่ติดเพดาน limit(35) และไม่รวมสถานะ "ไม่ลงเวลา") |
 | `buildQuery` | `arrow_fn` | **L2639 - L2651** | `(columns) => inferred` | Arrow Function L2639-L2651 |
-| `AttendanceModel.submitTimeCorrectionRequest` | `static public async method` | **L2695 - L2771** | `(logId, currentUser, reason = '') => Promise<any>` | ผู้ใช้งานส่งคำขอแก้ไขเวลาเข้า-ออกงานสำหรับรายการที่ระบุ (เหตุผล Optional) |
-| `AttendanceModel.getTimeCorrectionRequests` | `static public async method` | **L2776 - L2874** | `(currentUser, statusFilter = 'pending') => Promise<any>` | ดึงรายการคำขอแก้ไขเวลาสำหรับผู้ดูแลระบบ พร้อมข้อมูลผู้ขอ (Role) และสิทธิ์การอนุมัติ |
-| `AttendanceModel.processTimeCorrectionsBulk` | `static public async method` | **L2883 - L3011** | `(logIds, isApprovedOrDecision, currentUser, rejectReason = '') => Promise<any>` | static public async method L2883-L3011 (129 lines) |
-| `AttendanceModel.getDatesBetween` | `static public method` | **L3013 - L3030** | `(startDate, endDate) => any` | static public method L3013-L3030 (18 lines) |
-| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L3032 - L3103** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L3032-L3103 (72 lines) |
-| `AttendanceModel.#formatReportRow` | `static private method` | **L3105 - L3155** | `(person, log, workDate, evalStatus) => any` | static private method L3105-L3155 (51 lines) |
-| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L3157 - L3159** | `(workDate, currentUser) => Promise<any>` | static public async method L3157-L3159 (3 lines) |
-| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L3161 - L3330** | `(payload) => Promise<any>` | static public async method L3161-L3330 (170 lines) |
-| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L3332 - L3350** | `(logId) => Promise<any>` | static public async method L3332-L3350 (19 lines) |
-| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L3352 - L3415** | `(dailyRecords) => any` | static public method L3352-L3415 (64 lines) |
-| `AttendanceModel.getTodaySyncWatermark` | `static public async method` | **L3421 - L3463** | `() => Promise<any>` | static public async method L3421-L3463 (43 lines) |
+| `AttendanceModel.submitTimeCorrectionRequest` | `static public async method` | **L2695 - L2774** | `(logId, currentUser, reason = '') => Promise<any>` | ผู้ใช้งานส่งคำขอแก้ไขเวลาเข้า-ออกงานสำหรับรายการที่ระบุ (เหตุผล Optional) |
+| `AttendanceModel.getTimeCorrectionRequests` | `static public async method` | **L2779 - L2877** | `(currentUser, statusFilter = 'pending') => Promise<any>` | ดึงรายการคำขอแก้ไขเวลาสำหรับผู้ดูแลระบบ พร้อมข้อมูลผู้ขอ (Role) และสิทธิ์การอนุมัติ |
+| `AttendanceModel.processTimeCorrectionsBulk` | `static public async method` | **L2886 - L3014** | `(logIds, isApprovedOrDecision, currentUser, rejectReason = '') => Promise<any>` | static public async method L2886-L3014 (129 lines) |
+| `AttendanceModel.getDatesBetween` | `static public method` | **L3016 - L3033** | `(startDate, endDate) => any` | static public method L3016-L3033 (18 lines) |
+| `AttendanceModel.getReportRecordsByDateRange` | `static public async method` | **L3035 - L3106** | `(startDate, endDate, currentUser) => Promise<any>` | static public async method L3035-L3106 (72 lines) |
+| `AttendanceModel.#formatReportRow` | `static private method` | **L3108 - L3158** | `(person, log, workDate, evalStatus) => any` | static private method L3108-L3158 (51 lines) |
+| `AttendanceModel.getDailyReportRecords` | `static public async method` | **L3160 - L3162** | `(workDate, currentUser) => Promise<any>` | static public async method L3160-L3162 (3 lines) |
+| `AttendanceModel.saveAdminAttendanceRecord` | `static public async method` | **L3164 - L3333** | `(payload) => Promise<any>` | static public async method L3164-L3333 (170 lines) |
+| `AttendanceModel.deleteAttendanceRecord` | `static public async method` | **L3335 - L3353** | `(logId) => Promise<any>` | static public async method L3335-L3353 (19 lines) |
+| `AttendanceModel.calculateDashboardMetrics` | `static public method` | **L3355 - L3418** | `(dailyRecords) => any` | static public method L3355-L3418 (64 lines) |
+| `AttendanceModel.getTodaySyncWatermark` | `static public async method` | **L3424 - L3466** | `() => Promise<any>` | static public async method L3424-L3466 (43 lines) |
 
 ---
 
@@ -733,7 +733,7 @@
 
 ## File: `assets/js/utils/DOMDiffHelper.js`
 - **Layer:** Application Module
-- **Hash:** `10662234de402079` | **Total Lines:** `249` | **Imports:** `0` | **Exports:** `DOMDiffHelper`
+- **Hash:** `6621993ebcb20d51` | **Total Lines:** `249` | **Imports:** `0` | **Exports:** `DOMDiffHelper`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -753,7 +753,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b3ca66ca1380346c` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `66433c83e45f3ba3` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -796,7 +796,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `0886d8a9d58b4e1e` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `728a25f35bfb0f1a` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -881,7 +881,7 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9026bb75c5d3b6c4` | **Total Lines:** `436` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `277a6706c7b60771` | **Total Lines:** `436` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -896,7 +896,7 @@
 
 ## File: `loading.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `146ad4601ce4e7b1` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1a0eaeec35e2026e` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -907,7 +907,7 @@
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `2529033f93f98cf1` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `55a0e067311a057f` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1417,7 +1417,7 @@
 
 ## File: `pipeline/PIPE-20261104-fix-staging-table-relations/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7d44056a9bdb417a` | **Total Lines:** `196` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e651c1facdf9b65e` | **Total Lines:** `196` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1427,7 +1427,7 @@
 
 ## File: `pipeline/PIPE-20261104-lean-ai-workflow/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `bd26ac30913a5b32` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `9d34aa2596f0e230` | **Total Lines:** `164` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1437,7 +1437,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `3aacfb4b78b96b32` | **Total Lines:** `134` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `6b1f620d7c170f75` | **Total Lines:** `134` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1447,7 +1447,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-onsite-offsite-nextstep/qa_loca_v2_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `ad9ead718c9dee87` | **Total Lines:** `341` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `14b1eb2263e07a22` | **Total Lines:** `341` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1461,7 +1461,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ef35adbb2d2d1565` | **Total Lines:** `609` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e631e305ae8ce3f6` | **Total Lines:** `609` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1474,7 +1474,7 @@
 
 ## File: `pipeline/PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix/qa_zero_scroll_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `ba0df63fd43f1d5b` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `9f0b1bf20adac291` | **Total Lines:** `260` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1484,7 +1484,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-3to4-zero-scroll/qa_3to4_zero_scroll_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `784e708257ad7745` | **Total Lines:** `246` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `fc6414843b654edd` | **Total Lines:** `246` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1494,7 +1494,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-cockpit-split-layout/qa_cockpit_split_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `ed864983a4037a3c` | **Total Lines:** `327` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `9e6968af8d9af300` | **Total Lines:** `327` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1504,7 +1504,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-card-refine/qa_loca_v2_gps_card_refine_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `c6df485d154a960c` | **Total Lines:** `140` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `9216ce1451b4c319` | **Total Lines:** `140` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1514,7 +1514,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `c82916fd7a05fc2e` | **Total Lines:** `352` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `4c829ae3391757c8` | **Total Lines:** `352` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1528,7 +1528,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-gps-symmetry-compact/qa_gps_symmetry_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `03d9d7ed698ed5e7` | **Total Lines:** `221` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `60c115de4404ece7` | **Total Lines:** `221` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1538,7 +1538,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `87418c6c3d0fa5a8` | **Total Lines:** `697` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e82e2910ac332157` | **Total Lines:** `697` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1560,7 +1560,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-material-tailwind-cards/qa_material_tailwind_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `841b5ace65f0238a` | **Total Lines:** `151` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `3693c8b1cd484c70` | **Total Lines:** `151` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1570,7 +1570,7 @@
 
 ## File: `pipeline/PIPE-20261105-loca-v2-polish/qa_loca_v2_polish_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `9067a4ef8530d0ed` | **Total Lines:** `99` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `89ae60c5e5161039` | **Total Lines:** `99` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1580,7 +1580,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `eb7b4899bbe550d6` | **Total Lines:** `770` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `606754168b2a74b7` | **Total Lines:** `770` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1591,7 +1591,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `bf683afec1a72744` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `5d851a6619234635` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1599,7 +1599,7 @@
 
 ## File: `pipeline/PIPE-20261109-admin-realtime-differential-table-sync/qa_dom_diff_unit_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `7cabe8b1b23895fa` | **Total Lines:** `217` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `acfa5290bf0a566b` | **Total Lines:** `217` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1626,7 +1626,7 @@
 
 ## File: `pipeline/PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `38f23e696ded318b` | **Total Lines:** `497` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `add50985244b0508` | **Total Lines:** `497` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1639,7 +1639,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `859782ae5f8429e2` | **Total Lines:** `142` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3655adccd260bdbb` | **Total Lines:** `142` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1649,7 +1649,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `875a992ddf90dcf2` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `b824495242f833e1` | **Total Lines:** `68` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1657,7 +1657,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/qa_functional_robustness_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `742111fb296344e2` | **Total Lines:** `284` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `74863609ce346320` | **Total Lines:** `284` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1672,7 +1672,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_app_layout.mjs`
 - **Layer:** Application Module
-- **Hash:** `6a6d1a90b975d135` | **Total Lines:** `184` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `af394dfa47048c11` | **Total Lines:** `184` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1680,7 +1680,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_attendance_model.mjs`
 - **Layer:** Application Module
-- **Hash:** `5cf78dd64cf632d0` | **Total Lines:** `358` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `29a00a83689a1b4e` | **Total Lines:** `358` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1688,7 +1688,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_checkin.mjs`
 - **Layer:** Application Module
-- **Hash:** `098682ffc77649e3` | **Total Lines:** `134` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `e8327e01dc50f7b8` | **Total Lines:** `134` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1696,7 +1696,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_dashboard.mjs`
 - **Layer:** Application Module
-- **Hash:** `6f0116dd21203e09` | **Total Lines:** `70` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `3511cdabfa44b439` | **Total Lines:** `70` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1704,7 +1704,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-diff-sync-robustness-fix/scratch_patch_reports.mjs`
 - **Layer:** Application Module
-- **Hash:** `07ef5eeaf087acf9` | **Total Lines:** `121` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `533841669eaabe54` | **Total Lines:** `121` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1712,7 +1712,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/inspect_staging_schema.mjs`
 - **Layer:** Application Module
-- **Hash:** `34578b11310ad8cc` | **Total Lines:** `133` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `890e7ddac163ae28` | **Total Lines:** `133` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1723,7 +1723,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ab36a9c0cd2c55b6` | **Total Lines:** `224` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fee2788fdca6c2a9` | **Total Lines:** `224` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1733,7 +1733,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_cache_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `172da6c29bc306dc` | **Total Lines:** `74` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `23aff4fbf439b149` | **Total Lines:** `74` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1741,7 +1741,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_comprehensive_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `d87d1929f093d2c1` | **Total Lines:** `124` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `325da2bc88343839` | **Total Lines:** `124` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1749,7 +1749,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_live_persistence_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `ee29c199dd71d23c` | **Total Lines:** `100` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `bb4a4c22366868a4` | **Total Lines:** `100` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1765,7 +1765,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/qa_rev2_verification_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `5ceadf6f54684575` | **Total Lines:** `88` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `269a5ecd93113b12` | **Total Lines:** `88` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1773,7 +1773,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_applayout_realtime_js.mjs`
 - **Layer:** Application Module
-- **Hash:** `654bccafd3c3fc9e` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `6bcf0bf88a14b49d` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1788,7 +1788,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_broadcast_behavior.mjs`
 - **Layer:** Application Module
-- **Hash:** `f940ae6471ebbce7` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `57e70cc0aab16715` | **Total Lines:** `63` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1796,7 +1796,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_daily_report_records.mjs`
 - **Layer:** Application Module
-- **Hash:** `665cb702462272f8` | **Total Lines:** `44` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `cdf44f23bd216aee` | **Total Lines:** `44` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1804,7 +1804,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_live_ws_trigger.mjs`
 - **Layer:** Application Module
-- **Hash:** `5ec5d12d8a3a4298` | **Total Lines:** `74` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `76bab416874b3723` | **Total Lines:** `74` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1812,7 +1812,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_non_existent_table_sub.mjs`
 - **Layer:** Application Module
-- **Hash:** `bfcd14b107a75c1e` | **Total Lines:** `33` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `5611f5f4736629f7` | **Total Lines:** `33` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1820,7 +1820,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_realtime_crud_live.mjs`
 - **Layer:** Application Module
-- **Hash:** `a5971a764c73d573` | **Total Lines:** `97` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `5ac21cc7bec74cd3` | **Total Lines:** `97` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1828,7 +1828,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_checkin_flow.mjs`
 - **Layer:** Application Module
-- **Hash:** `43af9bc5286ec09a` | **Total Lines:** `28` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `3efeffc7826c70eb` | **Total Lines:** `28` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1843,7 +1843,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_columns.mjs`
 - **Layer:** Application Module
-- **Hash:** `62c84bd9c2f55431` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f14b0fbcf7f0ac5b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1853,7 +1853,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_settings_watermark.mjs`
 - **Layer:** Application Module
-- **Hash:** `50927bd4091763b9` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3ded696faf3aa959` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1863,7 +1863,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_supabase_realtime_ws.mjs`
 - **Layer:** Application Module
-- **Hash:** `1d02d30f6bf46175` | **Total Lines:** `58` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `1b025b94e40ff4a3` | **Total Lines:** `58` | **Imports:** `0` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1871,7 +1871,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_debug.mjs`
 - **Layer:** Application Module
-- **Hash:** `2f31d06487c2a984` | **Total Lines:** `41` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `5e9e9ed971b8a676` | **Total Lines:** `41` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1879,7 +1879,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_live.mjs`
 - **Layer:** Application Module
-- **Hash:** `8b8ff6e6c281c1bd` | **Total Lines:** `47` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `2d85a0963e44b71b` | **Total Lines:** `47` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1889,7 +1889,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_query.mjs`
 - **Layer:** Application Module
-- **Hash:** `08a3d9167cf2c55e` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e703c363d5832497` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1899,7 +1899,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_watermark_safe.mjs`
 - **Layer:** Application Module
-- **Hash:** `fa42408d36be917b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `d055b9bd3d84c94b` | **Total Lines:** `19` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1909,7 +1909,7 @@
 
 ## File: `pipeline/PIPE-20261110-realtime-sync-expansion-and-settings-geofence/test_write_postgrest.mjs`
 - **Layer:** Application Module
-- **Hash:** `395d2623bcf39637` | **Total Lines:** `27` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `aa3f997ef807db73` | **Total Lines:** `27` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1919,7 +1919,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `4089bfbc498cc6a7` | **Total Lines:** `250` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7224279609c12254` | **Total Lines:** `250` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1929,7 +1929,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-camera-lifecycle-fix/qa_camera_stream_protection_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `71b631730bc074b2` | **Total Lines:** `492` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `2da3175d09e13e94` | **Total Lines:** `492` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1943,7 +1943,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/audit_cache_sync.mjs`
 - **Layer:** Application Module
-- **Hash:** `33b4e39f15afc3e5` | **Total Lines:** `50` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `42128d1382167564` | **Total Lines:** `50` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -1951,7 +1951,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `8c4b8fd2770a6869` | **Total Lines:** `212` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `71e975bb092c4974` | **Total Lines:** `212` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1961,7 +1961,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_unit_mock_tests.mjs`
 - **Layer:** Application Module
-- **Hash:** `618a241232fe53e6` | **Total Lines:** `430` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `fc45a29c7be67452` | **Total Lines:** `430` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1972,7 +1972,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_button_lock.mjs`
 - **Layer:** Application Module
-- **Hash:** `4c5b9a0a06b4987b` | **Total Lines:** `45` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `a0f180444bed904e` | **Total Lines:** `45` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1982,7 +1982,7 @@
 
 ## File: `pipeline/PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign/qa_verify_gps_places.mjs`
 - **Layer:** Application Module
-- **Hash:** `4b5fd299d3159aeb` | **Total Lines:** `194` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `96395561bf851fb6` | **Total Lines:** `194` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -1993,7 +1993,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b3250c98e3e18ed4` | **Total Lines:** `248` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `cdea2f0f97a5294c` | **Total Lines:** `248` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2003,7 +2003,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_adversarial_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `3a8e926f76937ffd` | **Total Lines:** `107` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `5ae72241f5e0e9d9` | **Total Lines:** `107` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2015,7 +2015,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/qa_verify_gps_refresh_and_clock.mjs`
 - **Layer:** Application Module
-- **Hash:** `771827f9e89f9565` | **Total Lines:** `64` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `d1bff993c36b03b7` | **Total Lines:** `64` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2026,7 +2026,7 @@
 
 ## File: `pipeline/PIPE-20261111-gps-refresh-cachebust-and-clock-format-fix/test_full_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `1b1cd903588333db` | **Total Lines:** `191` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `b27a7f849f222305` | **Total Lines:** `191` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2038,7 +2038,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `482ae9522e98fa0b` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5e32f2db1fb1eba9` | **Total Lines:** `290` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2049,7 +2049,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_regression_preflight_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `bbe37b558bba82da` | **Total Lines:** `66` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `5eb039f430dddc70` | **Total Lines:** `66` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2059,7 +2059,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/qa_stress_edge_cases.mjs`
 - **Layer:** Application Module
-- **Hash:** `aff2048a6ed002bd` | **Total Lines:** `190` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `10c726c567ab6c4b` | **Total Lines:** `190` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2070,7 +2070,7 @@
 
 ## File: `pipeline/PIPE-20261111-login-version-badge-and-whats-new-modal/verify_login_version_badge_modal.mjs`
 - **Layer:** Application Module
-- **Hash:** `6b0e318bd230b7c5` | **Total Lines:** `275` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `215fbed204e391b6` | **Total Lines:** `275` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2082,7 +2082,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `21f532f6f2e96b0a` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `2a2c16c6942ab063` | **Total Lines:** `258` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2092,7 +2092,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_adversarial_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `4fd5e25ecb67b95b` | **Total Lines:** `281` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `5fe81e53e24d2be1` | **Total Lines:** `281` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2102,7 +2102,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_comprehensive_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `e36b0752341bf8c7` | **Total Lines:** `139` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `cc2c2683ab0f8b3e` | **Total Lines:** `139` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2112,7 +2112,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_html_tags_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `210b26a8c1603ab9` | **Total Lines:** `42` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `609fc01074f988af` | **Total Lines:** `42` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2120,7 +2120,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/qa_print_simulation_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `8ceac785762c57bc` | **Total Lines:** `152` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `c910c0f7f57b4555` | **Total Lines:** `152` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2130,7 +2130,7 @@
 
 ## File: `pipeline/PIPE-20261111-reports-print-pdf-pagebreak-fix/verify_pagebreak_rules.mjs`
 - **Layer:** Application Module
-- **Hash:** `ce02121fd6cbee88` | **Total Lines:** `123` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `31ecadf08a2b088b` | **Total Lines:** `123` | **Imports:** `3` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2138,7 +2138,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `09dc9139f36c8556` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `b7a2909b17765728` | **Total Lines:** `378` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2148,7 +2148,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/preflight_forward_search_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `573023b649fb4832` | **Total Lines:** `64` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `21130928faee9378` | **Total Lines:** `64` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2158,7 +2158,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/qa_audit_test_suite.mjs`
 - **Layer:** Application Module
-- **Hash:** `9f8427e6aec77e01` | **Total Lines:** `363` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `cabf204e484c9bfd` | **Total Lines:** `363` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2169,7 +2169,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-forward-search-modals/verify_cache_sync.mjs`
 - **Layer:** Application Module
-- **Hash:** `16e79d04c52cc7f8` | **Total Lines:** `29` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `5918c0aafe77004d` | **Total Lines:** `29` | **Imports:** `1` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2177,7 +2177,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `82e9d84f5289d02e` | **Total Lines:** `200` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3410ca95e5fe4dd6` | **Total Lines:** `200` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2187,7 +2187,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/preflight_arcgis_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `434dc204883e6319` | **Total Lines:** `131` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `bcfe866fd66c17a0` | **Total Lines:** `131` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2199,7 +2199,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_arcgis.mjs`
 - **Layer:** Application Module
-- **Hash:** `44f250e6f084eca4` | **Total Lines:** `395` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `e49722e56b9b2b26` | **Total Lines:** `395` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2212,7 +2212,7 @@
 
 ## File: `pipeline/PIPE-20261112-arcgis-primary-places-resolution/test_attendance_model_e2e.mjs`
 - **Layer:** Application Module
-- **Hash:** `6e353677c22c5903` | **Total Lines:** `92` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `ce0bd37aff0d4489` | **Total Lines:** `92` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2222,7 +2222,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `b85b5690967fefa7` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ed635ba5111c1524` | **Total Lines:** `222` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2232,7 +2232,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/preflight_plan_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `15e72590d71fbc93` | **Total Lines:** `35` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `025f08c97ea8a6b1` | **Total Lines:** `35` | **Imports:** `2` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2240,7 +2240,7 @@
 
 ## File: `pipeline/PIPE-20261113-remove-special-request-btn-from-shift-card/qa_post_implementation_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `05afa63faeeeff18` | **Total Lines:** `162` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `08b4880c46b84008` | **Total Lines:** `162` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2256,7 +2256,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `7e1c6e0d00300ff3` | **Total Lines:** `170` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `abe86103ffa1c1cb` | **Total Lines:** `170` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2267,7 +2267,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/preflight_plan_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `2fee2287d6d2fbd6` | **Total Lines:** `48` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `f5ca59801d3ddb1d` | **Total Lines:** `48` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2277,7 +2277,7 @@
 
 ## File: `pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `a5c1a6776e47939c` | **Total Lines:** `588` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `c24e19e947c6e44b` | **Total Lines:** `588` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2288,7 +2288,7 @@
 
 ## File: `pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_adversarial_deep_audit.mjs`
 - **Layer:** Application Module
-- **Hash:** `ee99ddc0ecb52330` | **Total Lines:** `225` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `338cf68ff35eb6fe` | **Total Lines:** `225` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2298,7 +2298,7 @@
 
 ## File: `pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_special_request_mode_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `e5bb15ed3728a226` | **Total Lines:** `433` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `a42192ac4a210695` | **Total Lines:** `433` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2311,7 +2311,7 @@
 
 ## File: `pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_deep_adversarial_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `4562c61b56167fba` | **Total Lines:** `456` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `52a3070a401c6fec` | **Total Lines:** `456` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2326,7 +2326,7 @@
 
 ## File: `pipeline/PIPE-20261113-split-dropdowns-and-special-request-official-locations/qa_split_dropdowns_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `0dfe8b171bf47e8f` | **Total Lines:** `103` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `6de0056798b27d8b` | **Total Lines:** `103` | **Imports:** `4` | **Exports:** `None`
 
 > *ไม่มีฟังก์ชันหรือคลาสย่อย (อาจเป็นไฟล์ Config, Types หรือ Constants — อ่านเฉพาะส่วนที่ต้องการ)*
 
@@ -2334,7 +2334,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `e433a99f8a02dcc7` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `433792dff37b5c3a` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2344,7 +2344,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `5618b32df35273b3` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `8fdb352bdc5bac92` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2356,7 +2356,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs`
 - **Layer:** Application Module
-- **Hash:** `08b7a6ef3cad9055` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `366c3946e33e3d65` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2402,7 +2402,7 @@
 
 ## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_runtime_deep_simulation.mjs`
 - **Layer:** Application Module
-- **Hash:** `38178ea0e866941a` | **Total Lines:** `526` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `040ed8a0d6803c11` | **Total Lines:** `526` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2423,7 +2423,7 @@
 
 ## File: `pipeline/PIPE-20261116-loading-entry-screen/qa_test_suite.mjs`
 - **Layer:** Application Module
-- **Hash:** `7daab173e933aa12` | **Total Lines:** `431` | **Imports:** `3` | **Exports:** `None`
+- **Hash:** `82461bd7b1e780c4` | **Total Lines:** `431` | **Imports:** `3` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2433,7 +2433,7 @@
 
 ## File: `pipeline/PIPE-20261117-move-announcement-drive-folder-to-tab1/qa_tab1_announcement_folder_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `d57e5ddd76c57aee` | **Total Lines:** `893` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `45f50ca499476e24` | **Total Lines:** `893` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2506,7 +2506,7 @@
 
 ## File: `pipeline/PIPE-20261117-sidebar-active-state-and-realtime-settings-fix/qa_sidebar_active_sync_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `e5d19958621a7251` | **Total Lines:** `1017` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `82fa3fd976103a6e` | **Total Lines:** `1017` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2582,7 +2582,7 @@
 
 ## File: `pipeline/PIPE-20261117-system-announcement-and-v2-10-sync/qa_v2_10_announcement_verification.mjs`
 - **Layer:** Application Module
-- **Hash:** `d669838bd3068fcc` | **Total Lines:** `640` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `a4defc3f17e38ea2` | **Total Lines:** `640` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2618,7 +2618,7 @@
 
 ## File: `pipeline/PIPE-20261118-admin-mobile-cards-and-users-tabs/qa_admin_mobile_cards_users_tabs_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `345c986f95dba2c2` | **Total Lines:** `598` | **Imports:** `2` | **Exports:** `None`
+- **Hash:** `e0346faedb8cdbbb` | **Total Lines:** `598` | **Imports:** `2` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2643,7 +2643,7 @@
 
 ## File: `pipeline/PIPE-20261118-admin-mobile-modals-clipping-fix/qa_v48_mobile_modals_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `d1f5bda826731db1` | **Total Lines:** `602` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `c7ea68f17b732e98` | **Total Lines:** `602` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2661,7 +2661,7 @@
 
 ## File: `pipeline/PIPE-20261118-mobile-cards-and-drawer-spa-redesign/qa_mobile_cards_drawer_spa_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `56e5aae88d606770` | **Total Lines:** `774` | **Imports:** `4` | **Exports:** `None`
+- **Hash:** `d57e493a0ce15f25` | **Total Lines:** `774` | **Imports:** `4` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2682,7 +2682,7 @@
 
 ## File: `pipeline/PIPE-20261119-time-correction-request-and-approvals/qa_v49_time_correction_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `f7d1c70a1746bbfb` | **Total Lines:** `885` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `fae2b8fbc0ace87b` | **Total Lines:** `885` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2700,7 +2700,7 @@
 
 ## File: `pipeline/PIPE-20261119-v50-toast-swal-superadmin-rbac/qa_v50_verification_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `910cd4aba74fdeee` | **Total Lines:** `604` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `8cbf6d56fdfe2e50` | **Total Lines:** `604` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2714,7 +2714,7 @@
 
 ## File: `pipeline/PIPE-20261119-v51-reports-edit-modal-checkout-logic/qa_v51_reports_edit_modal_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `6c4d9153c9cb798e` | **Total Lines:** `583` | **Imports:** `5` | **Exports:** `None`
+- **Hash:** `3756509412e6d52e` | **Total Lines:** `583` | **Imports:** `5` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2730,9 +2730,19 @@
 
 ---
 
+## File: `pipeline/PIPE-20261121-switch-schema-staging-to-public/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `268ced14c626dfa1` | **Total Lines:** `141` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
+
+---
+
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `a32cbe66d88261e1` | **Total Lines:** `556` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f6046855af6cb951` | **Total Lines:** `556` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2750,7 +2760,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `0e457f573a95f6d4` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `07f93b8a77bcc014` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2769,7 +2779,7 @@
 
 ## File: `sql/alter_v2_10_announcement_staging.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `1f0bcb3718339863` | **Total Lines:** `63` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `ab47d4e6f050b61a` | **Total Lines:** `63` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2779,7 +2789,7 @@
 
 ## File: `sql/alter_v2_11_time_correction_public.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `22724403b295709c` | **Total Lines:** `54` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `494bf1b811c48072` | **Total Lines:** `54` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2790,7 +2800,7 @@
 
 ## File: `sql/alter_v2_11_time_correction_staging.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `70414da5b3f7a82a` | **Total Lines:** `54` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `f973b3d7356a2de7` | **Total Lines:** `54` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2832,7 +2842,7 @@
 
 ## File: `sql/alter_v2_8_loca_v2_schema.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `e0c7e01341941957` | **Total Lines:** `121` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e1b5b4c5676a2511` | **Total Lines:** `121` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2849,7 +2859,7 @@
 
 ## File: `sql/create_staging_schema.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `d554844dc50576ab` | **Total Lines:** `141` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5e551ecafde42c07` | **Total Lines:** `141` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2882,7 +2892,7 @@
 
 ## File: `sql/fix_staging_foreign_keys.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `a30e70683a5f8c75` | **Total Lines:** `24` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `7cb1070ec4983509` | **Total Lines:** `24` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2895,9 +2905,24 @@
 
 ---
 
+## File: `sql/migration_public_full_loca_v2_sync.sql`
+- **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
+- **Hash:** `50b726c0edf0ff4e` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `ALTER public.system_settings (L13)` | `sql_alter` | **L13 - L16** | `ALTER TABLE public.system_settings` | Schema Alteration L13-L16 |
+| `ALTER public.system_settings (L30)` | `sql_alter` | **L30 - L34** | `ALTER TABLE public.system_settings` | Schema Alteration L30-L34 |
+| `ALTER public.system_settings (L37)` | `sql_alter` | **L37 - L46** | `ALTER TABLE public.system_settings` | Schema Alteration L37-L46 |
+| `ALTER public.attendance_logs (L80)` | `sql_alter` | **L80 - L86** | `ALTER TABLE public.attendance_logs` | Schema Alteration L80-L86 |
+| `ALTER public.attendance_logs (L89)` | `sql_alter` | **L89 - L100** | `ALTER TABLE public.attendance_logs` | Schema Alteration L89-L100 |
+| `ALTER public.attendance_logs (L114)` | `sql_alter` | **L114 - L117** | `ALTER TABLE public.attendance_logs` | Schema Alteration L114-L117 |
+
+---
+
 ## File: `sql/migration_staging_split_dropdowns.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `b86ac35a324e0f5f` | **Total Lines:** `68` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `5527b77210220b7c` | **Total Lines:** `68` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2936,7 +2961,7 @@
 
 ## File: `time-corrections.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ef3d3c449bb2fba1` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fccd476079c13aab` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2952,7 +2977,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `9c5bad2e20c5bd88` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `34a86bccff5c4766` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

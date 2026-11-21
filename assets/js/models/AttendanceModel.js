@@ -2705,7 +2705,10 @@ export class AttendanceModel {
 
         if (findErr) {
             if (findErr.code === '42703' || findErr.code === 'PGRST204' || findErr.message?.includes('column')) {
-                return { success: false, message: 'ฐานข้อมูลยังไม่ได้อัปเดตคอลัมน์ระบบขอแก้ไขเวลา (กรุณารัน sql/alter_v2_11_time_correction_staging.sql)' };
+                const migrationFile = DatabaseService.getActiveSchema() === 'public'
+                    ? 'sql/migration_public_full_loca_v2_sync.sql'
+                    : 'sql/alter_v2_11_time_correction_staging.sql';
+                return { success: false, message: `ฐานข้อมูลยังไม่ได้อัปเดตคอลัมน์ระบบขอแก้ไขเวลา (กรุณารัน ${migrationFile})` };
             }
             return { success: false, message: 'ไม่สามารถตรวจสอบข้อมูลรายการได้: ' + findErr.message };
         }

@@ -1,0 +1,142 @@
+{
+  "task_id": "PIPE-20261121-switch-schema-staging-to-public",
+  "mode": "PLAN",
+  "target_branch": "Loca-V2",
+  "flow_ids": [
+    "FLOW_AUTH_01",
+    "FLOW_LAYOUT_01",
+    "FLOW_CHECKIN_01",
+    "FLOW_SETTINGS_01",
+    "FLOW_REPORTS_01",
+    "FLOW_APPROVALS_01",
+    "FLOW_TIME_CORRECTION_01"
+  ],
+  "strict_policies": [
+    "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+    "STRICT_SURGICAL_SCOPE_ONLY",
+    "NO_PLACEHOLDERS_IN_TARGET_SCOPE",
+    "MANDATORY_CACHE_VERSION_SYNC_10_HTML"
+  ],
+  "live_supabase_diff_observed": {
+    "system_settings": {
+      "public_cols": 29,
+      "staging_cols": 42,
+      "missing_in_public_count": 13,
+      "missing_in_public": [
+        "official_locations",
+        "enforce_geofence_radius",
+        "offsite_job_types",
+        "special_request_reasons",
+        "announcement_enabled",
+        "announcement_mode",
+        "announcement_start_date",
+        "announcement_end_date",
+        "announcement_title",
+        "announcement_body",
+        "announcement_image_url",
+        "announcement_drive_folder_id",
+        "announcement_updated_at"
+      ]
+    },
+    "attendance_logs": {
+      "public_cols": 25,
+      "public_rows": 691,
+      "staging_cols": 40,
+      "missing_in_public_count": 15,
+      "missing_in_public": [
+        "location_mode",
+        "distance_from_official_meters",
+        "offsite_reason",
+        "check_out_location_mode",
+        "check_out_distance_from_official_meters",
+        "check_out_offsite_reason",
+        "correction_status",
+        "correction_requested_at",
+        "correction_request_reason",
+        "correction_reviewed_by",
+        "correction_reviewed_at",
+        "correction_reject_reason",
+        "correction_original_check_in",
+        "correction_original_check_out",
+        "correction_original_status"
+      ]
+    },
+    "personnel": {
+      "public_cols": 15,
+      "staging_cols": 15,
+      "missing_in_public_count": 0
+    },
+    "user_accounts": {
+      "public_cols": 16,
+      "staging_cols": 16,
+      "missing_in_public_count": 0
+    }
+  },
+  "surgical_targets": [
+    {
+      "file_path": "assets/js/core/Config.js",
+      "symbol": "Config.SUPABASE_SCHEMA",
+      "start_line": 6,
+      "end_line": 12,
+      "recommended_read_window": "1-20",
+      "action": "เปลี่ยน static SUPABASE_SCHEMA = 'staging'; เป็น static SUPABASE_SCHEMA = 'public';"
+    },
+    {
+      "file_path": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.submitTimeCorrectionRequest",
+      "start_line": 2700,
+      "end_line": 2714,
+      "recommended_read_window": "2695-2720",
+      "action": "ปรับข้อความแจ้งเตือนคอลัมน์ไม่ครบ (L2708) ให้อ้างอิงชื่อสคริปต์ตาม active schema (public -> sql/migration_public_full_loca_v2_sync.sql หรือ sql/alter_v2_11_time_correction_public.sql แทนการฮาร์ดโค้ด staging)"
+    },
+    {
+      "file_path": "sql/migration_public_full_loca_v2_sync.sql",
+      "symbol": "NEW_FILE",
+      "start_line": 1,
+      "end_line": 1,
+      "action": "สร้างสคริปต์ SQL แบบ Idempotent & Additive 100% สำหรับอัปเกรด Schema public ให้ครบทุกคอลัมน์เหมือน staging (+13 คอลัมน์ใน system_settings, +15 คอลัมน์ใน attendance_logs โดยใช้ DEFAULT NULL กับ location_mode/check_out_location_mode เพื่อไม่กระทบข้อมูลเก่า 691 แถว, FK, Partial Index, Realtime Publication, Grants, และ NOTIFY pgrst)"
+    }
+  ],
+  "verified_dynamic_files_no_edit_needed": [
+    {
+      "file_path": "assets/js/core/DatabaseService.js",
+      "lines": "36-68, 102, 119-124",
+      "reason": "อ่านค่าจาก Config.SUPABASE_SCHEMA ผ่าน getActiveSchema() อัตโนมัติ เมื่อเป็น 'public' จะเชื่อม public โดยตรง"
+    },
+    {
+      "file_path": "assets/js/components/AppLayout.js",
+      "lines": "902-957",
+      "reason": "อ่าน Config.SUPABASE_SCHEMA อัตโนมัติทั้งชื่อ channel และ postgres_changes schema"
+    },
+    {
+      "file_path": "assets/js/controllers/CheckinController.js",
+      "lines": "183-195",
+      "reason": "อ่าน Config.SUPABASE_SCHEMA อัตโนมัติทั้งชื่อ channel และ postgres_changes schema"
+    },
+    {
+      "file_path": "assets/js/models/SettingsModel.js",
+      "lines": "78-84",
+      "reason": "Fallback guard ทำงานเฉพาะกรณี schema-not-exposed error เท่านั้น ปลอดภัย 100% เมื่อใช้ public"
+    }
+  ],
+  "auto_stamped_files_on_build": [
+    "version.json",
+    "index.html",
+    "loading.html",
+    "checkin.html",
+    "dashboard.html",
+    "approvals.html",
+    "time-corrections.html",
+    "reports.html",
+    "settings.html",
+    "personnel.html",
+    "users.html",
+    ".ai_map/01_FILE_FUNCTION_INDEX.md",
+    ".ai_map/CODE_INDEX.json"
+  ],
+  "git_plan": {
+    "branch": "Loca-V2",
+    "push_requested_by_user": true,
+    "execute_push_only_after_proceed_and_qa_pass": true
+  }
+}
