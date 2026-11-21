@@ -7,6 +7,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { AppLayout } from '../components/AppLayout.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class PersonnelController {
     constructor() {
@@ -19,6 +20,12 @@ export class PersonnelController {
         this.canDeletePersonnel = false;
         this.bulkImportRows = [];
         this.isProcessingBulkImport = false;
+        this.selectedFilterBureau = 'all';
+        this.selectedFilterDivision = 'all';
+        this.selectedFilterWorkGroup = 'all';
+        this.isSuperAdmin = false;
+        this.currentEditingPersonnelId = null;
+        this.isAdminBureau = false;
         this.init();
     }
 
@@ -35,14 +42,133 @@ export class PersonnelController {
 
         // กฎ: บัญชีผู้ใช้งานระดับ Admin ขอบเขตการมองเห็น "ส่วน/ฝ่าย" และ "สำนักงาน" จะไม่สามารถลบข้อมูลในเมนูจัดการข้อมูลบุคลากรได้
         this.canDeletePersonnel = this.currentUser.role === 'SuperAdmin';
+        this.isSuperAdmin = this.currentUser.role === 'SuperAdmin';
+        this.isAdminBureau = this.currentUser.role === 'Admin' && this.currentUser.visibility_level === 'bureau';
 
         if (this.settings?.category_colors?.group_header) {
             this.headerColor = this.settings.category_colors.group_header;
         }
 
         this.#populateDropdownsFromSettings();
+        this.#initHierarchicalOrgFilter();
         this.#bindEvents();
         await this.loadPersonnelData();
+    }
+
+    #initHierarchicalOrgFilter() {
+        const filterDock = document.getElementById('hierarchicalPersonnelOrgFilterDock');
+        if (filterDock && (this.isSuperAdmin || this.isAdminBureau)) {
+            filterDock.classList.remove('hidden');
+        }
+
+        const bureauSelect = document.getElementById('selectPersonnelFilterBureau');
+        const divisionSelect = document.getElementById('selectPersonnelFilterDivision');
+        const workGroupSelect = document.getElementById('selectPersonnelFilterWorkGroup');
+
+        bureauSelect?.addEventListener('change', (e) => {
+            this.selectedFilterBureau = e.target.value;
+            this.selectedFilterDivision = 'all';
+            this.selectedFilterWorkGroup = 'all';
+            this.#updateFilterDivisionOptions();
+            this.#renderGroupedTable();
+        });
+
+        divisionSelect?.addEventListener('change', (e) => {
+            this.selectedFilterDivision = e.target.value;
+            this.selectedFilterWorkGroup = 'all';
+            this.#updateFilterWorkGroupOptions();
+            this.#renderGroupedTable();
+        });
+
+        workGroupSelect?.addEventListener('change', (e) => {
+            this.selectedFilterWorkGroup = e.target.value;
+            this.#renderGroupedTable();
+        });
+    }
+
+    #populateHierarchicalOrgFilter() {
+        const bureauSelect = document.getElementById('selectPersonnelFilterBureau');
+        if (!bureauSelect) return;
+
+        const primaryBureaus = SettingsModel.getUniqueBureaus(this.settings);
+        const listBureaus = (this.personnelList || []).map(p => (p.bureau || '').trim()).filter(Boolean);
+        const bureaus = [...new Set([...primaryBureaus, ...listBureaus])].sort((a, b) => a.localeCompare(b, 'th'));
+
+        if (this.selectedFilterBureau !== 'all' && !bureaus.includes(this.selectedFilterBureau)) {
+            this.selectedFilterBureau = 'all';
+        }
+
+        bureauSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+            bureaus.map(b => `<option value="${UIHelpers.escapeHtml(b)}">${UIHelpers.escapeHtml(b)}</option>`).join('');
+        bureauSelect.value = this.selectedFilterBureau;
+
+        this.#updateFilterDivisionOptions();
+    }
+
+    #updateFilterDivisionOptions() {
+        const divisionSelect = document.getElementById('selectPersonnelFilterDivision');
+        if (!divisionSelect) return;
+
+        if (this.selectedFilterBureau === 'all') {
+            divisionSelect.disabled = true;
+            divisionSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            divisionSelect.value = 'all';
+            this.selectedFilterDivision = 'all';
+        } else {
+            divisionSelect.disabled = false;
+            divisionSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryDivisions = SettingsModel.getUniqueDivisions(this.settings, this.selectedFilterBureau);
+            const listDivisions = (this.personnelList || [])
+                .filter(p => (p.bureau || '').trim() === this.selectedFilterBureau.trim())
+                .map(p => (p.division || '').trim())
+                .filter(Boolean);
+
+            const divisions = [...new Set([...primaryDivisions, ...listDivisions])].sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedFilterDivision !== 'all' && !divisions.includes(this.selectedFilterDivision)) {
+                this.selectedFilterDivision = 'all';
+            }
+
+            divisionSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                divisions.map(d => `<option value="${UIHelpers.escapeHtml(d)}">${UIHelpers.escapeHtml(d)}</option>`).join('');
+            divisionSelect.value = this.selectedFilterDivision;
+        }
+
+        this.#updateFilterWorkGroupOptions();
+    }
+
+    #updateFilterWorkGroupOptions() {
+        const workGroupSelect = document.getElementById('selectPersonnelFilterWorkGroup');
+        if (!workGroupSelect) return;
+
+        if (this.selectedFilterBureau === 'all' || this.selectedFilterDivision === 'all') {
+            workGroupSelect.disabled = true;
+            workGroupSelect.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>';
+            workGroupSelect.value = 'all';
+            this.selectedFilterWorkGroup = 'all';
+        } else {
+            workGroupSelect.disabled = false;
+            workGroupSelect.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-100', 'dark:bg-slate-800');
+
+            const primaryGroups = SettingsModel.getUniqueGroups(this.settings, this.selectedFilterBureau, this.selectedFilterDivision);
+            const listGroups = (this.personnelList || [])
+                .filter(p => (p.bureau || '').trim() === this.selectedFilterBureau.trim() && (p.division || '').trim() === this.selectedFilterDivision.trim())
+                .map(p => (p.work_group || '').trim())
+                .filter(Boolean);
+
+            const workGroups = [...new Set([...primaryGroups, ...listGroups])].sort((a, b) => a.localeCompare(b, 'th'));
+
+            if (this.selectedFilterWorkGroup !== 'all' && !workGroups.includes(this.selectedFilterWorkGroup)) {
+                this.selectedFilterWorkGroup = 'all';
+            }
+
+            workGroupSelect.innerHTML = '<option value="all">แสดงทั้งหมด</option>' +
+                workGroups.map(wg => `<option value="${UIHelpers.escapeHtml(wg)}">${UIHelpers.escapeHtml(wg)}</option>`).join('');
+            workGroupSelect.value = this.selectedFilterWorkGroup;
+        }
     }
 
     #populateDropdownsFromSettings() {
@@ -124,26 +250,59 @@ export class PersonnelController {
 
     async loadPersonnelData() {
         const tbody = document.getElementById('personnelTableBody');
+        const cardsContainer = document.getElementById('personnelCardsContainer');
         if (tbody) {
             tbody.innerHTML = UIHelpers.renderTableSkeleton(6, 6);
+        }
+        if (cardsContainer) {
+            cardsContainer.innerHTML = this.#renderMobileCardsSkeleton(3);
         }
 
         UIHelpers.showLoading('กำลังโหลดข้อมูลบุคลากร...');
         try {
             this.personnelList = await PersonnelModel.getAll(this.currentUser);
+            this.#populateHierarchicalOrgFilter();
             this.#renderGroupedTable();
+        } catch (err) {
+            console.error('Load personnel error:', err);
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-rose-500 font-bold">เกิดข้อผิดพลาดในการโหลดข้อมูลบุคลากร</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800/60 p-6 text-center text-xs font-bold text-rose-600 dark:text-rose-400 shadow-xs">เกิดข้อผิดพลาดในการโหลดข้อมูลบุคลากร</div>`;
+            }
         } finally {
             UIHelpers.hideLoading();
         }
     }
 
+    #renderMobileCardsSkeleton(count = 3) {
+        return Array.from({ length: count }, () => `
+            <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-4 space-y-2.5">
+                <div class="h-4 w-2/3 rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-full rounded-lg bma-skeleton-shimmer"></div>
+                <div class="h-3 w-1/2 rounded-lg bma-skeleton-shimmer"></div>
+            </div>
+        `).join('');
+    }
+
     #renderGroupedTable() {
         const tbody = document.getElementById('personnelTableBody');
+        const cardsContainer = document.getElementById('personnelCardsContainer');
         const totalBadge = document.getElementById('personnelTotalCountBadge');
-        if (!tbody) return;
+        if (!tbody && !cardsContainer) return;
 
         const keyword = this.searchKeyword.toLowerCase().trim();
         const filtered = this.personnelList.filter(p => {
+            if (this.selectedFilterBureau !== 'all' && (p.bureau || '').trim() !== this.selectedFilterBureau.trim()) {
+                return false;
+            }
+            if (this.selectedFilterDivision !== 'all' && (p.division || '').trim() !== this.selectedFilterDivision.trim()) {
+                return false;
+            }
+            if (this.selectedFilterWorkGroup !== 'all' && (p.work_group || '').trim() !== this.selectedFilterWorkGroup.trim()) {
+                return false;
+            }
             if (!keyword) return true;
             const fullText = `${p.prefix}${p.first_name} ${p.last_name} ${p.national_id || ''} ${p.position_title} ${p.position_level} ${p.bureau} ${p.division} ${p.work_group} ${p.account_role || ''}`.toLowerCase();
             return fullText.includes(keyword);
@@ -152,13 +311,20 @@ export class PersonnelController {
         if (totalBadge) totalBadge.textContent = String(filtered.length);
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 bma-text-sub">ไม่พบข้อมูลบุคลากรที่ค้นหา</td></tr>`;
+            }
+            if (cardsContainer) {
+                cardsContainer.innerHTML = `<div data-card-empty="true" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-8 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่พบข้อมูลบุคลากรที่ค้นหา</div>`;
+            }
             return;
         }
 
         const grouped = PersonnelModel.groupPersonnel(filtered, this.groupViewMode);
         let html = '';
+        let cardsHtml = '';
         let runningNo = 1;
+        let cardRunningNo = 1;
 
         for (const [bureauName, divisionsObj] of Object.entries(grouped)) {
             for (const [divisionName, content] of Object.entries(divisionsObj)) {
@@ -168,6 +334,11 @@ export class PersonnelController {
                             <i class="fa-solid fa-building-user mr-1.5"></i>${bureauName} &gt; ${divisionName}
                         </td>
                     </tr>
+                `;
+                cardsHtml += `
+                    <div class="rounded-xl px-3.5 py-2 font-bold text-xs shadow-xs border-l-4" style="background-color: ${this.headerColor}18; color: ${this.headerColor}; border-left-color: ${this.headerColor};">
+                        <i class="fa-solid fa-building-user mr-1.5"></i>${UIHelpers.escapeHtml(bureauName)} &gt; ${UIHelpers.escapeHtml(divisionName)}
+                    </div>
                 `;
 
                 if (this.groupViewMode === 'group') {
@@ -179,19 +350,87 @@ export class PersonnelController {
                                 </td>
                             </tr>
                         `;
+                        cardsHtml += `
+                            <div class="px-3 py-1.5 rounded-lg bg-slate-200/70 dark:bg-slate-800/70 font-semibold text-[11px] bma-text-main">
+                                <i class="fa-solid fa-layer-group mr-1.5 text-emerald-600 dark:text-emerald-400"></i>กลุ่มงาน: ${UIHelpers.escapeHtml(groupName)} (${members.length} คน)
+                            </div>
+                        `;
                         for (const person of members) {
                             html += this.#buildPersonRowHtml(person, runningNo++);
+                            cardsHtml += this.#buildPersonCardHtml(person, cardRunningNo++);
                         }
                     }
                 } else {
                     for (const person of content) {
                         html += this.#buildPersonRowHtml(person, runningNo++);
+                        cardsHtml += this.#buildPersonCardHtml(person, cardRunningNo++);
                     }
                 }
             }
         }
 
-        tbody.innerHTML = html;
+        if (tbody) tbody.innerHTML = html;
+        if (cardsContainer) cardsContainer.innerHTML = cardsHtml;
+    }
+
+    #buildPersonCardHtml(person, indexNo) {
+        const fullName = `${person.prefix || ''}${person.first_name || ''} ${person.last_name || ''}`.trim();
+        const posFull = UIHelpers.formatPosition(person.position_title, person.position_level, person.position_type);
+        const roleMeta = person.role_meta || PersonnelModel.getRolePastelMeta(person.account_role || 'User');
+        const workGroupText = (!person.work_group || person.work_group.trim() === 'ไม่มี') ? '-' : person.work_group;
+        const safeId = UIHelpers.escapeHtml(person.id);
+        const safeName = UIHelpers.escapeHtml(fullName);
+
+        const roleBadgeOrBtnHtml = person.has_account === false
+            ? `
+                <button type="button" data-action="auto-create-account" data-id="${safeId}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 transition-all cursor-pointer shrink-0" title="คลิกเพื่อสร้างบัญชีผู้ใช้งานอัตโนมัติ">
+                    <i class="fa-solid fa-user-plus text-[10px]"></i>
+                    <span>+ สร้างบัญชี</span>
+                </button>
+            `
+            : `<span class="bma-badge ${roleMeta.badgeClass} text-[10px] shrink-0">${UIHelpers.escapeHtml(roleMeta.label)}</span>`;
+
+        const dotClass = person.has_account === false ? 'bg-amber-400' : (roleMeta.dotClass || 'bg-emerald-400');
+
+        const deleteBtnHtml = this.canDeletePersonnel
+            ? `
+                <button type="button" data-action="delete-personnel" data-id="${safeId}" data-name="${safeName}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 transition cursor-pointer">
+                    <i class="fa-solid fa-trash"></i> ลบ
+                </button>
+            `
+            : '';
+
+        return `
+            <div data-card-item="true" data-card-id="${safeId}" data-person-id="${safeId}" class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs cursor-pointer transition">
+                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="w-2.5 h-2.5 rounded-full shrink-0 ${dotClass}"></span>
+                        <span class="font-extrabold text-slate-800 dark:text-slate-100 truncate">${safeName}</span>
+                    </div>
+                    ${roleBadgeOrBtnHtml}
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ตำแหน่ง</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">
+                        ${UIHelpers.escapeHtml(posFull)}${person.position_type ? ` <span class="block text-[11px] text-slate-500 dark:text-slate-400 font-normal">${UIHelpers.escapeHtml(person.position_type)}</span>` : ''}
+                    </span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">กลุ่มงาน</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${UIHelpers.escapeHtml(workGroupText)}</span>
+                </div>
+                <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-between gap-2">
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium"><i class="fa-regular fa-id-card mr-1"></i>แตะการ์ดดูประวัติ</span>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" data-action="edit-personnel" data-id="${safeId}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 hover:bg-sky-100 transition cursor-pointer">
+                            <i class="fa-solid fa-pen"></i> แก้ไข
+                        </button>
+                        ${deleteBtnHtml}
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     #buildPersonRowHtml(person, indexNo) {
@@ -226,8 +465,8 @@ export class PersonnelController {
             : '';
 
         return `
-            <tr class="cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-700/50 transition-colors" data-person-id="${person.id}">
-                <td class="text-center font-semibold">${indexNo}</td>
+            <tr class="cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-700/50 transition-colors" data-person-id="${person.id}" data-row-id="${person.id}">
+                <td class="text-center font-semibold seq-num">${indexNo}</td>
                 <td>
                     <div class="flex items-center gap-2.5 whitespace-nowrap">
                         <span class="w-3 h-3 rounded-full shrink-0 ${dotClass}"></span>
@@ -253,6 +492,8 @@ export class PersonnelController {
     }
 
     #openModal(editPerson = null) {
+        this.currentEditingPersonnelId = editPerson ? editPerson.id : null;
+        document.getElementById('personnelCollisionAlert')?.remove();
         const modal = document.getElementById('modalPersonnelForm');
         const titleEl = document.getElementById('modalPersonnelTitle');
         const autoBox = document.getElementById('autoCreateAccountBox');
@@ -291,13 +532,78 @@ export class PersonnelController {
         }
 
         modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
+        this.currentEditingPersonnelId = null;
+        document.getElementById('personnelCollisionAlert')?.remove();
         document.getElementById('modalPersonnelForm')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
+    }
+
+    async syncPersonnelSilent(deltaDetail = null) {
+        // Dirty-Form Collision Guard: ตรวจสอบว่าแอดมินกำลังเปิดแก้ไขคนเดียวกับที่ถูกอัปเดตหรือไม่
+        if (this.currentEditingPersonnelId && deltaDetail?.record) {
+            const deltaId = String(deltaDetail.record.id || deltaDetail.record.personnel_id || '');
+            if (deltaId === String(this.currentEditingPersonnelId)) {
+                const modal = document.getElementById('modalPersonnelForm');
+                if (modal && !modal.classList.contains('hidden') && !document.getElementById('personnelCollisionAlert')) {
+                    const banner = document.createElement('div');
+                    banner.id = 'personnelCollisionAlert';
+                    banner.className = 'mb-4 p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-xs font-bold flex items-center gap-2';
+                    banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm"></i>
+                        <span>คำเตือน: ข้อมูลบุคลากรนี้เพิ่งได้รับการแก้ไขโดยผู้ดูแลระบบท่านอื่น (${deltaDetail.actor || 'Admin'}) โปรดตรวจสอบก่อนบันทึกทับ</span>`;
+                    const form = modal.querySelector('form');
+                    if (form) form.prepend(banner);
+                }
+            }
+        }
+
+        // Silent delta sync สำหรับตารางบุคลากร
+        try {
+            const freshList = await PersonnelModel.getAll(this.currentUser);
+            this.personnelList = freshList;
+
+            const tbody = document.getElementById('personnelTableBody');
+            const cardsContainer = document.getElementById('personnelCardsContainer');
+            const freshMap = new Map(freshList.map(p => [String(p.id), p]));
+            if (tbody) {
+                const existingRows = Array.from(tbody.querySelectorAll('tr[data-person-id]'));
+                for (const row of existingRows) {
+                    const id = row.getAttribute('data-person-id');
+                    if (!freshMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(row, 600, () => {
+                            DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexTableSequence(tbody, '.seq-num');
+            }
+            if (cardsContainer) {
+                const existingCards = Array.from(cardsContainer.querySelectorAll('[data-person-id]'));
+                for (const card of existingCards) {
+                    const id = card.getAttribute('data-person-id');
+                    if (!freshMap.has(id)) {
+                        DOMDiffHelper.removeRowWithFade(card, 600, () => {
+                            DOMDiffHelper.reindexCardSequence(cardsContainer, '[data-card-item]', '.seq-num');
+                        });
+                    }
+                }
+                DOMDiffHelper.reindexCardSequence(cardsContainer, '[data-card-item]', '.seq-num');
+            }
+        } catch (err) {
+            console.warn('[PersonnelController] syncPersonnelSilent error:', err);
+        }
     }
 
     #bindEvents() {
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            this.syncPersonnelSilent(e.detail);
+        });
+        window.addEventListener('bma:realtime-sync', () => {
+            this.syncPersonnelSilent();
+        });
         document.getElementById('searchPersonnelInput')?.addEventListener('input', (e) => {
             this.searchKeyword = e.target.value;
             this.#renderGroupedTable();
@@ -364,7 +670,23 @@ export class PersonnelController {
         });
 
         document.getElementById('btnExportPersonnelExcel')?.addEventListener('click', () => {
-            const rows = this.personnelList.map((p, idx) => ({
+            const keyword = this.searchKeyword.toLowerCase().trim();
+            const filtered = this.personnelList.filter(p => {
+                if (this.selectedFilterBureau !== 'all' && (p.bureau || '').trim() !== this.selectedFilterBureau.trim()) {
+                    return false;
+                }
+                if (this.selectedFilterDivision !== 'all' && (p.division || '').trim() !== this.selectedFilterDivision.trim()) {
+                    return false;
+                }
+                if (this.selectedFilterWorkGroup !== 'all' && (p.work_group || '').trim() !== this.selectedFilterWorkGroup.trim()) {
+                    return false;
+                }
+                if (!keyword) return true;
+                const fullText = `${p.prefix}${p.first_name} ${p.last_name} ${p.national_id || ''} ${p.position_title} ${p.position_level} ${p.bureau} ${p.division} ${p.work_group} ${p.account_role || ''}`.toLowerCase();
+                return fullText.includes(keyword);
+            });
+
+            const rows = filtered.map((p, idx) => ({
                 'ลำดับ': idx + 1,
                 'เลขบัตรประชาชน': p.national_id || '',
                 'คำนำหน้า': p.prefix,
@@ -397,9 +719,10 @@ export class PersonnelController {
             this.#processBulkImportFile(file);
         });
 
-        document.getElementById('personnelTableBody')?.addEventListener('click', async (e) => {
+        const handlePersonnelContainerClick = async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (btn) {
+                e.stopPropagation();
                 const action = btn.dataset.action;
                 const id = btn.dataset.id;
 
@@ -440,28 +763,30 @@ export class PersonnelController {
                 return;
             }
 
-            // คลิกที่แถวบุคลากรเพื่อเปิด Resume Profile Modal
-            const row = e.target.closest('tr[data-person-id]');
-            if (row) {
-                const personId = row.dataset.personId;
+            // คลิกที่แถวหรือการ์ดบุคลากรเพื่อเปิด Resume Profile Modal
+            const rowOrCard = e.target.closest('tr[data-person-id], [data-card-item][data-person-id]');
+            if (rowOrCard) {
+                const personId = rowOrCard.dataset.personId;
                 const person = this.personnelList.find(p => p.id === personId);
                 if (person) {
                     this.#openPersonnelResumeModal(person);
                 }
             }
-        });
+        };
 
-        // Event listeners ปิด Resume Profile Modal
+        document.getElementById('personnelTableBody')?.addEventListener('click', handlePersonnelContainerClick);
+        document.getElementById('personnelCardsContainer')?.addEventListener('click', handlePersonnelContainerClick);
+
+        // Event listeners ปิด Resume Profile Modal & Unified Modal Dismiss
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelForm'), () => this.#closeModal());
         document.getElementById('btnClosePersonnelResumeModal')?.addEventListener('click', () => {
             this.#closePersonnelResumeModal();
         });
         document.getElementById('btnClosePersonnelResumeModalBottom')?.addEventListener('click', () => {
             this.#closePersonnelResumeModal();
         });
-        document.getElementById('modalPersonnelResumeProfile')?.addEventListener('click', (e) => {
-            if (e.target.id === 'modalPersonnelResumeProfile') {
-                this.#closePersonnelResumeModal();
-            }
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelResumeProfile'), () => {
+            this.#closePersonnelResumeModal();
         });
 
         // Event listeners ระบบ Smart Bulk Import Modal
@@ -469,6 +794,9 @@ export class PersonnelController {
             this.#closeBulkImportModal();
         });
         document.getElementById('btnCancelBulkImport')?.addEventListener('click', () => {
+            this.#closeBulkImportModal();
+        });
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelBulkImport'), () => {
             this.#closeBulkImportModal();
         });
         document.getElementById('btnDownloadImportTemplate')?.addEventListener('click', () => {
@@ -688,11 +1016,13 @@ export class PersonnelController {
         }
 
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closePersonnelResumeModal() {
         const modal = document.getElementById('modalPersonnelResumeProfile');
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
     }
 
     async #handleSavePersonnel() {
@@ -867,6 +1197,7 @@ export class PersonnelController {
         if (confirmBtn) confirmBtn.disabled = true;
 
         modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
 
         if (initialFile) {
             this.#processBulkImportFile(initialFile);
@@ -877,6 +1208,7 @@ export class PersonnelController {
         if (this.isProcessingBulkImport) return;
         const modal = document.getElementById('modalPersonnelBulkImport');
         modal?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
         const inputFile = document.getElementById('inputBulkPersonnelFile');
         if (inputFile) inputFile.value = '';
         const inputImport = document.getElementById('inputImportPersonnelExcel');

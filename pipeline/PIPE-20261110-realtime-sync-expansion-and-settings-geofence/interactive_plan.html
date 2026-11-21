@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Plan — Realtime Sync (Dashboard/Reports/Checkin) & Geofence Settings Root-Cause Fix (Rev 2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body { background: #0b0f19; color: #e2e8f0; font-family: 'Inter', 'Sarabun', sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(51, 65, 85, 0.7); backdrop-filter: blur(12px); }
+    pre { background: #090d16; border: 1px solid #1e293b; border-radius: 0.5rem; padding: 0.9rem; overflow-x: auto; font-size: 0.82rem; }
+  </style>
+</head>
+<body class="p-6 max-w-6xl mx-auto space-y-6">
+  <header class="glass-card rounded-2xl p-6 border-l-4 border-amber-500">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+          MODE: PLAN (Rev 2 — Single-Variable Schema &amp; Cumulative Staging + Public SQL)
+        </span>
+        <h1 class="text-2xl font-bold text-white mt-2">แผนตรวจสอบต้นตอและแก้ไขระบบ Realtime Sync &amp; สวิตช์บังคับตรวจสอบรัศมี (Geofence) ให้ใช้งานได้จริง 100%</h1>
+        <p class="text-slate-400 text-sm mt-1">Task ID: <code>PIPE-20261110-realtime-sync-expansion-and-settings-geofence</code> | Branch: <code>Loca-V2</code></p>
+      </div>
+      <div class="text-right text-xs text-slate-400">
+        <div>Architecture: 1 Orchestrator + 2 SubAgents</div>
+        <div>Status: <span class="text-amber-400 font-semibold">Waiting for Proceed</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Highlighted User Feedback Rev 2 -->
+  <section class="glass-card rounded-2xl p-6 space-y-4 border border-cyan-500/40">
+    <h2 class="text-lg font-bold text-cyan-300">✨ รายการปรับปรุงแผนตามข้อเสนอแนะล่าสุด (Rev 2)</h2>
+    <div class="grid md:grid-cols-2 gap-4 text-sm">
+      <div class="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-2">
+        <div class="font-bold text-cyan-200">1. ผูกตัวแปร Schema จุดเดียวที่ <code>Config.SUPABASE_SCHEMA</code></div>
+        <p class="text-slate-300 text-xs">
+          กำหนดค่าสคีมาไว้ที่ตัวแปรเดียวคือ <code>Config.SUPABASE_SCHEMA = 'staging'</code> ใน <code>assets/js/core/Config.js</code> แล้วให้ทั้ง <code>DatabaseService.js</code>, <code>AppLayout.js</code>, และ <code>CheckinController.js</code> ดึงค่าจาก <code>Config.SUPABASE_SCHEMA</code> ไปใช้โดยตรง เมื่อต้องการสลับเป็น <code>'public'</code> ในอนาคต แก้ไขที่ <code>Config.js</code> เพียงจุดเดียวจะมีผลทั้งระบบทันที
+        </p>
+      </div>
+      <div class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 space-y-2">
+        <div class="font-bold text-emerald-200">2. ชุดคำสั่ง SQL สำหรับ <code>staging</code> + สรุปสะสมคำสั่ง SQL สำหรับ <code>public</code></div>
+        <p class="text-slate-300 text-xs">
+          จัดทำชุดคำสั่ง SQL สำหรับรันบนสคีมา <code>staging</code> (<code>sql/create_staging_schema.sql</code>) และอัปเดตสรุปคำสั่ง SQL สะสมทั้งหมดที่ต้องนำไปรันบนสคีมา <code>public</code> (<code>sql/alter_v2_8_loca_v2_schema.sql</code>) ควบคู่กันทุกครั้งที่มีการปรับโครงสร้างตารางบน <code>staging</code>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1: SQL Scripts for staging and public -->
+  <section class="glass-card rounded-2xl p-6 space-y-4">
+    <h2 class="text-lg font-bold text-emerald-400">1. ชุดคำสั่ง SQL สำหรับ Schema <code>staging</code> และสรุปคำสั่ง SQL สะสมสำหรับ Schema <code>public</code></h2>
+
+    <div class="space-y-3">
+      <h3 class="text-sm font-bold text-amber-300">1.1 คำสั่ง SQL สำหรับรันบน <code>staging</code> ตอนนี้ (อัปเดตใน <code>sql/create_staging_schema.sql</code>)</h3>
+      <pre><code class="text-amber-200">-- ============================================================================
+-- [STAGING] เพิ่มคอลัมน์ enforce_geofence_radius และเปิด Realtime Publication บน staging
+-- ============================================================================
+ALTER TABLE staging.system_settings
+  ADD COLUMN IF NOT EXISTS enforce_geofence_radius BOOLEAN NOT NULL DEFAULT true;
+
+UPDATE staging.system_settings
+SET enforce_geofence_radius = COALESCE(
+  (category_colors->>'enforce_geofence_radius')::boolean,
+  enforce_geofence_radius,
+  true
+);
+
+-- เปิดใช้งาน Supabase Realtime WebSocket สำหรับตารางในสคีมา staging
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.attendance_logs;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.system_settings;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.personnel;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE staging.holidays;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+  END IF;
+END $$;
+
+NOTIFY pgrst, 'reload schema';</code></pre>
+    </div>
+
+    <div class="space-y-3 pt-2">
+      <h3 class="text-sm font-bold text-emerald-300">1.2 สรุปคำสั่ง SQL สะสมทั้งหมดที่ต้องนำไปใช้กับ <code>public</code> (อัปเดตใน <code>sql/alter_v2_8_loca_v2_schema.sql</code>)</h3>
+      <p class="text-xs text-slate-400">รวบรวมทุกการเปลี่ยนแปลงโครงสร้างฐานข้อมูลที่เกิดขึ้นใน <code>staging</code> (ตั้งแต่ V2.8 Loca-V2 จนถึงปัจจุบัน) เพื่อให้นำไปรันบน <code>public</code> ได้ครบจบในชุดเดียวเมื่อรวมเข้า <code>main</code>:</p>
+      <pre><code class="text-emerald-200">-- ============================================================================
+-- [PUBLIC CUMULATIVE MIGRATION] สรุปคำสั่ง SQL สะสมสำหรับนำไปใช้กับ Schema public
+-- ไฟล์: sql/alter_v2_8_loca_v2_schema.sql
+-- ============================================================================
+
+-- 1. ตาราง public.attendance_logs: รองรับโหมดในสถานที่/นอกสถานที่ และเหตุผลช่วยราชการ
+ALTER TABLE public.attendance_logs
+  ADD COLUMN IF NOT EXISTS work_mode TEXT DEFAULT 'onsite',
+  ADD COLUMN IF NOT EXISTS offsite_reason TEXT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS check_out_work_mode TEXT DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS check_out_offsite_reason TEXT DEFAULT NULL;
+
+-- 2. ตาราง public.system_settings: รองรับสวิตช์บังคับตรวจสอบรัศมีสถานที่ทำงาน (Geofence)
+ALTER TABLE public.system_settings
+  ADD COLUMN IF NOT EXISTS enforce_geofence_radius BOOLEAN NOT NULL DEFAULT true;
+
+UPDATE public.system_settings
+SET enforce_geofence_radius = COALESCE(
+  (category_colors->>'enforce_geofence_radius')::boolean,
+  enforce_geofence_radius,
+  true
+);
+
+-- 3. เปิดใช้งาน Supabase Realtime WebSocket สำหรับตารางในสคีมา public
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.attendance_logs;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.system_settings;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.personnel;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+    BEGIN
+      ALTER PUBLICATION supabase_realtime ADD TABLE public.holidays;
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END;
+  END IF;
+END $$;
+
+-- 4. รีโหลด Schema Cache ของ PostgREST
+NOTIFY pgrst, 'reload schema';</code></pre>
+    </div>
+  </section>
+
+  <!-- Section 2: Single-Variable Schema Architecture -->
+  <section class="glass-card rounded-2xl p-6 space-y-4">
+    <h2 class="text-lg font-bold text-cyan-400">2. การผูกตัวแปร Schema จุดเดียว (Single-Point Schema Variable)</h2>
+    <div class="mermaid">
+flowchart LR
+    CFG["Config.js\nSUPABASE_SCHEMA = 'staging'"] --> DB["DatabaseService.js\ngetActiveSchema() => Config.SUPABASE_SCHEMA"]
+    CFG --> AL["AppLayout.js\nconst activeSchema = Config.SUPABASE_SCHEMA || 'public'"]
+    CFG --> CC["CheckinController.js\nconst activeSchema = Config.SUPABASE_SCHEMA || 'public'"]
+    DB --> Q["ทุกคำสั่ง db.from(...)"]
+    AL --> WS1["WebSocket postgres_changes\n(attendance_logs, system_settings, personnel, holidays)"]
+    CC --> WS2["WebSocket postgres_changes\n(system_settings บนหน้า checkin.html)"]
+    </div>
+  </section>
+
+  <!-- Section 3: Surgical File List -->
+  <section class="glass-card rounded-2xl p-6 space-y-4">
+    <h2 class="text-lg font-bold text-indigo-400">3. รายการไฟล์ที่แก้ไขแบบ Surgical Scope (ไม่แตะส่วนที่ไม่เกี่ยวข้อง)</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-300">
+            <th class="py-2 px-3">ลำดับ</th>
+            <th class="py-2 px-3">ไฟล์</th>
+            <th class="py-2 px-3">จุดที่แก้ไข (Surgical Target)</th>
+            <th class="py-2 px-3">รายละเอียดการแก้ไข</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800 text-slate-300">
+          <tr>
+            <td class="py-2 px-3">1</td>
+            <td class="py-2 px-3 font-mono text-emerald-300">sql/create_staging_schema.sql<br>sql/alter_v2_8_loca_v2_schema.sql</td>
+            <td class="py-2 px-3 font-mono">system_settings + supabase_realtime</td>
+            <td class="py-2 px-3">เพิ่มคำสั่ง SQL คอลัมน์ <code>enforce_geofence_radius</code> และการผูก Publication <code>supabase_realtime</code> ทั้งของ <code>staging</code> และสรุปสะสมของ <code>public</code></td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3">2</td>
+            <td class="py-2 px-3 font-mono text-cyan-300">assets/js/core/Config.js<br>assets/js/core/DatabaseService.js</td>
+            <td class="py-2 px-3 font-mono">Config.SUPABASE_SCHEMA<br>getActiveSchema() (L18–85)</td>
+            <td class="py-2 px-3">ใช้ <code>Config.SUPABASE_SCHEMA</code> เป็นจุดศูนย์กลางเพียงจุดเดียว พร้อม helper <code>DatabaseService.getActiveSchema()</code></td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3">3</td>
+            <td class="py-2 px-3 font-mono text-cyan-300">assets/js/models/SettingsModel.js</td>
+            <td class="py-2 px-3 font-mono">getSettings (L22–95)<br>updateSettings (L152–245)</td>
+            <td class="py-2 px-3">บันทึก <code>enforce_geofence_radius</code> ลงฐานข้อมูล Supabase จริง (พร้อม fallback ใน <code>category_colors</code> JSONB) และดึงค่าล่าสุดจาก DB เสมอเมื่อเปิดหรือรีเฟรชหน้า</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3">4</td>
+            <td class="py-2 px-3 font-mono text-cyan-300">assets/js/models/AttendanceModel.js<br>assets/js/components/AppLayout.js</td>
+            <td class="py-2 px-3 font-mono">getTodaySyncWatermark()<br>refreshNotificationBell &amp; initGlobalRealtimeSync</td>
+            <td class="py-2 px-3">ใช้ <code>Config.SUPABASE_SCHEMA</code> แทนการ hardcode <code>'public'</code> และเพิ่มการตรวจจับ Watermark ของ <code>attendance_logs</code> วันนี้และ <code>system_settings</code> เพื่อส่ง Event <code>bma:realtime-delta-sync</code> แบบเดียวกับหน้าอนุมัติ</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3">5</td>
+            <td class="py-2 px-3 font-mono text-cyan-300">assets/js/controllers/ReportsController.js</td>
+            <td class="py-2 px-3 font-mono">syncReportsSilent (L976–1038)</td>
+            <td class="py-2 px-3">เมื่อสถานะเปลี่ยนข้ามตาราง (เช่น <code>no_checkin</code> → <code>normal</code>) ให้ย้ายแถวข้ามตารางสถานะพร้อมไฮไลต์แถวที่เปลี่ยนและอัปเดตการ์ดตัวเลขสรุปทันที</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3">6</td>
+            <td class="py-2 px-3 font-mono text-cyan-300">assets/js/controllers/CheckinController.js</td>
+            <td class="py-2 px-3 font-mono">init / #initSettingsRealtimeSync / #renderGeofenceStatusUI / #goToStep / #updateStep1Validation</td>
+            <td class="py-2 px-3">ใช้ <code>Config.SUPABASE_SCHEMA</code>, โหลด <code>getSettings(true)</code> จาก Supabase ทุกครั้งที่เปิดหน้า/รีเฟรช/สลับกลับมาหน้าจอ, และปลดล็อกปุ่มถัดไปทันทีเมื่อปิดสวิตช์บังคับรัศมี</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+</body>
+</html>

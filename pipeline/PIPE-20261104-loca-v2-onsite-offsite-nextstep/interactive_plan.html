@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Plan (Updated: แนวทาง A - Schema staging ใน Supabase เดิม)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 sm:p-6">
+  <div class="max-w-6xl mx-auto space-y-6">
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-900/70 via-teal-900/60 to-slate-900 border border-emerald-500/40 rounded-2xl p-6 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              PIPE-20261104-loca-v2-onsite-offsite-nextstep
+            </span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">
+              แนวทาง A: Schema "staging" ใน Supabase เดิม
+            </span>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              Branch: Loca-V2
+            </span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold mt-3 text-white">
+            แผนพัฒนาระบบลงเวลา Branch Loca-V2 (แนวทาง A: แยก Schema ทดสอบใน Supabase เดิม)
+          </h1>
+          <p class="text-slate-300 text-sm mt-1">
+            ใช้ URL และ Key เดิม 100% แต่แยกโครงสร้างข้อมูลทดสอบไปไว้ที่ Schema <code>staging</code> เพื่อความปลอดภัยสูงสุด ข้อมูลทดสอบไม่ปนกับข้อมูลจริงของระบบบน Cloudflare Pages
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Deep Dive on Approach A (Same Supabase, Separate Schema) -->
+    <div class="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-extrabold text-purple-400 flex items-center gap-2">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>แนวทาง A: แยก Schema "staging" บน Supabase เดิม (ไม่ต้องเปลี่ยน URL/Key)</span>
+        </h2>
+        <span class="text-xs px-3 py-1 rounded-full bg-purple-950 border border-purple-500/50 text-purple-300 font-bold">
+          ความปลอดภัยสูงสุด • ข้อมูลแยกขาดจากระบบจริง
+        </span>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+          <div class="font-bold text-amber-300 flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center text-xs">1</span>
+            <span>สคริปต์ SQL โคลนตาราง (`sql/create_staging_schema.sql`)</span>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            สร้าง Schema <code>staging</code> พร้อมคัดลอกตาราง <code>system_settings</code>, <code>personnel</code>, <code>user_accounts</code> และ <code>attendance_logs</code> มาไว้ใน <code>staging</code> โดยก๊อปปี้ข้อมูลบุคลากรและบัญชีเดิมมาให้ครบ เพื่อให้ท่านสามารถล็อกอินเข้าทดสอบได้ทันที
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+          <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs">2</span>
+            <span>ในโค้ด `Config.js` &amp; `DatabaseService.js`</span>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            บน Branch <code>Loca-V2</code> จะเพิ่มเพียงบรรทัดเดียว: <code>static SUPABASE_SCHEMA = 'staging';</code> (โดยที่ URL และ Key ใช้ชุดเดิม)<br/>
+            ใน <code>DatabaseService.js</code> ส่ง <code>db: { schema: 'staging' }</code> ทำให้ทุกหน้าใน <code>Loca-V2</code> ชี้ไปที่ฐานข้อมูลทดสอบอัตโนมัติ 100%
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 space-y-2">
+          <div class="font-bold text-sky-300 flex items-center gap-1.5">
+            <span class="w-6 h-6 rounded-full bg-sky-500/20 flex items-center justify-center text-xs">3</span>
+            <span>ตั้งค่าบน Supabase Dashboard 1 จุด</span>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            เข้าไปที่ <strong>Project Settings &gt; API &gt; PostgREST &gt; Exposed Schemas</strong> แล้วเพิ่มคำว่า <code>staging</code> เข้าไปคู่กับ <code>public</code> (ทำครั้งเดียวใน 30 วินาที) เพื่อเปิดให้เว็บดึงข้อมูลจาก Schema ใหม่ได้
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Flow Summary (Step 1: Location+Shift -> Step 2: Photo) -->
+    <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-5 space-y-3">
+      <h2 class="text-base sm:text-lg font-extrabold text-emerald-400 flex items-center gap-2">
+        <i class="fa-solid fa-shoe-prints"></i>
+        <span>ลำดับ Next Step 2 ขั้นตอนแบบ Zero-Scroll (100dvh): [1. พิกัด+ช่วงเวลา] ➔ [2. ถ่ายรูป &amp; บันทึก]</span>
+      </h2>
+      <div class="grid md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-xl bg-slate-800/60 border border-amber-500/30 space-y-2">
+          <div class="font-bold text-amber-300 text-sm">
+            ขั้นตอนที่ 1 (หน้าแรก): พิกัดสถานที่ + ช่วงเวลานอกเวลา (ถ้ามี)
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs">
+            <li><strong>โหมดในสถานที่ (ค่าเริ่มต้น):</strong> คำนวณรัศมีเทียบกับทุกสถานที่ในแท็บ "สถานที่และรัศมี" หากอยู่ในรัศมีอนุญาตให้ไปต่อ หากอยู่นอกรัศมีล็อกปุ่มถัดไปและแจ้งเตือน <code>"พิกัดตำแหน่งอยู่นอกสถานที่ทำงาน"</code> (ไม่เสียเวลาเปิดกล้องเก้อ)</li>
+            <li><strong>โหมดนอกสถานที่:</strong> เลือกรูปแบบการปฏิบัติงาน (ช่องกรอก "อื่นๆ" เปิดเป็นป๊อปอัปเพื่อไม่ให้ดันความสูงหน้าจอ) + เลือกพิกัด GPS 2 ตัวเลือก (พิกัดปัจจุบัน หรือ ค้นหาสถานที่เอง)</li>
+            <li><strong>ช่วงเวลานอกเวลา:</strong> แสดงกล่องเลือกช่วงเวลากระชับด้านล่างการ์ดพิกัด (เฉพาะเมื่อเป็นนอกเวลา)</li>
+            <li><strong>ปุ่มขอบล่างจอ:</strong> แสดง <strong>"ปุ่มถัดไป" (สีเหลือง)</strong></li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-800/60 border border-emerald-500/30 space-y-2">
+          <div class="font-bold text-emerald-300 text-sm">
+            ขั้นตอนที่ 2 (หน้าสุดท้าย): ถ่ายรูปยืนยันตัวตน &amp; บันทึกเวลา
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs">
+            <li>แสดงแถบสรุปพิกัด/ช่วงเวลาที่เลือกไว้ (กดย้อนกลับไปแก้ไขได้)</li>
+            <li>แสดงกรอบกล้องถ่ายภาพแนวตั้ง 3:4 เพื่อยืนยันตัวตน</li>
+            <li><strong>ปุ่มขอบล่างจอ:</strong> แสดง <strong>"บันทึกลงเวลาปฏิบัติงาน" (สีเขียว)</strong></li>
+            <li>เมื่อกดยืนยัน จะแสดงลำดับ Popup: <strong>สรุปข้อมูล</strong> ➔ <strong>"ระบบกำลังบันทึกข้อมูล"</strong> ➔ <strong>"ลงเวลาปฏิบัติงานเรียบร้อยแล้ว"</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Personnel Hierarchical Filter Summary -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
+      <h3 class="text-base font-extrabold text-sky-400">
+        <i class="fa-solid fa-sitemap mr-1.5"></i>หน้าจัดการข้อมูลบุคลากร (กรองข้อมูลตามโครงสร้างองค์กร 3 ระดับ)
+      </h3>
+      <p class="text-xs sm:text-sm text-slate-300">
+        เพิ่มแผง <strong>"กรองข้อมูลตามโครงสร้างองค์กร (ขอบเขต สำนักงาน/กอง)"</strong> แบบ 3 ระดับ (<code>1. สำนักงาน/กอง</code> &gt; <code>2. ส่วน/ฝ่าย</code> &gt; <code>3. กลุ่มงาน</code>) เหมือนหน้ารายงานการลงเวลา สำหรับบัญชี <code>SuperAdmin</code> และ <code>Admin</code> เฉพาะขอบเขตการมองเห็น <code>สำนักงาน/กอง</code>
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

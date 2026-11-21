@@ -1,11 +1,12 @@
 /**
  * @file assets/js/core/Config.js
- * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ V2.7
+ * @description คลาสเก็บค่าคงที่ การตั้งค่าเชื่อมต่อ Supabase และค่ามาตรฐานของระบบ v2.10.0
  */
 
 export class Config {
     static SUPABASE_URL = 'https://yicatrqogmcncfpqdyra.supabase.co';
     static SUPABASE_ANON_KEY = 'sb_publishable_eF5hCLSrg74gre5UXNtVgw_UsPRbPZl';
+    static SUPABASE_SCHEMA = 'public';
     static PROJECT_REF = 'yicatrqogmcncfpqdyra';
     static GITHUB_REPO = 'https://github.com/STB6636/CheckinApp.git';
 
@@ -14,8 +15,10 @@ export class Config {
         THEME_MODE: 'bma_checkin_theme_mode_v2_7',
         CACHED_SETTINGS: 'bma_checkin_cached_settings_v2_7',
         WELCOME_TOAST: 'bma_checkin_welcome_toast_v2_7',
+        OFFICIAL_LOCATIONS: 'bma_official_locations_v2',
         REMEMBER_ME: 'bma_remember_me',
-        REMEMBER_USERNAME: 'bma_remember_username'
+        REMEMBER_USERNAME: 'bma_remember_username',
+        LAST_SEEN_ANNOUNCEMENT: 'bma_last_seen_announcement_id'
     };
 
     static OFFICIAL_STATUSES = [
@@ -36,6 +39,7 @@ export class Config {
         require_photo: true,
         allow_gallery_fallback: true,
         require_gps: true,
+        enforce_geofence_radius: true,
         single_click_checkin: false,
         randomize_gps_checkout: false,
         randomize_gps_radius_meters: 20,
@@ -49,6 +53,15 @@ export class Config {
         early_shift_window_minutes: 30,
         google_drive_script_url: '',
         google_drive_folder_id: '',
+        announcement_enabled: false,
+        announcement_mode: 'text',
+        announcement_start_date: '',
+        announcement_end_date: '',
+        announcement_title: '',
+        announcement_body: '',
+        announcement_image_url: '',
+        announcement_drive_folder_id: '',
+        announcement_updated_at: '',
         prefixes: ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง'],
         positions: [
             { type: 'ประเภททั่วไป', title: 'เจ้าพนักงานเทศกิจ', level: 'ปฏิบัติงาน' },
@@ -63,12 +76,32 @@ export class Config {
             { organization: 'กรุงเทพมหานคร', bureau: 'สำนักเทศกิจ', division: 'กองตรวจและปฏิบัติการพื้นที่ 1', group: 'กลุ่มงานตรวจและปฏิบัติการ 1' },
             { organization: 'กรุงเทพมหานคร', bureau: 'สำนักเทศกิจ', division: 'กองตรวจและปฏิบัติการพื้นที่ 2', group: 'กลุ่มงานตรวจและปฏิบัติการ 2' }
         ],
+        official_locations: [
+            { id: 'LOC-001', name: 'สำนักเทศกิจ', latitude: 13.756331, longitude: 100.501765, radius_meters: 150, is_active: true }
+        ],
         remarks: [
-            'ปฏิบัติราชการนอกสถานที่',
-            'อบรม/สัมมนา/ประชุมราชการ',
+            'ปฏิบัติงานนอกสถานที่',
+            'อบรม',
+            'ประชุม',
+            'ปฏิบัติงานที่บ้าน (WFH)',
             'ปฏิบัติงานเวรประจำวัน',
             'ลืมลงเวลาปฏิบัติราชการ',
-            'โทรศัพท์/อุปกรณ์ขัดข้อง'
+            'โทรศัพท์/อุปกรณ์ขัดข้อง',
+            'อื่นๆ'
+        ],
+        offsite_job_types: [
+            'ปฏิบัติงานนอกสถานที่',
+            'อบรม/สัมมนา/ประชุมราชการ',
+            'ปฏิบัติงานที่บ้าน (WFH)',
+            'ปฏิบัติงานเวรประจำวัน',
+            'อื่นๆ'
+        ],
+        special_request_reasons: [
+            'ลืมลงเวลาปฏิบัติราชการ',
+            'โทรศัพท์/อุปกรณ์ขัดข้อง',
+            'ระบบอินเทอร์เน็ตขัดข้อง',
+            'ปฏิบัติงานภารกิจเร่งด่วน',
+            'อื่นๆ'
         ],
         work_shifts: [
             { name: 'เวลาราชการปกติ', check_in: '08:30', check_out: '16:30', is_custom: false, is_overtime: false, is_overnight: false, allow_early_checkin: false },

@@ -3,6 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Force Browser Revalidation & Auto Cache-Busting (Remote version.json + Hard Cache Purge) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        (function() {
+            const CURRENT_APP_BUILD = '20261121_e7690051';
+            const BUILD_STORAGE_KEY = 'bma_app_build';
+            const RELOAD_GUARD_KEY = 'bma_reloaded_build';
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                'bma_last_seen_announcement_id',
+                BUILD_STORAGE_KEY
+            ];
+
+            // Clean up temporary cache-busting query param (?_cb=...) after forced reload
+            try {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('_cb')) {
+                    url.searchParams.delete('_cb');
+                    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+                }
+            } catch (_) {}
+
+            async function performHardCachePurge(targetBuild) {
+                try {
+                    if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                    sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
+
+                    Object.keys(localStorage).forEach((key) => {
+                        if (!PRESERVE_KEYS.includes(key)) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+                    localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                    if ('caches' in window) {
+                        const names = await window.caches.keys();
+                        await Promise.all(names.map((n) => window.caches.delete(n)));
+                    }
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map((r) => r.unregister()));
+                    }
+                    try {
+                        await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                    } catch (_) {}
+
+                    const nextUrl = new URL(window.location.href);
+                    nextUrl.searchParams.set('_cb', targetBuild);
+                    window.location.replace(nextUrl.toString());
+                } catch (err) {
+                    console.warn('[CacheBuster] Hard purge error:', err);
+                }
+            }
+
+            try {
+                const prevBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+                if (prevBuild && prevBuild !== CURRENT_APP_BUILD) {
+                    performHardCachePurge(CURRENT_APP_BUILD);
+                    return;
+                }
+                if (!prevBuild) {
+                    localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_APP_BUILD);
+                }
+            } catch (_) {}
+
+            async function checkRemoteVersion() {
+                try {
+                    const res = await fetch('./version.json?_t=' + Date.now(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const remoteBuild = data && data.buildId ? String(data.buildId).trim() : '';
+                    if (!remoteBuild) return;
+                    const localBuild = localStorage.getItem(BUILD_STORAGE_KEY) || CURRENT_APP_BUILD;
+                    if (remoteBuild !== localBuild || remoteBuild !== CURRENT_APP_BUILD) {
+                        await performHardCachePurge(remoteBuild);
+                    }
+                } catch (_) {}
+            }
+
+            checkRemoteVersion();
+            window.addEventListener('pageshow', (e) => { if (e.persisted) checkRemoteVersion(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkRemoteVersion();
+            });
+        })();
+    </script>
     <title>รายงานการลงเวลาปฏิบัติราชการ - กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -14,7 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261121_e7690051">
 </head>
 <body class="min-h-screen flex flex-col bg-[#E7ECE9] dark:bg-[#0B132B] text-slate-800 dark:text-slate-100 antialiased">
 
@@ -40,7 +138,7 @@
                         </div>
                         <div>
                             <h2 class="text-base sm:text-lg font-extrabold tracking-wide text-white">รายงานการลงเวลาปฏิบัติราชการ</h2>
-                            <p id="reportDateDisplaySubtitle" class="text-xs text-blue-100/90 font-bold mt-0.5">ประจำวันที่ 15 มกราคม 2569</p>
+                            <p id="reportDateDisplaySubtitle" class="text-xs text-blue-100/90 font-bold mt-0.5">ประจำวันที่ 17 พฤศจิกายน 2569</p>
                         </div>
                     </div>
 
@@ -190,21 +288,23 @@
     <div id="bmaMobileBottomNav"></div>
 
     <!-- Modal 1: เพิ่ม / แก้ไขข้อมูลการลงเวลา -->
-    <div id="modalReportAttendance" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-        <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-6 border border-slate-200 dark:border-slate-700">
-            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 id="modalReportTitle" class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0971CE] flex items-center justify-center text-sm shadow-xs">
+    <div id="modalReportAttendance" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-700 gap-3">
+                <h3 id="modalReportTitle" class="text-base sm:text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2 min-w-0">
+                    <span class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-[#0971CE] flex items-center justify-center text-sm shadow-xs shrink-0">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </span>
-                    <span>บันทึก/แก้ไขเวลาปฏิบัติราชการ</span>
+                    <span id="repTitleText" class="truncate">บันทึก/แก้ไขเวลาปฏิบัติราชการ</span>
+                    <span id="repEditModeBadge" class="hidden shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">แก้ไขบันทึกเดิม</span>
                 </h3>
-                <button type="button" id="btnCloseReportModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                <button type="button" id="btnCloseReportModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <form id="formReportAttendance" class="space-y-3.5">
+            <form id="formReportAttendance" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-4 space-y-3.5">
                 <input type="hidden" id="repLogId">
 
                 <div>
@@ -217,15 +317,31 @@
                     <input type="date" id="repWorkDate" class="bma-input text-sm rounded-xl" required>
                 </div>
 
+                <div id="repDuplicateWarningBanner" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-[11px] font-semibold text-amber-800 dark:text-amber-200 flex items-start gap-2 leading-relaxed">
+                    <i class="fa-solid fa-triangle-exclamation mt-0.5 shrink-0 text-amber-600 dark:text-amber-400"></i>
+                    <span id="repDuplicateWarningText">บุคลากรรายนี้มีบันทึกเวลาปฏิบัติราชการในวันที่เลือกอยู่แล้ว ระบบจะยึดข้อมูลการลงเวลาของผู้ใช้เป็นหลัก</span>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเข้างาน (24 ชม.) *</label>
                         <input type="text" id="repCheckinTime" class="bma-input text-sm font-mono text-center rounded-xl" value="08:30" placeholder="08:30" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เวลาเลิกงาน (24 ชม.)</label>
-                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center rounded-xl" value="16:30" placeholder="16:30">
+                        <div class="flex items-center justify-between gap-1 mb-1">
+                            <label for="repCheckoutTime" class="block text-xs font-bold text-slate-700 dark:text-slate-300 truncate">เวลาเลิกงาน (24 ชม.)</label>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <button type="button" id="btnQuickFillCheckout" class="px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 hover:bg-emerald-100 text-[#00744B] dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 transition cursor-pointer" title="เติมเวลาเลิกงานตามกะมาตรฐาน">ตามกะ</button>
+                                <button type="button" id="btnClearCheckout" class="hidden px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 transition cursor-pointer" title="ล้างเวลาเลิกงานเป็นว่าง">ล้าง</button>
+                            </div>
+                        </div>
+                        <input type="text" id="repCheckoutTime" class="bma-input text-sm font-mono text-center rounded-xl" placeholder="ยังไม่ลงเวลาออก">
                     </div>
+                </div>
+
+                <div id="repCheckoutHintBanner" class="hidden p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 text-[11px] font-medium text-sky-800 dark:text-sky-200 flex items-start gap-2 leading-relaxed">
+                    <i class="fa-solid fa-circle-info mt-0.5 shrink-0 text-sky-600 dark:text-sky-400"></i>
+                    <span>บุคลากรรายนี้ยังไม่ได้ลงเวลาออกงาน — เว้นว่างไว้หากยังไม่ต้องการบันทึกเวลาเลิกงาน (หรือกดปุ่ม ตามกะ)</span>
                 </div>
 
                 <div>
@@ -242,8 +358,9 @@
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">หมายเหตุ</label>
                     <input type="text" id="repRemarkInput" class="bma-input text-sm rounded-xl" placeholder="ระบุหมายเหตุ (ถ้ามี)">
                 </div>
+                </div>
 
-                <div class="pt-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700">
+                <div class="shrink-0 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2.5 border-t border-slate-200 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/50">
                     <button type="button" id="btnCancelReportModal" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition cursor-pointer">ยกเลิก</button>
                     <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-md transition cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i>
@@ -255,11 +372,11 @@
     </div>
 
     <!-- Modal 2: International Resume Profile Modal (Zero-Scroll Executive Redesign) -->
-    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs">
-        <div class="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[90vh]">
+    <div id="modalPersonnelResumeProfile" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/65 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-5xl my-auto bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh]">
 
             <!-- 1. Executive Resume Header Banner (~80px) -->
-            <div class="shrink-0 px-6 py-4 relative bg-gradient-to-r from-[#00351B] via-[#005B2E] to-[#00744B] text-white">
+            <div class="shrink-0 px-4 sm:px-6 py-3.5 sm:py-4 relative bg-gradient-to-r from-[#00351B] via-[#005B2E] to-[#00744B] text-white">
                 <button type="button" id="btnCloseResumeModalTop" class="absolute top-3.5 right-4 w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center cursor-pointer transition">
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
@@ -284,7 +401,7 @@
             </div>
 
             <!-- 2. Profile Body Content (2 Columns: เข้างาน vs ออกงาน) -->
-            <div class="p-5 overflow-y-auto space-y-4">
+            <div class="flex-1 min-h-0 p-4 sm:p-5 overflow-y-auto overscroll-contain space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
                     <!-- ฝั่งซ้าย: ข้อมูลเข้างาน -->
@@ -423,9 +540,9 @@
             </div>
 
             <!-- 3. Modal Footer (~48px) -->
-            <div class="shrink-0 px-6 py-2.5 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-                <span class="text-[11px] text-slate-500 font-medium">ระบบบันทึกเวลาปฏิบัติราชการดิจิทัล กรุงเทพมหานคร</span>
-                <button type="button" id="btnCloseResumeModalBottom" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-sm transition cursor-pointer">
+            <div class="shrink-0 px-4 sm:px-6 py-2.5 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-900/50">
+                <span class="text-[11px] text-slate-500 font-medium truncate">ระบบบันทึกเวลาปฏิบัติราชการดิจิทัล กรุงเทพมหานคร</span>
+                <button type="button" id="btnCloseResumeModalBottom" class="shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-[#00744B] hover:bg-[#005B3A] text-white shadow-sm transition cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                     <span>ปิดหน้าต่าง</span>
                 </button>
@@ -434,6 +551,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/ReportsController.js"></script>
+    <script type="module" src="assets/js/controllers/ReportsController.js?v=20261121_e7690051"></script>
 </body>
 </html>

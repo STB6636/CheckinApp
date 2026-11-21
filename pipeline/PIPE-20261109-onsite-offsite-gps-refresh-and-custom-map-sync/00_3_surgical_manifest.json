@@ -1,0 +1,29 @@
+{
+  "task_id": "PIPE-20261109-onsite-offsite-gps-refresh-and-custom-map-sync",
+  "created_at": "2026-11-09T15:44:07+07:00",
+  "mode": "PLAN",
+  "flows": [
+    "FLOW_CHECKIN_01",
+    "FLOW_GPS_01"
+  ],
+  "targets": [
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "line_range": "539-630",
+      "symbols": ["#initModeSwitcher"],
+      "action": "Trigger fresh GPS lookup on switching back to Onsite and switching back to Current GPS in Offsite mode"
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "line_range": "895-950",
+      "symbols": ["#initOffsiteModalGps"],
+      "action": "Update inline Leaflet map and header location name in GPS card when custom offsite location is confirmed"
+    },
+    {
+      "file": "checkin.html",
+      "line_range": "365-430",
+      "symbols": ["btnModeOnsite", "btnModeOffsite", "btnOffsiteGpsCurrent", "btnOpenOffsiteMapModal"],
+      "action": "Verify initial default states: Onsite default, and Offsite GPS Current default"
+    }
+  ]
+}

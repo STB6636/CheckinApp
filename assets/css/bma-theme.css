@@ -1318,6 +1318,10 @@ html.dark .swal2-icon.swal2-success {
 html.dark .swal2-icon.swal2-success [class^='swal2-success-line'] {
     background-color: #34D399 !important;
 }
+/* Ensure SweetAlert2 overlays sit above mobile drawer & z-[9999] modals, below progress bar, toast & global spinner */
+.swal2-container {
+    z-index: 99990 !important;
+}
 
 /* ============================================================================
  * Material Dashboard PRO - Dynamic Stat Card & Floating Header Overrides
@@ -1504,6 +1508,11 @@ div[id^="modal"].fixed.inset-0:not(.hidden),
     display: block !important;
 }
 
+body.bma-modal-open {
+    overflow: hidden !important;
+    overscroll-behavior: contain;
+}
+
 /* ============================================================================
  * Checkin Floating Header Table Cards Spacing Contract (Plan V2.15)
  * ป้องกันการชนกันของ Floating Header (-mt-6) กับกล่องลงเวลาด้านบน (สุทธิ 32px / 40px)
@@ -1518,6 +1527,11 @@ div[id^="modal"].fixed.inset-0:not(.hidden),
         margin-top: 4rem !important;    /* 64px Desktop -> สุทธิ: 64px - 24px = 40px */
         margin-bottom: 2.5rem !important; /* 40px Desktop */
     }
+}
+
+#mobileDrawerHistoryMount .bma-checkin-table-card {
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
 }
 
 /* ============================================================================
@@ -1605,23 +1619,6 @@ html.dark .cell-health-error {
 }
 
 /* ============================================================================
- * Zero-Scroll Executive Resume Profile Modal Contract (Plan V2.22)
- * Height constrained to <= 520px, guaranteed zero vertical scrolling on standard viewports
- * ============================================================================ */
-#modalPersonnelResumeProfile > div {
-    max-height: calc(100vh - 2rem);
-    display: flex;
-    flex-direction: column;
-}
-
-@media (min-height: 600px) {
-    #modalPersonnelResumeProfile > div {
-        max-height: calc(100vh - 2.5rem);
-        overflow: hidden;
-    }
-}
-
-/* ============================================================================
  * Sticky Check-in Bottom Action Bar (Plan V2.22)
  * On mobile (<1024px), docked to bottom edge; on desktop (>=1024px), flows naturally
  * ============================================================================ */
@@ -1689,4 +1686,70 @@ html.dark .bma-sticky-checkin-bar {
 /* Single Action Icon Buttons (w-8.5 h-8.5 / 34px) */
 .w-8\.5 { width: 2.125rem; }
 .h-8\.5 { height: 2.125rem; }
+
+/* --- GPS Card Isolation & Leaflet Pane Stacking Defense --- */
+#gpsSectionCard {
+    isolation: isolate;
+    z-index: 0;
+    padding: 0 !important;
+}
+#inlineGpsLeafletMap .leaflet-pane {
+    z-index: 10 !important;
+}
+#inlineGpsLeafletMap .leaflet-tile-pane {
+    z-index: 5 !important;
+}
+#inlineGpsLeafletMap .leaflet-marker-pane {
+    z-index: 20 !important;
+}
+#inlineGpsLeafletMap .leaflet-control-container {
+    z-index: 30 !important;
+}
+
+/* ============================================================================
+ * Incremental Realtime DOM Diffing & Concurrency Styles (Plan PIPE-20261109)
+ * ============================================================================ */
+.row-enter-highlight {
+    animation: rowGreenPulse 2.5s ease-out forwards;
+}
+
+@keyframes rowGreenPulse {
+    0% { background-color: rgba(16, 185, 129, 0.45); transform: translateY(-6px); }
+    50% { background-color: rgba(16, 185, 129, 0.2); }
+    100% { background-color: transparent; transform: translateY(0); }
+}
+
+.row-update-highlight {
+    animation: rowAmberPulse 2s ease-out forwards;
+}
+
+@keyframes rowAmberPulse {
+    0% { background-color: rgba(245, 158, 11, 0.45); }
+    50% { background-color: rgba(245, 158, 11, 0.15); }
+    100% { background-color: transparent; }
+}
+
+.row-leave-fade {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0 !important;
+    transform: translateX(25px) scale(0.97) !important;
+    background-color: rgba(244, 63, 94, 0.25) !important;
+    pointer-events: none !important;
+}
+
+.row-locked-highlight {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    border-left: 4px solid #3b82f6 !important;
+}
+
+.counter-badge-pop {
+    animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
 

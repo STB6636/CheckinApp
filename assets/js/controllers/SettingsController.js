@@ -7,6 +7,7 @@ import { Config } from '../core/Config.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { AppLayout } from '../components/AppLayout.js';
 import { SettingsModel } from '../models/SettingsModel.js';
+import { SystemUpdateModal } from '../components/SystemUpdateModal.js';
 
 export class SettingsController {
     constructor() {
@@ -47,6 +48,10 @@ export class SettingsController {
         document.getElementById('setLogoUrlInput').value = this.settings.logo_url || '';
         document.getElementById('setGDriveScriptUrl').value = this.settings.google_drive_script_url || '';
         document.getElementById('setGDriveFolderId').value = this.settings.google_drive_folder_id || '';
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (annFolderEl) {
+            annFolderEl.value = String(this.settings.announcement_drive_folder_id || '');
+        }
 
         const logoBadge = document.getElementById('logoUrlVerifyBadge');
         if (logoBadge) {
@@ -70,12 +75,18 @@ export class SettingsController {
             }
         }
 
+        this.#syncAnnouncementDriveFolderUI();
+
         document.getElementById('toggleRequirePhoto').checked = Boolean(this.settings.require_photo);
         const elAllowGallery = document.getElementById('toggleAllowGalleryFallback');
         if (elAllowGallery) {
             elAllowGallery.checked = Boolean(this.settings.allow_gallery_fallback !== false);
         }
         document.getElementById('toggleRequireGps').checked = Boolean(this.settings.require_gps);
+        const elEnforceRadius = document.getElementById('toggleEnforceGeofenceRadius');
+        if (elEnforceRadius) {
+            elEnforceRadius.checked = Boolean(this.settings.enforce_geofence_radius !== false);
+        }
 
         const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
         const earlyShiftWindowEl = document.getElementById('setEarlyShiftWindowMinutes');
@@ -84,20 +95,7 @@ export class SettingsController {
         }
         if (filterRealtimeEl) {
             filterRealtimeEl.checked = Boolean(this.settings.filter_shifts_by_realtime ?? true);
-            const earlyWindowContainer = document.getElementById('containerEarlyShiftWindow');
-            const syncEarlyWindowVisibility = () => {
-                if (earlyWindowContainer) {
-                    if (filterRealtimeEl.checked) {
-                        earlyWindowContainer.classList.remove('opacity-40', 'pointer-events-none');
-                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = false;
-                    } else {
-                        earlyWindowContainer.classList.add('opacity-40', 'pointer-events-none');
-                        if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = true;
-                    }
-                }
-            };
-            syncEarlyWindowVisibility();
-            filterRealtimeEl.addEventListener('change', syncEarlyWindowVisibility);
+            this.#syncEarlyWindowVisibility();
         }
 
         const elDisableNormal = document.getElementById('toggleDisableNormalHoursCheckin');
@@ -112,20 +110,7 @@ export class SettingsController {
         const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
         if (elRandGps) {
             elRandGps.checked = Boolean(this.settings.randomize_gps_checkout);
-            const elRadiusContainer = document.getElementById('containerRandomizeGpsRadius');
-            const syncRadiusVisibility = () => {
-                if (elRadiusContainer) {
-                    if (elRandGps.checked) {
-                        elRadiusContainer.classList.remove('opacity-40', 'pointer-events-none');
-                        if (elRadius) elRadius.disabled = false;
-                    } else {
-                        elRadiusContainer.classList.add('opacity-40', 'pointer-events-none');
-                        if (elRadius) elRadius.disabled = true;
-                    }
-                }
-            };
-            syncRadiusVisibility();
-            elRandGps.addEventListener('change', syncRadiusVisibility);
+            this.#syncRadiusVisibility();
         }
 
         const isSingleClick = Boolean(this.settings.single_click_checkin);
@@ -159,9 +144,322 @@ export class SettingsController {
         this.#updateLogoPreview(this.settings.logo_url);
         this.#renderPrefixes();
         this.#renderRemarks();
+        this.#renderOffsiteJobTypes();
+        this.#renderSpecialReasons();
         this.#renderShifts();
         this.#renderPositions();
         this.#renderAffiliations();
+        this.#renderOfficialLocations();
+        this.#renderAnnouncementTab();
+    }
+
+    #syncEarlyWindowVisibility() {
+        const filterRealtimeEl = document.getElementById('toggleFilterShiftsByRealtime');
+        const earlyShiftWindowEl = document.getElementById('setEarlyShiftWindowMinutes');
+        const earlyWindowContainer = document.getElementById('containerEarlyShiftWindow');
+        if (!earlyWindowContainer || !filterRealtimeEl) return;
+        if (filterRealtimeEl.checked) {
+            earlyWindowContainer.classList.remove('opacity-40', 'pointer-events-none');
+            if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = false;
+        } else {
+            earlyWindowContainer.classList.add('opacity-40', 'pointer-events-none');
+            if (earlyShiftWindowEl) earlyShiftWindowEl.disabled = true;
+        }
+    }
+
+    #syncRadiusVisibility() {
+        const elRandGps = document.getElementById('toggleRandomizeGpsCheckout');
+        const elRadius = document.getElementById('setRandomizeGpsRadius');
+        const elRadiusContainer = document.getElementById('containerRandomizeGpsRadius');
+        if (!elRadiusContainer || !elRandGps) return;
+        if (elRandGps.checked) {
+            elRadiusContainer.classList.remove('opacity-40', 'pointer-events-none');
+            if (elRadius) elRadius.disabled = false;
+        } else {
+            elRadiusContainer.classList.add('opacity-40', 'pointer-events-none');
+            if (elRadius) elRadius.disabled = true;
+        }
+    }
+
+    #syncAnnouncementDriveFolderUI({ verifiedFolderName = null, verifyFailed = false } = {}) {
+        const scriptEl = document.getElementById('setGDriveScriptUrl');
+        const folderEl = document.getElementById('setAnnouncementDriveFolderId');
+        const scriptUrl = String((scriptEl ? scriptEl.value : this.settings?.google_drive_script_url) || '').trim();
+        const folderId = String((folderEl ? folderEl.value : this.settings?.announcement_drive_folder_id) || '').trim();
+
+        const folderBadge = document.getElementById('announcementFolderVerifyBadge');
+        if (folderBadge) {
+            if (verifyFailed) {
+                folderBadge.textContent = '✗ โฟลเดอร์ไม่ถูกต้อง';
+                folderBadge.className = 'bma-badge bma-badge-danger text-[11px]';
+            } else if (verifiedFolderName) {
+                folderBadge.textContent = `✓ ${verifiedFolderName}`;
+                folderBadge.className = 'bma-badge bma-badge-success text-[11px]';
+            } else if (folderId) {
+                folderBadge.textContent = 'ระบุโฟลเดอร์แล้ว';
+                folderBadge.className = 'bma-badge bma-badge-sky text-[11px]';
+            } else {
+                folderBadge.textContent = 'รอระบุโฟลเดอร์';
+                folderBadge.className = 'bma-badge bma-badge-warning text-[11px]';
+            }
+        }
+
+        const hintEl = document.getElementById('tab7AnnouncementFolderHint');
+        if (hintEl) {
+            const hasValidScript = Boolean(scriptUrl && scriptUrl.includes('script.google.com') && scriptUrl.includes('/exec'));
+            const safeFolder = UIHelpers.escapeHtml(folderId);
+            if (verifyFailed) {
+                hintEl.innerHTML = '<span class="text-rose-600 dark:text-rose-400 font-bold">✗ ตรวจสอบโฟลเดอร์รูปประกาศไม่ผ่าน</span> — กรุณาตรวจสอบสิทธิ์หรือรหัสโฟลเดอร์ใน <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (!hasValidScript && !folderId) {
+                hintEl.innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุ Apps Script URL และโฟลเดอร์รูปประกาศ</span> — ตั้งค่าได้ที่ <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (!hasValidScript) {
+                hintEl.innerHTML = `<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุ Google Apps Script Web App URL</span> — โฟลเดอร์ประกาศปัจจุบัน: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (ตั้งค่าใน <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            } else if (!folderId) {
+                hintEl.innerHTML = '<span class="text-amber-600 dark:text-amber-400 font-bold">⚠ ยังไม่ได้ระบุโฟลเดอร์ Google Drive เก็บรูปประกาศ</span> — กดปุ่ม <b>"ไปตั้งค่าในแท็บ 1"</b> เพื่อระบุใน <b>แท็บ 1 (ข้อมูลหน่วยงาน &amp; ระบบ) &gt; การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ"</b>';
+            } else if (verifiedFolderName) {
+                const safeName = UIHelpers.escapeHtml(verifiedFolderName);
+                hintEl.innerHTML = `<span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ พร้อมใช้งาน (${safeName})</span> — โฟลเดอร์: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (แก้ไขได้ที่ <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            } else {
+                hintEl.innerHTML = `<span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ ตั้งค่าแล้ว</span> — ใช้ Apps Script Web App ร่วมกับโฟลเดอร์รูปประกาศ: <code class="font-mono break-all px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">${safeFolder}</code> (แก้ไขได้ที่ <b>แท็บ 1 &gt; ข้อมูลหน่วยงาน และข้อความระบบ</b>)`;
+            }
+        }
+    }
+
+    #activateSettingsTab(targetId) {
+        if (!targetId) return;
+        document.querySelectorAll('.settings-tab-pane').forEach(panel => panel.classList.add('hidden'));
+        document.getElementById(targetId)?.classList.remove('hidden');
+        const tabNav = document.getElementById('settingsTabNav');
+        if (tabNav) {
+            tabNav.querySelectorAll('.settings-tab-btn').forEach(b => {
+                if (b.getAttribute('data-tab-target') === targetId) {
+                    b.classList.add('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
+                    b.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                } else {
+                    b.classList.remove('bg-[#00744B]', 'text-white', 'shadow-md', 'shadow-emerald-900/20', 'active');
+                    b.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200', 'dark:bg-slate-700/60', 'dark:text-slate-300', 'dark:hover:bg-slate-700');
+                }
+            });
+        }
+    }
+
+    #renderAnnouncementTab() {
+        const folderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (folderEl) folderEl.value = String(this.settings.announcement_drive_folder_id || '');
+        this.#syncAnnouncementDriveFolderUI();
+
+        const enabledEl = document.getElementById('setAnnouncementEnabled');
+        if (!enabledEl) return;
+
+        enabledEl.checked = Boolean(this.settings.announcement_enabled);
+
+        const startEl = document.getElementById('setAnnouncementStartDate');
+        const endEl = document.getElementById('setAnnouncementEndDate');
+        const titleEl = document.getElementById('setAnnouncementTitle');
+        const bodyEl = document.getElementById('setAnnouncementBody');
+        const imageUrlEl = document.getElementById('setAnnouncementImageUrl');
+        const modeTextEl = document.getElementById('radioAnnouncementModeText');
+        const modeImageEl = document.getElementById('radioAnnouncementModeImage');
+
+        if (startEl) startEl.value = String(this.settings.announcement_start_date || '');
+        if (endEl) endEl.value = String(this.settings.announcement_end_date || '');
+        if (titleEl) titleEl.value = String(this.settings.announcement_title || '');
+        if (bodyEl) bodyEl.value = String(this.settings.announcement_body || '');
+        if (imageUrlEl) imageUrlEl.value = String(this.settings.announcement_image_url || '');
+
+        const mode = this.settings.announcement_mode === 'image' ? 'image' : 'text';
+        if (modeTextEl) modeTextEl.checked = (mode === 'text');
+        if (modeImageEl) modeImageEl.checked = (mode === 'image');
+
+        const imgBadge = document.getElementById('announcementImageVerifyBadge');
+        if (imgBadge) {
+            if (String(this.settings.announcement_image_url || '').trim()) {
+                imgBadge.textContent = 'ตั้งค่ารูปภาพแล้ว';
+                imgBadge.className = 'bma-badge bma-badge-success text-[11px]';
+            } else {
+                imgBadge.textContent = 'พร้อมตรวจสอบ';
+                imgBadge.className = 'bma-badge bma-badge-sky text-[11px]';
+            }
+        }
+
+        this.#syncAnnouncementModePanels();
+        this.#updateAnnouncementStatusBadge();
+        this.#updateAnnouncementImagePreview(this.settings.announcement_image_url || '');
+    }
+
+    #syncAnnouncementModePanels() {
+        const mode = document.getElementById('radioAnnouncementModeImage')?.checked ? 'image' : 'text';
+        const panelText = document.getElementById('announcementPanelText');
+        const panelImage = document.getElementById('announcementPanelImage');
+        if (panelText) panelText.classList.toggle('hidden', mode !== 'text');
+        if (panelImage) panelImage.classList.toggle('hidden', mode !== 'image');
+    }
+
+    #readAnnouncementFormDraft() {
+        const mode = document.getElementById('radioAnnouncementModeImage')?.checked ? 'image' : 'text';
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        const announcementDriveFolderId = annFolderEl
+            ? String(annFolderEl.value || '').trim()
+            : String(this.settings?.announcement_drive_folder_id || '').trim();
+        return {
+            announcement_enabled: Boolean(document.getElementById('setAnnouncementEnabled')?.checked),
+            announcement_mode: mode,
+            announcement_start_date: String(document.getElementById('setAnnouncementStartDate')?.value || '').trim(),
+            announcement_end_date: String(document.getElementById('setAnnouncementEndDate')?.value || '').trim(),
+            announcement_title: String(document.getElementById('setAnnouncementTitle')?.value || '').trim(),
+            announcement_body: String(document.getElementById('setAnnouncementBody')?.value ?? ''),
+            announcement_image_url: String(document.getElementById('setAnnouncementImageUrl')?.value || '').trim(),
+            announcement_drive_folder_id: announcementDriveFolderId,
+            announcement_updated_at: String(this.settings.announcement_updated_at || '')
+        };
+    }
+
+    #updateAnnouncementStatusBadge() {
+        const badge = document.getElementById('announcementLiveStatusBadge');
+        if (!badge) return;
+
+        const draft = this.#readAnnouncementFormDraft();
+        if (!draft.announcement_enabled) {
+            badge.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-900/40 border border-white/20 text-slate-200 shrink-0';
+            badge.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-slate-400"></i><span>ปิดใช้งาน</span>';
+            return;
+        }
+
+        const today = SystemUpdateModal.getTodayBangkokISO();
+        const start = draft.announcement_start_date;
+        const end = draft.announcement_end_date;
+        const inRange = (!start || today >= start) && (!end || today <= end);
+
+        if (!inRange) {
+            badge.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/25 border border-amber-300/40 text-amber-100 shrink-0';
+            badge.innerHTML = '<i class="fa-solid fa-clock text-[10px] text-[#F6DE51]"></i><span>นอกช่วงวันที่</span>';
+            return;
+        }
+
+        badge.className = 'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-400/25 border border-emerald-200/50 text-white shrink-0';
+        badge.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-emerald-300 animate-pulse"></i><span>เปิดใช้งาน</span>';
+    }
+
+    #updateAnnouncementImagePreview(rawUrl) {
+        const box = document.getElementById('announcementImagePreviewBox');
+        if (!box) return;
+        const safeUrl = SystemUpdateModal.sanitizeImageUrl(rawUrl);
+        if (safeUrl) {
+            box.innerHTML = `<img src="${UIHelpers.escapeHtml(safeUrl)}" alt="Preview" class="w-full h-full object-contain rounded-xl bg-white dark:bg-slate-900">`;
+        } else {
+            box.innerHTML = `
+                <i class="fa-regular fa-image text-3xl mb-1.5 opacity-60"></i>
+                <span class="text-[11px] text-center">ตัวอย่างภาพประกาศบนหน้าจอมือถือ (4:5 / 9:16)</span>
+            `;
+        }
+    }
+
+    #openAnnouncementPreviewModal() {
+        const modal = document.getElementById('modalAnnouncementPreview');
+        if (!modal) {
+            SystemUpdateModal.showAnnouncement(this.#readAnnouncementFormDraft(), { isPreview: true });
+            return;
+        }
+
+        const draft = this.#readAnnouncementFormDraft();
+        const titleEl = document.getElementById('modalAnnouncementPreviewTitle');
+        const datesEl = document.getElementById('modalAnnouncementPreviewDates');
+        const iconWrap = document.getElementById('modalAnnouncementPreviewIconWrap');
+        const bodyEl = document.getElementById('modalAnnouncementPreviewBody');
+
+        const title = draft.announcement_title || 'ประกาศจากระบบ';
+        if (titleEl) titleEl.textContent = title;
+
+        const dateParts = [];
+        if (draft.announcement_start_date) dateParts.push(`เริ่ม ${draft.announcement_start_date}`);
+        if (draft.announcement_end_date) dateParts.push(`ถึง ${draft.announcement_end_date}`);
+        if (datesEl) {
+            if (dateParts.length > 0) {
+                datesEl.textContent = dateParts.join(' • ');
+                datesEl.classList.remove('hidden');
+            } else {
+                datesEl.textContent = '';
+                datesEl.classList.add('hidden');
+            }
+        }
+
+        if (draft.announcement_mode === 'image') {
+            if (iconWrap) iconWrap.classList.add('hidden');
+            const safeImgUrl = SystemUpdateModal.sanitizeImageUrl(draft.announcement_image_url);
+            if (bodyEl) {
+                if (safeImgUrl) {
+                    bodyEl.innerHTML = `
+                        <div class="flex flex-col items-center justify-center">
+                            <img id="modalAnnouncementPreviewImg" src="${UIHelpers.escapeHtml(safeImgUrl)}" alt="${UIHelpers.escapeHtml(title)}" class="max-h-[70dvh] w-auto max-w-full object-contain rounded-2xl shadow-md bg-white dark:bg-slate-800">
+                            <div id="modalAnnouncementPreviewImgError" class="hidden flex-col items-center justify-center py-8 px-4 text-center text-slate-500 dark:text-slate-400">
+                                <i class="fa-regular fa-image text-3xl mb-2 text-rose-400"></i>
+                                <p class="text-xs font-semibold text-rose-600 dark:text-rose-400">ไม่สามารถโหลดรูปภาพประกาศได้</p>
+                                <p class="text-[11px] mt-1">กรุณาตรวจสอบลิงก์รูปภาพหรือสิทธิ์การเข้าถึงบน Google Drive</p>
+                            </div>
+                        </div>
+                    `;
+                    const previewImg = document.getElementById('modalAnnouncementPreviewImg');
+                    const previewErr = document.getElementById('modalAnnouncementPreviewImgError');
+                    if (previewImg && previewErr) {
+                        previewImg.addEventListener('error', () => {
+                            previewImg.classList.add('hidden');
+                            previewErr.classList.remove('hidden');
+                            previewErr.classList.add('flex');
+                        });
+                    }
+                } else {
+                    bodyEl.innerHTML = '<p class="text-xs text-center text-slate-400 py-8">ยังไม่ได้ระบุลิงก์รูปภาพประกาศ</p>';
+                }
+            }
+        } else {
+            if (iconWrap) iconWrap.classList.remove('hidden');
+            if (bodyEl) {
+                bodyEl.innerHTML = SystemUpdateModal.formatAnnouncementBodyHtml(draft.announcement_body);
+            }
+        }
+
+        modal.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
+    }
+
+    #closeAnnouncementPreviewModal() {
+        document.getElementById('modalAnnouncementPreview')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
+    }
+
+    async #saveAnnouncementTab() {
+        const draft = this.#readAnnouncementFormDraft();
+
+        if (draft.announcement_start_date && draft.announcement_end_date && draft.announcement_end_date < draft.announcement_start_date) {
+            await UIHelpers.alert('ช่วงวันที่ไม่ถูกต้อง', 'วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น', 'warning');
+            return;
+        }
+
+        if (draft.announcement_enabled) {
+            if (draft.announcement_mode === 'image') {
+                if (!draft.announcement_image_url) {
+                    await UIHelpers.alert('ข้อมูลยังไม่ครบถ้วน', 'กรุณาอัปโหลดรูปภาพหรือระบุลิงก์รูปภาพประกาศก่อนเปิดใช้งาน', 'warning');
+                    return;
+                }
+            } else if (!draft.announcement_title && !draft.announcement_body) {
+                await UIHelpers.alert('ข้อมูลยังไม่ครบถ้วน', 'กรุณากรอกหัวข้อหรือรายละเอียดประกาศก่อนเปิดใช้งาน', 'warning');
+                return;
+            }
+        }
+
+        Object.assign(this.settings, {
+            announcement_enabled: draft.announcement_enabled,
+            announcement_mode: draft.announcement_mode,
+            announcement_start_date: draft.announcement_start_date,
+            announcement_end_date: draft.announcement_end_date,
+            announcement_title: draft.announcement_title,
+            announcement_body: draft.announcement_body,
+            announcement_image_url: draft.announcement_image_url,
+            announcement_drive_folder_id: draft.announcement_drive_folder_id,
+            announcement_updated_at: new Date().toISOString()
+        });
+
+        await this.#persistSettings(true);
     }
 
     #updateColorPreviewBadges() {
@@ -287,6 +585,56 @@ export class SettingsController {
         `).join('');
     }
 
+    #renderOffsiteJobTypes() {
+        const container = document.getElementById('offsiteJobTypeListContainer');
+        if (!container) return;
+        if (!Array.isArray(this.settings.offsite_job_types) || this.settings.offsite_job_types.length === 0) {
+            this.settings.offsite_job_types = [...(Config.DEFAULT_SETTINGS.offsite_job_types || [])];
+        }
+        const jobTypes = this.settings.offsite_job_types;
+        container.innerHTML = jobTypes.map((jobType, idx) => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl border bma-border text-sm">
+                <div class="flex items-center gap-2.5">
+                    ${this.#buildSortButtonsHtml('offsite_job_types', idx, jobTypes.length)}
+                    <span class="font-semibold bma-text-main">${idx + 1}. ${jobType}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" data-action="edit-offsite-job-type" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" data-action="delete-offsite-job-type" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    #renderSpecialReasons() {
+        const container = document.getElementById('specialReasonListContainer');
+        if (!container) return;
+        if (!Array.isArray(this.settings.special_request_reasons) || this.settings.special_request_reasons.length === 0) {
+            this.settings.special_request_reasons = [...(Config.DEFAULT_SETTINGS.special_request_reasons || [])];
+        }
+        const reasons = this.settings.special_request_reasons;
+        container.innerHTML = reasons.map((reason, idx) => `
+            <div class="flex items-center justify-between p-2.5 rounded-xl border bma-border text-sm">
+                <div class="flex items-center gap-2.5">
+                    ${this.#buildSortButtonsHtml('special_request_reasons', idx, reasons.length)}
+                    <span class="font-semibold bma-text-main">${idx + 1}. ${reason}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" data-action="edit-special-reason" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-amber-500" title="แก้ไข">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" data-action="delete-special-reason" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
     #renderShifts() {
         const tbody = document.getElementById('shiftsTableBody');
         if (!tbody) return;
@@ -388,17 +736,248 @@ export class SettingsController {
         `).join('');
     }
 
+    #renderOfficialLocations() {
+        const tbody = document.getElementById('officialLocationsTableBody');
+        if (!tbody) return;
+        const locations = this.settings.official_locations || [];
+
+        if (locations.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-8 text-slate-400 dark:text-slate-500">
+                        <i class="fa-solid fa-map-location-dot text-2xl mb-2 block"></i>
+                        ยังไม่มีรายการสถานที่ราชการ กรุณากดปุ่ม "+ เพิ่มสถานที่ราชการ" เพื่อเริ่มต้น
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = locations.map((loc, idx) => {
+            const lat = Number(loc.latitude).toFixed(6);
+            const lng = Number(loc.longitude).toFixed(6);
+            const radius = Number(loc.radius_meters || 150);
+            const isActive = loc.is_active !== false;
+            const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
+
+            return `
+                <tr>
+                    <td class="text-center font-semibold">${idx + 1}</td>
+                    <td class="text-center">${this.#buildSortButtonsHtml('official_locations', idx, locations.length)}</td>
+                    <td>
+                        <div class="font-bold bma-text-main flex items-center gap-2">
+                            <i class="fa-solid fa-building text-[#00744B]"></i>
+                            <span>${UIHelpers.escapeHtml(loc.name || '-')}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2 font-mono text-xs">
+                            <span class="text-slate-700 dark:text-slate-300">${lat}, ${lng}</span>
+                            <a href="${mapLink}" target="_blank" rel="noopener" class="text-sky-600 hover:text-sky-700 text-[11px] inline-flex items-center gap-1" title="ดูบน Google Maps">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] dark:text-emerald-300 border border-emerald-300/40">
+                            ${radius.toLocaleString()} ม.
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        ${isActive
+                            ? '<span class="bma-badge bma-badge-success text-[11px] font-bold">เปิดใช้งาน</span>'
+                            : '<span class="bma-badge bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400 text-[11px] font-bold">ปิดใช้งาน</span>'
+                        }
+                    </td>
+                    <td class="text-center space-x-1 whitespace-nowrap">
+                        <button type="button" data-action="edit-official-location" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-sky-500" title="แก้ไข">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button type="button" data-action="delete-official-location" data-index="${idx}" class="btn-bma-outline py-1 px-2.5 text-xs text-rose-500" title="ลบ">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    #openOfficialLocationModal(editIndex = null) {
+        const isEdit = editIndex !== null;
+        const locations = this.settings.official_locations || [];
+        const currentLoc = isEdit ? locations[editIndex] : null;
+
+        const title = isEdit ? 'แก้ไขสถานที่ราชการ' : '+ เพิ่มสถานที่ราชการ';
+        const defaultName = currentLoc?.name || '';
+        const defaultLat = currentLoc?.latitude ?? 13.756331;
+        const defaultLng = currentLoc?.longitude ?? 100.501765;
+        const defaultRadius = currentLoc?.radius_meters ?? 150;
+        const defaultActive = currentLoc?.is_active !== false;
+
+        const bodyHtml = `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">ชื่อสถานที่ราชการ *</label>
+                    <input type="text" id="modalLocName" class="bma-input" placeholder="เช่น สำนักเทศกิจ หรือ สำนักงานตรวจและบังคับการ" value="${UIHelpers.escapeHtml(defaultName)}" required>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">พิกัดละติจูด (Latitude) *</label>
+                        <input type="number" step="any" id="modalLocLat" class="bma-input font-mono" placeholder="13.756331" value="${defaultLat}" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">พิกัดลองจิจูด (Longitude) *</label>
+                        <input type="number" step="any" id="modalLocLng" class="bma-input font-mono" placeholder="100.501765" value="${defaultLng}" required>
+                    </div>
+                </div>
+
+                <!-- ปุ่มช่วยเหลือดึงพิกัด GPS -->
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                    <button type="button" id="btnModalLocGetGps" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition border border-sky-300/40 cursor-pointer">
+                        <i class="fa-solid fa-location-crosshairs text-sky-600"></i>
+                        <span>ดึงพิกัด GPS ปัจจุบัน</span>
+                    </button>
+                    <a id="btnModalLocViewMap" href="https://www.google.com/maps?q=${defaultLat},${defaultLng}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 transition border border-slate-300/40 no-underline cursor-pointer">
+                        <i class="fa-solid fa-map-location-dot text-emerald-600"></i>
+                        <span>ดูตำแหน่งบน Google Maps</span>
+                    </a>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold bma-text-main mb-1">รัศมีที่อนุญาตให้ลงเวลาได้ (เมตร) *</label>
+                    <div class="flex items-center gap-3">
+                        <input type="number" min="10" max="5000" id="modalLocRadius" class="bma-input font-mono w-40" value="${defaultRadius}" required>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">เมตร (ค่าแนะนำ: 100 - 200 เมตร)</span>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-bold bma-text-main">สถานะเปิดใช้งานสถานที่นี้</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400">หากปิดใช้งาน ผู้ใช้จะไม่สามารถใช้สถานที่นี้ในการตรวจเช็ค Geofence ได้</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="modalLocIsActive" class="sr-only peer" ${defaultActive ? 'checked' : ''}>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00744B]"></div>
+                    </label>
+                </div>
+            </div>
+        `;
+
+        this.#openModal(title, bodyHtml, async () => {
+            const name = document.getElementById('modalLocName')?.value.trim();
+            const lat = parseFloat(document.getElementById('modalLocLat')?.value);
+            const lng = parseFloat(document.getElementById('modalLocLng')?.value);
+            const radius = parseInt(document.getElementById('modalLocRadius')?.value, 10);
+            const isActive = document.getElementById('modalLocIsActive')?.checked;
+
+            if (!name) {
+                await UIHelpers.alert('ข้อมูลไม่ครบถ้วน', 'กรุณาระบุชื่อสถานที่ราชการ', 'warning');
+                return;
+            }
+            if (isNaN(lat) || isNaN(lng)) {
+                await UIHelpers.alert('พิกัดไม่ถูกต้อง', 'กรุณาระบุพิกัดละติจูดและลองจิจูดให้ถูกต้อง', 'warning');
+                return;
+            }
+
+            const locationItem = {
+                id: currentLoc?.id || ('LOC-' + String(Date.now()).slice(-6)),
+                name,
+                latitude: lat,
+                longitude: lng,
+                radius_meters: isNaN(radius) ? 150 : radius,
+                is_active: Boolean(isActive),
+                updated_at: new Date().toISOString()
+            };
+
+            if (!Array.isArray(this.settings.official_locations)) {
+                this.settings.official_locations = [];
+            }
+
+            if (isEdit) {
+                this.settings.official_locations[editIndex] = locationItem;
+            } else {
+                this.settings.official_locations.push(locationItem);
+            }
+
+            await this.#persistSettings(true);
+        });
+
+        // Event: ดึงพิกัด GPS ปัจจุบัน
+        const btnGetGps = document.getElementById('btnModalLocGetGps');
+        if (btnGetGps) {
+            btnGetGps.addEventListener('click', () => {
+                if (!navigator.geolocation) {
+                    UIHelpers.alert('ไม่รองรับ GPS', 'เบราว์เซอร์ไม่รองรับ Geolocation', 'warning');
+                    return;
+                }
+                btnGetGps.disabled = true;
+                btnGetGps.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังดึงพิกัด...';
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const curLat = pos.coords.latitude;
+                        const curLng = pos.coords.longitude;
+                        const latInput = document.getElementById('modalLocLat');
+                        const lngInput = document.getElementById('modalLocLng');
+                        if (latInput) latInput.value = curLat.toFixed(6);
+                        if (lngInput) lngInput.value = curLng.toFixed(6);
+                        const mapLink = document.getElementById('btnModalLocViewMap');
+                        if (mapLink) mapLink.href = `https://www.google.com/maps?q=${curLat},${curLng}`;
+                        btnGetGps.disabled = false;
+                        btnGetGps.innerHTML = '<i class="fa-solid fa-check text-emerald-600"></i> ดึงพิกัดสำเร็จ';
+                    },
+                    (err) => {
+                        console.error('Geolocation error:', err);
+                        btnGetGps.disabled = false;
+                        btnGetGps.innerHTML = '<i class="fa-solid fa-location-crosshairs text-sky-600"></i> ดึงพิกัด GPS ปัจจุบัน';
+                        UIHelpers.alert('ไม่สามารถดึงพิกัดได้', err.message || 'กรุณาอนุญาตการเข้าถึงตำแหน่งที่ตั้ง', 'warning');
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            });
+        }
+
+        // Live update Google Maps link when inputs change
+        const latInput = document.getElementById('modalLocLat');
+        const lngInput = document.getElementById('modalLocLng');
+        const updateMapLink = () => {
+            const mapLink = document.getElementById('btnModalLocViewMap');
+            if (mapLink && latInput && lngInput) {
+                mapLink.href = `https://www.google.com/maps?q=${latInput.value},${lngInput.value}`;
+            }
+        };
+        if (latInput) latInput.addEventListener('input', updateMapLink);
+        if (lngInput) lngInput.addEventListener('input', updateMapLink);
+    }
+
     #collectMainAndColorFieldsIntoSettings() {
-        this.settings.organization_name = document.getElementById('setOrgName').value.trim() || 'กรุงเทพมหานคร';
-        this.settings.bureau_name = document.getElementById('setBureauName').value.trim() || 'สำนักเทศกิจ';
-        this.settings.header_system_title = document.getElementById('setHeaderSystemTitle')?.value?.trim() || 'BMA e-Government Time Attendance System';
-        this.settings.footer_description = document.getElementById('setFooterDescInput').value.trim();
-        this.settings.logo_url = document.getElementById('setLogoUrlInput').value.trim();
-        this.settings.google_drive_script_url = document.getElementById('setGDriveScriptUrl').value.trim();
-        this.settings.google_drive_folder_id = document.getElementById('setGDriveFolderId').value.trim();
-        this.settings.require_photo = document.getElementById('toggleRequirePhoto').checked;
-        this.settings.allow_gallery_fallback = document.getElementById('toggleAllowGalleryFallback')?.checked !== false;
-        this.settings.require_gps = document.getElementById('toggleRequireGps').checked;
+        const orgEl = document.getElementById('setOrgName');
+        if (orgEl) this.settings.organization_name = orgEl.value.trim() || 'กรุงเทพมหานคร';
+        const bureauEl = document.getElementById('setBureauName');
+        if (bureauEl) this.settings.bureau_name = bureauEl.value.trim() || 'สำนักเทศกิจ';
+        const headerEl = document.getElementById('setHeaderSystemTitle');
+        if (headerEl) this.settings.header_system_title = headerEl.value.trim() || 'BMA e-Government Time Attendance System';
+        const footerEl = document.getElementById('setFooterDescInput');
+        if (footerEl) this.settings.footer_description = footerEl.value.trim();
+        const logoEl = document.getElementById('setLogoUrlInput');
+        if (logoEl) this.settings.logo_url = logoEl.value.trim();
+        const scriptEl = document.getElementById('setGDriveScriptUrl');
+        if (scriptEl) this.settings.google_drive_script_url = scriptEl.value.trim();
+        const folderEl = document.getElementById('setGDriveFolderId');
+        if (folderEl) this.settings.google_drive_folder_id = folderEl.value.trim();
+        const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+        if (annFolderEl) this.settings.announcement_drive_folder_id = annFolderEl.value.trim();
+        const reqPhotoEl = document.getElementById('toggleRequirePhoto');
+        if (reqPhotoEl) this.settings.require_photo = Boolean(reqPhotoEl.checked);
+        const allowGalleryEl = document.getElementById('toggleAllowGalleryFallback');
+        if (allowGalleryEl) this.settings.allow_gallery_fallback = allowGalleryEl.checked !== false;
+        const reqGpsEl = document.getElementById('toggleRequireGps');
+        if (reqGpsEl) this.settings.require_gps = Boolean(reqGpsEl.checked);
+        const elEnforceRadius = document.getElementById('toggleEnforceGeofenceRadius');
+        if (elEnforceRadius) {
+            this.settings.enforce_geofence_radius = Boolean(elEnforceRadius.checked);
+        }
         const elFilterRealtime = document.getElementById('toggleFilterShiftsByRealtime');
         if (elFilterRealtime) {
             this.settings.filter_shifts_by_realtime = Boolean(elFilterRealtime.checked);
@@ -415,25 +994,39 @@ export class SettingsController {
         if (elRandGps) {
             this.settings.randomize_gps_checkout = Boolean(elRandGps.checked);
         }
-        this.settings.randomize_gps_radius_meters = Number(document.getElementById('setRandomizeGpsRadius')?.value || 20);
+        const elRandRadius = document.getElementById('setRandomizeGpsRadius');
+        if (elRandRadius) {
+            this.settings.randomize_gps_radius_meters = Number(elRandRadius.value || 20);
+        }
         const radioSingle = document.querySelector('input[name="checkinRecordingMode"][value="single_click"]');
         const chkSingle = document.getElementById('toggleSingleClickCheckin');
-        this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
+        if (radioSingle || chkSingle) {
+            this.settings.single_click_checkin = radioSingle ? radioSingle.checked : Boolean(chkSingle?.checked);
+        }
 
-        this.settings.allow_checkin_start_time = UIHelpers.formatTime24(document.getElementById('setAllowCheckinStartTime')?.value || '06:00');
-        this.settings.standard_check_in = UIHelpers.formatTime24(document.getElementById('setStdCheckIn').value || '08:30');
-        this.settings.standard_check_out = UIHelpers.formatTime24(document.getElementById('setStdCheckOut').value || '16:30');
-        this.settings.late_threshold_minutes = Number(document.getElementById('setLateThresholdMin').value ?? 30);
-        this.settings.checkout_grace_minutes = Number(document.getElementById('setCheckoutGraceMin')?.value ?? 30);
+        const allowStartEl = document.getElementById('setAllowCheckinStartTime');
+        if (allowStartEl) this.settings.allow_checkin_start_time = UIHelpers.formatTime24(allowStartEl.value || '06:00');
+        const stdInEl = document.getElementById('setStdCheckIn');
+        if (stdInEl) this.settings.standard_check_in = UIHelpers.formatTime24(stdInEl.value || '08:30');
+        const stdOutEl = document.getElementById('setStdCheckOut');
+        if (stdOutEl) this.settings.standard_check_out = UIHelpers.formatTime24(stdOutEl.value || '16:30');
+        const lateEl = document.getElementById('setLateThresholdMin');
+        if (lateEl) this.settings.late_threshold_minutes = Number(lateEl.value ?? 30);
+        const graceEl = document.getElementById('setCheckoutGraceMin');
+        if (graceEl) this.settings.checkout_grace_minutes = Number(graceEl.value ?? 30);
 
-        this.settings.category_colors = {
-            normal: document.getElementById('setColorNormal').value || '#007B3E',
-            late: document.getElementById('setColorLate').value || '#EAB308',
-            absent_duty: document.getElementById('setColorAbsentDuty').value || '#EA580C',
-            no_checkin: document.getElementById('setColorNoCheckin').value || '#E11D48',
-            overtime: document.getElementById('setColorOvertime').value || '#2563EB',
-            group_header: document.getElementById('setColorGroupHeader').value || '#007B3E'
-        };
+        const cNormal = document.getElementById('setColorNormal');
+        if (cNormal) {
+            this.settings.category_colors = {
+                normal: cNormal.value || '#007B3E',
+                late: document.getElementById('setColorLate')?.value || '#EAB308',
+                absent_duty: document.getElementById('setColorAbsentDuty')?.value || '#EA580C',
+                no_checkin: document.getElementById('setColorNoCheckin')?.value || '#E11D48',
+                overtime: document.getElementById('setColorOvertime')?.value || '#2563EB',
+                group_header: document.getElementById('setColorGroupHeader')?.value || '#007B3E'
+            };
+        }
+        // Notice: Strictly NEVER mutate the 8 popup announcement fields (enabled/mode/dates/title/body/image_url/updated_at) here (Tabs 1-6 preserve existing announcement popup state)
     }
 
     async #persistSettings(showToastAlert = true) {
@@ -450,6 +1043,36 @@ export class SettingsController {
                 this.settings = res.data;
             }
             this.#renderAllSettings();
+
+            // Sync brand cache for loading.html instant 0ms pre-hydration
+            try {
+                const s = this.settings || {};
+                const orgName = s.organization_name || 'สำนักเทศกิจ';
+                const bureauName = s.bureau_name || 'สำนักงานตรวจและบังคับการ';
+                const headerTitle = s.header_system_title || 'ระบบลงเวลาปฏิบัติราชการ (สตบ.สนท.)';
+                let resolvedLogoUrl = '';
+                const rawLogo = String(s.logo_url || '').trim();
+                const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(rawLogo);
+                if (rawLogo && isSafeProtocol) {
+                    const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(rawLogo);
+                    if (isGoogleDrive) {
+                        const m = rawLogo.match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                        resolvedLogoUrl = m && m[1] ? `https://lh3.googleusercontent.com/d/${m[1]}` : rawLogo;
+                    } else {
+                        resolvedLogoUrl = rawLogo;
+                    }
+                } else {
+                    resolvedLogoUrl = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+                }
+
+                const brandPayload = {
+                    orgName,
+                    bureauName,
+                    headerSystemTitle: headerTitle,
+                    logoUrl: resolvedLogoUrl
+                };
+                localStorage.setItem('bma_cached_brand_v2_7', JSON.stringify(brandPayload));
+            } catch (_) {}
             if (showToastAlert) {
                 await UIHelpers.showToast('บันทึกการตั้งค่าระบบเรียบร้อยแล้ว', 'success', 2500);
             }
@@ -462,15 +1085,18 @@ export class SettingsController {
     }
 
     #openModal(title, bodyHtml, onSubmitCallback) {
+        const modal = document.getElementById('modalSettingsItem');
         document.getElementById('modalSettingsTitle').textContent = title;
         document.getElementById('modalSettingsBody').innerHTML = bodyHtml;
         this.activeModalHandler = onSubmitCallback;
-        document.getElementById('modalSettingsItem').classList.remove('hidden');
+        modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
-        document.getElementById('modalSettingsItem').classList.add('hidden');
+        document.getElementById('modalSettingsItem')?.classList.add('hidden');
         this.activeModalHandler = null;
+        UIHelpers.syncBodyModalLock();
     }
 
     #buildMultiRowInputsHtml(fieldLabel, placeholder) {
@@ -616,10 +1242,12 @@ export class SettingsController {
 
         document.getElementById('toggleFilterShiftsByRealtime')?.addEventListener('change', (e) => {
             this.settings.filter_shifts_by_realtime = Boolean(e.target.checked);
+            this.#syncEarlyWindowVisibility();
         });
 
         document.getElementById('toggleRandomizeGpsCheckout')?.addEventListener('change', (e) => {
             this.settings.randomize_gps_checkout = Boolean(e.target.checked);
+            this.#syncRadiusVisibility();
         });
 
         document.querySelectorAll('input[name="checkinRecordingMode"]').forEach(radio => {
@@ -636,8 +1264,253 @@ export class SettingsController {
             await this.#persistSettings(true);
         });
 
+        // SPA-safe Tab Navigation Binding (scoped inside #settingsTabNav under <main>)
+        const tabNav = document.getElementById('settingsTabNav');
+        if (tabNav && tabNav.dataset.tabsBound !== 'true') {
+            tabNav.dataset.tabsBound = 'true';
+            tabNav.addEventListener('click', (e) => {
+                const btn = e.target.closest('.settings-tab-btn');
+                if (!btn) return;
+                e.preventDefault();
+                this.#activateSettingsTab(btn.getAttribute('data-tab-target'));
+            });
+        }
+
+        document.querySelectorAll('[data-jump-tab]').forEach(jumpBtn => {
+            jumpBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetTabId = jumpBtn.getAttribute('data-jump-tab') || 'tab-panel-general';
+                const targetTabBtn = document.querySelector(`#settingsTabNav .settings-tab-btn[data-tab-target="${targetTabId}"]`);
+                if (targetTabBtn) {
+                    targetTabBtn.click();
+                }
+                if (document.getElementById(targetTabId)?.classList.contains('hidden')) {
+                    this.#activateSettingsTab(targetTabId);
+                }
+                if (targetTabId === 'tab-panel-general') {
+                    const annFolderInput = document.getElementById('setAnnouncementDriveFolderId');
+                    if (annFolderInput) {
+                        annFolderInput.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+                        try {
+                            annFolderInput.focus?.({ preventScroll: true });
+                        } catch (_) {
+                            annFolderInput.focus?.();
+                        }
+                    }
+                }
+            });
+        });
+
+        document.getElementById('setGDriveScriptUrl')?.addEventListener('input', () => {
+            this.#syncAnnouncementDriveFolderUI();
+        });
+        document.getElementById('setAnnouncementDriveFolderId')?.addEventListener('input', () => {
+            this.#syncAnnouncementDriveFolderUI();
+        });
+
+        // Tab 7: ประกาศระบบ (scoped strictly inside #tab-panel-announcement & #modalAnnouncementPreview)
+        document.getElementById('setAnnouncementEnabled')?.addEventListener('change', () => {
+            this.#updateAnnouncementStatusBadge();
+        });
+        document.getElementById('setAnnouncementStartDate')?.addEventListener('change', () => {
+            this.#updateAnnouncementStatusBadge();
+        });
+        document.getElementById('setAnnouncementEndDate')?.addEventListener('change', () => {
+            this.#updateAnnouncementStatusBadge();
+        });
+        document.getElementById('btnClearAnnouncementEndDate')?.addEventListener('click', () => {
+            const endEl = document.getElementById('setAnnouncementEndDate');
+            if (endEl) endEl.value = '';
+            this.#updateAnnouncementStatusBadge();
+        });
+
+        document.querySelectorAll('input[name="announcementMode"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.#syncAnnouncementModePanels();
+            });
+        });
+
+        document.getElementById('btnFillAnnouncementTemplate')?.addEventListener('click', () => {
+            const titleEl = document.getElementById('setAnnouncementTitle');
+            const bodyEl = document.getElementById('setAnnouncementBody');
+            if (titleEl) titleEl.value = 'แจ้งปรับปรุง ระบบลงเวลาปฏิบัติราชการ (สตบ.)';
+            if (bodyEl) {
+                bodyEl.value = [
+                    '- ปรับปรุงหน้าลงเวลาปฏิบัติราชการใหม่ ใช้ง่ายกว่าเดิม',
+                    '- เพิ่มเลือก "ในสถานที่/นอกสถานที่" และจำกัดรัศมีลงเวลากรณีใช้ในสถานที่ (ต้องอยู่ในพิกัดรัศมีเท่านั้นถึงลงเวลาได้)',
+                    '- ระบบผู้ดูแล Admin , เพิ่มฟังชั่น Sync ข้อมูล RealTime ไม่ต้องคอยรีเฟรชจออัพเดทข้อมูล',
+                    '- ระบบผู้ดูแล Admin , แก้ไขการพิมพ์ข้อมูลหน้ารายงาน ให้สวยงามและตารางต่อเนื่องไม่เว้นช่วงหน้ากระดาษ'
+                ].join('\n');
+            }
+            UIHelpers.showToast('ใส่เทมเพลตประกาศ v2.10.0 เรียบร้อยแล้ว', 'success', 2000);
+        });
+
+        document.getElementById('btnVerifyAnnouncementFolder')?.addEventListener('click', async () => {
+            const scriptEl = document.getElementById('setGDriveScriptUrl');
+            const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+            const scriptUrl = String(scriptEl ? scriptEl.value : (this.settings.google_drive_script_url || '')).trim();
+            const folderId = String(annFolderEl ? annFolderEl.value : (this.settings.announcement_drive_folder_id || '')).trim();
+
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
+                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ด้านบน ก่อนตรวจสอบโฟลเดอร์ประกาศ', 'warning');
+                return;
+            }
+            if (!folderId) {
+                await UIHelpers.alert('กรุณาระบุโฟลเดอร์ประกาศ', 'กรุณาระบุรหัสหรือลิงก์โฟลเดอร์ Google Drive สำหรับเก็บรูปประกาศ (ห้ามเว้นว่าง)', 'warning');
+                return;
+            }
+
+            UIHelpers.showLoading('กำลังตรวจสอบสิทธิ์โฟลเดอร์ประกาศใน Google Drive...');
+            const res = await UIHelpers.verifyGoogleDriveLink(scriptUrl, folderId, { strictFolder: true });
+            UIHelpers.hideLoading();
+
+            if (res.success) {
+                this.#syncAnnouncementDriveFolderUI({ verifiedFolderName: res.folderName || 'พร้อมใช้งาน' });
+                await UIHelpers.alert('ตรวจสอบโฟลเดอร์ประกาศสำเร็จ', res.message, 'success');
+            } else {
+                this.#syncAnnouncementDriveFolderUI({ verifyFailed: true });
+                await UIHelpers.alert('ไม่สามารถเข้าถึงโฟลเดอร์ได้', res.message, 'warning');
+            }
+        });
+
+        document.getElementById('btnTriggerAnnouncementUpload')?.addEventListener('click', () => {
+            document.getElementById('setAnnouncementImageFile')?.click();
+        });
+
+        document.getElementById('setAnnouncementImageFile')?.addEventListener('change', async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+            if (!allowedTypes.includes(String(file.type || '').toLowerCase())) {
+                e.target.value = '';
+                await UIHelpers.alert('ไฟล์ไม่รองรับ', 'กรุณาเลือกไฟล์รูปภาพ PNG, JPG หรือ WebP เท่านั้น', 'warning');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                e.target.value = '';
+                await UIHelpers.alert('ไฟล์มีขนาดใหญ่เกินไป', 'ขนาดไฟล์ต้องไม่เกิน 5 MB', 'warning');
+                return;
+            }
+
+            const scriptEl = document.getElementById('setGDriveScriptUrl');
+            const annFolderEl = document.getElementById('setAnnouncementDriveFolderId');
+            const scriptUrl = String(scriptEl ? scriptEl.value : (this.settings.google_drive_script_url || '')).trim();
+            const folderId = String(annFolderEl ? annFolderEl.value : (this.settings.announcement_drive_folder_id || '')).trim();
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
+                e.target.value = '';
+                await UIHelpers.alert('ยังไม่ได้ตั้งค่า Apps Script', 'กรุณากรอกลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 (ข้อมูลหน่วยงาน & ระบบ) ก่อนอัปโหลดรูปภาพ', 'warning');
+                return;
+            }
+            if (!folderId) {
+                e.target.value = '';
+                await UIHelpers.alert('กรุณาระบุโฟลเดอร์ประกาศ', 'กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศในแท็บ 1 (ข้อมูลหน่วยงาน & ระบบ) > การ์ด "ข้อมูลหน่วยงาน และข้อความระบบ" ก่อนอัปโหลดรูปภาพ', 'warning');
+                return;
+            }
+
+            const statusEl = document.getElementById('announcementUploadStatus');
+            const imgBadge = document.getElementById('announcementImageVerifyBadge');
+            if (statusEl) statusEl.textContent = 'กำลังอัปโหลดไปยัง Google Drive...';
+
+            UIHelpers.showLoading('กำลังอัปโหลดรูปประกาศไปยัง Google Drive...');
+            try {
+                const dataUrl = await SettingsModel.fileToDataUrl(file);
+                const ext = file.type === 'image/png' ? 'png' : (file.type === 'image/webp' ? 'webp' : 'jpg');
+                const uploadedUrl = await UIHelpers.uploadPhotoToGoogleDrive(
+                    dataUrl,
+                    'Announcement',
+                    { ...this.settings, google_drive_script_url: scriptUrl },
+                    {
+                        folderId,
+                        strictFolder: true,
+                        mimeType: file.type,
+                        fileName: `Announcement_${UIHelpers.getTodayISO()}_${Date.now()}.${ext}`
+                    }
+                );
+                const urlInput = document.getElementById('setAnnouncementImageUrl');
+                if (urlInput) urlInput.value = uploadedUrl;
+                this.#updateAnnouncementImagePreview(uploadedUrl);
+                if (statusEl) statusEl.textContent = '✓ อัปโหลดสำเร็จ';
+                if (imgBadge) {
+                    imgBadge.textContent = '✓ อัปโหลดขึ้น Drive แล้ว';
+                    imgBadge.className = 'bma-badge bma-badge-success text-[11px]';
+                }
+                UIHelpers.hideLoading();
+                await UIHelpers.showToast('อัปโหลดรูปประกาศขึ้น Google Drive สำเร็จ', 'success', 2500);
+            } catch (err) {
+                UIHelpers.hideLoading();
+                if (statusEl) statusEl.textContent = '✗ อัปโหลดไม่สำเร็จ';
+                e.target.value = '';
+                await UIHelpers.alert('อัปโหลดรูปภาพไม่สำเร็จ', err.message || 'กรุณาตรวจสอบสิทธิ์โฟลเดอร์และการ Deploy Google Apps Script', 'error');
+            }
+        });
+
+        document.getElementById('setAnnouncementImageUrl')?.addEventListener('input', (e) => {
+            this.#updateAnnouncementImagePreview(e.target.value);
+        });
+
+        document.getElementById('btnVerifyAnnouncementImage')?.addEventListener('click', async () => {
+            const rawUrl = document.getElementById('setAnnouncementImageUrl')?.value || '';
+            const imgBadge = document.getElementById('announcementImageVerifyBadge');
+
+            UIHelpers.showLoading('กำลังตรวจสอบลิงก์รูปภาพประกาศ...');
+            const result = await UIHelpers.verifyImageUrl(rawUrl);
+            UIHelpers.hideLoading();
+
+            if (result.success) {
+                const urlInput = document.getElementById('setAnnouncementImageUrl');
+                if (urlInput) urlInput.value = result.normalizedUrl;
+                this.#updateAnnouncementImagePreview(result.normalizedUrl);
+                if (imgBadge) {
+                    imgBadge.textContent = `✓ ใช้ได้ (${result.width}×${result.height})`;
+                    imgBadge.className = 'bma-badge bma-badge-success text-[11px]';
+                }
+                await UIHelpers.alert('ตรวจสอบลิงก์รูปภาพสำเร็จ', result.message, 'success');
+            } else {
+                if (imgBadge) {
+                    imgBadge.textContent = '✗ ลิงก์รูปไม่ถูกต้อง';
+                    imgBadge.className = 'bma-badge bma-badge-danger text-[11px]';
+                }
+                await UIHelpers.alert('ไม่สามารถโหลดรูปภาพได้', result.message, 'warning');
+            }
+        });
+
+        document.getElementById('btnClearAnnouncementImage')?.addEventListener('click', () => {
+            const urlInput = document.getElementById('setAnnouncementImageUrl');
+            const fileInput = document.getElementById('setAnnouncementImageFile');
+            const statusEl = document.getElementById('announcementUploadStatus');
+            const imgBadge = document.getElementById('announcementImageVerifyBadge');
+            if (urlInput) urlInput.value = '';
+            if (fileInput) fileInput.value = '';
+            if (statusEl) statusEl.textContent = '';
+            if (imgBadge) {
+                imgBadge.textContent = 'ล้างรูปภาพแล้ว';
+                imgBadge.className = 'bma-badge bma-badge-warning text-[11px]';
+            }
+            this.#updateAnnouncementImagePreview('');
+        });
+
+        document.getElementById('btnPreviewAnnouncement')?.addEventListener('click', () => {
+            this.#openAnnouncementPreviewModal();
+        });
+
+        document.getElementById('btnCloseAnnouncementPreviewModal')?.addEventListener('click', () => {
+            this.#closeAnnouncementPreviewModal();
+        });
+        document.getElementById('btnAckAnnouncementPreviewModal')?.addEventListener('click', () => {
+            this.#closeAnnouncementPreviewModal();
+        });
+        UIHelpers.bindModalDismiss(document.getElementById('modalAnnouncementPreview'), () => {
+            this.#closeAnnouncementPreviewModal();
+        });
+
+        document.getElementById('btnSaveAnnouncementSettings')?.addEventListener('click', async () => {
+            await this.#saveAnnouncementTab();
+        });
+
         document.getElementById('btnCloseSettingsModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelSettingsModal')?.addEventListener('click', () => this.#closeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalSettingsItem'), () => this.#closeModal());
 
         document.getElementById('formSettingsItem')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -677,8 +1550,48 @@ export class SettingsController {
             this.#bindDynamicMultiRowEvents('เช่น ปฏิบัติราชการนอกสถานที่');
         });
 
+        document.getElementById('btnAddOffsiteJobType')?.addEventListener('click', () => {
+            this.#openModal(
+                'เพิ่มลักษณะงานนอกสถานที่',
+                this.#buildMultiRowInputsHtml('ลักษณะงานนอกสถานที่', 'เช่น ปฏิบัติงานนอกสถานที่, อบรม/สัมมนา'),
+                async () => {
+                    const values = this.#getDynamicMultiRowValues();
+                    if (values.length > 0) {
+                        if (!Array.isArray(this.settings.offsite_job_types)) {
+                            this.settings.offsite_job_types = [...(Config.DEFAULT_SETTINGS.offsite_job_types || [])];
+                        }
+                        this.settings.offsite_job_types.push(...values);
+                        await this.#persistSettings(true);
+                    }
+                }
+            );
+            this.#bindDynamicMultiRowEvents('เช่น ปฏิบัติงานนอกสถานที่, อบรม/สัมมนา');
+        });
+
+        document.getElementById('btnAddSpecialReason')?.addEventListener('click', () => {
+            this.#openModal(
+                'เพิ่มเหตุผลลงเวลากรณีพิเศษ',
+                this.#buildMultiRowInputsHtml('เหตุผลลงเวลากรณีพิเศษ', 'เช่น ลืมลงเวลาปฏิบัติราชการ, โทรศัพท์ขัดข้อง'),
+                async () => {
+                    const values = this.#getDynamicMultiRowValues();
+                    if (values.length > 0) {
+                        if (!Array.isArray(this.settings.special_request_reasons)) {
+                            this.settings.special_request_reasons = [...(Config.DEFAULT_SETTINGS.special_request_reasons || [])];
+                        }
+                        this.settings.special_request_reasons.push(...values);
+                        await this.#persistSettings(true);
+                    }
+                }
+            );
+            this.#bindDynamicMultiRowEvents('เช่น ลืมลงเวลาปฏิบัติราชการ, โทรศัพท์ขัดข้อง');
+        });
+
         document.getElementById('btnAddShift')?.addEventListener('click', () => {
             this.#openShiftModal();
+        });
+
+        document.getElementById('btnAddOfficialLocation')?.addEventListener('click', () => {
+            this.#openOfficialLocationModal();
         });
 
         document.getElementById('btnAddPosStep1Type')?.addEventListener('click', () => this.#openAddPositionStep1Modal());
@@ -690,7 +1603,12 @@ export class SettingsController {
         document.getElementById('btnAddAffStep3Division')?.addEventListener('click', () => this.#openAddAffiliationStep3DivisionModal());
         document.getElementById('btnAddAffStep4Group')?.addEventListener('click', () => this.#openAddAffiliationStep4GroupModal());
 
-        document.querySelector('main')?.addEventListener('click', async (e) => {
+        const mainEl = document.querySelector('main');
+        if (mainEl) {
+            if (mainEl.__bmaSettingsMainClickHandler) {
+                mainEl.removeEventListener('click', mainEl.__bmaSettingsMainClickHandler);
+            }
+            const mainClickHandler = async (e) => {
             const btn = e.target.closest('button[data-action]');
             if (!btn) return;
             const action = btn.dataset.action;
@@ -738,6 +1656,44 @@ export class SettingsController {
                     this.settings.remarks.splice(idx, 1);
                     await this.#persistSettings(true);
                 }
+            } else if (action === 'edit-offsite-job-type') {
+                const currentVal = this.settings.offsite_job_types[idx];
+                this.#openModal('แก้ไขลักษณะงานนอกสถานที่', `
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">ลักษณะงานนอกสถานที่ *</label>
+                        <input type="text" id="modalInputOffsiteJobType" class="bma-input" value="${currentVal}" required>
+                    </div>
+                `, async () => {
+                    const val = document.getElementById('modalInputOffsiteJobType')?.value?.trim();
+                    if (val) {
+                        this.settings.offsite_job_types[idx] = val;
+                        await this.#persistSettings(true);
+                    }
+                });
+            } else if (action === 'delete-offsite-job-type') {
+                if (await UIHelpers.confirm('ยืนยันการลบลักษณะงานนอกสถานที่', `ต้องการลบ "${this.settings.offsite_job_types[idx]}" ใช่หรือไม่?`, 'ลบรายการ')) {
+                    this.settings.offsite_job_types.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
+            } else if (action === 'edit-special-reason') {
+                const currentVal = this.settings.special_request_reasons[idx];
+                this.#openModal('แก้ไขเหตุผลลงเวลากรณีพิเศษ', `
+                    <div>
+                        <label class="block text-xs font-bold bma-text-main mb-1">เหตุผลลงเวลากรณีพิเศษ *</label>
+                        <input type="text" id="modalInputSpecialReason" class="bma-input" value="${currentVal}" required>
+                    </div>
+                `, async () => {
+                    const val = document.getElementById('modalInputSpecialReason')?.value?.trim();
+                    if (val) {
+                        this.settings.special_request_reasons[idx] = val;
+                        await this.#persistSettings(true);
+                    }
+                });
+            } else if (action === 'delete-special-reason') {
+                if (await UIHelpers.confirm('ยืนยันการลบเหตุผลกรณีพิเศษ', `ต้องการลบ "${this.settings.special_request_reasons[idx]}" ใช่หรือไม่?`, 'ลบรายการ')) {
+                    this.settings.special_request_reasons.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
             } else if (action === 'edit-shift') {
                 this.#openShiftModal(idx);
             } else if (action === 'delete-shift') {
@@ -761,8 +1717,19 @@ export class SettingsController {
                     this.settings.affiliations.splice(idx, 1);
                     await this.#persistSettings(true);
                 }
+            } else if (action === 'edit-official-location') {
+                this.#openOfficialLocationModal(idx);
+            } else if (action === 'delete-official-location') {
+                const loc = (this.settings.official_locations || [])[idx];
+                if (await UIHelpers.confirm('ยืนยันการลบสถานที่ราชการ', `ต้องการลบ "${loc?.name || 'สถานที่ราชการ'}" ใช่หรือไม่?\n(หากลบ บุคลากรจะไม่สามารถใช้สถานที่นี้ในการตรวจสอบ Geofence ได้)`, 'ลบรายการ')) {
+                    this.settings.official_locations.splice(idx, 1);
+                    await this.#persistSettings(true);
+                }
             }
-        });
+            };
+            mainEl.__bmaSettingsMainClickHandler = mainClickHandler;
+            mainEl.addEventListener('click', mainClickHandler);
+        }
     }
 
     #openShiftModal(editIndex = null) {

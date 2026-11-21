@@ -10,6 +10,7 @@ import { SettingsModel } from '../models/SettingsModel.js';
 import { PersonnelModel } from '../models/PersonnelModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { AuthService } from '../core/AuthService.js';
+import { DOMDiffHelper } from '../utils/DOMDiffHelper.js';
 
 export class ReportsController {
     constructor() {
@@ -336,6 +337,205 @@ export class ReportsController {
         return `${Math.abs(nLat).toFixed(6)}° ${latDir}, ${Math.abs(nLng).toFixed(6)}° ${lngDir}`;
     }
 
+    #calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const toRad = (deg) => (deg * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    #isWithinGeofence(lat, lng) {
+        if (lat === null || lat === undefined || lng === null || lng === undefined) return null;
+        const numLat = parseFloat(lat);
+        const numLng = parseFloat(lng);
+        if (isNaN(numLat) || isNaN(numLng)) return null;
+
+        const officialList = this.settings?.official_locations || Config.DEFAULT_SETTINGS?.official_locations || [];
+        if (!Array.isArray(officialList) || officialList.length === 0) {
+            const d = this.#calculateDistanceMeters(numLat, numLng, 13.756331, 100.501765);
+            return d <= 180;
+        }
+
+        for (const loc of officialList) {
+            if (!loc || loc.is_active === false) continue;
+            const locLat = Number(loc.latitude ?? loc.lat);
+            const locLng = Number(loc.longitude ?? loc.lng ?? loc.lon);
+            if (!Number.isFinite(locLat) || !Number.isFinite(locLng)) continue;
+
+            const radius = Math.max(loc.radius_meters || 150, 180);
+            const dist = this.#calculateDistanceMeters(numLat, numLng, locLat, locLng);
+            if (dist <= radius) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    #formatLocationName(locName) {
+        if (!locName) return '-';
+        let trimmed = String(locName).trim();
+        if (!trimmed || trimmed === '-' || trimmed.toLowerCase() === 'null' || trimmed.toLowerCase() === 'undefined') {
+            return '-';
+        }
+        trimmed = trimmed.replace(/\(?พิกัด:?\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\)?/gi, '').trim();
+        if (/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/.test(trimmed)) {
+            return '-';
+        }
+        if (!trimmed || trimmed === '-') return '-';
+        if (/^(บริเวณ|ใกล้เคียง)/.test(trimmed)) {
+            return trimmed;
+        }
+        return `บริเวณ ${trimmed}`;
+    }
+
+    #resolveLocationMode(rec, type = 'check_in') {
+        if (!rec || !rec.log_id) return null;
+
+        if (type === 'check_in') {
+            const hasCheckIn = Boolean(rec.check_in_time || rec.check_in_lat || rec.check_in_location);
+            if (!hasCheckIn && !rec.is_special_request) {
+                return null;
+            }
+            if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.location_mode === 'ONSITE') return 'ONSITE';
+
+            const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
+            const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
+            if (inLat !== null && inLng !== null) {
+                const inGeofence = this.#isWithinGeofence(inLat, inLng);
+                if (inGeofence !== null) {
+                    return inGeofence ? 'ONSITE' : 'OFFSITE';
+                }
+            }
+            if (rec.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(rec.remark.trim())) {
+                return 'OFFSITE';
+            }
+            return 'ONSITE';
+        }
+
+        if (type === 'check_out') {
+            const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location);
+            if (!isCheckedOut && !rec.is_special_request) {
+                return null;
+            }
+            if (rec.check_out_location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.check_out_location_mode === 'ONSITE') return 'ONSITE';
+
+            // Special requests: check-out inherits check-in mode when check_out_location_mode is null/empty
+            if (rec.is_special_request) {
+                if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+                if (rec.location_mode === 'ONSITE') return 'ONSITE';
+                const inheritedInMode = this.#resolveLocationMode(rec, 'check_in');
+                if (inheritedInMode) return inheritedInMode;
+            }
+
+            const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
+            const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
+            if (outLat !== null && outLng !== null) {
+                const outGeofence = this.#isWithinGeofence(outLat, outLng);
+                if (outGeofence !== null) {
+                    return outGeofence ? 'ONSITE' : 'OFFSITE';
+                }
+            }
+            if (rec.location_mode === 'OFFSITE') return 'OFFSITE';
+            if (rec.remark && ['อบรม', 'ประชุม', 'ปฏิบัติงานนอกสถานที่', 'ปฏิบัติงานที่บ้าน (WFH)', 'ปฏิบัติงานเวรประจำวัน'].includes(rec.remark.trim())) {
+                return 'OFFSITE';
+            }
+            return 'ONSITE';
+        }
+
+        return null;
+    }
+
+    #escapeHtml(val) {
+        if (val === null || val === undefined) return '';
+        return String(val)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    #resolveReportRemark(rec, { forExcel = false, forPrint = false } = {}) {
+        if (!rec || !rec.log_id) return '-';
+
+        const rawRemarkCheck = String(rec.remark || '').trim();
+        if (rawRemarkCheck === 'ขอแก้ไขเวลา' || rawRemarkCheck.endsWith('(แก้ไขเวลา)')) {
+            if (forExcel) return rawRemarkCheck;
+            const safeCorr = this.#escapeHtml(rawRemarkCheck);
+            if (forPrint) {
+                return `<span style="font-weight: 700; color: #00744B;">${safeCorr}</span>`;
+            }
+            return `<span class="font-bold text-[#00744B] dark:text-emerald-400">${safeCorr}</span>`;
+        }
+
+        const SUPPRESSED_STATUS_REMARKS = new Set([
+            'ปฏิบัติงานปกติ',
+            'มาสาย',
+            'ขาดราชการ',
+            'ไม่ลงเวลา',
+            'ปฏิบัติงานนอกเวลา',
+            'ปฏิบัติงานนอกเวลาราชการ',
+            'ในสถานที่'
+        ]);
+
+        if (rec.is_special_request) {
+            const rawRemark = (rec.remark || '').replace(/^กรณีพิเศษ\s*\((.*?)\)$/i, '$1').replace(/^กรณีพิเศษ\s*[-:—–/]?\s*/i, '').trim();
+            const rawOffsite = (rec.offsite_reason || '').trim();
+
+            const validRemark = (rawRemark && rawRemark !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawRemark) && rawRemark !== 'กรณีพิเศษ' && rawRemark !== 'ปฏิบัติงานนอกสถานที่' && rawRemark !== 'นอกสถานที่') ? rawRemark : '';
+            const validOffsite = (rawOffsite && rawOffsite !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawOffsite) && rawOffsite !== 'กรณีพิเศษ') ? rawOffsite : '';
+
+            let combinedReason = '';
+            if (validRemark && validOffsite && validRemark !== validOffsite && !validRemark.includes(validOffsite)) {
+                combinedReason = `${validRemark} (${validOffsite})`;
+            } else {
+                combinedReason = validRemark || validOffsite || '';
+            }
+
+            if (forExcel) {
+                return combinedReason ? `กรณีพิเศษ\n${combinedReason}` : 'กรณีพิเศษ';
+            }
+
+            const safeCombined = this.#escapeHtml(combinedReason);
+            if (forPrint) {
+                return safeCombined
+                    ? `<div><span style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span></div><div style="font-size: 10px; color: #475569;">${safeCombined}</div>`
+                    : `<span style="font-weight: 700; color: #1e293b;">กรณีพิเศษ</span>`;
+            }
+
+            return safeCombined
+                ? `<div><span class="font-bold text-slate-800 dark:text-slate-200">กรณีพิเศษ</span></div><div class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">${safeCombined}</div>`
+                : `<span class="font-bold text-slate-800 dark:text-slate-200">กรณีพิเศษ</span>`;
+        }
+
+        const inMode = rec.location_mode || this.#resolveLocationMode(rec, 'check_in');
+        if (inMode === 'ONSITE') {
+            return '-';
+        }
+
+        if (inMode === 'OFFSITE') {
+            const rawOffsite = (rec.offsite_reason || '').trim();
+            if (rawOffsite && rawOffsite !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawOffsite)) {
+                return forExcel ? rawOffsite : this.#escapeHtml(rawOffsite);
+            }
+            const rawRemark = (rec.remark || '').trim();
+            if (rawRemark && rawRemark !== '-' && !SUPPRESSED_STATUS_REMARKS.has(rawRemark)) {
+                return forExcel ? rawRemark : this.#escapeHtml(rawRemark);
+            }
+            return 'ปฏิบัติงานนอกสถานที่';
+        }
+
+        return '-';
+    }
+
     #renderSeparateTablesBySelectedTags(forPrintPdf = false) {
         const masterContainer = document.getElementById('reportTablesMasterContainer');
         const activeStatuses = Config.OFFICIAL_STATUSES.filter(st => this.selectedStatusKeys.has(st.key));
@@ -364,7 +564,7 @@ export class ReportsController {
 
                 if (forPrintPdf) {
                     combinedHtml += `
-                        <div class="day-section-banner" style="background-color: #00351B; color: #FFFFFF; padding: 8px 14px; font-weight: 800; font-size: 15px; border-radius: 6px; margin-top: 18px; margin-bottom: 12px; page-break-after: avoid;">
+                        <div class="day-section-banner" style="background-color: #00351B; color: #FFFFFF; padding: 8px 14px; font-weight: 800; font-size: 15px; border-radius: 6px; margin-top: 18px; margin-bottom: 12px; page-break-after: avoid; break-after: avoid;">
                             รายงานประจำวันที่ ${dayThaiFull}
                         </div>
                     `;
@@ -465,7 +665,7 @@ export class ReportsController {
 
             return `
                 <div class="tag-section-block">
-                    <div class="tag-section-title" style="background-color: ${statusColor};">
+                    <div class="tag-section-title" style="background-color: ${statusColor}; page-break-after: avoid; break-after: avoid;">
                         ตารางสถานะ: ${statusMeta.label} - ประจำวันที่ ${daySubtitle} (จำนวน ${tagRecords.length} รายการ)
                     </div>
                     <table>
@@ -503,6 +703,8 @@ export class ReportsController {
                             </tr>
         `;
 
+        const mobileCardsHtml = this.#buildGroupedCardsForTag(tagRecords, groupHeaderColor);
+
         return `
             <div class="bma-card p-5 space-y-3" style="border-top: 4px solid ${statusColor};">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b bma-border">
@@ -522,16 +724,151 @@ export class ReportsController {
                     </span>
                 </div>
 
-                <div class="bma-table-container">
-                    <table class="bma-table text-sm">
-                        <thead>
-                            ${theadWebHtml}
-                        </thead>
-                        <tbody>
-                            ${tableRowsHtml}
-                        </tbody>
-                    </table>
+                <!-- Mobile Card-List (< lg) -->
+                <div class="lg:hidden space-y-3 bg-slate-100/80 dark:bg-slate-900/60 p-3 rounded-2xl">
+                    ${mobileCardsHtml}
                 </div>
+
+                <!-- Desktop Table (>= lg) -->
+                <div class="hidden lg:block">
+                    <div class="bma-table-container">
+                        <table class="bma-table text-sm">
+                            <thead>
+                                ${theadWebHtml}
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    #buildGroupedCardsForTag(tagRecords, groupHeaderColor) {
+        if (!tagRecords || tagRecords.length === 0) {
+            return `<div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 p-6 text-center text-xs font-medium bma-text-sub shadow-xs">ไม่มีข้อมูลบุคลากรในสถานะนี้</div>`;
+        }
+
+        const grouped = PersonnelModel.groupPersonnel(tagRecords, this.groupViewMode);
+        let cardsHtml = '';
+        let runningNo = 1;
+
+        for (const [bureauName, divisionsObj] of Object.entries(grouped || {})) {
+            for (const [divisionName, content] of Object.entries(divisionsObj || {})) {
+                cardsHtml += `
+                    <div class="rounded-xl px-3.5 py-2 font-bold text-xs shadow-xs border-l-4" style="background-color: ${groupHeaderColor}18; color: ${groupHeaderColor}; border-left-color: ${groupHeaderColor};">
+                        <i class="fa-solid fa-building-user mr-1.5"></i>${this.#escapeHtml(bureauName || '-')} &gt; ${this.#escapeHtml(divisionName || '-')}
+                    </div>
+                `;
+
+                if (this.groupViewMode === 'group') {
+                    for (const [groupName, members] of Object.entries(content || {})) {
+                        const memberList = Array.isArray(members) ? members : [];
+                        cardsHtml += `
+                            <div class="px-3 py-1.5 rounded-lg bg-emerald-950/5 dark:bg-slate-800/70 font-semibold text-[11px] bma-text-main">
+                                กลุ่มงาน: ${this.#escapeHtml(groupName || '-')} (${memberList.length} รายการ)
+                            </div>
+                        `;
+                        for (const rec of memberList) {
+                            if (rec) {
+                                cardsHtml += this.#buildReportCardHtml(rec, runningNo++);
+                            }
+                        }
+                    }
+                } else {
+                    const contentList = Array.isArray(content) ? content : [];
+                    for (const rec of contentList) {
+                        if (rec) {
+                            cardsHtml += this.#buildReportCardHtml(rec, runningNo++);
+                        }
+                    }
+                }
+            }
+        }
+
+        return cardsHtml;
+    }
+
+    #buildReportCardHtml(rec, indexNo) {
+        if (!rec) return '';
+
+        const showGps = Boolean(this.settings?.require_gps);
+        const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
+        const remarkDisplay = this.#resolveReportRemark(rec, { forPrint: false });
+        const fullName = this.#escapeHtml(rec.full_name || '-');
+        const rowUid = this.#escapeHtml(rec.row_uid || '');
+        const rowId = this.#escapeHtml(rec.log_id || rec.row_uid || '');
+
+        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        const inLocName = this.#escapeHtml(this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '')));
+
+        const outMode = this.#resolveLocationMode(rec, 'check_out');
+        const outRawLoc = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        const outLocName = this.#escapeHtml(this.#formatLocationName(outRawLoc));
+
+        const renderModeLoc = (mode, locText) => {
+            if (!mode) return '<span class="text-slate-500 dark:text-slate-400">-</span>';
+            const badge = mode === 'ONSITE'
+                ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+            const safeLoc = (locText && locText !== '-') ? locText : '-';
+            return `${badge}${safeLoc}`;
+        };
+
+        const canEdit = this.canManageRecords && AuthService.canEditAttendanceRecord(this.currentUser, rec);
+        const canDelete = this.canManageRecords && AuthService.canDeleteAttendanceRecord(this.currentUser, rec) && rec.log_id;
+        const actionFooter = (canEdit || canDelete) ? `
+            <div class="pt-2.5 mt-1 border-t border-slate-100 dark:border-slate-700/70 flex items-center justify-end gap-2 no-print">
+                ${canEdit ? `
+                    <button type="button" data-action="edit-record" data-row-uid="${rowUid}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 hover:bg-sky-100 transition cursor-pointer">
+                        <i class="fa-solid fa-pen"></i> แก้ไข
+                    </button>
+                ` : ''}
+                ${canDelete ? `
+                    <button type="button" data-action="delete-record" data-logid="${this.#escapeHtml(rec.log_id)}" data-name="${fullName}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 transition cursor-pointer">
+                        <i class="fa-solid fa-trash"></i> ลบ
+                    </button>
+                ` : ''}
+            </div>
+        ` : '';
+
+        return `
+            <div class="report-person-card rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-xs space-y-2 text-xs cursor-pointer transition" data-row-uid="${rowUid}" data-row-id="${rowId}">
+                <div class="flex items-start justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-700/70">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-[11px] seq-num">${indexNo}</span>
+                        <span class="font-extrabold text-slate-800 dark:text-slate-100 truncate">${fullName}</span>
+                    </div>
+                    <i class="fa-regular fa-id-badge text-sm text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"></i>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">ตำแหน่ง</span>
+                    <span class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${this.#escapeHtml(posDisplay)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาเข้างาน</span>
+                    <span data-field="check-in" class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_in_time ? this.#escapeHtml(rec.check_in_time) + ' น.' : '-'}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">เวลาออกงาน</span>
+                    <span data-field="check-out" class="font-bold text-slate-800 dark:text-slate-100 text-right font-mono">${rec.check_out_time ? this.#escapeHtml(rec.check_out_time) + ' น.' : '-'}</span>
+                </div>
+                ${showGps ? `
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัดเข้างาน</span>
+                    <span data-field="in-loc" class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${renderModeLoc(inMode, inLocName)}</span>
+                </div>
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">พิกัดออกงาน</span>
+                    <span data-field="out-loc" class="font-semibold text-slate-700 dark:text-slate-200 text-right break-words">${renderModeLoc(outMode, outLocName)}</span>
+                </div>` : ''}
+                <div class="flex items-start justify-between gap-3 py-0.5">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium shrink-0">หมายเหตุ</span>
+                    <span data-field="remark" class="font-medium text-slate-700 dark:text-slate-200 text-right break-words">${remarkDisplay}</span>
+                </div>
+                ${actionFooter}
             </div>
         `;
     }
@@ -594,34 +931,31 @@ export class ReportsController {
         if (!rec) return '';
 
         const showGps = Boolean(this.settings?.require_gps);
-        const posDisplay = rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-';
-        const remarkDisplay = rec.remark || '-';
-        const fullName = rec.full_name || '-';
-        const rowUid = rec.row_uid || '';
+        const posDisplay = this.#escapeHtml(rec.position_full || UIHelpers.formatPosition(rec.position_title, rec.position_level, rec.position_type) || '-');
+        const remarkDisplay = this.#resolveReportRemark(rec, { forPrint: Boolean(forPrintPdf) });
+        const fullName = this.#escapeHtml(rec.full_name || '-');
+        const rowUid = this.#escapeHtml(rec.row_uid || '');
 
-        const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
-        const inLng = rec.check_in_lng ?? (rec.is_special_request ? rec.check_out_lng : null);
-        const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
-        const inLocName = (rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '') || '').trim();
+        const inMode = this.#resolveLocationMode(rec, 'check_in');
+        const inLocName = this.#escapeHtml(this.#formatLocationName(rec.check_in_location || (rec.is_special_request ? rec.check_out_location : '')));
 
-        const isCheckedOut = Boolean(rec.check_out_time || rec.check_out_lat || rec.check_out_location);
-        const outLat = rec.check_out_lat ?? (rec.is_special_request ? rec.check_in_lat : null);
-        const outLng = rec.check_out_lng ?? (rec.is_special_request ? rec.check_in_lng : null);
-        const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
-        let outLocName = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
-        if (!outLocName && !isCheckedOut && !rec.is_special_request) {
-            outLocName = '-';
-        }
+        const outMode = this.#resolveLocationMode(rec, 'check_out');
+        const outRawLoc = (rec.check_out_location || (rec.is_special_request ? rec.check_in_location : '') || '').trim();
+        const outLocName = this.#escapeHtml(this.#formatLocationName(outRawLoc));
 
         if (forPrintPdf) {
             const gpsPrintCells = showGps ? `
-                    <td style="font-size: 11px;">
-                        <div style="font-weight: 600;">${inLocName || '-'}</div>
-                        ${inGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${inGpsCoords}</div>` : ''}
+                    <td style="font-size: 11px; vertical-align: middle;">
+                        ${inMode ? `
+                            <div><span style="display: inline-block; padding: 1px 6px; border-radius: 9999px; background: ${inMode === 'ONSITE' ? '#D1FAE5' : '#E0F2FE'}; color: ${inMode === 'ONSITE' ? '#065F46' : '#0369A1'}; font-weight: 700; font-size: 10px;">${inMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่'}</span></div>
+                            <div style="font-size: 10px; color: #334155; margin-top: 2px;">${inLocName}</div>
+                        ` : `<div style="text-align: center; color: #64748B;">-</div>`}
                     </td>
-                    <td style="font-size: 11px;">
-                        <div style="font-weight: 600;">${outLocName || '-'}</div>
-                        ${outGpsCoords ? `<div style="font-family: monospace; font-size: 10px; color: #64748B;">${outGpsCoords}</div>` : ''}
+                    <td style="font-size: 11px; vertical-align: middle;">
+                        ${outMode ? `
+                            <div><span style="display: inline-block; padding: 1px 6px; border-radius: 9999px; background: ${outMode === 'ONSITE' ? '#D1FAE5' : '#E0F2FE'}; color: ${outMode === 'ONSITE' ? '#065F46' : '#0369A1'}; font-weight: 700; font-size: 10px;">${outMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่'}</span></div>
+                            <div style="font-size: 10px; color: #334155; margin-top: 2px;">${outLocName}</div>
+                        ` : `<div style="text-align: center; color: #64748B;">-</div>`}
                     </td>
             ` : '';
 
@@ -642,24 +976,48 @@ export class ReportsController {
             ? 'w-28 text-center font-mono font-bold'
             : 'w-32 text-center font-mono font-bold';
 
+        const inBadge = inMode === 'ONSITE'
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/40"><i class="fa-solid fa-building text-[10px]"></i>ในสถานที่</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-300/40"><i class="fa-solid fa-map-location-dot text-[10px]"></i>นอกสถานที่</span>`;
+
+        const inLocDisp = (inLocName && inLocName !== '-')
+            ? `<div class="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-[170px] mt-1" title="${inLocName}"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${inLocName}</div>`
+            : `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">-</div>`;
+
+        const outBadge = outMode === 'ONSITE'
+            ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300/40"><i class="fa-solid fa-building text-[10px]"></i>ในสถานที่</span>`
+            : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-300/40"><i class="fa-solid fa-map-location-dot text-[10px]"></i>นอกสถานที่</span>`;
+
+        const outLocDisp = (outLocName && outLocName !== '-')
+            ? `<div class="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-[170px] mt-1" title="${outLocName}"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${outLocName}</div>`
+            : `<div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">-</div>`;
+
+        const inCellHtml = inMode
+            ? `<td class="w-44 min-w-[180px] py-2">
+                    <div class="flex flex-col items-start justify-center">
+                        ${inBadge}
+                        ${inLocDisp}
+                    </div>
+               </td>`
+            : `<td class="w-44 min-w-[180px] text-center text-slate-500 dark:text-slate-400 font-medium">-</td>`;
+
+        const outCellHtml = outMode
+            ? `<td class="w-44 min-w-[180px] py-2">
+                    <div class="flex flex-col items-start justify-center">
+                        ${outBadge}
+                        ${outLocDisp}
+                    </div>
+               </td>`
+            : `<td class="w-44 min-w-[180px] text-center text-slate-500 dark:text-slate-400 font-medium">-</td>`;
+
         const gpsWebCells = showGps ? `
-                <td class="w-44 min-w-[180px]">
-                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${inLocName || '-'}">
-                        ${inLocName && inLocName !== '-' ? `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${inLocName}` : (inLocName || '-')}
-                    </div>
-                    ${inGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${inGpsCoords}</div>` : ''}
-                </td>
-                <td class="w-44 min-w-[180px]">
-                    <div class="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[170px]" title="${outLocName || '-'}">
-                        ${outLocName && outLocName !== '-' ? `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${outLocName}` : (outLocName || '-')}
-                    </div>
-                    ${outGpsCoords ? `<div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${outGpsCoords}</div>` : ''}
-                </td>
+                ${inCellHtml}
+                ${outCellHtml}
         ` : '';
 
         return `
-            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rowUid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
-                <td class="w-14 text-center font-semibold">${indexNo}</td>
+            <tr class="report-person-row cursor-pointer transition" data-row-uid="${rowUid}" data-row-id="${rec.log_id || rowUid}" title="คลิกเพื่อดูโปรไฟล์ รูปถ่าย และพิกัด Google Map ของรายการนี้">
+                <td class="w-14 text-center font-semibold seq-num">${indexNo}</td>
                 <td class="${showGps ? 'min-w-[170px]' : 'min-w-[200px]'}">
                     <div class="font-bold bma-text-main flex items-center gap-1.5">
                         <span>${fullName}</span>
@@ -670,7 +1028,7 @@ export class ReportsController {
                 <td class="${timeColClass}">${rec.check_in_time ? rec.check_in_time + ' น.' : '-'}</td>
                 <td class="${timeColClass}">${rec.check_out_time ? rec.check_out_time + ' น.' : '-'}</td>
                 ${gpsWebCells}
-                <td class="${showGps ? 'min-w-[130px]' : 'min-w-[180px]'} text-xs text-slate-600 dark:text-slate-300">
+                <td data-field="remark" class="${showGps ? 'min-w-[130px]' : 'min-w-[180px]'} text-xs text-slate-600 dark:text-slate-300">
                     ${remarkDisplay}
                 </td>
 ${this.canManageRecords ? `
@@ -834,7 +1192,22 @@ ${this.canManageRecords ? `
         const outEl = document.getElementById('resumeRowCheckoutTime');
         if (outEl) outEl.textContent = rec.check_out_time ? `${rec.check_out_time} น.` : 'ไม่ได้ลงเวลา';
         const remEl = document.getElementById('resumeRowRemark');
-        if (remEl) remEl.textContent = rec.remark || 'ไม่มีหมายเหตุ';
+        if (remEl) {
+            const parts = [];
+            if (rec.is_special_request) {
+                parts.push('กรณีพิเศษ');
+            }
+            if (rec.offsite_reason) {
+                parts.push(`ลักษณะงานนอกสถานที่: ${rec.offsite_reason}`);
+            }
+            if (rec.check_out_offsite_reason && rec.check_out_offsite_reason !== rec.offsite_reason) {
+                parts.push(`ขากลับนอกสถานที่: ${rec.check_out_offsite_reason}`);
+            }
+            if (rec.remark && rec.remark !== rec.offsite_reason && rec.remark !== 'ในสถานที่' && rec.remark !== 'กรณีพิเศษ') {
+                parts.push(rec.remark);
+            }
+            remEl.textContent = parts.length > 0 ? parts.join(' | ') : (rec.remark || 'ไม่มีหมายเหตุ');
+        }
 
         // 5. พิกัดตำแหน่งและแผนที่ Google Map เฉพาะของ Row นี้ (ทั้งขาเข้า และ ขาออก)
         const inLat = rec.check_in_lat ?? (rec.is_special_request ? rec.check_out_lat : null);
@@ -902,6 +1275,7 @@ ${this.canManageRecords ? `
         if (wgEl) wgEl.textContent = rec.work_group || '-';
 
         document.getElementById('modalPersonnelResumeProfile')?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(document.getElementById('modalPersonnelResumeProfile'));
     }
 
     #closeResumeModal() {
@@ -914,6 +1288,115 @@ ${this.canManageRecords ? `
             this.currentPhotoBlobUrlOut = null;
         }
         document.getElementById('modalPersonnelResumeProfile')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
+    }
+
+    #normalizeModalTimeValue(val) {
+        if (val === null || val === undefined) return '';
+        const str = String(val).trim();
+        if (!str || str === '-' || str === '--:--') return '';
+        const hmsMatch = str.match(/^([01]?\d|2[0-3])[:.]([0-5]\d):[0-5]\d$/);
+        if (hmsMatch) {
+            return `${String(hmsMatch[1]).padStart(2, '0')}:${hmsMatch[2]}`;
+        }
+        return str;
+    }
+
+    #syncCheckoutControlState(isEditExisting = null) {
+        const hasLogId = isEditExisting !== null
+            ? Boolean(isEditExisting)
+            : Boolean(document.getElementById('repLogId')?.value);
+        const checkoutVal = this.#normalizeModalTimeValue(document.getElementById('repCheckoutTime')?.value);
+        const btnClear = document.getElementById('btnClearCheckout');
+        const hintBanner = document.getElementById('repCheckoutHintBanner');
+
+        if (btnClear) {
+            btnClear.classList.toggle('hidden', !checkoutVal);
+        }
+        if (hintBanner) {
+            hintBanner.classList.toggle('hidden', !(hasLogId && !checkoutVal));
+        }
+    }
+
+    #syncDuplicateWarningBanner() {
+        const banner = document.getElementById('repDuplicateWarningBanner');
+        const textEl = document.getElementById('repDuplicateWarningText');
+        if (!banner) return;
+
+        const hasLogId = Boolean(document.getElementById('repLogId')?.value);
+        if (hasLogId) {
+            banner.classList.add('hidden');
+            return;
+        }
+
+        const personnelId = document.getElementById('repPersonnelSelect')?.value;
+        const workDate = document.getElementById('repWorkDate')?.value;
+        const statusVal = document.getElementById('repStatusSelect')?.value;
+        const isOvertime = statusVal === 'ปฏิบัติงานนอกเวลา';
+
+        if (!personnelId || !workDate || isOvertime) {
+            banner.classList.add('hidden');
+            return;
+        }
+
+        const existing = (this.records || []).find(r =>
+            r.log_id &&
+            String(r.personnel_id) === String(personnelId) &&
+            String(r.work_date) === String(workDate) &&
+            !r.is_overtime &&
+            r.status_label !== 'ปฏิบัติงานนอกเวลา'
+        );
+
+        if (existing) {
+            const inTxt = this.#normalizeModalTimeValue(existing.check_in_time) || '-';
+            const outTxt = this.#normalizeModalTimeValue(existing.check_out_time) || 'ยังไม่ลงออก';
+            if (textEl) {
+                textEl.textContent = `บุคลากรรายนี้มีบันทึกเวลาปกติในวันที่เลือกอยู่แล้ว (เข้า ${inTxt} น. / ออก ${outTxt}) ระบบจะยึดการลงเวลาของผู้ใช้เป็นหลัก`;
+            }
+            banner.classList.remove('hidden');
+        } else {
+            banner.classList.add('hidden');
+        }
+    }
+
+    #bindReportModalHelperEvents() {
+        const btnQuickFill = document.getElementById('btnQuickFillCheckout');
+        if (btnQuickFill && btnQuickFill.dataset.v51Bound !== 'true') {
+            btnQuickFill.dataset.v51Bound = 'true';
+            btnQuickFill.addEventListener('click', () => {
+                const checkoutInput = document.getElementById('repCheckoutTime');
+                if (checkoutInput) {
+                    checkoutInput.value = this.settings?.standard_check_out || '16:30';
+                }
+                this.#syncCheckoutControlState();
+            });
+        }
+
+        const btnClear = document.getElementById('btnClearCheckout');
+        if (btnClear && btnClear.dataset.v51Bound !== 'true') {
+            btnClear.dataset.v51Bound = 'true';
+            btnClear.addEventListener('click', () => {
+                const checkoutInput = document.getElementById('repCheckoutTime');
+                if (checkoutInput) {
+                    checkoutInput.value = '';
+                }
+                this.#syncCheckoutControlState();
+            });
+        }
+
+        const checkoutInput = document.getElementById('repCheckoutTime');
+        if (checkoutInput && checkoutInput.dataset.v51Bound !== 'true') {
+            checkoutInput.dataset.v51Bound = 'true';
+            checkoutInput.addEventListener('input', () => this.#syncCheckoutControlState());
+        }
+
+        for (const id of ['repPersonnelSelect', 'repWorkDate', 'repStatusSelect']) {
+            const el = document.getElementById(id);
+            if (el && el.dataset.v51Bound !== 'true') {
+                el.dataset.v51Bound = 'true';
+                el.addEventListener('change', () => this.#syncDuplicateWarningBanner());
+            }
+        }
     }
 
     #openModal(rec = null) {
@@ -932,29 +1415,278 @@ ${this.canManageRecords ? `
             }
         }
         this.#populatePersonnelDropdown();
+        this.#bindReportModalHelperEvents();
+
         const modal = document.getElementById('modalReportAttendance');
         const defaultDate = document.getElementById('reportSingleDateInput')?.value || UIHelpers.getTodayISO();
+        const isEditExisting = Boolean(rec?.log_id);
+
+        const titleSpan = document.getElementById('repTitleText') || document.querySelector('#modalReportTitle span:last-child');
+        if (titleSpan) {
+            titleSpan.textContent = isEditExisting ? 'แก้ไขเวลาปฏิบัติราชการ' : 'เพิ่มบันทึกเวลาปฏิบัติราชการ';
+        }
+        document.getElementById('repEditModeBadge')?.classList.toggle('hidden', !isEditExisting);
 
         document.getElementById('repLogId').value = rec?.log_id || '';
-        if (rec?.personnel_id) {
-            document.getElementById('repPersonnelSelect').value = rec.personnel_id;
+        const personnelSelect = document.getElementById('repPersonnelSelect');
+        if (personnelSelect) {
+            if (rec?.personnel_id) {
+                personnelSelect.value = rec.personnel_id;
+            }
+            personnelSelect.disabled = isEditExisting;
+            personnelSelect.classList.toggle('opacity-60', isEditExisting);
+            personnelSelect.classList.toggle('cursor-not-allowed', isEditExisting);
         }
-        document.getElementById('repWorkDate').value = rec?.work_date || defaultDate;
-        document.getElementById('repCheckinTime').value = rec?.check_in_time || this.settings.standard_check_in || '08:30';
-        document.getElementById('repCheckoutTime').value = rec?.check_out_time || this.settings.standard_check_out || '16:30';
+
+        const workDateInput = document.getElementById('repWorkDate');
+        if (workDateInput) {
+            workDateInput.value = rec?.work_date || defaultDate;
+            workDateInput.disabled = isEditExisting;
+            workDateInput.classList.toggle('opacity-60', isEditExisting);
+            workDateInput.classList.toggle('cursor-not-allowed', isEditExisting);
+        }
+
+        document.getElementById('repCheckinTime').value = isEditExisting
+            ? this.#normalizeModalTimeValue(rec.check_in_time)
+            : (this.settings?.standard_check_in || '08:30');
+        document.getElementById('repCheckoutTime').value = isEditExisting
+            ? this.#normalizeModalTimeValue(rec.check_out_time)
+            : '';
         document.getElementById('repStatusSelect').value = rec?.status_label && rec.status_label !== 'ไม่ลงเวลา'
             ? rec.status_label
             : 'ปฏิบัติงานปกติ';
         document.getElementById('repRemarkInput').value = rec?.remark || '';
 
+        this.#syncCheckoutControlState(isEditExisting);
+        this.#syncDuplicateWarningBanner();
+
         modal?.classList.remove('hidden');
+        UIHelpers.prepareModalOpen(modal);
     }
 
     #closeModal() {
         document.getElementById('modalReportAttendance')?.classList.add('hidden');
+        UIHelpers.syncBodyModalLock();
+    }
+
+    async syncReportsSilent(deltaDetail = null) {
+        let startDate = UIHelpers.getTodayISO();
+        let endDate = startDate;
+        if (this.dateMode === 'single') {
+            startDate = document.getElementById('reportSingleDateInput')?.value || startDate;
+            endDate = startDate;
+        } else {
+            startDate = document.getElementById('reportStartDateInput')?.value || startDate;
+            endDate = document.getElementById('reportEndDateInput')?.value || startDate;
+        }
+
+        try {
+            const oldRecords = this.records || [];
+            const oldMap = new Map();
+            for (const r of oldRecords) {
+                if (r.row_uid) oldMap.set(String(r.row_uid), r);
+                if (r.log_id) oldMap.set(String(r.log_id), r);
+                if (r.personnel_id && r.work_date) {
+                    oldMap.set(`${r.personnel_id}_${r.work_date}`, r);
+                    oldMap.set(`${r.personnel_id}_${r.work_date}_empty`, r);
+                }
+            }
+
+            const freshRecords = await AttendanceModel.getReportRecordsByDateRange(startDate, endDate, this.currentUser);
+
+            let categoryChanged = false;
+            const changedUids = new Set();
+            for (const fr of freshRecords) {
+                const prev = oldMap.get(String(fr.row_uid)) ||
+                    (fr.log_id ? oldMap.get(String(fr.log_id)) : null) ||
+                    oldMap.get(`${fr.personnel_id}_${fr.work_date}`) ||
+                    oldMap.get(`${fr.personnel_id}_${fr.work_date}_empty`);
+
+                if (prev) {
+                    const oldCat = prev.status_category || prev.status_key;
+                    const newCat = fr.status_category || fr.status_key;
+                    if (oldCat !== newCat) {
+                        categoryChanged = true;
+                        if (fr.row_uid) changedUids.add(String(fr.row_uid));
+                        if (fr.log_id) changedUids.add(String(fr.log_id));
+                        if (fr.personnel_id) changedUids.add(String(fr.personnel_id));
+                        changedUids.add(`${fr.personnel_id}_${fr.work_date}`);
+                    } else if (prev.check_in_time !== fr.check_in_time || prev.check_out_time !== fr.check_out_time) {
+                        if (fr.row_uid) changedUids.add(String(fr.row_uid));
+                        if (fr.log_id) changedUids.add(String(fr.log_id));
+                        changedUids.add(`${fr.personnel_id}_${fr.work_date}`);
+                    }
+                }
+            }
+
+            this.records = freshRecords;
+            this.#renderStatusTagFilterChips();
+
+            const masterContainer = document.getElementById('reportTablesMasterContainer');
+            if (categoryChanged && masterContainer) {
+                // ย้ายแถวข้ามตารางสถานะ พร้อมคงตำแหน่ง Scroll เดิม
+                const prevScrollY = window.scrollY;
+                this.#renderSeparateTablesBySelectedTags(false);
+                window.scrollTo({ top: prevScrollY, behavior: 'instant' });
+
+                // ไฮไลต์แถวและ์การ์ดของบุคคลที่สถานะเปลี่ยนข้ามตาราง
+                const rows = masterContainer.querySelectorAll('tr.report-person-row, .report-person-card');
+                for (const row of rows) {
+                    const uid = row.getAttribute('data-row-uid');
+                    const logId = row.getAttribute('data-row-id');
+                    if (changedUids.has(uid) || changedUids.has(logId)) {
+                        row.classList.add('bg-emerald-500/15', 'transition-colors', 'duration-1000');
+                        setTimeout(() => {
+                            row.classList.remove('bg-emerald-500/15', 'transition-colors', 'duration-1000');
+                        }, 2200);
+                    }
+                }
+            } else if (masterContainer) {
+                // อัปเดตเฉพาะเซลล์แบบ In-Place หากสถานะตารางเดิมไม่เปลี่ยน
+                const freshMap = new Map();
+                for (const r of freshRecords) {
+                    if (r.row_uid) freshMap.set(String(r.row_uid), r);
+                    if (r.log_id) freshMap.set(String(r.log_id), r);
+                    if (r.personnel_id && r.work_date) {
+                        freshMap.set(`${r.personnel_id}_${r.work_date}`, r);
+                        freshMap.set(`${r.personnel_id}_${r.work_date}_empty`, r);
+                    }
+                }
+
+                const showGps = Boolean(this.settings?.require_gps);
+                const visibleRows = masterContainer.querySelectorAll('tr.report-person-row');
+                for (const row of visibleRows) {
+                    const uid = row.getAttribute('data-row-uid');
+                    const logId = row.getAttribute('data-row-id');
+                    const updated = freshMap.get(uid) || freshMap.get(logId);
+                    if (updated) {
+                        const cells = row.querySelectorAll('td');
+                        let isUpdated = false;
+
+                        // cell 3: เวลาเข้า
+                        if (cells[3]) {
+                            const newIn = updated.check_in_time ? updated.check_in_time + ' น.' : '-';
+                            if (cells[3].textContent.trim() !== newIn) {
+                                cells[3].textContent = newIn;
+                                isUpdated = true;
+                            }
+                        }
+                        // cell 4: เวลาออก
+                        if (cells[4]) {
+                            const newOut = updated.check_out_time ? updated.check_out_time + ' น.' : '-';
+                            if (cells[4].textContent.trim() !== newOut) {
+                                cells[4].textContent = newOut;
+                                isUpdated = true;
+                            }
+                        }
+                        // GPS location names
+                        if (showGps) {
+                            if (cells[5] && updated.check_in_location) {
+                                const inLocDiv = cells[5].querySelector('div');
+                                if (inLocDiv && !inLocDiv.textContent.includes(updated.check_in_location)) {
+                                    inLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${this.#escapeHtml(updated.check_in_location)}`;
+                                    isUpdated = true;
+                                }
+                            }
+                            if (cells[6] && updated.check_out_location) {
+                                const outLocDiv = cells[6].querySelector('div');
+                                if (outLocDiv && !outLocDiv.textContent.includes(updated.check_out_location)) {
+                                    outLocDiv.innerHTML = `<i class="fa-solid fa-location-dot text-teal-600 mr-1"></i>${this.#escapeHtml(updated.check_out_location)}`;
+                                    isUpdated = true;
+                                }
+                            }
+                        }
+
+                        const remarkTd = row.querySelector('td[data-field="remark"]');
+                        if (remarkTd) {
+                            const nextRemarkHtml = this.#resolveReportRemark(updated, { forPrint: false }).trim();
+                            if (remarkTd.innerHTML.trim() !== nextRemarkHtml) {
+                                remarkTd.innerHTML = nextRemarkHtml;
+                                isUpdated = true;
+                            }
+                        }
+
+                        if (isUpdated) {
+                            DOMDiffHelper.highlightRowUpdate(row);
+                        }
+                    }
+                }
+
+                const visibleCards = masterContainer.querySelectorAll('.report-person-card');
+                for (const card of visibleCards) {
+                    const uid = card.getAttribute('data-row-uid');
+                    const logId = card.getAttribute('data-row-id');
+                    const updated = freshMap.get(uid) || freshMap.get(logId);
+                    if (updated) {
+                        let cardUpdated = false;
+                        const inEl = card.querySelector('[data-field="check-in"]');
+                        if (inEl) {
+                            const newIn = updated.check_in_time ? `${updated.check_in_time} น.` : '-';
+                            if (inEl.textContent.trim() !== newIn) {
+                                inEl.textContent = newIn;
+                                cardUpdated = true;
+                            }
+                        }
+                        const outEl = card.querySelector('[data-field="check-out"]');
+                        if (outEl) {
+                            const newOut = updated.check_out_time ? `${updated.check_out_time} น.` : '-';
+                            if (outEl.textContent.trim() !== newOut) {
+                                outEl.textContent = newOut;
+                                cardUpdated = true;
+                            }
+                        }
+                        if (showGps) {
+                            const inLocEl = card.querySelector('[data-field="in-loc"]');
+                            if (inLocEl && updated.check_in_location && !inLocEl.textContent.includes(updated.check_in_location)) {
+                                const inMode = this.#resolveLocationMode(updated, 'check_in');
+                                const badge = inMode === 'ONSITE'
+                                    ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                                    : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+                                inLocEl.innerHTML = `${badge}${this.#escapeHtml(this.#formatLocationName(updated.check_in_location))}`;
+                                cardUpdated = true;
+                            }
+                            const outLocEl = card.querySelector('[data-field="out-loc"]');
+                            if (outLocEl && updated.check_out_location && !outLocEl.textContent.includes(updated.check_out_location)) {
+                                const outMode = this.#resolveLocationMode(updated, 'check_out');
+                                const badge = outMode === 'ONSITE'
+                                    ? `<span class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold mr-1.5">[ในสถานที่]</span>`
+                                    : `<span class="inline-block px-1.5 py-0.5 rounded bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 text-[10px] font-bold mr-1.5">[นอกสถานที่]</span>`;
+                                outLocEl.innerHTML = `${badge}${this.#escapeHtml(this.#formatLocationName(updated.check_out_location))}`;
+                                cardUpdated = true;
+                            }
+                        }
+                        const remarkEl = card.querySelector('[data-field="remark"]');
+                        if (remarkEl) {
+                            const nextRemarkHtml = this.#resolveReportRemark(updated, { forPrint: false }).trim();
+                            if (remarkEl.innerHTML.trim() !== nextRemarkHtml) {
+                                remarkEl.innerHTML = nextRemarkHtml;
+                                cardUpdated = true;
+                            }
+                        }
+                        if (cardUpdated) {
+                            DOMDiffHelper.highlightRowUpdate(card);
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('[ReportsController] syncReportsSilent error:', err);
+        }
     }
 
     #bindEvents() {
+        const triggerDebouncedReportSync = (detail) => {
+            if (this._realtimeDebounceTimer) clearTimeout(this._realtimeDebounceTimer);
+            this._realtimeDebounceTimer = setTimeout(() => {
+                this.syncReportsSilent(detail);
+            }, 250);
+        };
+        window.addEventListener('bma:realtime-delta-sync', (e) => {
+            triggerDebouncedReportSync(e.detail);
+        });
+        window.addEventListener('bma:realtime-sync', () => {
+            triggerDebouncedReportSync();
+        });
         const btnSingle = document.getElementById('btnModeSingleDate');
         const btnRange = document.getElementById('btnModeRangeDate');
         const singleBox = document.getElementById('singleDatePickerBox');
@@ -1015,14 +1747,17 @@ ${this.canManageRecords ? `
         document.getElementById('btnOpenAddReportRecord')?.addEventListener('click', () => this.#openModal(null));
         document.getElementById('btnCloseReportModal')?.addEventListener('click', () => this.#closeModal());
         document.getElementById('btnCancelReportModal')?.addEventListener('click', () => this.#closeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalReportAttendance'), () => this.#closeModal());
 
         document.getElementById('btnCloseResumeModalTop')?.addEventListener('click', () => this.#closeResumeModal());
         document.getElementById('btnCloseResumeModalBottom')?.addEventListener('click', () => this.#closeResumeModal());
+        UIHelpers.bindModalDismiss(document.getElementById('modalPersonnelResumeProfile'), () => this.#closeResumeModal());
 
         document.getElementById('formReportAttendance')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.#handleSaveReportRecord();
         });
+        this.#bindReportModalHelperEvents();
 
         document.getElementById('btnPrintPdfNewTab')?.addEventListener('click', () => {
             const tableHtml = this.#renderSeparateTablesBySelectedTags(true);
@@ -1048,21 +1783,24 @@ ${this.canManageRecords ? `
             }
             const showGps = Boolean(this.settings?.require_gps);
             const rows = filtered.map((r, idx) => {
-                const inLat = r.check_in_lat ?? (r.is_special_request ? r.check_out_lat : null);
-                const inLng = r.check_in_lng ?? (r.is_special_request ? r.check_out_lng : null);
-                const inGpsCoords = this.#formatGpsCoordinates(inLat, inLng);
-                const inLocName = (r.check_in_location || (r.is_special_request ? r.check_out_location : '') || '').trim();
-                const inGpsDisplay = [inLocName, inGpsCoords].filter(Boolean).join(' ') || '-';
-
-                const isCheckedOut = Boolean(r.check_out_time || r.check_out_lat || r.check_out_location);
-                const outLat = r.check_out_lat ?? (r.is_special_request ? r.check_in_lat : null);
-                const outLng = r.check_out_lng ?? (r.is_special_request ? r.check_in_lng : null);
-                const outGpsCoords = this.#formatGpsCoordinates(outLat, outLng);
-                let outLocName = (r.check_out_location || (r.is_special_request ? r.check_in_location : '') || '').trim();
-                if (!outLocName && !isCheckedOut && !r.is_special_request) {
-                    outLocName = '-';
+                const inMode = this.#resolveLocationMode(r, 'check_in');
+                const inLocFormatted = this.#formatLocationName(r.check_in_location || (r.is_special_request ? r.check_out_location : ''));
+                let inGpsDisplay = '-';
+                if (inMode) {
+                    const modeText = inMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
+                    inGpsDisplay = (inLocFormatted && inLocFormatted !== '-') ? `${modeText}\n${inLocFormatted}` : modeText;
                 }
-                const outGpsDisplay = [outLocName, outGpsCoords].filter(Boolean).join(' ') || '-';
+
+                const outMode = this.#resolveLocationMode(r, 'check_out');
+                const outRawLoc = (r.check_out_location || (r.is_special_request ? r.check_in_location : '') || '').trim();
+                const outLocFormatted = this.#formatLocationName(outRawLoc);
+                let outGpsDisplay = '-';
+                if (outMode) {
+                    const modeText = outMode === 'ONSITE' ? 'ในสถานที่' : 'นอกสถานที่';
+                    outGpsDisplay = (outLocFormatted && outLocFormatted !== '-') ? `${modeText}\n${outLocFormatted}` : modeText;
+                }
+
+                const resolvedRemark = this.#resolveReportRemark(r, { forExcel: true });
 
                 const rowObj = {
                     'ลำดับ': idx + 1,
@@ -1082,7 +1820,7 @@ ${this.canManageRecords ? `
                 }
 
                 rowObj['สถานะ'] = r.status_label;
-                rowObj['หมายเหตุ'] = r.remark || '';
+                rowObj['หมายเหตุ'] = resolvedRemark;
 
                 return rowObj;
             });
@@ -1104,12 +1842,12 @@ ${this.canManageRecords ? `
             };
 
             if (showGps) {
-                sampleItem['พิกัด GPS เข้างาน'] = 'สำนักเทศกิจ 13.733790° N, 100.468261° E';
-                sampleItem['พิกัด GPS ออกงาน'] = 'ศาลาว่าการ กทม. 13.756300° N, 100.501800° E';
+                sampleItem['พิกัด GPS เข้างาน'] = 'ในสถานที่ บริเวณ สำนักเทศกิจ';
+                sampleItem['พิกัด GPS ออกงาน'] = 'ในสถานที่ บริเวณ ศาลาว่าการ กทม.';
             }
 
             sampleItem['สถานะ'] = 'ปฏิบัติงานปกติ';
-            sampleItem['หมายเหตุ'] = '';
+            sampleItem['หมายเหตุ'] = '-';
 
             const sample = [sampleItem];
             UIHelpers.exportToExcelUTF8(sample, 'Template_รายงานการลงเวลา', 'Template');
@@ -1164,6 +1902,12 @@ ${this.canManageRecords ? `
             const personRow = e.target.closest('tr.report-person-row');
             if (personRow && personRow.dataset.rowUid) {
                 this.#openResumeProfileForSpecificRow(personRow.dataset.rowUid);
+                return;
+            }
+
+            const personCard = e.target.closest('.report-person-card');
+            if (personCard && personCard.dataset.rowUid) {
+                this.#openResumeProfileForSpecificRow(personCard.dataset.rowUid);
             }
         });
     }
@@ -1181,13 +1925,44 @@ ${this.canManageRecords ? `
             return;
         }
 
+        const rawCheckIn = this.#normalizeModalTimeValue(document.getElementById('repCheckinTime').value);
+        const rawCheckOut = this.#normalizeModalTimeValue(document.getElementById('repCheckoutTime').value);
+        const timeRegex = /^(?:[01]?\d|2[0-3])[:.]([0-5]\d)$/;
+
+        if (!rawCheckIn || !timeRegex.test(rawCheckIn)) {
+            await UIHelpers.alert('รูปแบบเวลาไม่ถูกต้อง', 'กรุณาระบุเวลาเข้างานเป็นรูปแบบ 24 ชม. ที่ถูกต้อง (เช่น 08:30)', 'warning');
+            return;
+        }
+        if (rawCheckOut && !timeRegex.test(rawCheckOut)) {
+            await UIHelpers.alert('รูปแบบเวลาไม่ถูกต้อง', 'กรุณาระบุเวลาเลิกงานเป็นรูปแบบ 24 ชม. ที่ถูกต้อง (เช่น 16:30) หรือเว้นว่างไว้หากยังไม่ลงเวลาออก', 'warning');
+            return;
+        }
+
+        const checkInFormatted = UIHelpers.formatTime24(rawCheckIn);
+        const checkOutFormatted = rawCheckOut ? UIHelpers.formatTime24(rawCheckOut) : null;
+        const statusVal = document.getElementById('repStatusSelect').value;
+
+        if (checkOutFormatted && statusVal !== 'ปฏิบัติงานนอกเวลา') {
+            const inMin = UIHelpers.timeToMinutes(checkInFormatted);
+            const outMin = UIHelpers.timeToMinutes(checkOutFormatted);
+            if (inMin >= 0 && outMin >= 0 && outMin <= inMin) {
+                const confirmOrder = await UIHelpers.confirm(
+                    'ตรวจสอบลำดับเวลาเข้า-ออกงาน',
+                    `เวลาเลิกงาน (${checkOutFormatted} น.) น้อยกว่าหรือเท่ากับเวลาเข้างาน (${checkInFormatted} น.) ในกะปกติ ต้องการบันทึกข้อมูลนี้ต่อหรือไม่?`,
+                    'ยืนยันบันทึกข้อมูล',
+                    'warning'
+                );
+                if (!confirmOrder) return;
+            }
+        }
+
         const payload = {
             log_id: document.getElementById('repLogId').value || null,
             personnel_id: selectedPersonnelId,
             work_date: document.getElementById('repWorkDate').value,
-            check_in_time: UIHelpers.formatTime24(document.getElementById('repCheckinTime').value),
-            check_out_time: UIHelpers.formatTime24(document.getElementById('repCheckoutTime').value),
-            status: document.getElementById('repStatusSelect').value,
+            check_in_time: checkInFormatted,
+            check_out_time: checkOutFormatted,
+            status: statusVal,
             remark: document.getElementById('repRemarkInput').value
         };
 
@@ -1196,6 +1971,12 @@ ${this.canManageRecords ? `
             const res = await AttendanceModel.saveAdminAttendanceRecord(payload);
             UIHelpers.hideLoading();
             if (!res.success) {
+                if (res.duplicate) {
+                    this.#closeModal();
+                    await this.loadReportData();
+                    await UIHelpers.alert('พบข้อมูลการลงเวลาอยู่แล้ว', res.message, 'warning');
+                    return;
+                }
                 await UIHelpers.alert('บันทึกไม่สำเร็จ', res.message, 'error');
                 return;
             }

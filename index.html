@@ -3,6 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Force Browser Revalidation & Auto Cache-Busting (Remote version.json + Hard Cache Purge) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        (function() {
+            const CURRENT_APP_BUILD = '20261121_e7690051';
+            const BUILD_STORAGE_KEY = 'bma_app_build';
+            const RELOAD_GUARD_KEY = 'bma_reloaded_build';
+            const PRESERVE_KEYS = [
+                'bma_checkin_session_user_v2_7',
+                'bma_checkin_theme_mode_v2_7',
+                'bma_remember_me',
+                'bma_remember_username',
+                'bma_last_seen_update_build',
+                'bma_last_seen_announcement_id',
+                BUILD_STORAGE_KEY
+            ];
+
+            // Clean up temporary cache-busting query param (?_cb=...) after forced reload
+            try {
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('_cb')) {
+                    url.searchParams.delete('_cb');
+                    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+                }
+            } catch (_) {}
+
+            let purgePromise = null;
+            function performHardCachePurge(targetBuild) {
+                window.__bmaPurgeActive = true;
+                purgePromise = (async () => {
+                    try {
+                        if (sessionStorage.getItem(RELOAD_GUARD_KEY) === targetBuild) return;
+                        sessionStorage.setItem(RELOAD_GUARD_KEY, targetBuild);
+
+                        Object.keys(localStorage).forEach((key) => {
+                            if (!PRESERVE_KEYS.includes(key)) {
+                                localStorage.removeItem(key);
+                            }
+                        });
+                        localStorage.setItem(BUILD_STORAGE_KEY, targetBuild);
+
+                        if ('caches' in window) {
+                            const names = await window.caches.keys();
+                            await Promise.all(names.map((n) => window.caches.delete(n)));
+                        }
+                        if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+                            const regs = await navigator.serviceWorker.getRegistrations();
+                            await Promise.all(regs.map((r) => r.unregister()));
+                        }
+                        try {
+                            await fetch(window.location.pathname, { cache: 'reload', credentials: 'same-origin' });
+                        } catch (_) {}
+
+                        const nextUrl = new URL(window.location.href);
+                        nextUrl.searchParams.set('_cb', targetBuild);
+                        if (document.documentElement.classList.contains('bma-session-redirecting')) {
+                            const loadingUrl = new URL('loading.html', window.location.href);
+                            loadingUrl.searchParams.set('entry', 'session');
+                            loadingUrl.searchParams.set('_cb', targetBuild);
+                            window.location.replace(loadingUrl.toString());
+                            return;
+                        }
+                        window.location.replace(nextUrl.toString());
+                    } catch (err) {
+                        console.warn('[CacheBuster] Hard purge error:', err);
+                    } finally {
+                        window.__bmaPurgeActive = false;
+                    }
+                })();
+                window.__bmaPurgePromise = purgePromise;
+                return purgePromise;
+            }
+
+            try {
+                const prevBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+                if (prevBuild && prevBuild !== CURRENT_APP_BUILD) {
+                    performHardCachePurge(CURRENT_APP_BUILD);
+                    return;
+                }
+                if (!prevBuild) {
+                    localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_APP_BUILD);
+                }
+            } catch (_) {}
+
+            async function checkRemoteVersion() {
+                try {
+                    const res = await fetch('./version.json?_t=' + Date.now(), {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const remoteBuild = data && data.buildId ? String(data.buildId).trim() : '';
+                    if (!remoteBuild) return;
+                    const localBuild = localStorage.getItem(BUILD_STORAGE_KEY) || CURRENT_APP_BUILD;
+                    if (remoteBuild !== localBuild || remoteBuild !== CURRENT_APP_BUILD) {
+                        await performHardCachePurge(remoteBuild);
+                    }
+                } catch (_) {}
+            }
+
+            checkRemoteVersion();
+            window.addEventListener('pageshow', (e) => { if (e.persisted) checkRemoteVersion(); });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') checkRemoteVersion();
+            });
+        })();
+    </script>
+    <style>
+        html.bma-session-redirecting body {
+            display: none !important;
+        }
+    </style>
+    <script>
+        // Fast-path Session Redirect Guard (รันก่อนวาด Body เพื่อป้องกัน FOUC เมื่อมี Session เดิมที่ยังไม่หมดอายุ)
+        (function() {
+            try {
+                const rawUser = localStorage.getItem('bma_checkin_session_user_v2_7');
+                if (rawUser) {
+                    const parsed = JSON.parse(rawUser);
+                    if (parsed && parsed.id && parsed.expires_at && parsed.expires_at > Date.now()) {
+                        document.documentElement.classList.add('bma-session-redirecting');
+                        const proceedRedirect = function() {
+                            window.location.replace('loading.html?entry=session');
+                        };
+                        if (window.__bmaPurgeActive && window.__bmaPurgePromise) {
+                            Promise.race([
+                                window.__bmaPurgePromise,
+                                new Promise(function(resolve) { setTimeout(resolve, 1200); })
+                            ]).then(proceedRedirect).catch(proceedRedirect);
+                        } else {
+                            proceedRedirect();
+                        }
+                    }
+                }
+            } catch (_) {}
+        })();
+    </script>
     <title>เข้าสู่ระบบ - ระบบลงเวลาปฏิบัติราชการ กรุงเทพมหานคร</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,7 +156,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="assets/css/bma-theme.css">
+    <link rel="stylesheet" href="assets/css/bma-theme.css?v=20261121_e7690051">
     <style>
         /* Smooth vertical gradient background using BMA Civic 9-color palette without pattern/clutter */
         body.login-vertical-gradient,
@@ -84,6 +227,7 @@
 
             <!-- UPPER SECTION: Clean Header Window with Civic Crest -->
             <div class="login-card-header-gradient p-4 sm:p-5 flex flex-col items-center justify-center text-center relative">
+                <div id="loginVersionBadgeSlot" class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-10"></div>
                 <div class="flex flex-col items-center gap-1.5 sm:gap-2">
                     <div id="orgLogoWrapper" class="w-12 h-12 rounded-xl flex items-center justify-center bg-white/15 backdrop-blur-md p-1.5 border border-white/25 shadow-lg text-[#F6DE51]">
                         <i class="fa-solid fa-landmark text-xl drop-shadow-md"></i>
@@ -210,9 +354,9 @@
          ====================================================================== -->
 
     <!-- Modal 1: เปลี่ยนรหัสผ่าน -->
-    <div id="modalChangePassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-700">
+    <div id="modalChangePassword" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 relative flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-700">
                 <h3 class="text-base font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-key text-[#00744B]"></i>
                     <span>เปลี่ยนรหัสผ่านด้วยตนเอง</span>
@@ -222,7 +366,8 @@
                 </button>
             </div>
 
-            <form id="formChangePassword" class="space-y-3.5">
+            <form id="formChangePassword" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-3.5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ชื่อบัญชี (Username) *</label>
                     <input type="text" id="cpUsername" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#00744B]" required>
@@ -240,8 +385,9 @@
                     <input type="password" id="cpConfirmPassword" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#00744B]" minlength="6" required>
                 </div>
                 <div id="cpMatchStatus" class="text-xs font-bold min-h-[1.25rem]"></div>
+                </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
+                <div class="shrink-0 px-5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/40">
                     <button type="button" id="btnCancelChangePwd" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">ยกเลิก</button>
                     <button type="submit" id="btnSubmitChangePwd" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md shadow-emerald-700/30 hover:brightness-105 cursor-pointer">
                         <i class="fa-solid fa-floppy-disk mr-1"></i>บันทึกรหัสผ่านใหม่
@@ -252,9 +398,9 @@
     </div>
 
     <!-- Modal 2: ลืมรหัสผ่าน -->
-    <div id="modalForgotPassword" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="w-full max-w-md bg-white dark:bg-[#1E293B] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-700 relative">
-            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-700">
+    <div id="modalForgotPassword" class="fixed inset-0 z-[9990] hidden flex items-center justify-center p-2.5 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto overscroll-contain">
+        <div class="w-full max-w-md my-auto bg-white dark:bg-[#1E293B] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 relative flex flex-col max-h-[calc(100dvh-1.25rem)] sm:max-h-[90dvh] overflow-hidden">
+            <div class="shrink-0 flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-700">
                 <h3 class="text-base font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-circle-question text-amber-500"></i>
                     <span>ขอรีเซ็ตรหัสผ่าน</span>
@@ -264,7 +410,8 @@
                 </button>
             </div>
 
-            <form id="formForgotPassword" class="space-y-4">
+            <form id="formForgotPassword" class="flex-1 min-h-0 flex flex-col overflow-hidden">
+                <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 sm:px-6 py-4 space-y-4">
                 <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     กรุณากรอกเลขประจำตัวประชาชน 13 หลัก ระบบจะส่งคำขอไปยังผู้ดูแลระบบเพื่อรีเซ็ตรหัสผ่านเริ่มต้น (6 ตัวท้าย)
                 </p>
@@ -272,8 +419,9 @@
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">เลขประจำตัวประชาชน 13 หลัก *</label>
                     <input type="text" id="fpNationalId" maxlength="13" class="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-mono tracking-widest text-center font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00744B]" placeholder="XXXXXXXXXXXXX" required>
                 </div>
+                </div>
 
-                <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
+                <div class="shrink-0 px-5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700 bg-slate-50/90 dark:bg-slate-900/40">
                     <button type="button" id="btnCancelForgotPwd" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">ยกเลิก</button>
                     <button type="submit" id="btnSubmitForgotPwd" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#00744B] to-[#00A368] shadow-md shadow-emerald-700/30 hover:brightness-105 cursor-pointer">
                         <i class="fa-solid fa-paper-plane mr-1"></i>ส่งคำขอรีเซ็ต
@@ -283,6 +431,6 @@
         </div>
     </div>
 
-    <script type="module" src="assets/js/controllers/LoginController.js"></script>
+    <script type="module" src="assets/js/controllers/LoginController.js?v=20261121_e7690051"></script>
 </body>
 </html>

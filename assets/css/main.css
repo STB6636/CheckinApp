@@ -1,0 +1,50 @@
+/**
+ * @file assets/css/main.css
+ * @description Realtime Differential Sync CSS & Theme Forwarder
+ */
+
+@import './bma-theme.css';
+
+/* Highlight Animations for Incremental DOM Patching */
+.row-enter-highlight {
+    animation: rowGreenPulse 2.5s ease-out forwards;
+}
+
+@keyframes rowGreenPulse {
+    0% { background-color: rgba(16, 185, 129, 0.45); transform: translateY(-6px); }
+    50% { background-color: rgba(16, 185, 129, 0.2); }
+    100% { background-color: transparent; transform: translateY(0); }
+}
+
+.row-update-highlight {
+    animation: rowAmberPulse 2s ease-out forwards;
+}
+
+@keyframes rowAmberPulse {
+    0% { background-color: rgba(245, 158, 11, 0.45); }
+    50% { background-color: rgba(245, 158, 11, 0.15); }
+    100% { background-color: transparent; }
+}
+
+.row-leave-fade {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0 !important;
+    transform: translateX(25px) scale(0.97) !important;
+    background-color: rgba(244, 63, 94, 0.25) !important;
+    pointer-events: none !important;
+}
+
+.row-locked-highlight {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    border-left: 4px solid #3b82f6 !important;
+}
+
+.counter-badge-pop {
+    animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}

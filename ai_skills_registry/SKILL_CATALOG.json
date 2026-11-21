@@ -2,19 +2,14 @@
   "skills": [
     {
       "skill_id": "vscode_surgical_codebase_mapping",
-      "name": "VS Code Surgical Context & Automated AST Codebase Mapping",
-      "version": "3.0.0",
+      "name": "VS Code Surgical Context & Automated AST Codebase Mapping (Lean 2-SubAgent Edition)",
+      "version": "3.5.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_02_architect",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security",
-        "agent_06_devops",
-        "agent_09_code_mapper"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
-      "trigger_conditions": "บังคับโหลดทุกครั้งที่มีการค้นหา อ่าน แก้ไข ปรับปรุง หรือเพิ่มฟีเจอร์ในโปรเจกต์เพื่อบังคับใช้โหมด MAP_FIRST_SURGICAL_LINE_RANGE_ONLY และการซิงค์สารบัญ .ai_map/",
+      "trigger_conditions": "บังคับโหลดทุกครั้งที่มีการค้นหา อ่าน แก้ไข ปรับปรุง หรือเพิ่มฟีเจอร์ในโปรเจกต์เพื่อบังคับใช้โหมด MAP_FIRST_SURGICAL_LINE_RANGE_ONLY, STRICT_SURGICAL_SCOPE_ONLY และการซิงค์สารบัญ .ai_map/",
       "skill_file_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/SKILL.md",
       "templates_path": "./ai_skills_registry/skills/vscode_surgical_codebase_mapping/templates/"
     },
@@ -24,11 +19,8 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_02_architect",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องออกแบบหรือพัฒนาการควบคุมสิทธิ์การเข้าถึงข้อมูล (RBAC) ทั้งในระดับ UI และ Logic ภายในแอปพลิเคชันที่มีลำดับชั้น เช่น SuperAdmin, Admin ระดับสำนัก/กอง (bureau), และ Admin ระดับกลุ่ม/ส่วน/ฝ่าย (division)",
       "skill_file_path": "./ai_skills_registry/skills/client_side_hierarchical_rbac/SKILL.md"
@@ -39,9 +31,8 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_02_architect",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องการทำ Mobile Drawer หรือ Responsive Navigation ที่ต้องย้าย Component หรือ DOM Node ที่มีความซับซ้อน (เช่น ตารางข้อมูล, ฟอร์ม, แท็บประวัติ) สลับระหว่างมุมมอง Desktop และ Mobile Drawer โดยไม่ให้เกิด Race Condition, DOM ID ซ้ำซ้อน, หรือสูญเสีย Event Listeners",
       "skill_file_path": "./ai_skills_registry/skills/offcanvas_drawer_race_free_tab_mounting/SKILL.md"
@@ -52,13 +43,71 @@
       "version": "1.0.0",
       "target_subagents": [
         "agent_00_orchestrator",
-        "agent_01_ba_sa",
-        "agent_03_backend",
-        "agent_04_frontend",
-        "agent_05_qa_security"
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
       ],
       "trigger_conditions": "ใช้เมื่อต้องแสดงผล ค้นหา จัดกลุ่ม หรือส่งออกข้อมูลตำแหน่งและระดับของข้าราชการ/บุคลากรภาครัฐ (กทม./ก.พ.) ให้เป็นไปตามมาตรฐานภาษาไทยที่ถูกต้อง โดยตัดคำซ้ำซ้อน จัดการวรรคตอน และมี Fallback ที่ปลอดภัย",
       "skill_file_path": "./ai_skills_registry/skills/civil_servant_position_level_formatter/SKILL.md"
+    },
+    {
+      "skill_id": "remote_version_hard_cache_purge",
+      "name": "Remote version.json + Hard Cache Purge + Auto-Stamp Pipeline Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "บังคับใช้ทุกครั้งที่มีการแก้ไขไฟล์ Frontend (*.html, assets/css/**, assets/js/**) เพื่อ Auto-stamp version.json และ ?v=<buildId> ครบทั้ง 10 หน้าหลักผ่าน node ./.ai_map/vscode_ast_mapper.mjs และบังคับเคลียร์แคชฝั่งผู้ใช้โดยอัตโนมัติ",
+      "skill_file_path": "./ai_skills_registry/skills/remote_version_hard_cache_purge/SKILL.md"
+    },
+    {
+      "skill_id": "realtime_differential_dom_diffing_and_concurrency",
+      "name": "Realtime Differential DOM Diffing & Multi-Admin Concurrency Engine Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องอัปเดตตารางข้อมูลหรือการ์ดสถิติแบบ Realtime โดยไม่ให้หน้าจอกระพริบ (ไร้ Full Reload / Skeleton) แทรกแถวใหม่ ลบแถวที่จัดการแล้ว รันเลขลำดับอัตโนมัติ และป้องกัน Race Condition หรือแก้ไขชนกันเมื่อมี Admin มากกว่า 2 คนเปิดหน้าจอเดียวกัน",
+      "skill_file_path": "./ai_skills_registry/skills/realtime_differential_dom_diffing_and_concurrency/SKILL.md"
+    },
+    {
+      "skill_id": "multi_tier_resilient_reverse_geocoding",
+      "name": "Multi-Tier Resilient Reverse Geocoding & POI Resolution Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องแปลงพิกัด GPS เป็นชื่อสถานที่ มุ่งเน้นการให้ความสำคัญกับสถานที่สำคัญ/สถานที่ราชการ/ร้านค้าก่อนชื่อซอยเสมอ รองรับ In-Memory Official Locations (Tier 0 0ms), Overpass Mirror Racing (Promise.any), และการป้องกัน Cache Poisoning เมื่อเครือข่ายขัดข้อง",
+      "skill_file_path": "./ai_skills_registry/skills/multi_tier_resilient_reverse_geocoding/SKILL.md"
+    },
+    {
+      "skill_id": "viewport_bounded_3zone_modal_lifecycle",
+      "name": "Viewport-Bounded 3-Zone Responsive Modal Lifecycle Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องสร้าง ปรับปรุง หรือตรวจสอบความสมบูรณ์ของ Modal/Dialog บนมือถือให้ปลอดภัยจากการตัดขอบบน-ล่าง (Negative-Y Flex Overflow), ใช้ 100dvh + my-auto + Sticky Header/Footer 3 ส่วน, รักษาลำดับชั้น Z-Index (z-[9990] / z-[9999] / .swal2-container 99990), และซิงก์สถานะ bma-modal-open + scrollTop=0 + backdrop/ESC ข้ามหน้า SPA",
+      "skill_file_path": "./ai_skills_registry/skills/viewport_bounded_3zone_modal_lifecycle/SKILL.md"
+    },
+    {
+      "skill_id": "leg_selective_correction_and_executive_rbac",
+      "name": "Leg-Selective Attendance Correction, Idempotent Remark Suffix & Double-Layer Executive RBAC Pattern",
+      "version": "1.0.0",
+      "target_subagents": [
+        "agent_00_orchestrator",
+        "subagent_01_implementer",
+        "subagent_02_qa_auditor"
+      ],
+      "trigger_conditions": "ใช้เมื่อต้องออกแบบหรือแก้ไขระบบคำขอแก้ไขเวลาเข้า-ออกงานที่ปรับเฉพาะขาที่ผิดปกติ (มาสาย/ขาดราชการ), คงหมายเหตุเดิมพร้อมต่อท้าย (แก้ไขเวลา) แบบ Idempotent, รักษา Nullish Snapshot 2 รอบ, และบังคับใช้สิทธิ์อนุมัติผู้บริหาร 2 ชั้น (UI + Model)",
+      "skill_file_path": "./ai_skills_registry/skills/leg_selective_correction_and_executive_rbac/SKILL.md"
     }
   ]
 }

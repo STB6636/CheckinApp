@@ -1,0 +1,46 @@
+{
+  "task_id": "PIPE-20261104-loca-v2-ux-zero-scroll-camera-fix",
+  "generated_at": "2026-11-05T10:33:40+07:00",
+  "orchestrator": "agent_00_orchestrator",
+  "architecture_approach": "APPROACH_A_FULLSCREEN_CAMERA_AND_OFFSITE_MAP_POPUP",
+  "theme_standard": "BMA_EMERALD_CIVIC_DESIGN_SYSTEM",
+  "git_delivery": "git push origin Loca-V2",
+  "targets": [
+    {
+      "flow_id": "FLOW_CHECKIN_01",
+      "file_path": "checkin.html",
+      "action": "modify",
+      "start_line": 140,
+      "end_line": 520,
+      "symbols": ["checkinWorkspaceWrapper", "photoPreviewCard", "modalFullscreenCamera", "btnSubmitCheckinMain"],
+      "purpose": "1) การ์ดแสดงรูปถ่ายกะทัดรัด (~75px) บนหน้าหลัก, 2) โมดอลกล้องเต็มจอ (modalFullscreenCamera) ที่เด้งขึ้นมาเมื่อกดถ่ายภาพและกลับมาหน้าหลักพร้อมแสดงรูป, 3) สลับโหมด [ในสถานที่] / [นอกสถานที่], 4) ตัวเลือกพิกัด [GPS ปัจจุบัน / ค้นหาเอง] ซึ่งจะเด้ง modalOffsiteMapSearch, 5) การ์ดพิกัด GPS ที่รับค่ากลับมาแสดงผลทันที, 6) ปุ่ม Sticky BMA เขียว/แดง/เทา"
+    },
+    {
+      "flow_id": "FLOW_CHECKIN_01",
+      "file_path": "assets/js/controllers/CheckinController.js",
+      "action": "modify",
+      "start_line": 560,
+      "end_line": 640,
+      "symbols": ["CheckinController.#initModeSwitcher", "CheckinController.#handleOffsiteGpsMode"],
+      "purpose": "ผูกตัวเลือก 'ค้นหาพิกัดเอง' ให้เปิด modalOffsiteMapSearch อัตโนมัติ และอัปเดตการ์ดพิกัด GPS เมื่อยืนยันตำแหน่ง"
+    },
+    {
+      "flow_id": "FLOW_PHOTO_01",
+      "file_path": "assets/js/controllers/CheckinController.js",
+      "action": "modify",
+      "start_line": 1550,
+      "end_line": 1640,
+      "symbols": ["CheckinController.#openFullscreenCamera", "CheckinController.#captureAndCloseCamera"],
+      "purpose": "จัดการการเปิดโมดอลกล้องเต็มจอ บันทึกภาพ ปิดสตรีมกล้องอัตโนมัติ และนำภาพมาแสดงในการ์ดแสดงรูปถ่ายบนหน้าจอหลัก"
+    },
+    {
+      "flow_id": "FLOW_SETTINGS_01",
+      "file_path": "assets/js/controllers/CheckinController.js",
+      "action": "modify",
+      "start_line": 1040,
+      "end_line": 1200,
+      "symbols": ["CheckinController.#updateStatusCardsAndMainButton"],
+      "purpose": "ตรวจสอบความเข้ากันได้กับการตั้งค่าระบบทั้ง 12 ฟังก์ชัน (require_photo, require_gps, disable_normal_hours, official_locations, remarks, ฯลฯ)"
+    }
+  ]
+}

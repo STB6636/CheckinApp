@@ -1,0 +1,56 @@
+{
+  "task_id": "PIPE-20261111-checkin-camera-lifecycle-fix",
+  "pipeline_mode": "PLAN",
+  "flow_id": "FLOW_PHOTO_01",
+  "subagents_assignment": {
+    "subagent_01_implementer": {
+      "model": "Flash 3.8 High",
+      "target_file": "assets/js/controllers/CheckinController.js",
+      "recommended_read_window": [
+        [100, 240],
+        [1650, 1760]
+      ],
+      "tasks": [
+        "Task 1.1: VisibilityChange Guard (L115-L119) preventing stream shutdown when camera is open",
+        "Task 1.2: Idempotent Settings Sync (L194-L202) diffing fresh settings before apply",
+        "Task 1.3: Active Stream Guard in #applySettingsHotReload (L213-L220) forbidding stopCamera when isCameraRunning === true",
+        "Task 1.4: Mobile Video Play & Media Constraints in #openFullscreenCamera (L1680-L1691)",
+        "Task 1.5: Frame readyState check in #captureAndCloseCamera (L1719-L1723)",
+        "Task 1.6: Run node ./.ai_map/vscode_ast_mapper.mjs to sync cache buildId and .ai_map/"
+      ]
+    },
+    "subagent_02_qa_auditor": {
+      "model": "Flash 3.8 High",
+      "tasks": [
+        "Task 2.1: Syntax check with node --check (0 errors)",
+        "Task 2.2: Functional simulation test verifying 5s interval fires while isCameraRunning === true",
+        "Task 2.3: Cache sync audit verifying buildId across version.json and 8 HTML files",
+        "Task 2.4: Main-diff audit (git diff main) verifying zero changes to unrelated code"
+      ]
+    }
+  },
+  "target_files": [
+    {
+      "path": "assets/js/controllers/CheckinController.js",
+      "symbols": [
+        "CheckinController.init",
+        "CheckinController.#initRealtimeSettingsListener",
+        "CheckinController.#syncSettingsHotReload",
+        "CheckinController.#applySettingsHotReload",
+        "CheckinController.#openFullscreenCamera",
+        "CheckinController.#captureAndCloseCamera",
+        "CheckinController.#closeFullscreenCamera"
+      ],
+      "exact_line_ranges": [
+        { "start": 114, "end": 121, "desc": "VisibilityChange listener in init()" },
+        { "start": 178, "end": 185, "desc": "5-second setInterval timer in #initRealtimeSettingsListener()" },
+        { "start": 194, "end": 226, "desc": "#syncSettingsHotReload() and #applySettingsHotReload()" },
+        { "start": 1662, "end": 1746, "desc": "Camera open, play, capture, and close lifecycle methods" }
+      ],
+      "recommended_read_window": [
+        [100, 240],
+        [1650, 1760]
+      ]
+    }
+  ]
+}

@@ -182,7 +182,7 @@
                     คู่มือนี้จัดทำขึ้นเพื่อแนะนำวิธีการใช้งานระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร ผ่านเว็บบราวเซอร์บนอุปกรณ์คอมพิวเตอร์และโทรศัพท์สมาร์ตโฟนอย่างละเอียดทีละขั้นตอน พร้อมภาพจำลองระบบที่มีปฏิสัมพันธ์ (Interactive Mockups) และแนวทางแก้ไขปัญหาเบื้องต้น
                 </p>
                 <div class="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#00744B]"></i> ปรับปรุงล่าสุด: 29 ตุลาคม 2569 (V2.7+)</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-calendar-check text-[#00744B]"></i> ปรับปรุงล่าสุด: 19 พฤศจิกายน 2569 (V2.11.0)</span>
                     <span>•</span>
                     <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-[#00744B]"></i> ระบบรองรับมาตรฐาน PDPA</span>
                 </div>
@@ -200,8 +200,17 @@
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        เปิดเว็บบราวเซอร์ (แนะนำ Google Chrome หรือ Safari) แล้วเข้าไปยัง URL ของระบบลงเวลา หน้าจอหลักจะแสดงฟอร์มเข้าสู่ระบบ <code class="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-emerald-600 dark:text-emerald-400">index.html</code>
+                        เปิดเว็บบราวเซอร์ (แนะนำ <b>Brave</b>, <b>Google Chrome</b> บน Android/คอมพิวเตอร์ หรือ <b>Safari</b> บน iPhone/iPad &mdash; หากใช้ Chrome บน iPhone/iPad แล้วระบบถามสิทธิ์กล้องซ้ำ แนะนำเปิดใช้งานผ่าน <b>Safari</b>) แล้วเข้าไปยัง URL ของระบบลงเวลา หน้าจอหลักจะแสดงฟอร์มเข้าสู่ระบบ <code class="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-emerald-600 dark:text-emerald-400">index.html</code> พร้อมหน้าจอโหลดเตรียมข้อมูล <code class="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded text-emerald-600 dark:text-emerald-400">loading.html</code> เมื่อเข้าสู่ระบบหรือเปิดแอปซ้ำภายใน Session 7 วัน
                     </p>
+                    <div class="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 text-xs space-y-1">
+                        <div class="font-extrabold text-[#00744B] dark:text-emerald-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bullhorn"></i>
+                            <span>ป๊อปอัปประกาศระบบ (System Announcement) — เด้งครั้งเดียวต่อ 1 รอบประกาศ</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                            หากผู้ดูแลระบบเปิดใช้งานประกาศข่าวสาร (แบบข้อความหรือรูปภาพโปสเตอร์แนวมือถือ) ระบบจะแสดงป๊อปอัปให้อ่านและกดปุ่ม <b>"รับทราบ"</b> เพียง 1 ครั้ง ทั้งผู้ที่เข้าสู่ระบบผ่านหน้า Login หรือผู้ที่เข้าใช้งานอัตโนมัติด้วย Session 7 วัน (และสามารถกดดูประกาศซ้ำได้จากป้ายเวอร์ชันมุมขวาบนของการ์ด Login)
+                        </p>
+                    </div>
 
                     <!-- Mock UI Box: Interactive Login Screen Wireframe -->
                     <div class="p-4 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-700/60 space-y-3 max-w-md mx-auto shadow-sm">
@@ -370,14 +379,15 @@
                                     <span class="px-2 py-1 text-slate-600 dark:text-slate-300">3. คำขอพิเศษ</span>
                                 </div>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
-                                        <div class="text-[11px] font-bold text-slate-500">คอลัมน์ซ้าย (4/10)</div>
-                                        <div class="text-xs font-bold text-[#00744B] mt-1"><i class="fa-solid fa-camera mr-1"></i>กล้องถ่ายรูป 3:4</div>
+                                    <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center space-y-1">
+                                        <div class="text-[11px] font-bold text-slate-500">ฝั่งซ้าย (50% Cockpit)</div>
+                                        <div class="text-xs font-bold text-[#00744B]"><i class="fa-solid fa-camera mr-1"></i>พรีวิวรูป 3:4 + ปุ่มกล้องเต็มจอ</div>
+                                        <div class="text-[11px] font-bold text-[#0971CE]"><i class="fa-solid fa-map-location-dot mr-1"></i>การ์ด GPS &amp; แผนที่ Leaflet</div>
                                     </div>
                                     <div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center space-y-1">
-                                        <div class="text-[11px] font-bold text-slate-500">คอลัมน์ขวา (6/10)</div>
-                                        <div class="text-[11px] font-bold text-[#0971CE]"><i class="fa-solid fa-location-dot mr-1"></i>พิกัด GPS &amp; แผนที่</div>
-                                        <div class="text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-fingerprint mr-1"></i>Dropdown &amp; ปุ่มลงเวลา</div>
+                                        <div class="text-[11px] font-bold text-slate-500">ฝั่งขวา (50% Cockpit)</div>
+                                        <div class="text-[11px] font-bold text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-building-circle-check mr-1"></i>สลับ ในสถานที่ / นอกสถานที่</div>
+                                        <div class="text-[11px] font-bold text-emerald-600"><i class="fa-solid fa-fingerprint mr-1"></i>เลือกกะ &amp; ปุ่มบันทึกเวลา (Ultra Zero-Scroll)</div>
                                     </div>
                                 </div>
                             </div>
@@ -418,8 +428,8 @@
                             <span>แสดงผล 2 กล่องคู่: "เวลาเข้างาน" (ขอบสีเขียว) และ "เวลาออกงาน" (ขอบสีน้ำเงิน) จะเปลี่ยนจากข้อความ "ยังไม่ได้ลงเวลา" เป็นเวลาจริงเมื่อบันทึกสำเร็จ</span>
                         </div>
                         <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700">
-                            <strong class="text-slate-800 dark:text-white block mb-0.5">3. เมนู Drawer บนสมาร์ตโฟน:</strong>
-                            <span>กดปุ่มเมนูรูปขีดสามขีด (<i class="fa-solid fa-bars text-emerald-600"></i>) ที่มุมขวาบน เพื่อเปิด Drawer เลื่อนดูประวัติการลงเวลา, ยื่นคำขอพิเศษ, สลับโหมดถนอมสายตา หรือออกจากระบบ</span>
+                            <strong class="text-slate-800 dark:text-white block mb-0.5">3. เมนู Drawer แบบแยกหน้า (SPA) และระบบ "แก้ไขเวลา" บนสมาร์ตโฟนและเดสก์ท็อป:</strong>
+                            <span>กดปุ่มเมนูรูปขีดสามขีด (<i class="fa-solid fa-bars text-emerald-600"></i>) ที่มุมขวาบน เพื่อเปิด Drawer ที่แสดงชื่อ-นามสกุลและตำแหน่งของท่าน พร้อมเมนูจัดเรียงสมมาตรสำหรับ <b>คำขอพิเศษ</b>, <b>แก้ไขเวลา</b> (พร้อมตัวเลข Badge แจ้งเตือนรายการที่สถานะ <b>มาสาย</b> หรือ <b>ขาดราชการ</b> — กด <b>"ขอแก้ไขเวลา"</b> ส่งได้ทันทีใน 1 คลิกหรือแนบเหตุผลเพิ่มเติม และหากไม่อนุมัติสามารถกด <b>"ขอแก้ไขเวลาอีกครั้ง"</b>) และ <b>ประวัติการลงเวลา</b> (ขยายเต็มฝั่งขวาสำหรับผู้ใช้งานทั่วไป) รวมถึงสลับโหมดถนอมสายตาหรือออกจากระบบ</span>
                         </div>
                     </div>
                 </div>
@@ -431,18 +441,18 @@
                     <span class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-[#00744B] flex items-center justify-center font-black text-lg shadow-xs shrink-0">4</span>
                     <div>
                         <h3 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white">การถ่ายภาพยืนยันตัวตน และการอนุญาตสิทธิ์กล้อง / GPS</h3>
-                        <p class="text-xs text-slate-500">วิธีการใช้งานกล้อง Mirror 3:4 การขอสิทธิ์บน Chrome/iOS/Android และการอ่านพิกัดสถานที่จริง</p>
+                        <p class="text-xs text-slate-500">วิธีการใช้งานกล้อง Mirror 3:4 การตั้งค่าสิทธิ์กล้องถาวรและการคง Session 7 วันบน Brave / Chrome / Safari (iOS &amp; Android) รวมถึงการอ่านพิกัดสถานที่จริง</p>
                     </div>
                 </div>
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <!-- Permission Prompt Guide -->
-                    <div class="p-4 sm:p-5 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border-l-4 border-[#0971CE] text-sky-900 dark:text-sky-200 text-xs space-y-2">
+                    <div class="p-4 sm:p-5 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border-l-4 border-[#0971CE] text-sky-900 dark:text-sky-200 text-xs space-y-2.5">
                         <div class="font-bold text-sm text-sky-800 dark:text-sky-300 flex items-center gap-1.5">
-                            <i class="fa-solid fa-shield-halved"></i>การอนุญาตสิทธิ์การเข้าถึงอุปกรณ์ (ครั้งแรกที่เปิดใช้งาน)
+                            <i class="fa-solid fa-shield-halved"></i>การอนุญาตสิทธิ์การเข้าถึงอุปกรณ์และการจำ Session 7 วันข้ามเบราว์เซอร์
                         </div>
                         <p>
-                            เมื่อเปิดหน้าลงเวลาครั้งแรก เบราว์เซอร์จะแสดงหน้าต่างถามความยินยอม ให้กดปุ่ม <b>"อนุญาต" (Allow)</b> ทั้ง 2 รายการ:
+                            เมื่อเปิดหน้าลงเวลาครั้งแรก เบราว์เซอร์จะแสดงหน้าต่างถามความยินยอม ให้กดปุ่ม <b>"อนุญาต" (Allow)</b> ทั้ง 2 รายการ และเลือกอายุสิทธิ์แบบต่อเนื่องตามเบราว์เซอร์ที่ใช้:
                         </p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 font-semibold">
                             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-sky-200 dark:border-slate-700 flex items-center gap-2">
@@ -459,6 +469,15 @@
                                     <div class="text-[11px] text-slate-400 font-normal">สำหรับดึงพิกัดเพื่อตรวจสอบสถานที่ปฏิบัติราชการ</div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="p-3 bg-white/90 dark:bg-slate-800/90 rounded-xl border border-sky-200/80 dark:border-slate-700 space-y-1.5 text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed">
+                            <div class="font-bold text-sky-800 dark:text-sky-300">แนวทางตั้งค่าสิทธิ์กล้องถาวร และรักษาการเข้าสู่ระบบ (Session 7 วัน):</div>
+                            <ul class="list-disc pl-4 space-y-1">
+                                <li><b>Brave (Android):</b> เมื่อมี Pop-up ถามสิทธิ์กล้อง ให้เลือก <b>"ตลอดไป"</b> (หลีกเลี่ยง <i>"จนกว่าจะปิดเว็บไซต์นี้"</i>) และปิด <b>Brave Shields &gt; "Forget me when I close this site"</b> เพื่อไม่ให้สิทธิ์กล้องและ Session 7 วันถูกล้างเมื่อปิดแอป</li>
+                                <li><b>Chrome (Android):</b> เลือก <b>"อนุญาตขณะเข้าชมเว็บไซต์"</b> (หลีกเลี่ยง <i>"อนุญาตในครั้งนี้"</i>) และใช้งานในแท็บปกติ (ไม่ใช่โหมดไม่ระบุตัวตน) เพื่อรักษา Session ต่อเนื่อง 7 วัน</li>
+                                <li><b>Safari (iOS):</b> กด <b>"อนุญาต"</b> และตั้งค่าถาวรที่แถบ URL โดยแตะ <b>aA</b> หรือ <b>ไอคอนเมนูหน้าเว็บ [สี่เหลี่ยมมีขีด]</b> &gt; <i>การตั้งค่าเว็บไซต์</i> &gt; <i>กล้อง</i> &gt; เลือก <b>"อนุญาต"</b> รวมถึงตรวจ <i>การตั้งค่า &gt; แอป &gt; Safari &gt; กล้อง</i> (ใช้แท็บปกติเพื่อรักษา Session 7 วัน)</li>
+                                <li><b>Chrome (iOS):</b> เปิด <i>การตั้งค่า &gt; แอป &gt; Chrome &gt; กล้อง</i> และตั้ง <i>Page Info &gt; Permissions &gt; Camera</i> เป็น <b>Always Allow</b> (หากปิดแอปแล้วยังถามสิทธิ์กล้องซ้ำ แนะนำเปิดระบบผ่าน <b>Safari</b> ซึ่งตั้งค่ารายเว็บได้ถาวรกว่า)</li>
+                            </ul>
                         </div>
                     </div>
 
@@ -520,18 +539,32 @@
                     <div class="space-y-3 pt-2">
                         <h4 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
                             <i class="fa-solid fa-map-location-dot text-[#0971CE]"></i>
-                            <span>การอ่านพิกัดสถานที่และแผนที่ Google Maps</span>
+                            <span>การอ่านพิกัด GPS, โหมด "ในสถานที่ / นอกสถานที่" และเกณฑ์รัศมี</span>
                         </h4>
-                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-2">
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700 space-y-3">
                             <p>
-                                ระบบจะดึงพิกัดละติจูดและลองจิจูดจากอุปกรณ์ของท่านแบบความแม่นยำสูง (High Accuracy) พร้อมค้นหาชื่อสถานที่ใกล้เคียงแบบ 3 ระดับ (อาคารสถานที่สำคัญ, ซอยย่อย, ถนน) และแสดงแผนที่ย่อ Google Maps
+                                ระบบจะดึงพิกัดละติจูดและลองจิจูดจากชิป GPS (High Accuracy) พร้อมระบบค้นหาชื่อสถานที่ใกล้เคียง <b>6 ระดับ (6-Tier Places Resolution)</b> และแสดงแผนที่ Leaflet ย่อส่วน รวมถึงรองรับการเลือกโหมดปฏิบัติงาน 2 รูปแบบ:
                             </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 space-y-1">
+                                    <div class="font-extrabold text-[#00744B] dark:text-emerald-300"><i class="fa-solid fa-building mr-1"></i>1. ในสถานที่ (Onsite + Geofence)</div>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        ระบบตรวจสอบระยะห่างจากสถานที่ราชการทุกแห่งที่ SuperAdmin กำหนดไว้ (รองรับค่าเผื่อสัญญาณ GPS +25 เมตร) หากหน่วยงานเปิดการจำกัดรัศมีและอยู่นอกเขต ปุ่มลงเวลาในสถานที่จะถูกระงับเพื่อป้องกันการลงเวลาผิดพลาด
+                                    </p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-sky-50/80 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/50 space-y-1">
+                                    <div class="font-extrabold text-[#0971CE] dark:text-sky-300"><i class="fa-solid fa-route mr-1"></i>2. นอกสถานที่ (Offsite + ปักหมุด)</div>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                                        ใช้เมื่อปฏิบัติงานภาคสนาม อบรม หรือ WFH โดยเลือกป้าย <b>ลักษณะงานนอกสถานที่</b> และสามารถเปิดหน้าต่างแผนที่เพื่อ <b>ค้นหาชื่อสถานที่หรือปักหมุดจุดปฏิบัติงานจริง</b> ได้อย่างแม่นยำ
+                                    </p>
+                                </div>
+                            </div>
                             <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                                <button type="button" class="mockup-btn px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 cursor-pointer" data-title="ตรวจสอบพิกัด GPS อีกครั้ง" data-desc="ในการใช้งานจริง ปุ่มนี้จะสั่งให้อุปกรณ์อ่านสัญญาณดาวเทียม GPS ใหม่เพื่อปรับปรุงค่าความแม่นยำ">
-                                    <i class="fa-solid fa-arrows-rotate mr-1 text-[#00744B]"></i>ปุ่ม "ตรวจสอบพิกัด GPS อีกครั้ง"
+                                <button type="button" class="mockup-btn px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-300 cursor-pointer" data-title="รีเฟรชพิกัด GPS ล่าสุด" data-desc="ในการใช้งานจริง ปุ่มนี้จะสั่งให้อุปกรณ์อ่านสัญญาณดาวเทียม GPS ใหม่โดยไม่ใช้ค่าเก่าจากแคช พร้อมคำนวณรัศมีสถานที่ราชการใหม่ทันที">
+                                    <i class="fa-solid fa-arrows-rotate mr-1 text-[#00744B]"></i>ปุ่ม "รีเฟรช GPS"
                                 </button>
-                                <button type="button" class="mockup-btn px-3 py-1.5 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-[#0971CE] font-bold hover:bg-sky-200 cursor-pointer" data-title="เปิดแผนที่ Google Maps" data-desc="ในการใช้งานจริง ปุ่มนี้จะเปิด Google Maps แท็บใหม่เพื่อนำทางและตรวจสอบตำแหน่งปัจจุบัน">
-                                    <i class="fa-solid fa-up-right-from-square mr-1"></i>ปุ่ม "เปิดแผนที่"
+                                <button type="button" class="mockup-btn px-3 py-1.5 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-[#0971CE] font-bold hover:bg-sky-200 cursor-pointer" data-title="ขยายดูแผนที่ / ค้นหาสถานที่" data-desc="ในการใช้งานจริง ปุ่มนี้จะเปิดแผนที่แบบขยาย (หรือหน้าต่างปักหมุดค้นหาสถานที่เมื่อเลือกโหมดนอกสถานที่)">
+                                    <i class="fa-solid fa-up-right-from-square mr-1"></i>ปุ่ม "ดูแผนที่ / ปักหมุด"
                                 </button>
                             </div>
                         </div>
@@ -834,18 +867,18 @@
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
                             <div>
                                 <strong class="text-slate-800 dark:text-white">เปิดแบบคำขอ:</strong>
-                                <span> บน PC ให้กดปุ่ม <b>"ขอลงเวลากรณีพิเศษ"</b> ด้านล่างการ์ดบันทึกเวลา หรือในแท็บที่ 3 หรือบนสมาร์ตโฟนให้เปิด Drawer แล้วกดปุ่มสีม่วง <i>"กรอกแบบคำขอลงเวลากรณีพิเศษ"</i></span>
+                                <span> บน PC ให้กดปุ่ม <b>"ขอลงเวลากรณีพิเศษ"</b> ในแท็บที่ 3 ("คำขอพิเศษ") หรือบนสมาร์ตโฟนให้เปิด Drawer แล้วเลือกเมนู <b>"คำขอพิเศษ"</b> จากนั้นกดปุ่มสีม่วง <i>"กรอกแบบคำขอลงเวลากรณีพิเศษ"</i></span>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200/60 dark:border-slate-700/60">
                             <span class="w-6 h-6 rounded-full bg-[#480080] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
                             <div>
-                                <strong class="text-slate-800 dark:text-white">กรอกข้อมูล 4 รายการสำคัญ:</strong>
+                                <strong class="text-slate-800 dark:text-white">กรอกข้อมูลแบบ Step-by-Step 4 ขั้นตอน:</strong>
                                 <ul class="list-disc pl-5 mt-1 space-y-1 text-xs">
-                                    <li><b>เลือกวันที่ปฏิบัติราชการ:</b> สามารถเลือกวันที่ย้อนหลังหรือวันที่เกิดเหตุได้</li>
-                                    <li><b>เลือกช่วงเวลาทำงาน:</b> เลือกกะมาตรฐานหรือระบุเวลาเข้า-เลิกงาน <i>(ท่านสามารถเปิดและยื่นคำขอลงเวลากรณีพิเศษได้ตลอดเวลา 24 ชม. ทั้งนี้หากหน่วยงานเปิดฟังก์ชันปิดรับเวลาปกติ ตัวเลือก "เวลาราชการปกติ" จะถูกซ่อนออกเพื่อให้ยื่นขอได้เฉพาะปฏิบัติงานนอกเวลาหรือกะพิเศษเท่านั้น)</i></li>
-                                    <li><b>เลือกหมายเหตุ / เหตุผล:</b> เช่น ไปราชการนอกสถานที่, ตรวจพื้นที่, อบรมสัมมนา, ระบบขัดข้อง</li>
-                                    <li><b>แนบรูปภาพหรือเอกสาร (ถ้ามี):</b> เช่น หนังสือเชิญประชุม, ภาพถ่ายขณะปฏิบัติงานนอกสถานที่</li>
+                                    <li><b>ขั้นตอนที่ 1 — วันที่, ช่วงเวลา และเหตุผลคำขอ:</b> เลือกวันที่ปฏิบัติราชการ, ช่วงเวลาทำงาน (หากหน่วยงานเปิดปิดรับเวลาปกติ ระบบจะซ่อนตัวเลือก "เวลาราชการปกติ" ให้อัตโนมัติ) และเลือกเหตุผลจากรายการของหน่วยงาน (เช่น ลืมลงเวลา, อุปกรณ์ขัดข้อง)</li>
+                                    <li><b>ขั้นตอนที่ 2 — โหมดสถานที่ปฏิบัติงาน:</b> เลือก <b>ในสถานที่</b> (เลือกรายชื่อสถานที่ราชการของหน่วยงานจาก Dropdown) หรือ <b>นอกสถานที่</b> (ค้นหาชื่อสถานที่และปักหมุดพิกัดบนแผนที่จริง)</li>
+                                    <li><b>ขั้นตอนที่ 3 — แนบรูปภาพหรือหลักฐาน (ถ้ามี):</b> เช่น หนังสือเชิญประชุม หรือภาพถ่ายขณะปฏิบัติงาน</li>
+                                    <li><b>ขั้นตอนที่ 4 — ตรวจสอบสรุปข้อมูลและยืนยันส่งคำขอ:</b> ทบทวนข้อมูลทั้งหมดก่อนกดยืนยันส่งเข้าสู่ระบบอนุมัติ</li>
                                 </ul>
                             </div>
                         </div>
@@ -864,7 +897,7 @@
                             <i class="fa-solid fa-trash-can text-rose-500 mr-1"></i>การยกเลิกคำขอที่อยู่ระหว่างรออนุมัติ:
                         </strong>
                         <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                            หากท่านส่งคำขอผิดพลาด ท่านสามารถเข้าไปที่แท็บ <b>"ประวัติการขอลงเวลากรณีพิเศษ"</b> แล้วกดปุ่ม <b>"ลบคำขอ"</b> (ไอคอนรูปถังขยะสีแดง) ในคอลัมน์จัดการได้ด้วยตนเอง <i>(สามารถยกเลิกได้เฉพาะรายการที่สถานะยังเป็น "รออนุมัติ" เท่านั้น หากผู้ดูแลกดอนุมัติหรือปฏิเสธแล้วจะไม่สามารถลบได้)</i>
+                            หากท่านส่งคำขอผิดพลาด ท่านสามารถเข้าไปที่แท็บหรือเมนู <b>"คำขอพิเศษ"</b> แล้วกดปุ่ม <b>"ลบคำขอ"</b> (ไอคอนรูปถังขยะสีแดง) ในคอลัมน์จัดการบน PC หรือท้ายการ์ดคำขอในมุมมองมือถือได้ด้วยตนเอง <i>(สามารถยกเลิกได้เฉพาะรายการที่สถานะยังเป็น "รออนุมัติ" เท่านั้น หากผู้ดูแลกดอนุมัติหรือปฏิเสธแล้วจะไม่สามารถลบได้)</i>
                         </p>
                     </div>
                 </div>
@@ -882,11 +915,11 @@
 
                 <div class="space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                     <p>
-                        ท่านสามารถตรวจสอบข้อมูลการลงเวลาของตนเองได้ตลอดเวลาผ่านแท็บ <b>"ตารางประวัติการลงเวลาส่วนตัว"</b> (แท็บที่ 2) โดยมี 2 แผงย่อย:
+                        ท่านสามารถตรวจสอบข้อมูลการลงเวลาของตนเองได้ตลอดเวลาผ่านแท็บ <b>"ประวัติการลงเวลา"</b> บน PC (แสดงแบบตาราง) หรือผ่านเมนู <b>"ประวัติการลงเวลา"</b> ใน Drawer บนสมาร์ตโฟน (แสดงแบบการ์ดเรียงข้อมูล เวลาเข้างาน–พิกัด–สถานะเข้างาน และ เวลาออกงาน–พิกัด–สถานะออกงาน อย่างชัดเจน) โดยมี 2 แผงย่อย:
                     </p>
                     <ul class="list-disc pl-5 space-y-1 text-xs">
                         <li><b>แผง "วันปัจจุบัน":</b> แสดงรายการที่ลงเวลาในวันนี้ทันที เพื่อให้มั่นใจว่าข้อมูลเข้าสู่ระบบเรียบร้อย</li>
-                        <li><b>แผง "ย้อนหลัง":</b> แสดงประวัติการลงเวลาย้อนหลังทั้งหมด พร้อมปุ่มเลือกขนาดหน้า (5, 10, 20 รายการต่อหน้า) และปุ่มเปลี่ยนหน้าก่อนหน้า/ถัดไป</li>
+                        <li><b>แผง "ย้อนหลัง":</b> แสดงประวัติการลงเวลาย้อนหลังทั้งหมด (สูงสุด 30 รายการล่าสุด) พร้อมปุ่มเลือกขนาดหน้า (5, 10, 15, 20, 30 รายการต่อหน้า) และปุ่มเปลี่ยนหน้าก่อนหน้า/ถัดไป</li>
                     </ul>
 
                     <!-- 5 Status Badges Table with overflow-x-auto wrapper -->
@@ -1032,9 +1065,11 @@
                         </button>
                         <div class="faq-content px-5 pb-4 pt-1 text-slate-600 dark:text-slate-300 space-y-2 text-xs leading-relaxed border-t border-slate-200/60 dark:border-slate-700/60">
                             <p><b>วิธีแก้ไขทีละขั้นตอน:</b></p>
-                            <ol class="list-decimal pl-5 space-y-1">
-                                <li><b>บน Google Chrome (คอมพิวเตอร์/Android):</b> คลิกรูปแม่กุญแจ 🔒 ที่แถบ URL ด้านบน &rarr; การตั้งค่าไซต์ &rarr; สิทธิ์การเข้าถึงกล้อง &rarr; เลือกเป็น <b>"อนุญาต" (Allow)</b></li>
-                                <li><b>บน Safari (iPhone / iPad):</b> ไปที่ การตั้งค่า (Settings) ของ iOS &rarr; Safari &rarr; กล้อง &rarr; เลือกเป็น <b>"ถาม" หรือ "อนุญาต"</b></li>
+                            <ol class="list-decimal pl-5 space-y-1.5">
+                                <li><b>บน Brave (Android):</b> แตะ <b>ไอคอนปรับแต่ง/ขีดสองขีด (หรือแม่กุญแจ 🔒)</b> ที่แถบ URL ด้านบน &rarr; การตั้งค่าไซต์ / สิทธิ์ &rarr; กล้อง &rarr; เลือกเป็น <b>"อนุญาต / ตลอดไป"</b> พร้อมปิด <b>Brave Shields &gt; "Forget me when I close this site"</b> และตรวจสิทธิ์ระดับเครื่องที่ <i>การตั้งค่า &gt; แอป &gt; Brave &gt; สิทธิ์ &gt; กล้อง &gt; อนุญาตขณะใช้งานแอปเท่านั้น</i></li>
+                                <li><b>บน Google Chrome (คอมพิวเตอร์ / Android):</b> แตะ <b>ไอคอนปรับแต่ง/ขีดสองขีด (หรือแม่กุญแจ 🔒)</b> ที่แถบ URL ด้านบน &rarr; การตั้งค่าไซต์ / สิทธิ์ &rarr; สิทธิ์การเข้าถึงกล้อง &rarr; เลือกเป็น <b>"อนุญาตขณะเข้าชมเว็บไซต์"</b> หรือ <b>"อนุญาต" (Allow)</b> และบน Android ให้ตรวจ <i>การตั้งค่า &gt; แอป &gt; Chrome &gt; สิทธิ์ &gt; กล้อง &gt; อนุญาตขณะใช้งานแอปเท่านั้น</i></li>
+                                <li><b>บน Safari (iPhone / iPad):</b> แตะ <b>aA</b> หรือ <b>ไอคอนเมนูหน้าเว็บ [สี่เหลี่ยมมีขีด]</b> ที่แถบ URL &rarr; <i>การตั้งค่าเว็บไซต์</i> &rarr; <i>กล้อง</i> &rarr; เลือกเป็น <b>"อนุญาต" (Allow) เท่านั้น</b> และตรวจสอบใน <i>การตั้งค่า (Settings) ของ iOS &gt; แอป &gt; Safari &gt; กล้อง</i></li>
+                                <li><b>บน Google Chrome (iPhone / iPad):</b> ไปที่ <i>การตั้งค่า (Settings) &gt; แอป &gt; Chrome &gt; กล้อง = เปิด</i> และแตะไอคอนแถบ URL (<i>Page Info &gt; Permissions &gt; Camera</i>) เลือก <b>Always Allow</b> (หากปิดแอปแล้วยังถามซ้ำ แนะนำเปิดใช้งานด้วย <b>Safari</b> เพื่อจำสิทธิ์ถาวร)</li>
                                 <li>ปิดแอปพลิเคชันอื่นที่อาจแย่งการใช้งานกล้องอยู่ (เช่น LINE, Zoom, Google Meet)</li>
                                 <li>กดรีเฟรชหน้าเว็บ (กดปุ่ม F5 หรือรูดหน้าจอลงบนมือถือ) แล้วลองใหม่อีกครั้ง</li>
                             </ol>
@@ -1175,7 +1210,7 @@
             <i class="fa-solid fa-landmark text-[#00744B]"></i>
             <span>ระบบลงเวลาปฏิบัติราชการออนไลน์ กรุงเทพมหานคร</span>
         </div>
-        <p>คู่มือการใช้งานสำหรับผู้ใช้งานทั่วไป (User Manual) • ฉบับ 27 ตุลาคม 2569</p>
+        <p>คู่มือการใช้งานสำหรับผู้ใช้งานทั่วไป (User Manual) • ฉบับ 19 พฤศจิกายน 2569 (V2.11.0)</p>
     </footer>
 
     <!-- Interactive Scripts: Theme, Mobile TOC, Scrollspy, Back to Top, FAQ Accordion, Mockup Alerts -->

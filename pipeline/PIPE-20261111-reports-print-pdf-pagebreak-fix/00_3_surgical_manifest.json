@@ -1,0 +1,63 @@
+{
+  "task_id": "PIPE-20261111-reports-print-pdf-pagebreak-fix",
+  "pipeline_mode": "PLAN",
+  "flow_id": "FLOW_REPORTS_01",
+  "subagents_assignment": {
+    "subagent_01_implementer": {
+      "model": "Flash 3.8 High",
+      "target_files": [
+        {
+          "path": "assets/js/core/UIHelpers.js",
+          "recommended_read_window": [1050, 1180],
+          "tasks": [
+            "Task 1.1: Remove page-break-inside: avoid from .tag-section-block (change to auto)",
+            "Task 1.2: Add page-break-after: avoid and break-after: avoid to .report-header and .tag-section-title",
+            "Task 1.3: Configure thead { display: table-header-group; page-break-after: avoid; break-after: avoid; } to repeat column headers cleanly on every printed page",
+            "Task 1.4: Configure tr { page-break-inside: avoid; break-inside: avoid; } to prevent table row splitting across pages",
+            "Task 1.5: Configure .group-row and .sub-group-row with page-break-after: avoid to prevent orphaned department headings",
+            "Task 1.6: Refine @page to size: A4 landscape; margin: 8mm 10mm; and print body { margin: 0; padding: 0; }"
+          ]
+        },
+        {
+          "path": "assets/js/controllers/ReportsController.js",
+          "recommended_read_window": [360, 490],
+          "tasks": [
+            "Task 1.7: Ensure .day-section-banner and .tag-section-title inline styles reinforce page-break-after: avoid; break-after: avoid;",
+            "Task 1.8: Run node ./.ai_map/vscode_ast_mapper.mjs to sync buildId and .ai_map/"
+          ]
+        }
+      ]
+    },
+    "subagent_02_qa_auditor": {
+      "model": "Flash 3.8 High",
+      "tasks": [
+        "Task 2.1: Syntax audit with node --check on modified files (0 errors)",
+        "Task 2.2: Automated print simulation test verifying HTML structure, thead repetition, and elimination of page-break-inside: avoid on tag-section-block",
+        "Task 2.3: Cache sync audit verifying buildId consistency across version.json and all 8 HTML files",
+        "Task 2.4: Main-diff audit (git diff main) ensuring zero changes outside the print PDF scope"
+      ]
+    }
+  },
+  "target_files": [
+    {
+      "path": "assets/js/core/UIHelpers.js",
+      "symbols": ["UIHelpers.printReportInNewTab"],
+      "exact_line_ranges": [
+        { "start": 1062, "end": 1175, "desc": "Print CSS styles, page-break rules, and @page margins in printReportInNewTab" }
+      ],
+      "recommended_read_window": [[1050, 1180]]
+    },
+    {
+      "path": "assets/js/controllers/ReportsController.js",
+      "symbols": [
+        "ReportsController.#renderSeparateTablesBySelectedTags",
+        "ReportsController.#renderSingleStatusTableHtml"
+      ],
+      "exact_line_ranges": [
+        { "start": 366, "end": 372, "desc": "day-section-banner break-after rules in date range mode" },
+        { "start": 467, "end": 481, "desc": "tag-section-block and tag-section-title markup for print PDF" }
+      ],
+      "recommended_read_window": [[360, 490]]
+    }
+  ]
+}

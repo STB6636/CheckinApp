@@ -12,7 +12,7 @@ export class UIHelpers {
 
     static VIEW_PAGE_STORAGE_KEY = 'bma_checkin_active_view_page_v2_9';
 
-    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|personnel|users|settings)(\.html)?\/?$/i;
+    static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|time-corrections|personnel|users|settings)(\.html)?\/?$/i;
 
     static THAI_MONTHS_SHORT = [
         'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
@@ -97,6 +97,70 @@ export class UIHelpers {
         return currentMode;
     }
 
+    static formatWelcomeDisplayName(userOrName, prefixes = null) {
+        if (!userOrName) return '';
+
+        if (typeof userOrName === 'object') {
+            const firstName = String(userOrName.personnel?.first_name ?? userOrName.first_name ?? '').trim();
+            const lastName = String(userOrName.personnel?.last_name ?? userOrName.last_name ?? '').trim();
+            if (firstName) {
+                return `${firstName}${lastName ? ` ${lastName}` : ''}`.trim();
+            }
+        }
+
+        const rawName = String(
+            typeof userOrName === 'string'
+                ? userOrName
+                : (userOrName.full_name || userOrName.name || '')
+        ).trim();
+        if (!rawName) return '';
+
+        let dynamicPrefixes = Array.isArray(prefixes) ? prefixes : null;
+        if (!dynamicPrefixes) {
+            const stores = [
+                typeof sessionStorage !== 'undefined' ? sessionStorage : null,
+                typeof localStorage !== 'undefined' ? localStorage : null
+            ].filter(Boolean);
+            for (const store of stores) {
+                try {
+                    const cachedRaw = store.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                    if (cachedRaw) {
+                        const cached = JSON.parse(cachedRaw);
+                        if (Array.isArray(cached?.prefixes)) {
+                            dynamicPrefixes = cached.prefixes;
+                            break;
+                        }
+                    }
+                } catch {
+                    // ignore invalid cached settings JSON
+                }
+            }
+        }
+        if (!dynamicPrefixes) {
+            dynamicPrefixes = Array.isArray(Config.DEFAULT_SETTINGS?.prefixes) ? Config.DEFAULT_SETTINGS.prefixes : [];
+        }
+
+        const candidates = new Set(
+            dynamicPrefixes
+                .map(p => String(p || '').trim())
+                .filter(Boolean)
+        );
+        if (typeof userOrName === 'object') {
+            const userPrefix = String(userOrName.personnel?.prefix || userOrName.prefix || '').trim();
+            if (userPrefix) candidates.add(userPrefix);
+        }
+
+        const sortedPrefixes = [...candidates].sort((a, b) => b.length - a.length);
+        for (const prefix of sortedPrefixes) {
+            const escaped = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const re = new RegExp(`^${escaped}\\s*`);
+            if (re.test(rawName)) {
+                return rawName.replace(re, '').trim();
+            }
+        }
+        return rawName;
+    }
+
     static showToast(message, type = 'success', durationMs = 2600) {
         return new Promise((resolve) => {
             let wrapper = document.getElementById('bmaToastWrapper');
@@ -149,6 +213,48 @@ export class UIHelpers {
         return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${shortYear}`;
     }
 
+    /**
+     * จัดรูปแบบวันที่ภาษาไทยแบบเดือนย่อและปี พ.ศ. 4 หลัก (เช่น 17 พ.ย. 2569)
+     * @param {string} dateStr
+     * @returns {string}
+     */
+    static formatThaiShortDateFullYear(dateStr) {
+        if (!dateStr) return '-';
+        const parts = String(dateStr).slice(0, 10).split('-');
+        if (parts.length === 3) {
+            const yearAD = parseInt(parts[0], 10);
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            if (!isNaN(yearAD) && monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                return `${day} ${UIHelpers.THAI_MONTHS_SHORT[monthIdx]} ${yearAD + 543}`;
+            }
+        }
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return `${d.getDate()} ${UIHelpers.THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear() + 543}`;
+    }
+
+    /**
+     * เลื่อนวันที่รูปแบบ ISO (YYYY-MM-DD) ด้วย UTC เพื่อป้องกันการคลาดเคลื่อนจาก Timezone/DST
+     * @param {string} dateStr
+     * @param {number} [deltaDays=0]
+     * @returns {string}
+     */
+    static shiftDateISO(dateStr, deltaDays = 0) {
+        if (!dateStr) return '';
+        const match = String(dateStr).trim().slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!match) return String(dateStr);
+        const year = parseInt(match[1], 10);
+        const month = parseInt(match[2], 10);
+        const day = parseInt(match[3], 10);
+        const dt = new Date(Date.UTC(year, month - 1, day + (Number(deltaDays) || 0)));
+        if (isNaN(dt.getTime())) return String(dateStr);
+        const yy = String(dt.getUTCFullYear()).padStart(4, '0');
+        const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getUTCDate()).padStart(2, '0');
+        return `${yy}-${mm}-${dd}`;
+    }
+
     static formatThaiFullDate(dateStr) {
         if (!dateStr) return '-';
         const parts = String(dateStr).slice(0, 10).split('-');
@@ -192,6 +298,10 @@ export class UIHelpers {
         const now = new Date();
         const offsetMs = now.getTimezoneOffset() * 60000;
         return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+    }
+
+    static getTodayDateString() {
+        return UIHelpers.getTodayISO();
     }
 
     static getCurrentTimeHHMM() {
@@ -347,21 +457,31 @@ export class UIHelpers {
         });
     }
 
-    static async verifyGoogleDriveLink(scriptUrl, folderId = '') {
+    static async verifyGoogleDriveLink(scriptUrl, folderId = '', options = {}) {
         const cleanUrl = String(scriptUrl || '').trim();
+        const strictFolder = Boolean(options && options.strictFolder);
+        const cleanFolderId = String(folderId || '').trim();
+
         if (!cleanUrl) {
             return { success: false, message: 'กรุณากรอกลิงก์ Google Drive / Apps Script Web App ก่อนกดตรวจสอบ' };
         }
 
+        if (strictFolder && !cleanFolderId) {
+            return { success: false, message: 'กรุณาระบุรหัสหรือลิงก์โฟลเดอร์ Google Drive ก่อนกดตรวจสอบ' };
+        }
+
         if (cleanUrl.includes('script.google.com') && cleanUrl.includes('/exec')) {
             try {
-                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(folderId || '')}`;
+                const strictParam = strictFolder ? '&strictFolder=true' : '';
+                const verifyEndpoint = `${cleanUrl}${cleanUrl.includes('?') ? '&' : '?'}action=verify&folderId=${encodeURIComponent(cleanFolderId)}${strictParam}`;
                 const res = await fetch(verifyEndpoint, { method: 'GET', redirect: 'follow' });
                 const data = await res.json();
                 if (data && data.success) {
                     return {
                         success: true,
+                        folderId: data.folderId || cleanFolderId,
                         folderName: data.folderName || 'BMA_Checkin_Photos',
+                        folderUrl: data.folderUrl || '',
                         message: data.message || 'ตรวจสอบลิงก์สำเร็จ พร้อมจัดเก็บไฟล์รูปถ่ายใน Google Drive'
                     };
                 }
@@ -372,6 +492,13 @@ export class UIHelpers {
                     message: 'ไม่สามารถเชื่อมต่อกับ Google Apps Script ได้ กรุณาตรวจสอบว่าตั้งค่าสิทธิ์ Web App เป็น Anyone แล้ว'
                 };
             }
+        }
+
+        if (strictFolder && (!cleanUrl.includes('script.google.com') || !cleanUrl.includes('/exec'))) {
+            return {
+                success: false,
+                message: 'กรุณาระบุลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 เพื่อตรวจสอบและอัปโหลดไฟล์เข้าโฟลเดอร์ประกาศ'
+            };
         }
 
         if (cleanUrl.includes('drive.google.com')) {
@@ -391,15 +518,38 @@ export class UIHelpers {
         };
     }
 
-    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings) {
+    static async uploadPhotoToGoogleDrive(base64DataUrl, fileNamePrefix, settings, options = {}) {
         if (!base64DataUrl) return '';
         if (!base64DataUrl.startsWith('data:image')) return base64DataUrl;
 
         const scriptUrl = String(settings?.google_drive_script_url || '').trim();
-        const cleanFolderId = String(settings?.google_drive_folder_id || '').trim();
+        const hasFolderOverride = options && Object.prototype.hasOwnProperty.call(options, 'folderId');
+        const cleanFolderId = String(hasFolderOverride ? options.folderId : (settings?.google_drive_folder_id || '')).trim();
+        const strictFolder = Boolean(options && options.strictFolder);
+
+        const mimeMatch = String(base64DataUrl).match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+        const detectedMime = String(options?.mimeType || (mimeMatch ? mimeMatch[1] : 'image/jpeg')).toLowerCase();
+        const extMap = {
+            'image/png': 'png',
+            'image/webp': 'webp',
+            'image/gif': 'gif',
+            'image/svg+xml': 'svg',
+            'image/jpeg': 'jpg',
+            'image/jpg': 'jpg'
+        };
+        const fileExt = extMap[detectedMime] || 'jpg';
+
+        if (strictFolder) {
+            if (!scriptUrl || !scriptUrl.includes('script.google.com') || !scriptUrl.includes('/exec')) {
+                throw new Error('กรุณาตั้งค่าลิงก์ Google Apps Script Web App (.../exec) ในแท็บ 1 ก่อนอัปโหลดรูปภาพ');
+            }
+            if (!cleanFolderId) {
+                throw new Error('กรุณาระบุโฟลเดอร์ Google Drive เก็บรูปประกาศในแท็บ 1 ก่อนอัปโหลด');
+            }
+        }
 
         if (scriptUrl && scriptUrl.includes('script.google.com')) {
-            const fileName = `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.jpg`;
+            const fileName = String(options?.fileName || `${fileNamePrefix}_${UIHelpers.getTodayISO()}_${Date.now()}.${fileExt}`);
 
             // Attempt 1: Upload to configured folderId
             try {
@@ -410,8 +560,9 @@ export class UIHelpers {
                     body: JSON.stringify({
                         action: 'upload',
                         folderId: cleanFolderId,
+                        strictFolder,
                         fileName,
-                        mimeType: 'image/jpeg',
+                        mimeType: detectedMime,
                         base64Data: base64DataUrl
                     })
                 });
@@ -419,12 +570,18 @@ export class UIHelpers {
                 if (result && result.success && result.url) {
                     return result.url;
                 }
+                if (strictFolder) {
+                    throw new Error(result?.message || 'ไม่สามารถอัปโหลดรูปภาพไปยังโฟลเดอร์ Google Drive ที่ระบุได้');
+                }
             } catch (err) {
+                if (strictFolder) {
+                    throw err instanceof Error ? err : new Error('อัปโหลดรูปภาพไปยัง Google Drive ไม่สำเร็จ');
+                }
                 console.warn('Google Drive upload attempt 1 failed:', err);
             }
 
-            // Attempt 2: If cleanFolderId was non-empty and failed, retry with default folder ('')
-            if (cleanFolderId) {
+            // Attempt 2: If cleanFolderId was non-empty and failed (non-strict check-in flow), retry with default folder ('')
+            if (cleanFolderId && !strictFolder) {
                 try {
                     const fallbackResponse = await fetch(scriptUrl, {
                         method: 'POST',
@@ -434,7 +591,7 @@ export class UIHelpers {
                             action: 'upload',
                             folderId: '',
                             fileName,
-                            mimeType: 'image/jpeg',
+                            mimeType: detectedMime,
                             base64Data: base64DataUrl
                         })
                     });
@@ -448,10 +605,10 @@ export class UIHelpers {
             }
         }
 
-        if (scriptUrl && scriptUrl.includes('drive.google.com')) {
+        if (scriptUrl && scriptUrl.includes('drive.google.com') && !strictFolder) {
             const match = scriptUrl.match(/[-\w]{25,}/);
             const fid = match ? match[0] : 'drive_folder';
-            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.jpg')}`;
+            return `https://drive.google.com/drive/folders/${fid}?file=${encodeURIComponent(fileNamePrefix + '_' + Date.now() + '.' + fileExt)}`;
         }
 
         return base64DataUrl;
@@ -661,6 +818,82 @@ export class UIHelpers {
         }
         const fallbackMsg = options.infoNote ? `${title}\n${text}\n\nหมายเหตุ: ${options.infoNote}` : `${title}\n${text}`;
         return window.confirm(fallbackMsg);
+    }
+
+    static async confirmWithInput(title, options = {}) {
+        const isDark = document.documentElement.classList.contains('dark');
+        const swalApi = (typeof window !== 'undefined' && window.Swal) || (typeof Swal !== 'undefined' ? Swal : null);
+        const icon = options.icon || 'question';
+        const confirmText = options.confirmText || 'ยืนยัน';
+        const confirmIcon = options.confirmIcon !== undefined
+            ? options.confirmIcon
+            : '<i class="fa-solid fa-check mr-1.5"></i>';
+        const confirmGradient = options.confirmGradient
+            || (icon === 'error' || icon === 'warning' ? 'from-rose-600 to-red-500' : 'from-[#00744B] to-emerald-500');
+
+        if (swalApi) {
+            const safeInputId = UIHelpers.escapeHtml(options.inputId || 'swalConfirmWithInputField');
+            const safePlaceholder = UIHelpers.escapeHtml(options.inputPlaceholder || '');
+            const focusRing = options.focusRingClass || (icon === 'warning' || icon === 'error' ? 'focus:ring-rose-500' : 'focus:ring-[#00744B]');
+            const infoBoxHtml = options.infoHtml
+                ? `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 rounded-xl text-xs text-slate-600 dark:text-slate-300 flex items-start gap-2.5 text-left leading-relaxed">
+                        <i class="fa-solid ${UIHelpers.escapeHtml(options.infoIcon || 'fa-circle-info')} mt-0.5 shrink-0 ${options.infoIconClass || 'text-[#00744B] dark:text-emerald-400'} text-sm"></i>
+                        <div class="min-w-0 flex-1">${options.infoHtml}</div>
+                    </div>
+                `
+                : '';
+            const textHtml = options.text
+                ? `<p class="text-sm text-slate-600 dark:text-slate-300 mb-1 text-center">${UIHelpers.escapeHtml(options.text)}</p>`
+                : '';
+            const labelHtml = options.inputLabel
+                ? `<label for="${safeInputId}" class="block font-bold text-xs text-slate-700 dark:text-slate-200 mb-1.5 text-left">${UIHelpers.escapeHtml(options.inputLabel)}</label>`
+                : '';
+
+            const html = `
+                <div class="text-sm text-slate-600 dark:text-slate-300 mt-1 space-y-3 text-left">
+                    ${textHtml}
+                    ${infoBoxHtml}
+                    <div>
+                        ${labelHtml}
+                        <textarea id="${safeInputId}" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 ${focusRing} transition" placeholder="${safePlaceholder}"></textarea>
+                    </div>
+                </div>
+            `;
+
+            const result = await swalApi.fire({
+                title,
+                html,
+                icon,
+                showCancelButton: true,
+                buttonsStyling: false,
+                reverseButtons: true,
+                confirmButtonText: `${confirmIcon}${confirmText}`,
+                cancelButtonText: options.cancelButtonText || 'ยกเลิก',
+                customClass: {
+                    popup: options.popupClass || 'rounded-2xl p-5 shadow-2xl border border-slate-200/80 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md max-w-sm sm:max-w-md',
+                    title: 'text-base sm:text-lg font-bold text-slate-800 dark:text-white pt-2',
+                    htmlContainer: 'text-sm text-slate-600 dark:text-slate-300 m-0 pt-1',
+                    actions: 'flex justify-center gap-3 mt-3',
+                    confirmButton: `inline-block px-6 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-gradient-to-tl ${confirmGradient} hover:scale-102 hover:shadow-soft-xs active:opacity-85 text-white`,
+                    cancelButton: 'inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 hover:scale-102 active:opacity-85'
+                },
+                background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                color: isDark ? '#F1F5F9' : '#0F172A',
+                preConfirm: () => {
+                    const inputEl = document.getElementById(options.inputId || 'swalConfirmWithInputField');
+                    return inputEl ? String(inputEl.value || '').trim() : '';
+                }
+            });
+
+            return {
+                isConfirmed: Boolean(result.isConfirmed),
+                value: String(result.value || '').trim()
+            };
+        }
+
+        const fallbackConfirmed = await UIHelpers.confirm(title, options.text || '', confirmText, icon, options);
+        return { isConfirmed: fallbackConfirmed, value: '' };
     }
 
     static validateThaiNationalId(id, strictCheckDigit = false) {
@@ -1073,6 +1306,8 @@ export class UIHelpers {
             margin-bottom: 16px;
             border-bottom: 2px solid ${headerColor};
             padding-bottom: 10px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         .report-header h1 {
             margin: 0 0 4px 0;
@@ -1112,9 +1347,14 @@ export class UIHelpers {
             font-weight: 700;
             cursor: pointer;
         }
+        .day-section-banner {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
         .tag-section-block {
             margin-bottom: 22px;
-            page-break-inside: avoid;
+            page-break-inside: auto;
+            break-inside: auto;
         }
         .tag-section-title {
             font-size: 14px;
@@ -1123,6 +1363,8 @@ export class UIHelpers {
             border-radius: 6px;
             color: #FFFFFF;
             margin-bottom: 6px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         table {
             width: 100%;
@@ -1130,6 +1372,19 @@ export class UIHelpers {
             border-collapse: collapse;
             font-size: 13px;
             margin-bottom: 12px;
+            page-break-inside: auto;
+            break-inside: auto;
+        }
+        thead {
+            display: table-header-group;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            page-break-after: avoid;
+            break-after: avoid;
+        }
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
         th, td {
             border: 1px solid #CBD5E1;
@@ -1145,6 +1400,10 @@ export class UIHelpers {
             font-weight: 700;
             white-space: nowrap;
         }
+        .group-row, .sub-group-row {
+            page-break-after: avoid;
+            break-after: avoid;
+        }
         .group-row td {
             background-color: #E3F2E9 !important;
             font-weight: 700;
@@ -1157,13 +1416,13 @@ export class UIHelpers {
         }
         @page {
             size: A4 landscape;
-            margin: 0mm;
+            margin: 8mm 10mm;
         }
         @media print {
             .toolbar { display: none !important; }
             body {
                 margin: 0;
-                padding: 10mm 12mm;
+                padding: 0;
             }
         }
     </style>
@@ -1191,5 +1450,100 @@ export class UIHelpers {
         printWindow.document.open();
         printWindow.document.write(htmlDocument);
         printWindow.document.close();
+    }
+
+    /**
+     * ซิงค์สถานะล็อกสกรอลล์พื้นหลัง (body.bma-modal-open) ตาม Modal ที่กำลังเปิดอยู่
+     */
+    static syncBodyModalLock() {
+        if (typeof document === 'undefined' || !document.body || !document.body.classList) return false;
+        const overlays = typeof document.querySelectorAll === 'function'
+            ? document.querySelectorAll('.fixed.inset-0:not(.hidden)')
+            : [];
+        let hasOpenModal = false;
+        for (const el of overlays) {
+            if (!el || el.id === 'bmaSidebarBackdrop') continue;
+            if (typeof el.closest === 'function' && el.closest('.hidden')) continue;
+            if (el.classList?.contains?.('invisible') || el.classList?.contains?.('pointer-events-none')) continue;
+            const style = typeof window !== 'undefined' && typeof window.getComputedStyle === 'function' ? window.getComputedStyle(el) : null;
+            if (style && (style.display === 'none' || style.visibility === 'hidden')) continue;
+            hasOpenModal = true;
+            break;
+        }
+        if (typeof document.body.classList.toggle === 'function') {
+            document.body.classList.toggle('bma-modal-open', hasOpenModal);
+        } else if (hasOpenModal) {
+            document.body.classList.add?.('bma-modal-open');
+        } else {
+            document.body.classList.remove?.('bma-modal-open');
+        }
+        return hasOpenModal;
+    }
+
+    /**
+     * รีเซ็ตตำแหน่งสกรอลล์ของ Modal และ Container ภายในก่อนแสดงผล พร้อมล็อกสกรอลล์พื้นหลัง
+     * @param {HTMLElement|null} modalEl
+     */
+    static prepareModalOpen(modalEl) {
+        if (modalEl) {
+            modalEl.scrollTop = 0;
+            if (typeof modalEl.querySelectorAll === 'function') {
+                modalEl.querySelectorAll('.overflow-y-auto, .overflow-auto').forEach((scrollEl) => {
+                    scrollEl.scrollTop = 0;
+                });
+            }
+        }
+        UIHelpers.syncBodyModalLock();
+    }
+
+    /**
+     * ผูก Event ปิด Modal แบบ Idempotent (Backdrop click, ปุ่ม ESC, และเลื่อน Input หนีคีย์บอร์ดมือถือ)
+     * @param {HTMLElement|null} modalEl
+     * @param {Function} closeCallback
+     */
+    static bindModalDismiss(modalEl, closeCallback) {
+        if (!modalEl || typeof closeCallback !== 'function') return;
+        if (!modalEl.dataset) modalEl.dataset = {};
+        if (modalEl.dataset.bmaDismissBound === '1') return;
+        modalEl.dataset.bmaDismissBound = '1';
+
+        if (typeof modalEl.addEventListener === 'function') {
+            modalEl.addEventListener('click', (e) => {
+                if (e.target === modalEl) {
+                    closeCallback();
+                }
+            });
+
+            modalEl.addEventListener('focusin', (e) => {
+                const field = e.target?.closest?.('input, select, textarea');
+                if (!field || typeof window === 'undefined' || window.innerWidth >= 1024) return;
+                setTimeout(() => {
+                    if (document.activeElement === field && typeof field.scrollIntoView === 'function') {
+                        field.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                    }
+                }, 260);
+            });
+        }
+
+        if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+            const onEsc = (e) => {
+                if (modalEl.isConnected === false) {
+                    document.removeEventListener?.('keydown', onEsc);
+                    return;
+                }
+                if (e.key !== 'Escape') return;
+                if (modalEl.classList?.contains?.('hidden')) return;
+                if (typeof document.querySelector === 'function' && document.querySelector('.swal2-popup:not(.swal2-toast)')) return;
+                const openModals = typeof document.querySelectorAll === 'function'
+                    ? Array.from(document.querySelectorAll('.fixed.inset-0:not(.hidden)')).filter(
+                        (el) => el.id !== 'bmaSidebarBackdrop' && !(typeof el.closest === 'function' && el.closest('.hidden')) && !el.classList?.contains?.('invisible')
+                    )
+                    : [];
+                const topModal = openModals[openModals.length - 1];
+                if (topModal && topModal !== modalEl) return;
+                closeCallback();
+            };
+            document.addEventListener('keydown', onEsc);
+        }
     }
 }

@@ -1,0 +1,80 @@
+{
+  "task_id": "PIPE-20261113-special-request-mode-and-reports-remarks-redesign",
+  "flow_id": "FLOW_CHECKIN_SPECIAL_REQUEST_01",
+  "target_branch": "Loca-V2",
+  "target_schema": "staging",
+  "created_at": "2026-11-13T15:45:00+07:00",
+  "database_prerequisite": {
+    "schema": "staging",
+    "table": "attendance_logs",
+    "required_columns": [
+      "location_mode",
+      "offsite_reason",
+      "check_out_location_mode",
+      "check_out_distance_from_official_meters",
+      "check_out_offsite_reason"
+    ],
+    "sql_file": "sql/create_staging_schema.sql"
+  },
+  "targets": [
+    {
+      "file": "checkin.html",
+      "symbol": "#modalSpecialRequest",
+      "line_range": "780-820",
+      "recommended_read_window": [770, 830],
+      "operation": "EDIT",
+      "purpose": "Add segmented mode buttons (spModeOnsite, spModeOffsite), spOffsiteReasonContainer, and spOffsiteReasonSelect inside #modalSpecialRequest while preserving all existing DOM IDs."
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#initModalSpecialRequest",
+      "line_range": "3250-3295",
+      "recommended_read_window": [3240, 3305],
+      "operation": "ADD",
+      "purpose": "Initialize special request segmented mode toggles (ONSITE/OFFSITE) and populate spOffsiteReasonSelect."
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#handleSubmitSpecialRequest",
+      "line_range": "3800-3880",
+      "recommended_read_window": [3790, 3890],
+      "operation": "EDIT",
+      "purpose": "Transmit location_mode, check_out_location_mode, offsite_reason, check_out_offsite_reason, and distance to AttendanceModel.submitSpecialRequest."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.submitSpecialRequest",
+      "line_range": "2112-2210",
+      "recommended_read_window": [2110, 2220],
+      "operation": "EDIT",
+      "purpose": "Strictly reference check-in coordinates for check-out (plus jitter if enabled), save location_mode, check_out_location_mode, offsite_reason, check_out_offsite_reason, and distance fields."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.getSpecialRequests",
+      "line_range": "2225-2280",
+      "recommended_read_window": [2220, 2290],
+      "operation": "EDIT",
+      "purpose": "Query location_mode, check_out_location_mode, offsite_reason, check_out_offsite_reason, and distance columns with fallback."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#resolveLocationMode",
+      "line_range": "420-450",
+      "recommended_read_window": [410, 460],
+      "operation": "EDIT",
+      "purpose": "Ensure check-out mode inherits check-in mode when check_out_location_mode is null for special requests."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#resolveReportRemark",
+      "line_range": "450-490",
+      "recommended_read_window": [440, 500],
+      "operation": "EDIT",
+      "purpose": "Render 2 lines for special requests in column หมายเหตุ (Line 1: กรณีพิเศษ, Line 2: เหตุผล) across Web DOM, Print PDF, and Excel export."
+    }
+  ],
+  "verification_suite": [
+    "pipeline/PIPE-20261113-special-request-mode-and-reports-remarks-redesign/qa_special_request_mode_verification.mjs"
+  ]
+}

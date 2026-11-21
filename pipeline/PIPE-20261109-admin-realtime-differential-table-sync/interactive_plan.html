@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan — Realtime Differential Table Sync & Multi-Admin Concurrency Engine</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background-color: #0b1120;
+            color: #334155;
+        }
+        /* Highlight Animations for Incremental DOM Patching */
+        .row-enter-highlight {
+            animation: rowGreenPulse 2.5s ease-out forwards;
+        }
+        @keyframes rowGreenPulse {
+            0% { background-color: rgba(16, 185, 129, 0.45); transform: translateY(-6px); }
+            50% { background-color: rgba(16, 185, 129, 0.2); }
+            100% { background-color: transparent; transform: translateY(0); }
+        }
+        .row-update-highlight {
+            animation: rowAmberPulse 2s ease-out forwards;
+        }
+        @keyframes rowAmberPulse {
+            0% { background-color: rgba(245, 158, 11, 0.45); }
+            50% { background-color: rgba(245, 158, 11, 0.15); }
+            100% { background-color: transparent; }
+        }
+        .row-leave-fade {
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateX(25px) scale(0.97);
+            background-color: rgba(244, 63, 94, 0.25);
+        }
+        .row-locked-highlight {
+            background-color: rgba(59, 130, 246, 0.2) !important;
+            border-left: 4px solid #3b82f6 !important;
+        }
+        .counter-badge-pop {
+            animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes badgePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 116, 139, 1);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-3 sm:p-5 lg:p-8">
+
+    <div class="max-w-[1550px] mx-auto space-y-6">
+
+        <!-- Top Header & Plan Metadata -->
+        <header class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+            <div>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-black uppercase tracking-wider">
+                        PLAN MODE • ENTERPRISE MULTI-SCREEN & MULTI-ADMIN DELTA ENGINE
+                    </span>
+                    <span class="text-xs text-slate-400">Task: PIPE-20261109-admin-realtime-differential-table-sync</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white mt-2 flex items-center gap-3">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-emerald-400"></i>
+                    <span>ระบบ Realtime DOM Diffing & Concurrency Engine (รองรับ Admin หลายคนพร้อมกัน)</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1.5 max-w-5xl leading-relaxed">
+                    ครอบคลุมทั้ง 5 หน้าหลัก: <strong>หน้าภาพรวม (ทุกการ์ดทุกตาราง)</strong>, <strong>หน้ารายงานการลงเวลา (ทุกตาราง)</strong>, <strong>หน้าอนุมัติลงเวลากรณีพิเศษ</strong>, <strong>หน้าจัดการข้อมูลบุคลากร</strong> และ <strong>หน้าจัดการบัญชีผู้ใช้งาน</strong> พร้อมระบบป้องกัน Race Condition / Double Action Shield เมื่อมีแอดมินมากกว่า 2 คนดูแลระบบเดียวกันในหน้าจอเดียวกัน
+                </p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <span class="px-4 py-2 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-hourglass-half animate-spin"></i>
+                    <span>รอการอนุมัติ (Proceed) จากผู้ใช้</span>
+                </span>
+            </div>
+        </header>
+
+        <!-- Executive Architecture Pillars -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Pillar 1 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>1. Silent DOM Diffing (ไร้ Skeleton)</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    ไม่เรียก <code>showLoading</code> หรือล้างตารางทิ้ง แต่ตรวจจับความต่างระดับ Row ด้วย <code>data-row-id</code> แทรกเฉพาะแถวใหม่ ลบแถวเก่า และอัปเดตเฉพาะ Cell ที่เปลี่ยน
+                </p>
+            </div>
+            <!-- Pillar 2 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2 text-cyan-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>2. Multi-Admin Concurrency Shield</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    เมื่อ Admin A กดอนุมัติ/จัดการ หน้าจอ Admin B จะล็อกปุ่มแถวนั้นทันที แสดงข้อความ <em>"อนุมัติแล้ว โดย Admin A"</em> ป้องกันการกดย้ำซ้ำซ้อน (Zero 409 Race Condition)
+                </p>
+            </div>
+            <!-- Pillar 3 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2 text-indigo-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-list-ol"></i>
+                    <span>3. Dynamic Sequence Re-Indexing</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    ฟังก์ชัน <code>reindexTableSequence()</code> จะคำนวณและรันหมายเลข <strong>"ลำดับ 1, 2, 3..."</strong> ใหม่ทั่วทั้งตารางอัตโนมัติ ไม่ว่าจะมีการแทรกแถวใหม่หรือลบแถวออก
+                </p>
+            </div>
+            <!-- Pillar 4 -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-xs border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>4. Zero State Loss & Dirty Form Guard</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    คงตำแหน่ง Scrollbar, ไม่กระทบ Checkbox ที่กำลังเลือก และหากแอดมินเปิด Modal แก้ไขอยู่แล้วข้อมูลถูกแก้ จะมีแถบเตือนไม่ให้เขียนทับข้อมูลของกันและกัน
+                </p>
+            </div>
+        </div>
+
+        <!-- Tabbed Interactive Simulator Cockpit -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-6">
+            
+            <!-- Navigation Tabs -->
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="switchSimulatorTab('approvals-concurrency')" id="tabBtn-approvals-concurrency" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-md flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-users"></i>
+                        <span>1. หน้าอนุมัติ (จำลอง Admin A vs Admin B)</span>
+                    </button>
+                    <button type="button" onclick="switchSimulatorTab('dashboard-cards')" id="tabBtn-dashboard-cards" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>2. หน้าภาพรวม (ทุกการ์ด + ฟีดตาราง)</span>
+                    </button>
+                    <button type="button" onclick="switchSimulatorTab('reports-filter')" id="tabBtn-reports-filter" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-file-waveform"></i>
+                        <span>3. หน้ารายงาน (คงสถานะ Filter/Pagination)</span>
+                    </button>
+                    <button type="button" onclick="switchSimulatorTab('personnel-modal')" id="tabBtn-personnel-modal" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition cursor-pointer">
+                        <i class="fa-solid fa-address-card"></i>
+                        <span>4. บุคลากร & บัญชีผู้ใช้ (เตือนฟอร์มชนกัน)</span>
+                    </button>
+                </div>
+                <div class="text-xs text-slate-400 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>Realtime WebSocket Active</span>
+                </div>
+            </div>
+
+            <!-- TAB 1: Multi-Admin Split-Screen Simulator (Approvals) -->
+            <div id="tabContent-approvals-concurrency" class="space-y-5">
+                
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-display text-emerald-400"></i>
+                            <span>การจำลองหน้าจอจริง: Admin 2 คนเปิดหน้า "อนุมัติลงเวลากรณีพิเศษ" พร้อมกัน</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            ลองกดปุ่มจำลองด้านขวา เพื่อดูว่าเมื่อ <strong>Admin A</strong> ดำเนินการ หน้าจอของ <strong>Admin B</strong> จะล็อกปุ่ม แทรกแถวใหม่ และรันเลขลำดับ 1, 2, 3 อัตโนมัติอย่างไร
+                        </p>
+                    </div>
+
+                    <!-- Simulator Control Actions -->
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <button type="button" id="btnSimAdminAApprove" onclick="simulateAdminAApproveRow1()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Admin A อนุมัติคำขอ #1</span>
+                        </button>
+                        <button type="button" id="btnSimNewIncomingReq" onclick="simulateNewIncomingRequest()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                            <i class="fa-solid fa-plus-circle"></i>
+                            <span>ผู้ใช้ส่งคำขอใหม่เข้ามา (+1)</span>
+                        </button>
+                        <button type="button" onclick="resetMultiAdminSim()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition cursor-pointer">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>รีเซ็ต</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dual Split Screen Layout (Admin A vs Admin B) -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                    
+                    <!-- TERMINAL 1: Admin A Screen -->
+                    <div class="bg-slate-950 rounded-2xl border border-emerald-500/40 shadow-xl overflow-hidden flex flex-col">
+                        <div class="px-4 py-2.5 bg-emerald-950/40 border-b border-emerald-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="text-xs font-bold text-emerald-300">หน้าจอ Admin A (นายวิศรุต - SuperAdmin)</span>
+                            </div>
+                            <span class="text-[11px] text-emerald-400/80 font-mono">Terminal ID: #ADM-01</span>
+                        </div>
+                        
+                        <!-- Admin A Table View -->
+                        <div class="p-4 space-y-3 flex-1 flex flex-col">
+                            <div class="flex items-center justify-between text-xs text-slate-300 pb-2 border-b border-slate-800">
+                                <span class="font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-bell text-amber-400"></i>
+                                    <span>แจ้งเตือนรออนุมัติ: <strong id="adminA-bellCount" class="text-emerald-400">2 รายการ</strong></span>
+                                </span>
+                                <span id="adminA-bulkStatus" class="text-[11px] text-slate-400">เลือกไว้ 0 รายการ</span>
+                            </div>
+
+                            <div class="overflow-x-auto rounded-xl border border-slate-800 flex-1">
+                                <table class="w-full text-left text-xs text-slate-300">
+                                    <thead class="bg-slate-900/90 text-slate-400 text-[11px] uppercase font-bold border-b border-slate-800">
+                                        <tr>
+                                            <th class="py-2.5 px-2.5 text-center w-8"><input type="checkbox"></th>
+                                            <th class="py-2.5 px-2.5 text-center w-12">ลำดับ</th>
+                                            <th class="py-2.5 px-3">ชื่อ-นามสกุล</th>
+                                            <th class="py-2.5 px-3">วันที่ / เหตุผล</th>
+                                            <th class="py-2.5 px-2.5 text-center w-28">คำสั่ง</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminA-tableBody" class="divide-y divide-slate-800/60 font-normal">
+                                        <!-- Row 1 -->
+                                        <tr id="adminA-row-101" data-row-id="101" class="transition-colors hover:bg-slate-900/50">
+                                            <td class="text-center py-2 px-2.5"><input type="checkbox" class="rounded"></td>
+                                            <td class="text-center py-2 px-2.5 font-bold text-emerald-400 seq-num">1</td>
+                                            <td class="py-2 px-3 font-semibold text-white">นายวิศรุต โต๊ะพาน</td>
+                                            <td class="py-2 px-3 text-slate-300">8 พ.ย. 69 • นอกสถานที่</td>
+                                            <td class="py-2 px-2.5 text-center action-cell">
+                                                <div class="flex items-center justify-center gap-1.5">
+                                                    <button type="button" onclick="simulateAdminAApproveRow1()" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                                                    <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 2 -->
+                                        <tr id="adminA-row-102" data-row-id="102" class="transition-colors hover:bg-slate-900/50">
+                                            <td class="text-center py-2 px-2.5"><input type="checkbox" class="rounded"></td>
+                                            <td class="text-center py-2 px-2.5 font-bold text-emerald-400 seq-num">2</td>
+                                            <td class="py-2 px-3 font-semibold text-white">นายสมเกียรติ มั่นคง</td>
+                                            <td class="py-2 px-3 text-slate-300">7 พ.ย. 69 • นอกสถานที่</td>
+                                            <td class="py-2 px-2.5 text-center action-cell">
+                                                <div class="flex items-center justify-center gap-1.5">
+                                                    <button type="button" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                                                    <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TERMINAL 2: Admin B Screen -->
+                    <div class="bg-slate-950 rounded-2xl border border-cyan-500/40 shadow-xl overflow-hidden flex flex-col">
+                        <div class="px-4 py-2.5 bg-cyan-950/40 border-b border-cyan-500/30 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+                                <span class="text-xs font-bold text-cyan-300">หน้าจอ Admin B (นางสมศรี - Admin ประจำฝ่าย)</span>
+                            </div>
+                            <span class="text-[11px] text-cyan-400/80 font-mono">Terminal ID: #ADM-02</span>
+                        </div>
+                        
+                        <!-- Admin B Table View -->
+                        <div class="p-4 space-y-3 flex-1 flex flex-col">
+                            <div class="flex items-center justify-between text-xs text-slate-300 pb-2 border-b border-slate-800">
+                                <span class="font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-bell text-amber-400"></i>
+                                    <span>แจ้งเตือนรออนุมัติ: <strong id="adminB-bellCount" class="text-cyan-400">2 รายการ</strong></span>
+                                </span>
+                                <span id="adminB-bulkStatus" class="text-[11px] text-amber-400 font-bold">เลือกไว้ 1 รายการ (กำลังพิจารณา)</span>
+                            </div>
+
+                            <div class="overflow-x-auto rounded-xl border border-slate-800 flex-1">
+                                <table class="w-full text-left text-xs text-slate-300">
+                                    <thead class="bg-slate-900/90 text-slate-400 text-[11px] uppercase font-bold border-b border-slate-800">
+                                        <tr>
+                                            <th class="py-2.5 px-2.5 text-center w-8"><input type="checkbox"></th>
+                                            <th class="py-2.5 px-2.5 text-center w-12">ลำดับ</th>
+                                            <th class="py-2.5 px-3">ชื่อ-นามสกุล</th>
+                                            <th class="py-2.5 px-3">วันที่ / เหตุผล</th>
+                                            <th class="py-2.5 px-2.5 text-center w-36">คำสั่ง</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminB-tableBody" class="divide-y divide-slate-800/60 font-normal">
+                                        <!-- Row 1 (Checked by Admin B) -->
+                                        <tr id="adminB-row-101" data-row-id="101" class="transition-colors hover:bg-slate-900/50 bg-slate-900/20">
+                                            <td class="text-center py-2 px-2.5"><input type="checkbox" id="adminB-chk-101" checked class="rounded accent-cyan-500"></td>
+                                            <td class="text-center py-2 px-2.5 font-bold text-cyan-400 seq-num">1</td>
+                                            <td class="py-2 px-3 font-semibold text-white">นายวิศรุต โต๊ะพาน</td>
+                                            <td class="py-2 px-3 text-slate-300">8 พ.ย. 69 • นอกสถานที่</td>
+                                            <td class="py-2 px-2.5 text-center action-cell">
+                                                <div class="flex items-center justify-center gap-1.5">
+                                                    <button type="button" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                                                    <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- Row 2 -->
+                                        <tr id="adminB-row-102" data-row-id="102" class="transition-colors hover:bg-slate-900/50">
+                                            <td class="text-center py-2 px-2.5"><input type="checkbox" class="rounded"></td>
+                                            <td class="text-center py-2 px-2.5 font-bold text-cyan-400 seq-num">2</td>
+                                            <td class="py-2 px-3 font-semibold text-white">นายสมเกียรติ มั่นคง</td>
+                                            <td class="py-2 px-3 text-slate-300">7 พ.ย. 69 • นอกสถานที่</td>
+                                            <td class="py-2 px-2.5 text-center action-cell">
+                                                <div class="flex items-center justify-center gap-1.5">
+                                                    <button type="button" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                                                    <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Live Feedback Banner for Admin B -->
+                            <div id="adminB-toastNotice" class="hidden p-2.5 rounded-xl bg-blue-500/20 border border-blue-500/40 text-xs text-blue-300 flex items-center gap-2">
+                                <i class="fa-solid fa-circle-info text-blue-400"></i>
+                                <span id="adminB-toastMsg">คำขอ #101 ได้รับการอนุมัติโดย Admin A แล้ว ระบบปลดการเลือกและปรับปรุงตารางให้อัตโนมัติ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 2: Dashboard Realtime Stat Cards & Activity Stream -->
+            <div id="tabContent-dashboard-cards" class="hidden space-y-5">
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+                            <span>การจำลองหน้าภาพรวม (Dashboard Jewel Cards & Live Feed)</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">ตัวเลขในการ์ดจะนับขึ้นแบบ Odometer Animation และแถวเช็กอินใหม่จะเลื่อนเข้ามาด้านบนแบบ Delta Prepend</p>
+                    </div>
+                    <button type="button" onclick="simulateNewCheckin()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                        <i class="fa-solid fa-user-clock"></i>
+                        <span>จำลองบุคลากรลงเวลาเข้างาน (+1 คน)</span>
+                    </button>
+                </div>
+
+                <!-- Jewel Stat Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-xl space-y-1">
+                        <div class="text-xs opacity-90 font-medium">ลงเวลาวันนี้ทั้งหมด</div>
+                        <div id="dashStatTotal" class="text-2xl sm:text-3xl font-black">142</div>
+                        <div class="text-[10px] text-emerald-200">อัปเดตแบบเรียลไทม์</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-800 text-white shadow-xl space-y-1">
+                        <div class="text-xs opacity-90 font-medium">ตรงเวลา</div>
+                        <div id="dashStatOntime" class="text-2xl sm:text-3xl font-black">128</div>
+                        <div class="text-[10px] text-teal-200">อัตราส่วน 90.1%</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-xl space-y-1">
+                        <div class="text-xs opacity-90 font-medium">สาย</div>
+                        <div id="dashStatLate" class="text-2xl sm:text-3xl font-black">11</div>
+                        <div class="text-[10px] text-amber-200">ตามระเบียบกำหนด</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-xl space-y-1">
+                        <div class="text-xs opacity-90 font-medium">นอกสถานที่</div>
+                        <div id="dashStatOffsite" class="text-2xl sm:text-3xl font-black">3</div>
+                        <div class="text-[10px] text-blue-200">มีพิกัด GPS แนบ</div>
+                    </div>
+                </div>
+
+                <!-- Live Checkin Activity Stream Table -->
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="px-5 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-stream text-emerald-400"></i>
+                            <span>ตารางประวัติการลงเวลาล่าสุด (Live Activity Stream)</span>
+                        </h3>
+                        <span class="text-[11px] text-emerald-400 font-mono">Differential Prepend Active</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900/80 text-slate-400 text-[11px] uppercase font-bold border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 w-12 text-center">ลำดับ</th>
+                                    <th class="py-2.5 px-3">ชื่อ-นามสกุล</th>
+                                    <th class="py-2.5 px-3">ฝ่าย/สังกัด</th>
+                                    <th class="py-2.5 px-3">เวลาบันทึก</th>
+                                    <th class="py-2.5 px-3">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashLiveTableBody" class="divide-y divide-slate-800/60 font-normal">
+                                <tr class="transition-colors hover:bg-slate-900/50">
+                                    <td class="py-2 px-3 text-center font-bold text-emerald-400 seq-dash">1</td>
+                                    <td class="py-2 px-3 font-semibold text-white">ส.ต.ท. ประจักษ์ มั่งมี</td>
+                                    <td class="py-2 px-3 text-slate-400">ฝ่ายตรวจเทศกิจ</td>
+                                    <td class="py-2 px-3 text-slate-300">08:29:14 น.</td>
+                                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">ตรงเวลา</span></td>
+                                </tr>
+                                <tr class="transition-colors hover:bg-slate-900/50">
+                                    <td class="py-2 px-3 text-center font-bold text-emerald-400 seq-dash">2</td>
+                                    <td class="py-2 px-3 font-semibold text-white">นางกัลยา พันธุ์ทอง</td>
+                                    <td class="py-2 px-3 text-slate-400">ฝ่ายบริหารงานทั่วไป</td>
+                                    <td class="py-2 px-3 text-slate-300">08:27:02 น.</td>
+                                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">ตรงเวลา</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Reports Filter Preservation -->
+            <div id="tabContent-reports-filter" class="hidden space-y-5">
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-indigo-400"></i>
+                            <span>การจำลองหน้ารายงาน (รักษาตัวกรองและหน้า Pagination 100%)</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">เมื่อมีข้อมูลใหม่เข้ามา จะตรวจสอบว่าตรงกับตัวกรองที่แอดมินเลือกอยู่หรือไม่ หากตรงจะแทรกแถว หากไม่ตรงจะไม่รบกวนหน้าจอ</p>
+                    </div>
+                    <button type="button" onclick="simulateIncomingReportLog()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>จำลองข้อมูลบันทึกเวลาใหม่เข้ามา</span>
+                    </button>
+                </div>
+
+                <!-- Mock Filter Bar -->
+                <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap items-center gap-3 text-xs">
+                    <span class="text-slate-400 font-bold">ตัวกรองปัจจุบัน:</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">สังกัด: ฝ่ายตรวจและบังคับการ</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">สถานะ: ตรงเวลา (On-time)</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300">หน้า: 1 จาก 4</span>
+                    <span id="reportFilterNotice" class="ml-auto text-[11px] text-slate-400">สถานะตัวกรอง: ปลอดภัย (ไม่ถูกรีเซ็ตเมื่อมี Realtime Event)</span>
+                </div>
+
+                <!-- Reports Table -->
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900/90 text-slate-400 text-[11px] uppercase font-bold border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 w-12 text-center">ลำดับ</th>
+                                    <th class="py-2.5 px-3">ชื่อ-นามสกุล</th>
+                                    <th class="py-2.5 px-3">ฝ่าย</th>
+                                    <th class="py-2.5 px-3">เวลาเข้า</th>
+                                    <th class="py-2.5 px-3">เวลาออก</th>
+                                    <th class="py-2.5 px-3">สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody" class="divide-y divide-slate-800/60 font-normal">
+                                <tr class="transition-colors hover:bg-slate-900/50">
+                                    <td class="py-2 px-3 text-center font-bold text-indigo-400 seq-rep">1</td>
+                                    <td class="py-2 px-3 font-semibold text-white">จ.ส.ต. สมหมาย ใฝ่ดี</td>
+                                    <td class="py-2 px-3 text-slate-400">ฝ่ายตรวจและบังคับการ</td>
+                                    <td class="py-2 px-3 text-slate-300">08:15:20 น.</td>
+                                    <td class="py-2 px-3 text-slate-400">-</td>
+                                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">ตรงเวลา</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: Personnel & Users Modal Dirty Form Shield -->
+            <div id="tabContent-personnel-modal" class="hidden space-y-5">
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                            <span>การจำลองป้องกันการแก้ไขชนกัน (Dirty-Form Collision Guard)</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">ขณะ Admin 1 เปิดหน้าต่างแก้ไขบุคลากรคนเดิมอยู่ แล้ว Admin 2 ทำการบันทึกแก้ไขจากอีกเครื่องหนึ่ง</p>
+                    </div>
+                    <button type="button" onclick="simulateAdmin2ModifiesOpenPerson()" class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg transition cursor-pointer">
+                        <i class="fa-solid fa-user-pen"></i>
+                        <span>จำลอง Admin 2 บันทึกแก้ไขบุคคลนี้</span>
+                    </button>
+                </div>
+
+                <!-- Mock Open Modal Container -->
+                <div class="max-w-2xl mx-auto bg-slate-950 rounded-2xl border border-slate-700 p-5 shadow-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2 text-white font-bold text-sm">
+                            <i class="fa-solid fa-user-edit text-sky-400"></i>
+                            <span>แก้ไขข้อมูลบุคลากร: นายวิศรุต โต๊ะพาน (รหัส ID: #105)</span>
+                        </div>
+                        <span class="text-[11px] text-slate-400 font-mono">Admin 1 กำลังเปิดฟอร์ม</span>
+                    </div>
+
+                    <!-- Dirty Conflict Warning Alert (Triggered in real-time) -->
+                    <div id="modalCollisionAlert" class="hidden p-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs flex items-start gap-2.5 animate-bounce">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm mt-0.5"></i>
+                        <div class="space-y-1">
+                            <strong class="font-bold">ตรวจพบการแก้ไขชนกัน (Concurrent Modification):</strong>
+                            <p class="text-[11px] leading-relaxed">
+                                ข้อมูลบุคลากรท่านนี้เพิ่งได้รับการบันทึกแก้ไขโดย <strong>Admin 2 (นางสมศรี)</strong> เมื่อสักครู่ เพื่อป้องกันการเขียนทับข้อมูล โปรดตรวจสอบความแตกต่างหรือโหลดข้อมูลล่าสุด
+                            </p>
+                            <div class="flex items-center gap-2 pt-1">
+                                <button type="button" onclick="loadLatestPersonData()" class="px-2.5 py-1 rounded bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold transition">โหลดข้อมูลล่าสุดของ Admin 2</button>
+                                <button type="button" onclick="dismissModalAlert()" class="px-2.5 py-1 rounded bg-slate-800 text-slate-300 text-[10px] font-bold transition">ซ่อนการแจ้งเตือน</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mock Form Fields -->
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="space-y-1">
+                            <label class="text-slate-400">ชื่อ-นามสกุล</label>
+                            <input type="text" id="mockInputName" value="นายวิศรุต โต๊ะพาน" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-slate-400">ตำแหน่ง</label>
+                            <input type="text" id="mockInputPosition" value="นักจัดการงานทั่วไปปฏิบัติการ" class="w-full p-2 rounded-lg bg-slate-900 border border-slate-700 text-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Technical Specification & Conflict Resolution Matrix -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-scale-balanced text-indigo-400"></i>
+                <span>ตารางวิเคราะห์การจัดการ Concurrency ในกรณี Admin มากกว่า 2 คน (Resolution Matrix)</span>
+            </h2>
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-950 text-slate-400 text-[11px] uppercase font-bold border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-4 w-48">กรณีปัญหา (Scenario)</th>
+                            <th class="py-3 px-4 w-56">ความเสี่ยงเดิม (Risk)</th>
+                            <th class="py-3 px-4">แนวทางแก้ไขในแผนงานใหม่ (Delta Engine Solution)</th>
+                            <th class="py-3 px-4 w-36 text-center">ผลลัพธ์ UX</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 bg-slate-900/50 font-normal">
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-white">1. อนุมัติคำขอเดียวกันพร้อมกัน</td>
+                            <td class="py-3 px-4 text-rose-400">เกิด 409 Race Condition / สถานะ Audit Log ขัดแย้ง</td>
+                            <td class="py-3 px-4 text-slate-300">ทันทีที่ Admin A กด ปุ่มในจอ Admin B จะถูก Disabled ทันที และเปลี่ยนป้ายเป็น "อนุมัติแล้ว โดย Admin A" พร้อมเงื่อนไข Idempotent UPDATE ในฐานข้อมูล</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">ไร้ข้อผิดพลาด</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-white">2. ติ๊ก Checkbox หลายรายการเพื่อ Bulk Approve</td>
+                            <td class="py-3 px-4 text-rose-400">Admin A จัดการบางรายการไปแล้ว แต่ในชุดเลือกของ Admin B ยังค้างอยู่</td>
+                            <td class="py-3 px-4 text-slate-300">ระบบถอด `id` นั้นออกจาก `selectedIds` ของ Admin B อัตโนมัติ ปรับตัวเลขนับ และแสดง Toast แจ้งเตือนสั้นๆ โดยไม่ล้างรายการอื่นที่ Admin B เลือกไว้</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">ไม่เสียงานที่เลือก</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-white">3. แก้ไขฟอร์มบุคคลเดียวกัน</td>
+                            <td class="py-3 px-4 text-rose-400">Admin คนที่สองบันทึกทับข้อมูลที่ Admin คนแรกเพิ่งแก้ไขไป (Dirty Overwrite)</td>
+                            <td class="py-3 px-4 text-slate-300">เปรียบเทียบ `updated_at` หากหน้าต่าง Modal เปิดอยู่ จะแสดงแถบเตือนสีส้ม "ข้อมูลเพิ่งถูกอัปเดตโดย Admin อื่น" พร้อมปุ่มเปรียบเทียบข้อมูล</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-bold">ป้องกันทับข้อมูล</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-4 font-bold text-white">4. ลำดับในตาราง (ลำดับที่ 1, 2, 3...)</td>
+                            <td class="py-3 px-4 text-rose-400">ตัวเลขลำดับกระโดด ฟันหลอ หรือเรียงซ้ำกันเมื่อมีแถวถูกลบ/แทรก</td>
+                            <td class="py-3 px-4 text-slate-300">ฟังก์ชัน `DOMDiffHelper.reindexTableSequence()` ทำการวนนับเฉพาะแถวที่ยังแสดงผลอยู่ใหม่ทุกครั้งหลังเกิดการแทรก/ลบ</td>
+                            <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-bold">รันเลขต่อเนื่อง 100%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Interactive Simulation JavaScript -->
+    <script>
+        // Tab Switcher
+        function switchSimulatorTab(tabId) {
+            const tabs = ['approvals-concurrency', 'dashboard-cards', 'reports-filter', 'personnel-modal'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tabContent-${t}`);
+                const btn = document.getElementById(`tabBtn-${t}`);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-md flex items-center gap-2 transition cursor-pointer";
+                } else {
+                    el.classList.add('hidden');
+                    btn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white flex items-center gap-2 transition cursor-pointer";
+                }
+            });
+        }
+
+        // TAB 1: Multi-Admin Concurrency Actions
+        function simulateAdminAApproveRow1() {
+            const rowA = document.getElementById('adminA-row-101');
+            const rowB = document.getElementById('adminB-row-101');
+            if (!rowA || !rowB) return;
+
+            // Admin A Action: Immediate Success State
+            const actionCellA = rowA.querySelector('.action-cell');
+            if (actionCellA) {
+                actionCellA.innerHTML = '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[11px] font-bold">อนุมัติแล้ว</span>';
+            }
+            rowA.classList.add('row-leave-fade');
+            setTimeout(() => {
+                rowA.remove();
+                reindexSequence('adminA-tableBody', 'seq-num');
+                document.getElementById('adminA-bellCount').textContent = '1 รายการ';
+            }, 600);
+
+            // Admin B Reaction: Realtime Concurrency Lock & Notification
+            rowB.classList.add('row-locked-highlight');
+            const chkB = document.getElementById('adminB-chk-101');
+            if (chkB) {
+                chkB.checked = false;
+                chkB.disabled = true;
+            }
+            const actionCellB = rowB.querySelector('.action-cell');
+            if (actionCellB) {
+                actionCellB.innerHTML = '<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold flex items-center justify-center gap-1"><i class="fa-solid fa-lock text-[9px]"></i> อนุมัติแล้ว โดย Admin A</span>';
+            }
+            
+            // Show Feedback Toast to Admin B
+            const toast = document.getElementById('adminB-toastNotice');
+            if (toast) toast.classList.remove('hidden');
+            document.getElementById('adminB-bulkStatus').textContent = 'เลือกไว้ 0 รายการ (ระบบปลดรายการที่ถูกจัดการแล้ว)';
+            document.getElementById('adminB-bellCount').textContent = '1 รายการ';
+
+            // After 2.5 seconds, smoothly slide row out from Admin B table and re-index
+            setTimeout(() => {
+                rowB.classList.add('row-leave-fade');
+                setTimeout(() => {
+                    rowB.remove();
+                    reindexSequence('adminB-tableBody', 'seq-num');
+                }, 600);
+            }, 2500);
+        }
+
+        let newReqIndex = 103;
+        function simulateNewIncomingRequest() {
+            const reqId = newReqIndex++;
+            const newHtmlA = `
+                <tr id="adminA-row-${reqId}" data-row-id="${reqId}" class="transition-colors hover:bg-slate-900/50 row-enter-highlight">
+                    <td class="text-center py-2 px-2.5"><input type="checkbox" class="rounded"></td>
+                    <td class="text-center py-2 px-2.5 font-bold text-emerald-400 seq-num">1</td>
+                    <td class="py-2 px-3 font-semibold text-white">น.ส. พิมพา ชื่นสุข</td>
+                    <td class="py-2 px-3 text-slate-300">วันนี้ • นอกสถานที่</td>
+                    <td class="py-2 px-2.5 text-center action-cell">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button type="button" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                            <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            const newHtmlB = `
+                <tr id="adminB-row-${reqId}" data-row-id="${reqId}" class="transition-colors hover:bg-slate-900/50 row-enter-highlight">
+                    <td class="text-center py-2 px-2.5"><input type="checkbox" class="rounded"></td>
+                    <td class="text-center py-2 px-2.5 font-bold text-cyan-400 seq-num">1</td>
+                    <td class="py-2 px-3 font-semibold text-white">น.ส. พิมพา ชื่นสุข</td>
+                    <td class="py-2 px-3 text-slate-300">วันนี้ • นอกสถานที่</td>
+                    <td class="py-2 px-2.5 text-center action-cell">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button type="button" class="px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">อนุมัติ</button>
+                            <button type="button" class="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold transition">ปฏิเสธ</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById('adminA-tableBody').insertAdjacentHTML('afterbegin', newHtmlA);
+            document.getElementById('adminB-tableBody').insertAdjacentHTML('afterbegin', newHtmlB);
+
+            reindexSequence('adminA-tableBody', 'seq-num');
+            reindexSequence('adminB-tableBody', 'seq-num');
+
+            const countA = document.getElementById('adminA-tableBody').children.length;
+            const countB = document.getElementById('adminB-tableBody').children.length;
+            document.getElementById('adminA-bellCount').textContent = `${countA} รายการ`;
+            document.getElementById('adminB-bellCount').textContent = `${countB} รายการ`;
+        }
+
+        function reindexSequence(tbodyId, seqClass) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            const seqEls = tbody.querySelectorAll(`.${seqClass}`);
+            seqEls.forEach((el, idx) => {
+                el.textContent = idx + 1;
+            });
+        }
+
+        function resetMultiAdminSim() {
+            location.reload();
+        }
+
+        // TAB 2: Dashboard Simulation
+        let mockDashTotal = 142;
+        let mockDashOntime = 128;
+        function simulateNewCheckin() {
+            mockDashTotal++;
+            mockDashOntime++;
+            const totalEl = document.getElementById('dashStatTotal');
+            const ontimeEl = document.getElementById('dashStatOntime');
+            totalEl.textContent = mockDashTotal;
+            ontimeEl.textContent = mockDashOntime;
+            totalEl.classList.add('counter-badge-pop');
+            ontimeEl.classList.add('counter-badge-pop');
+            setTimeout(() => {
+                totalEl.classList.remove('counter-badge-pop');
+                ontimeEl.classList.remove('counter-badge-pop');
+            }, 600);
+
+            const now = new Date();
+            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} น.`;
+            const newRow = `
+                <tr class="transition-colors hover:bg-slate-900/50 row-enter-highlight">
+                    <td class="py-2 px-3 text-center font-bold text-emerald-400 seq-dash">1</td>
+                    <td class="py-2 px-3 font-semibold text-white">นายวิศรุต โต๊ะพาน</td>
+                    <td class="py-2 px-3 text-slate-400">ฝ่ายบริหารงานทั่วไป</td>
+                    <td class="py-2 px-3 text-emerald-300 font-bold">${timeStr}</td>
+                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">ตรงเวลา</span></td>
+                </tr>
+            `;
+            const tbody = document.getElementById('dashLiveTableBody');
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+            reindexSequence('dashLiveTableBody', 'seq-dash');
+        }
+
+        // TAB 3: Reports Simulation
+        function simulateIncomingReportLog() {
+            const newRow = `
+                <tr class="transition-colors hover:bg-slate-900/50 row-enter-highlight">
+                    <td class="py-2 px-3 text-center font-bold text-indigo-400 seq-rep">1</td>
+                    <td class="py-2 px-3 font-semibold text-white">นายธนกฤต แสนสุข</td>
+                    <td class="py-2 px-3 text-slate-400">ฝ่ายตรวจและบังคับการ</td>
+                    <td class="py-2 px-3 text-slate-300">08:29:40 น.</td>
+                    <td class="py-2 px-3 text-slate-400">-</td>
+                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px]">ตรงเวลา</span></td>
+                </tr>
+            `;
+            const tbody = document.getElementById('reportTableBody');
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+            reindexSequence('reportTableBody', 'seq-rep');
+        }
+
+        // TAB 4: Personnel Modal Collision Simulation
+        function simulateAdmin2ModifiesOpenPerson() {
+            document.getElementById('modalCollisionAlert').classList.remove('hidden');
+        }
+        function loadLatestPersonData() {
+            document.getElementById('mockInputPosition').value = "หัวหน้าฝ่ายบริหารงานทั่วไป (อัปเดตโดย Admin 2)";
+            document.getElementById('mockInputPosition').classList.add('row-update-highlight');
+            document.getElementById('modalCollisionAlert').classList.add('hidden');
+        }
+        function dismissModalAlert() {
+            document.getElementById('modalCollisionAlert').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

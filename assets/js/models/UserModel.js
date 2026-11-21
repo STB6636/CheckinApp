@@ -10,7 +10,7 @@ import { UIHelpers } from '../core/UIHelpers.js';
 export class UserModel {
     /**
      * ดึงรายการบัญชีผู้ใช้งานทั้งหมดตามสิทธิ์และขอบเขตการมองเห็นของผู้ดูแลระบบ
-     * กฎ V2.1: Admin จะไม่เห็นบัญชีระดับ SuperAdmin และเห็นเฉพาะบุคลากรในขอบเขตของตน
+     * กฎ v2.10.0: Admin จะไม่เห็นบัญชีระดับ SuperAdmin และเห็นเฉพาะบุคลากรในขอบเขตของตน
      * @param {Object} currentUser ผู้ใช้ที่ล็อกอินอยู่
      * @returns {Promise<Array<Object>>}
      */
@@ -231,22 +231,42 @@ export class UserModel {
      * เมื่ออนุมัติแล้ว รหัสผ่านของ User จะถูกรีเซ็ตกลับเป็นหมายเลข 6 ตัวท้ายของหมายเลขบัตรประชาชน
      * @param {string} userId UUID ของบัญชีผู้ใช้
      * @param {boolean} isApproved true = อนุมัติ, false = ไม่อนุมัติ
+     * @param {Object|null} [currentUser=null] ผู้ดูแลระบบที่ทำรายการ (สำหรับตรวจสิทธิ์ RBAC & ขอบเขตสังกัด)
      * @returns {Promise<{success: boolean, resetPasswordTo?: string, message: string}>}
      */
-    static async processPasswordResetRequest(userId, isApproved) {
+    static async processPasswordResetRequest(userId, isApproved, currentUser = null) {
+        if (currentUser) {
+            const isSuperAdmin = currentUser.role === 'SuperAdmin';
+            const isBureauAdmin = currentUser.role === 'Admin' && (currentUser.visibility_level === 'bureau' || currentUser.visibility_level === 'all');
+            if (!isSuperAdmin && !isBureauAdmin) {
+                return { success: false, message: 'คุณไม่มีสิทธิ์อนุมัติหรือปฏิเสธคำขอเปลี่ยนรหัสผ่าน' };
+            }
+        }
+
         const db = DatabaseService.getInstance().client;
 
         const { data: account, error: fetchErr } = await db
             .from('user_accounts')
             .select(`
-                id, username, full_name, national_id,
-                personnel:personnel_id ( national_id )
+                id, username, full_name, national_id, role, scope_bureau, scope_division,
+                personnel:personnel_id ( national_id, bureau, division )
             `)
             .eq('id', userId)
             .maybeSingle();
 
         if (fetchErr || !account) {
             return { success: false, message: 'ไม่พบข้อมูลบัญชีผู้ใช้งานที่ต้องการดำเนินการ' };
+        }
+
+        if (currentUser && currentUser.role !== 'SuperAdmin') {
+            if (account.role === 'SuperAdmin') {
+                return { success: false, message: 'ไม่สามารถดำเนินการกับบัญชีระดับ SuperAdmin ได้' };
+            }
+            const targetBureau = account.personnel?.bureau || account.scope_bureau || '';
+            const targetDivision = account.personnel?.division || account.scope_division || '';
+            if (!AuthService.canViewRecordByScope(currentUser, { bureau: targetBureau, division: targetDivision })) {
+                return { success: false, message: 'ไม่สามารถดำเนินการคำขอเปลี่ยนรหัสผ่านนอกขอบเขตสังกัดของคุณได้' };
+            }
         }
 
         if (!isApproved) {

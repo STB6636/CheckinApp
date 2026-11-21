@@ -41,29 +41,65 @@ export class SettingsModel {
             const cached = sessionStorage.getItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
             if (cached) {
                 try {
-                    return JSON.parse(cached);
+                    const parsed = JSON.parse(cached);
+                    if (parsed && typeof parsed === 'object' && typeof parsed.announcement_enabled === 'boolean') {
+                        if (!Array.isArray(parsed.offsite_job_types) || parsed.offsite_job_types.length === 0) {
+                            try {
+                                const local = JSON.parse(localStorage.getItem('bma_offsite_job_types') || '[]');
+                                parsed.offsite_job_types = (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.offsite_job_types;
+                            } catch (e) {
+                                parsed.offsite_job_types = Config.DEFAULT_SETTINGS.offsite_job_types;
+                            }
+                        }
+                        if (!Array.isArray(parsed.special_request_reasons) || parsed.special_request_reasons.length === 0) {
+                            try {
+                                const local = JSON.parse(localStorage.getItem('bma_special_request_reasons') || '[]');
+                                parsed.special_request_reasons = (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.special_request_reasons;
+                            } catch (e) {
+                                parsed.special_request_reasons = Config.DEFAULT_SETTINGS.special_request_reasons;
+                            }
+                        }
+                        return parsed;
+                    }
                 } catch (e) {
                     console.warn('Invalid cached settings:', e);
                 }
             }
         }
 
-        const db = DatabaseService.getInstance().client;
+        const dbService = DatabaseService.getInstance();
+        let db = dbService.client;
         let { data, error } = await db
             .from('system_settings')
             .select('*')
             .eq('id', 1)
             .maybeSingle();
 
+        if (error && String(error.message || '').includes('The schema must be one of the following: public')) {
+            console.warn('[SettingsModel] Staging schema not exposed yet, falling back to public schema');
+            db = dbService.publicClient;
+            const res = await db.from('system_settings').select('*').eq('id', 1).maybeSingle();
+            data = res.data;
+            error = res.error;
+        }
+
         if (error || !data) {
             console.warn('Using fallback default settings:', error);
             return structuredClone(Config.DEFAULT_SETTINGS);
         }
 
+        const rawColors = (data.category_colors && typeof data.category_colors === 'object') ? data.category_colors : {};
+        const announcementFallback = (rawColors._announcement && typeof rawColors._announcement === 'object')
+            ? rawColors._announcement
+            : null;
         const mergedColors = {
             ...Config.DEFAULT_SETTINGS.category_colors,
-            ...(data.category_colors || {})
+            ...rawColors
         };
+        delete mergedColors._announcement;
+
+        const hasAnnouncementCols = typeof data.announcement_enabled === 'boolean' || data.announcement_updated_at !== undefined;
+        const annSource = hasAnnouncementCols ? data : (announcementFallback || {});
 
         const rawShifts = Array.isArray(data.work_shifts) && data.work_shifts.length > 0
             ? data.work_shifts
@@ -111,6 +147,21 @@ export class SettingsModel {
                 : (localStorage.getItem('bma_early_shift_window_minutes') !== null
                     ? Number(localStorage.getItem('bma_early_shift_window_minutes')) || 30
                     : Number(Config.DEFAULT_SETTINGS.early_shift_window_minutes ?? 30)),
+            enforce_geofence_radius: (() => {
+                let enforceGeofence = true;
+                if (typeof data.enforce_geofence_radius === 'boolean') {
+                    enforceGeofence = data.enforce_geofence_radius;
+                } else if (data.category_colors && typeof data.category_colors === 'object' && typeof data.category_colors.enforce_geofence_radius === 'boolean') {
+                    enforceGeofence = data.category_colors.enforce_geofence_radius;
+                } else {
+                    const localEnforceGeofence = localStorage.getItem('bma_enforce_geofence_radius');
+                    if (localEnforceGeofence !== null) {
+                        enforceGeofence = localEnforceGeofence !== 'false';
+                    }
+                }
+                try { localStorage.setItem('bma_enforce_geofence_radius', String(enforceGeofence)); } catch (e) {}
+                return enforceGeofence;
+            })(),
             disable_normal_hours_checkin: typeof data.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
                 : (localStorage.getItem('bma_disable_normal_hours_checkin') !== null
@@ -134,8 +185,42 @@ export class SettingsModel {
             positions: Array.isArray(data.positions) ? data.positions : Config.DEFAULT_SETTINGS.positions,
             affiliations: Array.isArray(data.affiliations) ? data.affiliations : Config.DEFAULT_SETTINGS.affiliations,
             remarks: Array.isArray(data.remarks) ? data.remarks : Config.DEFAULT_SETTINGS.remarks,
+            offsite_job_types: (Array.isArray(data.offsite_job_types) && data.offsite_job_types.length > 0)
+                ? data.offsite_job_types
+                : (() => {
+                    try {
+                        const local = JSON.parse(localStorage.getItem('bma_offsite_job_types') || '[]');
+                        return (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.offsite_job_types;
+                    } catch (e) {
+                        return Config.DEFAULT_SETTINGS.offsite_job_types;
+                    }
+                })(),
+            special_request_reasons: (Array.isArray(data.special_request_reasons) && data.special_request_reasons.length > 0)
+                ? data.special_request_reasons
+                : (() => {
+                    try {
+                        const local = JSON.parse(localStorage.getItem('bma_special_request_reasons') || '[]');
+                        return (Array.isArray(local) && local.length > 0) ? local : Config.DEFAULT_SETTINGS.special_request_reasons;
+                    } catch (e) {
+                        return Config.DEFAULT_SETTINGS.special_request_reasons;
+                    }
+                })(),
+            official_locations: Array.isArray(data.official_locations) && data.official_locations.length > 0
+                ? data.official_locations
+                : (localStorage.getItem('bma_official_locations_v2') !== null
+                    ? JSON.parse(localStorage.getItem('bma_official_locations_v2') || '[]')
+                    : Config.DEFAULT_SETTINGS.official_locations),
             work_shifts: normalizedShifts,
-            category_colors: mergedColors
+            category_colors: mergedColors,
+            announcement_enabled: Boolean(annSource.announcement_enabled ?? Config.DEFAULT_SETTINGS.announcement_enabled),
+            announcement_mode: annSource.announcement_mode === 'image' ? 'image' : 'text',
+            announcement_start_date: String(annSource.announcement_start_date ?? ''),
+            announcement_end_date: String(annSource.announcement_end_date ?? ''),
+            announcement_title: String(annSource.announcement_title ?? ''),
+            announcement_body: String(annSource.announcement_body ?? ''),
+            announcement_image_url: String(annSource.announcement_image_url ?? ''),
+            announcement_drive_folder_id: String(annSource.announcement_drive_folder_id ?? ''),
+            announcement_updated_at: String(annSource.announcement_updated_at ?? '')
         };
 
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(merged));
@@ -144,6 +229,24 @@ export class SettingsModel {
 
     static async updateSettings(payload) {
         const db = DatabaseService.getInstance().client;
+        const enforceGeofenceFlag = Boolean(payload.enforce_geofence_radius !== false);
+        const cleanInputColors = { ...(payload.category_colors || Config.DEFAULT_SETTINGS.category_colors) };
+        delete cleanInputColors._announcement;
+        const mergedCategoryColors = {
+            ...cleanInputColors,
+            enforce_geofence_radius: enforceGeofenceFlag
+        };
+        const announcementPayload = {
+            announcement_enabled: Boolean(payload.announcement_enabled),
+            announcement_mode: payload.announcement_mode === 'image' ? 'image' : 'text',
+            announcement_start_date: String(payload.announcement_start_date || '').trim(),
+            announcement_end_date: String(payload.announcement_end_date || '').trim(),
+            announcement_title: String(payload.announcement_title || '').trim(),
+            announcement_body: String(payload.announcement_body ?? ''),
+            announcement_image_url: String(payload.announcement_image_url || '').trim(),
+            announcement_drive_folder_id: String(payload.announcement_drive_folder_id || '').trim(),
+            announcement_updated_at: String(payload.announcement_updated_at || '').trim()
+        };
         const updateData = {
             id: 1,
             organization_name: payload.organization_name || 'กรุงเทพมหานคร',
@@ -170,9 +273,17 @@ export class SettingsModel {
             prefixes: payload.prefixes || [],
             positions: payload.positions || [],
             affiliations: payload.affiliations || [],
-            remarks: payload.remarks || [],
+            remarks: Array.from(new Set([
+                ...(Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types),
+                ...(Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons)
+            ])),
+            offsite_job_types: Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types,
+            special_request_reasons: Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons,
+            official_locations: Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations,
             work_shifts: payload.work_shifts || [],
-            category_colors: payload.category_colors || Config.DEFAULT_SETTINGS.category_colors,
+            enforce_geofence_radius: enforceGeofenceFlag,
+            category_colors: mergedCategoryColors,
+            ...announcementPayload,
             updated_at: new Date().toISOString()
         };
 
@@ -183,33 +294,63 @@ export class SettingsModel {
             .single();
 
         if (error) {
-            let retryNeeded = false;
             const fallbackUpdateData = { ...updateData };
-            if (String(error.message || '').includes('allow_gallery_fallback')) {
-                delete fallbackUpdateData.allow_gallery_fallback;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('filter_shifts_by_realtime')) {
-                delete fallbackUpdateData.filter_shifts_by_realtime;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('disable_normal_hours_checkin')) {
-                delete fallbackUpdateData.disable_normal_hours_checkin;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('randomize_gps_radius_meters')) {
-                delete fallbackUpdateData.randomize_gps_radius_meters;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('randomize_gps_checkout')) {
-                delete fallbackUpdateData.randomize_gps_checkout;
-                retryNeeded = true;
-            }
-            if (String(error.message || '').includes('early_shift_window_minutes')) {
-                delete fallbackUpdateData.early_shift_window_minutes;
-                retryNeeded = true;
-            }
-            if (retryNeeded) {
+            let maxRetries = 25;
+            const isMissingColErr = (err) => {
+                if (!err) return false;
+                const msg = `${err.message || ''} ${err.details || ''} ${err.hint || ''}`;
+                return err.code === 'PGRST204'
+                    || err.code === '42703'
+                    || msg.includes('column')
+                    || msg.includes('does not exist')
+                    || msg.includes('schema cache');
+            };
+            while (error && maxRetries > 0 && isMissingColErr(error)) {
+                maxRetries--;
+                let strippedAny = false;
+                const errMsg = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`;
+                const knownOptionalColumns = [
+                    'offsite_job_types',
+                    'special_request_reasons',
+                    'official_locations',
+                    'allow_gallery_fallback',
+                    'filter_shifts_by_realtime',
+                    'disable_normal_hours_checkin',
+                    'randomize_gps_radius_meters',
+                    'randomize_gps_checkout',
+                    'early_shift_window_minutes',
+                    'announcement_enabled',
+                    'announcement_mode',
+                    'announcement_start_date',
+                    'announcement_end_date',
+                    'announcement_title',
+                    'announcement_body',
+                    'announcement_image_url',
+                    'announcement_drive_folder_id',
+                    'announcement_updated_at'
+                ];
+                for (const col of knownOptionalColumns) {
+                    if (errMsg.includes(col) && col in fallbackUpdateData) {
+                        delete fallbackUpdateData[col];
+                        if (col.startsWith('announcement_')) {
+                            fallbackUpdateData.category_colors = {
+                                ...mergedCategoryColors,
+                                _announcement: announcementPayload
+                            };
+                        }
+                        strippedAny = true;
+                    }
+                }
+                if (errMsg.includes('enforce_geofence_radius') || error.code === '42703') {
+                    if ('enforce_geofence_radius' in fallbackUpdateData) {
+                        delete fallbackUpdateData.enforce_geofence_radius;
+                        fallbackUpdateData.category_colors = {
+                            ...(fallbackUpdateData.category_colors || mergedCategoryColors)
+                        };
+                        strippedAny = true;
+                    }
+                }
+                if (!strippedAny) break;
                 const retryRes = await db.from('system_settings').upsert(fallbackUpdateData, { onConflict: 'id' }).select().single();
                 data = retryRes.data;
                 error = retryRes.error;
@@ -220,6 +361,15 @@ export class SettingsModel {
             return { success: false, message: 'ไม่สามารถบันทึกการตั้งค่าระบบได้: ' + error.message };
         }
 
+        try {
+            DatabaseService.getInstance().broadcastRealtimeEvent('settings_updated', {
+                enforce_geofence_radius: enforceGeofenceFlag,
+                announcement_updated_at: announcementPayload.announcement_updated_at
+            });
+        } catch (e) {}
+
+        const enforceGeofenceVal = enforceGeofenceFlag;
+        try { localStorage.setItem('bma_enforce_geofence_radius', String(enforceGeofenceVal)); } catch (e) {}
         const allowGalleryVal = Boolean(payload.allow_gallery_fallback);
         try { localStorage.setItem('bma_allow_gallery_fallback', String(allowGalleryVal)); } catch (e) {}
         const filterRealtimeVal = payload.filter_shifts_by_realtime !== false;
@@ -232,9 +382,22 @@ export class SettingsModel {
         try { localStorage.setItem('bma_randomize_gps_radius_meters', String(randomizeRadiusVal)); } catch (e) {}
         const earlyShiftWindowVal = Math.max(0, Math.min(1440, Number(payload.early_shift_window_minutes ?? 30)));
         try { localStorage.setItem('bma_early_shift_window_minutes', String(earlyShiftWindowVal)); } catch (e) {}
+        const officialLocationsVal = Array.isArray(payload.official_locations) ? payload.official_locations : Config.DEFAULT_SETTINGS.official_locations;
+        try { localStorage.setItem('bma_official_locations_v2', JSON.stringify(officialLocationsVal)); } catch (e) {}
+        const offsiteJobTypesVal = Array.isArray(payload.offsite_job_types) ? payload.offsite_job_types : Config.DEFAULT_SETTINGS.offsite_job_types;
+        try { localStorage.setItem('bma_offsite_job_types', JSON.stringify(offsiteJobTypesVal)); } catch (e) {}
+        const specialReasonsVal = Array.isArray(payload.special_request_reasons) ? payload.special_request_reasons : Config.DEFAULT_SETTINGS.special_request_reasons;
+        try { localStorage.setItem('bma_special_request_reasons', JSON.stringify(specialReasonsVal)); } catch (e) {}
+        const normalizedSavedColors = {
+            ...Config.DEFAULT_SETTINGS.category_colors,
+            ...(data?.category_colors && typeof data.category_colors === 'object' ? data.category_colors : mergedCategoryColors)
+        };
+        delete normalizedSavedColors._announcement;
+
         const normalizedSavedData = {
             ...Config.DEFAULT_SETTINGS,
             ...data,
+            category_colors: normalizedSavedColors,
             allow_gallery_fallback: typeof data?.allow_gallery_fallback === 'boolean'
                 ? data.allow_gallery_fallback
                 : allowGalleryVal,
@@ -252,7 +415,46 @@ export class SettingsModel {
                 : randomizeRadiusVal,
             disable_normal_hours_checkin: typeof data?.disable_normal_hours_checkin === 'boolean'
                 ? data.disable_normal_hours_checkin
-                : disableNormalVal
+                : disableNormalVal,
+            enforce_geofence_radius: typeof data?.enforce_geofence_radius === 'boolean'
+                ? data.enforce_geofence_radius
+                : enforceGeofenceVal,
+            official_locations: Array.isArray(data?.official_locations)
+                ? data.official_locations
+                : officialLocationsVal,
+            offsite_job_types: Array.isArray(data?.offsite_job_types)
+                ? data.offsite_job_types
+                : offsiteJobTypesVal,
+            special_request_reasons: Array.isArray(data?.special_request_reasons)
+                ? data.special_request_reasons
+                : specialReasonsVal,
+            announcement_enabled: typeof data?.announcement_enabled === 'boolean'
+                ? data.announcement_enabled
+                : announcementPayload.announcement_enabled,
+            announcement_mode: data?.announcement_mode !== undefined
+                ? (data.announcement_mode === 'image' ? 'image' : 'text')
+                : announcementPayload.announcement_mode,
+            announcement_start_date: data?.announcement_start_date !== undefined
+                ? String(data.announcement_start_date || '')
+                : announcementPayload.announcement_start_date,
+            announcement_end_date: data?.announcement_end_date !== undefined
+                ? String(data.announcement_end_date || '')
+                : announcementPayload.announcement_end_date,
+            announcement_title: data?.announcement_title !== undefined
+                ? String(data.announcement_title || '')
+                : announcementPayload.announcement_title,
+            announcement_body: data?.announcement_body !== undefined
+                ? String(data.announcement_body ?? '')
+                : announcementPayload.announcement_body,
+            announcement_image_url: data?.announcement_image_url !== undefined
+                ? String(data.announcement_image_url || '')
+                : announcementPayload.announcement_image_url,
+            announcement_drive_folder_id: data?.announcement_drive_folder_id !== undefined
+                ? String(data.announcement_drive_folder_id || '')
+                : announcementPayload.announcement_drive_folder_id,
+            announcement_updated_at: data?.announcement_updated_at !== undefined
+                ? String(data.announcement_updated_at || '')
+                : announcementPayload.announcement_updated_at
         };
         sessionStorage.setItem(Config.STORAGE_KEYS.CACHED_SETTINGS, JSON.stringify(normalizedSavedData));
         window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: normalizedSavedData }));

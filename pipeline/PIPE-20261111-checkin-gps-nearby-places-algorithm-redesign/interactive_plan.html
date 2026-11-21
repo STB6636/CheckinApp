@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan: Checkin GPS 5-Tier Resolution & UI Lock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8">
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800">
+                        <i class="fa-solid fa-satellite-dish"></i> GPS Architecture & UI Redesign
+                    </span>
+                    <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 mt-2">
+                        แผนงานปรับปรุงระบบระบุสถานที่ GPS และความปลอดภัยการลงเวลา
+                    </h1>
+                    <p class="text-sm text-slate-500 mt-1">
+                        รหัสงาน: <span class="font-mono text-teal-700 font-semibold">PIPE-20261111-checkin-gps-nearby-places-algorithm-redesign</span> &bull; 
+                        Build ID: <span class="font-mono text-slate-700 font-semibold">20261111_e2c03bc2</span> &bull;
+                        Git Branch: <span class="font-mono text-indigo-700 font-semibold">Loca-V2</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i> QA Audit: PASS 100%
+                    </span>
+                </div>
+            </div>
+
+            <!-- Executive Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="p-4 rounded-xl bg-teal-50 border border-teal-100">
+                    <div class="text-xs font-bold text-teal-600 uppercase tracking-wider">5-Tier Resolution</div>
+                    <div class="text-base font-bold text-teal-950 mt-1">POI-First & Racing</div>
+                    <p class="text-xs text-teal-700 mt-1">แก้ปัญหาชื่อซอยกลบชื่อสถานที่จริง โดยให้ความสำคัญกับสถานที่จริง (ราชการ, วัด, รพ., ร้านค้า) ก่อนชื่อถนน</p>
+                </div>
+                <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-100">
+                    <div class="text-xs font-bold text-cyan-600 uppercase tracking-wider">GPS Card Header</div>
+                    <div class="text-base font-bold text-cyan-950 mt-1">Spinner + คงชื่อเดิม</div>
+                    <p class="text-xs text-cyan-700 mt-1">หัวการ์ดยังคงเป็น "พื้นที่ใกล้เคียง" (ไม่ซ้ำซ้อน) พร้อมแสดงไอคอนหมุนขณะระบบกำลังค้นหา</p>
+                </div>
+                <div class="p-4 rounded-xl bg-rose-50 border border-rose-100">
+                    <div class="text-xs font-bold text-rose-600 uppercase tracking-wider">Attendance Button Lock</div>
+                    <div class="text-base font-bold text-rose-950 mt-1">ปุ่มล็อกห้ามกดก่อนเสร็จ</div>
+                    <p class="text-xs text-rose-700 mt-1">ปุ่มลงเวลาถูก Disable และเปลี่ยนป้ายเป็น "กำลังค้นหาสถานที่ใกล้เคียง..." จนกว่าจะระบุชื่อเสร็จสมบูรณ์</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SubAgents Responsibilities Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-indigo-600"></i> โครงสร้างและหน้าที่ความรับผิดชอบของ SubAgents (Lean Architecture)
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-left border-b border-slate-200">
+                            <th class="p-3 font-bold">Agent</th>
+                            <th class="p-3 font-bold">Model</th>
+                            <th class="p-3 font-bold">หน้าที่และความรับผิดชอบหลัก</th>
+                            <th class="p-3 font-bold">กฎเหล็กและข้อกำหนด</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Orchestrator
+                            </td>
+                            <td class="p-3 text-xs font-mono text-slate-600">Current Model</td>
+                            <td class="p-3 text-slate-700">ควบคุมทั้ง Pipeline, วางแผนงาน, สั่งการ SubAgents, ประเมินผล, บันทึก Second Brain, จัดการ Git Commit & Push</td>
+                            <td class="p-3 text-xs text-slate-600">ห้ามสั่ง Git Push ก่อนได้รับคำสั่งอนุมัติจากผู้ใช้เด็ดขาด</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span> subagent_01_implementer
+                            </td>
+                            <td class="p-3 text-xs font-mono text-teal-700">Flash 3.8 High</td>
+                            <td class="p-3 text-slate-700">Lead Implementer: ผ่าตัดแก้ไขเฉพาะจุดใน AttendanceModel.js, checkin.html, CheckinController.js</td>
+                            <td class="p-3 text-xs text-slate-600">STRICT_SURGICAL_SCOPE_ONLY และต้องรัน vscode_ast_mapper.mjs ซิงค์แคชทุกครั้ง</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-slate-900 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> subagent_02_qa_auditor
+                            </td>
+                            <td class="p-3 text-xs font-mono text-emerald-700">Flash 3.8 High</td>
+                            <td class="p-3 text-slate-700">QA Auditor: ตรวจ Syntax (node --check), รัน Unit & Mock Tests, ตรวจ Cache Sync 100%, ตรวจ git diff main</td>
+                            <td class="p-3 text-xs text-slate-600">ต้องยืนยันว่า buildId ใน version.json ตรงกับ 8 หน้า HTML 100% จึงจะ PASS</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Interactive Simulation Widget -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-laptop-code text-teal-600"></i> การจำลองพฤติกรรม UI จริง (Live Interactive UI Simulator)
+                </h2>
+                <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-semibold">คลิกปุ่มเพื่อทดสอบ</span>
+            </div>
+
+            <!-- Mock Card -->
+            <div class="max-w-md mx-auto bg-white border border-teal-100 rounded-2xl p-5 shadow-sm space-y-4">
+                <!-- GPS Card Header -->
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-teal-600 flex items-center justify-center text-white text-xs">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </span>
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-teal-800">
+                            <span id="demoHeaderTitle">พื้นที่ใกล้เคียง</span>
+                            <i id="demoSpinner" class="fa-solid fa-spinner fa-spin text-teal-600 text-[10px] hidden"></i>
+                            <i id="demoInfoIcon" class="fa-solid fa-circle-info text-[10px] text-teal-600/70"></i>
+                        </div>
+                    </div>
+                    <span id="demoBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">พร้อมใช้งาน</span>
+                </div>
+
+                <!-- GPS Location Text -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div class="text-[11px] text-slate-500">สถานที่ที่ตรวจพบ:</div>
+                    <div id="demoLocationText" class="text-sm font-bold text-slate-900 mt-0.5">บริเวณ สำนักเทศกิจ (อาคารสำนักงาน)</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button id="demoSubmitBtn" class="w-full py-3 px-4 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 shadow-md">
+                    <i id="demoSubmitIcon" class="fa-solid fa-fingerprint"></i>
+                    <span id="demoSubmitLabel">บันทึกเวลาปฏิบัติราชการ (เข้างาน)</span>
+                </button>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <button onclick="startSearchingState()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-play"></i> 1. จำลองสถานะ "กำลังค้นหาสถานที่" (ล็อกปุ่ม + แสดง Spinner)
+                </button>
+                <button onclick="finishSearchingState()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-check"></i> 2. จำลองสถานะ "ค้นพบสถานที่เสร็จสิ้น" (ปลดล็อกปุ่ม + ซ่อน Spinner)
+                </button>
+            </div>
+        </div>
+
+        <!-- Git Push Section -->
+        <div class="bg-slate-900 text-slate-100 rounded-2xl p-6 shadow-sm space-y-4">
+            <h2 class="text-lg font-bold flex items-center gap-2 text-emerald-400">
+                <i class="fa-brands fa-github"></i> ขั้นตอนการ Push ขึ้น GitHub Branch Loca-V2 (เมื่อได้รับอนุมัติ)
+            </h2>
+            <p class="text-xs text-slate-400">
+                ระบบจะรันตามคำสั่งมาตรฐานต่อไปนี้ทันทีที่ได้รับคำสั่งอนุมัติจากผู้ใช้ (ห้าม push ล่วงหน้าเด็ดขาด):
+            </p>
+            <div class="bg-slate-950 p-4 rounded-xl font-mono text-xs text-slate-200 space-y-1.5 border border-slate-800">
+                <p class="text-slate-500"># 1. ตรวจสอบสถานะ Working Directory</p>
+                <p class="text-emerald-300">git status</p>
+                <p class="text-slate-500 mt-2"># 2. Stage ไฟล์ทั้งหมดที่ผ่าน QA Audit 100%</p>
+                <p class="text-emerald-300">git add -A</p>
+                <p class="text-slate-500 mt-2"># 3. บันทึก Commit ด้วย Conventional Commit Format</p>
+                <p class="text-emerald-300">git commit -m "feat(gps): implement 5-tier nearby places resolution, header searching spinner, and checkin button lock (build 20261111_e2c03bc2)"</p>
+                <p class="text-slate-500 mt-2"># 4. Push การเปลี่ยนแปลงขึ้น Remote Branch Loca-V2</p>
+                <p class="text-emerald-300">git push origin Loca-V2</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let isSearching = false;
+
+        function startSearchingState() {
+            isSearching = true;
+            document.getElementById('demoSpinner').classList.remove('hidden');
+            document.getElementById('demoInfoIcon').classList.add('hidden');
+            document.getElementById('demoLocationText').textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+            document.getElementById('demoBadge').className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800';
+            document.getElementById('demoBadge').textContent = 'กำลังระบุพิกัด';
+
+            const btn = document.getElementById('demoSubmitBtn');
+            btn.disabled = true;
+            btn.className = 'w-full py-3 px-4 rounded-xl font-bold text-white bg-slate-400 opacity-60 cursor-not-allowed pointer-events-none flex items-center justify-center gap-2 shadow-none';
+            document.getElementById('demoSubmitLabel').textContent = 'กำลังค้นหาสถานที่ใกล้เคียง...';
+            document.getElementById('demoSubmitIcon').className = 'fa-solid fa-spinner fa-spin';
+        }
+
+        function finishSearchingState() {
+            isSearching = false;
+            document.getElementById('demoSpinner').classList.add('hidden');
+            document.getElementById('demoInfoIcon').classList.remove('hidden');
+            document.getElementById('demoLocationText').textContent = 'บริเวณ สำนักเทศกิจ (อาคารสำนักงาน)';
+            document.getElementById('demoBadge').className = 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800';
+            document.getElementById('demoBadge').textContent = 'พร้อมใช้งาน';
+
+            const btn = document.getElementById('demoSubmitBtn');
+            btn.disabled = false;
+            btn.className = 'w-full py-3 px-4 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 shadow-md';
+            document.getElementById('demoSubmitLabel').textContent = 'บันทึกเวลาปฏิบัติราชการ (เข้างาน)';
+            document.getElementById('demoSubmitIcon').className = 'fa-solid fa-fingerprint';
+        }
+    </script>
+</body>
+</html>

@@ -1,65 +1,52 @@
-workflow_name: "Enterprise_AI_Software_Engineering_Pipeline"
-version: "1.0.0"
+workflow_name: "Lean_AI_Software_Engineering_Pipeline"
+version: "3.5.0"
 
 global_constraints:
   minimum_model_version: "Flash 3.8 High"
   fallback_behavior: "reject_if_below_minimum_model"
   communication_format: "Structured_Markdown_and_JSON_Handoff"
-  code_completeness_policy: "NO_PLACEHOLDERS_OR_TRUNCATION"
+  code_completeness_policy: "NO_PLACEHOLDERS_IN_TARGET_SCOPE"
+  token_optimization_policy: "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY"
+  strict_surgical_policy: "STRICT_SURGICAL_SCOPE_ONLY"
+  git_push_policy: "STRICTLY_PROHIBITED_UNLESS_EXPLICIT_USER_COMMAND"
 
 agents:
   orchestrator:
     id: "agent_00_orchestrator"
-    role: "Master Technical Orchestrator & Project Manager"
+    role: "Master Technical Orchestrator & Knowledge Manager"
     model: "Flash 3.8 High"
     temperature: 0.1
     top_p: 0.9
     max_output_tokens: 16384
+    responsibilities:
+      - "Phase 0 Pre-Flight direct context retrieval (Second Brain, Skills, Codebase Map locator)"
+      - "Dual Plan creation (implementation_plan.md + interactive_plan.html)"
+      - "SubAgent coordination and validation gates"
+      - "Phase 6 Post-Flight knowledge ingestion & skill extraction"
+      - "Final user summary reporting"
 
-  subagent_requirements:
-    id: "agent_01_ba_sa"
-    role: "Requirements & System Analyst"
-    model: "Flash 3.8 High"
-    temperature: 0.2
-    top_p: 0.9
-    max_output_tokens: 16384
-
-  subagent_architect:
-    id: "agent_02_architect"
-    role: "System Architect & Database Designer"
-    model: "Flash 3.8 High"
-    temperature: 0.1
-    top_p: 0.85
-    max_output_tokens: 32768
-
-  subagent_backend:
-    id: "agent_03_backend"
-    role: "Senior Backend Engineer"
+  subagent_implementer:
+    id: "subagent_01_implementer"
+    role: "Surgical Implementer & AST Codebase Map Syncer"
     model: "Flash 3.8 High"
     temperature: 0.1
     top_p: 0.8
     max_output_tokens: 65536
+    responsibilities:
+      - "Read only target line ranges (StartLine-EndLine ± 10 lines)"
+      - "Modify only approved code sections (STRICT_SURGICAL_SCOPE_ONLY)"
+      - "100% complete working code (NO_PLACEHOLDERS_IN_TARGET_SCOPE)"
+      - "Sync .ai_map/ via node ./.ai_map/vscode_ast_mapper.mjs"
 
-  subagent_frontend:
-    id: "agent_04_frontend"
-    role: "Senior Frontend & UI/UX Engineer"
-    model: "Flash 3.8 High"
-    temperature: 0.15
-    top_p: 0.85
-    max_output_tokens: 65536
-
-  subagent_qa_sec:
-    id: "agent_05_qa_security"
-    role: "QA Automation & Application Security Engineer"
+  subagent_qa_auditor:
+    id: "subagent_02_qa_auditor"
+    role: "QA Auditor & Branch Main Diff Specialist"
     model: "Flash 3.8 High"
     temperature: 0.1
     top_p: 0.8
     max_output_tokens: 32768
-
-  subagent_devops:
-    id: "agent_06_devops"
-    role: "DevOps & Infrastructure Engineer"
-    model: "Flash 3.8 High"
-    temperature: 0.1
-    top_p: 0.8
-    max_output_tokens: 32768
+    responsibilities:
+      - "Audit implementation against all approved plan items"
+      - "Verify syntax (node --check) and run test suites"
+      - "Audit git diff main to verify branch compatibility and zero unintended alterations"
+      - "Report findings and recommendations back to Orchestrator"

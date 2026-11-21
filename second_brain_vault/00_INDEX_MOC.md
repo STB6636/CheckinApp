@@ -2,12 +2,12 @@
 id: "sb_00_index_moc"
 title: "Second Brain — Map of Content (MOC)"
 type: "index"
-last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
+last_updated_phase: "PIPE-20261121-switch-schema-staging-to-public"
 ---
 
-# 🧠 Second Brain — Map of Content (v3.0)
+# 🧠 Second Brain — Map of Content (v3.5 Lean Workflow)
 
-> อ่านไฟล์นี้เป็นอันดับแรกเสมอ (`agent_07_second_brain` / `RETRIEVE`) แล้วติดตาม `[[Wiki-links]]` ไปยังโน้ตที่เกี่ยวข้อง
+> อ่านไฟล์นี้เป็นอันดับแรกเสมอ (`Orchestrator` / `RETRIEVE`) แล้วติดตาม `[[Wiki-links]]` ไปยังโน้ตที่เกี่ยวข้อง
 > ทุกครั้งที่สร้าง/อัปเดตโน้ต (`INGEST_AND_LINK`) ต้องเพิ่มลิงก์ในหมวดที่ถูกต้องด้านล่าง และเชื่อมโยงกับ `Flow ID` ใน `.ai_map/00_PROCESS_FLOW_MAP.md`
 
 ## 01 — Architecture Decisions (ADR)
@@ -15,6 +15,31 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[adr_002_mobile_checkin_sticky_drawer]] — ADR-002: สถาปัตยกรรมหน้าลงเวลามือถือแบบ Zero-Scroll ด้วย Sticky Bottom Bar, Two-Tier Banner และ Hamburger History Drawer (Flow 1, 2, 4)
 - [[adr_003_double_layer_rbac_hierarchy]] — ADR-003: สถาปัตยกรรม Double-Layer RBAC 3 ระดับ (SuperAdmin, Admin กอง, Admin ฝ่าย) ใน AuthService.js และ ReportsController.js (`FLOW_AUTH_01`, `FLOW_REPORTS_01`, `FLOW_USERS_01`)
 - [[adr_004_checkin_viewport_lock_and_drawer]] — ADR-004: สถาปัตยกรรม Off-canvas Slide Drawer และ Zero-Scroll Viewport Lock บน checkin.html พร้อมการรักษา DOM IDs 98 จุด (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
+- [[adr_005_lean_2_subagent_ai_workflow]] — ADR-005: สถาปัตยกรรม Lean 2-SubAgent + 1-Orchestrator AI Workflow (v3.5) เพื่อลดขั้นตอนและประหยัดโทเคน (`subagent_01_implementer` + `subagent_02_qa_auditor`)
+- [[ADR_0018_Tri_Layer_Realtime_Differential_Sync_Robustness]] — ADR-0018: สถาปัตยกรรม Tri-Layer Realtime Differential Sync Robustness & Fail-Safe Auto-Healing (Broadcast + Supabase Realtime + Watermark Polling) (`FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0019_Camera_Lifecycle_Stream_Guard]] — ADR-0019: สถาปัตยกรรม Camera Lifecycle MediaStream Guard & Hardware Teardown Protocol ป้องกันกล้องดับและแก้ปัญหา "กล้องยังไม่พร้อมใช้งาน" (`FLOW_PHOTO_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0020_Reports_Print_PDF_PageBreak_Architecture]] — ADR-0020: สถาปัตยกรรม Reports Print PDF Pagination & Paged Media Architecture แก้ปัญหา Header หลุดคนละหน้า (`FLOW_REPORTS_01`)
+- [[ADR_0021_GPS_5Tier_Nearby_Places_Resolution_Architecture]] — ADR-0021: สถาปัตยกรรม GPS 5-Tier Nearby Places Resolution Architecture แก้ปัญหาพิกัดหลุด "ใกล้เคียงซอย xxxx (พิกัด)" (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0022_GPS_Hardware_Cache_Busting_And_Live_Clock_Format]] — ADR-0022: สถาปัตยกรรม GPS Hardware Cache-Busting, Re-entrancy Resilience & Live Clock Format แก้ปัญหารีเฟรช GPS ค้างแคชเดิม และปรับเวลา HH:mm น. (`FLOW_GPS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0023_Login_Version_Badge_And_OOP_System_Update_Modal]] — ADR-0023: สถาปัตยกรรม Login Version Badge & Dynamic OOP System Update Modal แสดงเวอร์ชันและกล่องแจ้งเตือนอัปเดตระบบอัตโนมัติ (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0024_ArcGIS_Primary_POI_Resolution_Architecture]] — ADR-0024: สถาปัตยกรรม ArcGIS World Geocoding Primary POI Resolution & 4-Tier Priority Architecture พร้อมการล็อกรัศมี 400 ม. และการคัดกรองคำต้องห้าม (`FLOW_GPS_01`, `FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`)
+- [[ADR_0025_unified_arcgis_forward_geocoding_architecture]] — ADR-0025: สถาปัตยกรรม Unified ArcGIS Forward Geocoding พร้อม Smart Query Normalizer, 3-Tier Fallback, และ Sequence Guard สำหรับ `#modalSpecialRequest` และ `#modalOffsiteMapSearch` (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_GPS_01`)
+- [[ADR_0026_remove_special_request_button_from_shift_card]] — ADR-0026: สถาปัตยกรรม Shift Selection Card Zero-Scroll Optimization ลบปุ่มคำขอกรณีพิเศษออกจากการ์ดกะ พร้อมรักษา DOM ID Invariance สำหรับการทดสอบและ Controller (`FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0027_reports_table_gps_and_remarks_redesign]] — ADR-0027: สถาปัตยกรรมตารางรายงานการลงเวลา 5 TAG ปรับคอลัมน์พิกัด GPS 2 บรรทัด (ไร้ค่าพิกัดตัวเลข) และการปรับปรุงคอลัมน์หมายเหตุตามมาตรฐานราชการ (`FLOW_REPORTS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0028_special_request_mode_and_reports_remarks_redesign]] — ADR-0028: สถาปัตยกรรมฟอร์มคำขอลงเวลากรณีพิเศษ [ในสถานที่/นอกสถานที่], การอ้างอิงพิกัดแรกขาออก และการแสดงผลหมายเหตุ 2 บรรทัดตามมาตรฐานราชการ (`FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_REPORTS_01`)
+- [[ADR_0029_split_dropdowns_and_special_request_official_locations]] — ADR-0029: สถาปัตยกรรมแยกตัวเลือก "ลักษณะงาน" นอกสถานที่ และ "เหตุผลลงเวลากรณีพิเศษ" พร้อมระบบเลือกสถานที่ราชการทางการสำหรับคำขอในสถานที่ (`FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`)
+- [[ADR_0030_approvals_two_line_remark_badge]] — ADR-0030: สถาปัตยกรรมป้ายหมายเหตุ 2 บรรทัดในตารางอนุมัติคำขอกรณีพิเศษ (แยกเหตุผลหลักบรรทัดที่ 1 และลักษณะงานนอกสถานที่บรรทัดที่ 2 พร้อมคงความเข้ากันได้กับ WFH และโหมด ONSITE) (`FLOW_APPROVALS_01`, `FLOW_SPECIAL_REQ_01`)
+- [[ADR_0031_mobile_logout_zindex_session_7day_and_cross_browser_camera]] — ADR-0031: การจัดลำดับชั้น Z-Index กล่องยืนยันออกจากระบบมือถือ (`.swal2-container: 99990`), การรักษา Session 7 วันข้ามการล้างแคช (`PRESERVE_KEYS`), และการปรับปรุงวงจรสิทธิ์กล้องข้าม 4 เบราว์เซอร์ (`FLOW_LAYOUT_01`, `FLOW_AUTH_01`, `FLOW_CHECKIN_01`, `FLOW_PHOTO_01`)
+- [[ADR_0032_standalone_boot_loading_screen_and_3d_dual_logo_flip]] — ADR-0032: สถาปัตยกรรมหน้าโหลดเข้าระบบแบบแยกไฟล์ (`loading.html` + `LoadingController.js`), เส้นทางเข้าใช้งาน 3 กรณี, และ Intact Civic Logo Stage จาก `system_settings.logo_url` ตั้งแต่ 0ms (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`)
+- [[ADR_0033_db_driven_system_announcement_tab7_and_v2_10_sync]] — ADR-0033: สถาปัตยกรรมประกาศระบบจากฐานข้อมูล (`Tab 7: ประกาศระบบ`), Strict Google Drive Upload (`DriveUploadBridge.gs`), SQL Migration (`staging` + แก้ Drift 5 จุด `public`), และการอัปเดตเวอร์ชัน `v2.10.0` พร้อมคู่มือ 4 ไฟล์ (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0034_sidebar_active_state_watermark_reentrancy_and_spa_hygiene]] — ADR-0034: แก้ปัญหา Sidebar กระโดดกลับ "ภาพรวม" หลังบันทึกตั้งค่าระบบ (Authoritative `#currentActivePage`, `.active` + Badge Preservation ใน `#renderSidebar`, ตัดวงจร Re-entrancy `refreshNotificationBell`, และ Full Settings Hydration) (`FLOW_LAYOUT_01`, `FLOW_SETTINGS_01`, `FLOW_APPROVALS_01`)
+- [[ADR_0035_tab1_announcement_drive_folder_relocation_and_sync_invariance]] — ADR-0035: ย้ายช่องโฟลเดอร์ Google Drive เก็บรูปประกาศ (`#setAnnouncementDriveFolderId`) ไปแท็บ 1 (`ข้อมูลหน่วยงาน และข้อความระบบ`), รักษา `announcement_updated_at` Invariance, และปุ่มลัด + สถานะในแท็บ 7 (`FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0036_mobile_card_lists_and_drawer_ajax_spa]] — ADR-0036: การ์ดประวัติการลงเวลาและคำขอพิเศษมุมมองมือถือ (`< lg`), การคำนวณกะข้ามวัน +1 วัน, เมนูแฮมเบอเกอร์ Head/Body และ AJAX SPA แยกหน้าพร้อมสลับสีปุ่ม BMA + รักษา DOM ID `adr_004` (`FLOW_CHECKIN_01`, `FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`)
+- [[ADR_0037_admin_mobile_cards_users_2tab_rbac_badges_and_hydrogen_high]] — ADR-0037: การ์ดมุมมองมือถือ 5 หน้าผู้ดูแลระบบ, จัดการบัญชีผู้ใช้งาน 2 แท็บ + Count Badges (Sidebar/Bottom Nav/Tabs) พร้อม RBAC Guard และปรับมาตรฐานโมเดล SubAgents เป็น Gemini 4 Hydrogen (High) (`FLOW_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_LAYOUT_01`)
+- [[ADR_0038_mobile_modals_dvh_3zone_scroll_and_z9990_hierarchy]] — ADR-0038: สถาปัตยกรรม Modal มือถือมาตรฐาน 3 ส่วนด้วย `100dvh` + `my-auto` (แก้ตัดขอบบน-ล่าง & Negative-Y Overflow), ลำดับชั้น `z-[9990]`/`z-[9999]`/`99990`, `backdrop-blur-sm` และ `UIHelpers` Modal Lifecycle (`FLOW_LAYOUT_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`, `FLOW_REPORTS_01`, `FLOW_SETTINGS_01`, `FLOW_AUTH_01`, `FLOW_CHECKIN_01`)
+- [[ADR_0039_Time_Correction_Request_And_Executive_RBAC]] — ADR-0039: ระบบขอแก้ไขเวลาเข้า-ออกงาน (`time-corrections.html`), กฎคำนวณแก้เฉพาะขาผิดปกติ + หมายเหตุ `(แก้ไขเวลา)`, Double-Layer Executive RBAC (5 ตำแหน่งผู้บริหารสำหรับคำขอของ Admin), Drawer Layout สมมาตร 2×2 / `row-span-2`, และ Cache Sync 10 หน้า HTML (`FLOW_TIME_CORRECTION_01`, `FLOW_CHECKIN_01`, `FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_REPORTS_01`, `FLOW_DASHBOARD_01`)
+- [[ADR_0040_Reports_Edit_Modal_Checkout_Logic_And_User_Priority_Guard]] — ADR-0040: ออกแบบ Logic ใหม่ฟอร์มบันทึก/แก้ไขเวลา (`reports.html`) ป้องกันเติม 16:30 อัตโนมัติ, Disabled บุคลากร+วันที่ตอนแก้ไข, ปุ่มลัดตามกะ/ล้าง, รักษา `shift_name`/`is_special_request` บน UPDATE และ User-Priority Duplicate Guard (`FLOW_REPORTS_01`, `FLOW_TIME_CORRECTION_01`)
+- [[ADR_0041_switch_active_schema_staging_to_public_and_unified_sql]] — ADR-0041: เปลี่ยน Active Schema จาก `staging` เป็น `public` (`Config.SUPABASE_SCHEMA`), ปรับข้อความ SQL Hint แบบ Dynamic และรวมสคริปต์ Migration `sql/migration_public_full_loca_v2_sync.sql` ครบ `v2.8–v2.11` พร้อมป้องกันข้อมูลเก่า 691 แถวด้วย `DEFAULT NULL` (`FLOW_AUTH_01`, `FLOW_LAYOUT_01`, `FLOW_CHECKIN_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_TIME_CORRECTION_01`)
 
 ## 02 — Domain Logic & Rules
 - [[rule_compact_action_buttons_and_approvals]] — Domain Rule: มาตรฐานปุ่มคำสั่งไอคอนเดี่ยว (Single-Action Icon Buttons w-8.5 h-8.5) ในตารางอนุมัติพิเศษ และการจัดรูปแบบตำแหน่ง+ระดับติดกัน (`FLOW_SPECIAL_REQ_01`, `FLOW_DASHBOARD_01`)
@@ -29,11 +54,17 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 - [[rule_special_request_custom_gps_and_jitter]] — Domain Rule: ระบบสุ่มระยะ GPS ขาออกงานแบบค้นหาจนกว่าจะได้ค่า และการปักหมุดแผนที่ในคำขอลงเวลากรณีพิเศษ (`FLOW_GPS_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`)
 - [[rule_reports_hierarchical_org_filter]] — Domain Rule: ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับ ([สำนักงาน/กอง] > [ส่วน/ฝ่าย] > [กลุ่มงาน]) ในหน้ารายงานการลงเวลา (`FLOW_REPORTS_01`)
 - [[rule_users_hierarchical_org_filter_and_grouping]] — Domain Rule: ตัวกรองโครงสร้างองค์กรแบบลำดับชั้น 3 ระดับและมุมมองจัดกลุ่ม 2 รูปแบบในหน้าจัดการบัญชีผู้ใช้งาน (`FLOW_USERS_01`, `FLOW_SETTINGS_01`)
-
 - [[rule_early_shift_realtime_filter]] — Domain Rule: ระบบอนุญาตให้เริ่มเลือกทำงานก่อนเวลาเริ่มงานได้ (Early Shift Real-time Filter Window) พร้อมการตั้งค่านาทีล่วงหน้า (FLOW_SETTINGS_01, FLOW_CHECKIN_01)
-
 - [[rule_hide_recorded_shifts_and_disable_btn]] — Domain Rule: ซ่อนช่วงเวลาที่ลงเวลาแล้ว และปิดปุ่มบันทึกเมื่อไม่มีตัวเลือกช่วงเวลา (FLOW_CHECKIN_01, FLOW_SETTINGS_01)
 - [[rule_format_position_and_hide_non_level]] — Domain Rule: การจัดรูปแบบแสดงผลตำแหน่งและระดับ (ซ่อน 'ไม่มี', ซ่อนระดับผู้บริหาร, และเว้นวรรค 1 ช่องลูกจ้างประจำ) (`FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_APPROVALS_01`, `FLOW_USERS_01`, `FLOW_CHECKIN_01`)
+- [[rule_loca_v2_onsite_offsite_nextstep_and_staging_schema]] — Domain Rule: ระบบลงเวลา [ในสถานที่/นอกสถานที่] รัศมีหลายสถานที่, UI รูปแบบ Next Step 2 ขั้นตอน, ตัวกรองสังกัดหน้าบุคลากร และการแยก Schema `staging` (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`)
+- [[rule_loca_v2_ultra_zero_scroll_fullscreen_camera_and_modal_map]] — Domain Rule: สถาปัตยกรรมหน้าลงเวลามือถือ Ultra Zero-Scroll (~345px) พร้อมกล้องเต็มจอสด และโมดอลแผนที่ Leaflet On-Demand (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_PHOTO_01`, `FLOW_SETTINGS_01`)
+- [[rule_multi_admin_realtime_sync_and_cache_defense]] — Domain Rule: ระบบ Realtime Concurrency Sync ป้องกันคำขอชนกันของผู้ดูแลระบบ และสถาปัตยกรรมป้องกันแคช 4 ชั้น (`FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_CHECKIN_01`, `FLOW_DASHBOARD_01`)
+- [[rule_material_tailwind_gps_card_elevation]] — Domain Rule: มาตรฐานการ์ดพิกัด GPS สไตล์ Material Tailwind Inset Header และปุ่มล็อกขอบล่าง 100% (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_LAYOUT_01`)
+- [[rule_gps_map_card_replica_and_shutter_overlay]] — Domain Rule: การ์ดพิกัด GPS แผนที่จริงในตัวการ์ด (Embedded Leaflet) หัวการ์ดสีเทานวล และปุ่มชัตเตอร์รีเฟรชลอยตรงกลางด้านล่าง (`FLOW_CHECKIN_01`, `FLOW_GPS_01`, `FLOW_LAYOUT_01`)
+- [[rule_remote_version_hard_cache_purge_autostamp]] — Domain Rule: ระบบบังคับเคลียร์แคชอัตโนมัติ (Remote version.json + Hard Cache Purge + Auto-Stamp) และข้อกำหนดเหล็กของโปรเจกต์ (`FLOW-01` – `FLOW-08`)
+- [[rule_realtime_differential_dom_diffing_and_multi_admin_concurrency]] — Domain Rule: ระบบ Realtime DOM Diffing & Multi-Admin Concurrency Engine ครอบคลุม 5 หน้าจอหลักแอดมิน (`FLOW_LAYOUT_01`, `FLOW_SPECIAL_REQ_01`, `FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_PERSONNEL_01`, `FLOW_USERS_01`)
+- [[rule_realtime_settings_hotreload_and_geofence_toggle]] — Domain Rule: ระบบ Realtime Settings Hot-Reload, สวิตช์ระบบรัศมี และ Realtime Differential Sync (Dashboard & Reports) (`FLOW_SETTINGS_01`, `FLOW_CHECKIN_01`, `FLOW_ADMIN_DASHBOARD_01`, `FLOW_REPORTS_01`, `FLOW_LAYOUT_01`)
 
 ## 03 — Bug Post-mortems & Fixes
 - [[fix_v19_realtime_shift_filter_and_personnel_modal]] — Post-mortem V19: แก้ไข `filter_shifts_by_realtime` (Flow 3, 5, 11) และปรับปรุง Layout ฟอร์มประวัติบุคลากรไร้ข้อมูลซ้ำซ้อน (Flow 9)
@@ -46,13 +77,17 @@ last_updated_phase: "PIPE-20261026-enhance-approval-perm-checkin-overview"
 
 ## Codebase Map (`.ai_map/`)
 - สารบัญกระบวนการทำงานและ Call Chain: `.ai_map/00_PROCESS_FLOW_MAP.md`
-- สารบัญไฟล์และฟังก์ชันพร้อมเลขบรรทัด (30 ไฟล์ / 367 สัญลักษณ์): `.ai_map/01_FILE_FUNCTION_INDEX.md`
+- สารบัญไฟล์และฟังก์ชันพร้อมเลขบรรทัด (77 ไฟล์ / 554 สัญลักษณ์): `.ai_map/01_FILE_FUNCTION_INDEX.md`
 - ดัชนีโครงสร้างโค้ด JSON: `.ai_map/CODE_INDEX.json`
 - สคริปต์สแกนอัตโนมัติ (0 AI Tokens): `.ai_map/vscode_ast_mapper.mjs`
 
 ## Skill Registry (`ai_skills_registry/`)
 - ดัชนีสกิล: `ai_skills_registry/SKILL_CATALOG.json`
-- [[vscode_surgical_codebase_mapping]] — VS Code Surgical Context & Automated AST Codebase Mapping (`v3.0.0`)
+- [[vscode_surgical_codebase_mapping]] — VS Code Surgical Context & Automated AST Codebase Mapping (`v3.5.0`)
 - [[client_side_hierarchical_rbac]] — Client-Side 3-Tier Granular Permission Gate Pattern (`v1.0.0`)
 - [[offcanvas_drawer_race_free_tab_mounting]] — Zero-Scroll Viewport-Locked & Race-Free Mobile Slide Drawer Pattern (`v1.0.0`)
 - [[civil_servant_position_level_formatter]] — Civil Service Position & Level String Normalizer Pattern (`v1.0.0`)
+- [[remote_version_hard_cache_purge]] — Remote version.json + Hard Cache Purge + Auto-Stamp Pipeline Pattern (`v1.0.0`)
+- [[multi_tier_resilient_reverse_geocoding]] — Multi-Tier Resilient Reverse Geocoding & POI Resolution Pattern (`v1.0.0`)
+- [[viewport_bounded_3zone_modal_lifecycle]] — Viewport-Bounded 3-Zone Responsive Modal Lifecycle Pattern (`v1.0.0`)
+- [[leg_selective_correction_and_executive_rbac]] — Leg-Selective Attendance Correction, Idempotent Remark Suffix & Double-Layer Executive RBAC Pattern (`v1.0.0`)

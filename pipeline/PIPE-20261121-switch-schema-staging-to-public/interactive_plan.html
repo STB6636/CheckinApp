@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Plan — PIPE-20261121-switch-schema-staging-to-public</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    body { font-family: 'Sarabun', 'Noto Sans Thai', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
+    <!-- Header -->
+    <header class="rounded-2xl bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white p-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur">
+            <i class="fa-solid fa-database"></i> PLAN MODE — รออนุมัติ (ยังไม่ Proceed)
+          </span>
+          <h1 class="text-xl sm:text-2xl font-extrabold mt-2">
+            เปลี่ยน Schema จาก <code>staging</code> → <code>public</code> &amp; เตรียม SQL Migration ฉบับสมบูรณ์
+          </h1>
+          <p class="text-xs sm:text-sm text-emerald-100 mt-1">
+            Task ID: <code>PIPE-20261121-switch-schema-staging-to-public</code> | Branch: <code>Loca-V2</code>
+          </p>
+        </div>
+        <div class="bg-white/15 backdrop-blur rounded-xl px-4 py-3 text-xs space-y-1">
+          <div><i class="fa-solid fa-code-branch mr-1.5"></i>GitHub: <strong>STB6636/CheckinApp (Loca-V2)</strong></div>
+          <div><i class="fa-solid fa-robot mr-1.5"></i>SubAgents: <strong>Gemini 4 Hydrogen (High)</strong></div>
+          <div><i class="fa-solid fa-shield-halved mr-1.5"></i>Cache Sync: <strong>10 Root HTML Files</strong></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Live DB Diff Summary -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-table-columns text-emerald-600"></i>
+        ส่วนต่างโครงสร้างจริงบน Supabase (<code>public</code> vs <code>staging</code>)
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50">
+          <div class="font-bold text-amber-900">system_settings</div>
+          <div class="text-lg font-extrabold text-amber-700 mt-1">29 → 42 คอลัมน์</div>
+          <div class="text-slate-600 mt-1">+13 คอลัมน์ (Loca-V2 + Announcement v2.10)</div>
+        </div>
+        <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/50">
+          <div class="font-bold text-rose-900">attendance_logs</div>
+          <div class="text-lg font-extrabold text-rose-700 mt-1">25 → 40 คอลัมน์</div>
+          <div class="text-slate-600 mt-1">+15 คอลัมน์ (Loca-V2 6 + Time Correction 9) • 691 แถวเดิม</div>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+          <div class="font-bold text-emerald-900">personnel</div>
+          <div class="text-lg font-extrabold text-emerald-700 mt-1">15 / 15 คอลัมน์</div>
+          <div class="text-slate-600 mt-1">ตรงกัน 100% (250 แถว)</div>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50">
+          <div class="font-bold text-emerald-900">user_accounts</div>
+          <div class="text-lg font-extrabold text-emerald-700 mt-1">16 / 16 คอลัมน์</div>
+          <div class="text-slate-600 mt-1">ตรงกัน 100% (251 แถว)</div>
+        </div>
+      </div>
+      <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900">
+        <i class="fa-solid fa-circle-info mr-1.5"></i>
+        <strong>จุดป้องกันข้อมูลย้อนหลัง 691 แถว:</strong> ใน <code>sql/migration_public_full_loca_v2_sync.sql</code> จะกำหนด <code>location_mode</code> และ <code>check_out_location_mode</code> เป็น <code>TEXT DEFAULT NULL</code> เพื่อไม่บังคับติดป้าย <code>ONSITE</code> ให้ข้อมูลเก่าและให้ระบบ Fallback คำนวณจากพิกัด GPS/หมายเหตุได้ถูกต้อง
+      </div>
+    </section>
+
+    <!-- File Audit Matrix -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-file-code text-emerald-600"></i>
+        รายการไฟล์ที่เกี่ยวข้องทั้งหมด
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+              <th class="py-2.5 px-3">ไฟล์</th>
+              <th class="py-2.5 px-3">จุดที่พบ</th>
+              <th class="py-2.5 px-3">การดำเนินการ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="py-2.5 px-3 font-mono font-semibold text-emerald-800">assets/js/core/Config.js</td>
+              <td class="py-2.5 px-3">L9: <code>SUPABASE_SCHEMA = 'staging'</code></td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">แก้ไข → 'public'</span></td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-mono font-semibold text-emerald-800">assets/js/models/AttendanceModel.js</td>
+              <td class="py-2.5 px-3">L2708: ข้อความอ้าง <code>alter_v2_11_time_correction_staging.sql</code></td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">แก้ให้อิง activeSchema</span></td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-mono font-semibold text-emerald-800">sql/migration_public_full_loca_v2_sync.sql</td>
+              <td class="py-2.5 px-3">ไฟล์ SQL ใหม่ (รวม v2.8 – v2.11 ครบจบในไฟล์เดียว)</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold">สร้างใหม่ (Idempotent)</span></td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-mono text-slate-600">DatabaseService.js / AppLayout.js / CheckinController.js / SettingsModel.js</td>
+              <td class="py-2.5 px-3">อ่าน <code>Config.SUPABASE_SCHEMA</code> แบบ Dynamic</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">อัตโนมัติ (ไม่ต้องแก้)</span></td>
+            </tr>
+            <tr>
+              <td class="py-2.5 px-3 font-mono text-slate-600">version.json + 10 Root HTML + .ai_map/</td>
+              <td class="py-2.5 px-3">Cache Version Sync &amp; AST Index</td>
+              <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">Auto-Stamp ด้วย vscode_ast_mapper.mjs</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SubAgents Plan -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-users-gear text-emerald-600"></i>
+        แผนการทำงานของ Sub Agents (Lean 2-SubAgent + 1-Orchestrator)
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div class="p-4 rounded-xl border border-sky-200 bg-sky-50/50 space-y-1.5">
+          <div class="font-bold text-sky-900">Stage 2: subagent_01_implementer</div>
+          <div class="text-slate-600">แก้ <code>Config.js</code>, <code>AttendanceModel.js</code>, สร้าง <code>sql/migration_public_full_loca_v2_sync.sql</code>, รัน <code>vscode_ast_mapper.mjs</code> ซิงก์ 10 HTML</div>
+        </div>
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 space-y-1.5">
+          <div class="font-bold text-amber-900">Stage 3: subagent_02_qa_auditor</div>
+          <div class="text-slate-600">ตรวจ <code>node --check</code>, สแกนไม่ให้เหลือ <code>'staging'</code> ตกหล่น, ตรวจ SQL ครบ 13+15 คอลัมน์, ตรวจ Cache Sync 10 HTML และ <code>git diff</code></div>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 space-y-1.5">
+          <div class="font-bold text-emerald-900">Stage 4: agent_00_orchestrator</div>
+          <div class="text-slate-600">บันทึก Second Brain (ADR), <code>git commit</code> บน <code>Loca-V2</code> และ <code>git push origin Loca-V2</code> ขึ้น GitHub</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

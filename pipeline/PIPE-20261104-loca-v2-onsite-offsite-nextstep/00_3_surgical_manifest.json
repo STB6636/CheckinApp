@@ -1,0 +1,72 @@
+{
+  "pipeline_id": "PIPE-20261104-loca-v2-onsite-offsite-nextstep",
+  "mode": "FULL",
+  "target_branch": "Loca-V2",
+  "base_branch": "main",
+  "surgical_policy": "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+  "database_strategy": "OPTION_A_SEPARATE_STAGING_SCHEMA",
+  "staging_schema_name": "staging",
+  "ui_step_order": "STEP_1_LOCATION_AND_SHIFT_COMBINED -> STEP_2_PHOTO_CAPTURE_AND_SUBMIT",
+  "targets": [
+    {
+      "file": "sql/create_staging_schema.sql",
+      "lines": "1-120",
+      "purpose": "SQL script to create 'staging' schema in the existing Supabase project, clone tables/data from 'public', grant RLS permissions, and add official_locations & location_mode columns for Loca-V2 testing."
+    },
+    {
+      "file": "sql/alter_v2_8_loca_v2_schema.sql",
+      "lines": "1-90",
+      "purpose": "Additive migration script for when Loca-V2 is eventually merged into main (public schema) without breaking Cloudflare Pages."
+    },
+    {
+      "file": "assets/js/core/Config.js",
+      "lines": "6-95",
+      "purpose": "Add SUPABASE_SCHEMA = 'staging' (isolated schema support using existing URL & Key), add default official_locations array and updated remarks."
+    },
+    {
+      "file": "assets/js/core/DatabaseService.js",
+      "lines": "34-48",
+      "purpose": "Pass db: { schema: Config.SUPABASE_SCHEMA || 'public' } to createClient so all models automatically target 'staging' schema with zero changes to queries."
+    },
+    {
+      "file": "assets/js/models/SettingsModel.js",
+      "lines": "60-265",
+      "purpose": "Support official_locations and remarks in getSettings() and updateSettings() with Stale-While-Revalidate localStorage fallback."
+    },
+    {
+      "file": "settings.html",
+      "lines": "30-55, 450-565",
+      "purpose": "Add Tab 6 'สถานที่และรัศมี' (tab-panel-locations) in settingsTabNav and its CRUD table/modal container for managing multiple Official Locations & Radius (meters) with map/GPS picker."
+    },
+    {
+      "file": "assets/js/controllers/SettingsController.js",
+      "lines": "39-165, 268-289, 390-462, 665-766",
+      "purpose": "Implement renderLocations(), add/edit/delete official locations modal (name, latitude, longitude, radius_meters, active toggle, current GPS helper), and persist official_locations."
+    },
+    {
+      "file": "checkin.html",
+      "lines": "140-370, 613-737",
+      "purpose": "Redesign Next-Step UI into a Compact 2-Step Zero-Scroll Flow (100dvh): Step 1 combines [พิกัดสถานที่ (ในสถานที่/นอกสถานที่ + หมายเหตุ + พิกัด GPS) + ช่วงเวลา (กรณีปฏิบัติงานนอกเวลา)] in a single zero-scroll card with Yellow 'ถัดไป' button at bottom edge; Step 2 is [ถ่ายรูปยืนยันตัวตน] with Green 'บันทึกลงเวลาปฏิบัติงาน' button at bottom edge, while preserving all existing DOM IDs."
+    },
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "lines": "13-130, 278-515, 1002-1215, 1497-1840",
+      "purpose": "Implement Combined Step 1 (Location + Overtime Shift) -> Step 2 (Photo Capture & Submit), Multi-Location Haversine Geofencing (evaluateOnsiteGeofence with 25m accuracy buffer), Onsite/Offsite mode switching, Offsite remark chips + 'อื่นๆ' modal input, Offsite 2-option GPS (Current GPS vs Manual Search modal), and the 3-stage Popup sequence (Summary Confirm -> 'ระบบกำลังบันทึกข้อมูล' -> 'ลงเวลาปฏิบัติงานเรียบร้อยแล้ว')."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "lines": "920-1225",
+      "purpose": "Support saving remark (work format option / custom 'อื่นๆ' text) and check-in / check-out GPS coordinates & location names for both Onsite and Offsite modes during check-in, check-out, single-click, and overtime flows."
+    },
+    {
+      "file": "personnel.html",
+      "lines": "70-106",
+      "purpose": "Add Hierarchical Organization Filter Dock (#hierarchicalPersonnelOrgFilterDock: 1. สำนักงาน/กอง > 2. ส่วน/ฝ่าย > 3. กลุ่มงาน) matching reports.html for SuperAdmin and Admin (bureau scope)."
+    },
+    {
+      "file": "assets/js/controllers/PersonnelController.js",
+      "lines": "12-47, 125-196, 300-335",
+      "purpose": "Implement #initHierarchicalOrgFilter(), #populateHierarchicalOrgFilter(), #updateFilterDivisionOptions(), #updateFilterWorkGroupOptions(), and filter personnel table & export by selected Bureau/Division/WorkGroup for SuperAdmin and Admin (ขอบเขต สำนักงาน/กอง)."
+    }
+  ]
+}

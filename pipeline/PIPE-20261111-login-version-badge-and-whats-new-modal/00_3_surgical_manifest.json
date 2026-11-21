@@ -1,0 +1,26 @@
+{
+  "taskId": "PIPE-20261111-login-version-badge-and-whats-new-modal",
+  "flowIds": ["FLOW_AUTH_01", "FLOW_LAYOUT_01"],
+  "targets": [
+    {
+      "file": "index.html",
+      "lineRange": "175-186",
+      "purpose": "Add version badge button at top-right of login card header"
+    },
+    {
+      "file": "index.html",
+      "lineRange": "350-375",
+      "purpose": "Add System Update / What's New modal DOM markup with top-right X button, scrollable highlights, and center-bottom close button"
+    },
+    {
+      "file": "assets/js/controllers/LoginController.js",
+      "lineRange": "17-33",
+      "purpose": "Hook #checkAndShowWhatsNewModal() into init lifecycle"
+    },
+    {
+      "file": "assets/js/controllers/LoginController.js",
+      "lineRange": "250-303",
+      "purpose": "Implement #checkAndShowWhatsNewModal(), #openUpdateModal(), #closeUpdateModal() with localStorage persistence"
+    }
+  ]
+}

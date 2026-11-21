@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ต้นแบบการ์ดแผนที่ GPS สีเทาอ่อนตามภาพตัวอย่าง 100% — CheckinApp</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS & JS for Live Map Replica -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+        }
+        .leaflet-pin-red {
+            filter: drop-shadow(0 3px 6px rgba(220, 38, 38, 0.45));
+        }
+        .leaflet-pin-blue {
+            filter: drop-shadow(0 3px 6px rgba(37, 99, 235, 0.45));
+        }
+        .shutter-glow {
+            box-shadow: 0 4px 14px rgba(0, 116, 75, 0.25), 0 0 0 3px rgba(255, 255, 255, 0.95);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-16">
+
+    <!-- Top Navigation -->
+    <header class="glass-header sticky top-0 z-50 border-b border-slate-200/80 px-4 py-3 shadow-xs">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00744B] to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-700/20">
+                    <i class="fa-solid fa-map-location-dot text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 tracking-wider">Mode: PLAN</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#00744B] text-white">หัวการ์ดสีเทาอ่อนตามภาพตัวอย่าง 100%</span>
+                    </div>
+                    <h1 class="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        ต้นแบบการ์ดพิกัด (GPS & Map) หัวการ์ดสีเทาอ่อนนวลตา ไม่ดำ ตรงตามภาพตัวอย่าง 100%
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Status Notice -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-hourglass-half text-amber-600"></i>
+                    <span>ยังไม่ Proceed (รอการยืนยันจากผู้ใช้)</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-6">
+
+        <!-- Explanation of Header Color Fix -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 mb-6">
+            <h2 class="text-sm font-extrabold text-slate-900 flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-palette text-emerald-600"></i>
+                <span>ชี้แจงสาเหตุ & การปรับสีหัวการ์ดให้เป็นสีเทาอ่อนตรงตามตัวอย่าง (ไม่ดำ)</span>
+            </h2>
+            <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
+                <p>
+                    • <strong>สาเหตุที่เห็นเป็นสีดำก่อนหน้านี้:</strong> เกิดจากระบบใส่คลาส <code>dark:bg-slate-800</code> ซึ่งเมื่อเปิดดูในอุปกรณ์ที่เปิดโหมด Dark Mode (โหมดกลางคืน) เบราว์เซอร์จะสลับพื้นหลังหัวการ์ดเป็นสีดำ/เทาเข้มโดยอัตโนมัติ
+                </p>
+                <p>
+                    • <strong>การแก้ไขให้ตรงตามภาพตัวอย่าง 100%:</strong> ลบ <code>dark:bg-slate-800</code> ออก และล็อกสีพื้นหลังหัวการ์ดให้เป็น <strong>สีเทาอ่อนนวลตา <code>bg-[#F1F3F5]</code></strong> อย่างถาวรทุกโหมด:
+                    <span class="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#F1F3F5] text-slate-800 font-bold border border-slate-200 ml-1">
+                        <i class="fa-solid fa-location-dot text-teal-600 text-xs"></i>
+                        <span class="text-[11px]">พื้นที่ใกล้เคียง • สำนักงานเทศกิจ</span>
+                        <i class="fa-solid fa-chevron-up text-slate-400 text-[10px]"></i>
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Simulator Stage -->
+        <div class="flex justify-center mb-8">
+            <div class="w-full max-w-[420px]">
+                <div class="bg-slate-900 p-3.5 rounded-[36px] shadow-2xl border-4 border-slate-800">
+                    
+                    <!-- Inside Screen (Exact checkin.html) -->
+                    <div class="bg-gradient-to-b from-emerald-50/30 via-white to-slate-50 rounded-[28px] overflow-hidden p-3 border border-slate-700/50 min-h-[620px] flex flex-col">
+                        
+                        <!-- 1. Phone Status Bar -->
+                        <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 mb-2 px-1">
+                            <span>11:53</span>
+                            <div class="flex items-center gap-1.5 text-xs">
+                                <i class="fa-solid fa-signal"></i>
+                                <i class="fa-solid fa-wifi"></i>
+                                <i class="fa-solid fa-battery-three-quarters"></i>
+                            </div>
+                        </div>
+
+                        <!-- 2. User Topbar -->
+                        <div class="bg-white rounded-xl p-2.5 flex items-center justify-between shadow-2xs border border-slate-200/80 mb-2.5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-bold">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-slate-800 truncate">นายวิศรุต โต๊ะพาน</div>
+                                    <div class="text-[9px] text-slate-400">สำนักเทศกิจ • กทม.</div>
+                                </div>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-[#00744B] text-white flex items-center justify-center text-xs shadow-xs">
+                                <i class="fa-solid fa-bars"></i>
+                            </div>
+                        </div>
+
+                        <!-- 3. Checkin Banner -->
+                        <div class="bg-gradient-to-r from-[#00351B] to-[#00744B] text-white rounded-xl p-2.5 flex justify-between items-center shadow-xs mb-2.5">
+                            <div>
+                                <div class="text-[10px] text-emerald-200 font-bold">ลงเวลาเข้างาน</div>
+                                <div class="text-[9px] text-white/80">พร้อมบันทึกเวลาทำงานวันนี้</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs font-mono font-black tracking-wider">11:53:29 น.</div>
+                                <div class="text-[8px] text-emerald-200">เวลาปัจจุบัน</div>
+                            </div>
+                        </div>
+
+                        <!-- 4. COCKPIT 2-COLUMN GRID (กล้องซ้าย + การ์ดแผนที่ GPS ขวา — สมมาตรเป๊ะ 100%) -->
+                        <div class="grid grid-cols-2 gap-2.5 items-stretch w-full mb-2.5">
+
+                            <!-- Left: Camera Preview (Aspect 3:4, Max 30dvh) -->
+                            <div class="relative w-full aspect-[3/4] max-h-[30dvh] rounded-2xl overflow-hidden border border-slate-200/80 bg-slate-900 shadow-sm flex items-center justify-center">
+                                <div class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-500">
+                                    <i class="fa-solid fa-camera text-3xl text-slate-600 mb-0.5"></i>
+                                </div>
+                                <!-- Center Camera Shutter -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="w-11 h-11 rounded-full bg-slate-900/70 border-2 border-white/70 shadow-lg flex items-center justify-center pointer-events-auto cursor-pointer hover:scale-105 active:scale-95 transition">
+                                        <i class="fa-solid fa-camera text-base text-amber-300"></i>
+                                    </div>
+                                </div>
+                                <div class="absolute bottom-1.5 inset-x-1.5 text-center pointer-events-none">
+                                    <span class="inline-block px-2 py-0.5 rounded-full bg-black/60 text-[8.5px] text-white">แตะเพื่อถ่ายรูป</span>
+                                </div>
+                            </div>
+
+                            <!-- Right: The 100% Reverse-Engineered GPS Map Card (Aspect 3:4, Max 30dvh) -->
+                            <div id="gpsSectionCard" class="relative bg-white rounded-2xl shadow-sm border border-slate-200/80 flex flex-col w-full aspect-[3/4] max-h-[30dvh] overflow-hidden">
+                                
+                                <!-- 1. Header Bar: Light Gray #F1F3F5 (ตรงตามภาพตัวอย่างเป๊ะ ไม่ดำ) -->
+                                <div class="bg-[#F1F3F5] px-2.5 py-1.5 border-b border-slate-200/80 flex items-center justify-between shrink-0">
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <i class="fa-solid fa-location-dot text-teal-600 text-xs shrink-0"></i>
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1 text-[8.5px] text-slate-500 font-medium">
+                                                <span>พื้นที่ใกล้เคียง</span>
+                                                <i class="fa-solid fa-circle-info text-[7.5px] text-slate-400"></i>
+                                            </div>
+                                            <div id="gpsLocationNameText" class="text-[10px] sm:text-[11px] font-bold text-slate-800 truncate leading-tight">
+                                                สำนักงานเทศกิจ
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-up text-slate-400 text-[10px] shrink-0"></i>
+                                    <span id="gpsRequirementBadge" class="hidden"></span>
+                                    <span id="gpsLocationName" class="hidden"></span>
+                                    <span id="gpsCoordsText" class="hidden">13.738396, 100.495466</span>
+                                </div>
+
+                                <!-- 2. Embedded Live Map Container -->
+                                <div class="relative flex-1 w-full h-full min-h-0 bg-slate-100">
+                                    <div id="leafletMapContainer" class="w-full h-full"></div>
+
+                                    <!-- 3. Shutter-Style Floating Refresh Button (Overlay Bottom Center) -->
+                                    <div class="absolute bottom-2 inset-x-0 flex items-center justify-center pointer-events-none z-[400]">
+                                        <button type="button" onclick="triggerGpsRefresh()" id="btnRefreshGps" class="w-9 h-9 rounded-full bg-white text-emerald-700 shadow-md border-2 border-white flex items-center justify-center pointer-events-auto cursor-pointer hover:bg-emerald-50 active:scale-90 transition shutter-glow" title="กดเพื่อระบุตำแหน่งใหม่">
+                                            <i id="refreshIcon" class="fa-solid fa-arrows-rotate text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden legacy embeds for zero breakage -->
+                                <div id="googleMapEmbedWrapper" class="hidden"><iframe id="googleMapRealtimeIframe" class="hidden"></iframe></div>
+                                <a id="linkViewGoogleMap" href="#" class="hidden"></a>
+                                <button type="button" id="btnViewGpsMapModal" class="hidden"></button>
+                            </div>
+
+                        </div>
+
+                        <!-- 5. Original Work Mode Segmented Switcher (คงเดิม 100% ไร้ช่องหมายเหตุ) -->
+                        <div class="bg-white rounded-xl p-2.5 shadow-2xs border border-slate-200/80 mb-2.5 space-y-2">
+                            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-0.5 rounded-lg text-[10.5px] font-bold text-center">
+                                <button type="button" class="bg-white text-[#00744B] py-1.5 rounded-md shadow-2xs border border-emerald-500/30 flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-building-circle-check"></i> ในสถานที่
+                                </button>
+                                <button type="button" class="text-slate-600 py-1.5 flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-map-location-dot"></i> นอกสถานที่
+                                </button>
+                            </div>
+
+                            <!-- Original Radius Status Box -->
+                            <div class="p-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80 text-[9px] text-emerald-950 flex justify-between items-center">
+                                <div>
+                                    <div class="font-bold flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                                        <span>สถานะรัศมีสถานที่ทำงาน:</span>
+                                    </div>
+                                    <div class="text-emerald-800 text-[8.5px] mt-0.5">สำนักเทศกิจ (ห่าง 73 ม. / รัศมี 700 ม.)</div>
+                                </div>
+                                <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">อยู่ในสถานที่</span>
+                            </div>
+                        </div>
+
+                        <!-- 6. Original Conditions Card -->
+                        <div class="bg-white rounded-xl p-2.5 shadow-2xs border border-slate-200/80 mb-2.5 space-y-1.5">
+                            <div class="flex justify-between items-center text-[10px]">
+                                <span class="font-bold text-slate-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-sliders text-emerald-600"></i> เงื่อนไขการบันทึกเวลา:
+                                </span>
+                                <span class="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[8px] font-bold">รูปแบบปกติ</span>
+                            </div>
+                            <div class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg text-[9.5px] text-slate-600 flex justify-between items-center">
+                                <span>-- กรุณาเลือกช่วงเวลาปฏิบัติงาน --</span>
+                                <i class="fa-solid fa-chevron-down text-[8px] text-slate-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- 7. Original Sticky Bottom Button -->
+                        <div class="mt-auto pt-2">
+                            <button type="button" class="w-full py-2.5 rounded-xl bg-[#00744B] text-white text-xs font-black shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket"></i>
+                                <span>บันทึกลงเวลาเข้าปฏิบัติงาน</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Interactive Feedback -->
+        <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 mb-6">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-play text-emerald-600"></i>
+                    <span>ทดลองกดปุ่มชัตเตอร์รีเฟรชตรงกลางล่างของแผนที่</span>
+                </h3>
+                <span id="refreshToast" class="hidden px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[11px] font-bold transition animate-bounce">
+                    <i class="fa-solid fa-check"></i> อัปเดตพิกัด GPS เรียบร้อยแล้ว!
+                </span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                เมื่อแตะปุ่มทรงกลม <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white shadow-xs border border-slate-200 text-emerald-700 font-bold"><i class="fa-solid fa-arrows-rotate text-[10px]"></i></span> ตัวไอคอนจะหมุนและจำลองการดึงพิกัดดาวเทียมใหม่ พร้อมปักหมุดสีแดงของผู้ใช้ในจุดปัจจุบันทันที
+            </p>
+        </div>
+
+    </main>
+
+    <script>
+        let leafletMap = null;
+        let userMarker = null;
+
+        function initMap() {
+            setTimeout(() => {
+                const mapEl = document.getElementById('leafletMapContainer');
+                if (!mapEl) return;
+
+                const centerLat = 13.738396;
+                const centerLng = 100.495466;
+
+                leafletMap = L.map('leafletMapContainer', {
+                    zoomControl: false,
+                    attributionControl: false
+                }).setView([centerLat, centerLng], 17);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                }).addTo(leafletMap);
+
+                // Red Pin (User Location)
+                const redIcon = L.divIcon({
+                    className: 'custom-pin-red',
+                    html: '<div style="color: #dc2626; font-size: 19px;"><i class="fa-solid fa-location-dot leaflet-pin-red"></i></div>',
+                    iconSize: [19, 19],
+                    iconAnchor: [9.5, 19]
+                });
+                userMarker = L.marker([centerLat, centerLng], { icon: redIcon }).addTo(leafletMap);
+
+                // Blue Pin (Workplace Location)
+                const blueIcon = L.divIcon({
+                    className: 'custom-pin-blue',
+                    html: '<div style="color: #2563eb; font-size: 19px;"><i class="fa-solid fa-location-dot leaflet-pin-blue"></i></div>',
+                    iconSize: [19, 19],
+                    iconAnchor: [9.5, 19]
+                });
+                L.marker([centerLat + 0.0003, centerLng + 0.0004], { icon: blueIcon }).addTo(leafletMap);
+
+                // Workplace radius circle
+                L.circle([centerLat + 0.0003, centerLng + 0.0004], {
+                    radius: 70,
+                    color: '#10b981',
+                    fillColor: '#10b981',
+                    fillOpacity: 0.15,
+                    weight: 1.5
+                }).addTo(leafletMap);
+
+            }, 200);
+        }
+
+        function triggerGpsRefresh() {
+            const icon = document.getElementById('refreshIcon');
+            const toast = document.getElementById('refreshToast');
+
+            if (icon) icon.classList.add('fa-spin');
+            if (toast) toast.classList.remove('hidden');
+
+            setTimeout(() => {
+                if (icon) icon.classList.remove('fa-spin');
+                if (leafletMap && userMarker) {
+                    const newLat = 13.738396 + (Math.random() - 0.5) * 0.0002;
+                    const newLng = 100.495466 + (Math.random() - 0.5) * 0.0002;
+                    userMarker.setLatLng([newLat, newLng]);
+                    leafletMap.panTo([newLat, newLng]);
+                }
+            }, 800);
+
+            setTimeout(() => {
+                if (toast) toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        window.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>

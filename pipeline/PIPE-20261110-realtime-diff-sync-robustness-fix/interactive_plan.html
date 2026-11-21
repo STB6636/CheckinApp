@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Plan (Verified) — Realtime Differential Sync Deep Audit & Fix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body { background: #0b0f19; color: #e2e8f0; font-family: 'Inter', 'Sarabun', sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(51, 65, 85, 0.7); backdrop-filter: blur(12px); }
+    pre { background: #090d16; border: 1px solid #1e293b; border-radius: 0.5rem; padding: 0.9rem; overflow-x: auto; font-size: 0.82rem; }
+  </style>
+</head>
+<body class="p-6 max-w-6xl mx-auto space-y-6">
+  <header class="glass-card rounded-2xl p-6 border-l-4 border-emerald-500">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+          MODE: PLAN — DeepInvestigator Verified
+        </span>
+        <h1 class="text-2xl font-bold text-white mt-2">รายงานการตรวจทานและพิสูจน์สาเหตุที่แท้จริงของ Realtime Differential Sync</h1>
+        <p class="text-slate-400 text-sm mt-1">Task ID: <code>PIPE-20261110-realtime-diff-sync-robustness-fix</code> | Status: <span class="text-amber-400 font-semibold">Waiting for Proceed</span></p>
+      </div>
+      <div class="text-right text-xs text-slate-400">
+        <div>Architecture: 1 Orchestrator + 2 SubAgents</div>
+        <div>Verification Verdict: <span class="text-emerald-400 font-bold">100% PROVEN</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Deep Audit Verdicts Table -->
+  <section class="glass-card rounded-2xl p-6 space-y-4">
+    <h2 class="text-lg font-bold text-cyan-300">⚖️ ผลการตรวจพิสูจน์สมมติฐานเดิมเทียบกับความจริงในโค้ด (Evidence-Based Verdicts)</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-300">
+            <th class="py-2 px-3">ข้อ</th>
+            <th class="py-2 px-3">สมมติฐานในร่างแผนเดิม</th>
+            <th class="py-2 px-3">ผลการพิสูจน์</th>
+            <th class="py-2 px-3">หลักฐานเชิงประจักษ์และการค้นพบที่แท้จริง</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800 text-slate-300">
+          <tr>
+            <td class="py-2 px-3 font-bold">1</td>
+            <td class="py-2 px-3"><code>AttendanceModel.js</code> (L1743) เรียก <code>UIHelpers.getTodayDateString()</code> ทำให้แครชด้วย TypeError</td>
+            <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">สาเหตุจริง 100%</span></td>
+            <td class="py-2 px-3">ใน <code>UIHelpers.js</code> มีเฉพาะ <code>getTodayISO()</code> ส่งผลให้ลูปตรวจจับ Watermark ทุก 6 วินาทีแครชและคืนค่าว่างเปล่าเสมอ ลูป Fallback ตายสนิท</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 font-bold">2</td>
+            <td class="py-2 px-3">การลงเวลาไม่ได้บรอดแคสต์ <code>attendance_updated</code> บน <code>bma_global_realtime_bus</code></td>
+            <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">บกพร่องจริง</span></td>
+            <td class="py-2 px-3"><code>AttendanceModel.js</code> ขาดการเรียก <code>broadcastRealtimeEvent</code> ทุกจุด แต่ WebSocket ยังทำงานได้ สาเหตุที่ DOM ไม่ขยับจริงอยู่ที่ Bug ใน Controller</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 font-bold">3</td>
+            <td class="py-2 px-3"><code>AppLayout.js</code> ยิงทั้ง <code>bma:realtime-delta-sync</code> และ <code>bma:realtime-sync</code> พร้อมกัน เกิด Race Condition</td>
+            <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">สาเหตุจริง 100%</span></td>
+            <td class="py-2 px-3">ทุก Controller ผูกดักฟังทั้ง 2 อีเวนต์พร้อมกันโดยไม่มี Debounce ทำให้รันคิวรีและเข้าถึง DOM ขนานกัน 2 ครั้งซ้อนในทุกการกระทำ</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 font-bold">4</td>
+            <td class="py-2 px-3"><code>DashboardController</code> ใช้ <code>newCat.percentage</code> แทนที่จะเป็น <code>newCat.percent</code></td>
+            <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">สมมติฐานเท็จ</span></td>
+            <td class="py-2 px-3">ในโค้ดใช้ <code>${newCat.percent}%</code> ถูกต้องอยู่แล้ว <strong>แต่พบต้นตอจริงที่ร้ายแรงกว่า</strong> คือ <code>freshCheckedIn</code> ใช้วิธี <code>.reverse()</code> ซึ่งกลายเป็นการเรียงลำดับตามชื่อบุคลากร ฮ-ก ไม่ได้เรียงตามเวลาลงเวลาล่าสุด!</td>
+          </tr>
+          <tr>
+            <td class="py-2 px-3 font-bold">5</td>
+            <td class="py-2 px-3"><code>AppLayout.js</code> ดักฟังตาราง <code>password_reset_requests</code> ที่ไม่มีจริง</td>
+            <td class="py-2 px-3"><span class="px-2 py-0.5 rounded bg-slate-500/20 text-slate-300 font-bold">Bug จริงแต่ไม่เกี่ยว</span></td>
+            <td class="py-2 px-3">เป็นข้อผิดพลาดในฝั่งรีเซ็ตรหัสผ่าน แต่ Supabase Realtime ยังคงรับอีเวนต์ของ <code>attendance_logs</code> ได้ตามปกติ</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Critical New Findings (The Real Blockers) -->
+  <section class="glass-card rounded-2xl p-6 space-y-4 border border-rose-500/40">
+    <h2 class="text-lg font-bold text-rose-300">🚨 การค้นพบต้นตอที่แท้จริงเพิ่มเติม (The Real Blockers Uncovered)</h2>
+    <div class="grid md:grid-cols-3 gap-4 text-xs">
+      <div class="p-4 rounded-xl bg-rose-950/30 border border-rose-500/30 space-y-2">
+        <div class="font-bold text-rose-200">1. ReportsController: Bug `status_key` vs `status_category`</div>
+        <p class="text-slate-300">
+          ใน <code>ReportsController.js</code> เช็ค <code>if (prev.status_key !== fr.status_key)</code> แต่ใน <code>AttendanceModel.#formatReportRow()</code> ส่งฟิลด์ชื่อ <code>status_category</code> (ไม่มี <code>status_key</code>) ทำให้เปรียบเทียบ <code>undefined !== undefined</code> ซึ่งเป็น <code>false</code> เสมอ 100%! ตารางรายงานจึงไม่เคยย้ายแถวข้ามตารางสถานะเลย!
+        </p>
+      </div>
+      <div class="p-4 rounded-xl bg-rose-950/30 border border-rose-500/30 space-y-2">
+        <div class="font-bold text-rose-200">2. ReportsController: Key Mismatch ใน `oldMap`</div>
+        <p class="text-slate-300">
+          ก่อนลงเวลา แถวมี <code>row_uid = "${person.id}_${workDate}_empty"</code> แต่หลังลงเวลา กลายเป็น UUID ทำให้ <code>oldMap.get(uuid)</code> หาแถวเดิมไม่เจอ (ทั้งขา INSERT และ DELETE) ไม่เกิดการจับคู่เปรียบเทียบ
+        </p>
+      </div>
+      <div class="p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 space-y-2">
+        <div class="font-bold text-amber-200">3. DashboardController: รายการ 5 อันดับล่าสุดเรียงตามชื่อ ฮ-ก</div>
+        <p class="text-slate-300">
+          <code>freshCheckedIn</code> นำ Array ที่เรียงตามชื่อบุคลากร ก-ฮ มาทำ <code>.reverse()</code> ทำให้กลายเป็นการเรียง ฮ-ก! คนที่ลงเวลาใหม่แต่ชื่อไม่อยู่ท้ายพยัญชนะไทย จึงหลุดจาก 5 อันดับแรกและไม่ปรากฏบนหน้าจอ!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Surgical Solution -->
+  <section class="glass-card rounded-2xl p-6 space-y-4">
+    <h2 class="text-lg font-bold text-emerald-400">🛠️ แผนแก้ไขแบบครบวงจรและตรงจุด (Comprehensive Surgical Fix)</h2>
+    <div class="space-y-3 text-xs text-slate-300">
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">1. UIHelpers.js:</span> เพิ่ม <code>static getTodayDateString() { return UIHelpers.getTodayISO(); }</code>
+      </div>
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">2. AttendanceModel.js:</span>
+        <ul class="list-disc pl-5 mt-1 space-y-1">
+          <li>ใช้ <code>UIHelpers.getTodayISO()</code> ใน <code>getTodaySyncWatermark()</code></li>
+          <li>ดึง <code>updated_at</code> ใน <code>getReportRecordsByDateRange()</code></li>
+          <li>ส่งทั้ง <code>status_key</code>, <code>status_category</code>, <code>created_at</code>, <code>updated_at</code> ใน <code>#formatReportRow()</code></li>
+          <li>เพิ่มการยิง Broadcast <code>attendance_updated</code> ครบทั้ง 5 จุด (Checkin/Checkout, OT, Single-click, Admin Save/Delete, Special Request Approve)</li>
+        </ul>
+      </div>
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">3. AppLayout.js:</span> ตัด Event <code>bma:realtime-sync</code> ที่ยิงซ้ำซ้อนออก เหลือเฉพาะ <code>bma:realtime-delta-sync</code> และเปลี่ยนตาราง <code>password_reset_requests</code> เป็น <code>user_accounts</code>
+      </div>
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">4. DashboardController.js:</span> เพิ่ม Debounce 250ms และเรียงลำดับ <code>freshCheckedIn</code> ตาม <code>updated_at || created_at</code> และเวลาลงเวลาจริง
+      </div>
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">5. ReportsController.js:</span> เพิ่ม Debounce 250ms, รองรับ Key <code>oldMap</code> แบบผสม (<code>personnel_id + work_date</code>), และเปรียบเทียบด้วย <code>prev.status_category || prev.status_key</code>
+      </div>
+      <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+        <span class="font-bold text-emerald-300">6. CheckinController.js:</span> เพิ่ม Realtime Listener ดักฟัง <code>attendance_updated</code> และ <code>attendance_logs</code> เพื่ออัปเดตปุ่มลงเวลาและประวัติของตนเองแบบ In-Place ทันที
+      </div>
+    </div>
+  </section>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+</body>
+</html>

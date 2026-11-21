@@ -7,6 +7,7 @@ import { AuthService } from '../core/AuthService.js';
 import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { Config } from '../core/Config.js';
+import { SystemUpdateModal } from '../components/SystemUpdateModal.js';
 
 export class LoginController {
     constructor() {
@@ -18,18 +19,23 @@ export class LoginController {
         // ซ่อนชื่อไฟล์ .html ทันทีให้เหลือเฉพาะ https://stb6636.github.io/CheckinApp/
         UIHelpers.initTheme();
 
-        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าล่าสุดทันทีโดยไม่ต้อง Login ซ้ำ
+        // ตรวจสอบ Session 7 วัน: หากมี Session อยู่แล้ว ให้พาเข้าสู่หน้าโหลดเพื่อตรวจสอบสถานะก่อนเข้าสู่ระบบ
         const existingSessionUser = AuthService.getCurrentUser(true);
         if (existingSessionUser) {
-            const targetUrl = AuthService.getRedirectUrlForSession(existingSessionUser);
-            window.location.replace(targetUrl);
+            window.location.replace('loading.html?entry=session');
             return;
         }
 
         this.#updateThemeButtonUI();
         this.#bindEvents();
         this.#loadRememberedUser();
-        await this.#loadOrganizationBranding();
+        await Promise.allSettled([
+            this.#loadOrganizationBranding(),
+            SystemUpdateModal.init({ targetBadgeSlot: '#loginVersionBadgeSlot' })
+        ]);
+        if (this.settings) {
+            SystemUpdateModal.checkAndShowAnnouncement(this.settings);
+        }
     }
 
     async #loadOrganizationBranding() {
@@ -63,6 +69,32 @@ export class LoginController {
                 if (desktopLogo) desktopLogo.innerHTML = logoImgHtml;
                 if (mobileLogo) mobileLogo.innerHTML = logoImgHtml;
             }
+
+            // Sync brand cache for loading.html instant 0ms pre-hydration
+            try {
+                let resolvedLogoUrl = '';
+                const rawLogo = String(this.settings.logo_url || '').trim();
+                const isSafeProtocol = /^(?:https?:\/\/[^\s'"()<>]+|data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+)$/i.test(rawLogo);
+                if (rawLogo && isSafeProtocol) {
+                    const isGoogleDrive = /(?:drive\.google\.com|docs\.google\.com|lh3\.googleusercontent\.com)/i.test(rawLogo);
+                    if (isGoogleDrive) {
+                        const m = rawLogo.match(/(?:\/d\/|[?&]id=|\/file\/d\/)([-\w]{20,})/);
+                        resolvedLogoUrl = m && m[1] ? `https://lh3.googleusercontent.com/d/${m[1]}` : rawLogo;
+                    } else {
+                        resolvedLogoUrl = rawLogo;
+                    }
+                } else {
+                    resolvedLogoUrl = 'https://lh3.googleusercontent.com/d/1wMP2T2zV8N9hDGIBed_OO2WlM59pl2qc';
+                }
+
+                const brandPayload = {
+                    orgName,
+                    bureauName,
+                    headerSystemTitle: headerTitle,
+                    logoUrl: resolvedLogoUrl
+                };
+                localStorage.setItem('bma_cached_brand_v2_7', JSON.stringify(brandPayload));
+            } catch (_) {}
         } catch (err) {
             console.warn('Could not load branding settings on login page:', err);
         }
@@ -130,12 +162,17 @@ export class LoginController {
             document.getElementById('cpMatchStatus').classList.add('hidden');
             document.getElementById('btnSubmitChangePwd').disabled = true;
             modalChange?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modalChange);
         };
-        const closeChangeModal = () => modalChange?.classList.add('hidden');
+        const closeChangeModal = () => {
+            modalChange?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
 
         document.getElementById('btnOpenChangePwdModal')?.addEventListener('click', openChangeModal);
         document.getElementById('btnCloseChangePwdModal')?.addEventListener('click', closeChangeModal);
         document.getElementById('btnCancelChangePwd')?.addEventListener('click', closeChangeModal);
+        UIHelpers.bindModalDismiss(modalChange, closeChangeModal);
 
         const validatePasswordMatch = () => {
             const newPwd = document.getElementById('cpNewPassword').value;
@@ -174,12 +211,17 @@ export class LoginController {
             const currentTypedUser = document.getElementById('loginUsername')?.value || '';
             document.getElementById('fpNationalId').value = /^\d{1,13}$/.test(currentTypedUser) ? currentTypedUser : '';
             modalForgot?.classList.remove('hidden');
+            UIHelpers.prepareModalOpen(modalForgot);
         };
-        const closeForgotModal = () => modalForgot?.classList.add('hidden');
+        const closeForgotModal = () => {
+            modalForgot?.classList.add('hidden');
+            UIHelpers.syncBodyModalLock();
+        };
 
         document.getElementById('btnOpenForgotPwdModal')?.addEventListener('click', openForgotModal);
         document.getElementById('btnCloseForgotPwdModal')?.addEventListener('click', closeForgotModal);
         document.getElementById('btnCancelForgotPwd')?.addEventListener('click', closeForgotModal);
+        UIHelpers.bindModalDismiss(modalForgot, closeForgotModal);
 
         document.getElementById('formForgotPassword')?.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -203,8 +245,7 @@ export class LoginController {
 
             this.#persistRememberedUser(username);
 
-            await UIHelpers.showToast('เข้าสู่ระบบสำเร็จ', 'success', 2000);
-            window.location.replace(result.redirectUrl);
+            window.location.replace('loading.html?entry=login');
         } catch (err) {
             UIHelpers.hideLoading();
             await UIHelpers.showToast(err.message || 'ไม่สามารถเข้าสู่ระบบได้', 'error', 2800);

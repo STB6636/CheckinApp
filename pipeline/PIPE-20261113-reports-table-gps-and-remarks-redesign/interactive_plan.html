@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Plan (Updated): แผนปรับปรุงสถาปัตยกรรม Staging ทีเดียวจบ (Zero-Fallback CRUD & 5 TAG Reports)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bma: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#00744B',
+                            dark: '#004d32'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased">
+    <!-- Header -->
+    <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00744B] to-emerald-500 text-white flex items-center justify-center text-lg shadow-md shadow-emerald-500/20">
+                    <i class="fa-solid fa-database"></i>
+                </span>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg font-extrabold text-slate-900 dark:text-white">แผนปรับปรุงสถาปัตยกรรม Staging ทีเดียวจบ (Zero-Fallback CRUD)</h1>
+                        <span class="px-2 py-0.5 text-[11px] font-extrabold rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                            Schema: staging only
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Task: <span class="font-mono font-semibold text-emerald-700 dark:text-emerald-400">PIPE-20261113-reports-table-gps-and-remarks-redesign</span> • Branch: <span class="font-mono font-bold text-sky-600">Loca-V2</span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <span class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 flex items-center gap-1.5 border border-amber-300/60">
+                    <i class="fa-solid fa-clock-rotate-left"></i> รอตรวจทานแผน (Proceed)
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 space-y-8 w-full">
+
+        <!-- Executive Banner -->
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 text-white shadow-xl relative overflow-hidden">
+            <div class="relative z-10 max-w-4xl space-y-3">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-emerald-200 border border-white/10">
+                    <i class="fa-solid fa-shield-halved"></i> ข้อกำหนดสำคัญ
+                </div>
+                <h2 class="text-xl sm:text-2xl font-extrabold leading-tight">
+                    สคีม่าเป้าหมาย: เฉพาะ `staging` เท่านั้น (ยังไม่ยุ่งกับ `public`) • ปรับคอลัมน์และ CRUD ให้ครบถ้วนตามความเป็นจริง ไร้ Fallback
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                    เพิ่มคอลัมน์เก็บ <b>ลักษณะงานนอกสถานที่ (offsite_reason)</b> และ <b>โหมดขาออกงาน (check_out_location_mode)</b> ใน <code>staging.attendance_logs</code> พร้อมปรับโค้ด CRUD ใน <code>CheckinController.js</code> และ <code>AttendanceModel.js</code> ให้บันทึกตรงเข้าคอลัมน์จริงโดยไม่เกิดปัญหาเขียนทับข้อมูลขาเข้างาน และรองรับตารางรายงาน 5 TAG (GPS 2 บรรทัด ไร้พิกัดตัวเลข) อย่างสมบูรณ์
+                </p>
+            </div>
+        </div>
+
+        <!-- SQL Script for Staging -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-terminal"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white">คำสั่ง SQL Migration สำหรับสคีม่า `staging` (รันใน Supabase SQL Editor)</h3>
+                        <p class="text-xs text-slate-500">รันเฉพาะสคีม่า staging เท่านั้น ปลอดภัย ไม่กระทบสคีม่า public</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+<pre><span class="text-emerald-400">-- เพิ่มคอลัมน์ใหม่สำหรับเก็บลักษณะงานนอกสถานที่และโหมดขาออกงานใน staging.attendance_logs</span>
+<span class="text-sky-400">ALTER TABLE</span> staging.attendance_logs
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> offsite_reason <span class="text-amber-300">TEXT DEFAULT NULL</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_location_mode <span class="text-amber-300">TEXT DEFAULT 'ONSITE'</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_distance_from_official_meters <span class="text-amber-300">DOUBLE PRECISION DEFAULT NULL</span>,
+<span class="text-sky-400">ADD COLUMN IF NOT EXISTS</span> check_out_offsite_reason <span class="text-amber-300">TEXT DEFAULT NULL</span>;</pre>
+            </div>
+        </div>
+
+        <!-- 4-Pillar Architectural Redesign -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pillar 1: Check-in / Check-out Lifecycle -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="flex items-center gap-2 font-extrabold text-sm text-emerald-700 dark:text-emerald-400">
+                    <i class="fa-solid fa-right-to-bracket"></i> 1. วงจรการบันทึกเวลา (Check-in / Out Lifecycle)
+                </div>
+                <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+                    <li><b>ขาเข้างาน:</b> บันทึก <code>location_mode</code> + <code>offsite_reason</code> (เช่น อบรม, ประชุม, WFH) + <code>distance_from_official_meters</code></li>
+                    <li><b>ขาออกงาน:</b> บันทึก <code>check_out_location_mode</code> + <code>check_out_offsite_reason</code> โดย <b>ไม่เขียนทับ <code>remark</code> หรือ <code>offsite_reason</code> ของขาเข้างาน</b></li>
+                    <li><b>กะนอกเวลา (OT) & Single-Click:</b> บันทึกทั้ง <code>location_mode</code> และ <code>offsite_reason</code> ครบถ้วน</li>
+                    <li><b>คำขอพิเศษ:</b> บันทึกเหตุผลคำขอลงใน <code>remark</code> แยกอิสระ</li>
+                </ul>
+            </div>
+
+            <!-- Pillar 2: Reports Table Presentation -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+                <div class="flex items-center gap-2 font-extrabold text-sm text-sky-700 dark:text-sky-400">
+                    <i class="fa-solid fa-table"></i> 2. ตารางรายงาน 5 TAG & จุดเชื่อมโยง 3 จุด
+                </div>
+                <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-2 list-disc list-inside">
+                    <li><b>GPS เข้า/ออกงาน (2 บรรทัด):</b> บรรทัดที่ 1 = [ในสถานที่, นอกสถานที่], บรรทัดที่ 2 = [บริเวณ..., ใกล้เคียง...] <b>ไร้ค่าพิกัดตัวเลข 100%</b></li>
+                    <li><b>หมายเหตุ:</b> ตัดสถานะ TAG ตารางออกทั้งหมด (เช่น มาสาย, ปฏิบัติงานปกติ)</li>
+                    <li><b>ในสถานที่:</b> แสดง <code>-</code> (ไม่แสดงข้อความใดๆ ตามกฎ 2.1.1 & 2.3.1)</li>
+                    <li><b>นอกสถานที่:</b> แสดงข้อมูลตามตัวเลือก <code>rec.offsite_reason</code></li>
+                    <li><b>จุดเชื่อมโยง 3 จุด:</b> หน้าต่างโปรไฟล์ย่อ (#modalResumeProfile), ตารางประวัติส่วนตัวใน checkin.html, และฟอร์มแก้ไขเวลาแอดมิน ปรับให้อ่านและรักษา offsite_reason ครบถ้วน</li>
+                    <li><b>ส่งออก 3 ทาง:</b> Web DOM, Print PDF, และ Excel XLSX ตรงกัน 100%</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SubAgents Execution Pipeline -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-users-gear text-emerald-600"></i> ขั้นตอนการทำงานของ SubAgents (Lean AI Workflow)
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                <div class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-50/20 space-y-1">
+                    <span class="font-bold text-emerald-700 block">Stage 1: Pre-Flight & Migration Check</span>
+                    <p class="text-slate-500">ตรวจสอบว่าคำสั่ง SQL รันบน <code>staging.attendance_logs</code> สำเร็จและพบคอลัมน์ครบ 4 คอลัมน์</p>
+                </div>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-sky-700 block">Stage 2: SubAgent 1 (Implementer)</span>
+                    <p class="text-slate-500">ปรับปรุง Model, CheckinController, ReportsController ตัด Fallback ทิ้ง รัน AST mapper ซิงค์ buildId</p>
+                </div>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-purple-700 block">Stage 3: SubAgent 2 (QA Auditor)</span>
+                    <p class="text-slate-500">รันชุดทดสอบความถูกต้องของการบันทึกและการอ่านข้อมูลบน Staging ตรวจสอบ git diff main</p>
+                </div>
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/40 space-y-1">
+                    <span class="font-bold text-amber-700 block">Stage 4: Orchestrator Ingest & Push</span>
+                    <p class="text-slate-500">บันทึกสถาปัตยกรรมลง ADR-0027, อัปเดต 00_INDEX_MOC.md และ Git Commit & Push Branch Loca-V2</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
+        BMA Check-in App V2.8 • Lean AI Software Engineering Pipeline • Schema: <span class="font-mono text-emerald-600 font-bold">staging</span> • Branch: <span class="font-mono text-sky-600 font-bold">Loca-V2</span>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "task_id": "PIPE-20261113-reports-table-gps-and-remarks-redesign",
+  "flow_id": "FLOW_REPORTS_01",
+  "target_branch": "Loca-V2",
+  "target_schema": "staging",
+  "created_at": "2026-11-13T14:52:00+07:00",
+  "database_prerequisite": {
+    "schema": "staging",
+    "table": "attendance_logs",
+    "required_columns": [
+      "offsite_reason",
+      "check_out_location_mode",
+      "check_out_distance_from_official_meters",
+      "check_out_offsite_reason"
+    ],
+    "sql_file": "sql/create_staging_schema.sql"
+  },
+  "targets": [
+    {
+      "file": "assets/js/controllers/CheckinController.js",
+      "symbol": "CheckinController.#handleMainCheckin",
+      "line_range": "2850-3180",
+      "recommended_read_window": [2840, 3190],
+      "operation": "EDIT",
+      "purpose": "Pass dedicated offsite_reason, check_out_location_mode, check_out_offsite_reason cleanly across regular in/out, overtime, and single-click flows without remark overwriting."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.submitCheckinOrCheckout",
+      "line_range": "1740-2070",
+      "recommended_read_window": [1730, 2080],
+      "operation": "EDIT",
+      "purpose": "Persist offsite_reason and check_out fields directly to staging.attendance_logs without fallback deletion hacks, preserving check-in offsite_reason on checkout."
+    },
+    {
+      "file": "assets/js/models/AttendanceModel.js",
+      "symbol": "AttendanceModel.getReportRecordsByDateRange",
+      "line_range": "2330-2430",
+      "recommended_read_window": [2320, 2440],
+      "operation": "EDIT",
+      "purpose": "Query and map dedicated columns (location_mode, offsite_reason, check_out_location_mode, check_out_offsite_reason) directly into report rows."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#buildSingleRowHtml",
+      "line_range": "730-860",
+      "recommended_read_window": [720, 870],
+      "operation": "EDIT",
+      "purpose": "Render GPS columns (Line 1: [ในสถานที่,นอกสถานที่], Line 2: [บริเวณ,ใกล้เคียง], strictly no coordinate numbers) and Remarks column (Rules 2.1-2.4) using rec.offsite_reason directly across Web DOM and Print PDF."
+    },
+    {
+      "file": "assets/js/controllers/ReportsController.js",
+      "symbol": "ReportsController.#bindEvents",
+      "line_range": "1350-1430",
+      "recommended_read_window": [1340, 1440],
+      "operation": "EDIT",
+      "purpose": "Synchronize Excel export rows to match the new GPS 2-line format (no coordinate numbers) and dedicated offsite_reason remarks."
+    }
+  ],
+  "verification_suite": [
+    "pipeline/PIPE-20261113-reports-table-gps-and-remarks-redesign/qa_reports_redesign_verification.mjs"
+  ]
+}

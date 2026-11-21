@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนปฏิบัติการละเอียด: Cockpit Split Layout & แบบจำลองมือถือ (CheckinApp Loca-V2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .device-frame {
+            width: 100%;
+            max-width: 380px;
+            height: 720px;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 10px #0f172a;
+            overflow: hidden;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .bma-theme-green {
+            background: linear-gradient(135deg, #005B2E 0%, #00744B 50%, #008F5D 100%);
+        }
+        .bma-theme-red {
+            background: linear-gradient(135deg, #7F1D1D 0%, #991B1B 50%, #DC2626 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen p-3 md:p-6">
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header Banner -->
+        <div class="bg-gradient-to-r from-[#00351B] via-[#005B3A] to-[#00744B] rounded-2xl p-5 md:p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-200 text-xs font-bold rounded-full mb-2 border border-emerald-400/30">
+                        <i class="fa-solid fa-table-columns mr-1"></i> COCKPIT SPLIT 2-COLUMN SPECIFICATION
+                    </span>
+                    <h1 class="text-xl md:text-3xl font-extrabold">แผนปฏิบัติการละเอียด: Cockpit Split Layout (ซ้ายกล้อง ขวา GPS)</h1>
+                    <p class="text-emerald-100 text-xs md:text-sm mt-1">
+                        Task ID: <code class="bg-[#002211]/80 px-2 py-0.5 rounded font-mono">PIPE-20261105-loca-v2-cockpit-split-layout</code> | Branch: <span class="text-amber-300 font-bold">Loca-V2</span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-amber-400 text-amber-950 shadow-md">
+                        <i class="fa-solid fa-pause mr-1.5"></i> รอตรวจสอบแผนละเอียด (ยังไม่อนุมัติ Proceed)
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3 Specific Adjustments Callout -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-[#00744B] shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-window-minimize text-[#00744B]"></i> จุดที่ 1: Top Bar ชั้นเดียว
+                </span>
+                <p class="text-slate-600 leading-relaxed">
+                    รวมแถบด้านบนที่เคยซ้อนกัน 3 ชั้นให้เหลือเพียงแถบเดียว แสดงชื่อผู้ใช้ <span class="font-bold text-slate-800">[👤 นายวิศรุต โต๊ะพาน]</span> ทางซ้าย และปุ่มแฮมเบอร์เกอร์ 42x42px ทางขวา แล้วตามด้วย Banner ทันที ประหยัดพื้นที่ได้ ~55px
+                </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-teal-500 shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-table-columns text-teal-600"></i> จุดที่ 2: แบ่งครึ่งจอซ้ายกล้อง ขวา GPS (20dvh)
+                </span>
+                <p class="text-slate-600 leading-relaxed">
+                    รวบการ์ดกล้องถ่ายรูปและข้อมูลพิกัด GPS มาอยู่เคียงข้างกันในแถวเดียว ความสูง ~20dvh (~145px) พอดีกับรูปถ่ายบุคคล 3:4 และไม่มีขอบขาวส่วนเกินกวนสายตา
+                </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border-l-4 border-l-indigo-500 shadow-sm space-y-1.5">
+                <span class="font-bold text-slate-900 flex items-center gap-1.5 text-sm">
+                    <i class="fa-solid fa-sliders text-indigo-600"></i> จุดที่ 3: ปุ่มเลือกพิกัดเด่นชัด & ตัดข้อความ
+                </span>
+                <p class="text-slate-600 leading-relaxed">
+                    ตัดคำว่า "(ดึงจาก settings.remarks)" ออก, รายการใน Dropdown เรียงตามตั้งค่าระบบเป๊ะ, และปุ่มเลือกแหล่งพิกัดมีสถานะ Active สีเขียว/ม่วงครามเด่นชัด มองเห็นง่าย
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: รายละเอียดทางเทคนิค & Interactive Mobile Simulator -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Column: บทบาท SubAgents และรายละเอียดการผ่าตัดโค้ด (7 cols) -->
+            <div class="lg:col-span-7 space-y-4">
+                
+                <!-- SubAgents Specification Table -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-[#00744B]"></i>
+                        บทบาทหน้าที่ของ 2-SubAgents + 1-Orchestrator
+                    </h2>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-emerald-50/50 rounded-xl border border-emerald-200">
+                            <div class="flex items-center justify-between font-bold text-[#00351B] mb-1">
+                                <span>Orchestrator (Main Agent - คุณ)</span>
+                                <span class="text-[10px] text-slate-500 font-mono">Phase 0, 1, 4, 6</span>
+                            </div>
+                            <p class="text-slate-600">ทำ Pre-flight และค้นหา Codebase Map ด้วยตัวเอง (0 Sub Token), ส่งมอบแผน Dual Plans, ควบคุมสั่งการ 2 SubAgents, และรันคำสั่ง <code class="font-mono text-indigo-700 font-bold">git push origin Loca-V2</code> ใน Phase 6</p>
+                        </div>
+
+                        <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200">
+                            <div class="flex items-center justify-between font-bold text-amber-950 mb-1">
+                                <span>SubAgent 1: Implementer (Flash 3.8 High — 1 ตัว)</span>
+                                <span class="text-[10px] text-slate-500 font-mono">Map-First Surgical</span>
+                            </div>
+                            <p class="text-slate-600">อ่านเฉพาะบรรทัดเป้าหมาย (StartLine–EndLine ±10) ห้ามอ่านเกิน 80 บรรทัด, แก้ไขเฉพาะ 2 ไฟล์เป้าหมาย (<code class="font-mono">checkin.html</code> และ <code class="font-mono">CheckinController.js</code>), รวม Top Bar ชั้นเดียว, แบ่งครึ่งจอซ้ายกล้องขวา GPS (20dvh), ย้ายปุ่ม Legacy ไม่ให้เกิดแถบขาว, ปรับจูนปุ่มเลือกพิกัดเด่นชัด, และรัน Sync AST Map</p>
+                        </div>
+
+                        <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-200">
+                            <div class="flex items-center justify-between font-bold text-indigo-950 mb-1">
+                                <span>SubAgent 2: QA Auditor & Diff Specialist (Flash 3.8 High — 1 ตัว)</span>
+                                <span class="text-[10px] text-slate-500 font-mono">Audit & Diff</span>
+                            </div>
+                            <p class="text-slate-600">ตรวจสอบความสูงรวม (~315px Zero-Scroll), ตรวจสอบความสูงของการ์ดซ้าย-ขวา 20dvh, ตรวจสอบสี Active ของปุ่มแหล่งพิกัด, ตรวจสอบความถูกต้องของ Dropdown, รัน <code class="font-mono">node --check</code> และตรวจ <code class="font-mono text-rose-700 font-bold">git diff main</code> ป้องกันโค้ดหลุดขอบเขต</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12 Settings Compatibility Quick Checklist -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-xs text-slate-800">
+                            <i class="fa-solid fa-sliders text-[#00744B] mr-1"></i> ความเข้ากันได้กับตั้งค่าระบบทั้ง 12 ฟังก์ชัน
+                        </span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">100% Fully Compatible</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[10px] text-slate-600">
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 1. บังคับถ่ายภาพ (require_photo)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 2. อัปโหลดแทนกล้อง (allow_gallery)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 3. บังคับพิกัด GPS (require_gps)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 4. สถานที่และรัศมี (official_locations)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 5. ตัวเลือกหมายเหตุ (remarks)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 6. สุ่มพิกัด GPS ขาออก (randomize_gps)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 7. ปิดลงเวลาราชการ (disable_normal)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 8. กรองกะ Real-time (filter_shifts)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 9. เวลามาตรฐาน (standard_time)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 10. เวลาเริ่มเปิดลง (allow_start_time)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 11. ผ่อนปรนออกงาน (grace_minutes)</div>
+                        <div class="p-1.5 bg-slate-50 rounded border border-slate-100">✓ 12. หมวดสีสถานะ (category_colors)</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: แบบจำลองโทรศัพท์มือถือ Cockpit Layout (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col items-center">
+                <div class="text-center mb-2">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <i class="fa-solid fa-mobile-screen-button text-[#00744B] mr-1"></i> Interactive Mobile Simulator
+                    </span>
+                    <p class="text-[11px] text-slate-400">แบบจำลอง Cockpit Layout: ซ้ายกล้อง ขวา GPS ความสูง ~20dvh</p>
+                </div>
+
+                <div class="device-frame shadow-2xl">
+                    
+                    <!-- Mobile Viewport Container -->
+                    <div class="flex-1 overflow-y-auto p-3 space-y-2.5 pb-20 relative">
+                        
+                        <!-- [1] Top Bar บนมือถือ (เหลือชั้นเดียว: ชื่อผู้ใช้ + แฮมเบอร์เกอร์ 42px) -->
+                        <div class="flex items-center justify-between text-xs py-1 px-1">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#00744B] flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <span class="font-extrabold text-xs text-slate-800 truncate">นายวิศรุต โต๊ะพาน</span>
+                            </div>
+                            <button type="button" onclick="openSimDrawer()" class="w-10 h-10 rounded-xl bg-white text-[#00744B] border-2 border-emerald-500/40 shadow-md flex items-center justify-center hover:bg-emerald-50 active:scale-95 transition cursor-pointer shrink-0" title="เปิดเมนูแฮมเบอร์เกอร์เดิม">
+                                <i class="fa-solid fa-bars-staggered text-base"></i>
+                            </button>
+                        </div>
+
+                        <!-- [2] Dynamic Unified Banner (เปลี่ยนสีไดนามิก: เขียว=เข้างาน, แดง=ออกงาน) -->
+                        <div id="simUnifiedBanner" class="bma-theme-green rounded-xl p-2.5 text-white shadow-sm flex items-center justify-between transition-colors duration-300">
+                            <div>
+                                <span id="simBannerStatusText" class="text-xs font-extrabold text-white block">ลงเวลาเข้างาน • 5 พ.ย. 2569</span>
+                                <span id="simBannerSubText" class="text-[10px] text-emerald-100 font-medium">เวลาราชการปกติ</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="simRealtimeClock" class="font-mono text-xl font-extrabold text-white">11:56:45</span>
+                                <span class="text-[9px] text-white/80 block font-medium">เวลาปัจจุบัน</span>
+                            </div>
+                        </div>
+
+                        <!-- [3] Cockpit Split Grid (แบ่งครึ่งจอ 2 คอลัมน์: ซ้ายกล้อง ขวา GPS ~20dvh) -->
+                        <div class="grid grid-cols-2 gap-2 items-stretch h-36">
+                            
+                            <!-- ฝั่งซ้าย: กล้องถ่ายภาพ (~20dvh) ไร้ขอบขาวซ้อนทับ -->
+                            <div id="simPhotoBox" onclick="openSimCameraModal()" class="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 shadow-sm flex items-center justify-center cursor-pointer group h-full">
+                                <div id="simPhotoPlaceholder" class="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-400">
+                                    <i class="fa-solid fa-user text-3xl text-slate-500 mb-1"></i>
+                                    <span class="text-[9px] text-slate-400 font-medium">กล้องยืนยันตัวตน</span>
+                                </div>
+                                <img id="simPhotoImg" class="hidden w-full h-full object-cover" src="" alt="Thumbnail">
+
+                                <!-- Centered Floating Overlay Button -->
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div id="simCenterButton" class="w-11 h-11 rounded-full bg-slate-900/75 hover:bg-slate-900/90 text-white backdrop-blur-sm border-2 border-white/60 shadow-lg flex items-center justify-center transition transform group-hover:scale-105 active:scale-95 pointer-events-auto">
+                                        <i id="simCenterIcon" class="fa-solid fa-camera text-sm text-amber-300"></i>
+                                    </div>
+                                </div>
+
+                                <div class="absolute bottom-1.5 left-1.5 right-1.5 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[8px] text-white font-medium text-center truncate">
+                                    <span id="simPhotoStatusText">แตะเพื่อถ่ายรูป</span>
+                                </div>
+                            </div>
+
+                            <!-- ฝั่งขวา: ข้อมูลพิกัดและสถานที่ (GPS) (~20dvh) -->
+                            <div class="bg-white rounded-2xl p-2.5 shadow-xs border border-slate-200 flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-bold text-[11px] text-slate-800 flex items-center gap-1">
+                                            <i class="fa-solid fa-location-dot text-[#00744B]"></i> พิกัด (GPS)
+                                        </span>
+                                        <span id="simGpsBadge" class="px-1.5 py-0.5 rounded text-[8px] font-bold bg-sky-100 text-sky-800">บันทึกพิกัดจริง</span>
+                                    </div>
+                                    <div class="text-[10px] font-mono text-slate-600 font-semibold truncate" id="simGpsCoords">13.738112, 100.495479</div>
+                                    <div class="text-[10px] font-extrabold text-[#00744B] line-clamp-2 mt-0.5 leading-tight" id="simGpsLocationName">ใกล้เคียง ซอยขุมทรัพย์</div>
+                                </div>
+
+                                <!-- ปุ่มแอ็กชันคู่ฝั่งขวา -->
+                                <div class="grid grid-cols-2 gap-1 pt-1 border-t border-slate-100">
+                                    <button type="button" onclick="refreshSimGps()" class="py-1 px-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[9px] font-bold flex items-center justify-center gap-0.5 transition">
+                                        <i class="fa-solid fa-location-arrow text-[#00744B] text-[8px]"></i>
+                                        <span>รีเฟรช</span>
+                                    </button>
+                                    <button type="button" onclick="openSimViewMapModal()" class="py-1 px-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0971CE] border border-sky-200 text-[9px] font-bold flex items-center justify-center gap-0.5 transition">
+                                        <i class="fa-solid fa-map text-[8px]"></i>
+                                        <span>แผนที่</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- [4] การ์ดรูปแบบการปฏิบัติงาน (Segmented Switcher & Dynamic Remarks) -->
+                        <div class="bg-white rounded-xl p-2.5 shadow-xs border border-slate-200 space-y-2">
+                            <div class="flex items-center justify-between text-[11px] mb-0.5">
+                                <span class="font-bold text-slate-700">รูปแบบการปฏิบัติงาน *</span>
+                                <span id="simModeContextBadge" class="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">เข้างาน</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-lg text-xs font-bold">
+                                <button type="button" id="simBtnOnsite" onclick="setSimMode('onsite')" class="py-1.5 rounded-md bg-white text-[#00744B] shadow-xs transition">
+                                    <i class="fa-solid fa-building mr-1"></i>ในสถานที่
+                                </button>
+                                <button type="button" id="simBtnOffsite" onclick="setSimMode('offsite')" class="py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
+                                    <i class="fa-solid fa-map-location-dot mr-1"></i>นอกสถานที่
+                                </button>
+                            </div>
+
+                            <!-- Onsite Proximity -->
+                            <div id="simOnsiteContent" class="p-2 rounded-lg bg-emerald-50/60 border border-emerald-100 text-[11px] text-emerald-900 space-y-0.5">
+                                <div class="font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check text-emerald-600"></i> อยู่ในรัศมีสถานที่ทำงาน
+                                </div>
+                                <div class="text-slate-600 text-[10px]">สำนักเทศกิจ (ห่าง 68 ม. / รัศมี 700 ม.)</div>
+                            </div>
+
+                            <!-- Offsite Options (ตัดคำว่าดึงจาก settings ออก, เรียงลำดับตามระบบ, ปุ่มมีสี Active ชัดเจน) -->
+                            <div id="simOffsiteContent" class="hidden space-y-2 pt-1 border-t border-slate-100">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-700 mb-1">
+                                        ลักษณะงานนอกสถานที่ *
+                                    </label>
+                                    <select id="simOffsiteSelect" onchange="handleSimRemarkChange()" class="w-full text-xs p-1.5 rounded-lg border border-slate-200 bg-white">
+                                        <option value="WFH">ปฏิบัติงานที่บ้าน (WFH)</option>
+                                        <option value="WFA">ปฏิบัติงานนอกสถานที่ (WFA)</option>
+                                        <option value="MEETING">ไปประชุม / อบรม / สัมมนา</option>
+                                        <option value="PERMISSION">ขออนุญาตออกนอกสถานที่</option>
+                                        <option value="EXPRESS">ปฏิบัติงานในจุดบริการด่วนมหานคร</option>
+                                        <option value="OTHER">อื่นๆ</option>
+                                    </select>
+                                </div>
+
+                                <div id="simCustomRemarkBox" class="hidden">
+                                    <input type="text" id="simCustomRemarkInput" class="w-full text-xs p-1.5 rounded-lg border border-amber-300 bg-amber-50/50" placeholder="ระบุสถานที่ / ลักษณะงาน...">
+                                </div>
+
+                                <div class="space-y-1">
+                                    <span class="text-[10px] font-bold text-slate-700 block">เลือกแหล่งพิกัด (Active State ชัดเจน):</span>
+                                    <div class="grid grid-cols-2 gap-1.5">
+                                        <button type="button" id="simBtnGpsCurrent" onclick="setSimGpsChoice('current')" class="py-2 px-2 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-[10px] font-extrabold flex items-center justify-center gap-1 transition">
+                                            <i class="fa-solid fa-circle-check text-xs"></i>
+                                            <span>GPS ปัจจุบัน</span>
+                                        </button>
+                                        <button type="button" id="simBtnGpsSearch" onclick="setSimGpsChoice('map')" class="py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition">
+                                            <i class="fa-solid fa-map-pin text-xs"></i>
+                                            <span>ค้นหาพิกัดเอง</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- [5] High-Visibility Sticky Action Button -->
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-white/95 backdrop-blur-xs border-t border-slate-200">
+                        <button type="button" id="simStickyButton" class="w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white shadow-lg bma-theme-green flex items-center justify-center gap-2">
+                            <i id="simStickyIcon" class="fa-solid fa-fingerprint text-lg text-[#F6DE51]"></i>
+                            <span id="simStickyLabel">บันทึกลงเวลาเข้างาน</span>
+                        </button>
+                    </div>
+
+                    <!-- โมดอลดูแผนที่ตามพิกัด Leaflet -->
+                    <div id="simViewMapModal" class="hidden absolute inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-3">
+                        <div class="w-full bg-white rounded-3xl p-4 space-y-3 shadow-2xl max-h-[85%] flex flex-col">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <span class="font-bold text-xs text-sky-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-map-location-dot text-[#0971CE]"></i> แผนที่ตำแหน่งพิกัด (Leaflet Map)
+                                </span>
+                                <button type="button" onclick="closeSimViewMapModal()" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-xmark text-sm"></i>
+                                </button>
+                            </div>
+                            <div class="rounded-2xl overflow-hidden border border-slate-200 h-60 bg-emerald-50 relative flex items-center justify-center">
+                                <div class="absolute inset-0 bg-slate-100 flex flex-col items-center justify-center text-slate-400">
+                                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center animate-pulse mb-1">
+                                        <i class="fa-solid fa-location-dot text-2xl text-rose-500"></i>
+                                    </div>
+                                    <span class="text-[10px] text-slate-600 font-bold bg-white/90 px-3 py-1 rounded-full shadow-xs">
+                                        หมุดพิกัด: <span id="simModalPinCoords" class="font-mono text-[#00744B]">13.738112, 100.495479</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="button" onclick="closeSimViewMapModal()" class="w-full py-2.5 rounded-xl bg-[#00744B] text-white font-bold text-xs shadow-md">
+                                ปิดหน้าต่างแผนที่
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- กล้องถ่ายรูปเต็มจอ -->
+                    <div id="simCameraModal" class="hidden absolute inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-camera mr-1"></i>กล้องสแกนใบหน้า</span>
+                            <button type="button" onclick="closeSimCameraModal()" class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center py-4">
+                            <div class="w-52 h-68 border-2 border-dashed border-emerald-400/80 rounded-3xl flex items-center justify-center relative bg-emerald-950/20 shadow-2xl">
+                                <i class="fa-regular fa-face-smile text-7xl text-emerald-400/50"></i>
+                                <span class="absolute bottom-3 text-[10px] text-emerald-200 font-bold bg-black/60 px-2.5 py-0.5 rounded-full">จัดใบหน้าให้อยู่ในกรอบ</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center pb-5 space-y-2">
+                            <button type="button" onclick="captureSimPhoto()" class="w-16 h-16 rounded-full bg-white text-emerald-800 shadow-2xl flex items-center justify-center border-4 border-amber-400 active:scale-95 transition" title="กดถ่ายภาพ">
+                                <div class="w-12 h-12 rounded-full bg-emerald-700 flex items-center justify-center text-white shadow-inner">
+                                    <i class="fa-solid fa-camera text-xl"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Drawer Simulation -->
+                    <div id="simDrawer" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-end">
+                        <div class="w-4/5 bg-white h-full p-4 space-y-4 shadow-2xl">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <span class="font-extrabold text-sm text-[#00744B]">เมนูระบบเดิม</span>
+                                <button type="button" onclick="closeSimDrawer()" class="text-slate-400 hover:text-slate-600">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-2 text-xs font-bold text-slate-700">
+                                <div class="p-2.5 rounded-xl bg-emerald-50 text-[#00744B] flex items-center gap-2">
+                                    <i class="fa-solid fa-fingerprint"></i> ลงเวลาปฏิบัติราชการ
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                                    <i class="fa-solid fa-clock-rotate-left"></i> ประวัติการลงเวลา
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 flex items-center gap-2 cursor-pointer">
+                                    <i class="fa-solid fa-file-signature"></i> คำขอลงเวลากรณีพิเศษ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- โมดอลค้นหาพิกัดนอกสถานที่ (Leaflet Search) -->
+                    <div id="simMapModal" class="hidden absolute inset-0 z-50 bg-slate-900/90 flex flex-col justify-end">
+                        <div class="bg-white rounded-t-3xl p-4 space-y-3 max-h-[85%] overflow-y-auto">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <span class="font-bold text-xs text-indigo-900 flex items-center gap-1">
+                                    <i class="fa-solid fa-map-location-dot text-indigo-600"></i> ค้นหาพิกัดนอกสถานที่ (Leaflet Map)
+                                </span>
+                                <button type="button" onclick="closeSimMapModal()" class="text-slate-400 hover:text-slate-600">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-600">พิมพ์ค้นหาสถานที่ หรือเลือกจุดแนะนำ:</label>
+                                <input type="text" value="ศาลาว่าการกรุงเทพมหานคร (เสาชิงช้า)" class="w-full text-xs p-2 rounded-xl border border-indigo-200 bg-indigo-50/30">
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-100 border text-[11px] space-y-1">
+                                <div class="font-bold text-slate-800">พิกัดหมุดที่เลือก:</div>
+                                <div class="font-mono text-indigo-700 font-bold">13.753682, 100.501754</div>
+                                <div class="text-slate-500 text-[10px]">ศาลาว่าการกรุงเทพมหานคร 1 (เสาชิงช้า) แขวงเสาชิงช้า</div>
+                            </div>
+                            <button type="button" onclick="confirmSimMapSearch()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">
+                                <i class="fa-solid fa-check mr-1"></i> ยืนยันตำแหน่งนี้ (ส่งเข้าการ์ด GPS)
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Simulation Control Buttons -->
+                <div class="mt-3 flex items-center gap-2">
+                    <button type="button" onclick="toggleSimCheckinState('checkin')" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        🟢 สถานะเข้างาน
+                    </button>
+                    <button type="button" onclick="toggleSimCheckinState('checkout')" class="px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                        🔴 สถานะออกงาน
+                    </button>
+                    <button type="button" onclick="toggleSimCheckinState('locked')" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700 border border-slate-300">
+                        ⚪ ล็อกปุ่ม (สีเทา)
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Approval Box -->
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-5 text-center space-y-2">
+            <div class="text-sm font-bold text-amber-950 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-amber-600"></i>
+                แผนปฏิบัติการวิเคราะห์ละเอียดฉบับ Cockpit Layout เสร็จสมบูรณ์แล้ว — ยังไม่มีการแก้ไขโค้ดใดๆ
+            </div>
+            <p class="text-xs text-amber-800 max-w-xl mx-auto leading-relaxed">
+                หากท่านตรวจสอบรายละเอียดและแบบจำลองตอบสนองจริงแล้วเห็นชอบ สามารถกดปุ่ม <strong>"Proceed"</strong> เพื่อเริ่มต้นดำเนินการได้ทันทีครับ
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Realtime Clock Simulation
+        setInterval(() => {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('simRealtimeClock');
+            if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
+        }, 1000);
+
+        // Drawer
+        function openSimDrawer() {
+            document.getElementById('simDrawer').classList.remove('hidden');
+        }
+        function closeSimDrawer() {
+            document.getElementById('simDrawer').classList.add('hidden');
+        }
+
+        // View Map Modal (ปุ่มดูแผนที่ตามพิกัด)
+        function openSimViewMapModal() {
+            const coords = document.getElementById('simGpsCoords').textContent;
+            const locName = document.getElementById('simGpsLocationName').textContent;
+            document.getElementById('simModalPinCoords').textContent = coords;
+            document.getElementById('simViewMapModal').classList.remove('hidden');
+        }
+        function closeSimViewMapModal() {
+            document.getElementById('simViewMapModal').classList.add('hidden');
+        }
+
+        function refreshSimGps() {
+            alert('ตรวจสอบพิกัด GPS สำเร็จ: 13.738112, 100.495479 (ความแม่นยำสูง)');
+        }
+
+        // Mode Switching
+        function setSimMode(mode) {
+            const btnOnsite = document.getElementById('simBtnOnsite');
+            const btnOffsite = document.getElementById('simBtnOffsite');
+            const onsiteContent = document.getElementById('simOnsiteContent');
+            const offsiteContent = document.getElementById('simOffsiteContent');
+
+            if (mode === 'onsite') {
+                btnOnsite.className = 'py-1.5 rounded-md bg-white text-[#00744B] shadow-xs transition';
+                btnOffsite.className = 'py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition';
+                onsiteContent.classList.remove('hidden');
+                offsiteContent.classList.add('hidden');
+                setSimGpsChoice('current');
+            } else {
+                btnOffsite.className = 'py-1.5 rounded-md bg-white text-[#00744B] shadow-xs transition';
+                btnOnsite.className = 'py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition';
+                onsiteContent.classList.add('hidden');
+                offsiteContent.classList.remove('hidden');
+            }
+        }
+
+        function handleSimRemarkChange() {
+            const sel = document.getElementById('simOffsiteSelect');
+            const customBox = document.getElementById('simCustomRemarkBox');
+            if (sel.value === 'OTHER') {
+                customBox.classList.remove('hidden');
+            } else {
+                customBox.classList.add('hidden');
+            }
+        }
+
+        // Camera Modal
+        function openSimCameraModal() {
+            document.getElementById('simCameraModal').classList.remove('hidden');
+        }
+        function closeSimCameraModal() {
+            document.getElementById('simCameraModal').classList.add('hidden');
+        }
+        function captureSimPhoto() {
+            closeSimCameraModal();
+            document.getElementById('simPhotoPlaceholder').classList.add('hidden');
+            const img = document.getElementById('simPhotoImg');
+            img.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces';
+            img.classList.remove('hidden');
+            
+            const icon = document.getElementById('simCenterIcon');
+            icon.className = 'fa-solid fa-rotate-right text-xs text-white';
+            document.getElementById('simPhotoStatusText').textContent = 'ถ่ายภาพแล้ว (แตะเพื่อถ่ายใหม่)';
+        }
+
+        // Map Modal
+        function openSimMapModal() {
+            document.getElementById('simMapModal').classList.remove('hidden');
+        }
+        function closeSimMapModal() {
+            document.getElementById('simMapModal').classList.add('hidden');
+        }
+        function confirmSimMapSearch() {
+            closeSimMapModal();
+            document.getElementById('simGpsBadge').textContent = 'พิกัดที่ค้นหาเอง';
+            document.getElementById('simGpsBadge').className = 'px-1.5 py-0.5 rounded text-[8px] font-bold bg-indigo-100 text-indigo-800';
+            document.getElementById('simGpsCoords').textContent = '13.753682, 100.501754';
+            document.getElementById('simGpsLocationName').textContent = 'ศาลาว่าการกรุงเทพมหานคร 1';
+        }
+
+        // Prominent GPS Choice Toggle
+        function setSimGpsChoice(choice) {
+            const btnCurrent = document.getElementById('simBtnGpsCurrent');
+            const btnSearch = document.getElementById('simBtnGpsSearch');
+
+            if (choice === 'current') {
+                btnCurrent.className = 'py-2 px-2 rounded-xl bg-[#00744B] text-white shadow-md border-2 border-[#005B2E] text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnCurrent.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>GPS ปัจจุบัน</span>';
+
+                btnSearch.className = 'py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnSearch.innerHTML = '<i class="fa-solid fa-map-pin text-xs"></i><span>ค้นหาพิกัดเอง</span>';
+
+                document.getElementById('simGpsBadge').textContent = 'บันทึกพิกัดจริง';
+                document.getElementById('simGpsBadge').className = 'px-1.5 py-0.5 rounded text-[8px] font-bold bg-sky-100 text-sky-800';
+                document.getElementById('simGpsCoords').textContent = '13.738112, 100.495479';
+                document.getElementById('simGpsLocationName').textContent = 'ใกล้เคียง ซอยขุมทรัพย์';
+            } else if (choice === 'map') {
+                btnSearch.className = 'py-2 px-2 rounded-xl bg-indigo-600 text-white shadow-md border-2 border-indigo-700 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnSearch.innerHTML = '<i class="fa-solid fa-circle-check text-xs"></i><span>ค้นหาพิกัดเอง</span>';
+
+                btnCurrent.className = 'py-2 px-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 text-[10px] font-extrabold flex items-center justify-center gap-1 transition';
+                btnCurrent.innerHTML = '<i class="fa-solid fa-location-crosshairs text-xs"></i><span>GPS ปัจจุบัน</span>';
+
+                openSimMapModal();
+            }
+        }
+
+        // Button States & Dynamic Banner Synchronization
+        function toggleSimCheckinState(state) {
+            const btn = document.getElementById('simStickyButton');
+            const label = document.getElementById('simStickyLabel');
+            const icon = document.getElementById('simStickyIcon');
+            const banner = document.getElementById('simUnifiedBanner');
+            const bannerText = document.getElementById('simBannerStatusText');
+            const bannerSub = document.getElementById('simBannerSubText');
+            const modeBadge = document.getElementById('simModeContextBadge');
+
+            if (state === 'checkin') {
+                banner.className = 'bma-theme-green rounded-xl p-2.5 text-white shadow-sm flex items-center justify-between transition-colors duration-300';
+                bannerText.textContent = 'ลงเวลาเข้างาน • 5 พ.ย. 2569';
+                bannerSub.textContent = 'เวลาราชการปกติ';
+                modeBadge.textContent = 'เข้างาน';
+                modeBadge.className = 'text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full';
+
+                btn.className = 'w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white shadow-lg bma-theme-green flex items-center justify-center gap-2 cursor-pointer';
+                label.textContent = 'บันทึกลงเวลาเข้างาน';
+                icon.className = 'fa-solid fa-fingerprint text-lg text-[#F6DE51]';
+                btn.disabled = false;
+            } else if (state === 'checkout') {
+                banner.className = 'bma-theme-red rounded-xl p-2.5 text-white shadow-sm flex items-center justify-between transition-colors duration-300';
+                bannerText.textContent = 'ลงเวลาออกงาน • 5 พ.ย. 2569';
+                bannerSub.textContent = 'ท่านได้ลงเวลาเข้างานแล้ว';
+                modeBadge.textContent = 'ออกงาน (เลือกนอกสถานที่ได้)';
+                modeBadge.className = 'text-[9px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full';
+
+                btn.className = 'w-full py-3 px-4 rounded-xl text-sm font-extrabold text-white shadow-lg bma-theme-red flex items-center justify-center gap-2 cursor-pointer';
+                label.textContent = 'บันทึกลงเวลาออกงาน';
+                icon.className = 'fa-solid fa-arrow-right-from-bracket text-lg text-white';
+                btn.disabled = false;
+            } else if (state === 'locked') {
+                btn.className = 'w-full py-3 px-4 rounded-xl text-sm font-extrabold text-slate-400 bg-slate-200 flex items-center justify-center gap-2 cursor-not-allowed';
+                label.textContent = 'อยู่นอกรัศมี / ไม่มีกะเวลา';
+                icon.className = 'fa-solid fa-lock text-lg text-slate-400';
+                btn.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

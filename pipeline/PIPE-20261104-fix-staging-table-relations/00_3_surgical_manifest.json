@@ -1,0 +1,63 @@
+{
+  "task_id": "PIPE-20261104-fix-staging-table-relations",
+  "generated_at": "2026-11-04T17:04:40+07:00",
+  "orchestrator": "agent_00_orchestrator",
+  "root_cause": "PostgreSQL CREATE TABLE (LIKE ... INCLUDING ALL) omits Foreign Keys, causing PostgREST nested joins to fail with PGRST200 (HTTP 400). Catch blocks return [] leaving UI tables empty.",
+  "targets": [
+    {
+      "flow_id": "FLOW_DB_STAGING_01",
+      "file_path": "sql/fix_staging_foreign_keys.sql",
+      "action": "create",
+      "start_line": 1,
+      "end_line": 40,
+      "symbols": ["STAGING_FOREIGN_KEYS_PATCH"],
+      "purpose": "SQL patch script to add foreign key constraints to staging tables and reload schema cache"
+    },
+    {
+      "flow_id": "FLOW_DB_STAGING_01",
+      "file_path": "sql/create_staging_schema.sql",
+      "action": "modify",
+      "start_line": 15,
+      "end_line": 30,
+      "symbols": ["STAGING_SCHEMA_CONSTRAINTS"],
+      "purpose": "Include Foreign Key constraints and PostgREST reload in original staging creation script"
+    },
+    {
+      "flow_id": "FLOW_PERSONNEL_01",
+      "file_path": "assets/js/models/PersonnelModel.js",
+      "action": "modify",
+      "start_line": 52,
+      "end_line": 95,
+      "symbols": ["PersonnelModel.getAll"],
+      "purpose": "Add resilient two-stage fallback if joined query fails, querying personnel and user_accounts independently and stitching in-memory"
+    },
+    {
+      "flow_id": "FLOW_USERS_01",
+      "file_path": "assets/js/models/UserModel.js",
+      "action": "modify",
+      "start_line": 17,
+      "end_line": 55,
+      "symbols": ["UserModel.getAll"],
+      "purpose": "Add resilient two-stage fallback if joined query fails, querying user_accounts and personnel independently and stitching in-memory"
+    },
+    {
+      "flow_id": "FLOW_AUTH_01",
+      "file_path": "assets/js/core/AuthService.js",
+      "action": "modify",
+      "start_line": 78,
+      "end_line": 185,
+      "symbols": ["AuthService.verifySessionWithDatabase", "AuthService.login"],
+      "purpose": "Add fallback to individual table query if nested personnel relation fails on login or session verification"
+    },
+    {
+      "flow_id": "FLOW_APPROVALS_01",
+      "file_path": "assets/js/models/AttendanceModel.js",
+      "action": "modify",
+      "start_line": 1375,
+      "end_line": 1415,
+      "symbols": ["AttendanceModel.getSpecialRequests"],
+      "purpose": "Add fallback to individual table query if nested personnel relation fails on special requests query"
+    }
+  ]
+}
+

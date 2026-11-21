@@ -9,12 +9,23 @@ import { UIHelpers } from '../core/UIHelpers.js';
 import { SettingsModel } from '../models/SettingsModel.js';
 import { AttendanceModel } from '../models/AttendanceModel.js';
 import { UserModel } from '../models/UserModel.js';
+import { DatabaseService } from '../core/DatabaseService.js';
+import { SystemUpdateModal } from './SystemUpdateModal.js';
 
 export class AppLayout {
     static #isLayoutMounted = false;
     static #isGlobalEventsBound = false;
+    static #isSettingsListenerBound = false;
+    static #isRealtimeSyncInitialized = false;
+    static #hasCheckedAnnouncement = false;
+    static #currentActivePage = 'dashboard';
     static #currentUser = null;
     static #settings = null;
+    static #lastPendingSpecialCount = null;
+    static #lastPendingCorrectionCount = null;
+    static #lastPendingResetCount = null;
+    static #lastAttendanceWatermark = null;
+    static #lastSettingsWatermark = null;
 
     static PAGE_ROUTES = {
         'dashboard.html': {
@@ -34,6 +45,12 @@ export class AppLayout {
             pageTitle: 'อนุมัติลงเวลาปฏิบัติราชการกรณีพิเศษ',
             controllerPath: '../controllers/ApprovalsController.js',
             controllerClass: 'ApprovalsController'
+        },
+        'time-corrections.html': {
+            activePage: 'time-corrections',
+            pageTitle: 'อนุมัติแก้ไขเวลาเข้า-ออกงาน',
+            controllerPath: '../controllers/TimeCorrectionsController.js',
+            controllerClass: 'TimeCorrectionsController'
         },
         'personnel.html': {
             activePage: 'personnel',
@@ -91,6 +108,7 @@ export class AppLayout {
             document.body.appendChild(modalsContainer);
         }
 
+        AppLayout.#currentActivePage = activePage || AppLayout.#currentActivePage;
         AppLayout.#currentUser = currentUser;
         AppLayout.#settings = await SettingsModel.getSettings(false);
 
@@ -103,13 +121,25 @@ export class AppLayout {
             AppLayout.#bindGlobalDelegatedEvents();
             AppLayout.#isLayoutMounted = true;
 
-            window.addEventListener('bma:settings-updated', (e) => {
-                AppLayout.#settings = e.detail;
-                const currentActive = document.querySelector('#bmaSidebarDrawer a.active')?.dataset?.navId || activePage;
-                AppLayout.#renderSidebar(currentUser, AppLayout.#settings, currentActive);
-                AppLayout.#renderFooter(AppLayout.#settings);
-                AppLayout.refreshNotificationBell(currentUser);
-            });
+            if (!AppLayout.#isSettingsListenerBound) {
+                AppLayout.#isSettingsListenerBound = true;
+                window.addEventListener('bma:settings-updated', (e) => {
+                    const incoming = (e.detail && typeof e.detail === 'object')
+                        ? Object.fromEntries(Object.entries(e.detail).filter(([, v]) => v !== undefined))
+                        : {};
+                    AppLayout.#settings = {
+                        ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                        ...incoming
+                    };
+                    const currentActive = AppLayout.#currentActivePage
+                        || document.querySelector('#bmaSidebarDrawer a.active')?.dataset?.navId
+                        || activePage;
+                    const activeUser = AppLayout.#currentUser || currentUser;
+                    AppLayout.#renderSidebar(activeUser, AppLayout.#settings, currentActive);
+                    AppLayout.#renderMobileBottomNav(activeUser, currentActive);
+                    AppLayout.#renderFooter(AppLayout.#settings);
+                });
+            }
         } else {
             AppLayout.#updateActiveNavState(activePage, pageTitle, pageSubtitle);
         }
@@ -120,6 +150,15 @@ export class AppLayout {
             AppLayout.refreshNotificationBell(currentUser);
         }, 50);
 
+        AppLayout.initAdminRealtimeSync(currentUser);
+
+        if (!AppLayout.#hasCheckedAnnouncement && AppLayout.#settings) {
+            AppLayout.#hasCheckedAnnouncement = true;
+            setTimeout(() => {
+                SystemUpdateModal.checkAndShowAnnouncement(AppLayout.#settings);
+            }, 150);
+        }
+
         return { currentUser, settings: AppLayout.#settings };
     }
 
@@ -127,14 +166,20 @@ export class AppLayout {
         const welcomeName = sessionStorage.getItem(Config.STORAGE_KEYS.WELCOME_TOAST);
         if (welcomeName) {
             sessionStorage.removeItem(Config.STORAGE_KEYS.WELCOME_TOAST);
-            const displayName = welcomeName || currentUser?.full_name || '';
+            const prefixes = AppLayout.#settings?.prefixes || null;
+            const source = (currentUser?.personnel?.first_name && welcomeName === currentUser.full_name)
+                ? currentUser
+                : (welcomeName || currentUser || '');
+            const cleanName = UIHelpers.formatWelcomeDisplayName(source, prefixes);
+            const toastMsg = cleanName ? `ยินดีต้อนรับคุณ${cleanName}` : 'ยินดีต้อนรับเข้าสู่ระบบ';
             setTimeout(() => {
-                UIHelpers.showToast(`ยินดีต้อนรับคุณ ${displayName}`, 'success', 2800);
+                UIHelpers.showToast(toastMsg, 'success', 2800);
             }, 200);
         }
     }
 
     static #updateActiveNavState(activePage, pageTitle, pageSubtitle) {
+        AppLayout.#currentActivePage = activePage || AppLayout.#currentActivePage;
         const titleEl = document.getElementById('topbarPageTitle');
         const subEl = document.getElementById('topbarPageSubtitle');
         if (titleEl && pageTitle) titleEl.textContent = pageTitle;
@@ -312,6 +357,7 @@ export class AppLayout {
             newModals.forEach(modal => {
                 modalsContainer.appendChild(modal.cloneNode(true));
             });
+            UIHelpers.syncBodyModalLock();
 
             // 8.3 ปรับปรุง History State และ Root Masking
             if (pushHistory) {
@@ -354,6 +400,7 @@ export class AppLayout {
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', show: true },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-invoice', label: 'รายงานการลงเวลา', show: true },
             { id: 'approvals', href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติลงเวลากรณีพิเศษ', show: true, badgeId: 'sidebarSpecialBadge' },
+            { id: 'time-corrections', href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้ไขเวลา', show: true, badgeId: 'sidebarCorrectionBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-id-card-clip', label: 'จัดการข้อมูลบุคลากร', show: true },
             { id: 'users', href: 'users.html', icon: 'fa-users-gear', label: 'จัดการบัญชีผู้ใช้งาน', show: AppLayout.canViewUsersMenu(currentUser), badgeId: 'sidebarResetBadge' },
             { id: 'settings', href: 'settings.html', icon: 'fa-sliders', label: 'ตั้งค่าระบบ', show: currentUser.role === 'SuperAdmin' }
@@ -368,7 +415,7 @@ export class AppLayout {
                 : `ส่วน/ฝ่าย: ${currentUser.scope_division || currentUser.scope_bureau}`);
 
         sidebarEl.innerHTML = `
-            <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
+            <div id="bmaSidebarBackdrop" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
 
             <aside id="bmaSidebarDrawer" class="fixed top-0 left-0 bottom-0 w-72 bg-[#111827] dark:bg-[#0B132B] z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col justify-between shadow-2xl border-r border-slate-800">
                 <div>
@@ -409,13 +456,20 @@ export class AppLayout {
                         <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 px-4 pt-2 pb-1">เมนูระบบบริหารจัดการ</div>
                         ${visibleMenus.map(item => {
                             const isActive = activePage === item.id;
+                            const badgeCount = item.badgeId === 'sidebarSpecialBadge'
+                                ? Number(AppLayout.#lastPendingSpecialCount || 0)
+                                : (item.badgeId === 'sidebarCorrectionBadge'
+                                    ? Number(AppLayout.#lastPendingCorrectionCount || 0)
+                                    : (item.badgeId === 'sidebarResetBadge'
+                                        ? Number(AppLayout.#lastPendingResetCount || 0)
+                                        : 0));
                             return `
-                                <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
+                                <a href="${item.href}" data-nav-id="${item.id}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 no-underline ${isActive ? 'bg-gradient-to-r from-[#00744B] to-[#00995D] text-white shadow-lg shadow-emerald-700/40 active' : 'text-slate-300 hover:text-white hover:bg-slate-800/70'}">
                                     <div class="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'}">
                                         <i class="fa-solid ${item.icon}"></i>
                                     </div>
                                     <span class="flex-1 truncate">${item.label}</span>
-                                    ${item.badgeId ? `<span id="${item.badgeId}" class="hidden px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white shadow">0</span>` : ''}
+                                    ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}px-2 py-0.5 text-[10px] font-bold rounded-full bg-rose-500 text-white shadow">${badgeCount}</span>` : ''}
                                 </a>
                             `;
                         }).join('')}
@@ -511,23 +565,33 @@ export class AppLayout {
         const mobileNavEl = document.getElementById('bmaMobileBottomNav');
         if (!mobileNavEl) return;
 
+        const canSeeUsers = AppLayout.canViewUsersMenu(currentUser);
         const items = [
             { id: 'dashboard', href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', show: true },
             { id: 'reports', href: 'reports.html', icon: 'fa-file-lines', label: 'รายงาน', show: true },
-            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติเวลา', show: true },
+            { id: 'approvals', href: 'approvals.html', icon: 'fa-check-double', label: 'อนุมัติพิเศษ', show: true, badgeId: 'mobileNavSpecialBadge' },
+            { id: 'time-corrections', href: 'time-corrections.html', icon: 'fa-user-clock', label: 'แก้เวลา', show: true, badgeId: 'mobileNavCorrectionBadge' },
             { id: 'personnel', href: 'personnel.html', icon: 'fa-address-book', label: 'บุคลากร', show: true },
-            { id: 'users', href: 'users.html', icon: 'fa-user-shield', label: 'บัญชีผู้ใช้', show: AppLayout.canViewUsersMenu(currentUser) },
+            { id: 'users', href: 'users.html', icon: 'fa-user-shield', label: 'บัญชีผู้ใช้', show: canSeeUsers, badgeId: 'mobileNavResetBadge' },
             { id: 'settings', href: 'settings.html', icon: 'fa-gear', label: 'ตั้งค่า', show: currentUser.role === 'SuperAdmin' }
         ].filter(i => i.show);
 
         mobileNavEl.innerHTML = `
-            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-2 py-1.5 flex items-center justify-around shadow-lg">
+            <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bma-card rounded-none border-b-0 border-x-0 px-1.5 py-1.5 flex items-center justify-between sm:justify-around gap-0.5 overflow-x-auto no-scrollbar shadow-lg">
                 ${items.map(item => {
                     const isActive = activePage === item.id;
+                    const badgeCount = item.badgeId === 'mobileNavSpecialBadge'
+                        ? Number(AppLayout.#lastPendingSpecialCount || 0)
+                        : (item.badgeId === 'mobileNavCorrectionBadge'
+                            ? Number(AppLayout.#lastPendingCorrectionCount || 0)
+                            : (item.badgeId === 'mobileNavResetBadge' && canSeeUsers
+                                ? Number(AppLayout.#lastPendingResetCount || 0)
+                                : 0));
                     return `
-                        <a href="${item.href}" data-nav-id="${item.id}" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-[11px] font-bold transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
+                        <a href="${item.href}" data-nav-id="${item.id}" class="relative shrink-0 min-w-[54px] flex-1 flex flex-col items-center justify-center py-1 px-1.5 rounded-xl text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition no-underline ${isActive ? '' : 'bma-text-sub'}" style="${isActive ? 'color: var(--bma-primary);' : ''}">
                             <i class="fa-solid ${item.icon} text-base mb-0.5"></i>
                             <span>${item.label}</span>
+                            ${item.badgeId ? `<span id="${item.badgeId}" class="${badgeCount > 0 ? '' : 'hidden '}absolute top-0 right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-rose-500 text-white text-[9px] font-extrabold flex items-center justify-center shadow">${badgeCount}</span>` : ''}
                         </a>
                     `;
                 }).join('')}
@@ -541,6 +605,7 @@ export class AppLayout {
             { href: 'dashboard.html', icon: 'fa-chart-pie', label: 'ภาพรวม', bg: 'linear-gradient(135deg, #0284C7, #38BDF8)', show: true },
             { href: 'reports.html', icon: 'fa-file-pdf', label: 'รายงาน PDF', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'approvals.html', icon: 'fa-bell-concierge', label: 'อนุมัติพิเศษ', bg: 'linear-gradient(135deg, #4F46E5, #8B5CF6)', show: true },
+            { href: 'time-corrections.html', icon: 'fa-user-clock', label: 'อนุมัติแก้เวลา', bg: 'linear-gradient(135deg, #D97706, #F59E0B)', show: true },
             { href: 'personnel.html', icon: 'fa-users', label: 'บุคลากร', bg: 'linear-gradient(135deg, #005B2E, #059669)', show: true },
             { href: 'users.html', icon: 'fa-key', label: 'บัญชีผู้ใช้', bg: 'linear-gradient(135deg, #BE123C, #F43F5E)', show: AppLayout.canViewUsersMenu(currentUser) },
             { href: 'settings.html', icon: 'fa-sliders', label: 'ตั้งค่าระบบ', bg: 'linear-gradient(135deg, #EA580C, #FB923C)', show: currentUser?.role === 'SuperAdmin' }
@@ -593,16 +658,111 @@ export class AppLayout {
 
         try {
             const canSeeUsers = AppLayout.canViewUsersMenu(currentUser);
-            const [pendingSpecial, pendingResets] = await Promise.all([
+            const [pendingSpecial, pendingCorrections, pendingResets] = await Promise.all([
                 AttendanceModel.getSpecialRequests(currentUser, 'pending'),
+                AttendanceModel.getTimeCorrectionRequests(currentUser, 'pending'),
                 canSeeUsers ? UserModel.getPendingPasswordResetRequests(currentUser) : Promise.resolve([])
             ]);
 
-            const totalCount = pendingSpecial.length + pendingResets.length;
+            const totalCount = pendingSpecial.length + pendingCorrections.length + pendingResets.length;
+
+            if (AppLayout.#lastPendingSpecialCount !== null && AppLayout.#lastPendingSpecialCount !== pendingSpecial.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'attendance_logs',
+                        record: null,
+                        action: 'pending_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingSpecialCount,
+                        newCount: pendingSpecial.length
+                    }
+                }));
+            }
+            if (AppLayout.#lastPendingCorrectionCount !== null && AppLayout.#lastPendingCorrectionCount !== pendingCorrections.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'attendance_logs',
+                        record: null,
+                        action: 'correction_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingCorrectionCount,
+                        newCount: pendingCorrections.length
+                    }
+                }));
+            }
+            if (AppLayout.#lastPendingResetCount !== null && AppLayout.#lastPendingResetCount !== pendingResets.length) {
+                window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                    detail: {
+                        table: 'password_reset_requests',
+                        record: null,
+                        action: 'reset_count_changed',
+                        actor: currentUser?.full_name || 'Admin',
+                        timestamp: Date.now(),
+                        oldCount: AppLayout.#lastPendingResetCount,
+                        newCount: pendingResets.length
+                    }
+                }));
+            }
+            AppLayout.#lastPendingSpecialCount = pendingSpecial.length;
+            AppLayout.#lastPendingCorrectionCount = pendingCorrections.length;
+            AppLayout.#lastPendingResetCount = pendingResets.length;
+
+            try {
+                const watermark = await AttendanceModel.getTodaySyncWatermark();
+                if (watermark) {
+                    if (AppLayout.#lastAttendanceWatermark !== null && AppLayout.#lastAttendanceWatermark !== watermark.attendanceSignature) {
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'attendance_logs',
+                                action: 'watermark_sync',
+                                actor: currentUser?.full_name || 'Admin',
+                                timestamp: Date.now()
+                            }
+                        }));
+                    }
+                    AppLayout.#lastAttendanceWatermark = watermark.attendanceSignature;
+
+                    const prevSettingsWatermark = AppLayout.#lastSettingsWatermark;
+                    AppLayout.#lastSettingsWatermark = watermark.settingsSignature;
+                    if (prevSettingsWatermark !== null && prevSettingsWatermark !== watermark.settingsSignature) {
+                        sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                        let freshSettings = null;
+                        try {
+                            freshSettings = await SettingsModel.getSettings(true);
+                        } catch (settingsErr) {
+                            console.warn('Hydrate settings from watermark failed, using safe merge fallback:', settingsErr);
+                            freshSettings = {
+                                ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                ...(watermark.settingsRow || {})
+                            };
+                        }
+                        if (freshSettings) {
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
+                        }
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'system_settings',
+                                action: 'watermark_sync',
+                                record: freshSettings || watermark.settingsRow,
+                                actor: currentUser?.full_name || 'Admin',
+                                timestamp: Date.now()
+                            }
+                        }));
+                    }
+                }
+            } catch (wErr) {
+                console.warn('Sync watermark check error:', wErr);
+            }
 
             const topBellBadge = document.getElementById('topBellBadgeCount');
             const sidebarSpecialBadge = document.getElementById('sidebarSpecialBadge');
+            const sidebarCorrectionBadge = document.getElementById('sidebarCorrectionBadge');
             const sidebarResetBadge = document.getElementById('sidebarResetBadge');
+            const mobileNavSpecialBadge = document.getElementById('mobileNavSpecialBadge');
+            const mobileNavCorrectionBadge = document.getElementById('mobileNavCorrectionBadge');
+            const mobileNavResetBadge = document.getElementById('mobileNavResetBadge');
             const summaryTag = document.getElementById('notificationSummaryTag');
             const listContainer = document.getElementById('notificationListContainer');
 
@@ -614,9 +774,25 @@ export class AppLayout {
                 sidebarSpecialBadge.textContent = String(pendingSpecial.length);
                 sidebarSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
             }
+            if (sidebarCorrectionBadge) {
+                sidebarCorrectionBadge.textContent = String(pendingCorrections.length);
+                sidebarCorrectionBadge.classList.toggle('hidden', pendingCorrections.length === 0);
+            }
             if (sidebarResetBadge) {
-                sidebarResetBadge.textContent = String(pendingResets.length);
-                sidebarResetBadge.classList.toggle('hidden', pendingResets.length === 0);
+                sidebarResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
+                sidebarResetBadge.classList.toggle('hidden', !canSeeUsers || pendingResets.length === 0);
+            }
+            if (mobileNavSpecialBadge) {
+                mobileNavSpecialBadge.textContent = String(pendingSpecial.length);
+                mobileNavSpecialBadge.classList.toggle('hidden', pendingSpecial.length === 0);
+            }
+            if (mobileNavCorrectionBadge) {
+                mobileNavCorrectionBadge.textContent = String(pendingCorrections.length);
+                mobileNavCorrectionBadge.classList.toggle('hidden', pendingCorrections.length === 0);
+            }
+            if (mobileNavResetBadge) {
+                mobileNavResetBadge.textContent = String(canSeeUsers ? pendingResets.length : 0);
+                mobileNavResetBadge.classList.toggle('hidden', !canSeeUsers || pendingResets.length === 0);
             }
             if (summaryTag) {
                 summaryTag.textContent = `${totalCount} รายการ`;
@@ -665,9 +841,41 @@ export class AppLayout {
                         `;
                     }
 
-                    if (pendingResets.length > 0) {
+                    if (pendingCorrections.length > 0) {
+                        const previewCorr = pendingCorrections.slice(0, 4).map(req => {
+                            const p = req.personnel || {};
+                            const fullName = p.first_name ? `${p.prefix}${p.first_name} ${p.last_name}` : 'บุคลากร';
+                            const division = p.division || p.bureau || '';
+                            return `
+                                <div class="text-xs py-1.5 border-t bma-border flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <span class="font-bold bma-text-main block truncate">${fullName}</span>
+                                        <span class="text-[11px] bma-text-sub block truncate">${division} • ${req.correction_request_reason || 'ขอแก้ไขเวลาเข้า-ออกงาน'}</span>
+                                    </div>
+                                    <span class="text-[11px] font-bold text-amber-600 whitespace-nowrap">${UIHelpers.formatThaiShortDate(req.work_date)}</span>
+                                </div>
+                            `;
+                        }).join('');
+
                         itemsHtml += `
-                            <a href="users.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
+                            <a href="time-corrections.html" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-amber-500/5">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <span class="font-extrabold bma-text-main text-xs">
+                                        <i class="fa-solid fa-user-clock text-amber-600 mr-1.5"></i>ขออนุมัติแก้ไขเวลาเข้า-ออกงาน
+                                    </span>
+                                    <span class="bma-badge bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">${pendingCorrections.length} รายการ</span>
+                                </div>
+                                ${previewCorr}
+                                <p class="text-[11px] font-bold text-center mt-2 pt-1.5 border-t bma-border" style="color: var(--bma-primary);">
+                                    คลิกเพื่อไปหน้าอนุมัติแก้ไขเวลา &rarr;
+                                </p>
+                            </a>
+                        `;
+                    }
+
+                    if (canSeeUsers && pendingResets.length > 0) {
+                        itemsHtml += `
+                            <a href="users.html?tab=password-resets" data-users-deep-link="tab-panel-password-resets" class="block p-3 rounded-xl border bma-border hover:border-emerald-500 transition no-underline bg-rose-500/5">
                                 <div class="flex items-center justify-between">
                                     <span class="font-extrabold bma-text-main text-xs">
                                         <i class="fa-solid fa-key text-rose-500 mr-1.5"></i>คำขอลืมรหัสผ่าน (รีเซ็ตรหัส)
@@ -685,6 +893,156 @@ export class AppLayout {
         } catch (err) {
             console.warn('Notification bell refresh error:', err);
         }
+    }
+
+    static initAdminRealtimeSync(currentUser) {
+        if (!currentUser || AppLayout.#isRealtimeSyncInitialized) return;
+        AppLayout.#isRealtimeSyncInitialized = true;
+
+        const activeSchema = (typeof Config !== 'undefined' && Config.SUPABASE_SCHEMA) ? Config.SUPABASE_SCHEMA : 'public';
+        const client = DatabaseService.getInstance().client || window.supabaseClient;
+        if (client) {
+            try {
+                client.channel(`bma_admin_realtime_${activeSchema}`)
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'attendance_logs' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actorId = record?.correction_reviewed_by || record?.approved_by || record?.updated_by || null;
+                        const actor = record?.correction_reviewed_by || record?.approved_by || record?.updated_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'attendance_logs',
+                                record: record,
+                                action: action,
+                                actor_id: actorId,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'user_accounts' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = record?.approved_by || record?.reviewed_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'user_accounts',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'personnel' }, (payload) => {
+                        AppLayout.refreshNotificationBell(currentUser);
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = record?.updated_by || currentUser?.full_name || 'Admin';
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'personnel',
+                                record: record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                    })
+                    .on('postgres_changes', { event: '*', schema: activeSchema, table: 'system_settings' }, async (payload) => {
+                        const record = payload.new || payload.old || null;
+                        const action = (payload.eventType || 'sync').toLowerCase();
+                        const actor = currentUser?.full_name || 'Admin';
+                        let freshSettings = null;
+                        if (record) {
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            try {
+                                freshSettings = await SettingsModel.getSettings(true);
+                            } catch (settingsErr) {
+                                console.warn('Hydrate settings on postgres_changes failed, using safe merge fallback:', settingsErr);
+                                freshSettings = {
+                                    ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                    ...record
+                                };
+                            }
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
+                        }
+                        window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                            detail: {
+                                table: 'system_settings',
+                                record: freshSettings || record,
+                                action: action,
+                                actor: actor,
+                                timestamp: Date.now(),
+                                payload: payload
+                            }
+                        }));
+                    })
+                    .subscribe((status, err) => {
+                        if (status !== 'SUBSCRIBED') console.warn('[AppLayout Realtime] Status:', status, err);
+                    });
+
+                client.channel('bma_global_realtime_bus')
+                    .on('broadcast', { event: '*' }, async (e) => {
+                        if (e.event === 'settings_updated') {
+                            sessionStorage.removeItem(Config.STORAGE_KEYS.CACHED_SETTINGS);
+                            let freshSettings = null;
+                            try {
+                                freshSettings = await SettingsModel.getSettings(true);
+                            } catch (settingsErr) {
+                                console.warn('Hydrate settings on broadcast failed, using safe merge fallback:', settingsErr);
+                                freshSettings = {
+                                    ...(AppLayout.#settings || Config.DEFAULT_SETTINGS),
+                                    ...(e.payload || {})
+                                };
+                            }
+                            window.dispatchEvent(new CustomEvent('bma:settings-updated', { detail: freshSettings }));
+                            window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                                detail: { table: 'system_settings', record: freshSettings, action: 'broadcast_sync', timestamp: Date.now() }
+                            }));
+                        } else if (e.event === 'attendance_updated') {
+                            AppLayout.refreshNotificationBell(currentUser);
+                            window.dispatchEvent(new CustomEvent('bma:realtime-delta-sync', {
+                                detail: {
+                                    table: 'attendance_logs',
+                                    action: e.payload?.action || 'broadcast_sync',
+                                    actor_id: e.payload?.actor_id || null,
+                                    actor: e.payload?.actor_name || e.payload?.actor || null,
+                                    record: e.payload?.id ? { id: e.payload.id } : null,
+                                    timestamp: Date.now()
+                                }
+                            }));
+                        }
+                    })
+                    .subscribe((status, err) => {
+                        if (status !== 'SUBSCRIBED') console.warn('[AppLayout Global Bus] Status:', status, err);
+                    });
+            } catch (err) {
+                console.warn('Realtime subscription error:', err);
+            }
+        }
+
+        setInterval(() => {
+            AppLayout.refreshNotificationBell(currentUser);
+        }, 6000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                const activeUser = AuthService.getCurrentUser(true);
+                if (!activeUser) {
+                    window.location.replace(UIHelpers.getRootBasePath());
+                    return;
+                }
+                AppLayout.#currentUser = activeUser;
+                AppLayout.refreshNotificationBell(activeUser);
+                window.dispatchEvent(new CustomEvent('bma:realtime-sync'));
+            }
+        });
     }
 
     static #bindGlobalDelegatedEvents() {
@@ -783,6 +1141,11 @@ export class AppLayout {
                 if (anchor.target === '_blank') return;
                 const href = anchor.getAttribute('href') || '';
                 if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+                const usersDeepLink = anchor.dataset?.usersDeepLink;
+                if (usersDeepLink) {
+                    sessionStorage.setItem('bma_users_active_tab', usersDeepLink);
+                    window.dispatchEvent(new CustomEvent('bma:users-switch-tab', { detail: { tabId: usersDeepLink } }));
+                }
                 const cleanFile = href.split('?')[0].split('#')[0].split('/').pop();
                 if (AppLayout.PAGE_ROUTES[cleanFile]) {
                     e.preventDefault();
