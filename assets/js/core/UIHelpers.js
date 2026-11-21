@@ -14,6 +14,8 @@ export class UIHelpers {
 
     static KNOWN_PAGES_REGEX = /\/(index|checkin|dashboard|reports|approvals|time-corrections|personnel|users|settings)(\.html)?\/?$/i;
 
+    static TRANSIENT_PAGES_REGEX = /(?:\/loading(?:\.html)?)+(?=\/|$)/i;
+
     static THAI_MONTHS_SHORT = [
         'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
         'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
@@ -35,14 +37,37 @@ export class UIHelpers {
     }
 
     static getRootBasePath() {
-        const pathname = window.location.pathname || '/';
-        if (UIHelpers.KNOWN_PAGES_REGEX.test(pathname)) {
-            return pathname.replace(UIHelpers.KNOWN_PAGES_REGEX, '/');
+        let basePath = window.location.pathname || '/';
+        if (UIHelpers.KNOWN_PAGES_REGEX.test(basePath)) {
+            basePath = basePath.replace(UIHelpers.KNOWN_PAGES_REGEX, '/');
+        } else if (/\/[^\/]+\.html\/?$/i.test(basePath)) {
+            basePath = basePath.replace(/\/[^\/]+\.html\/?$/i, '/');
         }
-        if (/\/[^\/]+\.html$/i.test(pathname)) {
-            return pathname.replace(/\/[^\/]+\.html$/i, '/');
+        basePath = basePath.replace(UIHelpers.TRANSIENT_PAGES_REGEX, '').replace(/\/{2,}/g, '/');
+        if (!basePath) return '/';
+        return basePath.endsWith('/') ? basePath : `${basePath}/`;
+    }
+
+    static resolveAppUrl(targetPath = '') {
+        const rawTarget = String(targetPath ?? '').trim();
+        if (/^(?:https?:)?\/\//i.test(rawTarget)) {
+            return rawTarget;
         }
-        return pathname.endsWith('/') ? pathname : `${pathname}/`;
+        if (typeof window !== 'undefined' && window.location && window.location.protocol === 'file:') {
+            return rawTarget;
+        }
+        const basePath = UIHelpers.getRootBasePath();
+        if (!rawTarget) {
+            return basePath;
+        }
+        if (rawTarget.startsWith(basePath)) {
+            return rawTarget;
+        }
+        if (basePath !== '/' && `${rawTarget}/` === basePath) {
+            return basePath;
+        }
+        const cleanTarget = rawTarget.replace(/^(?:\.\/|\/)+/, '');
+        return `${basePath}${cleanTarget}`;
     }
 
     static maskUrlToRoot(explicitPageName = '') {

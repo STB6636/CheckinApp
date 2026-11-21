@@ -58,7 +58,7 @@ export class LoadingController {
         const sessionUser = AuthService.getCurrentUser(true);
         if (!sessionUser) {
             // หากไม่มี Session ให้เด้งกลับหน้า Login ทันที
-            window.location.replace('index.html');
+            window.location.replace(UIHelpers.resolveAppUrl('index.html'));
             return;
         }
 
@@ -80,7 +80,7 @@ export class LoadingController {
             this.#setStepLabel('บัญชีผู้ใช้นี้ถูกระงับสิทธิ์การใช้งาน');
             AuthService.clearSession();
             setTimeout(() => {
-                window.location.replace('index.html');
+                window.location.replace(UIHelpers.resolveAppUrl('index.html'));
             }, 1200);
             return;
         }
@@ -103,13 +103,13 @@ export class LoadingController {
 
     #bindFallbackEvents() {
         document.getElementById('btnRetryLoad')?.addEventListener('click', () => {
-            window.location.replace('loading.html?entry=' + encodeURIComponent(this.#entryMode));
+            window.location.replace(UIHelpers.resolveAppUrl('loading.html?entry=' + encodeURIComponent(this.#entryMode)));
         });
 
         document.getElementById('btnBackToLogin')?.addEventListener('click', () => {
             this.#clearWatchdog();
             AuthService.clearSession();
-            window.location.replace('index.html');
+            window.location.replace(UIHelpers.resolveAppUrl('index.html'));
         });
     }
 
@@ -363,7 +363,7 @@ export class LoadingController {
         }
 
         await new Promise((resolve) => setTimeout(resolve, 180));
-        window.location.replace(targetUrl);
+        window.location.replace(UIHelpers.resolveAppUrl(targetUrl));
     }
 }
 

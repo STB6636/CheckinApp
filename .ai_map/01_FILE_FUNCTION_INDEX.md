@@ -1,14 +1,14 @@
 # สารบัญไฟล์และฟังก์ชันของโปรเจกต์ (VS Code Automated File & Function Index)
 
-- **อัปเดตล่าสุด (Last Indexed):** `2026-11-21T06:53:46.695Z`
-- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `192` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1288`
+- **อัปเดตล่าสุด (Last Indexed):** `2026-11-21T07:38:12.984Z`
+- **จำนวนไฟล์ที่สแกนทั้งหมด (Total Files):** `193` | **จำนวนฟังก์ชัน/สัญลักษณ์ทั้งหมด (Total Symbols):** `1290`
 - **กฎการใช้งานสำหรับ AI (Token-Saving Rule):** ห้ามอ่านไฟล์ทั้งหมด ให้ดูช่วงบรรทัด `L_start - L_end` ในตารางด้านล่าง แล้วดึงเฉพาะช่วงบรรทัดที่ต้องการใช้งานเท่านั้น
 
 ---
 
 ## File: `approvals.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `ed3e9ddd54758b6c` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `245ffca07844c091` | **Total Lines:** `239` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -244,7 +244,7 @@
 
 ## File: `assets/js/controllers/LoadingController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `183384a514fd3c0f` | **Total Lines:** `382` | **Imports:** `4` | **Exports:** `LoadingController`
+- **Hash:** `29229ef40887ae2b` | **Total Lines:** `382` | **Imports:** `4` | **Exports:** `LoadingController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -268,7 +268,7 @@
 
 ## File: `assets/js/controllers/LoginController.js`
 - **Layer:** Frontend Page Controller Layer (OOP)
-- **Hash:** `ef6e24c8c43c4917` | **Total Lines:** `344` | **Imports:** `5` | **Exports:** `LoginController`
+- **Hash:** `ff0f69e93a380333` | **Total Lines:** `344` | **Imports:** `5` | **Exports:** `LoginController`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -561,51 +561,52 @@
 
 ## File: `assets/js/core/UIHelpers.js`
 - **Layer:** Core Service & Infrastructure Layer
-- **Hash:** `568b6adc4cc9f18e` | **Total Lines:** `1549` | **Imports:** `1` | **Exports:** `UIHelpers`
+- **Hash:** `49581bb9192a0422` | **Total Lines:** `1574` | **Imports:** `1` | **Exports:** `UIHelpers`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `UIHelpers` | `class` | **L8 - L1549** | `export class UIHelpers` | Class Definition (1542 lines) |
-| `UIHelpers.escapeHtml` | `static public method` | **L27 - L35** | `(str) => any` | static public method L27-L35 (9 lines) |
-| `UIHelpers.getRootBasePath` | `static public method` | **L37 - L46** | `() => any` | static public method L37-L46 (10 lines) |
-| `UIHelpers.maskUrlToRoot` | `static public method` | **L48 - L71** | `(explicitPageName = '') => any` | static public method L48-L71 (24 lines) |
-| `UIHelpers.initTheme` | `static public method` | **L73 - L90** | `() => any` | static public method L73-L90 (18 lines) |
-| `UIHelpers.toggleTheme` | `static public method` | **L92 - L98** | `() => any` | static public method L92-L98 (7 lines) |
-| `UIHelpers.formatWelcomeDisplayName` | `static public method` | **L100 - L162** | `(userOrName, prefixes = null) => any` | static public method L100-L162 (63 lines) |
-| `UIHelpers.showToast` | `static public method` | **L164 - L196** | `(message, type = 'success', durationMs = 2600) => any` | static public method L164-L196 (33 lines) |
-| `UIHelpers.formatThaiShortDate` | `static public method` | **L198 - L214** | `(dateStr) => any` | static public method L198-L214 (17 lines) |
-| `UIHelpers.formatThaiShortDateFullYear` | `static public method` | **L221 - L235** | `(dateStr) => any` | static public method L221-L235 (15 lines) |
-| `UIHelpers.shiftDateISO` | `static public method` | **L243 - L256** | `(dateStr, deltaDays = 0) => any` | static public method L243-L256 (14 lines) |
-| `UIHelpers.formatThaiFullDate` | `static public method` | **L258 - L273** | `(dateStr) => any` | static public method L258-L273 (16 lines) |
-| `UIHelpers.formatThaiDate` | `static public method` | **L275 - L277** | `(dateStr) => any` | static public method L275-L277 (3 lines) |
-| `UIHelpers.formatTime24` | `static public method` | **L279 - L287** | `(timeStr) => any` | static public method L279-L287 (9 lines) |
-| `UIHelpers.timeToMinutes` | `static public method` | **L289 - L295** | `(timeStr) => any` | static public method L289-L295 (7 lines) |
-| `UIHelpers.getTodayISO` | `static public method` | **L297 - L301** | `() => any` | static public method L297-L301 (5 lines) |
-| `UIHelpers.getTodayDateString` | `static public method` | **L303 - L305** | `() => any` | static public method L303-L305 (3 lines) |
-| `UIHelpers.getCurrentTimeHHMM` | `static public method` | **L307 - L312** | `() => any` | static public method L307-L312 (6 lines) |
-| `UIHelpers.formatPosition` | `static public method` | **L326 - L362** | `(title = '', level = '', positionType = '', fullFallback = '') => any` | static public method L326-L362 (37 lines) |
-| `UIHelpers.capturePortrait3x4FromVideo` | `static public method` | **L364 - L398** | `(videoEl, canvasEl) => any` | static public method L364-L398 (35 lines) |
-| `UIHelpers.verifyImageUrl` | `static public method` | **L400 - L458** | `(rawUrl) => any` | static public method L400-L458 (59 lines) |
-| `UIHelpers.verifyGoogleDriveLink` | `static public async method` | **L460 - L519** | `(scriptUrl, folderId = '', options = {}) => Promise<any>` | static public async method L460-L519 (60 lines) |
-| `UIHelpers.uploadPhotoToGoogleDrive` | `static public async method` | **L521 - L615** | `(base64DataUrl, fileNamePrefix, settings, options = {}) => Promise<any>` | static public async method L521-L615 (95 lines) |
-| `UIHelpers.showLoading` | `static public method` | **L622 - L684** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L622-L684 (63 lines) |
-| `UIHelpers.#updateProgressDOM` | `static private method` | **L686 - L693** | `(percent) => any` | static private method L686-L693 (8 lines) |
-| `UIHelpers.hideLoading` | `static public method` | **L695 - L720** | `() => any` | static public method L695-L720 (26 lines) |
-| `UIHelpers.renderTableSkeleton` | `static public method` | **L722 - L732** | `(rows = 5, cols = 6) => any` | static public method L722-L732 (11 lines) |
-| `UIHelpers.alert` | `static public async method` | **L734 - L769** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L734-L769 (36 lines) |
-| `UIHelpers.confirm` | `static public async method` | **L771 - L821** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L771-L821 (51 lines) |
-| `UIHelpers.confirmWithInput` | `static public async method` | **L823 - L897** | `(title, options = {}) => Promise<any>` | static public async method L823-L897 (75 lines) |
-| `UIHelpers.validateThaiNationalId` | `static public method` | **L899 - L918** | `(id, strictCheckDigit = false) => any` | static public method L899-L918 (20 lines) |
-| `UIHelpers.getLast6DigitsFromNationalId` | `static public method` | **L920 - L924** | `(nationalId) => any` | static public method L920-L924 (5 lines) |
-| `UIHelpers.exportToExcelUTF8` | `static public method` | **L926 - L951** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L926-L951 (26 lines) |
-| `UIHelpers.exportMultiSheetExcel` | `static public method` | **L958 - L978** | `(sheets, fileName = 'export_data') => any` | static public method L958-L978 (21 lines) |
-| `UIHelpers.exportTemplateWithValidationsExcel` | `static public async method` | **L987 - L1250** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L987-L1250 (264 lines) |
-| `UIHelpers.parseExcelFileUTF8` | `static public method` | **L1252 - L1274** | `(file) => any` | static public method L1252-L1274 (23 lines) |
-| `UIHelpers.printReportInNewTab` | `static public method` | **L1276 - L1453** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L1276-L1453 (178 lines) |
-| `UIHelpers.syncBodyModalLock` | `static public method` | **L1458 - L1481** | `() => any` | ซิงค์สถานะล็อกสกรอลล์พื้นหลัง (body.bma-modal-open) ตาม Modal ที่กำลังเปิดอยู่ |
-| `UIHelpers.prepareModalOpen` | `static public method` | **L1487 - L1497** | `(modalEl) => any` | static public method L1487-L1497 (11 lines) |
-| `UIHelpers.bindModalDismiss` | `static public method` | **L1504 - L1548** | `(modalEl, closeCallback) => any` | static public method L1504-L1548 (45 lines) |
-| `onEsc` | `arrow_fn` | **L1529 - L1545** | `(e) => inferred` | Arrow Function L1529-L1545 |
+| `UIHelpers` | `class` | **L8 - L71** | `export class UIHelpers` | Class Definition (64 lines) |
+| `UIHelpers.escapeHtml` | `static public method` | **L29 - L37** | `(str) => any` | static public method L29-L37 (9 lines) |
+| `UIHelpers.getRootBasePath` | `static public method` | **L39 - L49** | `() => any` | static public method L39-L49 (11 lines) |
+| `UIHelpers.resolveAppUrl` | `static public method` | **L51 - L55** | `(targetPath = '') => any` | static public method L51-L55 (5 lines) |
+| `maskUrlToRoot` | `static public method` | **L73 - L96** | `(explicitPageName = '') => any` | static public method L73-L96 (24 lines) |
+| `initTheme` | `static public method` | **L98 - L115** | `() => any` | static public method L98-L115 (18 lines) |
+| `toggleTheme` | `static public method` | **L117 - L123** | `() => any` | static public method L117-L123 (7 lines) |
+| `formatWelcomeDisplayName` | `static public method` | **L125 - L187** | `(userOrName, prefixes = null) => any` | static public method L125-L187 (63 lines) |
+| `showToast` | `static public method` | **L189 - L221** | `(message, type = 'success', durationMs = 2600) => any` | static public method L189-L221 (33 lines) |
+| `formatThaiShortDate` | `static public method` | **L223 - L239** | `(dateStr) => any` | static public method L223-L239 (17 lines) |
+| `formatThaiShortDateFullYear` | `static public method` | **L246 - L260** | `(dateStr) => any` | static public method L246-L260 (15 lines) |
+| `shiftDateISO` | `static public method` | **L268 - L281** | `(dateStr, deltaDays = 0) => any` | static public method L268-L281 (14 lines) |
+| `formatThaiFullDate` | `static public method` | **L283 - L298** | `(dateStr) => any` | static public method L283-L298 (16 lines) |
+| `formatThaiDate` | `static public method` | **L300 - L302** | `(dateStr) => any` | static public method L300-L302 (3 lines) |
+| `formatTime24` | `static public method` | **L304 - L312** | `(timeStr) => any` | static public method L304-L312 (9 lines) |
+| `timeToMinutes` | `static public method` | **L314 - L320** | `(timeStr) => any` | static public method L314-L320 (7 lines) |
+| `getTodayISO` | `static public method` | **L322 - L326** | `() => any` | static public method L322-L326 (5 lines) |
+| `getTodayDateString` | `static public method` | **L328 - L330** | `() => any` | static public method L328-L330 (3 lines) |
+| `getCurrentTimeHHMM` | `static public method` | **L332 - L337** | `() => any` | static public method L332-L337 (6 lines) |
+| `formatPosition` | `static public method` | **L351 - L387** | `(title = '', level = '', positionType = '', fullFallback = '') => any` | static public method L351-L387 (37 lines) |
+| `capturePortrait3x4FromVideo` | `static public method` | **L389 - L423** | `(videoEl, canvasEl) => any` | static public method L389-L423 (35 lines) |
+| `verifyImageUrl` | `static public method` | **L425 - L483** | `(rawUrl) => any` | static public method L425-L483 (59 lines) |
+| `verifyGoogleDriveLink` | `static public async method` | **L485 - L544** | `(scriptUrl, folderId = '', options = {}) => Promise<any>` | static public async method L485-L544 (60 lines) |
+| `uploadPhotoToGoogleDrive` | `static public async method` | **L546 - L640** | `(base64DataUrl, fileNamePrefix, settings, options = {}) => Promise<any>` | static public async method L546-L640 (95 lines) |
+| `showLoading` | `static public method` | **L647 - L709** | `(message = 'กำลังประมวลผลข้อมูล กรุณารอสักครู่...') => any` | static public method L647-L709 (63 lines) |
+| `#updateProgressDOM` | `static private method` | **L711 - L718** | `(percent) => any` | static private method L711-L718 (8 lines) |
+| `hideLoading` | `static public method` | **L720 - L745** | `() => any` | static public method L720-L745 (26 lines) |
+| `renderTableSkeleton` | `static public method` | **L747 - L757** | `(rows = 5, cols = 6) => any` | static public method L747-L757 (11 lines) |
+| `alert` | `static public async method` | **L759 - L794** | `(title, text = '', icon = 'success') => Promise<any>` | static public async method L759-L794 (36 lines) |
+| `confirm` | `static public async method` | **L796 - L846** | `(title, text = '', confirmText = 'ยืนยัน', icon = 'warning', options = {}) => Promise<any>` | static public async method L796-L846 (51 lines) |
+| `confirmWithInput` | `static public async method` | **L848 - L922** | `(title, options = {}) => Promise<any>` | static public async method L848-L922 (75 lines) |
+| `validateThaiNationalId` | `static public method` | **L924 - L943** | `(id, strictCheckDigit = false) => any` | static public method L924-L943 (20 lines) |
+| `getLast6DigitsFromNationalId` | `static public method` | **L945 - L949** | `(nationalId) => any` | static public method L945-L949 (5 lines) |
+| `exportToExcelUTF8` | `static public method` | **L951 - L976** | `(dataRows, fileName = 'export_data', sheetName = 'Sheet1') => any` | static public method L951-L976 (26 lines) |
+| `exportMultiSheetExcel` | `static public method` | **L983 - L1003** | `(sheets, fileName = 'export_data') => any` | static public method L983-L1003 (21 lines) |
+| `exportTemplateWithValidationsExcel` | `static public async method` | **L1012 - L1275** | `({ settings, templateRows, fileName = 'Template_นำเข้าบุคลากร_กทม' }) => Promise<any>` | static public async method L1012-L1275 (264 lines) |
+| `parseExcelFileUTF8` | `static public method` | **L1277 - L1299** | `(file) => any` | static public method L1277-L1299 (23 lines) |
+| `printReportInNewTab` | `static public method` | **L1301 - L1478** | `({ title, subtitle, tableHtml, headerColor = '#007B3E' }) => any` | static public method L1301-L1478 (178 lines) |
+| `syncBodyModalLock` | `static public method` | **L1483 - L1506** | `() => any` | ซิงค์สถานะล็อกสกรอลล์พื้นหลัง (body.bma-modal-open) ตาม Modal ที่กำลังเปิดอยู่ |
+| `prepareModalOpen` | `static public method` | **L1512 - L1522** | `(modalEl) => any` | static public method L1512-L1522 (11 lines) |
+| `bindModalDismiss` | `static public method` | **L1529 - L1573** | `(modalEl, closeCallback) => any` | static public method L1529-L1573 (45 lines) |
+| `onEsc` | `arrow_fn` | **L1554 - L1570** | `(e) => inferred` | Arrow Function L1554-L1570 |
 
 ---
 
@@ -753,7 +754,7 @@
 
 ## File: `checkin.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `66433c83e45f3ba3` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3b4bd8f2060af925` | **Total Lines:** `1138` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -796,7 +797,7 @@
 
 ## File: `dashboard.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `728a25f35bfb0f1a` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `3dac652d3d5fee8a` | **Total Lines:** `284` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -881,33 +882,33 @@
 
 ## File: `index.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `277a6706c7b60771` | **Total Lines:** `436` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `a7db1e6d5c5ea64a` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
-| `<head>` | `html_dom_section` | **L3 - L193** | `<head>` | HTML DOM Section L3-L193 |
-| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L218 - L218** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L218-L218 |
-| `<main>` | `html_dom_section` | **L225 - L337** | `<main>` | HTML DOM Section L225-L337 |
-| `<div#orgLogoWrapper>` | `html_dom_section` | **L232 - L234** | `id="orgLogoWrapper"` | HTML DOM Section L232-L234 |
-| `<form#loginForm>` | `html_dom_section` | **L246 - L334** | `id="loginForm"` | HTML DOM Section L246-L334 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L434 - L434** | `<script>` | Bootstrap script L434-L434 |
+| `<head>` | `html_dom_section` | **L3 - L206** | `<head>` | HTML DOM Section L3-L206 |
+| `<div#mobileOrgLogoWrapper>` | `html_dom_section` | **L231 - L231** | `id="mobileOrgLogoWrapper"` | HTML DOM Section L231-L231 |
+| `<main>` | `html_dom_section` | **L238 - L350** | `<main>` | HTML DOM Section L238-L350 |
+| `<div#orgLogoWrapper>` | `html_dom_section` | **L245 - L247** | `id="orgLogoWrapper"` | HTML DOM Section L245-L247 |
+| `<form#loginForm>` | `html_dom_section` | **L259 - L347** | `id="loginForm"` | HTML DOM Section L259-L347 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L447 - L447** | `<script>` | Bootstrap script L447-L447 |
 
 ---
 
 ## File: `loading.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `1a0eaeec35e2026e` | **Total Lines:** `449` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `c52c9daa98def3fb` | **Total Lines:** `456` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
 | `<head>` | `html_dom_section` | **L3 - L301** | `<head>` | HTML DOM Section L3-L301 |
-| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L447 - L447** | `<script>` | Bootstrap script L447-L447 |
+| `<script type="module"> (Page Bootstrap)` | `html_module_script` | **L454 - L454** | `<script>` | Bootstrap script L454-L454 |
 
 ---
 
 ## File: `personnel.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `55a0e067311a057f` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `027aa99bd96d04a2` | **Total Lines:** `694` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2334,7 +2335,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `433792dff37b5c3a` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e433a99f8a02dcc7` | **Total Lines:** `124` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2344,7 +2345,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/qa_real_instance_test.mjs`
 - **Layer:** Application Module
-- **Hash:** `8fdb352bdc5bac92` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `5618b32df35273b3` | **Total Lines:** `280` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2356,7 +2357,7 @@
 
 ## File: `pipeline/PIPE-20261114-approvals-remark-two-line/test_approvals_remark.mjs`
 - **Layer:** Application Module
-- **Hash:** `366c3946e33e3d65` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
+- **Hash:** `08b7a6ef3cad9055` | **Total Lines:** `367` | **Imports:** `1` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2730,9 +2731,19 @@
 
 ---
 
+## File: `pipeline/PIPE-20261121-fix-cloudflare-loading-path-loop/interactive_plan.html`
+- **Layer:** Frontend HTML View & Entry Point
+- **Hash:** `6aba11578525726e` | **Total Lines:** `70` | **Imports:** `0` | **Exports:** `None`
+
+| ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
+| :--- | :--- | :--- | :--- | :--- |
+| `<head>` | `html_dom_section` | **L3 - L12** | `<head>` | HTML DOM Section L3-L12 |
+
+---
+
 ## File: `pipeline/PIPE-20261121-switch-schema-staging-to-public/interactive_plan.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `268ced14c626dfa1` | **Total Lines:** `141` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `20d04ae30ed39a07` | **Total Lines:** `141` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2742,7 +2753,7 @@
 
 ## File: `reports.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `f6046855af6cb951` | **Total Lines:** `556` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `4a2d0e6c0c07f9c2` | **Total Lines:** `556` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2760,7 +2771,7 @@
 
 ## File: `settings.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `07f93b8a77bcc014` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `e6d6481a7b0ec6bb` | **Total Lines:** `1082` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2907,7 +2918,7 @@
 
 ## File: `sql/migration_public_full_loca_v2_sync.sql`
 - **Layer:** Database Schema & Migration Layer (PostgreSQL/Supabase)
-- **Hash:** `50b726c0edf0ff4e` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `61d4c20a8539c4fc` | **Total Lines:** `271` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2961,7 +2972,7 @@
 
 ## File: `time-corrections.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `fccd476079c13aab` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `485a3ac403b93672` | **Total Lines:** `240` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -2977,7 +2988,7 @@
 
 ## File: `users.html`
 - **Layer:** Frontend HTML View & Entry Point
-- **Hash:** `34a86bccff5c4766` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
+- **Hash:** `fd250365a3e5aacf` | **Total Lines:** `475` | **Imports:** `0` | **Exports:** `None`
 
 | ชื่อฟังก์ชัน / เมธอด / คอมโพเนนต์ (Symbol) | ชนิด (Kind) | ช่วงบรรทัด (Line Range) | พารามิเตอร์และค่าส่งกลับ (Signature) | หน้าที่และการทำงานย่อ (Summary) |
 | :--- | :--- | :--- | :--- | :--- |

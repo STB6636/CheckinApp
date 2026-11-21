@@ -1,0 +1,75 @@
+{
+  "task_id": "PIPE-20261121-fix-cloudflare-loading-path-loop",
+  "mode": "PLAN",
+  "target_branches": ["Loca-V2", "main"],
+  "flow_ids": ["FLOW_AUTH_01", "FLOW_LAYOUT_01"],
+  "strict_policies": [
+    "MAP_FIRST_SURGICAL_LINE_RANGE_ONLY",
+    "STRICT_SURGICAL_SCOPE_ONLY",
+    "NO_PLACEHOLDERS_IN_TARGET_SCOPE",
+    "MANDATORY_CACHE_VERSION_SYNC_10_HTML"
+  ],
+  "surgical_targets": [
+    {
+      "file_path": "assets/js/core/UIHelpers.js",
+      "symbol": "UIHelpers.getRootBasePath / UIHelpers.resolveAppUrl",
+      "start_line": 15,
+      "end_line": 72,
+      "recommended_read_window": "10-80",
+      "action": "อัปเดต getRootBasePath() ให้ตัด segment /loading(.html)? ซ้ำซ้อนออกด้วย (เช่น /loading, /loading/, /loading/loading.html, /CheckinApp/loading -> / หรือ /CheckinApp/) โดยคง KNOWN_PAGES_REGEX เดิมเพื่อไม่เขียนทับ VIEW_PAGE_STORAGE_KEY และเพิ่ม static resolveAppUrl(targetPath) ที่ resolve URL เทียบจาก getRootBasePath() เสมอ"
+    },
+    {
+      "file_path": "index.html",
+      "symbol": "Inline CacheBuster & Fast-path Session Redirect Guard",
+      "start_line": 60,
+      "end_line": 148,
+      "recommended_read_window": "55-150",
+      "action": "คำนวณ appRootPath อย่างปลอดภัย (ตัด /loading(.html)? และ /index(.html)? ท้าย path) เพื่อใช้สร้าง URL loading.html?entry=session แทน relative path เปล่า ช่วยปลดลูปผู้ใช้ที่ค้างอยู่ที่ /loading/loading.html?entry=session ทันที และรองรับทั้ง Cloudflare Pages (/) และ GitHub Pages (/CheckinApp/)"
+    },
+    {
+      "file_path": "loading.html",
+      "symbol": "BFCache pageshow handler",
+      "start_line": 438,
+      "end_line": 448,
+      "recommended_read_window": "435-449",
+      "action": "ปรับ pageshow redirect (L442) ให้ใช้ appRootPath + 'loading.html?entry=session' แทน relative path เปล่า"
+    },
+    {
+      "file_path": "assets/js/controllers/LoadingController.js",
+      "symbol": "LoadingController.init / #bindFallbackEvents / #navigateToTarget",
+      "start_line": 57,
+      "end_line": 115,
+      "secondary_range": "353-368",
+      "recommended_read_window": "55-118, 350-370",
+      "action": "ใช้ UIHelpers.resolveAppUrl(...) กับทุก window.location.replace (index.html, loading.html?entry=..., targetUrl) เพื่อป้องกัน path ซ้อน /loading/..."
+    },
+    {
+      "file_path": "assets/js/controllers/LoginController.js",
+      "symbol": "LoginController.init / #handleLogin",
+      "start_line": 22,
+      "end_line": 28,
+      "secondary_range": "244-252",
+      "recommended_read_window": "18-32, 238-255",
+      "action": "ใช้ UIHelpers.resolveAppUrl('loading.html?entry=session') และ UIHelpers.resolveAppUrl('loading.html?entry=login')"
+    }
+  ],
+  "auto_stamped_files_on_build": [
+    "version.json",
+    "index.html",
+    "loading.html",
+    "checkin.html",
+    "dashboard.html",
+    "approvals.html",
+    "time-corrections.html",
+    "reports.html",
+    "settings.html",
+    "personnel.html",
+    "users.html",
+    ".ai_map/01_FILE_FUNCTION_INDEX.md",
+    ".ai_map/CODE_INDEX.json"
+  ],
+  "git_plan": {
+    "branches": ["Loca-V2", "main"],
+    "sync_and_push_only_after_proceed_and_qa_pass": true
+  }
+}

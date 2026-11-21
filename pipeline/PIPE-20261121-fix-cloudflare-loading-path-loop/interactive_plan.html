@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Plan — PIPE-20261121-fix-cloudflare-loading-path-loop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    body { font-family: 'Sarabun', 'Noto Sans Thai', system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
+    <header class="rounded-2xl bg-gradient-to-r from-[#00744B] via-[#008F5D] to-[#00A368] text-white p-6 shadow-lg">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur">
+        <i class="fa-solid fa-bug-slash"></i> PLAN MODE — รออนุมัติ (ยังไม่ Proceed)
+      </span>
+      <h1 class="text-xl sm:text-2xl font-extrabold mt-2">
+        แก้ไขปัญหา Login ค้างหน้าจอเขียว <code>/loading/loading.html?entry=session</code> บน Cloudflare Pages
+      </h1>
+      <p class="text-xs sm:text-sm text-emerald-100 mt-1">
+        Task ID: <code>PIPE-20261121-fix-cloudflare-loading-path-loop</code> | Branches: <code>Loca-V2</code> &amp; <code>main</code>
+      </p>
+    </header>
+
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-route text-emerald-600"></i>
+        เปรียบเทียบการทำงานของ Path Resolution (Before vs After)
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-xl border border-rose-200 bg-rose-50/50 space-y-2">
+          <div class="font-bold text-rose-800">Before (พังบน Cloudflare Pages)</div>
+          <div class="font-mono bg-white p-2.5 rounded-lg border border-rose-100 space-y-1">
+            <div>1. Cloudflare Pretty URL: <code>/loading.html</code> → <code>/loading</code></div>
+            <div>2. <code>getRootBasePath('/loading')</code> → <span class="text-rose-600 font-bold"><code>/loading/</code></span></div>
+            <div>3. <code>location.replace('loading.html?entry=session')</code></div>
+            <div>4. ผลลัพธ์: <span class="text-rose-600 font-bold"><code>/loading/loading.html?entry=session</code></span> (วนลูปหน้าจอเขียว)</div>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 space-y-2">
+          <div class="font-bold text-emerald-800">After (รองรับทั้ง Cloudflare Pages &amp; GitHub Pages)</div>
+          <div class="font-mono bg-white p-2.5 rounded-lg border border-emerald-100 space-y-1">
+            <div>1. Cloudflare: <code>/loading</code> หรือ <code>/loading/loading.html</code> → <span class="text-emerald-700 font-bold"><code>/</code></span></div>
+            <div>2. GitHub Pages: <code>/CheckinApp/loading</code> → <span class="text-emerald-700 font-bold"><code>/CheckinApp/</code></span></div>
+            <div>3. <code>UIHelpers.resolveAppUrl('checkin.html')</code> → <span class="text-emerald-700 font-bold"><code>/checkin.html</code></span></div>
+            <div>4. Self-heal อัตโนมัติเมื่อผู้ใช้รีเฟรชจาก URL ที่ค้างอยู่</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-3">
+      <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-file-code text-emerald-600"></i>
+        ไฟล์เป้าหมายเชิงศัลยกรรม (5 ไฟล์ + 10-HTML Cache Sync)
+      </h2>
+      <ul class="list-disc list-inside text-xs text-slate-700 space-y-1.5">
+        <li><code>assets/js/core/UIHelpers.js</code> (L15–72): แก้ <code>getRootBasePath()</code> ตัด <code>/loading(.html)?</code> ซ้ำซ้อน + เพิ่ม <code>resolveAppUrl()</code> โดยไม่กระทบ <code>KNOWN_PAGES_REGEX</code></li>
+        <li><code>index.html</code> (L61–147): คำนวณ <code>appRootPath</code> ใน Inline Script 0ms เพื่อปลดลูปทันที</li>
+        <li><code>loading.html</code> (L440–444): ปรับ BFCache <code>pageshow</code> ให้ใช้ <code>appRootPath</code></li>
+        <li><code>assets/js/controllers/LoadingController.js</code> &amp; <code>LoginController.js</code>: ใช้ <code>UIHelpers.resolveAppUrl(...)</code> ทุกจุด redirect</li>
+        <li>รัน <code>node ./.ai_map/vscode_ast_mapper.mjs</code> ซิงก์ <code>version.json</code> + 10 หน้า HTML + <code>.ai_map/</code></li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
